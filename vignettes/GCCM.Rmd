@@ -1,0 +1,15 @@
+---
+title: "Geographical Convergent Cross Mapping (GCCM)"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{GCCM}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "##"
+)
+```
