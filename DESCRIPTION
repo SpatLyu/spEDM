@@ -18,13 +18,14 @@ Depends:
 LinkingTo: 
     Rcpp,
     RcppThread
+Imports: 
+    sdsfun,
+    sf,
+    terra
 Suggests: 
     knitr,
     Rcpp,
     RcppThread,
     rmarkdown
 VignetteBuilder: knitr
-Imports: 
-    sdsfun,
-    sf,
-    terra
+
