@@ -24,3 +24,7 @@ Suggests:
     RcppThread,
     rmarkdown
 VignetteBuilder: knitr
+Imports: 
+    sdsfun,
+    sf,
+    terra
