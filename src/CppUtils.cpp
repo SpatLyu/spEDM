@@ -3,8 +3,10 @@
 #include <unordered_set>
 #include <limits>  // for std::numeric_limits
 #include "HelperFuns.h"
+#include <Rcpp.h>
 
 // Function to calculate the lagged indices
+// [[Rcpp::export]]
 std::vector<std::vector<int>> CppLaggedIndices(const std::vector<int>& vec,
                                                const std::vector<std::vector<int>>& nbmat,
                                                int lagNum) {
