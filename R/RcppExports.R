@@ -9,7 +9,3 @@ RcppGenEmbeddings <- function(vec, nbmat, E) {
     .Call(`_spEDM_RcppGenEmbeddings`, vec, nbmat, E)
 }
 
-timesTwo <- function(x) {
-    .Call(`_spEDM_timesTwo`, x)
-}
-

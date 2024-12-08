@@ -97,8 +97,26 @@ std::vector<std::vector<double>> GenEmbeddings(const std::vector<double>& vec,
   std::vector<std::vector<double>> embeddings(n, std::vector<double>(E));
 
   for (int e = 0; e < E; ++e) {
-    int lagNum = E - 1;
+    int lagNum = e;
     std::vector<std::vector<int>> lagged_indices = CppLaggedIndices(vec, nbmat, lagNum);
+
+    // Remove duplicates with previous lagNum
+    if (e > 0) {
+      std::vector<std::vector<int>> prev_lagged_indices = CppLaggedIndices(vec, nbmat, e - 1);
+      for (int i = 0; i < n; ++i) {
+        std::unordered_set<int> prev_set(prev_lagged_indices[i].begin(), prev_lagged_indices[i].end());
+        std::vector<int> new_indices;
+        for (int index : lagged_indices[i]) {
+          if (prev_set.find(index) == prev_set.end()) {
+            new_indices.push_back(index);
+          }
+        }
+        lagged_indices[i] = new_indices;
+        if (lagged_indices[i].empty()) {
+          lagged_indices[i].push_back(std::numeric_limits<int>::min());
+        }
+      }
+    }
 
     for (int i = 0; i < n; ++i) {
       std::vector<double> lagged_values;
