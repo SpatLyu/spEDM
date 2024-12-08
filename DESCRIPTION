@@ -20,8 +20,7 @@ LinkingTo:
     RcppThread
 Imports: 
     sdsfun,
-    sf,
-    terra
+    sf
 Suggests: 
     knitr,
     Rcpp,
