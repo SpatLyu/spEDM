@@ -3,6 +3,7 @@
 #include <cmath>
 #include <numeric> // for std::accumulate
 #include <limits>  // for std::numeric_limits
+#include <Rcpp.h>
 
 // Function to check if a value is NA
 bool isNA(double value) {
@@ -10,6 +11,7 @@ bool isNA(double value) {
 }
 
 // Function to calculate the mean of a vector, ignoring NA values
+// [[Rcpp::export]]
 double CppMean(const std::vector<double>& vec, bool NA_rm = false) {
   double sum = 0.0;
   size_t count = 0;
@@ -23,6 +25,7 @@ double CppMean(const std::vector<double>& vec, bool NA_rm = false) {
 }
 
 // Function to calculate the variance of a vector, ignoring NA values
+// [[Rcpp::export]]
 double CppVariance(const std::vector<double>& vec, bool NA_rm = false) {
   double mean_val = CppMean(vec, NA_rm);
   double var = 0.0;
@@ -37,6 +40,7 @@ double CppVariance(const std::vector<double>& vec, bool NA_rm = false) {
 }
 
 // Function to calculate the covariance of two vectors, ignoring NA values
+// [[Rcpp::export]]
 double CppCovariance(const std::vector<double>& vec1,
                      const std::vector<double>& vec2,
                      bool NA_rm = false) {
@@ -58,6 +62,7 @@ double CppCovariance(const std::vector<double>& vec1,
 }
 
 // Function to calculate the Pearson correlation coefficient, ignoring NA values
+// [[Rcpp::export]]
 double PearsonCor(const std::vector<double>& y,
                   const std::vector<double>& y_hat,
                   bool NA_rm = false) {
