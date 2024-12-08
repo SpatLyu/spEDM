@@ -1,5 +1,7 @@
 ---
 title: "Geographical Convergent Cross Mapping (GCCM)"
+author: "Wenbo Lv"
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{GCCM}
@@ -10,6 +12,22 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "##"
+  comment = "##",
+  fig.path = "man/figures/gccm/"
 )
 ```
+
+## 1. The principle of geographical convergent cross mapping (GCCM)
+
+Takens’ theory proves that, for a dynamic system $\phi$, if its trajectory converges to an attractor manifold $M$, which are consisted by a bounded and invariant set of states, then the mapping between $\phi$ and M can be built and time series observations of $\phi$ can be used to construct $M$.
+
+According to the generalized embedding theorem, for a compact $d$-dimensional manifold $M$ and a set of observation functions $\left<h_1,h_2,\ldots,h_L\right>$, the map $\psi_{\phi,h} = \left<h_1\left(x\right),h_2\left(x\right),\ldots,h_L\left(x\right)\right>$ is an embedding of $M$ with $L = 2d + 1$. Here embedding means a one-to-one map resolving all singularities of the original manifold. The elements $h_i$ can be lags of observations from single time series observations, lags of observations from multiple time series, or multiple observation functions. The first two constructions are only special cases of the third one.
+
+By taking the measured values at one specific unit and its neighbors (named as spatial lags in spatial statistics) as a set of observation functions, $\psi_{\phi,h} \left(x,s\right) = \left<h_s\left(x\right),h_{s\left(1\right)}\left(x\right),\ldots,h_{s\left(L-1\right)}\left(x\right)\right>$ is a embedding, where $s$ is the focal unit currently under investigation and $s\left(i\right)$ is its $i$-th order of spatial lags. $h_s\left(x\right)$ and $h_{s\left(i\right)}\left(x\right)$ are their observation functions respectively. (Hereinafter, we will use $\psi \left(x,s\right)$ to present $\psi_{\phi,h} \left(x,s\right)$ for short). For two spatial variables $X$ and $Y$ on the same set of spatial units, their values and spatial lags can be regarded as observation functions reading values from each spatial unit. As the spatial lags in each order contain more than one spatial units, the observation function can be set as the mean of the spatial units or other summary functions considering the spatial direction, to assure the one-to-one mapping of the original manifold $M$.
+
+
+
+ 
+
+
+**Note: All variables must be continuous variables.**
