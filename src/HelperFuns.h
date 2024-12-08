@@ -1,6 +1,7 @@
 #ifndef HelperFuns_H
 #define HelperFuns_H
 
+#include <iostream>
 #include <vector>
 #include <cmath>
 #include <numeric> // for std::accumulate

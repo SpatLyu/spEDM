@@ -5,11 +5,6 @@
 #include <limits>  // for std::numeric_limits
 #include "HelperFuns.h"
 
-// Function to check if a value is NA
-bool isNA(double value) {
-  return std::isnan(value);
-}
-
 // Function to calculate the variance of a vector, ignoring NA values
 double CppVariance(const std::vector<double>& vec, bool NA_rm = false) {
   double mean_val = CppMean(vec, NA_rm);
