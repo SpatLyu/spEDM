@@ -3,11 +3,9 @@
 #include <unordered_set>
 #include <limits>  // for std::numeric_limits
 #include "HelperFuns.h"
-#include <Rcpp.h>
 
 // Function to calculate the lagged indices
-// [[Rcpp::export]]
-std::vector<std::vector<int>> CppLaggedIndices(const std::vector<int>& vec,
+std::vector<std::vector<int>> CppLaggedIndices(const std::vector<double>& vec,
                                                const std::vector<std::vector<int>>& nbmat,
                                                int lagNum) {
   int n = vec.size();
@@ -36,7 +34,7 @@ std::vector<std::vector<int>> CppLaggedIndices(const std::vector<int>& vec,
     }
 
     // Collect neighbors up to lagNum
-    for (int l = 1; l < lagNum; ++l) {
+    for (int l = 0; l < lagNum; ++l) {
       for (int neighbor : current_neighbors) {
         for (int j = 0; j < n; ++j) {
           if (nbmat[neighbor][j] == 1 && i != j && visited.find(j) == visited.end()) {
@@ -59,4 +57,29 @@ std::vector<std::vector<int>> CppLaggedIndices(const std::vector<int>& vec,
   }
 
   return result;
+}
+
+// Function to generate embeddings
+std::vector<std::vector<double>> GenEmbeddings(const std::vector<double>& vec,
+                                               const std::vector<std::vector<int>>& nbmat,
+                                               int E) {
+  int n = vec.size();
+  std::vector<std::vector<double>> embeddings(n, std::vector<double>(E));
+
+  for (int e = 0; e < E; ++e) {
+    int lagNum = E - 1;
+    std::vector<std::vector<int>> lagged_indices = CppLaggedIndices(vec, nbmat, lagNum);
+
+    for (int i = 0; i < n; ++i) {
+      std::vector<double> lagged_values;
+      for (int index : lagged_indices[i]) {
+        if (!isNA(index)) {
+          lagged_values.push_back(vec[index]);
+        }
+      }
+      embeddings[i][e] = CppMean(lagged_values, true);
+    }
+  }
+
+  return embeddings;
 }
