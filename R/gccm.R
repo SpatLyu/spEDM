@@ -12,6 +12,9 @@
 #' @export
 #'
 #' @examples
+#' columbus <- sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
+#'                         quiet=TRUE)
+#' gccm("CRIME","HOVAL", data = columbus)
 gccm = \(cause, effect, nbmat = NULL, data = NULL,
          libsizes = NULL, E = 3, ...) {
   if (is.null(nbmat)){
@@ -31,9 +34,8 @@ gccm = \(cause, effect, nbmat = NULL, data = NULL,
     effect = data[,effect,drop = TRUE]
   }
 
-  n = length(cause)
-  if (n != nrow(nbmat)) stop("Incompatible Data Dimensions!")
-  if (is.null(libsizes)) libsizes = floor(seq(1,n,length.out = 15))
+  if (length(cause) != nrow(nbmat)) stop("Incompatible Data Dimensions!")
+  if (is.null(libsizes)) libsizes = floor(seq(1,length(cause),length.out = 15))
 
   x_xmap_y = RcppGCCMLattice(cause,effect,nbmat,libsizes,E)
   return(x_xmap_y)

@@ -21,13 +21,13 @@ std::vector<std::vector<double>> GCCMLattice(const std::vector<double>& y,
 
   // Construct a new libsizevec with valid libsize values
   std::vector<int> libsizevec;
-  libsizevec.push_back(y_size - 2);
+  // libsizevec.push_back(y_size - 2);
   for (int libsize : libsizes) {
     if (libsize >= 1 && libsize <= y_size - 2) {
       libsizevec.push_back(libsize);
     }
   }
-  libsizevec.push_back(1);
+  // libsizevec.push_back(1);
 
   // Sort libsizevec in descending order
   std::sort(libsizevec.begin(), libsizevec.end(), std::greater<int>());
@@ -51,6 +51,17 @@ std::vector<std::vector<double>> GCCMLattice(const std::vector<double>& y,
     // Store the results in the result vector
     result.push_back({static_cast<double>(libsize), y_hat_mean, rho});
   });
+
+  // Calculate significance and confidence interval for each result
+  for (size_t i = 0; i < result.size(); ++i) {
+    double rho = result[i][2];
+    double significance = CppSignificance(rho, y_size);
+    std::vector<double> confidence_interval = CppConfidence(rho, y_size);
+
+    result[i].push_back(significance);
+    result[i].push_back(confidence_interval[0]);
+    result[i].push_back(confidence_interval[1]);
+  }
 
   return result;
 }
