@@ -67,3 +67,81 @@ where $n$ is the number of observations to be predicted, and
 $$
 z = \frac{1}{2} \ln \left(\frac{1+\rho}{1-\rho}\right)
 $$
+
+## 2. An example of county-level population density
+
+```r
+install.packages("spEDM", dep = TRUE)
+```
+
+Load data and package:
+
+```{r}
+library(spEDM)
+
+popd = readr::read_csv(system.file("extdata/popdensity.csv", 
+                                   package = "spEDM"))
+popd
+```
+
+Construct the neighbours matrix and coordinates matrix.
+
+```{r}
+popd_sf = sf::st_as_sf(popdensity,
+                       coords = c("x","y"),
+                       crs = 4326)
+nb = sdsfun::spdep_nb(popd_sf, k = 8)
+nbmat = spdep::nb2mat(nb, style = "B", zero.policy = TRUE)
+diag(nbmat) = 0
+nbmat[1:5,1:5]
+coords = sdsfun::sf_coordinates(popd_sf)
+coords[1:5,]
+```
+
+Run GCCM:
+
+```{r}
+res = gccm(cause = "popDensity",
+           effect = "Pre",
+           nbmat = nbmat,
+           coords = coords,
+           data = popd_sf,
+           libsizes = seq(1,28,by = 1) * 100,
+           E = 3)
+res
+```
+
+Visualize the result:
+
+```{r gccm_plot, fig.width=6.25,fig.height=4.55,fig.dpi=300}
+windowsFonts(TNR = windowsFont("Times New Roman"))
+
+fig_gccm = ggplot2::ggplot(data = res,
+                           ggplot2::aes(x = lib_sizes)) +
+  ggplot2::geom_line(ggplot2::aes(y = x_xmap_y,
+                                  color = "x xmap y"),
+                      lwd = 1.25) +
+  ggplot2::geom_line(ggplot2::aes(y = y_xmap_x,
+                                  color = "y xmap x"),
+                     lwd = 1.25) +
+  ggplot2::scale_y_continuous(breaks = seq(0, 1, by = 0.1),
+                              limits = c(-0.05, 1), expand = c(0, 0),
+                              name = expression(rho)) +
+  ggplot2::scale_x_continuous(name = "Lib of Sizes",
+                              breaks = seq(0, 300, by = 50),
+                              limits = c(0, 280), expand = c(0, 0)) +
+  ggplot2::scale_color_manual(values = c("x xmap y" = "royalblue", 
+                                         "y xmap x" = "red3"), 
+                              labels = c("Pre xmap popDensity", 
+                                         "popDensity xmap Pre"),
+                              name = "") +
+  ggplot2::theme_bw() +
+  ggplot2::theme(axis.text = ggplot2::element_text(family = "TNR"),
+                 axis.title = ggplot2::element_text(family = "TNR"),
+                 panel.grid = ggplot2::element_blank(),
+                 legend.position = "inside",
+                 legend.justification = c('right','top'),
+                 legend.background = ggplot2::element_rect(fill = 'transparent'),
+                 legend.text = ggplot2::element_text(family = "TNR"))
+```
+
