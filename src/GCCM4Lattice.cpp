@@ -5,6 +5,7 @@
 #include <utility>
 #include <limits>
 #include <map>
+#include "HelperFuns.h"
 #include "CppStats.h"
 #include "CppUtils.h"
 #include <RcppThread.h>
