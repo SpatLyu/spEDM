@@ -1,3 +1,17 @@
+#' geographical convergent cross mapping
+#'
+#' @param cause The causal series (as a character or a vector).
+#' @param effect The effect series (as a character or a vector).
+#' @param nbmat (optional) The neighbours matrix.
+#' @param data (optional) The observation data.
+#' @param libsizes (optional) A vector of library sizes to use
+#' @param E (optional) The number of dimensions for the attractor reconstruction.
+#' @param ... (optional) Other parameters passed to `sdsfun::spdep_nb()`.
+#'
+#' @return A `tibble`.
+#' @export
+#'
+#' @examples
 gccm = \(cause, effect, nbmat = NULL, data = NULL,
          libsizes = NULL, E = 3, ...) {
   if (is.null(nbmat)){
