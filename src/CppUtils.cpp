@@ -121,11 +121,18 @@ std::vector<std::vector<double>> GenEmbeddings(const std::vector<double>& vec,
     for (int i = 0; i < n; ++i) {
       std::vector<double> lagged_values;
       for (int index : lagged_indices[i]) {
-        if (!isNA(index)) {
+        if (!checkIntNA(index)) {
           lagged_values.push_back(vec[index]);
         }
       }
-      embeddings[i][e] = CppMean(lagged_values, true);
+
+      // Check if lagged_values is empty
+      if (lagged_values.empty()) {
+        embeddings[i][e] = std::numeric_limits<double>::quiet_NaN();
+      } else {
+        embeddings[i][e] = CppMean(lagged_values, true);
+      }
+      // embeddings[i][e] = CppMean(lagged_values, true);
     }
   }
 
