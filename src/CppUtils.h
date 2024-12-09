@@ -1,4 +1,4 @@
-#ifndef HelperFuns_H
+#ifndef CppUtils_H
 #define CppUtils_H
 
 #include <iostream>
