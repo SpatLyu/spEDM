@@ -70,7 +70,7 @@ std::vector<std::vector<double>> GCCMLattice(const std::vector<double>& y,
   // Construct a new libsizevec with valid libsize values
   std::vector<int> libsizevec;
   for (int libsize : libsizes) {
-    if (libsize >= E + 1 && libsize <= y_size - 2) {
+    if (libsize >= E + 1 && libsize <= y_size - E - 1) {
       libsizevec.push_back(libsize);
     }
   }
