@@ -1,7 +1,7 @@
 ---
 title: "Geographical Convergent Cross Mapping (GCCM)"
 author: "Wenbo Lv"
-date: "2024-12-09"
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{GCCM}
@@ -9,7 +9,13 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "##",
+  fig.path = "man/figures/gccm/"
+)
+```
 
 ## 1. The principle of geographical convergent cross mapping (GCCM)
 
@@ -70,40 +76,17 @@ install.packages("spEDM", dep = TRUE)
 
 Load data and package:
 
-
-``` r
+```{r}
 library(spEDM)
 
 popd = readr::read_csv(system.file("extdata/popdensity.csv",
                                    package = "spEDM"))
-## Rows: 2806 Columns: 7
-## ── Column specification ───────────────────────────────────────────────────────────────────────
-## Delimiter: ","
-## dbl (7): x, y, popDensity, DEM, Tem, Pre, slop
-## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 popd
-## # A tibble: 2,806 × 7
-##        x     y popDensity   DEM   Tem   Pre  slop
-##    <dbl> <dbl>      <dbl> <dbl> <dbl> <dbl> <dbl>
-##  1  117.  30.5       780.     8  17.4 1528. 0.452
-##  2  117.  30.6       395.    48  17.2 1487. 0.842
-##  3  117.  30.8       261.    49  16.0 1456. 3.56 
-##  4  116.  30.1       258.    23  17.4 1555. 0.932
-##  5  116.  30.5       211.   101  16.3 1494. 3.34 
-##  6  117.  31.0       386.    10  16.6 1382. 1.65 
-##  7  117.  30.2       350.    23  17.5 1569. 0.346
-##  8  117.  30.7       470.    22  17.1 1493. 1.88 
-##  9  117.  30.6      1226.    11  17.4 1526. 0.208
-## 10  116.  30.9       137.   598  13.9 1458. 5.92 
-## # ℹ 2,796 more rows
 ```
 
 Construct the neighbours matrix and coordinates matrix.
 
-
-``` r
+```{r}
 popd_sf = sf::st_as_sf(popdensity,
                        coords = c("x","y"),
                        crs = 4326)
@@ -111,26 +94,13 @@ nb = sdsfun::spdep_nb(popd_sf, k = 8)
 nbmat = spdep::nb2mat(nb, style = "B", zero.policy = TRUE)
 diag(nbmat) = 0
 nbmat[1:5,1:5]
-##   [,1] [,2] [,3] [,4] [,5]
-## 1    0    1    1    0    0
-## 2    1    0    1    0    1
-## 3    1    1    0    0    1
-## 4    0    0    0    0    1
-## 5    0    1    1    1    0
 coords = sdsfun::sf_coordinates(popd_sf)
 coords[1:5,]
-##            X       Y
-## [1,] 116.912 30.4879
-## [2,] 116.755 30.5877
-## [3,] 116.541 30.7548
-## [4,] 116.241 30.1040
-## [5,] 116.173 30.4950
 ```
 
 Run GCCM:
 
-
-``` r
+```{r}
 res = gccm(cause = "popDensity",
            effect = "Pre",
            nbmat = nbmat,
@@ -139,27 +109,11 @@ res = gccm(cause = "popDensity",
            libsizes = seq(100, 2800, by = 100),
            E = 3)
 res
-## # A tibble: 28 × 9
-##    lib_sizes x_xmap_y x_xmap_y_sig x_xmap_y_upper x_xmap_y_lower y_xmap_x y_xmap_x_sig
-##        <dbl>    <dbl>        <dbl>          <dbl>          <dbl>    <dbl>        <dbl>
-##  1       100    0.576            0          0.600          0.550    0.431            0
-##  2       200    0.576            0          0.600          0.551    0.429            0
-##  3       300    0.576            0          0.600          0.551    0.428            0
-##  4       400    0.576            0          0.600          0.551    0.428            0
-##  5       500    0.576            0          0.600          0.551    0.428            0
-##  6       600    0.576            0          0.600          0.551    0.428            0
-##  7       700    0.576            0          0.600          0.551    0.427            0
-##  8       800    0.576            0          0.600          0.551    0.428            0
-##  9       900    0.576            0          0.600          0.551    0.428            0
-## 10      1000    0.576            0          0.600          0.551    0.428            0
-## # ℹ 18 more rows
-## # ℹ 2 more variables: y_xmap_x_upper <dbl>, y_xmap_x_lower <dbl>
 ```
 
 Visualize the result:
 
-
-``` r
+```{r gccm_plot, fig.width=7.65,fig.height=4.55,fig.dpi=300}
 windowsFonts(TNR = windowsFont("Times New Roman"))
 
 fig_gccm = ggplot2::ggplot(data = res,
@@ -192,6 +146,4 @@ fig_gccm = ggplot2::ggplot(data = res,
                  legend.text = ggplot2::element_text(family = "TNR"))
 fig_gccm
 ```
-
-![](../man/figures/gccm/gccm_plot-1.png)
 
