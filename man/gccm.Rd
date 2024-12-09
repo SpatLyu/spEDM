@@ -4,7 +4,17 @@
 \alias{gccm}
 \title{geographical convergent cross mapping}
 \usage{
-gccm(cause, effect, nbmat = NULL, data = NULL, libsizes = NULL, E = 3, ...)
+gccm(
+  cause,
+  effect,
+  nbmat = NULL,
+  coords = NULL,
+  data = NULL,
+  libsizes = NULL,
+  E = 3,
+  trend_rm = c("effect", "cause", "none", "all"),
+  ...
+)
 }
 \arguments{
 \item{cause}{The causal series (as a character or a vector).}
@@ -13,11 +23,15 @@ gccm(cause, effect, nbmat = NULL, data = NULL, libsizes = NULL, E = 3, ...)
 
 \item{nbmat}{(optional) The neighbours matrix.}
 
+\item{coords}{(optional) The coordinates matrix.}
+
 \item{data}{(optional) The observation data.}
 
-\item{libsizes}{(optional) A vector of library sizes to use}
+\item{libsizes}{(optional) A vector of library sizes to use.}
 
 \item{E}{(optional) The number of dimensions for the attractor reconstruction.}
+
+\item{trend_rm}{(optional) Variables that need to remove linear trends.}
 
 \item{...}{(optional) Other parameters passed to \code{sdsfun::spdep_nb()}.}
 }

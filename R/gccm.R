@@ -3,9 +3,11 @@
 #' @param cause The causal series (as a character or a vector).
 #' @param effect The effect series (as a character or a vector).
 #' @param nbmat (optional) The neighbours matrix.
+#' @param coords (optional) The coordinates matrix.
 #' @param data (optional) The observation data.
-#' @param libsizes (optional) A vector of library sizes to use
+#' @param libsizes (optional) A vector of library sizes to use.
 #' @param E (optional) The number of dimensions for the attractor reconstruction.
+#' @param trend_rm (optional) Variables that need to remove linear trends.
 #' @param ... (optional) Other parameters passed to `sdsfun::spdep_nb()`.
 #'
 #' @return A `tibble`.
@@ -15,12 +17,20 @@
 #' columbus <- sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
 #'                         quiet=TRUE)
 #' gccm("CRIME","HOVAL", data = columbus)
-gccm = \(cause, effect, nbmat = NULL, data = NULL,
-         libsizes = NULL, E = 3, ...) {
+gccm = \(cause, effect, nbmat = NULL, coords = NULL, data = NULL, libsizes = NULL,
+         E = 3, trend_rm = c("effect", "cause", "none", "all"), ...) {
   if (is.null(nbmat)){
     if(inherits(data,"sf")){
       nbmat = spdep::nb2mat(sdsfun::spdep_nb(data,...),
                             style = "B", zero.policy = TRUE)
+    } else {
+      stop("When `nbmat` is NULL, the data must be provided as `sf` object!")
+    }
+  }
+
+  if (is.null(coords)){
+    if(inherits(data,"sf")){
+      coords = sdsfun::sf_coordinates(data)
     } else {
       stop("When `nbmat` is NULL, the data must be provided as `sf` object!")
     }
@@ -36,6 +46,20 @@ gccm = \(cause, effect, nbmat = NULL, data = NULL,
 
   if (length(cause) != nrow(nbmat)) stop("Incompatible Data Dimensions!")
   if (is.null(libsizes)) libsizes = floor(seq(1,length(cause),length.out = 15))
+
+  trend_rm = match.arg(trend_rm)
+  switch(trend_rm,
+         "effect" = {
+           effect = RcppLinearTrendRM(effect,as.double(coords[,1]),as.double(coords[,2]))
+         },
+         "cause" = {
+           cause = RcppLinearTrendRM(cause,as.double(coords[,1]),as.double(coords[,2]))
+         },
+         "all" = {
+           effect = RcppLinearTrendRM(effect,as.double(coords[,1]),as.double(coords[,2]))
+           cause = RcppLinearTrendRM(cause,as.double(coords[,1]),as.double(coords[,2]))
+         })
+
 
   x_xmap_y = RcppGCCMLattice(cause,effect,nbmat,libsizes,E)
   colnames(x_xmap_y) = c("lib_sizes","x_xmap_y","x_xmap_y_sig",

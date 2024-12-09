@@ -24,6 +24,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppLinearTrendRM
+Rcpp::NumericVector RcppLinearTrendRM(const Rcpp::NumericVector& vec, const Rcpp::NumericVector& xcoord, const Rcpp::NumericVector& ycoord, bool NA_rm);
+RcppExport SEXP _spEDM_RcppLinearTrendRM(SEXP vecSEXP, SEXP xcoordSEXP, SEXP ycoordSEXP, SEXP NA_rmSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type xcoord(xcoordSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type ycoord(ycoordSEXP);
+    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppLinearTrendRM(vec, xcoord, ycoord, NA_rm));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppLaggedIndices
 Rcpp::List RcppLaggedIndices(const Rcpp::NumericVector& vec, const Rcpp::NumericMatrix& nbmat, int lagNum);
 RcppExport SEXP _spEDM_RcppLaggedIndices(SEXP vecSEXP, SEXP nbmatSEXP, SEXP lagNumSEXP) {
@@ -119,6 +133,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppConfidence", (DL_FUNC) &_spEDM_RcppConfidence, 3},
+    {"_spEDM_RcppLinearTrendRM", (DL_FUNC) &_spEDM_RcppLinearTrendRM, 4},
     {"_spEDM_RcppLaggedIndices", (DL_FUNC) &_spEDM_RcppLaggedIndices, 3},
     {"_spEDM_RcppGenEmbeddings", (DL_FUNC) &_spEDM_RcppGenEmbeddings, 3},
     {"_spEDM_RcppDist", (DL_FUNC) &_spEDM_RcppDist, 1},

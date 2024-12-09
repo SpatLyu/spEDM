@@ -13,6 +13,24 @@ Rcpp::NumericVector RcppConfidence(double r, int n, double level = 0.05) {
   return Rcpp::wrap(result);
 }
 
+// Wrapper function to perform Linear Trend Removal and return a NumericVector
+// [[Rcpp::export]]
+Rcpp::NumericVector RcppLinearTrendRM(const Rcpp::NumericVector& vec,
+                                      const Rcpp::NumericVector& xcoord,
+                                      const Rcpp::NumericVector& ycoord,
+                                      bool NA_rm = false) {
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
+  std::vector<double> xcoord_std = Rcpp::as<std::vector<double>>(xcoord);
+  std::vector<double> ycoord_std = Rcpp::as<std::vector<double>>(ycoord);
+
+  // Perform Linear Trend Removal
+  std::vector<double> result = LinearTrendRM(vec_std, xcoord_std, ycoord_std, NA_rm);
+
+  // Convert std::vector<double> to Rcpp::NumericVector
+  return Rcpp::wrap(result);
+}
+
 // Wrapper function to calculate lagged indices and return a List
 // [[Rcpp::export]]
 Rcpp::List RcppLaggedIndices(const Rcpp::NumericVector& vec,

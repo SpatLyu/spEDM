@@ -85,3 +85,48 @@ std::vector<double> CppConfidence(double r, int n,
   // Return the result as a std::vector<double>
   return {r_upper, r_lower};
 }
+
+// Function to perform Linear Trend Removal
+std::vector<double> LinearTrendRM(const std::vector<double>& vec,
+                                  const std::vector<double>& xcoord,
+                                  const std::vector<double>& ycoord,
+                                  bool NA_rm = false) {
+  if (vec.size() != xcoord.size() || vec.size() != ycoord.size()) {
+    throw std::invalid_argument("Input vectors must have the same size.");
+  }
+
+  // Perform linear regression
+  double x1_mean = CppMean(xcoord, NA_rm);
+  double x2_mean = CppMean(ycoord, NA_rm);
+  double y_mean = CppMean(vec, NA_rm);
+
+  double x1_var = CppVariance(xcoord, NA_rm);
+  double x2_var = CppVariance(ycoord, NA_rm);
+  double x1_x2_cov = CppCovariance(xcoord, ycoord, NA_rm);
+
+  double x1_y_cov = CppCovariance(xcoord, vec, NA_rm);
+  double x2_y_cov = CppCovariance(ycoord, vec, NA_rm);
+
+  double denom = x1_var * x2_var - x1_x2_cov * x1_x2_cov;
+  if (denom == 0.0) {
+    throw std::invalid_argument("Linear regression cannot be performed due to collinearity.");
+  }
+
+  double b1 = (x2_var * x1_y_cov - x1_x2_cov * x2_y_cov) / denom;
+  double b2 = (x1_var * x2_y_cov - x1_x2_cov * x1_y_cov) / denom;
+  double b0 = y_mean - b1 * x1_mean - b2 * x2_mean;
+
+  // Predict vec_hat using the linear regression model
+  std::vector<double> vec_hat(vec.size());
+  for (size_t i = 0; i < vec.size(); ++i) {
+    vec_hat[i] = b0 + b1 * xcoord[i] + b2 * ycoord[i];
+  }
+
+  // Calculate vec - vec_hat
+  std::vector<double> result(vec.size());
+  for (size_t i = 0; i < vec.size(); ++i) {
+    result[i] = vec[i] - vec_hat[i];
+  }
+
+  return result;
+}

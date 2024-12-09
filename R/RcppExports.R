@@ -5,6 +5,10 @@ RcppConfidence <- function(r, n, level = 0.05) {
     .Call(`_spEDM_RcppConfidence`, r, n, level)
 }
 
+RcppLinearTrendRM <- function(vec, xcoord, ycoord, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppLinearTrendRM`, vec, xcoord, ycoord, NA_rm)
+}
+
 RcppLaggedIndices <- function(vec, nbmat, lagNum) {
     .Call(`_spEDM_RcppLaggedIndices`, vec, nbmat, lagNum)
 }
