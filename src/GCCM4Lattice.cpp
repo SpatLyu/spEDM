@@ -6,6 +6,10 @@
 #include <limits>
 #include "CppStats.h"
 #include "CppUtils.h"
+#include <RcppThread.h>
+
+// [[Rcpp::plugins(cpp11)]]
+// [[Rcpp::depends(RcppThread)]]
 
 // Function to compute the simplex projection
 double SimplexProjection(
@@ -141,6 +145,66 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
       double rho = SimplexProjection(x_vectors, y, lib_indices, pred_indices, b);
       x_xmap_y.emplace_back(lib_size, rho);
     }
+  }
+
+  return x_xmap_y;
+}
+
+// Function to compute GCCMLattice
+std::vector<std::pair<int, double>> GCCMLattice(
+    const std::vector<std::vector<double>>& x_vectors,  // Reconstructed state-space (each row is a separate vector/state)
+    const std::vector<double>& y,                      // Time series to cross map to
+    const std::vector<int>& lib_sizes,                 // Vector of library sizes to use
+    const std::vector<std::pair<int, int>>& lib,       // Matrix (n x 2) using n sequences of data to construct libraries
+    const std::vector<std::pair<int, int>>& pred,      // Matrix (n x 2) using n sequences of data to predict from
+    int E,                                             // Number of dimensions for the attractor reconstruction
+    int tau = 1,                                       // Time lag for the lagged-vector construction
+    int b = 0                                          // Number of nearest neighbors to use for prediction
+) {
+  int n = x_vectors.size();
+  b = E + 1; // Set b to E + 1 if not provided
+
+  // Setup pred_indices
+  std::vector<bool> pred_indices(n, false);
+  for (const auto& p : pred) {
+    int row_start = p.first + (E - 1) * tau;
+    int row_end = p.second;
+    if (row_end > row_start) {
+      std::fill(pred_indices.begin() + row_start, pred_indices.begin() + row_end + 1, true);
+    }
+  }
+
+  // Setup lib_indices
+  std::vector<bool> lib_indices(n, false);
+  for (const auto& l : lib) {
+    int row_start = l.first + (E - 1) * tau;
+    int row_end = l.second;
+    if (row_end > row_start) {
+      std::fill(lib_indices.begin() + row_start, lib_indices.begin() + row_end + 1, true);
+    }
+  }
+
+  int max_lib_size = std::accumulate(lib_indices.begin(), lib_indices.end(), 0); // Maximum lib size
+  std::vector<int> possible_lib_indices;
+  for (int i = 0; i < n; ++i) {
+    if (lib_indices[i]) {
+      possible_lib_indices.push_back(i);
+    }
+  }
+
+  // Make sure max lib size not exceeded and remove duplicates
+  std::vector<int> unique_lib_sizes;
+  std::unique_copy(lib_sizes.begin(), lib_sizes.end(), std::back_inserter(unique_lib_sizes),
+                   [&](int a, int b) { return a == b; });
+  std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
+                 [&](int size) { return std::min(size, max_lib_size); });
+
+  std::vector<std::pair<int, double>> x_xmap_y;
+
+  // Sequential version of the for loop
+  for (int lib_size : unique_lib_sizes) {
+    auto results = GCCMSingle4Lattice(x_vectors, y, lib_indices, lib_size, max_lib_size, possible_lib_indices, pred_indices, b);
+    x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
   }
 
   return x_xmap_y;
