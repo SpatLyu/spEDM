@@ -1,5 +1,17 @@
 #include <Rcpp.h>
+#include "CppStats.h"
 #include "CppUtils.h"
+#include "CppGCCM.h"
+
+// Wrapper function to calculate the confidence interval for a correlation coefficient and return a NumericVector
+// [[Rcpp::export]]
+Rcpp::NumericVector RcppConfidence(double r, int n, double level = 0.05) {
+  // Calculate the confidence interval
+  std::vector<double> result = CppConfidence(r, n, level);
+
+  // Convert std::vector<double> to Rcpp::NumericVector
+  return Rcpp::wrap(result);
+}
 
 // Wrapper function to calculate lagged indices and return a List
 // [[Rcpp::export]]
@@ -179,4 +191,44 @@ Rcpp::NumericVector RcppSimplexProjection(const Rcpp::NumericVector& y,
 
   // Convert std::vector<double> to Rcpp::NumericVector
   return Rcpp::wrap(result);
+}
+
+// Wrapper function to perform GCCM Lattice and return a NumericMatrix
+// [[Rcpp::export]]
+Rcpp::NumericMatrix RcppGCCMLattice(const Rcpp::NumericVector& y,
+                                    const Rcpp::NumericVector& x,
+                                    const Rcpp::NumericMatrix& nbmat,
+                                    const Rcpp::IntegerVector& libsizes,
+                                    int E) {
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> y_std = Rcpp::as<std::vector<double>>(y);
+  std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
+
+  // Convert Rcpp::NumericMatrix to std::vector<std::vector<int>>
+  int n = nbmat.nrow();
+  std::vector<std::vector<int>> nbmat_std(n, std::vector<int>(n));
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < n; ++j) {
+      nbmat_std[i][j] = nbmat(i, j);
+    }
+  }
+
+  // Convert Rcpp::IntegerVector to std::vector<int>
+  std::vector<int> libsizes_std = Rcpp::as<std::vector<int>>(libsizes);
+
+  // Perform GCCM Lattice
+  std::vector<std::vector<double>> result = GCCMLattice(y_std, x_std, nbmat_std, libsizes_std, E);
+
+  // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
+  Rcpp::NumericMatrix resultMatrix(result.size(), 5);
+  for (size_t i = 0; i < result.size(); ++i) {
+    resultMatrix(i, 0) = result[i][0];
+    resultMatrix(i, 1) = result[i][1];
+    resultMatrix(i, 2) = result[i][2];
+    resultMatrix(i, 3) = result[i][3];
+    resultMatrix(i, 4) = result[i][4];
+    // resultMatrix(i, 5) = result[i][5];
+  }
+
+  return resultMatrix;
 }

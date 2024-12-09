@@ -19,12 +19,14 @@ LinkingTo:
     Rcpp,
     RcppThread
 Imports: 
+    dplyr,
     sdsfun,
-    sf
+    spdep,
+    tibble
 Suggests: 
     knitr,
     Rcpp,
     RcppThread,
-    rmarkdown
+    rmarkdown,
+    sf
 VignetteBuilder: knitr
-
