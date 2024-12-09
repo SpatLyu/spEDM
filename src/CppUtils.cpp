@@ -1,9 +1,9 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include <unordered_set>
-#include <limits>  // for std::numeric_limits
+#include <limits>
 #include "HelperFuns.h"
-#include <Rcpp.h>
 
 // Function to calculate the lagged indices
 std::vector<std::vector<int>> CppLaggedIndices(const std::vector<double>& vec,
@@ -130,92 +130,32 @@ std::vector<std::vector<double>> CppDist(const std::vector<std::vector<double>>&
   return result;
 }
 
-// Wrapper function to calculate lagged indices and return a List
-// [[Rcpp::export]]
-Rcpp::List RcppLaggedIndices(const Rcpp::NumericVector& vec,
-                             const Rcpp::NumericMatrix& nbmat,
-                             int lagNum) {
-  // Convert Rcpp::NumericVector to std::vector<double>
-  std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
+// Function to find the indices of the libsize + 1 closest elements for each row in distmat
+std::vector<std::vector<int>> CppClosestIndices(const std::vector<std::vector<double>>& distmat,
+                                                int libsize) {
+  size_t n = distmat.size();
+  std::vector<std::vector<int>> closestIndices(n, std::vector<int>(libsize + 1));
 
-  // Convert Rcpp::NumericMatrix to std::vector<std::vector<int>>
-  int n = nbmat.nrow();
-  std::vector<std::vector<int>> nbmat_std(n, std::vector<int>(n));
-  for (int i = 0; i < n; ++i) {
-    for (int j = 0; j < n; ++j) {
-      nbmat_std[i][j] = nbmat(i, j);
-    }
-  }
-
-  // Calculate lagged indices
-  std::vector<std::vector<int>> lagged_indices = CppLaggedIndices(vec_std, nbmat_std, lagNum);
-
-  // Convert std::vector<std::vector<int>> to Rcpp::List
-  Rcpp::List result(n);
-  for (int i = 0; i < n; ++i) {
-    result[i] = Rcpp::wrap(lagged_indices[i]);
-  }
-
-  return result;
-}
-
-// Wrapper function to generate embeddings and return a NumericMatrix
-// [[Rcpp::export]]
-Rcpp::NumericMatrix RcppGenEmbeddings(const Rcpp::NumericVector& vec,
-                                      const Rcpp::NumericMatrix& nbmat,
-                                      int E) {
-  // Convert Rcpp::NumericVector to std::vector<double>
-  std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
-
-  // Convert Rcpp::NumericMatrix to std::vector<std::vector<int>>
-  int n = nbmat.nrow();
-  std::vector<std::vector<int>> nbmat_std(n, std::vector<int>(n));
-  for (int i = 0; i < n; ++i) {
-    for (int j = 0; j < n; ++j) {
-      nbmat_std[i][j] = nbmat(i, j);
-    }
-  }
-
-  // Generate embeddings
-  std::vector<std::vector<double>> embeddings = GenEmbeddings(vec_std, nbmat_std, E);
-
-  // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
-  int rows = embeddings.size();
-  int cols = embeddings[0].size();
-  Rcpp::NumericMatrix result(rows, cols);
-  for (int i = 0; i < rows; ++i) {
-    for (int j = 0; j < cols; ++j) {
-      result(i, j) = embeddings[i][j];
-    }
-  }
-
-  return result;
-}
-
-// Wrapper function to calculate the pairwise absolute difference mean matrix
-// and return a NumericMatrix
-// [[Rcpp::export]]
-Rcpp::NumericMatrix RcppDist(const Rcpp::NumericMatrix& matrix) {
-  // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
-  size_t n = matrix.nrow();
-  size_t m = matrix.ncol();
-  std::vector<std::vector<double>> matrix_std(n, std::vector<double>(m));
   for (size_t i = 0; i < n; ++i) {
-    for (size_t j = 0; j < m; ++j) {
-      matrix_std[i][j] = matrix(i, j);
-    }
-  }
+    // Create a vector to store the indices and distances
+    std::vector<std::pair<double, int>> distances;
 
-  // Calculate the pairwise absolute difference mean matrix
-  std::vector<std::vector<double>> dist_matrix = CppDist(matrix_std);
-
-  // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
-  Rcpp::NumericMatrix result(n, n);
-  for (size_t i = 0; i < n; ++i) {
     for (size_t j = 0; j < n; ++j) {
-      result(i, j) = dist_matrix[i][j];
+      if (i != j) { // Exclude the diagonal element
+        distances.push_back(std::make_pair(distmat[i][j], j));
+      }
+    }
+
+    // Sort the distances vector by the distance (first element of the pair)
+    std::sort(distances.begin(), distances.end(), [](const std::pair<double, int>& a, const std::pair<double, int>& b) {
+      return a.first < b.first;
+    });
+
+    // Select the libsize + 1 closest indices
+    for (int k = 0; k < libsize + 1; ++k) {
+      closestIndices[i][k] = distances[k].second;
     }
   }
 
-  return result;
+  return closestIndices;
 }

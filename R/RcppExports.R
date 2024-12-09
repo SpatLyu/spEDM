@@ -13,3 +13,7 @@ RcppDist <- function(matrix) {
     .Call(`_spEDM_RcppDist`, matrix)
 }
 
+RcppClosestIndices <- function(distmat, libsize) {
+    .Call(`_spEDM_RcppClosestIndices`, distmat, libsize)
+}
+

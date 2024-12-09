@@ -48,11 +48,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppClosestIndices
+Rcpp::IntegerMatrix RcppClosestIndices(const Rcpp::NumericMatrix& distmat, int libsize);
+RcppExport SEXP _spEDM_RcppClosestIndices(SEXP distmatSEXP, SEXP libsizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type distmat(distmatSEXP);
+    Rcpp::traits::input_parameter< int >::type libsize(libsizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppClosestIndices(distmat, libsize));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppLaggedIndices", (DL_FUNC) &_spEDM_RcppLaggedIndices, 3},
     {"_spEDM_RcppGenEmbeddings", (DL_FUNC) &_spEDM_RcppGenEmbeddings, 3},
     {"_spEDM_RcppDist", (DL_FUNC) &_spEDM_RcppDist, 1},
+    {"_spEDM_RcppClosestIndices", (DL_FUNC) &_spEDM_RcppClosestIndices, 2},
     {NULL, NULL, 0}
 };
 
