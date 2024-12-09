@@ -4,6 +4,7 @@
 #include <numeric>
 #include <utility>
 #include <limits>
+#include <map>
 #include "CppStats.h"
 #include "CppUtils.h"
 #include <RcppThread.h>
@@ -151,7 +152,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
 }
 
 // Function to compute GCCMLattice
-std::vector<std::pair<int, double>> GCCMLattice(
+std::vector<std::vector<double>> GCCMLattice(
     const std::vector<std::vector<double>>& x_vectors,  // Reconstructed state-space (each row is a separate vector/state)
     const std::vector<double>& y,                      // Time series to cross map to
     const std::vector<int>& lib_sizes,                 // Vector of library sizes to use
@@ -214,5 +215,28 @@ std::vector<std::pair<int, double>> GCCMLattice(
     x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
   });
 
-  return x_xmap_y;
+  // Group by the first int and compute the mean
+  std::map<int, std::vector<double>> grouped_results;
+  for (const auto& result : x_xmap_y) {
+    grouped_results[result.first].push_back(result.second);
+  }
+
+  std::vector<std::vector<double>> final_results;
+  for (const auto& group : grouped_results) {
+    double mean_value = CppMean(group.second, true);
+    final_results.push_back({static_cast<double>(group.first), mean_value});
+  }
+
+  // Calculate significance and confidence interval for each result
+  for (size_t i = 0; i < final_results.size(); ++i) {
+    double rho = final_results[i][1];
+    double significance = CppSignificance(rho, n);
+    std::vector<double> confidence_interval = CppConfidence(rho, n);
+
+    final_results[i].push_back(significance);
+    final_results[i].push_back(confidence_interval[0]);
+    final_results[i].push_back(confidence_interval[1]);
+  }
+
+  return final_results;
 }
