@@ -60,35 +60,6 @@ std::vector<std::vector<int>> CppLaggedIndices(const std::vector<double>& vec,
   return result;
 }
 
-// Wrapper function to calculate lagged indices and return a List
-// [[Rcpp::export]]
-Rcpp::List RcppLaggedIndices(const Rcpp::NumericVector& vec,
-                             const Rcpp::NumericMatrix& nbmat,
-                             int lagNum) {
-  // Convert Rcpp::NumericVector to std::vector<double>
-  std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
-
-  // Convert Rcpp::NumericMatrix to std::vector<std::vector<int>>
-  int n = nbmat.nrow();
-  std::vector<std::vector<int>> nbmat_std(n, std::vector<int>(n));
-  for (int i = 0; i < n; ++i) {
-    for (int j = 0; j < n; ++j) {
-      nbmat_std[i][j] = nbmat(i, j);
-    }
-  }
-
-  // Calculate lagged indices
-  std::vector<std::vector<int>> lagged_indices = CppLaggedIndices(vec_std, nbmat_std, lagNum);
-
-  // Convert std::vector<std::vector<int>> to Rcpp::List
-  Rcpp::List result(n);
-  for (int i = 0; i < n; ++i) {
-    result[i] = Rcpp::wrap(lagged_indices[i]);
-  }
-
-  return result;
-}
-
 // Function to generate embeddings
 std::vector<std::vector<double>> GenEmbeddings(const std::vector<double>& vec,
                                                const std::vector<std::vector<int>>& nbmat,
@@ -139,6 +110,55 @@ std::vector<std::vector<double>> GenEmbeddings(const std::vector<double>& vec,
   return embeddings;
 }
 
+// Function to calculate the pairwise absolute difference mean matrix
+std::vector<std::vector<double>> CppDist(const std::vector<std::vector<double>>& matrix) {
+  size_t n = matrix.size();
+  std::vector<std::vector<double>> result(n, std::vector<double>(n, std::numeric_limits<double>::quiet_NaN()));
+
+  for (size_t i = 0; i < n; ++i) {
+    for (size_t j = i; j < n; ++j) {
+      if (i == j) {
+        result[i][j] = 0.0; // Diagonal elements are zero
+      } else {
+        std::vector<double> abs_diff = CppAbs(matrix[i], matrix[j]);
+        result[i][j] = CppMean(abs_diff, true);
+        result[j][i] = result[i][j]; // Symmetric matrix
+      }
+    }
+  }
+
+  return result;
+}
+
+// Wrapper function to calculate lagged indices and return a List
+// [[Rcpp::export]]
+Rcpp::List RcppLaggedIndices(const Rcpp::NumericVector& vec,
+                             const Rcpp::NumericMatrix& nbmat,
+                             int lagNum) {
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
+
+  // Convert Rcpp::NumericMatrix to std::vector<std::vector<int>>
+  int n = nbmat.nrow();
+  std::vector<std::vector<int>> nbmat_std(n, std::vector<int>(n));
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < n; ++j) {
+      nbmat_std[i][j] = nbmat(i, j);
+    }
+  }
+
+  // Calculate lagged indices
+  std::vector<std::vector<int>> lagged_indices = CppLaggedIndices(vec_std, nbmat_std, lagNum);
+
+  // Convert std::vector<std::vector<int>> to Rcpp::List
+  Rcpp::List result(n);
+  for (int i = 0; i < n; ++i) {
+    result[i] = Rcpp::wrap(lagged_indices[i]);
+  }
+
+  return result;
+}
+
 // Wrapper function to generate embeddings and return a NumericMatrix
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppGenEmbeddings(const Rcpp::NumericVector& vec,
@@ -166,6 +186,34 @@ Rcpp::NumericMatrix RcppGenEmbeddings(const Rcpp::NumericVector& vec,
   for (int i = 0; i < rows; ++i) {
     for (int j = 0; j < cols; ++j) {
       result(i, j) = embeddings[i][j];
+    }
+  }
+
+  return result;
+}
+
+// Wrapper function to calculate the pairwise absolute difference mean matrix
+// and return a NumericMatrix
+// [[Rcpp::export]]
+Rcpp::NumericMatrix RcppDist(const Rcpp::NumericMatrix& matrix) {
+  // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
+  size_t n = matrix.nrow();
+  size_t m = matrix.ncol();
+  std::vector<std::vector<double>> matrix_std(n, std::vector<double>(m));
+  for (size_t i = 0; i < n; ++i) {
+    for (size_t j = 0; j < m; ++j) {
+      matrix_std[i][j] = matrix(i, j);
+    }
+  }
+
+  // Calculate the pairwise absolute difference mean matrix
+  std::vector<std::vector<double>> dist_matrix = CppDist(matrix_std);
+
+  // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
+  Rcpp::NumericMatrix result(n, n);
+  for (size_t i = 0; i < n; ++i) {
+    for (size_t j = 0; j < n; ++j) {
+      result(i, j) = dist_matrix[i][j];
     }
   }
 

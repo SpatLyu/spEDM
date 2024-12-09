@@ -9,3 +9,7 @@ RcppGenEmbeddings <- function(vec, nbmat, E) {
     .Call(`_spEDM_RcppGenEmbeddings`, vec, nbmat, E)
 }
 
+RcppDist <- function(matrix) {
+    .Call(`_spEDM_RcppDist`, matrix)
+}
+
