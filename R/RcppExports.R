@@ -17,3 +17,7 @@ RcppClosestIndices <- function(distmat, libsize) {
     .Call(`_spEDM_RcppClosestIndices`, distmat, libsize)
 }
 
+RcppCCMWeight <- function(distmat, closestIndices, libsize) {
+    .Call(`_spEDM_RcppCCMWeight`, distmat, closestIndices, libsize)
+}
+

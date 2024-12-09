@@ -60,12 +60,26 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppCCMWeight
+Rcpp::NumericMatrix RcppCCMWeight(const Rcpp::NumericMatrix& distmat, const Rcpp::IntegerMatrix& closestIndices, int libsize);
+RcppExport SEXP _spEDM_RcppCCMWeight(SEXP distmatSEXP, SEXP closestIndicesSEXP, SEXP libsizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type distmat(distmatSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type closestIndices(closestIndicesSEXP);
+    Rcpp::traits::input_parameter< int >::type libsize(libsizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppCCMWeight(distmat, closestIndices, libsize));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppLaggedIndices", (DL_FUNC) &_spEDM_RcppLaggedIndices, 3},
     {"_spEDM_RcppGenEmbeddings", (DL_FUNC) &_spEDM_RcppGenEmbeddings, 3},
     {"_spEDM_RcppDist", (DL_FUNC) &_spEDM_RcppDist, 1},
     {"_spEDM_RcppClosestIndices", (DL_FUNC) &_spEDM_RcppClosestIndices, 2},
+    {"_spEDM_RcppCCMWeight", (DL_FUNC) &_spEDM_RcppCCMWeight, 3},
     {NULL, NULL, 0}
 };
 

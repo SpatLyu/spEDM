@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <stdexcept>
 #include <numeric> // for std::accumulate
 #include <limits>  // for std::numeric_limits
 
@@ -27,6 +28,18 @@ double CppMean(const std::vector<double>& vec, bool NA_rm = false) {
   return count > 0 ? sum / count : std::numeric_limits<double>::quiet_NaN();
 }
 
+// Function to calculate the sum of a vector, ignoring NA values if NA_rm is true
+double CppSum(const std::vector<double>& vec,
+              bool NA_rm = false) {
+  double sum = 0.0;
+  for (const auto& value : vec) {
+    if (!NA_rm || !isNA(value)) {
+      sum += value;
+    }
+  }
+  return sum;
+}
+
 // Function to calculate the absolute difference between two vectors
 std::vector<double> CppAbs(const std::vector<double>& vec1,
                            const std::vector<double>& vec2) {
@@ -39,4 +52,24 @@ std::vector<double> CppAbs(const std::vector<double>& vec1,
     result[i] = std::abs(vec1[i] - vec2[i]);
   }
   return result;
+}
+
+// Function to normalize a vector by dividing each element by the sum of all elements
+std::vector<double> CppSumNormalize(const std::vector<double>& vec,
+                                    bool NA_rm = false) {
+  double sum = CppSum(vec, NA_rm);
+  if (sum == 0.0) {
+    throw std::invalid_argument("Sum of vector elements is zero, cannot normalize.");
+  }
+
+  std::vector<double> normalizedVec(vec.size());
+  for (size_t i = 0; i < vec.size(); ++i) {
+    if (!isNA(vec[i])) {
+      normalizedVec[i] = vec[i] / sum;
+    } else {
+      normalizedVec[i] = std::numeric_limits<double>::quiet_NaN();
+    }
+  }
+
+  return normalizedVec;
 }

@@ -159,3 +159,38 @@ std::vector<std::vector<int>> CppClosestIndices(const std::vector<std::vector<do
 
   return closestIndices;
 }
+
+// Function to calculate the CCM weights
+std::vector<std::vector<double>> CCMWeight(const std::vector<std::vector<double>>& distmat,
+                                           const std::vector<std::vector<int>>& closestIndices,
+                                           int libsize) {
+  size_t n = distmat.size();
+  std::vector<std::vector<double>> result(n, std::vector<double>(libsize + 1));
+
+  for (size_t i = 0; i < n; ++i) {
+    std::vector<double> sdist;
+
+    // Extract the corresponding distances from distmat
+    for (int j = 0; j < libsize + 1; ++j) {
+      int index = closestIndices[i][j];
+      sdist.push_back(distmat[i][index]);
+    }
+
+    // Normalize sdist by dividing each element by the first element,
+    // taking the negative and applying the exponential function
+    double firstElement = sdist[0];
+    for (size_t j = 0; j < sdist.size(); ++j) {
+      sdist[j] = std::exp(-sdist[j] / firstElement);
+    }
+
+    // Normalize the resulting vector using CppSumNormalize with NA_rm set to true
+    std::vector<double> normalizedWeights = CppSumNormalize(sdist, true);
+
+    // Assign the normalized weights to the result
+    for (int j = 0; j < libsize + 1; ++j) {
+      result[i][j] = normalizedWeights[j];
+    }
+  }
+
+  return result;
+}
