@@ -1,7 +1,8 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include <unordered_set>
-#include <limits>  // for std::numeric_limits
+#include <limits>
 #include "HelperFuns.h"
 #include <Rcpp.h>
 
@@ -128,6 +129,36 @@ std::vector<std::vector<double>> CppDist(const std::vector<std::vector<double>>&
   }
 
   return result;
+}
+
+// Function to find the indices of the libsize + 1 closest elements for each row in distmat
+std::vector<std::vector<int>> CppClosestIndices(const std::vector<std::vector<double>>& distmat,
+                                                int libsize) {
+  size_t n = distmat.size();
+  std::vector<std::vector<int>> closestIndices(n, std::vector<int>(libsize + 1));
+
+  for (size_t i = 0; i < n; ++i) {
+    // Create a vector to store the indices and distances
+    std::vector<std::pair<double, int>> distances;
+
+    for (size_t j = 0; j < n; ++j) {
+      if (i != j) { // Exclude the diagonal element
+        distances.push_back(std::make_pair(distmat[i][j], j));
+      }
+    }
+
+    // Sort the distances vector by the distance (first element of the pair)
+    std::sort(distances.begin(), distances.end(), [](const std::pair<double, int>& a, const std::pair<double, int>& b) {
+      return a.first < b.first;
+    });
+
+    // Select the libsize + 1 closest indices
+    for (int k = 0; k < libsize + 1; ++k) {
+      closestIndices[i][k] = distances[k].second;
+    }
+  }
+
+  return closestIndices;
 }
 
 // Wrapper function to calculate lagged indices and return a List
