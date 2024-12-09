@@ -20,11 +20,11 @@ LinkingTo:
     RcppThread
 Imports: 
     sdsfun,
-    sf
+    spdep
 Suggests: 
     knitr,
     Rcpp,
     RcppThread,
-    rmarkdown
+    rmarkdown,
+    sf
 VignetteBuilder: knitr
-
