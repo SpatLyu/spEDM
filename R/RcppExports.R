@@ -29,3 +29,7 @@ RcppSimplexProjection <- function(y, x, nbmat, libsize, E) {
     .Call(`_spEDM_RcppSimplexProjection`, y, x, nbmat, libsize, E)
 }
 
+RcppGCCMLattice <- function(y, x, nbmat, libsizes, E) {
+    .Call(`_spEDM_RcppGCCMLattice`, y, x, nbmat, libsizes, E)
+}
+

@@ -101,6 +101,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppGCCMLattice
+Rcpp::NumericMatrix RcppGCCMLattice(const Rcpp::NumericVector& y, const Rcpp::NumericVector& x, const Rcpp::NumericMatrix& nbmat, const Rcpp::IntegerVector& libsizes, int E);
+RcppExport SEXP _spEDM_RcppGCCMLattice(SEXP ySEXP, SEXP xSEXP, SEXP nbmatSEXP, SEXP libsizesSEXP, SEXP ESEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type nbmat(nbmatSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type libsizes(libsizesSEXP);
+    Rcpp::traits::input_parameter< int >::type E(ESEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppGCCMLattice(y, x, nbmat, libsizes, E));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppConfidence", (DL_FUNC) &_spEDM_RcppConfidence, 3},
@@ -110,6 +125,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppClosestIndices", (DL_FUNC) &_spEDM_RcppClosestIndices, 2},
     {"_spEDM_RcppCCMWeight", (DL_FUNC) &_spEDM_RcppCCMWeight, 3},
     {"_spEDM_RcppSimplexProjection", (DL_FUNC) &_spEDM_RcppSimplexProjection, 5},
+    {"_spEDM_RcppGCCMLattice", (DL_FUNC) &_spEDM_RcppGCCMLattice, 5},
     {NULL, NULL, 0}
 };
 
