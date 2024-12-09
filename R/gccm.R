@@ -14,8 +14,8 @@
 #' @export
 #'
 #' @examples
-#' columbus <- sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
-#'                         quiet=TRUE)
+#' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
+#'                        quiet=TRUE)
 #' gccm("CRIME","HOVAL", data = columbus)
 gccm = \(cause, effect, nbmat = NULL, coords = NULL, data = NULL, libsizes = NULL,
          E = 3, trend_rm = c("effect", "cause", "none", "all"), ...) {
