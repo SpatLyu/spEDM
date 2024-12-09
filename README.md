@@ -1,22 +1,12 @@
----
-output: github_document
----
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "##",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
-)
-```
 
 # spEDM <img src="man/figures/logo.png" align="right" height="139" alt="https://stscl.github.io/spEDM/">
 
 <!-- badges: start -->
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-cyan.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-cyan.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![CRAN](https://www.r-pkg.org/badges/version/spEDM)](https://CRAN.R-project.org/package=spEDM)
 [![DownloadsAll](https://badgen.net/cran/dt/spEDM?color=orange)](https://CRAN.R-project.org/package=spEDM)
 [![DownloadsMonth](https://cranlogs.r-pkg.org/badges/spEDM)](https://CRAN.R-project.org/package=spEDM)
@@ -33,7 +23,8 @@ knitr::opts_chunk$set(
 install.packages("spEDM", dep = TRUE)
 ```
 
-- Install binary version from [R-universe](https://stscl.r-universe.dev/spEDM) with:
+- Install binary version from
+  [R-universe](https://stscl.r-universe.dev/spEDM) with:
 
 ``` r
 install.packages("spEDM",
@@ -42,9 +33,10 @@ install.packages("spEDM",
                  dep = TRUE)
 ```
 
-- Install from source code on [GitHub](https://github.com/stscl/spEDM) with:
+- Install from source code on [GitHub](https://github.com/stscl/spEDM)
+  with:
 
-```r
+``` r
 if (!requireNamespace("devtools")) {
     install.packages("devtools")
 }
