@@ -29,7 +29,7 @@ gccm(
 
 \item{libsizes}{(optional) A vector of library sizes to use.}
 
-\item{E}{(optional) The number of dimensions for the attractor reconstruction.}
+\item{E}{(optional) The dimensions of the embedding.}
 
 \item{trend_rm}{(optional) Variables that need to remove linear trends.}
 

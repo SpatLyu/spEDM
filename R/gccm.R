@@ -6,7 +6,7 @@
 #' @param coords (optional) The coordinates matrix.
 #' @param data (optional) The observation data.
 #' @param libsizes (optional) A vector of library sizes to use.
-#' @param E (optional) The number of dimensions for the attractor reconstruction.
+#' @param E (optional) The dimensions of the embedding.
 #' @param trend_rm (optional) Variables that need to remove linear trends.
 #' @param ... (optional) Other parameters passed to `sdsfun::spdep_nb()`.
 #'
