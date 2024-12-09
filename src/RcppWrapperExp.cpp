@@ -1,5 +1,16 @@
 #include <Rcpp.h>
+#include "CppStats.h"
 #include "CppUtils.h"
+
+// Wrapper function to calculate the confidence interval for a correlation coefficient and return a NumericVector
+// [[Rcpp::export]]
+Rcpp::NumericVector RcppConfidence(double r, int n, double level = 0.05) {
+  // Calculate the confidence interval
+  std::vector<double> result = CppConfidence(r, n, level);
+
+  // Convert std::vector<double> to Rcpp::NumericVector
+  return Rcpp::wrap(result);
+}
 
 // Wrapper function to calculate lagged indices and return a List
 // [[Rcpp::export]]

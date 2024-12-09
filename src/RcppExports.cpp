@@ -11,6 +11,19 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// RcppConfidence
+Rcpp::NumericVector RcppConfidence(double r, int n, double level);
+RcppExport SEXP _spEDM_RcppConfidence(SEXP rSEXP, SEXP nSEXP, SEXP levelSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type r(rSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< double >::type level(levelSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppConfidence(r, n, level));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppLaggedIndices
 Rcpp::List RcppLaggedIndices(const Rcpp::NumericVector& vec, const Rcpp::NumericMatrix& nbmat, int lagNum);
 RcppExport SEXP _spEDM_RcppLaggedIndices(SEXP vecSEXP, SEXP nbmatSEXP, SEXP lagNumSEXP) {
@@ -90,6 +103,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_spEDM_RcppConfidence", (DL_FUNC) &_spEDM_RcppConfidence, 3},
     {"_spEDM_RcppLaggedIndices", (DL_FUNC) &_spEDM_RcppLaggedIndices, 3},
     {"_spEDM_RcppGenEmbeddings", (DL_FUNC) &_spEDM_RcppGenEmbeddings, 3},
     {"_spEDM_RcppDist", (DL_FUNC) &_spEDM_RcppDist, 1},

@@ -4,6 +4,7 @@
 #include <numeric> // for std::accumulate
 #include <limits>  // for std::numeric_limits
 #include "HelperFuns.h"
+#include <Rcpp.h>
 
 // Function to calculate the variance of a vector, ignoring NA values
 double CppVariance(const std::vector<double>& vec, bool NA_rm = false) {
@@ -53,4 +54,34 @@ double PearsonCor(const std::vector<double>& y,
   double var_y_hat = CppVariance(y_hat, NA_rm);
 
   return cov_yy_hat / std::sqrt(var_y * var_y_hat);
+}
+
+// Function to calculate the significance of a correlation coefficient
+double CppSignificance(double r, int n) {
+  double t = r * std::sqrt((n - 2) / (1 - r * r));
+  return (1 - R::pt(t, n - 2, true, false)) * 2;
+}
+
+// Function to calculate the confidence interval for a correlation coefficient
+std::vector<double> CppConfidence(double r, int n,
+                                  double level = 0.05) {
+  // Calculate the Fisher's z-transformation
+  double z = 0.5 * std::log((1 + r) / (1 - r));
+
+  // Calculate the standard error of z
+  double ztheta = 1 / std::sqrt(n - 3);
+
+  // Calculate the z-value for the given confidence level
+  double qZ = R::qnorm(1 - level / 2, 0.0, 1.0, true, false);
+
+  // Calculate the upper and lower bounds of the confidence interval
+  double upper = z + qZ * ztheta;
+  double lower = z - qZ * ztheta;
+
+  // Convert the bounds back to correlation coefficients
+  double r_upper = (std::exp(2 * upper) - 1) / (std::exp(2 * upper) + 1);
+  double r_lower = (std::exp(2 * lower) - 1) / (std::exp(2 * lower) + 1);
+
+  // Return the result as a std::vector<double>
+  return {r_upper, r_lower};
 }
