@@ -147,7 +147,9 @@ std::vector<std::vector<int>> CppClosestIndices(const std::vector<std::vector<do
     }
 
     // Sort the distances vector by the distance (first element of the pair)
-    std::sort(distances.begin(), distances.end(), [](const std::pair<double, int>& a, const std::pair<double, int>& b) {
+    std::sort(distances.begin(), distances.end(),
+              [](const std::pair<double, int>& a,
+                 const std::pair<double, int>& b) {
       return a.first < b.first;
     });
 
@@ -190,6 +192,47 @@ std::vector<std::vector<double>> CCMWeight(const std::vector<std::vector<double>
     for (int j = 0; j < libsize + 1; ++j) {
       result[i][j] = normalizedWeights[j];
     }
+  }
+
+  return result;
+}
+
+// Function to perform Simplex Projection
+std::vector<double> SimplexProjection(const std::vector<double>& y,
+                                      const std::vector<double>& x,
+                                      const std::vector<std::vector<int>>& nbmat,
+                                      int libsize,
+                                      int E) {
+  // Generate embeddings for x
+  std::vector<std::vector<double>> singleE = GenEmbeddings(x, nbmat, E);
+
+  // Calculate the distance matrix for singleE
+  std::vector<std::vector<double>> singleDist = CppDist(singleE);
+
+  // Find the closest indices for each row in singleDist
+  std::vector<std::vector<int>> singleCI = CppClosestIndices(singleDist, libsize);
+
+  // Calculate the weights for each row in singleCI
+  std::vector<std::vector<double>> singleW = CCMWeight(singleDist, singleCI, libsize);
+
+  // Construct singleY by extracting values from y based on singleCI
+  size_t n = y.size();
+  std::vector<std::vector<double>> singleY(n, std::vector<double>(libsize + 1));
+  for (size_t i = 0; i < n; ++i) {
+    for (int j = 0; j < libsize + 1; ++j) {
+      int index = singleCI[i][j];
+      singleY[i][j] = y[index];
+    }
+  }
+
+  // Calculate the result by multiplying singleY and singleW and summing the results
+  std::vector<double> result(n);
+  for (size_t i = 0; i < n; ++i) {
+    std::vector<double> sumvec;
+    for (int j = 0; j < libsize + 1; ++j) {
+      sumvec.push_back(singleY[i][j] * singleW[i][j]);
+    }
+    result[i] = CppSum(sumvec, true);
   }
 
   return result;

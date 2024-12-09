@@ -153,3 +153,30 @@ Rcpp::NumericMatrix RcppCCMWeight(const Rcpp::NumericMatrix& distmat,
 
   return result;
 }
+
+// Wrapper function to perform Simplex Projection and return a NumericVector
+// [[Rcpp::export]]
+Rcpp::NumericVector RcppSimplexProjection(const Rcpp::NumericVector& y,
+                                          const Rcpp::NumericVector& x,
+                                          const Rcpp::NumericMatrix& nbmat,
+                                          int libsize,
+                                          int E) {
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> y_std = Rcpp::as<std::vector<double>>(y);
+  std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
+
+  // Convert Rcpp::NumericMatrix to std::vector<std::vector<int>>
+  int n = nbmat.nrow();
+  std::vector<std::vector<int>> nbmat_std(n, std::vector<int>(n));
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < n; ++j) {
+      nbmat_std[i][j] = nbmat(i, j);
+    }
+  }
+
+  // Perform Simplex Projection
+  std::vector<double> result = SimplexProjection(y_std, x_std, nbmat_std, libsize, E);
+
+  // Convert std::vector<double> to Rcpp::NumericVector
+  return Rcpp::wrap(result);
+}
