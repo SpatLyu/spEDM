@@ -17,3 +17,7 @@ RcppGenEmbeddings <- function(vec, nbmat, E) {
     .Call(`_spEDM_RcppGenEmbeddings`, vec, nbmat, E)
 }
 
+RcppGCCMLattice <- function(y, x, nbmat, libsizes, E) {
+    .Call(`_spEDM_RcppGCCMLattice`, y, x, nbmat, libsizes, E)
+}
+
