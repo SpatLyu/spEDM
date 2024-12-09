@@ -19,8 +19,10 @@ LinkingTo:
     Rcpp,
     RcppThread
 Imports: 
+    dplyr,
     sdsfun,
-    spdep
+    spdep,
+    tibble
 Suggests: 
     knitr,
     Rcpp,

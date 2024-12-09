@@ -38,6 +38,17 @@ gccm = \(cause, effect, nbmat = NULL, data = NULL,
   if (is.null(libsizes)) libsizes = floor(seq(1,length(cause),length.out = 15))
 
   x_xmap_y = RcppGCCMLattice(cause,effect,nbmat,libsizes,E)
+  colnames(x_xmap_y) = c("lib_sizes","x_xmap_y","x_xmap_y_sig",
+                         "x_xmap_y_upper","x_xmap_y_lower")
+  x_xmap_y = tibble::as_tibble(x_xmap_y)
+
   y_xmap_x = RcppGCCMLattice(effect,cause,nbmat,libsizes,E)
-  return(x_xmap_y)
+  colnames(y_xmap_x) = c("lib_sizes","y_xmap_x","y_xmap_x_sig",
+                         "y_xmap_x_upper","y_xmap_x_lower")
+  y_xmap_x = tibble::as_tibble(y_xmap_x)
+
+  res = x_xmap_y |>
+    dplyr::left_join(y_xmap_x, by = "lib_sizes") |>
+    dplyr::arrange(lib_sizes)
+  return(res)
 }
