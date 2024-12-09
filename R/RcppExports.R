@@ -21,3 +21,7 @@ RcppCCMWeight <- function(distmat, closestIndices, libsize) {
     .Call(`_spEDM_RcppCCMWeight`, distmat, closestIndices, libsize)
 }
 
+RcppSimplexProjection <- function(y, x, nbmat, libsize, E) {
+    .Call(`_spEDM_RcppSimplexProjection`, y, x, nbmat, libsize, E)
+}
+

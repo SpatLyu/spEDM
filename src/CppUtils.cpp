@@ -147,7 +147,9 @@ std::vector<std::vector<int>> CppClosestIndices(const std::vector<std::vector<do
     }
 
     // Sort the distances vector by the distance (first element of the pair)
-    std::sort(distances.begin(), distances.end(), [](const std::pair<double, int>& a, const std::pair<double, int>& b) {
+    std::sort(distances.begin(), distances.end(),
+              [](const std::pair<double, int>& a,
+                 const std::pair<double, int>& b) {
       return a.first < b.first;
     });
 

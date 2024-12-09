@@ -73,6 +73,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppSimplexProjection
+Rcpp::NumericVector RcppSimplexProjection(const Rcpp::NumericVector& y, const Rcpp::NumericVector& x, const Rcpp::NumericMatrix& nbmat, int libsize, int E);
+RcppExport SEXP _spEDM_RcppSimplexProjection(SEXP ySEXP, SEXP xSEXP, SEXP nbmatSEXP, SEXP libsizeSEXP, SEXP ESEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type nbmat(nbmatSEXP);
+    Rcpp::traits::input_parameter< int >::type libsize(libsizeSEXP);
+    Rcpp::traits::input_parameter< int >::type E(ESEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSimplexProjection(y, x, nbmat, libsize, E));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppLaggedIndices", (DL_FUNC) &_spEDM_RcppLaggedIndices, 3},
@@ -80,6 +95,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppDist", (DL_FUNC) &_spEDM_RcppDist, 1},
     {"_spEDM_RcppClosestIndices", (DL_FUNC) &_spEDM_RcppClosestIndices, 2},
     {"_spEDM_RcppCCMWeight", (DL_FUNC) &_spEDM_RcppCCMWeight, 3},
+    {"_spEDM_RcppSimplexProjection", (DL_FUNC) &_spEDM_RcppSimplexProjection, 5},
     {NULL, NULL, 0}
 };
 
