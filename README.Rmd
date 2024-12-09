@@ -7,48 +7,49 @@ output: github_document
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "##",
+  comment = "#>",
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
 ```
 
-# spEDM <img src="man/figures/logo.png" align="right" height="139" alt="" />
+# spEDM
 
 <!-- badges: start -->
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-cyan.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![CRAN](https://www.r-pkg.org/badges/version/spEDM)](https://CRAN.R-project.org/package=spEDM)
-[![DownloadsAll](https://badgen.net/cran/dt/spEDM?color=orange)](https://CRAN.R-project.org/package=spEDM)
-[![DownloadsMonth](https://cranlogs.r-pkg.org/badges/spEDM)](https://CRAN.R-project.org/package=spEDM)
-[![R-universe](https://stscl.r-universe.dev/badges/spEDM?color=cyan)](https://stscl.r-universe.dev/spEDM)
 <!-- badges: end -->
 
-**Spatial Empirical Dynamic Modeling**
+The goal of spEDM is to ...
 
 ## Installation
 
-- Install from [CRAN](https://CRAN.R-project.org/package=spEDM) with:
+You can install the development version of spEDM from [GitHub](https://github.com/) with:
 
 ``` r
-install.packages("spEDM", dep = TRUE)
+# install.packages("pak")
+pak::pak("stscl/spEDM")
 ```
 
-- Install binary version from [R-universe](https://stscl.r-universe.dev/spEDM) with:
+## Example
 
-``` r
-install.packages("spEDM",
-                 repos = c("https://stscl.r-universe.dev",
-                           "https://cloud.r-project.org"),
-                 dep = TRUE)
+This is a basic example which shows you how to solve a common problem:
+
+```{r example}
+library(spEDM)
+## basic example code
 ```
 
-- Install from source code on [GitHub](https://github.com/stscl/spEDM) with:
+What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
 
-```r
-if (!requireNamespace("devtools")) {
-    install.packages("devtools")
-}
-devtools::install_github("stscl/spEDM",
-                         build_vignettes = TRUE,
-                         dep = TRUE)
+```{r cars}
+summary(cars)
 ```
+
+You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this.
+
+You can also embed plots, for example:
+
+```{r pressure, echo = FALSE}
+plot(pressure)
+```
+
+In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.
