@@ -45,7 +45,7 @@ gccm = \(cause, effect, nbmat = NULL, coords = NULL, data = NULL, libsizes = NUL
   }
 
   if (length(cause) != nrow(nbmat)) stop("Incompatible Data Dimensions!")
-  if (is.null(libsizes)) libsizes = floor(seq(1,length(cause),length.out = 15))
+  if (is.null(libsizes)) libsizes = floor(seq(E + 2,length(cause),length.out = 15))
 
   trend_rm = match.arg(trend_rm)
   switch(trend_rm,
