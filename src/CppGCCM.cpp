@@ -10,6 +10,54 @@
 // [[Rcpp::plugins(cpp11)]]
 // [[Rcpp::depends(RcppThread)]]
 
+// Function to calculate multiple rho values for each libsize
+std::vector<double> CalculateRhoForLibsize(const std::vector<double>& y,
+                                           const std::vector<double>& x,
+                                           const std::vector<std::vector<int>>& nbmat,
+                                           int libsize,
+                                           int E) {
+  std::vector<double> rhos;
+  size_t n = y.size();
+  size_t libsize_t = static_cast<size_t>(libsize); // Convert libsize to size_t
+
+  for (size_t start = 0; start < n; ++start) {
+    std::vector<double> y_subset;
+    std::vector<double> x_subset;
+    std::vector<bool> visited(n, false);
+    visited[start] = true;
+
+    // Collect neighbors based on nbmat
+    std::vector<size_t> current_neighbors = {start};
+    while (y_subset.size() < libsize_t && !current_neighbors.empty()) {
+      std::vector<size_t> next_neighbors;
+      for (size_t neighbor : current_neighbors) {
+        for (size_t i = 0; i < n; ++i) {
+          if (nbmat[neighbor][i] == 1 && !visited[i]) {
+            y_subset.push_back(y[i]);
+            x_subset.push_back(x[i]);
+            visited[i] = true;
+            if (y_subset.size() < libsize_t) {
+              next_neighbors.push_back(i);
+            }
+          }
+        }
+      }
+      current_neighbors = next_neighbors;
+    }
+
+    // Ensure the subset size is at least libsize
+    if (y_subset.size() < libsize_t) {
+      continue;
+    }
+
+    std::vector<double> predictions = SimplexProjection(y_subset, x_subset, nbmat, libsize, E);
+    double rho = PearsonCor(y_subset, predictions);
+    rhos.push_back(rho);
+  }
+
+  return rhos;
+}
+
 // Function to perform GCCM Lattice
 std::vector<std::vector<double>> GCCMLattice(const std::vector<double>& y,
                                              const std::vector<double>& x,
@@ -21,13 +69,11 @@ std::vector<std::vector<double>> GCCMLattice(const std::vector<double>& y,
 
   // Construct a new libsizevec with valid libsize values
   std::vector<int> libsizevec;
-  // libsizevec.push_back(y_size - 2);
   for (int libsize : libsizes) {
-    if (libsize >= 1 && libsize <= y_size - 2) {
+    if (libsize >= E + 1 && libsize <= y_size - 2) {
       libsizevec.push_back(libsize);
     }
   }
-  // libsizevec.push_back(1);
 
   // Sort libsizevec in descending order
   std::sort(libsizevec.begin(), libsizevec.end(), std::greater<int>());
@@ -39,18 +85,13 @@ std::vector<std::vector<double>> GCCMLattice(const std::vector<double>& y,
   RcppThread::parallelFor(0, libsizevec.size(), [&](size_t i) {
     int libsize = libsizevec[i];
 
-    // Perform Simplex Projection
-    std::vector<double> y_hat = SimplexProjection(y, x, nbmat, libsize, E);
+    std::vector<double> rhos = CalculateRhoForLibsize(y, x, nbmat, libsize, E);
 
-    // Calculate the mean of y_hat
-    // double y_hat_mean = CppMean(y_hat, true);
-
-    // Calculate the Pearson correlation coefficient
-    double rho = PearsonCor(y, y_hat, true);
+    // Calculate the mean of rhos
+    double rhos_mean = CppMean(rhos, true);
 
     // Store the results in the result vector
-    result.push_back({static_cast<double>(libsize), rho});
-    // result.push_back({static_cast<double>(libsize), y_hat_mean, rho});
+    result.push_back({static_cast<double>(libsize), rhos_mean});
   });
 
   // Calculate significance and confidence interval for each result
