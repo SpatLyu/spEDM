@@ -220,14 +220,14 @@ Rcpp::NumericMatrix RcppGCCMLattice(const Rcpp::NumericVector& y,
   std::vector<std::vector<double>> result = GCCMLattice(y_std, x_std, nbmat_std, libsizes_std, E);
 
   // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
-  Rcpp::NumericMatrix resultMatrix(result.size(), 6);
+  Rcpp::NumericMatrix resultMatrix(result.size(), 5);
   for (size_t i = 0; i < result.size(); ++i) {
     resultMatrix(i, 0) = result[i][0];
     resultMatrix(i, 1) = result[i][1];
     resultMatrix(i, 2) = result[i][2];
     resultMatrix(i, 3) = result[i][3];
     resultMatrix(i, 4) = result[i][4];
-    resultMatrix(i, 5) = result[i][5];
+    // resultMatrix(i, 5) = result[i][5];
   }
 
   return resultMatrix;

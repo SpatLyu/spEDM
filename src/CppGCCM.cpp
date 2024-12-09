@@ -43,18 +43,19 @@ std::vector<std::vector<double>> GCCMLattice(const std::vector<double>& y,
     std::vector<double> y_hat = SimplexProjection(y, x, nbmat, libsize, E);
 
     // Calculate the mean of y_hat
-    double y_hat_mean = CppMean(y_hat, true);
+    // double y_hat_mean = CppMean(y_hat, true);
 
     // Calculate the Pearson correlation coefficient
     double rho = PearsonCor(y, y_hat, true);
 
     // Store the results in the result vector
-    result.push_back({static_cast<double>(libsize), y_hat_mean, rho});
+    result.push_back({static_cast<double>(libsize), rho});
+    // result.push_back({static_cast<double>(libsize), y_hat_mean, rho});
   });
 
   // Calculate significance and confidence interval for each result
   for (size_t i = 0; i < result.size(); ++i) {
-    double rho = result[i][2];
+    double rho = result[i][1];
     double significance = CppSignificance(rho, y_size);
     std::vector<double> confidence_interval = CppConfidence(rho, y_size);
 

@@ -38,5 +38,6 @@ gccm = \(cause, effect, nbmat = NULL, data = NULL,
   if (is.null(libsizes)) libsizes = floor(seq(1,length(cause),length.out = 15))
 
   x_xmap_y = RcppGCCMLattice(cause,effect,nbmat,libsizes,E)
+  y_xmap_x = RcppGCCMLattice(effect,cause,nbmat,libsizes,E)
   return(x_xmap_y)
 }
