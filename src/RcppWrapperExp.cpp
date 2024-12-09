@@ -117,3 +117,39 @@ Rcpp::IntegerMatrix RcppClosestIndices(const Rcpp::NumericMatrix& distmat, int l
 
   return result;
 }
+
+// Wrapper function to calculate the CCM weights and return a NumericMatrix
+// [[Rcpp::export]]
+Rcpp::NumericMatrix RcppCCMWeight(const Rcpp::NumericMatrix& distmat,
+                                  const Rcpp::IntegerMatrix& closestIndices,
+                                  int libsize) {
+  // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
+  size_t n = distmat.nrow();
+  std::vector<std::vector<double>> distmat_std(n, std::vector<double>(n));
+  for (size_t i = 0; i < n; ++i) {
+    for (size_t j = 0; j < n; ++j) {
+      distmat_std[i][j] = distmat(i, j);
+    }
+  }
+
+  // Convert Rcpp::IntegerMatrix to std::vector<std::vector<int>>
+  std::vector<std::vector<int>> closestIndices_std(n, std::vector<int>(libsize + 1));
+  for (size_t i = 0; i < n; ++i) {
+    for (int j = 0; j < libsize + 1; ++j) {
+      closestIndices_std[i][j] = closestIndices(i, j);
+    }
+  }
+
+  // Calculate the CCM weights
+  std::vector<std::vector<double>> weights = CCMWeight(distmat_std, closestIndices_std, libsize);
+
+  // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
+  Rcpp::NumericMatrix result(n, libsize + 1);
+  for (size_t i = 0; i < n; ++i) {
+    for (int j = 0; j < libsize + 1; ++j) {
+      result(i, j) = weights[i][j];
+    }
+  }
+
+  return result;
+}
