@@ -201,11 +201,18 @@ std::vector<std::pair<int, double>> GCCMLattice(
 
   std::vector<std::pair<int, double>> x_xmap_y;
 
-  // Sequential version of the for loop
-  for (int lib_size : unique_lib_sizes) {
+  // // Sequential version of the for loop
+  // for (int lib_size : unique_lib_sizes) {
+  //   auto results = GCCMSingle4Lattice(x_vectors, y, lib_indices, lib_size, max_lib_size, possible_lib_indices, pred_indices, b);
+  //   x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+  // }
+
+  // Perform the operations using RcppThread
+  RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
+    int lib_size = unique_lib_sizes[i];
     auto results = GCCMSingle4Lattice(x_vectors, y, lib_indices, lib_size, max_lib_size, possible_lib_indices, pred_indices, b);
     x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
-  }
+  });
 
   return x_xmap_y;
 }
