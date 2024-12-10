@@ -49,7 +49,7 @@ gccm = \(cause, effect, nb = NULL, coords = NULL,
   if (is.null(libsizes)) libsizes = floor(seq(E + 2,length(cause),
                                               length.out = floor(sqrt(length(cause)))))
 
-  dtf = data.frame(cause = cause,effect = effect,
+  dtf = data.frame(cause = cause, effect = effect,
                    x = coords[,1], y = coords[,2])
   effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
   cause = sdsfun::rm_lineartrend("cause~x+y", data = dtf)
