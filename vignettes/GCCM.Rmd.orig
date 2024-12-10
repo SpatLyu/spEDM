@@ -86,9 +86,6 @@ popdensity
 popd_nb = spdep::read.gal(system.file("extdata/popdensity_nb.gal",
                                       package = "spEDM"))
 popd_nb
-
-coords = as.matrix(popdensity[,c("x","y")])
-coords[1:5,]
 ```
 
 Run GCCM:
@@ -98,11 +95,10 @@ startTime = Sys.time()
 res = gccm(cause = "Pre",
            effect = "popDensity",
            nb = popd_nb,
-           coords = coords,
+           coords = c("x","y"),
            data = popdensity,
            libsizes = seq(10, 2800, by = 100),
-           E = 3,
-           trend_rm = "all")
+           E = 3)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
 res
