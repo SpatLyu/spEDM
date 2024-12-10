@@ -7,7 +7,7 @@
 #include <map>
 #include "HelperFuns.h"
 #include "CppStats.h"
-#include "CppUtils.h"
+#include "CppLatticeUtils.h"
 #include <RcppThread.h>
 
 // [[Rcpp::plugins(cpp11)]]

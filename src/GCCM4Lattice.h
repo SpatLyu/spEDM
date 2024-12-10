@@ -10,7 +10,7 @@
 #include <map>
 #include "HelperFuns.h"
 #include "CppStats.h"
-#include "CppUtils.h"
+#include "CppLatticeUtils.h"
 #include <RcppThread.h>
 
 // Function to compute the simplex projection
