@@ -30,12 +30,11 @@ gccm = \(cause, effect, nb = NULL, coords = NULL,
   if (is.null(coords)){
     if(inherits(data,"sf")){
       coords = sdsfun::sf_coordinates(data)
-    } else if (inherits(coords,"character")) {
-      coords = as.matrix(data[,coords])
     } else {
       stop("When `coords` is NULL, the data must be provided as an `sf` object!")
     }
   }
+  if (inherits(coords,"character")) coords = as.matrix(data[,coords])
 
   if (inherits(cause,"character") || inherits(effect,"character")){
     if (is.null(data)){
