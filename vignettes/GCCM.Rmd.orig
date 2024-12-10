@@ -80,7 +80,7 @@ Load data and package:
 library(spEDM)
 
 popdensity = readr::read_csv(system.file("extdata/popdensity.csv",
-                             package = "spEDM"))
+                                         package = "spEDM"))
 popdensity
 
 popd_nb = spdep::read.gal(system.file("extdata/popdensity_nb.gal",
@@ -94,7 +94,7 @@ Construct the neighbours matrix and coordinates matrix.
 nbmat = spdep::nb2mat(popd_nb, style = "B", zero.policy = TRUE)
 diag(nbmat) = 0
 nbmat[1:5,1:5]
-coords = as.matrix(popdensity[,c["x","y"]])
+coords = as.matrix(popdensity[,c("x","y")])
 coords[1:5,]
 ```
 
