@@ -77,7 +77,7 @@ library(spEDM)
 popdensity = readr::read_csv(system.file("extdata/popdensity.csv",
                                          package = "spEDM"))
 ## Rows: 2806 Columns: 7
-## ── Column specification ────────────────────────────────────────────────────────────────────────
+## ── Column specification ───────────────────────────────────────────────────────────────────────
 ## Delimiter: ","
 ## dbl (7): x, y, popDensity, DEM, Tem, Pre, slop
 ## 
@@ -146,82 +146,82 @@ res = gccm(cause = "Pre",
            libsizes = seq(10, 2800, by = 100),
            E = 3)
 ## 
-Computing: [==                                      ] 4%  (~28m27s remaining)       
-Computing: [===                                     ] 7%  (~19m5s remaining)       
-Computing: [=====                                   ] 11%  (~14m47s remaining)       
-Computing: [======                                  ] 14%  (~13m25s remaining)       
-Computing: [========                                ] 18%  (~10m43s remaining)       
-Computing: [=========                               ] 21%  (~9m7s remaining)       
-Computing: [==========                              ] 25%  (~8m24s remaining)       
-Computing: [============                            ] 29%  (~7m44s remaining)       
+Computing: [==                                      ] 4%  (~28m40s remaining)       
+Computing: [===                                     ] 7%  (~19m9s remaining)       
+Computing: [=====                                   ] 11%  (~14m50s remaining)       
+Computing: [======                                  ] 14%  (~13m28s remaining)       
+Computing: [========                                ] 18%  (~10m54s remaining)       
+Computing: [=========                               ] 21%  (~9m8s remaining)       
+Computing: [==========                              ] 25%  (~8m27s remaining)       
+Computing: [============                            ] 29%  (~7m43s remaining)       
 Computing: [=============                           ] 32%  (~6m45s remaining)       
-Computing: [===============                         ] 36%  (~6m12s remaining)       
+Computing: [===============                         ] 36%  (~6m9s remaining)       
 Computing: [================                        ] 39%  (~5m40s remaining)       
-Computing: [==================                      ] 43%  (~4m56s remaining)       
-Computing: [===================                     ] 46%  (~5m17s remaining)       
-Computing: [====================                    ] 50%  (~4m43s remaining)       
-Computing: [======================                  ] 54%  (~4m19s remaining)       
+Computing: [==================                      ] 43%  (~4m54s remaining)       
+Computing: [===================                     ] 46%  (~5m18s remaining)       
+Computing: [====================                    ] 50%  (~4m38s remaining)       
+Computing: [======================                  ] 54%  (~4m15s remaining)       
 Computing: [=======================                 ] 57%  (~3m49s remaining)       
-Computing: [=========================               ] 61%  (~3m25s remaining)       
-Computing: [==========================              ] 64%  (~2m59s remaining)       
-Computing: [============================            ] 68%  (~2m42s remaining)       
-Computing: [=============================           ] 71%  (~2m17s remaining)       
+Computing: [=========================               ] 61%  (~3m24s remaining)       
+Computing: [==========================              ] 64%  (~3m1s remaining)       
+Computing: [============================            ] 68%  (~2m43s remaining)       
+Computing: [=============================           ] 71%  (~2m18s remaining)       
 Computing: [==============================          ] 75%  (~2m8s remaining)       
-Computing: [================================        ] 79%  (~1m53s remaining)       
-Computing: [=================================       ] 82%  (~1m30s remaining)       
+Computing: [================================        ] 79%  (~1m52s remaining)       
+Computing: [=================================       ] 82%  (~1m29s remaining)       
 Computing: [===================================     ] 86%  (~1m13s remaining)       
-Computing: [====================================    ] 89%  (~1m9s remaining)       
-Computing: [======================================  ] 93%  (~46s remaining)       
+Computing: [====================================    ] 89%  (~1m8s remaining)       
+Computing: [======================================  ] 93%  (~45s remaining)       
 Computing: [======================================= ] 96%  (~22s remaining)       
 Computing: [========================================] 100% (done)                         
 ## 
-Computing: [==                                      ] 4%  (~28m24s remaining)       
-Computing: [===                                     ] 7%  (~19m8s remaining)       
-Computing: [=====                                   ] 11%  (~14m51s remaining)       
-Computing: [======                                  ] 14%  (~13m31s remaining)       
-Computing: [========                                ] 18%  (~10m51s remaining)       
-Computing: [=========                               ] 21%  (~9m12s remaining)       
-Computing: [==========                              ] 25%  (~8m30s remaining)       
-Computing: [============                            ] 29%  (~7m49s remaining)       
+Computing: [==                                      ] 4%  (~28m38s remaining)       
+Computing: [===                                     ] 7%  (~19m2s remaining)       
+Computing: [=====                                   ] 11%  (~14m45s remaining)       
+Computing: [======                                  ] 14%  (~13m27s remaining)       
+Computing: [========                                ] 18%  (~10m55s remaining)       
+Computing: [=========                               ] 21%  (~9m10s remaining)       
+Computing: [==========                              ] 25%  (~8m31s remaining)       
+Computing: [============                            ] 29%  (~7m47s remaining)       
 Computing: [=============                           ] 32%  (~6m48s remaining)       
-Computing: [===============                         ] 36%  (~6m15s remaining)       
-Computing: [================                        ] 39%  (~5m44s remaining)       
-Computing: [==================                      ] 43%  (~4m58s remaining)       
-Computing: [===================                     ] 46%  (~5m18s remaining)       
-Computing: [====================                    ] 50%  (~4m42s remaining)       
-Computing: [======================                  ] 54%  (~4m18s remaining)       
+Computing: [===============                         ] 36%  (~6m12s remaining)       
+Computing: [================                        ] 39%  (~5m42s remaining)       
+Computing: [==================                      ] 43%  (~4m55s remaining)       
+Computing: [===================                     ] 46%  (~5m19s remaining)       
+Computing: [====================                    ] 50%  (~4m39s remaining)       
+Computing: [======================                  ] 54%  (~4m15s remaining)       
 Computing: [=======================                 ] 57%  (~3m50s remaining)       
-Computing: [=========================               ] 61%  (~3m26s remaining)       
-Computing: [==========================              ] 64%  (~3m0s remaining)       
-Computing: [============================            ] 68%  (~2m42s remaining)       
+Computing: [=========================               ] 61%  (~3m23s remaining)       
+Computing: [==========================              ] 64%  (~3m1s remaining)       
+Computing: [============================            ] 68%  (~2m43s remaining)       
 Computing: [=============================           ] 71%  (~2m18s remaining)       
-Computing: [==============================          ] 75%  (~2m8s remaining)       
-Computing: [================================        ] 79%  (~1m53s remaining)       
+Computing: [==============================          ] 75%  (~2m9s remaining)       
+Computing: [================================        ] 79%  (~1m52s remaining)       
 Computing: [=================================       ] 82%  (~1m30s remaining)       
-Computing: [===================================     ] 86%  (~1m14s remaining)       
-Computing: [====================================    ] 89%  (~1m9s remaining)       
+Computing: [===================================     ] 86%  (~1m13s remaining)       
+Computing: [====================================    ] 89%  (~1m8s remaining)       
 Computing: [======================================  ] 93%  (~46s remaining)       
 Computing: [======================================= ] 96%  (~22s remaining)       
 Computing: [========================================] 100% (done)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="hours"))
-## Time difference of 0.3490457 hours
+## Time difference of 0.3468182 hours
 res
 ## # A tibble: 28 × 9
-##    lib_sizes x_xmap_y_mean x_xmap_y_sig x_xmap_y_upper x_xmap_y_lower y_xmap_x_mean y_xmap_x_sig
-##        <dbl>         <dbl>        <dbl>          <dbl>          <dbl>         <dbl>        <dbl>
-##  1        10       0.00637     7.36e- 1         0.0434       -0.0306         0.0343     6.93e- 2
-##  2       110       0.0391      3.82e- 2         0.0760        0.00213        0.0629     8.61e- 4
-##  3       210       0.0653      5.34e- 4         0.102         0.0284         0.0834     9.75e- 6
-##  4       310       0.0897      1.94e- 6         0.126         0.0529         0.0996     1.24e- 7
-##  5       410       0.112       2.47e- 9         0.149         0.0756         0.121      1.19e-10
-##  6       510       0.136       5.28e-13         0.172         0.0992         0.141      7.24e-14
-##  7       610       0.159       0                0.195         0.123          0.162      0       
-##  8       710       0.183       0                0.218         0.147          0.180      0       
-##  9       810       0.203       0                0.238         0.167          0.198      0       
-## 10       910       0.223       0                0.257         0.187          0.216      0       
+##    lib_sizes x_xmap_y_mean x_xmap_y_sig x_xmap_y_upper x_xmap_y_lower y_xmap_x_mean
+##        <dbl>         <dbl>        <dbl>          <dbl>          <dbl>         <dbl>
+##  1        10       0.00637     7.36e- 1         0.0434       -0.0306         0.0343
+##  2       110       0.0391      3.82e- 2         0.0760        0.00213        0.0629
+##  3       210       0.0653      5.34e- 4         0.102         0.0284         0.0834
+##  4       310       0.0897      1.94e- 6         0.126         0.0529         0.0996
+##  5       410       0.112       2.47e- 9         0.149         0.0756         0.121 
+##  6       510       0.136       5.28e-13         0.172         0.0992         0.141 
+##  7       610       0.159       0                0.195         0.123          0.162 
+##  8       710       0.183       0                0.218         0.147          0.180 
+##  9       810       0.203       0                0.238         0.167          0.198 
+## 10       910       0.223       0                0.257         0.187          0.216 
 ## # ℹ 18 more rows
-## # ℹ 2 more variables: y_xmap_x_upper <dbl>, y_xmap_x_lower <dbl>
+## # ℹ 3 more variables: y_xmap_x_sig <dbl>, y_xmap_x_upper <dbl>, y_xmap_x_lower <dbl>
 ```
 
 Visualize the result:
@@ -244,14 +244,14 @@ fig_gccm = ggplot2::ggplot(data = res,
   ggplot2::scale_x_continuous(name = "Lib of Sizes",
                               breaks = seq(10, 2800, by = 100),
                               limits = c(0, 2800), expand = c(0, 0)) +
-  ggplot2::scale_color_manual(values = c("x xmap y" = "royalblue",
-                                         "y xmap x" = "red3"),
-                              labels = c("Pre xmap popDensity",
-                                         "popDensity xmap Pre"),
+  ggplot2::scale_color_manual(values = c("x xmap y" = "#608dbe",
+                                         "y xmap x" = "#ed795b"),
+                              labels = c("Pre xmap PopDensity",
+                                         "PopDensity xmap Pre"),
                               name = "") +
   ggplot2::theme_bw() +
   ggplot2::theme(axis.text = ggplot2::element_text(family = "TNR"),
-                 axis.text.x = ggplot2::element_text(angle = 45),
+                 axis.text.x = ggplot2::element_text(angle = 30),
                  axis.title = ggplot2::element_text(family = "TNR"),
                  panel.grid = ggplot2::element_blank(),
                  legend.position = "inside",
