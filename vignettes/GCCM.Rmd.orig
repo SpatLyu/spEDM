@@ -79,9 +79,9 @@ Load data and package:
 ```{r}
 library(spEDM)
 
-popd = readr::read_csv(system.file("extdata/popdensity.csv",
+popdensity = readr::read_csv(system.file("extdata/popdensity.csv",
                                    package = "spEDM"))
-popd
+popdensity
 ```
 
 Construct the neighbours matrix and coordinates matrix.
