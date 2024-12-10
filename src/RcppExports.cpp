@@ -65,17 +65,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppGCCMLattice
-Rcpp::NumericMatrix RcppGCCMLattice(const Rcpp::NumericVector& y, const Rcpp::NumericVector& x, const Rcpp::NumericMatrix& nbmat, const Rcpp::IntegerVector& libsizes, int E);
-RcppExport SEXP _spEDM_RcppGCCMLattice(SEXP ySEXP, SEXP xSEXP, SEXP nbmatSEXP, SEXP libsizesSEXP, SEXP ESEXP) {
+Rcpp::NumericMatrix RcppGCCMLattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::NumericMatrix& nbmat, const Rcpp::IntegerVector& libsizes, int E);
+RcppExport SEXP _spEDM_RcppGCCMLattice(SEXP xSEXP, SEXP ySEXP, SEXP nbmatSEXP, SEXP libsizesSEXP, SEXP ESEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type nbmat(nbmatSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type libsizes(libsizesSEXP);
     Rcpp::traits::input_parameter< int >::type E(ESEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppGCCMLattice(y, x, nbmat, libsizes, E));
+    rcpp_result_gen = Rcpp::wrap(RcppGCCMLattice(x, y, nbmat, libsizes, E));
     return rcpp_result_gen;
 END_RCPP
 }

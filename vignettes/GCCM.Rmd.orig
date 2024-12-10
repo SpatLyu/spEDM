@@ -101,8 +101,8 @@ coords[1:5,]
 Run GCCM:
 
 ```{r}
-res = gccm(cause = "popDensity",
-           effect = "Pre",
+res = gccm(cause = "Pre",
+           effect = "popDensity",
            nbmat = nbmat,
            coords = coords,
            data = popd_sf,

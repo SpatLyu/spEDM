@@ -95,8 +95,8 @@ Rcpp::NumericMatrix RcppGenEmbeddings(const Rcpp::NumericVector& vec,
 
 // Wrapper function to perform GCCM Lattice and return a NumericMatrix
 // [[Rcpp::export]]
-Rcpp::NumericMatrix RcppGCCMLattice(const Rcpp::NumericVector& y,
-                                    const Rcpp::NumericVector& x,
+Rcpp::NumericMatrix RcppGCCMLattice(const Rcpp::NumericVector& x,
+                                    const Rcpp::NumericVector& y,
                                     const Rcpp::NumericMatrix& nbmat,
                                     const Rcpp::IntegerVector& libsizes,
                                     int E) {

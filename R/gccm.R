@@ -18,7 +18,7 @@
 #'                        quiet=TRUE)
 #' gccm("CRIME","HOVAL", data = columbus)
 gccm = \(cause, effect, nbmat = NULL, coords = NULL, data = NULL, libsizes = NULL,
-         E = 3, trend_rm = c("effect", "cause", "none", "all"), ...) {
+         E = 3, trend_rm = c("cause", "effect", "none", "all"), ...) {
   if (is.null(nbmat)){
     if(inherits(data,"sf")){
       nbmat = spdep::nb2mat(sdsfun::spdep_nb(data,...),
@@ -49,11 +49,11 @@ gccm = \(cause, effect, nbmat = NULL, coords = NULL, data = NULL, libsizes = NUL
 
   trend_rm = match.arg(trend_rm)
   switch(trend_rm,
-         "effect" = {
-           effect = RcppLinearTrendRM(effect,as.double(coords[,1]),as.double(coords[,2]))
-         },
          "cause" = {
            cause = RcppLinearTrendRM(cause,as.double(coords[,1]),as.double(coords[,2]))
+         },
+         "effect" = {
+           effect = RcppLinearTrendRM(effect,as.double(coords[,1]),as.double(coords[,2]))
          },
          "all" = {
            effect = RcppLinearTrendRM(effect,as.double(coords[,1]),as.double(coords[,2]))
