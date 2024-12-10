@@ -16,7 +16,7 @@
 #' @examples
 #' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
 #'                        quiet=TRUE)
-#' gccm("CRIME","HOVAL", data = columbus)
+#' gccm("HOVAL", "CRIME", data = columbus)
 gccm = \(cause, effect, nbmat = NULL, coords = NULL, data = NULL, libsizes = NULL,
          E = 3, trend_rm = c("cause", "effect", "none", "all"), ...) {
   if (is.null(nbmat)){
