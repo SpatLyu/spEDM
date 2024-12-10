@@ -138,7 +138,6 @@ std::vector<std::vector<double>> GenEmbeddings(const std::vector<double>& vec,
 // #include <algorithm>
 // #include <unordered_set>
 // #include <limits>
-// #include "HelperFuns.h"
 //
 // // Function to calculate the lagged indices
 // std::vector<std::vector<int>> CppLaggedIndices(const std::vector<double>& vec,
