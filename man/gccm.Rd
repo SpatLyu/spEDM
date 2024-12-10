@@ -12,7 +12,7 @@ gccm(
   data = NULL,
   libsizes = NULL,
   E = 3,
-  trend_rm = c("cause", "effect", "none", "all"),
+  trend_rm = c("all", "cause", "effect", "none"),
   ...
 )
 }
