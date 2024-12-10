@@ -7,7 +7,6 @@
 #' @param data (optional) The observation data.
 #' @param libsizes (optional) A vector of library sizes to use.
 #' @param E (optional) The dimensions of the embedding.
-#' @param trend_rm (optional) Variables that need to remove linear trends.
 #' @param ... (optional) Other parameters passed to `sdsfun::spdep_nb()`.
 #'
 #' @return A `tibble`.
@@ -17,25 +16,28 @@
 #' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
 #'                        quiet=TRUE)
 #' gccm("HOVAL", "CRIME", data = columbus)
-gccm = \(cause, effect, nb = NULL, coords = NULL, data = NULL, libsizes = NULL,
-         E = 3, trend_rm = c("all", "cause", "effect", "none"), ...) {
+gccm = \(cause, effect, nb = NULL, coords = NULL,
+         data = NULL, libsizes = NULL, E = 3, ...) {
+
   if (is.null(nb)){
     if(inherits(data,"sf")){
       nb = sdsfun::spdep_nb(data,...)
     } else {
-      stop("When `nb` is NULL, the data must be provided as `sf` object!")
+      stop("When `nb` is NULL, the data must be provided as an `sf` object!")
     }
   }
 
   if (is.null(coords)){
     if(inherits(data,"sf")){
       coords = sdsfun::sf_coordinates(data)
+    } else if (inherits(coords,"character")) {
+      coords = as.matrix(data[,coords])
     } else {
-      stop("When `coords` is NULL, the data must be provided as `sf` object!")
+      stop("When `coords` is NULL, the data must be provided as an `sf` object!")
     }
   }
 
-  if (inherits(cause,"character") & inherits(effect,"character")){
+  if (inherits(cause,"character") || inherits(effect,"character")){
     if (is.null(data)){
       stop("When `cause` and `effect` are character, the data must be provided!")
     }
@@ -47,18 +49,10 @@ gccm = \(cause, effect, nb = NULL, coords = NULL, data = NULL, libsizes = NULL,
   if (is.null(libsizes)) libsizes = floor(seq(E + 2,length(cause),
                                               length.out = floor(sqrt(length(cause)))))
 
-  trend_rm = match.arg(trend_rm)
-  switch(trend_rm,
-         "cause" = {
-           cause = RcppLinearTrendRM(cause,as.double(coords[,1]),as.double(coords[,2]))
-         },
-         "effect" = {
-           effect = RcppLinearTrendRM(effect,as.double(coords[,1]),as.double(coords[,2]))
-         },
-         "all" = {
-           effect = RcppLinearTrendRM(effect,as.double(coords[,1]),as.double(coords[,2]))
-           cause = RcppLinearTrendRM(cause,as.double(coords[,1]),as.double(coords[,2]))
-         })
+  dtf = data.frame(cause = cause,effect = effect,
+                   x = coords[,1], y = coords[,2])
+  effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
+  cause = sdsfun::rm_lineartrend("cause~x+y", data = dtf)
 
   x_xmap_y = RcppGCCMLattice(cause,effect,nb,libsizes,E)
   colnames(x_xmap_y) = c("lib_sizes","x_xmap_y_mean","x_xmap_y_sig",
