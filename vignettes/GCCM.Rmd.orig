@@ -116,7 +116,7 @@ res
 
 Visualize the result:
 
-```{r gccm_plot, fig.width=7.65,fig.height=6.25,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 1**. The cross-mapping prediction outputs between population density and county-level Precipitation.")}
+```{r gccm_plot, fig.width=6.75,fig.height=5.5,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 1**. The cross-mapping prediction outputs between population density and county-level Precipitation.")}
 windowsFonts(TNR = windowsFont("Times New Roman"))
 
 fig_gccm = ggplot2::ggplot(data = res,
@@ -133,14 +133,14 @@ fig_gccm = ggplot2::ggplot(data = res,
   ggplot2::scale_x_continuous(name = "Lib of Sizes",
                               breaks = seq(10, 2800, by = 100),
                               limits = c(0, 2800), expand = c(0, 0)) +
-  ggplot2::scale_color_manual(values = c("x xmap y" = "royalblue",
-                                         "y xmap x" = "red3"),
-                              labels = c("Pre xmap popDensity",
-                                         "popDensity xmap Pre"),
+  ggplot2::scale_color_manual(values = c("x xmap y" = "#608dbe",
+                                         "y xmap x" = "#ed795b"),
+                              labels = c("Pre xmap PopDensity",
+                                         "PopDensity xmap Pre"),
                               name = "") +
   ggplot2::theme_bw() +
   ggplot2::theme(axis.text = ggplot2::element_text(family = "TNR"),
-                 axis.text.x = ggplot2::element_text(angle = 45),
+                 axis.text.x = ggplot2::element_text(angle = 30),
                  axis.title = ggplot2::element_text(family = "TNR"),
                  panel.grid = ggplot2::element_blank(),
                  legend.position = "inside",
