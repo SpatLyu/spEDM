@@ -29,4 +29,6 @@ Suggests:
     rmarkdown,
     sf,
     spdep
+Remotes:
+    stscl/sdsfun
 VignetteBuilder: knitr
