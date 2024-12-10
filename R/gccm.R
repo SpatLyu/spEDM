@@ -48,6 +48,8 @@ gccm = \(cause, effect, nb = NULL, coords = NULL,
   if (is.null(libsizes)) libsizes = floor(seq(E + 2,length(cause),
                                               length.out = floor(sqrt(length(cause)))))
 
+  # effect = RcppLinearTrendRM(effect,as.double(coords[,1]),as.double(coords[,2]))
+  # cause = RcppLinearTrendRM(cause,as.double(coords[,1]),as.double(coords[,2]))
   dtf = data.frame(cause = cause, effect = effect,
                    x = coords[,1], y = coords[,2])
   effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
