@@ -7,7 +7,7 @@
 gccm(
   cause,
   effect,
-  nbmat = NULL,
+  nb = NULL,
   coords = NULL,
   data = NULL,
   libsizes = NULL,
@@ -21,7 +21,7 @@ gccm(
 
 \item{effect}{The effect series (as a character or a vector).}
 
-\item{nbmat}{(optional) The neighbours matrix.}
+\item{nb}{(optional) The neighbours list.}
 
 \item{coords}{(optional) The coordinates matrix.}
 
