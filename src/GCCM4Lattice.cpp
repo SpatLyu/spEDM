@@ -210,10 +210,12 @@ std::vector<std::vector<double>> GCCMLattice(
   // }
 
   // Perform the operations using RcppThread
+  RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
   RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
     int lib_size = unique_lib_sizes[i];
     auto results = GCCMSingle4Lattice(x_vectors, y, lib_indices, lib_size, max_lib_size, possible_lib_indices, pred_indices, b);
     x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+    bar++;
   });
 
   // Group by the first int and compute the mean
