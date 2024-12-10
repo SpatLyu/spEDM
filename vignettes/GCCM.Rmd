@@ -131,27 +131,89 @@ Run GCCM:
 
 
 ``` r
-res = gccm(cause = "popDensity",
-           effect = "Pre",
+startTime = Sys.time()
+res = gccm(cause = "Pre",
+           effect = "popDensity",
            nbmat = nbmat,
            coords = coords,
            data = popd_sf,
-           libsizes = seq(100, 2800, by = 100),
+           libsizes = seq(10, 2800, by = 100),
            E = 3)
+## 
+Computing: [==                                      ] 4%  (~28m27s remaining)       
+Computing: [===                                     ] 7%  (~19m25s remaining)       
+Computing: [=====                                   ] 11%  (~15m3s remaining)       
+Computing: [======                                  ] 14%  (~13m35s remaining)       
+Computing: [========                                ] 18%  (~10m52s remaining)       
+Computing: [=========                               ] 21%  (~9m19s remaining)       
+Computing: [==========                              ] 25%  (~8m37s remaining)       
+Computing: [============                            ] 29%  (~7m58s remaining)       
+Computing: [=============                           ] 32%  (~6m55s remaining)       
+Computing: [===============                         ] 36%  (~6m25s remaining)       
+Computing: [================                        ] 39%  (~5m54s remaining)       
+Computing: [==================                      ] 43%  (~5m8s remaining)       
+Computing: [===================                     ] 46%  (~5m30s remaining)       
+Computing: [====================                    ] 50%  (~4m47s remaining)       
+Computing: [======================                  ] 54%  (~4m23s remaining)       
+Computing: [=======================                 ] 57%  (~4m0s remaining)       
+Computing: [=========================               ] 61%  (~3m30s remaining)       
+Computing: [==========================              ] 64%  (~3m7s remaining)       
+Computing: [============================            ] 68%  (~2m49s remaining)       
+Computing: [=============================           ] 71%  (~2m24s remaining)       
+Computing: [==============================          ] 75%  (~2m15s remaining)       
+Computing: [================================        ] 79%  (~1m58s remaining)       
+Computing: [=================================       ] 82%  (~1m34s remaining)       
+Computing: [===================================     ] 86%  (~1m16s remaining)       
+Computing: [====================================    ] 89%  (~1m11s remaining)       
+Computing: [======================================  ] 93%  (~47s remaining)       
+Computing: [======================================= ] 96%  (~23s remaining)       
+Computing: [========================================] 100% (done)                         
+## 
+Computing: [==                                      ] 4%  (~28m58s remaining)       
+Computing: [===                                     ] 7%  (~19m20s remaining)       
+Computing: [=====                                   ] 11%  (~14m58s remaining)       
+Computing: [======                                  ] 14%  (~13m41s remaining)       
+Computing: [========                                ] 18%  (~11m0s remaining)       
+Computing: [=========                               ] 21%  (~9m17s remaining)       
+Computing: [==========                              ] 25%  (~8m34s remaining)       
+Computing: [============                            ] 29%  (~7m51s remaining)       
+Computing: [=============                           ] 32%  (~6m50s remaining)       
+Computing: [===============                         ] 36%  (~6m17s remaining)       
+Computing: [================                        ] 39%  (~5m44s remaining)       
+Computing: [==================                      ] 43%  (~5m0s remaining)       
+Computing: [===================                     ] 46%  (~5m21s remaining)       
+Computing: [====================                    ] 50%  (~4m39s remaining)       
+Computing: [======================                  ] 54%  (~4m16s remaining)       
+Computing: [=======================                 ] 57%  (~3m51s remaining)       
+Computing: [=========================               ] 61%  (~3m23s remaining)       
+Computing: [==========================              ] 64%  (~3m1s remaining)       
+Computing: [============================            ] 68%  (~2m43s remaining)       
+Computing: [=============================           ] 71%  (~2m18s remaining)       
+Computing: [==============================          ] 75%  (~2m9s remaining)       
+Computing: [================================        ] 79%  (~1m53s remaining)       
+Computing: [=================================       ] 82%  (~1m30s remaining)       
+Computing: [===================================     ] 86%  (~1m13s remaining)       
+Computing: [====================================    ] 89%  (~1m7s remaining)       
+Computing: [======================================  ] 93%  (~45s remaining)       
+Computing: [======================================= ] 96%  (~22s remaining)       
+Computing: [========================================] 100% (done)
+endTime = Sys.time()
+print(difftime(endTime,startTime, units ="hours"))
+## Time difference of 0.3534139 hours
 res
 ## # A tibble: 28 × 9
 ##    lib_sizes x_xmap_y_mean x_xmap_y_sig x_xmap_y_upper x_xmap_y_lower y_xmap_x_mean
 ##        <dbl>         <dbl>        <dbl>          <dbl>          <dbl>         <dbl>
-##  1       100        0.0364     5.37e- 2         0.0733      -0.000584        0.0603
-##  2       200        0.0628     8.77e- 4         0.0996       0.0258          0.0817
-##  3       300        0.0874     3.57e- 6         0.124        0.0505          0.0980
-##  4       400        0.110      4.83e- 9         0.147        0.0735          0.119 
-##  5       500        0.133      1.42e-12         0.169        0.0966          0.139 
-##  6       600        0.157      0                0.193        0.121           0.160 
-##  7       700        0.180      0                0.216        0.144           0.178 
-##  8       800        0.201      0                0.236        0.165           0.196 
-##  9       900        0.221      0                0.256        0.185           0.214 
-## 10      1000        0.240      0                0.275        0.205           0.231 
+##  1        10        0.0582     2.02e- 3         0.0950         0.0213        0.0115
+##  2       110        0.0974     2.33e- 7         0.134          0.0606        0.0686
+##  3       210        0.142      4.35e-14         0.178          0.105         0.108 
+##  4       310        0.184      0                0.220          0.148         0.138 
+##  5       410        0.222      0                0.257          0.187         0.164 
+##  6       510        0.255      0                0.290          0.220         0.191 
+##  7       610        0.279      0                0.313          0.245         0.218 
+##  8       710        0.295      0                0.329          0.261         0.243 
+##  9       810        0.308      0                0.341          0.274         0.266 
+## 10       910        0.320      0                0.353          0.286         0.286 
 ## # ℹ 18 more rows
 ## # ℹ 3 more variables: y_xmap_x_sig <dbl>, y_xmap_x_upper <dbl>, y_xmap_x_lower <dbl>
 ```
@@ -174,7 +236,7 @@ fig_gccm = ggplot2::ggplot(data = res,
                               limits = c(-0.05, 1), expand = c(0, 0),
                               name = expression(rho)) +
   ggplot2::scale_x_continuous(name = "Lib of Sizes",
-                              breaks = seq(100, 2800, by = 100),
+                              breaks = seq(10, 2800, by = 100),
                               limits = c(0, 2800), expand = c(0, 0)) +
   ggplot2::scale_color_manual(values = c("x xmap y" = "royalblue",
                                          "y xmap x" = "red3"),
@@ -193,5 +255,5 @@ fig_gccm = ggplot2::ggplot(data = res,
 fig_gccm
 ```
 
-![](../man/figures/gccm/gccm_plot-1.png)
+![**Figure 1**. The cross-mapping prediction outputs between population density and county-level Precipitation.](../man/figures/gccm/gccm_plot-1.png)
 
