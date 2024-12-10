@@ -101,9 +101,10 @@ res = gccm(cause = "Pre",
            coords = coords,
            data = popdensity,
            libsizes = seq(10, 2800, by = 100),
-           E = 3)
+           E = 3,
+           trend_rm = "all")
 endTime = Sys.time()
-print(difftime(endTime,startTime, units ="hours"))
+print(difftime(endTime,startTime, units ="mins"))
 res
 ```
 
