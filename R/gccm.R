@@ -6,7 +6,7 @@
 #' @param coords (optional) The coordinates matrix.
 #' @param data (optional) The observation data.
 #' @param libsizes (optional) A vector of library sizes to use.
-#' @param E (optional) The number of dimensions for the attractor reconstruction.
+#' @param E (optional) The dimensions of the embedding.
 #' @param trend_rm (optional) Variables that need to remove linear trends.
 #' @param ... (optional) Other parameters passed to `sdsfun::spdep_nb()`.
 #'
@@ -14,8 +14,8 @@
 #' @export
 #'
 #' @examples
-#' columbus <- sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
-#'                         quiet=TRUE)
+#' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
+#'                        quiet=TRUE)
 #' gccm("CRIME","HOVAL", data = columbus)
 gccm = \(cause, effect, nbmat = NULL, coords = NULL, data = NULL, libsizes = NULL,
          E = 3, trend_rm = c("effect", "cause", "none", "all"), ...) {
@@ -45,7 +45,7 @@ gccm = \(cause, effect, nbmat = NULL, coords = NULL, data = NULL, libsizes = NUL
   }
 
   if (length(cause) != nrow(nbmat)) stop("Incompatible Data Dimensions!")
-  if (is.null(libsizes)) libsizes = floor(seq(1,length(cause),length.out = 15))
+  if (is.null(libsizes)) libsizes = floor(seq(E + 2,length(cause),length.out = 15))
 
   trend_rm = match.arg(trend_rm)
   switch(trend_rm,
@@ -62,12 +62,12 @@ gccm = \(cause, effect, nbmat = NULL, coords = NULL, data = NULL, libsizes = NUL
 
 
   x_xmap_y = RcppGCCMLattice(cause,effect,nbmat,libsizes,E)
-  colnames(x_xmap_y) = c("lib_sizes","x_xmap_y","x_xmap_y_sig",
+  colnames(x_xmap_y) = c("lib_sizes","x_xmap_y_mean","x_xmap_y_sig",
                          "x_xmap_y_upper","x_xmap_y_lower")
   x_xmap_y = tibble::as_tibble(x_xmap_y)
 
   y_xmap_x = RcppGCCMLattice(effect,cause,nbmat,libsizes,E)
-  colnames(y_xmap_x) = c("lib_sizes","y_xmap_x","y_xmap_x_sig",
+  colnames(y_xmap_x) = c("lib_sizes","y_xmap_x_mean","y_xmap_x_sig",
                          "y_xmap_x_upper","y_xmap_x_lower")
   y_xmap_x = tibble::as_tibble(y_xmap_x)
 

@@ -17,22 +17,6 @@ RcppGenEmbeddings <- function(vec, nbmat, E) {
     .Call(`_spEDM_RcppGenEmbeddings`, vec, nbmat, E)
 }
 
-RcppDist <- function(matrix) {
-    .Call(`_spEDM_RcppDist`, matrix)
-}
-
-RcppClosestIndices <- function(distmat, libsize) {
-    .Call(`_spEDM_RcppClosestIndices`, distmat, libsize)
-}
-
-RcppCCMWeight <- function(distmat, closestIndices, libsize) {
-    .Call(`_spEDM_RcppCCMWeight`, distmat, closestIndices, libsize)
-}
-
-RcppSimplexProjection <- function(y, x, nbmat, libsize, E) {
-    .Call(`_spEDM_RcppSimplexProjection`, y, x, nbmat, libsize, E)
-}
-
 RcppGCCMLattice <- function(y, x, nbmat, libsizes, E) {
     .Call(`_spEDM_RcppGCCMLattice`, y, x, nbmat, libsizes, E)
 }
