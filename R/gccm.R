@@ -2,7 +2,7 @@
 #'
 #' @param cause The causal series (as a character or a vector).
 #' @param effect The effect series (as a character or a vector).
-#' @param nbmat (optional) The neighbours matrix.
+#' @param nb (optional) The neighbours list.
 #' @param coords (optional) The coordinates matrix.
 #' @param data (optional) The observation data.
 #' @param libsizes (optional) A vector of library sizes to use.
@@ -17,14 +17,13 @@
 #' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
 #'                        quiet=TRUE)
 #' gccm("HOVAL", "CRIME", data = columbus)
-gccm = \(cause, effect, nbmat = NULL, coords = NULL, data = NULL, libsizes = NULL,
+gccm = \(cause, effect, nb = NULL, coords = NULL, data = NULL, libsizes = NULL,
          E = 3, trend_rm = c("cause", "effect", "none", "all"), ...) {
-  if (is.null(nbmat)){
+  if (is.null(nb)){
     if(inherits(data,"sf")){
-      nbmat = spdep::nb2mat(sdsfun::spdep_nb(data,...),
-                            style = "B", zero.policy = TRUE)
+      nb = sdsfun::spdep_nb(data,...)
     } else {
-      stop("When `nbmat` is NULL, the data must be provided as `sf` object!")
+      stop("When `nb` is NULL, the data must be provided as `sf` object!")
     }
   }
 
@@ -32,7 +31,7 @@ gccm = \(cause, effect, nbmat = NULL, coords = NULL, data = NULL, libsizes = NUL
     if(inherits(data,"sf")){
       coords = sdsfun::sf_coordinates(data)
     } else {
-      stop("When `nbmat` is NULL, the data must be provided as `sf` object!")
+      stop("When `coords` is NULL, the data must be provided as `sf` object!")
     }
   }
 
@@ -44,7 +43,7 @@ gccm = \(cause, effect, nbmat = NULL, coords = NULL, data = NULL, libsizes = NUL
     effect = data[,effect,drop = TRUE]
   }
 
-  if (length(cause) != nrow(nbmat)) stop("Incompatible Data Dimensions!")
+  if (length(cause) != length(nb)) stop("Incompatible Data Dimensions!")
   if (is.null(libsizes)) libsizes = floor(seq(E + 2,length(cause),
                                               length.out = floor(sqrt(length(cause)))))
 
@@ -61,12 +60,12 @@ gccm = \(cause, effect, nbmat = NULL, coords = NULL, data = NULL, libsizes = NUL
            cause = RcppLinearTrendRM(cause,as.double(coords[,1]),as.double(coords[,2]))
          })
 
-  x_xmap_y = RcppGCCMLattice(cause,effect,nbmat,libsizes,E)
+  x_xmap_y = RcppGCCMLattice(cause,effect,nb,libsizes,E)
   colnames(x_xmap_y) = c("lib_sizes","x_xmap_y_mean","x_xmap_y_sig",
                          "x_xmap_y_upper","x_xmap_y_lower")
   x_xmap_y = tibble::as_tibble(x_xmap_y)
 
-  y_xmap_x = RcppGCCMLattice(effect,cause,nbmat,libsizes,E)
+  y_xmap_x = RcppGCCMLattice(effect,cause,nb,libsizes,E)
   colnames(y_xmap_x) = c("lib_sizes","y_xmap_x_mean","y_xmap_x_sig",
                          "y_xmap_x_upper","y_xmap_x_lower")
   y_xmap_x = tibble::as_tibble(y_xmap_x)

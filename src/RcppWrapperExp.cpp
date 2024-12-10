@@ -1,6 +1,6 @@
 #include <Rcpp.h>
 #include "CppStats.h"
-#include "CppUtils.h"
+#include "CppLatticeUtils.h"
 #include "GCCM4Lattice.h"
 
 // Wrapper function to calculate the confidence interval for a correlation coefficient and return a NumericVector
@@ -33,23 +33,14 @@ Rcpp::NumericVector RcppLinearTrendRM(const Rcpp::NumericVector& vec,
 
 // Wrapper function to calculate lagged indices and return a List
 // [[Rcpp::export]]
-Rcpp::List RcppLaggedIndices(const Rcpp::NumericVector& vec,
-                             const Rcpp::NumericMatrix& nbmat,
-                             int lagNum) {
-  // Convert Rcpp::NumericVector to std::vector<double>
-  std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
+Rcpp::List RcppLaggedIndices(const Rcpp::List& nb, int lagNum) {
+  int n = nb.size();
 
-  // Convert Rcpp::NumericMatrix to std::vector<std::vector<int>>
-  int n = nbmat.nrow();
-  std::vector<std::vector<int>> nbmat_std(n, std::vector<int>(n));
-  for (int i = 0; i < n; ++i) {
-    for (int j = 0; j < n; ++j) {
-      nbmat_std[i][j] = nbmat(i, j);
-    }
-  }
+  // Convert Rcpp::List to std::vector<std::vector<int>>
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
   // Calculate lagged indices
-  std::vector<std::vector<int>> lagged_indices = CppLaggedIndices(vec_std, nbmat_std, lagNum);
+  std::vector<std::vector<int>> lagged_indices = CppLaggedVar4Lattice(nb_vec, lagNum);
 
   // Convert std::vector<std::vector<int>> to Rcpp::List
   Rcpp::List result(n);
@@ -63,22 +54,16 @@ Rcpp::List RcppLaggedIndices(const Rcpp::NumericVector& vec,
 // Wrapper function to generate embeddings and return a NumericMatrix
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppGenEmbeddings(const Rcpp::NumericVector& vec,
-                                      const Rcpp::NumericMatrix& nbmat,
+                                      const Rcpp::List& nb,
                                       int E) {
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
 
-  // Convert Rcpp::NumericMatrix to std::vector<std::vector<int>>
-  int n = nbmat.nrow();
-  std::vector<std::vector<int>> nbmat_std(n, std::vector<int>(n));
-  for (int i = 0; i < n; ++i) {
-    for (int j = 0; j < n; ++j) {
-      nbmat_std[i][j] = nbmat(i, j);
-    }
-  }
+  // Convert Rcpp::List to std::vector<std::vector<int>>
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
   // Generate embeddings
-  std::vector<std::vector<double>> embeddings = GenEmbeddings(vec_std, nbmat_std, E);
+  std::vector<std::vector<double>> embeddings = GenEmbeddings(vec_std, nb_vec, E);
 
   // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
   int rows = embeddings.size();
@@ -97,29 +82,24 @@ Rcpp::NumericMatrix RcppGenEmbeddings(const Rcpp::NumericVector& vec,
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppGCCMLattice(const Rcpp::NumericVector& x,
                                     const Rcpp::NumericVector& y,
-                                    const Rcpp::NumericMatrix& nbmat,
+                                    const Rcpp::List& nb,
                                     const Rcpp::IntegerVector& libsizes,
                                     int E) {
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
   std::vector<double> y_std = Rcpp::as<std::vector<double>>(y);
 
-  // Convert Rcpp::NumericMatrix to std::vector<std::vector<int>>
-  int n = nbmat.nrow();
-  std::vector<std::vector<int>> nbmat_std(n, std::vector<int>(n));
-  for (int i = 0; i < n; ++i) {
-    for (int j = 0; j < n; ++j) {
-      nbmat_std[i][j] = nbmat(i, j);
-    }
-  }
+  // Convert Rcpp::List to std::vector<std::vector<int>>
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
   // Generate embeddings
-  std::vector<std::vector<double>> embeddings = GenEmbeddings(x_std, nbmat_std, E);
+  std::vector<std::vector<double>> embeddings = GenEmbeddings(x_std, nb_vec, E);
 
   // Convert Rcpp::IntegerVector to std::vector<int>
   std::vector<int> libsizes_std = Rcpp::as<std::vector<int>>(libsizes);
 
   // Define the interval [1, n] as a std::vector<std::pair<int, int>>
+  int n = nb_vec.size();
   std::vector<std::pair<int, int>> interval = {{1, n}};
 
   // Perform GCCM Lattice

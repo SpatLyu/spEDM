@@ -9,15 +9,15 @@ RcppLinearTrendRM <- function(vec, xcoord, ycoord, NA_rm = FALSE) {
     .Call(`_spEDM_RcppLinearTrendRM`, vec, xcoord, ycoord, NA_rm)
 }
 
-RcppLaggedIndices <- function(vec, nbmat, lagNum) {
-    .Call(`_spEDM_RcppLaggedIndices`, vec, nbmat, lagNum)
+RcppLaggedIndices <- function(nb, lagNum) {
+    .Call(`_spEDM_RcppLaggedIndices`, nb, lagNum)
 }
 
-RcppGenEmbeddings <- function(vec, nbmat, E) {
-    .Call(`_spEDM_RcppGenEmbeddings`, vec, nbmat, E)
+RcppGenEmbeddings <- function(vec, nb, E) {
+    .Call(`_spEDM_RcppGenEmbeddings`, vec, nb, E)
 }
 
-RcppGCCMLattice <- function(x, y, nbmat, libsizes, E) {
-    .Call(`_spEDM_RcppGCCMLattice`, x, y, nbmat, libsizes, E)
+RcppGCCMLattice <- function(x, y, nb, libsizes, E) {
+    .Call(`_spEDM_RcppGCCMLattice`, x, y, nb, libsizes, E)
 }
 

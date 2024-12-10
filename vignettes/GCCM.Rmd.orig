@@ -86,14 +86,7 @@ popdensity
 popd_nb = spdep::read.gal(system.file("extdata/popdensity_nb.gal",
                                       package = "spEDM"))
 popd_nb
-```
 
-Construct the neighbours matrix and coordinates matrix.
-
-```{r}
-nbmat = spdep::nb2mat(popd_nb, style = "B", zero.policy = TRUE)
-diag(nbmat) = 0
-nbmat[1:5,1:5]
 coords = as.matrix(popdensity[,c("x","y")])
 coords[1:5,]
 ```
@@ -104,7 +97,7 @@ Run GCCM:
 startTime = Sys.time()
 res = gccm(cause = "Pre",
            effect = "popDensity",
-           nbmat = nbmat,
+           nb = popd_nb,
            coords = coords,
            data = popdensity,
            libsizes = seq(10, 2800, by = 100),

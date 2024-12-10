@@ -21,12 +21,12 @@ LinkingTo:
 Imports: 
     dplyr,
     sdsfun,
-    spdep,
     tibble
 Suggests: 
     knitr,
     Rcpp,
     RcppThread,
     rmarkdown,
-    sf
+    sf,
+    spdep
 VignetteBuilder: knitr
