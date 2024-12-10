@@ -101,8 +101,8 @@ Rcpp::NumericMatrix RcppGCCMLattice(const Rcpp::NumericVector& x,
                                     const Rcpp::IntegerVector& libsizes,
                                     int E) {
   // Convert Rcpp::NumericVector to std::vector<double>
-  std::vector<double> y_std = Rcpp::as<std::vector<double>>(y);
   std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
+  std::vector<double> y_std = Rcpp::as<std::vector<double>>(y);
 
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<int>>
   int n = nbmat.nrow();

@@ -61,7 +61,6 @@ gccm = \(cause, effect, nbmat = NULL, coords = NULL, data = NULL, libsizes = NUL
            cause = RcppLinearTrendRM(cause,as.double(coords[,1]),as.double(coords[,2]))
          })
 
-
   x_xmap_y = RcppGCCMLattice(cause,effect,nbmat,libsizes,E)
   colnames(x_xmap_y) = c("lib_sizes","x_xmap_y_mean","x_xmap_y_sig",
                          "x_xmap_y_upper","x_xmap_y_lower")
