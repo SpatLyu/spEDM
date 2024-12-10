@@ -33,7 +33,7 @@ Rcpp::NumericVector RcppLinearTrendRM(const Rcpp::NumericVector& vec,
 
 // Wrapper function to calculate lagged indices and return a List
 // [[Rcpp::export]]
-Rcpp::List RcppLaggedIndices(const Rcpp::List& nb, int lagNum) {
+Rcpp::List RcppLaggedVar4Lattice(const Rcpp::List& nb, int lagNum) {
   int n = nb.size();
 
   // Convert Rcpp::List to std::vector<std::vector<int>>

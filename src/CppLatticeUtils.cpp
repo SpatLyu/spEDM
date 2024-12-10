@@ -1,9 +1,12 @@
 #include <iostream>
 #include <vector>
-#include <algorithm> // for std::sort and std::unique
 #include <numeric>   // for std::accumulate
+#include <algorithm> // for std::sort, std::unique, std::accumulate
+#include <unordered_set> // for std::unordered_set
+#include <limits> // for std::numeric_limits
 #include <Rcpp.h>
 
+// Function to convert Rcpp::List to std::vector<std::vector<int>>
 std::vector<std::vector<int>> nb2vec(Rcpp::List nb) {
   // Get the number of elements in the nb object
   int n = nb.size();
@@ -40,61 +43,92 @@ std::vector<std::vector<int>> CppLaggedVar4Lattice(std::vector<std::vector<int>>
     return {};
   }
 
-  // If lagNum is 1, return a copy of spNeighbor
-  if (lagNum == 1) {
-    return spNeighbor;
-  }
+  // Initialize the lagged neighborhood as a copy of spNeighbor
+  std::vector<std::vector<int>> lagSpNeighbor = spNeighbor;
 
-  // Initialize the current neighborhood as a copy of spNeighbor
-  std::vector<std::vector<int>> curSpNeighbor = spNeighbor;
+  // If lagNum is greater than 1, expand the neighborhoods
+  if (lagNum > 1) {
+    std::vector<std::vector<int>> curSpNeighbor = spNeighbor;
 
-  // Iterate from 1 to lagNum - 1 to expand the neighborhoods
-  for (int lag = 1; lag < lagNum; ++lag) {
-    std::vector<std::vector<int>> preSpNeighbor = curSpNeighbor;
+    // Iterate from 1 to lagNum - 1 to expand the neighborhoods
+    for (int lag = 1; lag < lagNum; ++lag) {
+      std::vector<std::vector<int>> preSpNeighbor = curSpNeighbor;
 
-    // Update the current neighborhood for each node
-    for (size_t i = 0; i < preSpNeighbor.size(); ++i) {
-      std::vector<int> curChain = preSpNeighbor[i];
-      std::vector<int> newRings = curChain;
+      // Update the current neighborhood for each node
+      for (size_t i = 0; i < preSpNeighbor.size(); ++i) {
+        std::vector<int> curChain = preSpNeighbor[i];
+        std::vector<int> newRings = curChain;
 
-      // Expand the neighborhood by including neighbors of neighbors
-      for (int neigh : curChain) {
-        if (neigh > 0) {
-          std::vector<int> nextChain = spNeighbor[neigh - 1]; // Convert to 0-based index
-          newRings.insert(newRings.end(), nextChain.begin(), nextChain.end());
+        // Expand the neighborhood by including neighbors of neighbors
+        for (int neigh : curChain) {
+          if (neigh >= 0) {
+            std::vector<int> nextChain = spNeighbor[neigh]; // Use 0-based index
+            newRings.insert(newRings.end(), nextChain.begin(), nextChain.end());
+          }
+        }
+
+        // Remove duplicates and sort the new neighborhood
+        std::sort(newRings.begin(), newRings.end());
+        newRings.erase(std::unique(newRings.begin(), newRings.end()), newRings.end());
+
+        // Update the current neighborhood
+        curSpNeighbor[i] = newRings;
+      }
+    }
+
+    // Remove the original neighbors and the node itself from the lagged neighborhood
+    for (size_t i = 0; i < curSpNeighbor.size(); ++i) {
+      std::vector<int> newRings = curSpNeighbor[i];
+      std::vector<int> original = spNeighbor[i];
+      original.push_back(i); // Add the node itself (0-based index)
+
+      // Remove original neighbors and the node itself
+      std::vector<int> filteredRings;
+      for (int ring : newRings) {
+        if (std::find(original.begin(), original.end(), ring) == original.end()) {
+          filteredRings.push_back(ring);
         }
       }
 
-      // Remove duplicates and sort the new neighborhood
-      std::sort(newRings.begin(), newRings.end());
-      newRings.erase(std::unique(newRings.begin(), newRings.end()), newRings.end());
-
-      // Update the current neighborhood
-      curSpNeighbor[i] = newRings;
+      // Update the lagged neighborhood
+      lagSpNeighbor[i] = filteredRings;
     }
-  }
-
-  // Remove the original neighbors and the node itself from the lagged neighborhood
-  std::vector<std::vector<int>> lagSpNeighbor = curSpNeighbor;
-  for (size_t i = 0; i < curSpNeighbor.size(); ++i) {
-    std::vector<int> newRings = curSpNeighbor[i];
-    std::vector<int> original = spNeighbor[i];
-    original.push_back(i + 1); // Add the node itself (convert to 1-based index)
-
-    // Remove original neighbors and the node itself
-    std::vector<int> filteredRings;
-    for (int ring : newRings) {
-      if (std::find(original.begin(), original.end(), ring) == original.end()) {
-        filteredRings.push_back(ring);
-      }
-    }
-
-    // Update the lagged neighborhood
-    lagSpNeighbor[i] = filteredRings;
   }
 
   return lagSpNeighbor;
 }
+
+// // Function to generate embeddings for a given vector and neighborhood matrix
+// std::vector<std::vector<double>> GenEmbeddings(const std::vector<double>& vec,
+//                                                const std::vector<std::vector<int>>& nb,
+//                                                int E) {
+//   // Get the number of nodes
+//   int n = vec.size();
+//
+//   // Initialize the embeddings matrix with NaN values
+//   std::vector<std::vector<double>> xEmbedings(n, std::vector<double>(E, std::numeric_limits<double>::quiet_NaN()));
+//
+//   // Compute embeddings for each lag number from 1 to E
+//   for (int lagNum = 1; lagNum <= E; ++lagNum) {
+//     // Compute the lagged neighborhoods
+//     std::vector<std::vector<int>> laggedResults = CppLaggedVar4Lattice(nb, lagNum);
+//
+//     // Compute the mean of neighbor values for each node
+//     for (size_t l = 0; l < laggedResults.size(); ++l) {
+//       std::vector<int> neighbors = laggedResults[l];
+//
+//       // Compute the mean of neighbor values
+//       if (!neighbors.empty()) {
+//         double sum = std::accumulate(neighbors.begin(), neighbors.end(), 0.0, [&](double acc, int idx) {
+//           return acc + vec[idx];
+//         });
+//         xEmbedings[l][lagNum - 1] = sum / neighbors.size();
+//       }
+//     }
+//   }
+//
+//   return xEmbedings;
+// }
 
 // Function to generate embeddings for a given vector and neighborhood matrix
 std::vector<std::vector<double>> GenEmbeddings(const std::vector<double>& vec,
@@ -111,22 +145,45 @@ std::vector<std::vector<double>> GenEmbeddings(const std::vector<double>& vec,
     // Compute the lagged neighborhoods
     std::vector<std::vector<int>> laggedResults = CppLaggedVar4Lattice(nb, lagNum);
 
+    // Remove duplicates with previous lagNum (if lagNum >= 2)
+    if (lagNum >= 2) {
+      std::vector<std::vector<int>> prev_laggedResults = CppLaggedVar4Lattice(nb, lagNum - 1);
+      for (int i = 0; i < n; ++i) {
+        // Convert previous lagged results to a set for fast lookup
+        std::unordered_set<int> prev_set(prev_laggedResults[i].begin(), prev_laggedResults[i].end());
+
+        // Remove duplicates from current lagged results
+        std::vector<int> new_indices;
+        for (int index : laggedResults[i]) {
+          if (prev_set.find(index) == prev_set.end()) {
+            new_indices.push_back(index);
+          }
+        }
+
+        // If the new indices are empty, set it to a special value (e.g., std::numeric_limits<int>::min())
+        if (new_indices.empty()) {
+          new_indices.push_back(std::numeric_limits<int>::min());
+        }
+
+        // Update the lagged results
+        laggedResults[i] = new_indices;
+      }
+    }
+
     // Compute the mean of neighbor values for each node
     for (size_t l = 0; l < laggedResults.size(); ++l) {
       std::vector<int> neighbors = laggedResults[l];
 
-      // Convert neighbors to 0-based index
-      for (int& neighbor : neighbors) {
-        neighbor -= 1;
+      // If the neighbors are empty or contain only the special value, leave the embedding as NaN
+      if (neighbors.empty() || (neighbors.size() == 1 && neighbors[0] == std::numeric_limits<int>::min())) {
+        continue;
       }
 
       // Compute the mean of neighbor values
-      if (!neighbors.empty()) {
-        double sum = std::accumulate(neighbors.begin(), neighbors.end(), 0.0, [&](double acc, int idx) {
-          return acc + vec[idx];
-        });
-        xEmbedings[l][lagNum - 1] = sum / neighbors.size();
-      }
+      double sum = std::accumulate(neighbors.begin(), neighbors.end(), 0.0, [&](double acc, int idx) {
+        return acc + vec[idx];
+      });
+      xEmbedings[l][lagNum - 1] = sum / neighbors.size();
     }
   }
 

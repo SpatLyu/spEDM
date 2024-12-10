@@ -38,15 +38,15 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// RcppLaggedIndices
-Rcpp::List RcppLaggedIndices(const Rcpp::List& nb, int lagNum);
-RcppExport SEXP _spEDM_RcppLaggedIndices(SEXP nbSEXP, SEXP lagNumSEXP) {
+// RcppLaggedVar4Lattice
+Rcpp::List RcppLaggedVar4Lattice(const Rcpp::List& nb, int lagNum);
+RcppExport SEXP _spEDM_RcppLaggedVar4Lattice(SEXP nbSEXP, SEXP lagNumSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
     Rcpp::traits::input_parameter< int >::type lagNum(lagNumSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppLaggedIndices(nb, lagNum));
+    rcpp_result_gen = Rcpp::wrap(RcppLaggedVar4Lattice(nb, lagNum));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -82,7 +82,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppConfidence", (DL_FUNC) &_spEDM_RcppConfidence, 3},
     {"_spEDM_RcppLinearTrendRM", (DL_FUNC) &_spEDM_RcppLinearTrendRM, 4},
-    {"_spEDM_RcppLaggedIndices", (DL_FUNC) &_spEDM_RcppLaggedIndices, 2},
+    {"_spEDM_RcppLaggedVar4Lattice", (DL_FUNC) &_spEDM_RcppLaggedVar4Lattice, 2},
     {"_spEDM_RcppGenEmbeddings", (DL_FUNC) &_spEDM_RcppGenEmbeddings, 3},
     {"_spEDM_RcppGCCMLattice", (DL_FUNC) &_spEDM_RcppGCCMLattice, 5},
     {NULL, NULL, 0}

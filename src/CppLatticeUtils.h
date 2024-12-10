@@ -3,8 +3,10 @@
 
 #include <iostream>
 #include <vector>
-#include <algorithm> // for std::sort and std::unique
 #include <numeric>   // for std::accumulate
+#include <algorithm> // for std::sort, std::unique, std::accumulate
+#include <unordered_set> // for std::unordered_set
+#include <limits> // for std::numeric_limits
 #include <Rcpp.h>
 
 std::vector<std::vector<int>> nb2vec(Rcpp::List nb);
