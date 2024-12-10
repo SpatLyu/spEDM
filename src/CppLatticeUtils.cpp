@@ -98,38 +98,6 @@ std::vector<std::vector<int>> CppLaggedVar4Lattice(std::vector<std::vector<int>>
   return lagSpNeighbor;
 }
 
-// // Function to generate embeddings for a given vector and neighborhood matrix
-// std::vector<std::vector<double>> GenEmbeddings(const std::vector<double>& vec,
-//                                                const std::vector<std::vector<int>>& nb,
-//                                                int E) {
-//   // Get the number of nodes
-//   int n = vec.size();
-//
-//   // Initialize the embeddings matrix with NaN values
-//   std::vector<std::vector<double>> xEmbedings(n, std::vector<double>(E, std::numeric_limits<double>::quiet_NaN()));
-//
-//   // Compute embeddings for each lag number from 1 to E
-//   for (int lagNum = 1; lagNum <= E; ++lagNum) {
-//     // Compute the lagged neighborhoods
-//     std::vector<std::vector<int>> laggedResults = CppLaggedVar4Lattice(nb, lagNum);
-//
-//     // Compute the mean of neighbor values for each node
-//     for (size_t l = 0; l < laggedResults.size(); ++l) {
-//       std::vector<int> neighbors = laggedResults[l];
-//
-//       // Compute the mean of neighbor values
-//       if (!neighbors.empty()) {
-//         double sum = std::accumulate(neighbors.begin(), neighbors.end(), 0.0, [&](double acc, int idx) {
-//           return acc + vec[idx];
-//         });
-//         xEmbedings[l][lagNum - 1] = sum / neighbors.size();
-//       }
-//     }
-//   }
-//
-//   return xEmbedings;
-// }
-
 // Function to generate embeddings for a given vector and neighborhood matrix
 std::vector<std::vector<double>> GenEmbeddings(const std::vector<double>& vec,
                                                const std::vector<std::vector<int>>& nb,
