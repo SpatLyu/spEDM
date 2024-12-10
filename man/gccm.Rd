@@ -12,7 +12,6 @@ gccm(
   data = NULL,
   libsizes = NULL,
   E = 3,
-  trend_rm = c("all", "cause", "effect", "none"),
   ...
 )
 }
@@ -30,8 +29,6 @@ gccm(
 \item{libsizes}{(optional) A vector of library sizes to use.}
 
 \item{E}{(optional) The dimensions of the embedding.}
-
-\item{trend_rm}{(optional) Variables that need to remove linear trends.}
 
 \item{...}{(optional) Other parameters passed to \code{sdsfun::spdep_nb()}.}
 }

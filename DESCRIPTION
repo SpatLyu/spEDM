@@ -20,7 +20,7 @@ LinkingTo:
     RcppThread
 Imports: 
     dplyr,
-    sdsfun,
+    sdsfun (>= 0.6.0),
     tibble
 Suggests: 
     knitr,
@@ -29,4 +29,6 @@ Suggests:
     rmarkdown,
     sf,
     spdep
+Remotes:
+    stscl/sdsfun
 VignetteBuilder: knitr
