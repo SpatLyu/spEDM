@@ -8,7 +8,6 @@
 #include <utility>
 #include <limits>
 #include <map>
-#include "HelperFuns.h"
 #include "CppStats.h"
 #include "CppLatticeUtils.h"
 #include <RcppThread.h>
