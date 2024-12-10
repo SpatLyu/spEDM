@@ -18,7 +18,7 @@
 #'                        quiet=TRUE)
 #' gccm("HOVAL", "CRIME", data = columbus)
 gccm = \(cause, effect, nb = NULL, coords = NULL, data = NULL, libsizes = NULL,
-         E = 3, trend_rm = c("cause", "effect", "none", "all"), ...) {
+         E = 3, trend_rm = c("all", "cause", "effect", "none"), ...) {
   if (is.null(nb)){
     if(inherits(data,"sf")){
       nb = sdsfun::spdep_nb(data,...)
