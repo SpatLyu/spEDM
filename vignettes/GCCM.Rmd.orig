@@ -90,7 +90,7 @@ Construct the neighbours matrix and coordinates matrix.
 popd_sf = sf::st_as_sf(popdensity,
                        coords = c("x","y"),
                        crs = 4326)
-nb = sdsfun::spdep_nb(popd_sf, k = 8)
+nb = sdsfun::spdep_nb(popd_sf, k = 6)
 nbmat = spdep::nb2mat(nb, style = "B", zero.policy = TRUE)
 diag(nbmat) = 0
 nbmat[1:5,1:5]
