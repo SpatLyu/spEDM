@@ -21,8 +21,10 @@ LinkingTo:
 Imports: 
     dplyr,
     sdsfun (>= 0.6.0),
+    terra,
     tibble
 Suggests: 
+    ggplot2,
     knitr,
     Rcpp,
     RcppThread,

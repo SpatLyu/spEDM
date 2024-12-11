@@ -1,5 +1,6 @@
 #include <vector>
 #include "CppGridUtils.h"
+#include "GCCM4Grid.h"
 #include <Rcpp.h>
 
 // [[Rcpp::export]]
@@ -15,7 +16,7 @@ Rcpp::NumericMatrix RcppLaggedVar4Grid(Rcpp::NumericMatrix mat, int lagNum) {
     }
   }
 
-  // Call the Cpp function
+  // Call the CppLaggedVar4Grid function
   std::vector<std::vector<double>> laggedMat = CppLaggedVar4Grid(cppMat, lagNum);
 
   // Convert the result back to Rcpp::NumericMatrix
@@ -66,4 +67,61 @@ Rcpp::List RcppGenGridEmbeddings(Rcpp::NumericMatrix mat, int E) {
   }
 
   return result;
+}
+
+// [[Rcpp::export]]
+Rcpp::NumericMatrix RcppGCCM4Grid(
+    const Rcpp::NumericMatrix& xMatrix,
+    const Rcpp::NumericMatrix& yMatrix,
+    const Rcpp::IntegerVector& lib_sizes,
+    const Rcpp::IntegerMatrix& pred,
+    int E) {
+
+  // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
+  std::vector<std::vector<double>> xMatrix_cpp(xMatrix.nrow(), std::vector<double>(xMatrix.ncol()));
+  for (int i = 0; i < xMatrix.nrow(); ++i) {
+    for (int j = 0; j < xMatrix.ncol(); ++j) {
+      xMatrix_cpp[i][j] = xMatrix(i, j);
+    }
+  }
+
+  // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
+  std::vector<std::vector<double>> yMatrix_cpp(yMatrix.nrow(), std::vector<double>(yMatrix.ncol()));
+  for (int i = 0; i < yMatrix.nrow(); ++i) {
+    for (int j = 0; j < yMatrix.ncol(); ++j) {
+      yMatrix_cpp[i][j] = yMatrix(i, j);
+    }
+  }
+
+  // Convert Rcpp IntegerVector to std::vector<int>
+  std::vector<int> lib_sizes_cpp(lib_sizes.size());
+  for (int i = 0; i < lib_sizes.size(); ++i) {
+    lib_sizes_cpp[i] = lib_sizes[i];
+  }
+
+  // Convert Rcpp IntegerMatrix to std::vector<std::pair<int, int>>
+  std::vector<std::pair<int, int>> pred_cpp(pred.nrow());
+  for (int i = 0; i < pred.nrow(); ++i) {
+    pred_cpp[i] = std::make_pair(pred(i, 0), pred(i, 1));
+  }
+
+  // Call the C++ function GCCM4Grid
+  std::vector<std::vector<double>> result = GCCM4Grid(
+    xMatrix_cpp,
+    yMatrix_cpp,
+    lib_sizes_cpp,
+    pred_cpp,
+    E
+  );
+
+  Rcpp::NumericMatrix resultMatrix(result.size(), 5);
+  for (size_t i = 0; i < result.size(); ++i) {
+    resultMatrix(i, 0) = result[i][0];
+    resultMatrix(i, 1) = result[i][1];
+    resultMatrix(i, 2) = result[i][2];
+    resultMatrix(i, 3) = result[i][3];
+    resultMatrix(i, 4) = result[i][4];
+  }
+
+  return resultMatrix;
 }

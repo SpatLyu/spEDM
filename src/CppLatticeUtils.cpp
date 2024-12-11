@@ -36,6 +36,7 @@ std::vector<std::vector<int>> nb2vec(Rcpp::List nb) {
 }
 
 // Function to compute lagged neighborhoods for a given lag number
+// **Note that the return value corresponds to the cumulative neighbor indices for lagNum**
 std::vector<std::vector<int>> CppLaggedVar4Lattice(std::vector<std::vector<int>> spNeighbor,
                                                    int lagNum) {
   // If lagNum is less than 1, return an empty vector
