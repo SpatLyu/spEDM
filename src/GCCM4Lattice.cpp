@@ -13,7 +13,7 @@
 // [[Rcpp::depends(RcppThread)]]
 
 // Function to compute the simplex projection
-double SimplexProjection(
+double SimplexProjectionLattice(
     const std::vector<std::vector<double>>& vectors,  // Reconstructed state-space (each row is a separate vector/state)
     const std::vector<double>& target,                // Time series to be used as the target (should line up with vectors)
     const std::vector<bool>& lib_indices,             // Vector of T/F values (which states to include when searching for neighbors)
@@ -122,7 +122,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
     }
 
     // Run cross map and store results
-    double rho = SimplexProjection(x_vectors, y, lib_indices, pred_indices, b);
+    double rho = SimplexProjectionLattice(x_vectors, y, lib_indices, pred_indices, b);
     x_xmap_y.emplace_back(lib_size, rho);
   } else {
     for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
@@ -143,7 +143,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
       }
 
       // Run cross map and store results
-      double rho = SimplexProjection(x_vectors, y, lib_indices, pred_indices, b);
+      double rho = SimplexProjectionLattice(x_vectors, y, lib_indices, pred_indices, b);
       x_xmap_y.emplace_back(lib_size, rho);
     }
   }

@@ -13,7 +13,7 @@
 #include <RcppThread.h>
 
 // Function to compute the simplex projection
-double SimplexProjection(
+double SimplexProjectionLattice(
     const std::vector<std::vector<double>>& vectors,  // Reconstructed state-space (each row is a separate vector/state)
     const std::vector<double>& target,                // Time series to be used as the target (should line up with vectors)
     const std::vector<bool>& lib_indices,             // Vector of T/F values (which states to include when searching for neighbors)
