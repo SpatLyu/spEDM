@@ -8,7 +8,8 @@
 #include "CppStats.h"
 
 // Function to calculate the distance between embeddings, handling NaN values
-std::vector<double> DistCom(const std::vector<std::vector<std::vector<double>>>& embeddings, const std::vector<int>& libs, int p) {
+std::vector<double> DistCom(const std::vector<std::vector<std::vector<double>>>& embeddings,
+                            const std::vector<int>& libs, int p) {
   std::vector<double> distances;
   distances.reserve(libs.size());
 
@@ -68,7 +69,9 @@ std::vector<double> DistCom(const std::vector<std::vector<std::vector<double>>>&
 }
 
 // Function to perform Simplex Projection Grid
-double SimplexProjectionGrid(const std::vector<std::vector<std::vector<double>>>& embeddings, const std::vector<double>& target, const std::vector<bool>& lib_indices, const std::vector<bool>& pred_indices, int num_neighbors) {
+double SimplexProjectionGrid(const std::vector<std::vector<std::vector<double>>>& embeddings,
+                             const std::vector<double>& target, const std::vector<bool>& lib_indices,
+                             const std::vector<bool>& pred_indices, int num_neighbors) {
   std::vector<double> pred(target.size(), std::numeric_limits<double>::quiet_NaN());
 
   for (size_t p = 0; p < pred_indices.size(); ++p) {
@@ -76,7 +79,7 @@ double SimplexProjectionGrid(const std::vector<std::vector<std::vector<double>>>
 
     // Temporarily exclude the current prediction index from the library
     bool temp_lib = lib_indices[p];
-    std::vector<bool> modified_lib_indices = lib_indices;
+    std::vector<bool> modified_lib_indices = lib_indices; // Create a copy of lib_indices
     modified_lib_indices[p] = false;
 
     // Get the indices of the library points
@@ -101,9 +104,8 @@ double SimplexProjectionGrid(const std::vector<std::vector<std::vector<double>>>
     }
 
     // If fewer than num_neighbors valid distances, skip this prediction
-    if (neighbors.size() < num_neighbors) {
-      lib_indices[p] = temp_lib;
-      continue;
+    if (static_cast<int>(neighbors.size()) < num_neighbors) {
+      continue; // Skip this prediction
     }
 
     // Sort valid distances and get the top num_neighbors
@@ -146,9 +148,6 @@ double SimplexProjectionGrid(const std::vector<std::vector<std::vector<double>>>
       prediction += weights[i] * target[libs[top_neighbors[i]]];
     }
     pred[p] = prediction / total_weight;
-
-    // Restore the original library index
-    lib_indices[p] = temp_lib;
   }
 
   // Return the Pearson correlation between the target and the predicted values
