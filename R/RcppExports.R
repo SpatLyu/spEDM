@@ -5,6 +5,10 @@ RcppLaggedVar4Grid <- function(mat, lagNum) {
     .Call(`_spEDM_RcppLaggedVar4Grid`, mat, lagNum)
 }
 
+RcppGenGridEmbeddings <- function(mat, E) {
+    .Call(`_spEDM_RcppGenGridEmbeddings`, mat, E)
+}
+
 RcppConfidence <- function(r, n, level = 0.05) {
     .Call(`_spEDM_RcppConfidence`, r, n, level)
 }

@@ -10,8 +10,8 @@ std::vector<std::vector<double>> CppLaggedVar4Grid(
     std::vector<std::vector<double>> mat,
     int lagNum);
 
-std::vector<std::vector<double>> GenGridEmbeddings(const std::vector<double>& vec,
-                                                   const std::vector<std::vector<int>>& nb,
-                                                   int E);
+std::vector<std::vector<std::vector<double>>> GenGridEmbeddings(
+    const std::vector<std::vector<double>>& mat,
+    int E);
 
 #endif // CppGridUtils_H
