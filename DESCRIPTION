@@ -23,6 +23,7 @@ Imports:
     sdsfun (>= 0.6.0),
     tibble
 Suggests: 
+    ggplot2,
     knitr,
     Rcpp,
     RcppThread,

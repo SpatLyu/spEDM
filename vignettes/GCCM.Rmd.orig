@@ -96,25 +96,25 @@ Run GCCM:
 
 ```{r}
 startTime = Sys.time()
-res = gccm(cause = "Pre",
-           effect = "popDensity",
-           nb = popd_nb,
-           coords = c("x","y"),
-           data = popdensity,
-           libsizes = seq(10, 2800, by = 100),
-           E = 3)
+pd_res = gccm(cause = "Pre",
+              effect = "popDensity",
+              nb = popd_nb,
+              coords = c("x","y"),
+              data = popdensity,
+              libsizes = seq(10, 2800, by = 100),
+              E = 3)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-res
+pd_res
 ```
 
 Visualize the result:
 
-```{r gccm_p1, fig.width=6.75,fig.height=5.5,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 1**. The cross-mapping prediction outputs between population density and county-level Precipitation.")}
+```{r fig1,fig.width=6.75,fig.height=5.5,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 1**. The cross-mapping prediction outputs between population density and county-level Precipitation.")}
 windowsFonts(TNR = windowsFont("Times New Roman"))
 
-fig1 = ggplot2::ggplot(data = res,
-                           ggplot2::aes(x = lib_sizes)) +
+fig1 = ggplot2::ggplot(data = pd_res,
+                       ggplot2::aes(x = lib_sizes)) +
   ggplot2::geom_line(ggplot2::aes(y = x_xmap_y_mean,
                                   color = "x xmap y"),
                       lwd = 1.25) +
@@ -145,3 +145,33 @@ fig1
 ```
 
 ### 2.3 An example of grid data about soil pollution
+
+Load data and package:
+
+```{r fig2,fig.width=6.55,fig.height=2.60,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 2**. Maps of soil Cu concentration, the density of industrial pollutants and nightlight.")}
+library(spEDM)
+
+soilpollution = terra::rast(system.file("extdata/soilpollution.tif",
+                                        package = "spEDM"))
+soilpollution
+
+terra::plot(soilpollution,nc = 3,
+            mar = rep(0.1,4),
+            oma = rep(0.1,4),
+            axes = FALSE,
+            legend = FALSE)
+```
+
+Run GCCM:
+
+```{r}
+startTime = Sys.time()
+sp_res = gccm(cause = "industry",
+              effect = "cu",
+              data = soilpollution,
+              libsizes = seq(10,120,20),
+              E = 3)
+endTime = Sys.time()
+print(difftime(endTime,startTime, units ="mins"))
+sp_res
+```
