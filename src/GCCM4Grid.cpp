@@ -83,7 +83,7 @@ double SimplexProjectionGrid(const std::vector<std::vector<std::vector<double>>>
     if (!pred_indices[p]) continue;
 
     // Temporarily exclude the current prediction index from the library
-    bool temp_lib = lib_indices[p];
+    // bool temp_lib = lib_indices[p];
     std::vector<bool> modified_lib_indices = lib_indices; // Create a copy of lib_indices
     modified_lib_indices[p] = false;
 
