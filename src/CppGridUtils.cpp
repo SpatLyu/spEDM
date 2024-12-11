@@ -95,5 +95,33 @@ std::vector<std::vector<double>> CppLaggedVar4Grid(
   return laggedVar;
 }
 
+/**
+ * Generates a list of grid embeddings for the input matrix and embedding dimension.
+ *
+ * @param mat The input matrix represented as a 2D vector of doubles.
+ * @param E The embedding dimension, which determines the number of embeddings to generate.
+ * @return A vector of 2D vectors, where each element is an embedding of the input matrix.
+ */
+std::vector<std::vector<std::vector<double>>> GenGridEmbeddings(
+    const std::vector<std::vector<double>>& mat, int E) {
+  // Initialize a vector to store the embeddings
+  std::vector<std::vector<std::vector<double>>> xEmbeddings(E + 1);
 
+  // The first embedding is the transpose of the input matrix
+  int numRows = mat.size();
+  int numCols = mat[0].size();
+  xEmbeddings[0].resize(numCols, std::vector<double>(numRows));
 
+  for (int r = 0; r < numRows; ++r) {
+    for (int c = 0; c < numCols; ++c) {
+      xEmbeddings[0][c][r] = mat[r][c]; // Transpose the matrix
+    }
+  }
+
+  // Generate the remaining embeddings using laggedVariableAs2Dim
+  for (int i = 1; i <= E; ++i) {
+    xEmbeddings[i] = CppLaggedVar4Grid(mat, i);
+  }
+
+  return xEmbeddings;
+}
