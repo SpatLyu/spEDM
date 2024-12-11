@@ -68,11 +68,15 @@ $$
 z = \frac{1}{2} \ln \left(\frac{1+\rho}{1-\rho}\right)
 $$
 
-## 2. An example of county-level population density
+## 2. Examples
+
+### 2.1 Install the `spEDM` package
 
 ```r
 install.packages("spEDM", dep = TRUE)
 ```
+
+### 2.2 An example of lattice data about county-level population density
 
 Load data and package:
 
@@ -106,10 +110,10 @@ res
 
 Visualize the result:
 
-```{r gccm_plot, fig.width=6.75,fig.height=5.5,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 1**. The cross-mapping prediction outputs between population density and county-level Precipitation.")}
+```{r gccm_p1, fig.width=6.75,fig.height=5.5,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 1**. The cross-mapping prediction outputs between population density and county-level Precipitation.")}
 windowsFonts(TNR = windowsFont("Times New Roman"))
 
-fig_gccm = ggplot2::ggplot(data = res,
+fig1 = ggplot2::ggplot(data = res,
                            ggplot2::aes(x = lib_sizes)) +
   ggplot2::geom_line(ggplot2::aes(y = x_xmap_y_mean,
                                   color = "x xmap y"),
@@ -137,6 +141,7 @@ fig_gccm = ggplot2::ggplot(data = res,
                  legend.justification = c('right','top'),
                  legend.background = ggplot2::element_rect(fill = 'transparent'),
                  legend.text = ggplot2::element_text(family = "TNR"))
-fig_gccm
+fig1
 ```
 
+### 2.3 An example of grid data about soil pollution
