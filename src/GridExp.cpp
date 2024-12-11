@@ -15,7 +15,7 @@ Rcpp::NumericMatrix RcppLaggedVar4Grid(Rcpp::NumericMatrix mat, int lagNum) {
     }
   }
 
-  // Call the Cpp function
+  // Call the CppLaggedVar4Grid function
   std::vector<std::vector<double>> laggedMat = CppLaggedVar4Grid(cppMat, lagNum);
 
   // Convert the result back to Rcpp::NumericMatrix

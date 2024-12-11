@@ -3,105 +3,49 @@
 #include <cmath>
 #include <limits>
 
-/**
- * Expands a matrix by adding rows and columns of NaN values based on the lag number.
- *
- * @param mat The input matrix represented as a 2D vector of doubles.
- * @param lagNum The number of times the matrix should be expanded. Must be a non-negative integer.
- * @return The expanded matrix.
- */
-std::vector<std::vector<double>> ExpandMat(std::vector<std::vector<double>> mat,
-                                           int lagNum) {
-  // If lagNum is negative, return the original matrix as no expansion is needed.
-  if (lagNum < 0) {
-    return mat;
-  }
-
-  // If lagNum is greater than 1, recursively call ExpandMat to expand the matrix.
-  if (lagNum > 1) {
-    mat = ExpandMat(mat, lagNum - 1);
-  }
-
-  // Get the number of columns and rows in the matrix.
-  int numCols = mat[0].size();
-  // int numRows = mat.size();
-
-  // Add a row of NaN values at the top and bottom of the matrix.
-  std::vector<double> nanRow(numCols, std::numeric_limits<double>::quiet_NaN());
-  mat.insert(mat.begin(), nanRow); // Add at the top
-  mat.push_back(nanRow);          // Add at the bottom
-
-  // Add a column of NaN values at the left and right of the matrix.
-  for (auto& row : mat) {
-    row.insert(row.begin(), std::numeric_limits<double>::quiet_NaN()); // Add at the left
-    row.push_back(std::numeric_limits<double>::quiet_NaN());          // Add at the right
-  }
-
-  return mat;
-}
-
-/**
- * Generates a 2D matrix of lagged variables based on the input matrix and lag number.
- *
- * @param mat The input matrix represented as a 2D vector of doubles.
- * @param lagNum The lag number used to generate the lagged variables.
- * @return A 2D matrix of lagged variables.
- */
+// Note that the return value is the value of the lagged order position, not the index.
 std::vector<std::vector<double>> CppLaggedVar4Grid(
-    std::vector<std::vector<double>> mat,
-    int lagNum) {
-  // Get the number of columns and rows in the input matrix
-  int numCols = mat[0].size();
+    const std::vector<std::vector<double>>& mat,
+    int lagNum
+) {
   int numRows = mat.size();
+  int numCols = mat[0].size();
+  int totalElements = numRows * numCols;
+  std::vector<std::vector<double>> result(totalElements, std::vector<double>(8, std::numeric_limits<double>::quiet_NaN()));
 
-  // Expand the matrix using the ExpandMat function
-  mat = ExpandMat(mat, lagNum);
+  // Directions for Moore neighborhood (8 directions)
+  const int dx[] = {-1, -1, -1, 0, 0, 1, 1, 1};
+  const int dy[] = {-1, 0, 1, -1, 1, -1, 0, 1};
 
-  // Initialize the lagged variable matrix with dimensions (numRows * numCols) x (8 * lagNum)
-  int laggedVarRows = numRows * numCols;
-  int laggedVarCols = 8 * lagNum;
-  std::vector<std::vector<double>> laggedVar(laggedVarRows, std::vector<double>(laggedVarCols, std::numeric_limits<double>::quiet_NaN()));
+  for (int r = 0; r < numRows; ++r) {
+    for (int c = 0; c < numCols; ++c) {
+      int elementIndex = r * numCols + c;
+      int neighborIndex = 0;
 
-  // Iterate over each row and column of the original matrix
-  for (int r = 1; r <= numRows; ++r) {
-    for (int c = 1; c <= numCols; ++c) {
-      int item = 0; // Index for the laggedVar matrix
+      // Calculate positions that are exactly 'lagNum' units away
+      for (int dir = 0; dir < 8; ++dir) {
+        int dr = dx[dir] * lagNum;
+        int dc = dy[dir] * lagNum;
+        int rNeighbor = r + dr;
+        int cNeighbor = c + dc;
 
-      // Generate the sequence of column offsets
-      int colsAddStart = -std::trunc((3 + (lagNum - 1) * 2) / 2);
-      int colsAddEnd = std::trunc((3 + (lagNum - 1) * 2) / 2);
-      for (int la = colsAddStart; la <= colsAddEnd; ++la) {
-        laggedVar[(r - 1) * numCols + c - 1][item] = mat[r - 1 + lagNum][c - 1 + la + lagNum];
-        item++;
-      }
+        // Check if the neighbor position is within bounds
+        if (rNeighbor >= 0 && rNeighbor < numRows && cNeighbor >= 0 && cNeighbor < numCols) {
+          result[elementIndex][neighborIndex] = mat[rNeighbor][cNeighbor];
+        }
+        // Else, it remains NaN
 
-      // Generate the sequence of row offsets
-      for (int ra = -(lagNum - 1); ra <= (lagNum - 1); ++ra) {
-        laggedVar[(r - 1) * numCols + c - 1][item] = mat[r - 1 + ra + lagNum][c - 1 - lagNum + lagNum];
-        item++;
-
-        laggedVar[(r - 1) * numCols + c - 1][item] = mat[r - 1 + ra + lagNum][c - 1 + lagNum + lagNum];
-        item++;
-      }
-
-      // Generate the sequence of column offsets again
-      for (int la = colsAddStart; la <= colsAddEnd; ++la) {
-        laggedVar[(r - 1) * numCols + c - 1][item] = mat[r - 1 + lagNum + lagNum][c - 1 + la + lagNum];
-        item++;
+        neighborIndex++;
+        if (neighborIndex >= 8) {
+          break;
+        }
       }
     }
   }
 
-  return laggedVar;
+  return result;
 }
 
-/**
- * Generates a list of grid embeddings for the input matrix and embedding dimension.
- *
- * @param mat The input matrix represented as a 2D vector of doubles.
- * @param E The embedding dimension, which determines the number of embeddings to generate.
- * @return A vector of 2D vectors, where each element is an embedding of the input matrix.
- */
 std::vector<std::vector<std::vector<double>>> GenGridEmbeddings(
     const std::vector<std::vector<double>>& mat, int E) {
   // Initialize a vector to store the embeddings
