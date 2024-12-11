@@ -1,11 +1,13 @@
-#include <iostream>
 #include <vector>
 #include <algorithm>
 #include <cmath>
 #include <numeric>
-#include <stdexcept>
+#include <utility>
 #include <limits>
+#include <map>
 #include "CppStats.h"
+#include "CppGridUtils.h"
+#include <RcppThread.h>
 
 // Function to locate the index in a 2D grid
 int locate(int curRow, int curCol, int totalRow, int totalCol) {
@@ -75,8 +77,10 @@ std::vector<double> DistCom(const std::vector<std::vector<std::vector<double>>>&
 
 // Function to perform Simplex Projection Grid
 double SimplexProjectionGrid(const std::vector<std::vector<std::vector<double>>>& embeddings,
-                             const std::vector<double>& target, const std::vector<bool>& lib_indices,
-                             const std::vector<bool>& pred_indices, int num_neighbors) {
+                             const std::vector<double>& target,
+                             const std::vector<bool>& lib_indices,
+                             const std::vector<bool>& pred_indices,
+                             int num_neighbors) {
   std::vector<double> pred(target.size(), std::numeric_limits<double>::quiet_NaN());
 
   for (size_t p = 0; p < pred_indices.size(); ++p) {
@@ -215,4 +219,88 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
   }
 
   return x_xmap_y;
+}
+
+// GCCM4Grid function
+std::vector<std::vector<double>> GCCM4Grid(
+    const std::vector<std::vector<double>>& xMatrix,
+    const std::vector<std::vector<double>>& yMatrix,
+    const std::vector<int>& lib_sizes,
+    const std::vector<std::pair<int, int>>& lib,
+    const std::vector<std::pair<int, int>>& pred,
+    int E,
+    int tau = 1,
+    int b = 0) {
+
+  // If b is not provided, default it to E + 1
+  if (b == 0) {
+    b = E + 1;
+  }
+
+  // Get the dimensions of the xMatrix
+  int totalRow = xMatrix.size();
+  int totalCol = xMatrix[0].size();
+
+  // Flatten yMatrix into a 1D array (row-major order)
+  std::vector<double> yPred;
+  for (const auto& row : yMatrix) {
+    yPred.insert(yPred.end(), row.begin(), row.end());
+  }
+
+  // Generate embeddings for xMatrix
+  auto xEmbedings = GenGridEmbeddings(xMatrix, E);
+
+  // Ensure the minimum value in unique_lib_sizes is E + 2 and remove duplicates
+  std::vector<int> unique_lib_sizes;
+  std::unique_copy(lib_sizes.begin(), lib_sizes.end(), std::back_inserter(unique_lib_sizes),
+                   [&](int a, int b) { return a == b; });
+  std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
+                 [&](int size) { return std::max(size, E + 2); });
+
+  // Initialize the result container
+  std::vector<std::pair<int, double>> x_xmap_y;
+
+  // Iterate over each library size
+  for (int lib_size : unique_lib_sizes) {
+    // Perform single grid cross-mapping for the current library size
+    auto results = GCCMSingle4Grid(xEmbedings, yPred, lib_size, pred, totalRow, totalCol, b);
+
+    // Append the results to the main result container
+    x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+  }
+
+  // Perform the operations using RcppThread
+  RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
+  RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
+    int lib_size = unique_lib_sizes[i];
+    auto results = GCCMSingle4Grid(xEmbedings, yPred, lib_size, pred, totalRow, totalCol, b);
+    x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+    bar++;
+  });
+
+  // Group by the first int and compute the mean
+  std::map<int, std::vector<double>> grouped_results;
+  for (const auto& result : x_xmap_y) {
+    grouped_results[result.first].push_back(result.second);
+  }
+
+  std::vector<std::vector<double>> final_results;
+  for (const auto& group : grouped_results) {
+    double mean_value = CppMean(group.second, true);
+    final_results.push_back({static_cast<double>(group.first), mean_value});
+  }
+
+  int n = pred.size();
+  // Calculate significance and confidence interval for each result
+  for (size_t i = 0; i < final_results.size(); ++i) {
+    double rho = final_results[i][1];
+    double significance = CppSignificance(rho, n);
+    std::vector<double> confidence_interval = CppConfidence(rho, n);
+
+    final_results[i].push_back(significance);
+    final_results[i].push_back(confidence_interval[0]);
+    final_results[i].push_back(confidence_interval[1]);
+  }
+
+  return final_results;
 }
