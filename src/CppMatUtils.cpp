@@ -47,7 +47,7 @@ std::vector<std::vector<double>> ExpandMat(std::vector<std::vector<double>> mat,
  * @param lagNum The lag number used to generate the lagged variables.
  * @return A 2D matrix of lagged variables.
  */
-std::vector<std::vector<double>> LaggedVariableAs2Dim(
+std::vector<std::vector<double>> CppLaggedVar4Mat(
     std::vector<std::vector<double>> mat,
     int lagNum) {
   // Get the number of columns and rows in the input matrix

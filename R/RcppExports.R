@@ -21,3 +21,7 @@ RcppGCCMLattice <- function(x, y, nb, libsizes, E) {
     .Call(`_spEDM_RcppGCCMLattice`, x, y, nb, libsizes, E)
 }
 
+RcppLaggedVar4Mat <- function(mat, lagNum) {
+    .Call(`_spEDM_RcppLaggedVar4Mat`, mat, lagNum)
+}
+
