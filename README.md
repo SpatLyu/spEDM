@@ -13,7 +13,7 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-cyan.svg)](htt
 [![R-universe](https://stscl.r-universe.dev/badges/spEDM?color=cyan)](https://stscl.r-universe.dev/spEDM)
 <!-- badges: end -->
 
-\_ **Sp**atial **E**mpirical **D**ynamic **M**odeling \_
+***Sp**atial **E**mpirical **D**ynamic **M**odeling*
 
 ## Installation
 
