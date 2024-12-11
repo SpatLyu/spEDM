@@ -28,7 +28,8 @@ Suggests:
     RcppThread,
     rmarkdown,
     sf,
-    spdep
+    spdep,
+    terra
 Remotes:
     stscl/sdsfun
 VignetteBuilder: knitr
