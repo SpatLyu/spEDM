@@ -34,7 +34,6 @@ std::vector<std::vector<double>> GCCM4Grid(
     const std::vector<std::vector<double>>& xMatrix,
     const std::vector<std::vector<double>>& yMatrix,
     const std::vector<int>& lib_sizes,
-    const std::vector<std::pair<int, int>>& lib,
     const std::vector<std::pair<int, int>>& pred,
     int E,
     int tau = 1,
