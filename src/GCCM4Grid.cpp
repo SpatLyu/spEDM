@@ -7,6 +7,11 @@
 #include <limits>
 #include "CppStats.h"
 
+// Function to locate the index in a 2D grid
+int locate(int curRow, int curCol, int totalRow, int totalCol) {
+  return (curRow - 1) * totalCol + curCol - 1;
+}
+
 // Function to calculate the distance between embeddings, handling NaN values
 std::vector<double> DistCom(const std::vector<std::vector<std::vector<double>>>& embeddings,
                             const std::vector<int>& libs, int p) {
@@ -152,4 +157,62 @@ double SimplexProjectionGrid(const std::vector<std::vector<std::vector<double>>>
 
   // Return the Pearson correlation between the target and the predicted values
   return PearsonCor(target, pred, true);
+}
+
+// GCCMSingle4Grid function
+std::vector<std::pair<int, double>> GCCMSingle4Grid(
+    const std::vector<std::vector<std::vector<double>>>& xEmbedings,
+    const std::vector<double>& yPred,
+    int lib_size,
+    const std::vector<std::pair<int, int>>& pred,
+    int totalRow,
+    int totalCol,
+    int b) {
+
+  std::vector<std::pair<int, double>> x_xmap_y;
+
+  for (int r = 1; r <= totalRow - lib_size + 1; ++r) {
+    for (int c = 1; c <= totalCol - lib_size + 1; ++c) {
+
+      // Initialize prediction and library indices
+      std::vector<bool> pred_indices(totalRow * totalCol, false);
+      std::vector<bool> lib_indices(totalRow * totalCol, false);
+
+      // Set prediction indices
+      for (const auto& p : pred) {
+        pred_indices[locate(p.first, p.second, totalRow, totalCol)] = true;
+      }
+
+      // Exclude NA values in yPred from prediction indices
+      for (size_t i = 0; i < yPred.size(); ++i) {
+        if (std::isnan(yPred[i])) {
+          pred_indices[i] = false;
+        }
+      }
+
+      // Set library indices
+      for (int i = r; i < r + lib_size; ++i) {
+        for (int j = c; j < c + lib_size; ++j) {
+          lib_indices[locate(i, j, totalRow, totalCol)] = true;
+        }
+      }
+
+      // Check if more than half of the library is NA
+      int na_count = 0;
+      for (size_t i = 0; i < lib_indices.size(); ++i) {
+        if (lib_indices[i] && std::isnan(yPred[i])) {
+          ++na_count;
+        }
+      }
+      if (na_count > (lib_size * lib_size) / 2) {
+        continue;
+      }
+
+      // Run cross map and store results
+      double results = SimplexProjectionGrid(xEmbedings, yPred, lib_indices, pred_indices, b);
+      x_xmap_y.emplace_back(lib_size, results);
+    }
+  }
+
+  return x_xmap_y;
 }
