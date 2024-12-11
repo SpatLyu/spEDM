@@ -11,6 +11,18 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// RcppLaggedVar4Grid
+Rcpp::NumericMatrix RcppLaggedVar4Grid(Rcpp::NumericMatrix mat, int lagNum);
+RcppExport SEXP _spEDM_RcppLaggedVar4Grid(SEXP matSEXP, SEXP lagNumSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< int >::type lagNum(lagNumSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppLaggedVar4Grid(mat, lagNum));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppConfidence
 Rcpp::NumericVector RcppConfidence(double r, int n, double level);
 RcppExport SEXP _spEDM_RcppConfidence(SEXP rSEXP, SEXP nSEXP, SEXP levelSEXP) {
@@ -50,16 +62,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// RcppGenEmbeddings
-Rcpp::NumericMatrix RcppGenEmbeddings(const Rcpp::NumericVector& vec, const Rcpp::List& nb, int E);
-RcppExport SEXP _spEDM_RcppGenEmbeddings(SEXP vecSEXP, SEXP nbSEXP, SEXP ESEXP) {
+// RcppGenLatticeEmbeddings
+Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec, const Rcpp::List& nb, int E);
+RcppExport SEXP _spEDM_RcppGenLatticeEmbeddings(SEXP vecSEXP, SEXP nbSEXP, SEXP ESEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
     Rcpp::traits::input_parameter< int >::type E(ESEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppGenEmbeddings(vec, nb, E));
+    rcpp_result_gen = Rcpp::wrap(RcppGenLatticeEmbeddings(vec, nb, E));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -78,26 +90,14 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// RcppLaggedVar4Mat
-Rcpp::NumericMatrix RcppLaggedVar4Mat(Rcpp::NumericMatrix mat, int lagNum);
-RcppExport SEXP _spEDM_RcppLaggedVar4Mat(SEXP matSEXP, SEXP lagNumSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type mat(matSEXP);
-    Rcpp::traits::input_parameter< int >::type lagNum(lagNumSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppLaggedVar4Mat(mat, lagNum));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_spEDM_RcppLaggedVar4Grid", (DL_FUNC) &_spEDM_RcppLaggedVar4Grid, 2},
     {"_spEDM_RcppConfidence", (DL_FUNC) &_spEDM_RcppConfidence, 3},
     {"_spEDM_RcppLinearTrendRM", (DL_FUNC) &_spEDM_RcppLinearTrendRM, 4},
     {"_spEDM_RcppLaggedVar4Lattice", (DL_FUNC) &_spEDM_RcppLaggedVar4Lattice, 2},
-    {"_spEDM_RcppGenEmbeddings", (DL_FUNC) &_spEDM_RcppGenEmbeddings, 3},
+    {"_spEDM_RcppGenLatticeEmbeddings", (DL_FUNC) &_spEDM_RcppGenLatticeEmbeddings, 3},
     {"_spEDM_RcppGCCMLattice", (DL_FUNC) &_spEDM_RcppGCCMLattice, 5},
-    {"_spEDM_RcppLaggedVar4Mat", (DL_FUNC) &_spEDM_RcppLaggedVar4Mat, 2},
     {NULL, NULL, 0}
 };
 

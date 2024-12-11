@@ -14,8 +14,8 @@ std::vector<std::vector<int>> nb2vec(Rcpp::List nb);
 std::vector<std::vector<int>> CppLaggedVar4Lattice(std::vector<std::vector<int>> spNeighbor,
                                                    int lagNum);
 
-std::vector<std::vector<double>> GenEmbeddings(const std::vector<double>& vec,
-                                               const std::vector<std::vector<int>>& nb,
-                                               int E);
+std::vector<std::vector<double>> GenLatticeEmbeddings(const std::vector<double>& vec,
+                                                      const std::vector<std::vector<int>>& nb,
+                                                      int E);
 
 #endif // CppLatticeUtils_H

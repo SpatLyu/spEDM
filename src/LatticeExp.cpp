@@ -53,9 +53,9 @@ Rcpp::List RcppLaggedVar4Lattice(const Rcpp::List& nb, int lagNum) {
 
 // Wrapper function to generate embeddings and return a NumericMatrix
 // [[Rcpp::export]]
-Rcpp::NumericMatrix RcppGenEmbeddings(const Rcpp::NumericVector& vec,
-                                      const Rcpp::List& nb,
-                                      int E) {
+Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec,
+                                             const Rcpp::List& nb,
+                                             int E) {
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
 
@@ -63,7 +63,7 @@ Rcpp::NumericMatrix RcppGenEmbeddings(const Rcpp::NumericVector& vec,
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
   // Generate embeddings
-  std::vector<std::vector<double>> embeddings = GenEmbeddings(vec_std, nb_vec, E);
+  std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(vec_std, nb_vec, E);
 
   // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
   int rows = embeddings.size();
@@ -93,7 +93,7 @@ Rcpp::NumericMatrix RcppGCCMLattice(const Rcpp::NumericVector& x,
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
   // Generate embeddings
-  std::vector<std::vector<double>> embeddings = GenEmbeddings(x_std, nb_vec, E);
+  std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(x_std, nb_vec, E);
 
   // Convert Rcpp::IntegerVector to std::vector<int>
   std::vector<int> libsizes_std = Rcpp::as<std::vector<int>>(libsizes);
@@ -118,65 +118,3 @@ Rcpp::NumericMatrix RcppGCCMLattice(const Rcpp::NumericVector& x,
 
   return resultMatrix;
 }
-
-// // Wrapper function to calculate lagged indices and return a List
-// // [[Rcpp::export]]
-// Rcpp::List RcppLaggedIndices(const Rcpp::NumericVector& vec,
-//                              const Rcpp::NumericMatrix& nbmat,
-//                              int lagNum) {
-//   // Convert Rcpp::NumericVector to std::vector<double>
-//   std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
-//
-//   // Convert Rcpp::NumericMatrix to std::vector<std::vector<int>>
-//   int n = nbmat.nrow();
-//   std::vector<std::vector<int>> nbmat_std(n, std::vector<int>(n));
-//   for (int i = 0; i < n; ++i) {
-//     for (int j = 0; j < n; ++j) {
-//       nbmat_std[i][j] = nbmat(i, j);
-//     }
-//   }
-//
-//   // Calculate lagged indices
-//   std::vector<std::vector<int>> lagged_indices = CppLaggedIndices(vec_std, nbmat_std, lagNum);
-//
-//   // Convert std::vector<std::vector<int>> to Rcpp::List
-//   Rcpp::List result(n);
-//   for (int i = 0; i < n; ++i) {
-//     result[i] = Rcpp::wrap(lagged_indices[i]);
-//   }
-//
-//   return result;
-// }
-//
-// // Wrapper function to generate embeddings and return a NumericMatrix
-// // [[Rcpp::export]]
-// Rcpp::NumericMatrix RcppGenEmbeddings(const Rcpp::NumericVector& vec,
-//                                       const Rcpp::NumericMatrix& nbmat,
-//                                       int E) {
-//   // Convert Rcpp::NumericVector to std::vector<double>
-//   std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
-//
-//   // Convert Rcpp::NumericMatrix to std::vector<std::vector<int>>
-//   int n = nbmat.nrow();
-//   std::vector<std::vector<int>> nbmat_std(n, std::vector<int>(n));
-//   for (int i = 0; i < n; ++i) {
-//     for (int j = 0; j < n; ++j) {
-//       nbmat_std[i][j] = nbmat(i, j);
-//     }
-//   }
-//
-//   // Generate embeddings
-//   std::vector<std::vector<double>> embeddings = GenEmbeddings(vec_std, nbmat_std, E);
-//
-//   // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
-//   int rows = embeddings.size();
-//   int cols = embeddings[0].size();
-//   Rcpp::NumericMatrix result(rows, cols);
-//   for (int i = 0; i < rows; ++i) {
-//     for (int j = 0; j < cols; ++j) {
-//       result(i, j) = embeddings[i][j];
-//     }
-//   }
-//
-//   return result;
-// }

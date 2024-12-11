@@ -99,9 +99,10 @@ std::vector<std::vector<int>> CppLaggedVar4Lattice(std::vector<std::vector<int>>
 }
 
 // Function to generate embeddings for a given vector and neighborhood matrix
-std::vector<std::vector<double>> GenEmbeddings(const std::vector<double>& vec,
-                                               const std::vector<std::vector<int>>& nb,
-                                               int E) {
+std::vector<std::vector<double>> GenLatticeEmbeddings(
+    const std::vector<double>& vec,
+    const std::vector<std::vector<int>>& nb,
+    int E) {
   // Get the number of nodes
   int n = vec.size();
 
@@ -220,9 +221,9 @@ std::vector<std::vector<double>> GenEmbeddings(const std::vector<double>& vec,
 // }
 //
 // // Function to generate embeddings
-// std::vector<std::vector<double>> GenEmbeddings(const std::vector<double>& vec,
-//                                                const std::vector<std::vector<int>>& nbmat,
-//                                                int E) {
+// std::vector<std::vector<double>> GenLatticeEmbeddings(const std::vector<double>& vec,
+//                                                       const std::vector<std::vector<int>>& nbmat,
+//                                                       int E) {
 //   int n = vec.size();
 //   std::vector<std::vector<double>> embeddings(n, std::vector<double>(E));
 //

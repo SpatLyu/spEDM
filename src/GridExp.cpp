@@ -1,9 +1,9 @@
 #include <vector>
-#include "CppMatUtils.h"
+#include "CppGridUtils.h"
 #include <Rcpp.h>
 
 // [[Rcpp::export]]
-Rcpp::NumericMatrix RcppLaggedVar4Mat(Rcpp::NumericMatrix mat, int lagNum) {
+Rcpp::NumericMatrix RcppLaggedVar4Grid(Rcpp::NumericMatrix mat, int lagNum) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = mat.nrow();
   int numCols = mat.ncol();
@@ -16,7 +16,7 @@ Rcpp::NumericMatrix RcppLaggedVar4Mat(Rcpp::NumericMatrix mat, int lagNum) {
   }
 
   // Call the Cpp function
-  std::vector<std::vector<double>> laggedMat = CppLaggedVar4Mat(cppMat, lagNum);
+  std::vector<std::vector<double>> laggedMat = CppLaggedVar4Grid(cppMat, lagNum);
 
   // Convert the result back to Rcpp::NumericMatrix
   int laggedRows = laggedMat.size();
