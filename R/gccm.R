@@ -55,12 +55,12 @@ gccm = \(cause, effect, nb = NULL, coords = NULL,
   effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
   cause = sdsfun::rm_lineartrend("cause~x+y", data = dtf)
 
-  x_xmap_y = RcppGCCMLattice(cause,effect,nb,libsizes,E)
+  x_xmap_y = RcppGCCM4Lattice(cause,effect,nb,libsizes,E)
   colnames(x_xmap_y) = c("lib_sizes","x_xmap_y_mean","x_xmap_y_sig",
                          "x_xmap_y_upper","x_xmap_y_lower")
   x_xmap_y = as.data.frame(x_xmap_y)
 
-  y_xmap_x = RcppGCCMLattice(effect,cause,nb,libsizes,E)
+  y_xmap_x = RcppGCCM4Lattice(effect,cause,nb,libsizes,E)
   colnames(y_xmap_x) = c("lib_sizes","y_xmap_x_mean","y_xmap_x_sig",
                          "y_xmap_x_upper","y_xmap_x_lower")
   y_xmap_x = as.data.frame(y_xmap_x)

@@ -33,8 +33,8 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
     int b                                              // Number of neighbors to use for simplex projection
 );
 
-// Function to compute GCCMLattice
-std::vector<std::vector<double>> GCCMLattice(
+// Function to compute GCCM4Lattice
+std::vector<std::vector<double>> GCCM4Lattice(
     const std::vector<std::vector<double>>& x_vectors,  // Reconstructed state-space (each row is a separate vector/state)
     const std::vector<double>& y,                      // Time series to cross map to
     const std::vector<int>& lib_sizes,                 // Vector of library sizes to use
