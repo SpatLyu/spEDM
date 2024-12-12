@@ -33,13 +33,7 @@ gccm = \(cause, effect, data, libsizes = NULL, E = 3,
     if (trendRM){
       # cause = RcppLinearTrendRM(cause,as.double(coords[,1]),as.double(coords[,2]))
       # effect = RcppLinearTrendRM(effect,as.double(coords[,1]),as.double(coords[,2]))
-      dtf = data.frame(cause = cause, effect = effect,
-                       x = coords[,1], y = coords[,2])
-      cause = sdsfun::rm_lineartrend("cause~x+y", data = dtf)
-      effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)    # cause = RcppLinearTrendRM(cause,as.double(coords[,1]),as.double(coords[,2]))
-      # effect = RcppLinearTrendRM(effect,as.double(coords[,1]),as.double(coords[,2]))
-      dtf = data.frame(cause = cause, effect = effect,
-                       x = coords[,1], y = coords[,2])
+      dtf = data.frame(cause = cause, effect = effect, x = coords[,1], y = coords[,2])
       cause = sdsfun::rm_lineartrend("cause~x+y", data = dtf)
       effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
     }
