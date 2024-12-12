@@ -4,7 +4,16 @@
 \alias{gccm}
 \title{geographical convergent cross mapping}
 \usage{
-gccm(cause, effect, data, libsizes = NULL, E = 3, nb = NULL, RowCol = NULL)
+gccm(
+  cause,
+  effect,
+  data,
+  libsizes = NULL,
+  E = 3,
+  nb = NULL,
+  RowCol = NULL,
+  trendRM = TRUE
+)
 }
 \arguments{
 \item{cause}{Name of causal variable.}
@@ -20,6 +29,8 @@ gccm(cause, effect, data, libsizes = NULL, E = 3, nb = NULL, RowCol = NULL)
 \item{nb}{(optional) The neighbours list.}
 
 \item{RowCol}{(optional) Matrix of selected row and cols numbers.}
+
+\item{trendRM}{(optional) Whether to remove the linear trend.}
 }
 \value{
 A \code{data.frame}.

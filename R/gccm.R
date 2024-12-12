@@ -7,6 +7,7 @@
 #' @param E (optional) The dimensions of the embedding.
 #' @param nb (optional) The neighbours list.
 #' @param RowCol (optional) Matrix of selected row and cols numbers.
+#' @param trendRM (optional) Whether to remove the linear trend.
 #'
 #' @return A `data.frame`.
 #' @export
@@ -15,8 +16,8 @@
 #' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
 #'                        quiet=TRUE)
 #' gccm("HOVAL", "CRIME", data = columbus)
-gccm = \(cause, effect, data, libsizes = NULL,
-         E = 3, nb = NULL, RowCol = NULL) {
+gccm = \(cause, effect, data, libsizes = NULL, E = 3,
+         nb = NULL, RowCol = NULL, trendRM =TRUE) {
   if (!inherits(cause,"character") || !inherits(effect,"character")) {
     stop("The `cause` and `effect` must be character.")
   }
@@ -29,13 +30,14 @@ gccm = \(cause, effect, data, libsizes = NULL,
     if (length(cause) != length(nb)) stop("Incompatible Data Dimensions!")
     if (is.null(libsizes)) libsizes = floor(seq(E + 2,length(cause),
                                                 length.out = floor(sqrt(length(cause)))))
+    if (trendRM){
+      # cause = RcppLinearTrendRM(cause,as.double(coords[,1]),as.double(coords[,2]))
+      # effect = RcppLinearTrendRM(effect,as.double(coords[,1]),as.double(coords[,2]))
+      dtf = data.frame(cause = cause, effect = effect, x = coords[,1], y = coords[,2])
+      cause = sdsfun::rm_lineartrend("cause~x+y", data = dtf)
+      effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
+    }
 
-    # cause = RcppLinearTrendRM(cause,as.double(coords[,1]),as.double(coords[,2]))
-    # effect = RcppLinearTrendRM(effect,as.double(coords[,1]),as.double(coords[,2]))
-    dtf = data.frame(cause = cause, effect = effect,
-                     x = coords[,1], y = coords[,2])
-    cause = sdsfun::rm_lineartrend("cause~x+y", data = dtf)
-    effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
     x_xmap_y = RcppGCCM4Lattice(cause,effect,nb,libsizes,E)
     y_xmap_x = RcppGCCM4Lattice(effect,cause,nb,libsizes,E)
 
@@ -44,8 +46,10 @@ gccm = \(cause, effect, data, libsizes = NULL,
     names(data) = c("cause","effect")
 
     dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
-    dtf$cause = sdsfun::rm_lineartrend("cause~x+y", data = dtf)
-    dtf$effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
+    if (trendRM){
+      dtf$cause = sdsfun::rm_lineartrend("cause~x+y", data = dtf)
+      dtf$effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
+    }
     causemat = sdsfun::tbl_xyz2mat(dtf[,1:3])[[1]]
     effectmat = sdsfun::tbl_xyz2mat(dtf[,c(1,2,4)])[[1]]
 
