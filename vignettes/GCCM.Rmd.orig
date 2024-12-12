@@ -76,13 +76,17 @@ $$
 install.packages("spEDM", dep = TRUE)
 ```
 
+Load the `spEDM` package:
+
+```{r}
+library(spEDM)
+```
+
 ### 2.2 An example of lattice data about county-level population density
 
 Load data and package:
 
 ```{r}
-library(spEDM)
-
 popd_nb = spdep::read.gal(system.file("extdata/popdensity_nb.gal",
                                       package = "spEDM"))
 popd_nb
@@ -150,8 +154,6 @@ fig1
 Load data and package:
 
 ```{r fig2,fig.width=6.55,fig.height=2.60,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 2**. Maps of soil Cu concentration, the density of industrial pollutants and nightlight.")}
-library(spEDM)
-
 soilpollution = terra::rast(system.file("extdata/soilpollution.tif",
                                         package = "spEDM"))
 soilpollution
@@ -189,7 +191,7 @@ sp_res
 
 Visualize the result:
 
-```{r fig1,fig.width=4.5,fig.height=4.5,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 3**. The cross-mapping prediction outputs between population density and county-level Precipitation.")}
+```{r fig3,fig.width=4.5,fig.height=4.5,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 3**. The cross-mapping prediction outputs between population density and county-level Precipitation.")}
 fig3 = ggplot2::ggplot(data = sp_res,
                        ggplot2::aes(x = lib_sizes)) +
   ggplot2::geom_line(ggplot2::aes(y = x_xmap_y_mean,
