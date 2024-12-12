@@ -191,7 +191,7 @@ sp_res
 
 Visualize the result:
 
-```{r fig3,fig.width=4.5,fig.height=4.5,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 3**. The cross-mapping prediction outputs between population density and county-level Precipitation.")}
+```{r fig3,fig.width=4.5,fig.height=4.5,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 3**. The cross-mapping prediction outputs between industrial pollutants density and soil Cu concentration.")}
 fig3 = ggplot2::ggplot(data = sp_res,
                        ggplot2::aes(x = lib_sizes)) +
   ggplot2::geom_line(ggplot2::aes(y = x_xmap_y_mean,
