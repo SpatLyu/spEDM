@@ -1,7 +1,8 @@
-#include <Rcpp.h>
+#include <vector>
 #include "CppStats.h"
 #include "CppLatticeUtils.h"
 #include "GCCM4Lattice.h"
+#include <Rcpp.h>
 
 // Wrapper function to calculate the confidence interval for a correlation coefficient and return a NumericVector
 // [[Rcpp::export]]
