@@ -80,11 +80,11 @@ Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec,
 
 // Wrapper function to perform GCCM Lattice and return a NumericMatrix
 // [[Rcpp::export]]
-Rcpp::NumericMatrix RcppGCCMLattice(const Rcpp::NumericVector& x,
-                                    const Rcpp::NumericVector& y,
-                                    const Rcpp::List& nb,
-                                    const Rcpp::IntegerVector& libsizes,
-                                    int E) {
+Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,
+                                     const Rcpp::NumericVector& y,
+                                     const Rcpp::List& nb,
+                                     const Rcpp::IntegerVector& libsizes,
+                                     int E) {
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
   std::vector<double> y_std = Rcpp::as<std::vector<double>>(y);
@@ -103,8 +103,8 @@ Rcpp::NumericMatrix RcppGCCMLattice(const Rcpp::NumericVector& x,
   std::vector<std::pair<int, int>> interval = {{1, n}};
 
   // Perform GCCM Lattice
-  std::vector<std::vector<double>> result = GCCMLattice(embeddings, y_std, libsizes_std,
-                                                        interval, interval, E);
+  std::vector<std::vector<double>> result = GCCM4Lattice(embeddings, y_std, libsizes_std,
+                                                         interval, interval, E);
 
   // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
   Rcpp::NumericMatrix resultMatrix(result.size(), 5);
