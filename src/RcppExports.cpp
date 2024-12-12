@@ -24,7 +24,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppGenGridEmbeddings
-Rcpp::List RcppGenGridEmbeddings(Rcpp::NumericMatrix mat, int E);
+Rcpp::NumericMatrix RcppGenGridEmbeddings(Rcpp::NumericMatrix mat, int E);
 RcppExport SEXP _spEDM_RcppGenGridEmbeddings(SEXP matSEXP, SEXP ESEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -32,18 +32,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type mat(matSEXP);
     Rcpp::traits::input_parameter< int >::type E(ESEXP);
     rcpp_result_gen = Rcpp::wrap(RcppGenGridEmbeddings(mat, E));
-    return rcpp_result_gen;
-END_RCPP
-}
-// RcppGenGridEmbeddings2
-Rcpp::NumericMatrix RcppGenGridEmbeddings2(Rcpp::NumericMatrix mat, int E);
-RcppExport SEXP _spEDM_RcppGenGridEmbeddings2(SEXP matSEXP, SEXP ESEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type mat(matSEXP);
-    Rcpp::traits::input_parameter< int >::type E(ESEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppGenGridEmbeddings2(mat, E));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -133,7 +121,6 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppLaggedVar4Grid", (DL_FUNC) &_spEDM_RcppLaggedVar4Grid, 2},
     {"_spEDM_RcppGenGridEmbeddings", (DL_FUNC) &_spEDM_RcppGenGridEmbeddings, 2},
-    {"_spEDM_RcppGenGridEmbeddings2", (DL_FUNC) &_spEDM_RcppGenGridEmbeddings2, 2},
     {"_spEDM_RcppGCCM4Grid", (DL_FUNC) &_spEDM_RcppGCCM4Grid, 5},
     {"_spEDM_RcppConfidence", (DL_FUNC) &_spEDM_RcppConfidence, 3},
     {"_spEDM_RcppLinearTrendRM", (DL_FUNC) &_spEDM_RcppLinearTrendRM, 4},

@@ -48,31 +48,7 @@ std::vector<std::vector<double>> CppLaggedVar4Grid(
   return result;
 }
 
-std::vector<std::vector<std::vector<double>>> GenGridEmbeddings(
-    const std::vector<std::vector<double>>& mat, int E) {
-  // Initialize a vector to store the embeddings
-  std::vector<std::vector<std::vector<double>>> xEmbeddings(E + 1);
-
-  // The first embedding is the transpose of the input matrix
-  int numRows = mat.size();
-  int numCols = mat[0].size();
-  xEmbeddings[0].resize(numCols, std::vector<double>(numRows));
-
-  for (int r = 0; r < numRows; ++r) {
-    for (int c = 0; c < numCols; ++c) {
-      xEmbeddings[0][c][r] = mat[r][c]; // Transpose the matrix
-    }
-  }
-
-  // Generate the remaining embeddings using laggedVariableAs2Dim
-  for (int i = 1; i <= E; ++i) {
-    xEmbeddings[i] = CppLaggedVar4Grid(mat, i);
-  }
-
-  return xEmbeddings;
-}
-
-std::vector<std::vector<double>> GenGridEmbeddings2(
+std::vector<std::vector<double>> GenGridEmbeddings(
     const std::vector<std::vector<double>>& mat,
     int E) {
   // Calculate the total number of elements in all subsets of mat
@@ -121,3 +97,27 @@ std::vector<std::vector<double>> GenGridEmbeddings2(
 
   return result;
 }
+
+// std::vector<std::vector<std::vector<double>>> GenGridEmbeddings2(
+//     const std::vector<std::vector<double>>& mat, int E) {
+//   // Initialize a vector to store the embeddings
+//   std::vector<std::vector<std::vector<double>>> xEmbeddings(E + 1);
+//
+//   // The first embedding is the transpose of the input matrix
+//   int numRows = mat.size();
+//   int numCols = mat[0].size();
+//   xEmbeddings[0].resize(numCols, std::vector<double>(numRows));
+//
+//   for (int r = 0; r < numRows; ++r) {
+//     for (int c = 0; c < numCols; ++c) {
+//       xEmbeddings[0][c][r] = mat[r][c]; // Transpose the matrix
+//     }
+//   }
+//
+//   // Generate the remaining embeddings using laggedVariableAs2Dim
+//   for (int i = 1; i <= E; ++i) {
+//     xEmbeddings[i] = CppLaggedVar4Grid(mat, i);
+//   }
+//
+//   return xEmbeddings;
+// }
