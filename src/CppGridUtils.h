@@ -16,4 +16,9 @@ std::vector<std::vector<std::vector<double>>> GenGridEmbeddings(
     int E
 );
 
+std::vector<std::vector<double>> GenGridEmbeddings2(
+    const std::vector<std::vector<double>>& mat,
+    int E
+);
+
 #endif // CppGridUtils_H

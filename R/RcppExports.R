@@ -9,6 +9,10 @@ RcppGenGridEmbeddings <- function(mat, E) {
     .Call(`_spEDM_RcppGenGridEmbeddings`, mat, E)
 }
 
+RcppGenGridEmbeddings2 <- function(mat, E) {
+    .Call(`_spEDM_RcppGenGridEmbeddings2`, mat, E)
+}
+
 RcppGCCM4Grid <- function(xMatrix, yMatrix, lib_sizes, pred, E) {
     .Call(`_spEDM_RcppGCCM4Grid`, xMatrix, yMatrix, lib_sizes, pred, E)
 }

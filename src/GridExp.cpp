@@ -70,6 +70,35 @@ Rcpp::List RcppGenGridEmbeddings(Rcpp::NumericMatrix mat, int E) {
 }
 
 // [[Rcpp::export]]
+Rcpp::NumericMatrix RcppGenGridEmbeddings2(Rcpp::NumericMatrix mat, int E) {
+  // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
+  int numRows = mat.nrow();
+  int numCols = mat.ncol();
+  std::vector<std::vector<double>> cppMat(numRows, std::vector<double>(numCols));
+
+  for (int r = 0; r < numRows; ++r) {
+    for (int c = 0; c < numCols; ++c) {
+      cppMat[r][c] = mat(r, c);
+    }
+  }
+
+  // Call the GenGridEmbeddings function
+  std::vector<std::vector<double>> embeddings = GenGridEmbeddings2(cppMat, E);
+
+  // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
+  int rows = embeddings.size();
+  int cols = embeddings[0].size();
+  Rcpp::NumericMatrix result(rows, cols);
+  for (int i = 0; i < rows; ++i) {
+    for (int j = 0; j < cols; ++j) {
+      result(i, j) = embeddings[i][j];
+    }
+  }
+
+  return result;
+}
+
+// [[Rcpp::export]]
 Rcpp::NumericMatrix RcppGCCM4Grid(
     const Rcpp::NumericMatrix& xMatrix,
     const Rcpp::NumericMatrix& yMatrix,
