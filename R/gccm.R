@@ -29,16 +29,35 @@ gccm = \(cause, effect, data, libsizes = NULL,
     if (length(cause) != length(nb)) stop("Incompatible Data Dimensions!")
     if (is.null(libsizes)) libsizes = floor(seq(E + 2,length(cause),
                                                 length.out = floor(sqrt(length(cause)))))
-    # effect = RcppLinearTrendRM(effect,as.double(coords[,1]),as.double(coords[,2]))
+
     # cause = RcppLinearTrendRM(cause,as.double(coords[,1]),as.double(coords[,2]))
+    # effect = RcppLinearTrendRM(effect,as.double(coords[,1]),as.double(coords[,2]))
     dtf = data.frame(cause = cause, effect = effect,
                      x = coords[,1], y = coords[,2])
-    effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
     cause = sdsfun::rm_lineartrend("cause~x+y", data = dtf)
+    effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
     x_xmap_y = RcppGCCM4Lattice(cause,effect,nb,libsizes,E)
     y_xmap_x = RcppGCCM4Lattice(effect,cause,nb,libsizes,E)
+
   } else if (inherits(data,"SpatRaster")) {
-    imgdf = terra::as.data.frame(data[[c(cause,effect)]],xy = TRUE)
+    data = data[[c(cause,effect)]]
+    names(data) = c("cause","effect")
+
+    dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
+    dtf$cause = sdsfun::rm_lineartrend("cause~x+y", data = dtf)
+    dtf$effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
+    cause = sdsfun::tbl_xyz2mat(dtf, z = 3)[[1]]
+    effect = sdsfun::tbl_xyz2mat(dtf, z = 4)[[1]]
+
+    maxlibsize = min(dim(cause))
+    if (is.null(libsizes)) libsizes = floor(seq(E + 2, maxlibsize,
+                                                length.out = floor(sqrt(maxlibsize))))
+    selvec = seq(5,maxlibsize,5)
+    if (is.null(RowCol)) RowCol = as.matrix(expand.grid(selvec,selvec))
+
+    x_xmap_y = RcppGCCM4Gird(cause,effect,libsizes,RowCol,E)
+    y_xmap_x = RcppGCCM4Grid(effect,cause,libsizes,RowCol,E)
+
   } else {
     stop("The data should be `sf` or `SpatRaster` object!")
   }
