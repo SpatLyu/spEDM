@@ -1,13 +1,12 @@
 #' geographical convergent cross mapping
 #'
-#' @param cause The causal series (as a character or a vector).
-#' @param effect The effect series (as a character or a vector).
-#' @param nb (optional) The neighbours list.
-#' @param coords (optional) The coordinates matrix.
-#' @param data (optional) The observation data.
+#' @param cause Name of causal variable.
+#' @param effect Name of effect variable.
+#' @param data The observation data, must be `sf` or `SpatRaster` object.
 #' @param libsizes (optional) A vector of library sizes to use.
 #' @param E (optional) The dimensions of the embedding.
-#' @param ... (optional) Other parameters passed to `sdsfun::spdep_nb()`.
+#' @param nb (optional) The neighbours list.
+#' @param RowCol (optional) Matrix of selected row and cols numbers.
 #'
 #' @return A `data.frame`.
 #' @export
@@ -16,51 +15,56 @@
 #' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
 #'                        quiet=TRUE)
 #' gccm("HOVAL", "CRIME", data = columbus)
-gccm = \(cause, effect, nb = NULL, coords = NULL,
-         data = NULL, libsizes = NULL, E = 3, ...) {
-
-  if (is.null(nb)){
-    if(inherits(data,"sf")){
-      nb = sdsfun::spdep_nb(data,...)
-    } else {
-      stop("When `nb` is NULL, the data must be provided as an `sf` object!")
-    }
+gccm = \(cause, effect, data, libsizes = NULL,
+         E = 3, nb = NULL, RowCol = NULL) {
+  if (!inherits(cause,"character") || !inherits(effect,"character")) {
+    stop("The `cause` and `effect` must be character.")
   }
 
-  if (is.null(coords)){
-    if(inherits(data,"sf")){
-      coords = sdsfun::sf_coordinates(data)
-    } else {
-      stop("When `coords` is NULL, the data must be provided as an `sf` object!")
-    }
-  }
-  if (inherits(coords,"character")) coords = as.matrix(data[,coords])
-
-  if (inherits(cause,"character") || inherits(effect,"character")){
-    if (is.null(data)){
-      stop("When `cause` and `effect` are character, the data must be provided!")
-    }
+  if (inherits(data,"sf")) {
+    coords = sdsfun::sf_coordinates(data)
     cause = data[,cause,drop = TRUE]
     effect = data[,effect,drop = TRUE]
+    if (is.null(nb)) nb = sdsfun::spdep_nb(data)
+    if (length(cause) != length(nb)) stop("Incompatible Data Dimensions!")
+    if (is.null(libsizes)) libsizes = floor(seq(E + 2,length(cause),
+                                                length.out = floor(sqrt(length(cause)))))
+
+    # cause = RcppLinearTrendRM(cause,as.double(coords[,1]),as.double(coords[,2]))
+    # effect = RcppLinearTrendRM(effect,as.double(coords[,1]),as.double(coords[,2]))
+    dtf = data.frame(cause = cause, effect = effect,
+                     x = coords[,1], y = coords[,2])
+    cause = sdsfun::rm_lineartrend("cause~x+y", data = dtf)
+    effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
+    x_xmap_y = RcppGCCM4Lattice(cause,effect,nb,libsizes,E)
+    y_xmap_x = RcppGCCM4Lattice(effect,cause,nb,libsizes,E)
+
+  } else if (inherits(data,"SpatRaster")) {
+    data = data[[c(cause,effect)]]
+    names(data) = c("cause","effect")
+
+    dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
+    dtf$cause = sdsfun::rm_lineartrend("cause~x+y", data = dtf)
+    dtf$effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
+    cause = sdsfun::tbl_xyz2mat(dtf, z = 3)[[1]]
+    effect = sdsfun::tbl_xyz2mat(dtf, z = 4)[[1]]
+
+    maxlibsize = min(dim(cause))
+    if (is.null(libsizes)) libsizes = floor(seq(E + 2, maxlibsize,
+                                                length.out = floor(sqrt(maxlibsize))))
+    selvec = seq(5,maxlibsize,5)
+    if (is.null(RowCol)) RowCol = as.matrix(expand.grid(selvec,selvec))
+
+    x_xmap_y = RcppGCCM4Gird(cause,effect,libsizes,RowCol,E)
+    y_xmap_x = RcppGCCM4Grid(effect,cause,libsizes,RowCol,E)
+
+  } else {
+    stop("The data should be `sf` or `SpatRaster` object!")
   }
 
-  if (length(cause) != length(nb)) stop("Incompatible Data Dimensions!")
-  if (is.null(libsizes)) libsizes = floor(seq(E + 2,length(cause),
-                                              length.out = floor(sqrt(length(cause)))))
-
-  # effect = RcppLinearTrendRM(effect,as.double(coords[,1]),as.double(coords[,2]))
-  # cause = RcppLinearTrendRM(cause,as.double(coords[,1]),as.double(coords[,2]))
-  dtf = data.frame(cause = cause, effect = effect,
-                   x = coords[,1], y = coords[,2])
-  effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
-  cause = sdsfun::rm_lineartrend("cause~x+y", data = dtf)
-
-  x_xmap_y = RcppGCCM4Lattice(cause,effect,nb,libsizes,E)
   colnames(x_xmap_y) = c("lib_sizes","x_xmap_y_mean","x_xmap_y_sig",
                          "x_xmap_y_upper","x_xmap_y_lower")
   x_xmap_y = as.data.frame(x_xmap_y)
-
-  y_xmap_x = RcppGCCM4Lattice(effect,cause,nb,libsizes,E)
   colnames(y_xmap_x) = c("lib_sizes","y_xmap_x_mean","y_xmap_x_sig",
                          "y_xmap_x_upper","y_xmap_x_lower")
   y_xmap_x = as.data.frame(y_xmap_x)
