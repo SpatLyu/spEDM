@@ -179,7 +179,9 @@ sp_res = gccm(cause = "industry",
               effect = "cu",
               data = soilpollution,
               libsizes = seq(10,120,20),
-              E = 3, RowCol = pred)
+              E = 3,
+              RowCol = pred,
+              trendRM = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
 sp_res
