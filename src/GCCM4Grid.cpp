@@ -111,14 +111,14 @@ std::vector<std::vector<double>> GCCM4Grid(
   // Initialize the result container
   std::vector<std::pair<int, double>> x_xmap_y;
 
-  // Iterate over each library size
-  for (int lib_size : unique_lib_sizes) {
-    // Perform single grid cross-mapping for the current library size
-    auto results = GCCMSingle4Grid(xEmbedings, yPred, lib_size, pred, totalRow, totalCol, b);
-
-    // Append the results to the main result container
-    x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
-  }
+  // // Iterate over each library size
+  // for (int lib_size : unique_lib_sizes) {
+  //   // Perform single grid cross-mapping for the current library size
+  //   auto results = GCCMSingle4Grid(xEmbedings, yPred, lib_size, pred, totalRow, totalCol, b);
+  //
+  //   // Append the results to the main result container
+  //   x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+  // }
 
   // Perform the operations using RcppThread
   RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
