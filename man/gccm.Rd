@@ -4,33 +4,22 @@
 \alias{gccm}
 \title{geographical convergent cross mapping}
 \usage{
-gccm(
-  cause,
-  effect,
-  nb = NULL,
-  coords = NULL,
-  data = NULL,
-  libsizes = NULL,
-  E = 3,
-  ...
-)
+gccm(cause, effect, data, libsizes = NULL, E = 3, nb = NULL, RowCol = NULL)
 }
 \arguments{
-\item{cause}{The causal series (as a character or a vector).}
+\item{cause}{Name of causal variable.}
 
-\item{effect}{The effect series (as a character or a vector).}
+\item{effect}{Name of effect variable.}
 
-\item{nb}{(optional) The neighbours list.}
-
-\item{coords}{(optional) The coordinates matrix.}
-
-\item{data}{(optional) The observation data.}
+\item{data}{The observation data, must be \code{sf} or \code{SpatRaster} object.}
 
 \item{libsizes}{(optional) A vector of library sizes to use.}
 
 \item{E}{(optional) The dimensions of the embedding.}
 
-\item{...}{(optional) Other parameters passed to \code{sdsfun::spdep_nb()}.}
+\item{nb}{(optional) The neighbours list.}
+
+\item{RowCol}{(optional) Matrix of selected row and cols numbers.}
 }
 \value{
 A \code{data.frame}.
