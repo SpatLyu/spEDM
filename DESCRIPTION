@@ -21,8 +21,7 @@ LinkingTo:
 Imports: 
     dplyr,
     sdsfun (>= 0.6.0),
-    terra,
-    tibble
+    terra
 Suggests: 
     ggplot2,
     knitr,
@@ -31,6 +30,4 @@ Suggests:
     rmarkdown,
     sf,
     spdep
-Remotes:
-    stscl/sdsfun
 VignetteBuilder: knitr

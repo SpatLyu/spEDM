@@ -33,7 +33,7 @@ gccm(
 \item{...}{(optional) Other parameters passed to \code{sdsfun::spdep_nb()}.}
 }
 \value{
-A \code{tibble}.
+A \code{data.frame}.
 }
 \description{
 geographical convergent cross mapping
