@@ -149,27 +149,30 @@ fig1 = ggplot2::ggplot(data = pd_res,
 fig1
 ```
 
-### 2.3 An example of grid data about soil pollution
+### 2.3 An example of grid data about farmland NPP
 
 Load data and package:
 
-```{r fig2,fig.width=6.55,fig.height=2.60,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 2**. Maps of soil Cu concentration, the density of industrial pollutants and nightlight.")}
-soilpollution = terra::rast(system.file("extdata/soilpollution.tif",
-                                        package = "spEDM"))
-soilpollution
+```{r fig2,fig.width=6.55,fig.height=2.75,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 2**. Maps of farmland NPP and climate factors.")}
+npp = terra::rast(system.file("extdata/npp.tif", package = "spEDM"))
+npp
 
-terra::plot(soilpollution,nc = 3,
+terra::plot(npp,nc = 3,
             mar = rep(0.1,4),
             oma = rep(0.1,4),
             axes = FALSE,
             legend = FALSE)
 ```
 
-To save the computation time, not every pixels are predict and the results are almost the same due to the spatial autocorrealtion.
+*To save the computation time, we aggregate the npp raster data by `4` times*
 
 ```{r}
-predRows = seq(5,terra::nrow(soilpollution),5)
-predCols = seq(5,terra::ncol(soilpollution),5)
+npp = terra::aggregate(npp,4)
+```
+
+```{r}
+predRows = seq(5,terra::nrow(npp),5)
+predCols = seq(5,terra::ncol(npp),5)
 pred = as.matrix(merge(predRows,predCols))
 ```
 
@@ -177,22 +180,22 @@ Run GCCM:
 
 ```{r}
 startTime = Sys.time()
-sp_res = gccm(cause = "industry",
-              effect = "cu",
-              data = soilpollution,
-              libsizes = seq(10,120,20),
-              E = 3,
-              RowCol = pred,
-              trendRM = FALSE)
+npp_res = gccm(cause = "pre",
+               effect = "npp",
+               data = npp,
+               libsizes = seq(10,120,10),
+               E = 3,
+               RowCol = pred,
+               trendRM = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-sp_res
+npp_res
 ```
 
 Visualize the result:
 
-```{r fig3,fig.width=4.5,fig.height=4.5,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 3**. The cross-mapping prediction outputs between industrial pollutants density and soil Cu concentration.")}
-fig3 = ggplot2::ggplot(data = sp_res,
+```{r fig3,fig.width=4.5,fig.height=4.5,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 3**. The cross-mapping prediction outputs between farmland NPP and precipitation.")}
+fig3 = ggplot2::ggplot(data = npp_res,
                        ggplot2::aes(x = lib_sizes)) +
   ggplot2::geom_line(ggplot2::aes(y = x_xmap_y_mean,
                                   color = "x xmap y"),
@@ -208,8 +211,8 @@ fig3 = ggplot2::ggplot(data = sp_res,
                               limits = c(0, 125), expand = c(0, 0)) +
   ggplot2::scale_color_manual(values = c("x xmap y" = "#608dbe",
                                          "y xmap x" = "#ed795b"),
-                              labels = c("Industry xmap Cu",
-                                         "Cu xmap Industry"),
+                              labels = c("Precipitation xmap NPP",
+                                         "NPP xmap Precipitation"),
                               name = "") +
   ggplot2::theme_bw() +
   ggplot2::theme(axis.text = ggplot2::element_text(family = "TNR"),
