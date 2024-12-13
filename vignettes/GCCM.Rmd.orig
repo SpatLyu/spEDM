@@ -169,7 +169,7 @@ terra::plot(soilpollution,nc = 3,
             legend = FALSE)
 ```
 
-To save the computation time, not every pixels are predict and the results are almost the same due to the spatial autocorrealtion.
+*To save the computation time, not every pixels are predict and the results are almost the same due to the spatial autocorrealtion.*
 
 ```{r}
 predRows = seq(5,terra::nrow(soilpollution),5)
