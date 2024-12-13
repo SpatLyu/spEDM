@@ -169,7 +169,7 @@ terra::plot(npp,nc = 3,
 *To save the computation time, we select some not-NA pixels to predict:*
 
 ```{r}
-global(npp,"isNA")
+terra::global(npp,"isNA")
 terra::ncell(npp)
 
 namat = terra::as.matrix(!is.na(npp[[1]]), wide = TRUE)
