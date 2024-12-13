@@ -107,7 +107,9 @@ pd_res = gccm(cause = "Pre",
               effect = "popDensity",
               data = popd_sf,
               libsizes = seq(10, 2800, by = 100),
-              E = 3, nb = popd_nb)
+              E = 3,
+              nb = popd_nb,
+              trendRM = TRUE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
 pd_res
@@ -164,15 +166,11 @@ terra::plot(npp,nc = 3,
             legend = FALSE)
 ```
 
-*To save the computation time, we aggregate the npp raster data by `4` times*
+*To save the computation time, we select some pixels to predict*
 
 ```{r}
-npp = terra::aggregate(npp,4)
-```
-
-```{r}
-predRows = seq(5,terra::nrow(npp),5)
-predCols = seq(5,terra::ncol(npp),5)
+predRows = seq(10,terra::nrow(npp),10)
+predCols = seq(10,terra::ncol(npp),10)
 pred = as.matrix(merge(predRows,predCols))
 ```
 
@@ -183,10 +181,10 @@ startTime = Sys.time()
 npp_res = gccm(cause = "pre",
                effect = "npp",
                data = npp,
-               libsizes = seq(10,120,10),
+               libsizes = seq(20,300,20),
                E = 3,
                RowCol = pred,
-               trendRM = FALSE)
+               trendRM = TRUE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
 npp_res
@@ -207,8 +205,8 @@ fig3 = ggplot2::ggplot(data = npp_res,
                               limits = c(-0.05, 1), expand = c(0, 0),
                               name = expression(rho)) +
   ggplot2::scale_x_continuous(name = "Lib of Sizes",
-                              breaks = seq(10,120,20),
-                              limits = c(0, 125), expand = c(0, 0)) +
+                              breaks = seq(100,300,100),
+                              limits = c(10, 300), expand = c(0, 0)) +
   ggplot2::scale_color_manual(values = c("x xmap y" = "#608dbe",
                                          "y xmap x" = "#ed795b"),
                               labels = c("Precipitation xmap NPP",
