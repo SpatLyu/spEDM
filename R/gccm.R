@@ -57,7 +57,11 @@ gccm = \(cause, effect, data, libsizes = NULL, E = 3,
     if (is.null(libsizes)) libsizes = floor(seq(E + 2, maxlibsize,
                                                 length.out = floor(sqrt(maxlibsize))))
     selvec = seq(5,maxlibsize,5)
-    if (is.null(RowCol)) RowCol = as.matrix(expand.grid(selvec,selvec))
+    if (is.null(RowCol)){
+      RowCol = as.matrix(expand.grid(selvec,selvec))
+    } else {
+      RowCol = RowCol[,c(2,1)]
+    }
 
     x_xmap_y = RcppGCCM4Grid(causemat,effectmat,libsizes,RowCol,E)
     y_xmap_x = RcppGCCM4Grid(effectmat,causemat,libsizes,RowCol,E)
