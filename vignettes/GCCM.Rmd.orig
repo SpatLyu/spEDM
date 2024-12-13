@@ -184,7 +184,7 @@ startTime = Sys.time()
 sp_res = gccm(cause = "ntl",
               effect = "cu",
               data = soilpollution,
-              libsizes = seq(10,120,20),
+              libsizes = seq(10,120,10),
               E = 3, RowCol = pred)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
@@ -206,8 +206,8 @@ fig3 = ggplot2::ggplot(data = sp_res,
                               limits = c(-0.05, 1), expand = c(0, 0),
                               name = expression(rho)) +
   ggplot2::scale_x_continuous(name = "Lib of Sizes",
-                              breaks = seq(10,120,20),
-                              limits = c(0, 125), expand = c(0, 0)) +
+                              breaks = seq(10,120,10),
+                              limits = c(0, 121), expand = c(0, 0)) +
   ggplot2::scale_color_manual(values = c("x xmap y" = "#608dbe",
                                          "y xmap x" = "#ed795b"),
                               labels = c("Nightlight xmap Cu",
