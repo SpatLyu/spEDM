@@ -166,9 +166,10 @@ terra::plot(npp,nc = 3,
             legend = FALSE)
 ```
 
-*To save the computation time, we select some not-NA pixels to predict:*
+*To save the computation time, we will aggregate the data by 4 times and select 3000 non-NA pixels to predict:*
 
 ```{r}
+npp = terra::aggregate(npp,fact = 4, na.rm = TRUE)
 terra::global(npp,"isNA")
 terra::ncell(npp)
 
@@ -188,7 +189,7 @@ startTime = Sys.time()
 npp_res = gccm(cause = "pre",
                effect = "npp",
                data = npp,
-               libsizes = seq(10,300,10),
+               libsizes = seq(5,100,5),
                E = 3, RowCol = pred)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
@@ -210,8 +211,8 @@ fig3 = ggplot2::ggplot(data = npp_res,
                               limits = c(-0.05, 1), expand = c(0, 0),
                               name = expression(rho)) +
   ggplot2::scale_x_continuous(name = "Lib of Sizes",
-                              breaks = seq(10,300,10),
-                              limits = c(0, 300), expand = c(0, 0)) +
+                              breaks = seq(5,100,5),
+                              limits = c(0, 100), expand = c(0, 0)) +
   ggplot2::scale_color_manual(values = c("x xmap y" = "#608dbe",
                                          "y xmap x" = "#ed795b"),
                               labels = c("Precipitation xmap NPP",
