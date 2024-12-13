@@ -50,8 +50,8 @@ gccm = \(cause, effect, data, libsizes = NULL, E = 3,
       dtf$cause = sdsfun::rm_lineartrend("cause~x+y", data = dtf)
       dtf$effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
     }
-    causemat = sdsfun::tbl_xyz2mat(dtf[,1:3])[[1]]
-    effectmat = sdsfun::tbl_xyz2mat(dtf[,c(1,2,4)])[[1]]
+    causemat = matrix(dtf[,3],nrow = terra::nrow(data),byrow = TRUE)
+    effectmat = matrix(dtf[,4],nrow = terra::nrow(data),byrow = TRUE)
 
     maxlibsize = min(dim(causemat))
     if (is.null(libsizes)) libsizes = floor(seq(E + 2, maxlibsize,
