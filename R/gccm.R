@@ -50,18 +50,14 @@ gccm = \(cause, effect, data, libsizes = NULL, E = 3,
       dtf$cause = sdsfun::rm_lineartrend("cause~x+y", data = dtf)
       dtf$effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
     }
-    causemat = t(sdsfun::tbl_xyz2mat(dtf[,1:3])[[1]])
-    effectmat = t(sdsfun::tbl_xyz2mat(dtf[,c(1,2,4)])[[1]])
+    causemat = sdsfun::tbl_xyz2mat(dtf[,1:3])[[1]]
+    effectmat = sdsfun::tbl_xyz2mat(dtf[,c(1,2,4)])[[1]]
 
     maxlibsize = min(dim(causemat))
     if (is.null(libsizes)) libsizes = floor(seq(E + 2, maxlibsize,
                                                 length.out = floor(sqrt(maxlibsize))))
     selvec = seq(5,maxlibsize,5)
-    if (is.null(RowCol)){
-      RowCol = as.matrix(expand.grid(selvec,selvec))
-    } else {
-      RowCol = RowCol[,c(2,1)]
-    }
+    if (is.null(RowCol)) RowCol = as.matrix(expand.grid(selvec,selvec))
 
     x_xmap_y = RcppGCCM4Grid(causemat,effectmat,libsizes,RowCol,E)
     y_xmap_x = RcppGCCM4Grid(effectmat,causemat,libsizes,RowCol,E)
