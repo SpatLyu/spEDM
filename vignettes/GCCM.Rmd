@@ -98,7 +98,7 @@ popd_nb
 popdensity = readr::read_csv(system.file("extdata/popdensity.csv",
                                          package = "spEDM"))
 ## Rows: 2806 Columns: 7
-## ── Column specification ───────────────────────────────────────────────────────────────────────
+## ── Column specification ────────────────────────────────────────────────────────────────────────
 ## Delimiter: ","
 ## dbl (7): x, y, popDensity, DEM, Tem, Pre, slop
 ## 
@@ -156,66 +156,66 @@ pd_res = gccm(cause = "Pre",
               nb = popd_nb,
               trendRM = TRUE)
 ## 
-Computing: [==                                      ] 4%  (~27m52s remaining)       
-Computing: [===                                     ] 7%  (~18m52s remaining)       
-Computing: [=====                                   ] 11%  (~14m34s remaining)       
-Computing: [======                                  ] 14%  (~13m24s remaining)       
-Computing: [========                                ] 18%  (~10m35s remaining)       
-Computing: [=========                               ] 21%  (~9m5s remaining)       
-Computing: [==========                              ] 25%  (~8m22s remaining)       
-Computing: [============                            ] 29%  (~7m39s remaining)       
-Computing: [=============                           ] 32%  (~6m39s remaining)       
-Computing: [===============                         ] 36%  (~6m6s remaining)       
-Computing: [================                        ] 39%  (~5m36s remaining)       
+Computing: [==                                      ] 4%  (~27m51s remaining)       
+Computing: [===                                     ] 7%  (~18m56s remaining)       
+Computing: [=====                                   ] 11%  (~14m42s remaining)       
+Computing: [======                                  ] 14%  (~13m12s remaining)       
+Computing: [========                                ] 18%  (~10m33s remaining)       
+Computing: [=========                               ] 21%  (~8m58s remaining)       
+Computing: [==========                              ] 25%  (~8m17s remaining)       
+Computing: [============                            ] 29%  (~7m40s remaining)       
+Computing: [=============                           ] 32%  (~6m38s remaining)       
+Computing: [===============                         ] 36%  (~6m9s remaining)       
+Computing: [================                        ] 39%  (~5m38s remaining)       
 Computing: [==================                      ] 43%  (~4m53s remaining)       
-Computing: [===================                     ] 46%  (~5m15s remaining)       
-Computing: [====================                    ] 50%  (~4m39s remaining)       
-Computing: [======================                  ] 54%  (~4m10s remaining)       
-Computing: [=======================                 ] 57%  (~3m44s remaining)       
-Computing: [=========================               ] 61%  (~3m17s remaining)       
+Computing: [===================                     ] 46%  (~5m5s remaining)       
+Computing: [====================                    ] 50%  (~4m32s remaining)       
+Computing: [======================                  ] 54%  (~4m2s remaining)       
+Computing: [=======================                 ] 57%  (~3m41s remaining)       
+Computing: [=========================               ] 61%  (~3m16s remaining)       
 Computing: [==========================              ] 64%  (~2m57s remaining)       
-Computing: [============================            ] 68%  (~2m41s remaining)       
-Computing: [=============================           ] 71%  (~2m16s remaining)       
-Computing: [==============================          ] 75%  (~2m8s remaining)       
+Computing: [============================            ] 68%  (~2m40s remaining)       
+Computing: [=============================           ] 71%  (~2m17s remaining)       
+Computing: [==============================          ] 75%  (~2m7s remaining)       
 Computing: [================================        ] 79%  (~1m52s remaining)       
 Computing: [=================================       ] 82%  (~1m30s remaining)       
 Computing: [===================================     ] 86%  (~1m13s remaining)       
-Computing: [====================================    ] 89%  (~1m5s remaining)       
-Computing: [======================================  ] 93%  (~44s remaining)       
+Computing: [====================================    ] 89%  (~1m3s remaining)       
+Computing: [======================================  ] 93%  (~42s remaining)       
 Computing: [======================================= ] 96%  (~21s remaining)       
 Computing: [========================================] 100% (done)                         
 ## 
-Computing: [==                                      ] 4%  (~27m55s remaining)       
-Computing: [===                                     ] 7%  (~18m51s remaining)       
-Computing: [=====                                   ] 11%  (~14m38s remaining)       
-Computing: [======                                  ] 14%  (~13m12s remaining)       
-Computing: [========                                ] 18%  (~10m37s remaining)       
-Computing: [=========                               ] 21%  (~8m59s remaining)       
-Computing: [==========                              ] 25%  (~8m18s remaining)       
-Computing: [============                            ] 29%  (~7m38s remaining)       
-Computing: [=============                           ] 32%  (~6m39s remaining)       
-Computing: [===============                         ] 36%  (~6m6s remaining)       
-Computing: [================                        ] 39%  (~5m36s remaining)       
-Computing: [==================                      ] 43%  (~4m51s remaining)       
-Computing: [===================                     ] 46%  (~5m13s remaining)       
-Computing: [====================                    ] 50%  (~4m36s remaining)       
-Computing: [======================                  ] 54%  (~4m9s remaining)       
-Computing: [=======================                 ] 57%  (~3m46s remaining)       
-Computing: [=========================               ] 61%  (~3m16s remaining)       
-Computing: [==========================              ] 64%  (~2m58s remaining)       
+Computing: [==                                      ] 4%  (~27m51s remaining)       
+Computing: [===                                     ] 7%  (~19m2s remaining)       
+Computing: [=====                                   ] 11%  (~14m47s remaining)       
+Computing: [======                                  ] 14%  (~13m14s remaining)       
+Computing: [========                                ] 18%  (~10m36s remaining)       
+Computing: [=========                               ] 21%  (~9m1s remaining)       
+Computing: [==========                              ] 25%  (~8m19s remaining)       
+Computing: [============                            ] 29%  (~7m42s remaining)       
+Computing: [=============                           ] 32%  (~6m41s remaining)       
+Computing: [===============                         ] 36%  (~6m10s remaining)       
+Computing: [================                        ] 39%  (~5m39s remaining)       
+Computing: [==================                      ] 43%  (~4m54s remaining)       
+Computing: [===================                     ] 46%  (~5m3s remaining)       
+Computing: [====================                    ] 50%  (~4m31s remaining)       
+Computing: [======================                  ] 54%  (~4m2s remaining)       
+Computing: [=======================                 ] 57%  (~3m42s remaining)       
+Computing: [=========================               ] 61%  (~3m15s remaining)       
+Computing: [==========================              ] 64%  (~2m57s remaining)       
 Computing: [============================            ] 68%  (~2m40s remaining)       
-Computing: [=============================           ] 71%  (~2m16s remaining)       
+Computing: [=============================           ] 71%  (~2m17s remaining)       
 Computing: [==============================          ] 75%  (~2m7s remaining)       
-Computing: [================================        ] 79%  (~1m50s remaining)       
-Computing: [=================================       ] 82%  (~1m29s remaining)       
-Computing: [===================================     ] 86%  (~1m12s remaining)       
-Computing: [====================================    ] 89%  (~1m5s remaining)       
-Computing: [======================================  ] 93%  (~44s remaining)       
+Computing: [================================        ] 79%  (~1m52s remaining)       
+Computing: [=================================       ] 82%  (~1m30s remaining)       
+Computing: [===================================     ] 86%  (~1m13s remaining)       
+Computing: [====================================    ] 89%  (~1m3s remaining)       
+Computing: [======================================  ] 93%  (~43s remaining)       
 Computing: [======================================= ] 96%  (~21s remaining)       
 Computing: [========================================] 100% (done)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 19.93876 mins
+## Time difference of 19.5597 mins
 pd_res
 ##    lib_sizes x_xmap_y_mean x_xmap_y_sig x_xmap_y_upper x_xmap_y_lower y_xmap_x_mean
 ## 1         10    0.01130395 5.494786e-01     0.04828686   -0.025709912    0.06607465
@@ -316,43 +316,54 @@ fig1
 
 ![**Figure 1**. The cross-mapping prediction outputs between population density and county-level Precipitation.](../man/figures/gccm/fig1-1.png)
 
-### 2.3 An example of grid data about soil pollution
+### 2.3 An example of grid data about farmland NPP
 
 Load data and package:
 
 
 ``` r
-library(spEDM)
-
-soilpollution = terra::rast(system.file("extdata/soilpollution.tif",
-                                        package = "spEDM"))
-soilpollution
+npp = terra::rast(system.file("extdata/npp.tif", package = "spEDM"))
+npp
 ## class       : SpatRaster 
-## dimensions  : 131, 125, 3  (nrow, ncol, nlyr)
-## resolution  : 5000, 5000  (x, y)
-## extent      : 360000, 985000, 1555000, 2210000  (xmin, xmax, ymin, ymax)
-## coord. ref. : North_American_1983_Albers 
-## source      : soilpollution.tif 
-## names       :         cu, industry, ntl 
-## min values  :   1.201607,    0.000,   0 
-## max values  : 319.599274,    0.615,  63
+## dimensions  : 404, 483, 3  (nrow, ncol, nlyr)
+## resolution  : 10000, 10000  (x, y)
+## extent      : -2625763, 2204237, 1877078, 5917078  (xmin, xmax, ymin, ymax)
+## coord. ref. : CGCS2000_Albers 
+## source      : npp.tif 
+## names       :      npp,        pre,      tem 
+## min values  :   164.00,   384.3409, -47.8194 
+## max values  : 16606.33, 23878.3555, 263.6938
 
-terra::plot(soilpollution,nc = 3,
+terra::plot(npp,nc = 3,
             mar = rep(0.1,4),
             oma = rep(0.1,4),
             axes = FALSE,
             legend = FALSE)
 ```
 
-![**Figure 2**. Maps of soil Cu concentration, the density of industrial pollutants and nightlight.](../man/figures/gccm/fig2-1.png)
+![**Figure 2**. Maps of farmland NPP and climate factors.](../man/figures/gccm/fig2-1.png)
 
-*To save the computation time, not every pixels are predict and the results are almost the same due to the spatial autocorrealtion.*
+*To save the computation time, we will aggregate the data by 3 times and select 3000 non-NA pixels to predict:*
 
 
 ``` r
-predRows = seq(5,terra::nrow(soilpollution),5)
-predCols = seq(5,terra::ncol(soilpollution),5)
-pred = as.matrix(merge(predRows,predCols))
+npp = terra::aggregate(npp, fact = 3, na.rm = TRUE)
+terra::global(npp,"isNA")
+##      isNA
+## npp 14815
+## pre 14766
+## tem 14766
+terra::ncell(npp)
+## [1] 21735
+
+namat = terra::as.matrix(!is.na(npp[[1]]), wide = TRUE)
+pred = terra::rowColFromCell(npp,which(namat))
+dim(pred)
+## [1] 6920    2
+
+set.seed(42)
+indices = sample(nrow(pred), size = 3000, replace = FALSE)
+pred = pred[indices,]
 ```
 
 Run GCCM:
@@ -360,50 +371,66 @@ Run GCCM:
 
 ``` r
 startTime = Sys.time()
-sp_res = gccm(cause = "ntl",
-              effect = "cu",
-              data = soilpollution,
-              libsizes = seq(10,120,20),
-              E = 3, RowCol = pred)
+npp_res = gccm(cause = "pre",
+               effect = "npp",
+               data = npp,
+               libsizes = seq(10,130,10),
+               E = 3, RowCol = pred)
 ## 
-Computing: [=======                                 ] 17%  (~3m23s remaining)       
-Computing: [==============                          ] 33%  (~4m4s remaining)       
-Computing: [====================                    ] 50%  (~3m28s remaining)       
-Computing: [===========================             ] 67%  (~1m57s remaining)       
-Computing: [==================================      ] 83%  (~47s remaining)       
+Computing: [=============                           ] 31%  (~6m33s remaining)       
+Computing: [================                        ] 38%  (~6m51s remaining)       
+Computing: [===================                     ] 46%  (~6m13s remaining)       
+Computing: [======================                  ] 54%  (~5m12s remaining)       
+Computing: [=========================               ] 62%  (~3m48s remaining)       
+Computing: [============================            ] 69%  (~2m44s remaining)       
+Computing: [===============================         ] 77%  (~1m52s remaining)       
+Computing: [==================================      ] 85%  (~1m9s remaining)       
+Computing: [=====================================   ] 92%  (~32s remaining)       
 Computing: [========================================] 100% (done)                         
 ## 
-Computing: [=======                                 ] 17%  (~2m56s remaining)       
-Computing: [==============                          ] 33%  (~3m35s remaining)       
-Computing: [====================                    ] 50%  (~3m4s remaining)       
-Computing: [===========================             ] 67%  (~1m48s remaining)       
-Computing: [==================================      ] 83%  (~43s remaining)       
+Computing: [=============                           ] 31%  (~6m46s remaining)       
+Computing: [================                        ] 38%  (~6m58s remaining)       
+Computing: [===================                     ] 46%  (~6m17s remaining)       
+Computing: [======================                  ] 54%  (~5m16s remaining)       
+Computing: [=========================               ] 62%  (~3m51s remaining)       
+Computing: [============================            ] 69%  (~2m45s remaining)       
+Computing: [===============================         ] 77%  (~1m52s remaining)       
+Computing: [==================================      ] 85%  (~1m9s remaining)       
+Computing: [=====================================   ] 92%  (~32s remaining)       
 Computing: [========================================] 100% (done)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 8.381297 mins
-sp_res
-##   lib_sizes x_xmap_y_mean x_xmap_y_sig x_xmap_y_upper x_xmap_y_lower y_xmap_x_mean
-## 1        10    0.03479201 3.758405e-01      0.1113960    -0.04222296    0.02554708
-## 2        30    0.12246878 1.759246e-03      0.1975106     0.04600001    0.07388129
-## 3        50    0.20367775 1.625105e-07      0.2762527     0.12879306    0.11688379
-## 4        70    0.24407653 2.856015e-10      0.3150648     0.17037242    0.14388369
-## 5        90    0.29381954 2.087219e-14      0.3625301     0.22193217    0.19071174
-## 6       110    0.46495562 0.000000e+00      0.5231518     0.40244339    0.23136933
-##   y_xmap_x_sig y_xmap_x_upper y_xmap_x_lower
-## 1 5.155774e-01      0.1022482   -0.051456012
-## 2 5.976021e-02      0.1499314   -0.003037965
-## 3 2.840761e-03      0.1920594    0.040344435
-## 4 2.328362e-04      0.2183694    0.067731129
-## 5 9.687684e-07      0.2637456    0.115503737
-## 6 2.392951e-09      0.3028822    0.157265523
+## Time difference of 13.29012 mins
+npp_res
+##    lib_sizes x_xmap_y_mean x_xmap_y_sig x_xmap_y_upper x_xmap_y_lower y_xmap_x_mean
+## 1         10    0.05366658 3.278589e-03     0.08928161     0.01791449    0.07974064
+## 2         20    0.09168397 4.898603e-07     0.12705360     0.05608148    0.14103020
+## 3         30    0.12385334 9.956924e-12     0.15893539     0.08845891    0.18137790
+## 4         40    0.15205226 0.000000e+00     0.18682219     0.11690188    0.22147635
+## 5         50    0.18402074 0.000000e+00     0.21836918     0.14921690    0.27559982
+## 6         60    0.23504915 0.000000e+00     0.26857650     0.20095299    0.26947293
+## 7         70    0.24022627 0.000000e+00     0.27366015     0.20621255    0.20894394
+## 8         80    0.20491112 0.000000e+00     0.23894542     0.17037399    0.09716466
+## 9         90    0.14005787 1.287859e-14     0.17496740     0.10479663    0.01715257
+## 10       100    0.17271242 0.000000e+00     0.20721815     0.13777749   -0.02868893
+##    y_xmap_x_sig y_xmap_x_upper y_xmap_x_lower
+## 1  1.227088e-05    0.115198404     0.04407993
+## 2  8.437695e-15    0.175928786     0.10577755
+## 3  0.000000e+00    0.215763902     0.14654259
+## 4  0.000000e+00    0.255239854     0.18717336
+## 5  0.000000e+00    0.308345190     0.24220210
+## 6  0.000000e+00    0.302343779     0.23596193
+## 7  0.000000e+00    0.242914082     0.17446196
+## 8  9.696014e-08    0.132490470     0.06159233
+## 9  3.476473e-01    0.052906596    -0.01864537
+## 10 1.883823e+00    0.007104863    -0.06440930
 ```
 
 Visualize the result:
 
 
 ``` r
-fig3 = ggplot2::ggplot(data = sp_res,
+fig3 = ggplot2::ggplot(data = npp_res,
                        ggplot2::aes(x = lib_sizes)) +
   ggplot2::geom_line(ggplot2::aes(y = x_xmap_y_mean,
                                   color = "x xmap y"),
@@ -415,12 +442,12 @@ fig3 = ggplot2::ggplot(data = sp_res,
                               limits = c(-0.05, 1), expand = c(0, 0),
                               name = expression(rho)) +
   ggplot2::scale_x_continuous(name = "Lib of Sizes",
-                              breaks = seq(10,120,20),
-                              limits = c(0, 125), expand = c(0, 0)) +
+                              breaks = seq(10,130,10),
+                              limits = c(9, 101), expand = c(0, 0)) +
   ggplot2::scale_color_manual(values = c("x xmap y" = "#608dbe",
                                          "y xmap x" = "#ed795b"),
-                              labels = c("Nightlight xmap Cu",
-                                         "Cu xmap Nightlight"),
+                              labels = c("Precipitation xmap NPP",
+                                         "NPP xmap Precipitation"),
                               name = "") +
   ggplot2::theme_bw() +
   ggplot2::theme(axis.text = ggplot2::element_text(family = "TNR"),
@@ -433,4 +460,4 @@ fig3 = ggplot2::ggplot(data = sp_res,
 fig3
 ```
 
-![**Figure 3**. The cross-mapping prediction outputs between soil Cu and nightlight.](../man/figures/gccm/fig3-1.png)
+![**Figure 3**. The cross-mapping prediction outputs between farmland NPP and precipitation.](../man/figures/gccm/fig3-1.png)
