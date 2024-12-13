@@ -155,37 +155,41 @@ fig1
 
 Load data and package:
 
-```{r fig2,fig.width=6.55,fig.height=2.60,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 2**. Maps of soil Cu concentration, the density of industrial pollutants and nightlight.")}
-library(spEDM)
+```{r fig2,fig.width=6.55,fig.height=2.15,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 2**. Maps of farmland NPP and climate factors.")}
+npp = terra::rast(system.file("extdata/npp.tif", package = "spEDM"))
+npp
 
-soilpollution = terra::rast(system.file("extdata/soilpollution.tif",
-                                        package = "spEDM"))
-soilpollution
-
-terra::plot(soilpollution,nc = 3,
+terra::plot(npp,nc = 3,
             mar = rep(0.1,4),
             oma = rep(0.1,4),
             axes = FALSE,
             legend = FALSE)
 ```
 
-*To save the computation time, not every pixels are predict and the results are almost the same due to the spatial autocorrealtion.*
+*To save the computation time, we select some not-NA pixels to predict:*
 
 ```{r}
-predRows = seq(5,terra::nrow(soilpollution),5)
-predCols = seq(5,terra::ncol(soilpollution),5)
-pred = as.matrix(merge(predRows,predCols))
+global(npp,"isNA")
+terra::ncell(npp)
+
+namat = terra::as.matrix(!is.na(npp[[1]]), wide = TRUE)
+pred = terra::rowColFromCell(npp,which(namat))
+dim(pred)
+
+set.seed(42)
+indices = sample(nrow(pred), size = 3000, replace = FALSE)
+pred = pred[indices,]
 ```
 
 Run GCCM:
 
 ```{r}
 startTime = Sys.time()
-sp_res = gccm(cause = "ntl",
-              effect = "cu",
-              data = soilpollution,
-              libsizes = seq(10,120,10),
-              E = 3, RowCol = pred)
+sp_res = gccm(cause = "pre",
+              effect = "npp",
+              data = npp,
+              libsizes = seq(10,400,5),
+              E = 2, RowCol = pred)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
 sp_res
