@@ -151,7 +151,7 @@ fig1 = ggplot2::ggplot(data = pd_res,
 fig1
 ```
 
-### 2.3 An example of grid data about soil pollution
+### 2.3 An example of grid data about farmland NPP
 
 Load data and package:
 
@@ -185,20 +185,20 @@ Run GCCM:
 
 ```{r}
 startTime = Sys.time()
-sp_res = gccm(cause = "pre",
-              effect = "npp",
-              data = npp,
-              libsizes = seq(10,400,5),
-              E = 2, RowCol = pred)
+npp_res = gccm(cause = "pre",
+               effect = "npp",
+               data = npp,
+               libsizes = seq(10,300,10),
+               E = 3, RowCol = pred)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-sp_res
+npp_res
 ```
 
 Visualize the result:
 
-```{r fig3,fig.width=4.5,fig.height=4.5,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 3**. The cross-mapping prediction outputs between soil Cu and nightlight.")}
-fig3 = ggplot2::ggplot(data = sp_res,
+```{r fig3,fig.width=4.5,fig.height=4.5,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 3**. The cross-mapping prediction outputs between farmland NPP and precipitation.")}
+fig3 = ggplot2::ggplot(data = npp_res,
                        ggplot2::aes(x = lib_sizes)) +
   ggplot2::geom_line(ggplot2::aes(y = x_xmap_y_mean,
                                   color = "x xmap y"),
@@ -210,12 +210,12 @@ fig3 = ggplot2::ggplot(data = sp_res,
                               limits = c(-0.05, 1), expand = c(0, 0),
                               name = expression(rho)) +
   ggplot2::scale_x_continuous(name = "Lib of Sizes",
-                              breaks = seq(10,120,10),
-                              limits = c(0, 121), expand = c(0, 0)) +
+                              breaks = seq(10,300,10),
+                              limits = c(0, 300), expand = c(0, 0)) +
   ggplot2::scale_color_manual(values = c("x xmap y" = "#608dbe",
                                          "y xmap x" = "#ed795b"),
-                              labels = c("Nightlight xmap Cu",
-                                         "Cu xmap Nightlight"),
+                              labels = c("Precipitation xmap NPP",
+                                         "NPP xmap Precipitation"),
                               name = "") +
   ggplot2::theme_bw() +
   ggplot2::theme(axis.text = ggplot2::element_text(family = "TNR"),
