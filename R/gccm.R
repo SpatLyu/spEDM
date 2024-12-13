@@ -45,7 +45,7 @@ gccm = \(cause, effect, data, libsizes = NULL, E = 3,
     data = data[[c(cause,effect)]]
     names(data) = c("cause","effect")
 
-    dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
+    dtf = terra::as.data.frame(data,xy = TRUE,na.rm = TRUE)
     if (trendRM){
       dtf$cause = sdsfun::rm_lineartrend("cause~x+y", data = dtf)
       dtf$effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
