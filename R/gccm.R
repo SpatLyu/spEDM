@@ -3,7 +3,7 @@
 #' @param cause Name of causal variable.
 #' @param effect Name of effect variable.
 #' @param data The observation data, must be `sf` or `SpatRaster` object.
-#' @param libsizes (optional) A vector of library sizes to use.
+#' @param libsizes A vector of library sizes to use.
 #' @param E (optional) The dimensions of the embedding.
 #' @param nb (optional) The neighbours list.
 #' @param RowCol (optional) Matrix of selected row and cols numbers.

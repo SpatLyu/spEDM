@@ -22,7 +22,7 @@ gccm(
 
 \item{data}{The observation data, must be \code{sf} or \code{SpatRaster} object.}
 
-\item{libsizes}{(optional) A vector of library sizes to use.}
+\item{libsizes}{A vector of library sizes to use.}
 
 \item{E}{(optional) The dimensions of the embedding.}
 
