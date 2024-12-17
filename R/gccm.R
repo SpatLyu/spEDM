@@ -16,7 +16,6 @@
 #' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
 #'                        quiet=TRUE)
 #' \donttest{
-#' # use multi-core parallel computing by default
 #' gccm("HOVAL", "CRIME", data = columbus, libsizes = seq(5,45,5))
 #' }
 gccm = \(cause, effect, data, libsizes, E = 3,
