@@ -8,7 +8,7 @@ gccm(
   cause,
   effect,
   data,
-  libsizes = NULL,
+  libsizes,
   E = 3,
   nb = NULL,
   RowCol = NULL,
@@ -41,5 +41,8 @@ geographical convergent cross mapping
 \examples{
 columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
                        quiet=TRUE)
-gccm("HOVAL", "CRIME", data = columbus)
+\donttest{
+# use multi-core parallel computing by default
+gccm("HOVAL", "CRIME", data = columbus, libsizes = seq(5,45,5))
+}
 }
