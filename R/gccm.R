@@ -15,8 +15,11 @@
 #' @examples
 #' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
 #'                        quiet=TRUE)
-#' gccm("HOVAL", "CRIME", data = columbus)
-gccm = \(cause, effect, data, libsizes = NULL, E = 3,
+#' \donttest{
+#' # use multi-core parallel computing by default
+#' gccm("HOVAL", "CRIME", data = columbus, libsizes = seq(5,45,5))
+#' }
+gccm = \(cause, effect, data, libsizes, E = 3,
          nb = NULL, RowCol = NULL, trendRM =TRUE) {
   if (!inherits(cause,"character") || !inherits(effect,"character")) {
     stop("The `cause` and `effect` must be character.")
@@ -28,8 +31,6 @@ gccm = \(cause, effect, data, libsizes = NULL, E = 3,
     effect = data[,effect,drop = TRUE]
     if (is.null(nb)) nb = sdsfun::spdep_nb(data)
     if (length(cause) != length(nb)) stop("Incompatible Data Dimensions!")
-    if (is.null(libsizes)) libsizes = floor(seq(E + 2,length(cause),
-                                                length.out = floor(sqrt(length(cause)))))
     if (trendRM){
       # cause = RcppLinearTrendRM(cause,as.double(coords[,1]),as.double(coords[,2]))
       # effect = RcppLinearTrendRM(effect,as.double(coords[,1]),as.double(coords[,2]))
@@ -54,8 +55,6 @@ gccm = \(cause, effect, data, libsizes = NULL, E = 3,
     effectmat = matrix(dtf[,4],nrow = terra::nrow(data),byrow = TRUE)
 
     maxlibsize = min(dim(causemat))
-    if (is.null(libsizes)) libsizes = floor(seq(E + 2, maxlibsize,
-                                                length.out = floor(sqrt(maxlibsize))))
     selvec = seq(5,maxlibsize,5)
     if (is.null(RowCol)) RowCol = as.matrix(expand.grid(selvec,selvec))
 
