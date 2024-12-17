@@ -2,4 +2,4 @@
 
 0 errors | 0 warnings | 1 note
 
-* This is a new release.
+* This release enhances support for spatial dynamic empirical modeling. See `NEWS.md` for more details.
