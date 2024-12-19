@@ -1,3 +1,5 @@
+# spEDM 1.2
+
 # spEDM 1.1
 
 * Resolve CRAN autocheck issues, no significant API changes.
