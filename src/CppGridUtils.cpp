@@ -48,6 +48,7 @@ std::vector<std::vector<double>> CppLaggedVar4Grid(
   return result;
 }
 
+// Similar to GenLatticeEmbeddings
 std::vector<std::vector<double>> GenGridEmbeddings(
     const std::vector<std::vector<double>>& mat,
     int E) {

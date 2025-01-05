@@ -5,6 +5,8 @@
 #include <vector>
 #include <cmath>
 #include <limits>
+#include <numeric>
+#include <algorithm>
 
 std::vector<std::vector<double>> CppLaggedVar4Grid(
     const std::vector<std::vector<double>>& mat,
