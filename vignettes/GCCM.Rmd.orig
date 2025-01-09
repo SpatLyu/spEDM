@@ -120,35 +120,7 @@ Visualize the result:
 ```{r fig1,fig.width=6.75,fig.height=5.5,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 1**. The cross-mapping prediction outputs between population density and county-level Precipitation.")}
 windowsFonts(TNR = windowsFont("Times New Roman"))
 
-fig1 = ggplot2::ggplot(data = pd_res,
-                       ggplot2::aes(x = lib_sizes)) +
-  ggplot2::geom_line(ggplot2::aes(y = x_xmap_y_mean,
-                                  color = "x xmap y"),
-                      lwd = 1.25) +
-  ggplot2::geom_line(ggplot2::aes(y = y_xmap_x_mean,
-                                  color = "y xmap x"),
-                     lwd = 1.25) +
-  ggplot2::scale_y_continuous(breaks = seq(0, 1, by = 0.1),
-                              limits = c(-0.05, 1), expand = c(0, 0),
-                              name = expression(rho)) +
-  ggplot2::scale_x_continuous(name = "Lib of Sizes",
-                              breaks = seq(10, 2800, by = 100),
-                              limits = c(0, 2800), expand = c(0, 0)) +
-  ggplot2::scale_color_manual(values = c("x xmap y" = "#608dbe",
-                                         "y xmap x" = "#ed795b"),
-                              labels = c("Pre xmap PopDensity",
-                                         "PopDensity xmap Pre"),
-                              name = "") +
-  ggplot2::theme_bw() +
-  ggplot2::theme(axis.text = ggplot2::element_text(family = "TNR"),
-                 axis.text.x = ggplot2::element_text(angle = 30),
-                 axis.title = ggplot2::element_text(family = "TNR"),
-                 panel.grid = ggplot2::element_blank(),
-                 legend.position = "inside",
-                 legend.justification = c('right','top'),
-                 legend.background = ggplot2::element_rect(fill = 'transparent'),
-                 legend.text = ggplot2::element_text(family = "TNR"))
-fig1
+plot(pd_res,limits = c(0, 2800),family = "TNR")
 ```
 
 ### 2.3 An example of grid data about farmland NPP
@@ -199,32 +171,5 @@ npp_res
 Visualize the result:
 
 ```{r fig3,fig.width=4.5,fig.height=3.5,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 3**. The cross-mapping prediction outputs between farmland NPP and precipitation.")}
-fig3 = ggplot2::ggplot(data = npp_res,
-                       ggplot2::aes(x = lib_sizes)) +
-  ggplot2::geom_line(ggplot2::aes(y = x_xmap_y_mean,
-                                  color = "x xmap y"),
-                      lwd = 1.25) +
-  ggplot2::geom_line(ggplot2::aes(y = y_xmap_x_mean,
-                                  color = "y xmap x"),
-                     lwd = 1.25) +
-  ggplot2::scale_y_continuous(breaks = seq(0, 1, by = 0.1),
-                              limits = c(-0.05, 1), expand = c(0, 0),
-                              name = expression(rho)) +
-  ggplot2::scale_x_continuous(name = "Lib of Sizes",
-                              breaks = seq(10,130,10),
-                              limits = c(9, 101), expand = c(0, 0)) +
-  ggplot2::scale_color_manual(values = c("x xmap y" = "#608dbe",
-                                         "y xmap x" = "#ed795b"),
-                              labels = c("Precipitation xmap NPP",
-                                         "NPP xmap Precipitation"),
-                              name = "") +
-  ggplot2::theme_bw() +
-  ggplot2::theme(axis.text = ggplot2::element_text(family = "TNR"),
-                 axis.title = ggplot2::element_text(family = "TNR"),
-                 panel.grid = ggplot2::element_blank(),
-                 legend.position = "inside",
-                 legend.justification = c('right','top'),
-                 legend.background = ggplot2::element_rect(fill = 'transparent'),
-                 legend.text = ggplot2::element_text(family = "TNR"))
-fig3
+plot(npp_res,limits = c(9, 101),family = "TNR")
 ```
