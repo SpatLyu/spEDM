@@ -38,8 +38,8 @@ gccm = \(cause, effect, data, libsizes, E = 3,
       effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
     }
 
-    x_xmap_y = RcppGCCM4Lattice(cause,effect,nb,libsizes,E)
-    y_xmap_x = RcppGCCM4Lattice(effect,cause,nb,libsizes,E)
+    y_causes_x = RcppGCCM4Lattice(cause,effect,nb,libsizes,E)
+    x_causes_y = RcppGCCM4Lattice(effect,cause,nb,libsizes,E)
 
   } else if (inherits(data,"SpatRaster")) {
     data = data[[c(cause,effect)]]
@@ -57,22 +57,22 @@ gccm = \(cause, effect, data, libsizes, E = 3,
     selvec = seq(5,maxlibsize,5)
     if (is.null(RowCol)) RowCol = as.matrix(expand.grid(selvec,selvec))
 
-    x_xmap_y = RcppGCCM4Grid(causemat,effectmat,libsizes,RowCol,E)
-    y_xmap_x = RcppGCCM4Grid(effectmat,causemat,libsizes,RowCol,E)
+    y_causes_x = RcppGCCM4Grid(causemat,effectmat,libsizes,RowCol,E)
+    x_causes_y = RcppGCCM4Grid(effectmat,causemat,libsizes,RowCol,E)
 
   } else {
     stop("The data should be `sf` or `SpatRaster` object!")
   }
 
-  colnames(x_xmap_y) = c("lib_sizes","x_xmap_y_mean","x_xmap_y_sig",
-                         "x_xmap_y_upper","x_xmap_y_lower")
-  x_xmap_y = as.data.frame(x_xmap_y)
-  colnames(y_xmap_x) = c("lib_sizes","y_xmap_x_mean","y_xmap_x_sig",
-                         "y_xmap_x_upper","y_xmap_x_lower")
-  y_xmap_x = as.data.frame(y_xmap_x)
+  colnames(y_causes_x) = c("lib_sizes","y_causes_x_mean","y_causes_x_sig",
+                           "y_causes_x_upper","y_causes_x_lower")
+  y_causes_x = as.data.frame(y_causes_x)
+  colnames(x_causes_y) = c("lib_sizes","x_causes_y_mean","x_causes_y_sig",
+                           "x_causes_y_upper","x_causes_y_lower")
+  x_causes_y = as.data.frame(x_causes_y)
 
-  res = x_xmap_y |>
-    dplyr::left_join(y_xmap_x, by = "lib_sizes") |>
+  res = y_causes_x |>
+    dplyr::left_join(x_causes_y, by = "lib_sizes") |>
     dplyr::arrange(lib_sizes)
   return(res)
 }
