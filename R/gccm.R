@@ -69,16 +69,16 @@ gccm = \(cause, effect, data, libsizes, E = 3,
     stop("The data should be `sf` or `SpatRaster` object!")
   }
 
-  colnames(x_xmap_y) = c("lib_sizes","x_xmap_y_mean","x_xmap_y_sig",
+  colnames(x_xmap_y) = c("libsizes","x_xmap_y_mean","x_xmap_y_sig",
                          "x_xmap_y_upper","x_xmap_y_lower")
   x_xmap_y = as.data.frame(x_xmap_y)
-  colnames(y_xmap_x) = c("lib_sizes","y_xmap_x_mean","y_xmap_x_sig",
+  colnames(y_xmap_x) = c("libsizes","y_xmap_x_mean","y_xmap_x_sig",
                          "y_xmap_x_upper","y_xmap_x_lower")
   y_xmap_x = as.data.frame(y_xmap_x)
 
   resdf = x_xmap_y |>
-    dplyr::left_join(y_xmap_x, by = "lib_sizes") |>
-    dplyr::arrange(lib_sizes)
+    dplyr::left_join(y_xmap_x, by = "libsizes") |>
+    dplyr::arrange(libsizes)
 
   res = list("xmap" = resdf, "varname" = varname)
   class(res) = 'gccm_res'
@@ -90,10 +90,10 @@ gccm = \(cause, effect, data, libsizes, E = 3,
 #' @export
 print.gccm_res = \(x,...){
   resdf = x$xmap
-  resdf = resdf[,c("lib_sizes", "x_xmap_y_mean", "y_xmap_x_mean")]
+  resdf = resdf[,c("libsizes", "x_xmap_y_mean", "y_xmap_x_mean")]
   names(resdf) = c('libsizes',
-                   paste0(x$varname[2], "==>", x$varname[1]),
-                   paste0(x$varname[1], "==>", x$varname[2]))
+                   paste0(x$varname[2], "->", x$varname[1]),
+                   paste0(x$varname[1], "->", x$varname[2]))
   print(resdf)
 }
 
@@ -102,12 +102,12 @@ print.gccm_res = \(x,...){
 #' @export
 plot.gccm_res = \(x,breaks = NULL,limits = NULL,family = "serif",...){
   resdf = x$xmap
-  resdf = resdf[,c("lib_sizes", "x_xmap_y_mean", "y_xmap_x_mean")]
+  resdf = resdf[,c("libsizes", "x_xmap_y_mean", "y_xmap_x_mean")]
 
-  if(is.null(breaks)) breaks = resdf$lib_sizes
-  if(is.null(limits)) limits = c(min(breaks)-3,max(breaks)+3)
+  if(is.null(breaks)) breaks = resdf$libsizes
+  if(is.null(limits)) limits = c(min(breaks)-1,max(breaks)+1)
   fig1 = ggplot2::ggplot(data = resdf,
-                         ggplot2::aes(x = lib_sizes)) +
+                         ggplot2::aes(x = libsizes)) +
     ggplot2::geom_line(ggplot2::aes(y = x_xmap_y_mean,
                                     color = "x xmap y"),
                        lwd = 1.25) +
@@ -122,8 +122,8 @@ plot.gccm_res = \(x,breaks = NULL,limits = NULL,family = "serif",...){
                                 limits = limits, expand = c(0, 0)) +
     ggplot2::scale_color_manual(values = c("x xmap y" = "#608dbe",
                                            "y xmap x" = "#ed795b"),
-                                labels = c(paste0(x$varname[2], "causes", x$varname[1]),
-                                           paste0(x$varname[1], "causes", x$varname[2])),
+                                labels = c(paste0(x$varname[2], " causes ", x$varname[1]),
+                                           paste0(x$varname[1], " causes ", x$varname[2])),
                                 name = "") +
     ggplot2::theme_bw() +
     ggplot2::theme(axis.text = ggplot2::element_text(family = family),
