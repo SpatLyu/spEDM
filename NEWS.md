@@ -4,7 +4,7 @@
 
 # spEDM 1.1
 
-* Resolve CRAN autocheck issues, no significant API changes.
+* Resolve CRAN auto check issues, no significant API changes.
 
 # spEDM 1.0
 
