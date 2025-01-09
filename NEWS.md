@@ -1,5 +1,7 @@
 # spEDM 1.2
 
+* Add `print` and `plot` s3 methods for `gccm()` result (#64).
+
 # spEDM 1.1
 
 * Resolve CRAN autocheck issues, no significant API changes.
