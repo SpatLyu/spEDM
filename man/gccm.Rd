@@ -33,7 +33,11 @@ gccm(
 \item{trendRM}{(optional) Whether to remove the linear trend.}
 }
 \value{
-A \code{data.frame}.
+A list.
+\describe{
+\item{\code{xmap}}{cross-mapping prediction outputs}
+\item{\code{varname}}{names of causal and effect variable}
+}
 }
 \description{
 geographical convergent cross mapping
