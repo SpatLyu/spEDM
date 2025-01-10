@@ -98,7 +98,7 @@ popd_nb
 popdensity = readr::read_csv(system.file("extdata/popdensity.csv",
                                          package = "spEDM"))
 ## Rows: 2806 Columns: 7
-## ── Column specification ───────────────────────────────────────────────────────────────────────
+## ── Column specification ────────────────────────────────────────────────────────────────────────
 ## Delimiter: ","
 ## dbl (7): x, y, popDensity, DEM, Tem, Pre, slop
 ## 
@@ -153,69 +153,12 @@ pd_res = gccm(cause = "Pre",
               data = popd_sf,
               libsizes = seq(10, 2800, by = 100),
               E = 3,
+              k = 4,
               nb = popd_nb,
-              trendRM = TRUE)
-## 
-Computing: [==                                      ] 4%  (~28m26s remaining)       
-Computing: [===                                     ] 7%  (~19m10s remaining)       
-Computing: [=====                                   ] 11%  (~14m22s remaining)       
-Computing: [======                                  ] 14%  (~13m27s remaining)       
-Computing: [========                                ] 18%  (~10m48s remaining)       
-Computing: [=========                               ] 21%  (~8m52s remaining)       
-Computing: [==========                              ] 25%  (~8m12s remaining)       
-Computing: [============                            ] 29%  (~7m47s remaining)       
-Computing: [=============                           ] 32%  (~6m49s remaining)       
-Computing: [===============                         ] 36%  (~6m14s remaining)       
-Computing: [================                        ] 39%  (~5m31s remaining)       
-Computing: [==================                      ] 43%  (~4m50s remaining)       
-Computing: [===================                     ] 46%  (~5m5s remaining)       
-Computing: [====================                    ] 50%  (~4m36s remaining)       
-Computing: [======================                  ] 54%  (~4m0s remaining)       
-Computing: [=======================                 ] 57%  (~3m38s remaining)       
-Computing: [=========================               ] 61%  (~3m12s remaining)       
-Computing: [==========================              ] 64%  (~2m59s remaining)       
-Computing: [============================            ] 68%  (~2m38s remaining)       
-Computing: [=============================           ] 71%  (~2m14s remaining)       
-Computing: [==============================          ] 75%  (~2m8s remaining)       
-Computing: [================================        ] 79%  (~1m52s remaining)       
-Computing: [=================================       ] 82%  (~1m30s remaining)       
-Computing: [===================================     ] 86%  (~1m12s remaining)       
-Computing: [====================================    ] 89%  (~1m3s remaining)       
-Computing: [======================================  ] 93%  (~42s remaining)       
-Computing: [======================================= ] 96%  (~21s remaining)       
-Computing: [========================================] 100% (done)                         
-## 
-Computing: [==                                      ] 4%  (~27m49s remaining)       
-Computing: [===                                     ] 7%  (~18m48s remaining)       
-Computing: [=====                                   ] 11%  (~14m33s remaining)       
-Computing: [======                                  ] 14%  (~13m36s remaining)       
-Computing: [========                                ] 18%  (~10m37s remaining)       
-Computing: [=========                               ] 21%  (~8m54s remaining)       
-Computing: [==========                              ] 25%  (~8m15s remaining)       
-Computing: [============                            ] 29%  (~7m38s remaining)       
-Computing: [=============                           ] 32%  (~6m43s remaining)       
-Computing: [===============                         ] 36%  (~6m7s remaining)       
-Computing: [================                        ] 39%  (~5m34s remaining)       
-Computing: [==================                      ] 43%  (~4m50s remaining)       
-Computing: [===================                     ] 46%  (~5m4s remaining)       
-Computing: [====================                    ] 50%  (~4m36s remaining)       
-Computing: [======================                  ] 54%  (~4m2s remaining)       
-Computing: [=======================                 ] 57%  (~3m40s remaining)       
-Computing: [=========================               ] 61%  (~3m13s remaining)       
-Computing: [==========================              ] 64%  (~2m57s remaining)       
-Computing: [============================            ] 68%  (~2m39s remaining)       
-Computing: [=============================           ] 71%  (~2m15s remaining)       
-Computing: [==============================          ] 75%  (~2m8s remaining)       
-Computing: [================================        ] 79%  (~1m51s remaining)       
-Computing: [=================================       ] 82%  (~1m29s remaining)       
-Computing: [===================================     ] 86%  (~1m12s remaining)       
-Computing: [====================================    ] 89%  (~1m3s remaining)       
-Computing: [======================================  ] 93%  (~42s remaining)       
-Computing: [======================================= ] 96%  (~21s remaining)       
-Computing: [========================================] 100% (done)
+              progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 19.80848 mins
+## Time difference of 19.90492 mins
 pd_res
 ##    libsizes popDensity->Pre Pre->popDensity
 ## 1        10      0.01130395      0.06607465
@@ -317,52 +260,45 @@ startTime = Sys.time()
 npp_res = gccm(cause = "pre",
                effect = "npp",
                data = npp,
-               libsizes = seq(10,130,10),
-               E = 3, RowCol = pred)
-## 
-Computing: [=============                           ] 31%  (~6m37s remaining)       
-Computing: [================                        ] 38%  (~6m43s remaining)       
-Computing: [===================                     ] 46%  (~6m26s remaining)       
-Computing: [======================                  ] 54%  (~5m15s remaining)       
-Computing: [=========================               ] 62%  (~3m50s remaining)       
-Computing: [============================            ] 69%  (~2m44s remaining)       
-Computing: [===============================         ] 77%  (~1m54s remaining)       
-Computing: [==================================      ] 85%  (~1m10s remaining)       
-Computing: [=====================================   ] 92%  (~32s remaining)       
-Computing: [========================================] 100% (done)                         
-## 
-Computing: [=============                           ] 31%  (~6m56s remaining)       
-Computing: [================                        ] 38%  (~6m58s remaining)       
-Computing: [===================                     ] 46%  (~6m37s remaining)       
-Computing: [======================                  ] 54%  (~5m16s remaining)       
-Computing: [=========================               ] 62%  (~3m52s remaining)       
-Computing: [============================            ] 69%  (~2m45s remaining)       
-Computing: [===============================         ] 77%  (~1m54s remaining)       
-Computing: [==================================      ] 85%  (~1m12s remaining)       
-Computing: [=====================================   ] 92%  (~33s remaining)       
-Computing: [========================================] 100% (done)
+               libsizes = seq(10,130,5),
+               E = 2,
+               k = 5,
+               RowCol = pred,
+               progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 14.03368 mins
+## Time difference of 24.91822 mins
 npp_res
-##    libsizes   npp->pre    pre->npp
-## 1        10 0.05366658  0.07974064
-## 2        20 0.09168397  0.14103020
-## 3        30 0.12385334  0.18137790
-## 4        40 0.15205226  0.22147635
-## 5        50 0.18402074  0.27559982
-## 6        60 0.23504915  0.26947293
-## 7        70 0.24022627  0.20894394
-## 8        80 0.20491112  0.09716466
-## 9        90 0.14005787  0.01715257
-## 10      100 0.17271242 -0.02868893
+##    libsizes     npp->pre   pre->npp
+## 1        10  0.049237491 0.07312462
+## 2        15  0.063939456 0.10307461
+## 3        20  0.080009483 0.12935898
+## 4        25  0.097903289 0.14718470
+## 5        30  0.104758061 0.15943448
+## 6        35  0.111686523 0.17026742
+## 7        40  0.119169359 0.18985868
+## 8        45  0.132677547 0.21607528
+## 9        50  0.148968939 0.24764600
+## 10       55  0.165193950 0.28759045
+## 11       60  0.173868473 0.30697776
+## 12       65  0.179777011 0.31209341
+## 13       70  0.157231842 0.28574340
+## 14       75  0.108711472 0.24817243
+## 15       80  0.058977718 0.22701677
+## 16       85 -0.003501071 0.23364337
+## 17       90 -0.022853416 0.23577169
+## 18       95 -0.042780283 0.34364441
+## 19      100 -0.034298266 0.72561637
+## 20      105 -0.070605553 0.77999128
 ```
 
 Visualize the result:
 
 
 ``` r
-plot(npp_res,family = "TNR",xlimits = c(9, 101),ylimits = c(0,0.5))
+plot(npp_res,family = "TNR",xlimits = c(9, 101),ylimits = c(-0.05,1))
+## Warning: Removed 5 rows containing missing values or values outside the scale range
+## (`geom_line()`).
 ## Warning: Removed 1 row containing missing values or values outside the scale range
 ## (`geom_line()`).
 ```
