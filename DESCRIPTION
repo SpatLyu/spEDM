@@ -21,6 +21,7 @@ LinkingTo:
 Imports: 
     dplyr,
     ggplot2,
+    methods,
     sdsfun (>= 0.6.0),
     terra
 Suggests: 

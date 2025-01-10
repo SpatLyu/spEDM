@@ -103,9 +103,9 @@ Run GCCM:
 
 ```{r}
 startTime = Sys.time()
-pd_res = gccm(cause = "Pre",
+pd_res = gccm(data = popd_sf,
+              cause = "Pre",
               effect = "popDensity",
-              data = popd_sf,
               libsizes = seq(10, 2800, by = 100),
               E = 3,
               k = 4,
@@ -132,7 +132,7 @@ Load data and package:
 npp = terra::rast(system.file("extdata/npp.tif", package = "spEDM"))
 npp
 
-terra::plot(npp,nc = 3,
+terra::plot(npp, nc = 3,
             mar = rep(0.1,4),
             oma = rep(0.1,4),
             axes = FALSE,
@@ -159,9 +159,9 @@ Run GCCM:
 
 ```{r}
 startTime = Sys.time()
-npp_res = gccm(cause = "pre",
+npp_res = gccm(data = npp,
+               cause = "pre",
                effect = "npp",
-               data = npp,
                libsizes = seq(10,130,5),
                E = 2,
                k = 5,

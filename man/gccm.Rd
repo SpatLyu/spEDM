@@ -2,12 +2,14 @@
 % Please edit documentation in R/gccm.R
 \name{gccm}
 \alias{gccm}
+\alias{gccm,sf-method}
+\alias{gccm,SpatRaster-method}
 \title{geographical convergent cross mapping}
 \usage{
 gccm(
+  data,
   cause,
   effect,
-  data,
   libsizes,
   E = 3,
   tau = 1,
@@ -17,13 +19,39 @@ gccm(
   trendRM = TRUE,
   progressbar = TRUE
 )
+
+\S4method{gccm}{sf}(
+  data,
+  cause,
+  effect,
+  libsizes,
+  E,
+  tau,
+  k,
+  nb = NULL,
+  trendRM = TRUE,
+  progressbar = TRUE
+)
+
+\S4method{gccm}{SpatRaster}(
+  data,
+  cause,
+  effect,
+  libsizes,
+  E,
+  tau,
+  k,
+  RowCol = NULL,
+  trendRM = TRUE,
+  progressbar = TRUE
+)
 }
 \arguments{
+\item{data}{The observation data, must be \code{sf} or \code{SpatRaster} object.}
+
 \item{cause}{Name of causal variable.}
 
 \item{effect}{Name of effect variable.}
-
-\item{data}{The observation data, must be \code{sf} or \code{SpatRaster} object.}
 
 \item{libsizes}{A vector of library sizes to use.}
 
@@ -51,12 +79,19 @@ A list.
 \description{
 geographical convergent cross mapping
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{gccm(sf)}: \code{sf}
+
+\item \code{gccm(SpatRaster)}: \code{SpatRaster}
+
+}}
 \examples{
 columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
                        quiet=TRUE)
 \donttest{
-g = gccm("HOVAL", "CRIME", data = columbus, libsizes = seq(5,45,5))
+g = gccm(columbus, "HOVAL", "CRIME", libsizes = seq(5,45,5))
 g
-plot(g,ylimits = c(0,0.65))
+plot(g, ylimits = c(0,0.65))
 }
 }

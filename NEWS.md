@@ -1,5 +1,7 @@
 # spEDM 1.2
 
+* Encapsulate the `gccm` function using the S4 class (#72).
+
 * Add options for `tau`, `k`, and `progressbar` in `gccm` (#69).
 
 * Add `print` and `plot` s3 methods for `gccm` result (#64).
