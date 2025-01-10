@@ -1,4 +1,4 @@
-setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
+methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 
 .gccm_sf_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = E+1,
                     nb = NULL, trendRM = TRUE, progressbar = TRUE){
@@ -78,7 +78,7 @@ setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 #' g
 #' plot(g, ylimits = c(0,0.65))
 #' }
-setMethod("gccm", "sf", .gccm_sf_method)
+methods::setMethod("gccm", "sf", .gccm_sf_method)
 
 #' @rdname gccm
-setMethod("gccm", "SpatRaster", .gccm_spatraster_method)
+methods::setMethod("gccm", "SpatRaster", .gccm_spatraster_method)
