@@ -18,8 +18,6 @@
 #' \item{\code{varname}}{names of causal and effect variable}
 #' }
 #' @export
-#' @name gccm
-#' @rdname gccm
 #'
 #' @examples
 #' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
