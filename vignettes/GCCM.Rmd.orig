@@ -138,7 +138,7 @@ terra::plot(npp,nc = 3,
             legend = FALSE)
 ```
 
-*To save the computation time, we will aggregate the data by 3 times and select 3000 non-NA pixels to predict:*
+*To save the computation time, we will aggregate the data by 3 times and select 4500 non-NA pixels to predict:*
 
 ```{r}
 npp = terra::aggregate(npp, fact = 3, na.rm = TRUE)
@@ -150,7 +150,7 @@ pred = terra::rowColFromCell(npp,which(namat))
 dim(pred)
 
 set.seed(42)
-indices = sample(nrow(pred), size = 3000, replace = FALSE)
+indices = sample(nrow(pred), size = 4500, replace = FALSE)
 pred = pred[indices,]
 ```
 
