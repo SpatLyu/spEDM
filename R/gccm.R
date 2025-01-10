@@ -104,9 +104,9 @@ plot.gccm_res = \(x, family = "serif", xbreaks = NULL, xlimits = NULL,
                   ybreaks = seq(0, 1, by = 0.1), ylimits = c(-0.05, 1), ...){
   resdf = x$xmap
   resdf = resdf[,c("libsizes", "x_xmap_y_mean", "y_xmap_x_mean")]
-
   if(is.null(xbreaks)) xbreaks = resdf$libsizes
   if(is.null(xlimits)) xlimits = c(min(xbreaks)-1,max(xbreaks)+1)
+
   fig1 = ggplot2::ggplot(data = resdf,
                          ggplot2::aes(x = libsizes)) +
     ggplot2::geom_line(ggplot2::aes(y = x_xmap_y_mean,
