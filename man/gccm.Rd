@@ -2,6 +2,8 @@
 % Please edit documentation in R/gccm.R
 \name{gccm}
 \alias{gccm}
+\alias{gccm,sf-method}
+\alias{gccm,SpatRaster-method}
 \title{geographical convergent cross mapping}
 \usage{
 gccm(
@@ -13,6 +15,32 @@ gccm(
   tau = 1,
   k = E + 1,
   nb = NULL,
+  RowCol = NULL,
+  trendRM = TRUE,
+  progressbar = TRUE
+)
+
+\S4method{gccm}{sf}(
+  data,
+  cause,
+  effect,
+  libsizes,
+  E,
+  tau,
+  k,
+  nb = NULL,
+  trendRM = TRUE,
+  progressbar = TRUE
+)
+
+\S4method{gccm}{SpatRaster}(
+  data,
+  cause,
+  effect,
+  libsizes,
+  E,
+  tau,
+  k,
   RowCol = NULL,
   trendRM = TRUE,
   progressbar = TRUE
@@ -51,6 +79,13 @@ A list.
 \description{
 geographical convergent cross mapping
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{gccm(sf)}: \code{sf}
+
+\item \code{gccm(SpatRaster)}: \code{SpatRaster}
+
+}}
 \examples{
 columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
                        quiet=TRUE)

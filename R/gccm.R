@@ -79,6 +79,8 @@ methods::setGeneric("gccm", function(data, cause, effect, libsizes, E = 3, tau =
   return(.bind_xmapdf(x_xmap_y,y_xmap_x,varname))
 }
 
+#' @describeIn gccm `sf`
 methods::setMethod("gccm", "sf", .gccm_sf_method)
 
+#' @describeIn gccm `SpatRaster`
 methods::setMethod("gccm", "SpatRaster", .gccm_spatraster_method)
