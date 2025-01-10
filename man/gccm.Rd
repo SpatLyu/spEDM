@@ -4,26 +4,14 @@
 \alias{gccm}
 \title{geographical convergent cross mapping}
 \usage{
-gccm(
-  cause,
-  effect,
-  data,
-  libsizes,
-  E = 3,
-  tau = 1,
-  k = E + 1,
-  nb = NULL,
-  RowCol = NULL,
-  trendRM = TRUE,
-  progressbar = TRUE
-)
+gccm(data, ...)
 }
 \arguments{
+\item{data}{The observation data, must be \code{sf} or \code{SpatRaster} object.}
+
 \item{cause}{Name of causal variable.}
 
 \item{effect}{Name of effect variable.}
-
-\item{data}{The observation data, must be \code{sf} or \code{SpatRaster} object.}
 
 \item{libsizes}{A vector of library sizes to use.}
 
@@ -55,8 +43,8 @@ geographical convergent cross mapping
 columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
                        quiet=TRUE)
 \donttest{
-g = gccm("HOVAL", "CRIME", data = columbus, libsizes = seq(5,45,5))
+g = gccm(columbus, "HOVAL", "CRIME", libsizes = seq(5,45,5))
 g
-plot(g,ylimits = c(0,0.65))
+plot(g, ylimits = c(0,0.65))
 }
 }
