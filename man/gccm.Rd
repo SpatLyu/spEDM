@@ -26,7 +26,7 @@
   libsizes,
   E = 3,
   tau = 1,
-  k = E + 1,
+  k = E + 3,
   RowCol = NULL,
   trendRM = TRUE,
   progressbar = TRUE

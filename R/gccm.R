@@ -20,7 +20,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   return(.bind_xmapdf(x_xmap_y,y_xmap_x,varname))
 }
 
-.gccm_spatraster_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = E+1,
+.gccm_spatraster_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = E+3,
                             RowCol = NULL, trendRM = TRUE, progressbar = TRUE){
   varname = .check_character(cause, effect)
   data = data[[c(cause,effect)]]
