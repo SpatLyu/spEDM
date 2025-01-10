@@ -28,13 +28,14 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
 // Function to compute GCCM4Lattice
 std::vector<std::vector<double>> GCCM4Lattice(
     const std::vector<std::vector<double>>& x_vectors,  // Reconstructed state-space (each row is a separate vector/state)
-    const std::vector<double>& y,                      // Time series to cross map to
-    const std::vector<int>& lib_sizes,                 // Vector of library sizes to use
-    const std::vector<std::pair<int, int>>& lib,       // Matrix (n x 2) using n sequences of data to construct libraries
-    const std::vector<std::pair<int, int>>& pred,      // Matrix (n x 2) using n sequences of data to predict from
-    int E,                                             // Number of dimensions for the attractor reconstruction
-    int tau = 1,                                       // Time lag for the lagged-vector construction
-    int b = 0                                          // Number of nearest neighbors to use for prediction
+    const std::vector<double>& y,                       // Spatial cross-section series to cross map to
+    const std::vector<int>& lib_sizes,                  // Vector of library sizes to use
+    const std::vector<std::pair<int, int>>& lib,        // Matrix (n x 2) using n sequences of data to construct libraries
+    const std::vector<std::pair<int, int>>& pred,       // Matrix (n x 2) using n sequences of data to predict from
+    int E,                                              // Number of dimensions for the attractor reconstruction
+    int tau,                                            // Spatial lag for the lagged-vector construction
+    int b,                                              // Number of nearest neighbors to use for prediction
+    bool progressbar = true                             // Whether to print the progress bar
 );
 
 #endif // GCCM4Lattice_H

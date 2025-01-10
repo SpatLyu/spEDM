@@ -85,7 +85,10 @@ Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,
                                      const Rcpp::NumericVector& y,
                                      const Rcpp::List& nb,
                                      const Rcpp::IntegerVector& libsizes,
-                                     int E) {
+                                     int E,
+                                     int tau,
+                                     int b,
+                                     bool progressbar) {
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
   std::vector<double> y_std = Rcpp::as<std::vector<double>>(y);
@@ -104,8 +107,16 @@ Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,
   std::vector<std::pair<int, int>> interval = {{1, n}};
 
   // Perform GCCM Lattice
-  std::vector<std::vector<double>> result = GCCM4Lattice(embeddings, y_std, libsizes_std,
-                                                         interval, interval, E);
+  std::vector<std::vector<double>> result = GCCM4Lattice(
+    embeddings,
+    y_std,
+    libsizes_std,
+    interval,
+    interval,
+    E,
+    tau,
+    b,
+    progressbar);
 
   // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
   Rcpp::NumericMatrix resultMatrix(result.size(), 5);

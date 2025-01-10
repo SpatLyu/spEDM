@@ -75,17 +75,18 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
 
 // GCCM4Grid function
 std::vector<std::vector<double>> GCCM4Grid(
-    const std::vector<std::vector<double>>& xMatrix,
-    const std::vector<std::vector<double>>& yMatrix,
-    const std::vector<int>& lib_sizes,
-    const std::vector<std::pair<int, int>>& pred,
-    int E,
-    int tau = 1,
-    int b = 0) {
-
-  // If b is not provided, default it to E + 1
-  if (b == 0) {
-    b = E + 1;
+    const std::vector<std::vector<double>>& xMatrix, // Two dimension matrix of X variable
+    const std::vector<std::vector<double>>& yMatrix, // Two dimension matrix of Y variable
+    const std::vector<int>& lib_sizes,               // Vector of library sizes to use
+    const std::vector<std::pair<int, int>>& pred,    // Indices of spatial units to be predicted
+    int E,                                           // Number of dimensions for the attractor reconstruction
+    int tau,                                         // Step of spatial lags
+    int b,                                           // Number of nearest neighbors to use for prediction
+    bool progressbar                                 // Whether to print the progress bar
+) {
+  // If b is not provided correctly, default it to E + 2
+  if (b <= 0) {
+    b = E + 2;
   }
 
   // Get the dimensions of the xMatrix
@@ -121,13 +122,21 @@ std::vector<std::vector<double>> GCCM4Grid(
   // }
 
   // Perform the operations using RcppThread
-  RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
-  RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
-    int lib_size = unique_lib_sizes[i];
-    auto results = GCCMSingle4Grid(xEmbedings, yPred, lib_size, pred, totalRow, totalCol, b);
-    x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
-    bar++;
-  });
+  if (progressbar) {
+    RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
+    RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
+      int lib_size = unique_lib_sizes[i];
+      auto results = GCCMSingle4Grid(xEmbedings, yPred, lib_size, pred, totalRow, totalCol, b);
+      x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+      bar++;
+    });
+  } else {
+    RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
+      int lib_size = unique_lib_sizes[i];
+      auto results = GCCMSingle4Grid(xEmbedings, yPred, lib_size, pred, totalRow, totalCol, b);
+      x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+    });
+  }
 
   // Group by the first int and compute the mean
   std::map<int, std::vector<double>> grouped_results;
