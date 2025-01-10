@@ -27,7 +27,7 @@
 #' g
 #' plot(g,ylimits = c(0,0.65))
 #' }
-gccm = \(cause, effect, data, libsizes, E = 3, tau = 1, k = E+2,
+gccm = \(cause, effect, data, libsizes, E = 3, tau = 1, k = E + 2,
          nb = NULL, RowCol = NULL, trendRM = TRUE, progressbar = TRUE) {
   if (!inherits(cause,"character") || !inherits(effect,"character")) {
     stop("The `cause` and `effect` must be character.")
