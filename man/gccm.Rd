@@ -4,7 +4,19 @@
 \alias{gccm}
 \title{geographical convergent cross mapping}
 \usage{
-gccm(data, ...)
+gccm(
+  data,
+  cause,
+  effect,
+  libsizes,
+  E = 3,
+  tau = 1,
+  k = E + 1,
+  nb = NULL,
+  RowCol = NULL,
+  trendRM = TRUE,
+  progressbar = TRUE
+)
 }
 \arguments{
 \item{data}{The observation data, must be \code{sf} or \code{SpatRaster} object.}
