@@ -115,10 +115,10 @@ plot.gccm_res = \(x, family = "serif", xbreaks = NULL, xlimits = NULL,
     ggplot2::geom_line(ggplot2::aes(y = y_xmap_x_mean,
                                     color = "y xmap x"),
                        lwd = 1.25) +
+    ggplot2::scale_x_continuous(breaks = xbreaks, limits = xlimits,
+                                expand = c(0, 0), name = "Lib of Sizes") +
     ggplot2::scale_y_continuous(breaks = ybreaks, limits = ylimits,
                                 expand = c(0, 0), name = expression(rho)) +
-    ggplot2::scale_x_continuous(name = "Lib of Sizes", breaks = xbreaks,
-                                limits = xlimits, expand = c(0, 0)) +
     ggplot2::scale_color_manual(values = c("x xmap y" = "#608dbe",
                                            "y xmap x" = "#ed795b"),
                                 labels = c(paste0(x$varname[2], " causes ", x$varname[1]),
