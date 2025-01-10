@@ -98,7 +98,7 @@ popd_nb
 popdensity = readr::read_csv(system.file("extdata/popdensity.csv",
                                          package = "spEDM"))
 ## Rows: 2806 Columns: 7
-## ── Column specification ────────────────────────────────────────────────────────────────────────
+## ── Column specification ───────────────────────────────────────────────────────────────────────
 ## Delimiter: ","
 ## dbl (7): x, y, popDensity, DEM, Tem, Pre, slop
 ## 
@@ -148,9 +148,9 @@ Run GCCM:
 
 ``` r
 startTime = Sys.time()
-pd_res = gccm(cause = "Pre",
+pd_res = gccm(data = popd_sf,
+              cause = "Pre",
               effect = "popDensity",
-              data = popd_sf,
               libsizes = seq(10, 2800, by = 100),
               E = 3,
               k = 4,
@@ -158,7 +158,7 @@ pd_res = gccm(cause = "Pre",
               progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 20.3045 mins
+## Time difference of 19.89557 mins
 pd_res
 ##    libsizes popDensity->Pre Pre->popDensity
 ## 1        10      0.01130395      0.06607465
@@ -220,7 +220,7 @@ npp
 ## min values  :   164.00,   384.3409, -47.8194 
 ## max values  : 16606.33, 23878.3555, 263.6938
 
-terra::plot(npp,nc = 3,
+terra::plot(npp, nc = 3,
             mar = rep(0.1,4),
             oma = rep(0.1,4),
             axes = FALSE,
@@ -257,9 +257,9 @@ Run GCCM:
 
 ``` r
 startTime = Sys.time()
-npp_res = gccm(cause = "pre",
+npp_res = gccm(data = npp,
+               cause = "pre",
                effect = "npp",
-               data = npp,
                libsizes = seq(10,130,5),
                E = 2,
                k = 5,
@@ -267,7 +267,7 @@ npp_res = gccm(cause = "pre",
                progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 26.41701 mins
+## Time difference of 26.47164 mins
 npp_res
 ##    libsizes     npp->pre   pre->npp
 ## 1        10  0.049237491 0.07312462
