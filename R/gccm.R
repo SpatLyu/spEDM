@@ -1,37 +1,6 @@
-#' geographical convergent cross mapping
-#'
-#' @param data The observation data, must be `sf` or `SpatRaster` object.
-#' @param cause Name of causal variable.
-#' @param effect Name of effect variable.
-#' @param libsizes A vector of library sizes to use.
-#' @param E (optional) The dimensions of the embedding.
-#' @param tau (optional) The step of spatial lags.
-#' @param k (optional) Number of nearest neighbors to use for prediction.
-#' @param nb (optional) The neighbours list.
-#' @param RowCol (optional) Matrix of selected row and cols numbers.
-#' @param trendRM (optional) Whether to remove the linear trend.
-#' @param progressbar (optional) whether to print the progress bar.
-#'
-#' @return A list.
-#' \describe{
-#' \item{\code{xmap}}{cross-mapping prediction outputs}
-#' \item{\code{varname}}{names of causal and effect variable}
-#' }
-#' @export
-#'
-#' @examples
-#' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
-#'                        quiet=TRUE)
-#' \donttest{
-#' g = gccm(columbus, "HOVAL", "CRIME", libsizes = seq(5,45,5))
-#' g
-#' plot(g, ylimits = c(0,0.65))
-#' }
+methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 
-methods::setGeneric("gccm", function(data, cause, effect, libsizes, E = 3, tau = 1, k = E + 1,
-                                     nb = NULL, RowCol = NULL, trendRM = TRUE, progressbar = TRUE) standardGeneric("gccm"))
-
-.gccm_sf_method = \(data, cause, effect, libsizes, E, tau, k,
+.gccm_sf_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = E+1,
                     nb = NULL, trendRM = TRUE, progressbar = TRUE){
   varname = .check_character(cause, effect)
   coords = sdsfun::sf_coordinates(data)
@@ -51,7 +20,7 @@ methods::setGeneric("gccm", function(data, cause, effect, libsizes, E = 3, tau =
   return(.bind_xmapdf(x_xmap_y,y_xmap_x,varname))
 }
 
-.gccm_spatraster_method = \(data, cause, effect, libsizes, E, tau, k,
+.gccm_spatraster_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = E+3,
                             RowCol = NULL, trendRM = TRUE, progressbar = TRUE){
   varname = .check_character(cause, effect)
   data = data[[c(cause,effect)]]
@@ -75,8 +44,39 @@ methods::setGeneric("gccm", function(data, cause, effect, libsizes, E = 3, tau =
   return(.bind_xmapdf(x_xmap_y,y_xmap_x,varname))
 }
 
-#' @describeIn gccm `sf`
+#' geographical convergent cross mapping
+#'
+#' @param data The observation data.
+#' @param cause Name of causal variable.
+#' @param effect Name of effect variable.
+#' @param libsizes A vector of library sizes to use.
+#' @param E (optional) The dimensions of the embedding.
+#' @param tau (optional) The step of spatial lags.
+#' @param k (optional) Number of nearest neighbors to use for prediction.
+#' @param nb (optional) The neighbours list.
+#' @param RowCol (optional) Matrix of selected row and cols numbers.
+#' @param trendRM (optional) Whether to remove the linear trend.
+#' @param progressbar (optional) whether to print the progress bar.
+#'
+#' @return A list.
+#' \describe{
+#' \item{\code{xmap}}{cross-mapping prediction outputs}
+#' \item{\code{varname}}{names of causal and effect variable}
+#' }
+#' @export
+#' @name gccm
+#' @rdname gccm
+#' @aliases gccm,sf-method
+#'
+#' @examples
+#' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
+#'                        quiet=TRUE)
+#' \donttest{
+#' g = gccm(columbus, "HOVAL", "CRIME", libsizes = seq(5,45,5))
+#' g
+#' plot(g, ylimits = c(0,0.65))
+#' }
 methods::setMethod("gccm", "sf", .gccm_sf_method)
 
-#' @describeIn gccm `SpatRaster`
+#' @rdname gccm
 methods::setMethod("gccm", "SpatRaster", .gccm_spatraster_method)

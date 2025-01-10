@@ -6,7 +6,7 @@
 \alias{gccm,SpatRaster-method}
 \title{geographical convergent cross mapping}
 \usage{
-gccm(
+\S4method{gccm}{sf}(
   data,
   cause,
   effect,
@@ -14,20 +14,6 @@ gccm(
   E = 3,
   tau = 1,
   k = E + 1,
-  nb = NULL,
-  RowCol = NULL,
-  trendRM = TRUE,
-  progressbar = TRUE
-)
-
-\S4method{gccm}{sf}(
-  data,
-  cause,
-  effect,
-  libsizes,
-  E,
-  tau,
-  k,
   nb = NULL,
   trendRM = TRUE,
   progressbar = TRUE
@@ -38,16 +24,16 @@ gccm(
   cause,
   effect,
   libsizes,
-  E,
-  tau,
-  k,
+  E = 3,
+  tau = 1,
+  k = E + 3,
   RowCol = NULL,
   trendRM = TRUE,
   progressbar = TRUE
 )
 }
 \arguments{
-\item{data}{The observation data, must be \code{sf} or \code{SpatRaster} object.}
+\item{data}{The observation data.}
 
 \item{cause}{Name of causal variable.}
 
@@ -63,11 +49,11 @@ gccm(
 
 \item{nb}{(optional) The neighbours list.}
 
-\item{RowCol}{(optional) Matrix of selected row and cols numbers.}
-
 \item{trendRM}{(optional) Whether to remove the linear trend.}
 
 \item{progressbar}{(optional) whether to print the progress bar.}
+
+\item{RowCol}{(optional) Matrix of selected row and cols numbers.}
 }
 \value{
 A list.
@@ -79,13 +65,6 @@ A list.
 \description{
 geographical convergent cross mapping
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{gccm(sf)}: \code{sf}
-
-\item \code{gccm(SpatRaster)}: \code{SpatRaster}
-
-}}
 \examples{
 columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
                        quiet=TRUE)
