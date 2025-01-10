@@ -109,7 +109,8 @@ pd_res = gccm(cause = "Pre",
               libsizes = seq(10, 2800, by = 100),
               E = 3,
               k = 4,
-              nb = popd_nb)
+              nb = popd_nb,
+              progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
 pd_res
@@ -164,7 +165,8 @@ npp_res = gccm(cause = "pre",
                libsizes = seq(10,130,10),
                E = 2,
                k = 5,
-               RowCol = pred)
+               RowCol = pred,
+               progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
 npp_res
