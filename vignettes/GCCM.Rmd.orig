@@ -108,8 +108,8 @@ pd_res = gccm(cause = "Pre",
               data = popd_sf,
               libsizes = seq(10, 2800, by = 100),
               E = 3,
-              nb = popd_nb,
-              trendRM = TRUE)
+              k = 4,
+              nb = popd_nb)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
 pd_res
@@ -162,7 +162,9 @@ npp_res = gccm(cause = "pre",
                effect = "npp",
                data = npp,
                libsizes = seq(10,130,10),
-               E = 3, RowCol = pred)
+               E = 2,
+               k = 5,
+               RowCol = pred)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
 npp_res
@@ -171,5 +173,5 @@ npp_res
 Visualize the result:
 
 ```{r fig3,fig.width=4.5,fig.height=3.5,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 3**. The cross-mapping prediction outputs between farmland NPP and precipitation.")}
-plot(npp_res,family = "TNR",xlimits = c(9, 101),ylimits = c(0,0.5))
+plot(npp_res,family = "TNR",xlimits = c(9, 101),ylimits = c(0,0.7))
 ```
