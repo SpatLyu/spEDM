@@ -3,5 +3,6 @@
 S3method(plot,ccm_res)
 S3method(print,ccm_res)
 exportMethods(gccm)
+importFrom(methods,setGeneric)
 importFrom(methods,setMethod)
 useDynLib(spEDM, .registration = TRUE)

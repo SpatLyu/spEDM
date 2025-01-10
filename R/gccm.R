@@ -1,4 +1,4 @@
-methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
+setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 
 .gccm_sf_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = E+1,
                     nb = NULL, trendRM = TRUE, progressbar = TRUE){
@@ -64,7 +64,8 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 #' \item{\code{varname}}{names of causal and effect variable}
 #' }
 #' @export
-#' @importFrom methods setMethod setGeneric
+#' @importFrom methods setGeneric
+#' @importFrom methods setMethod
 #' @name gccm
 #' @rdname gccm
 #' @aliases gccm,sf-method
@@ -77,7 +78,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 #' g
 #' plot(g, ylimits = c(0,0.65))
 #' }
-methods::setMethod("gccm", "sf", .gccm_sf_method)
+setMethod("gccm", "sf", .gccm_sf_method)
 
 #' @rdname gccm
-methods::setMethod("gccm", "SpatRaster", .gccm_spatraster_method)
+setMethod("gccm", "SpatRaster", .gccm_spatraster_method)
