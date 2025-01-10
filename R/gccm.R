@@ -1,6 +1,6 @@
 #' geographical convergent cross mapping
 #'
-#' @param data The observation data, must be `sf` or `SpatRaster` object.
+#' @param data The observation data.
 #' @param cause Name of causal variable.
 #' @param effect Name of effect variable.
 #' @param libsizes A vector of library sizes to use.

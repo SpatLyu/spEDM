@@ -47,7 +47,7 @@ gccm(
 )
 }
 \arguments{
-\item{data}{The observation data, must be \code{sf} or \code{SpatRaster} object.}
+\item{data}{The observation data.}
 
 \item{cause}{Name of causal variable.}
 
