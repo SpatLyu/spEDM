@@ -40,8 +40,6 @@ methods::setGeneric("gccm", function(data, cause, effect, libsizes, E = 3, tau =
   if (is.null(nb)) nb = sdsfun::spdep_nb(data)
   if (length(cause) != length(nb)) stop("Incompatible Data Dimensions!")
   if (trendRM){
-    # cause = RcppLinearTrendRM(cause,as.double(coords[,1]),as.double(coords[,2]))
-    # effect = RcppLinearTrendRM(effect,as.double(coords[,1]),as.double(coords[,2]))
     dtf = data.frame(cause = cause, effect = effect, x = coords[,1], y = coords[,2])
     cause = sdsfun::rm_lineartrend("cause~x+y", data = dtf)
     effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
