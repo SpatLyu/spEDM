@@ -71,8 +71,8 @@ std::vector<std::vector<double>> GCCM4Lattice(
     const std::vector<std::pair<int, int>>& lib,        // Matrix (n x 2) using n sequences of data to construct libraries
     const std::vector<std::pair<int, int>>& pred,       // Matrix (n x 2) using n sequences of data to predict from
     int E,                                              // Number of dimensions for the attractor reconstruction
-    int tau = 1,                                        // Spatial lag for the lagged-vector construction
-    int b = 0,                                          // Number of nearest neighbors to use for prediction
+    int tau,                                            // Spatial lag for the lagged-vector construction
+    int b,                                              // Number of nearest neighbors to use for prediction
     bool progressbar = true                             // Whether to print the progress bar
 ) {
   // If b is not provided correctly, default it to E + 2

@@ -30,9 +30,9 @@ std::vector<std::vector<double>> GCCM4Grid(
     const std::vector<int>& lib_sizes,               // Vector of library sizes to use
     const std::vector<std::pair<int, int>>& pred,    // Indices of spatial units to be predicted
     int E,                                           // Number of dimensions for the attractor reconstruction
-    int tau = 1,                                     // Step of spatial lags
-    int b = 0,                                       // Number of nearest neighbors to use for prediction
-    bool progressbar = true                           // Whether to print the progress bar
+    int tau,                                         // Step of spatial lags
+    int b,                                           // Number of nearest neighbors to use for prediction
+    bool progressbar                                 // Whether to print the progress bar
 );
 
 #endif // GCCM4Grid_H
