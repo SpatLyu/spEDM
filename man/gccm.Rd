@@ -46,6 +46,8 @@ geographical convergent cross mapping
 columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
                        quiet=TRUE)
 \donttest{
-gccm("HOVAL", "CRIME", data = columbus, libsizes = seq(5,45,5))
+g = gccm("HOVAL", "CRIME", data = columbus, libsizes = seq(5,45,5))
+g
+plot(g,ylimits = c(0,0.65))
 }
 }
