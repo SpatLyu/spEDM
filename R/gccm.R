@@ -78,5 +78,5 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 #' }
 methods::setMethod("gccm", "sf", .gccm_sf_method)
 
-#' @describeIn gccm `SpatRaster`
+#' @rdname gccm
 methods::setMethod("gccm", "SpatRaster", .gccm_spatraster_method)

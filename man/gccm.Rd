@@ -65,11 +65,6 @@ A list.
 \description{
 geographical convergent cross mapping
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{gccm(SpatRaster)}: \code{SpatRaster}
-
-}}
 \examples{
 columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
                        quiet=TRUE)
