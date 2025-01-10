@@ -1,6 +1,6 @@
 methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 
-.gccm_sf_method = \(data, cause, effect, libsizes, E, tau, k,
+.gccm_sf_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = E+1,
                     nb = NULL, trendRM = TRUE, progressbar = TRUE){
   varname = .check_character(cause, effect)
   coords = sdsfun::sf_coordinates(data)
@@ -20,7 +20,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   return(.bind_xmapdf(x_xmap_y,y_xmap_x,varname))
 }
 
-.gccm_spatraster_method = \(data, cause, effect, libsizes, E, tau, k,
+.gccm_spatraster_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = E+1,
                             RowCol = NULL, trendRM = TRUE, progressbar = TRUE){
   varname = .check_character(cause, effect)
   data = data[[c(cause,effect)]]
