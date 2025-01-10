@@ -68,7 +68,10 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
     const Rcpp::NumericMatrix& yMatrix,
     const Rcpp::IntegerVector& lib_sizes,
     const Rcpp::IntegerMatrix& pred,
-    int E) {
+    int E,
+    int tau = 1,
+    int b = 0,
+    bool progressbar = true) {
 
   // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
   std::vector<std::vector<double>> xMatrix_cpp(xMatrix.nrow(), std::vector<double>(xMatrix.ncol()));
@@ -104,7 +107,10 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
     yMatrix_cpp,
     lib_sizes_cpp,
     pred_cpp,
-    E
+    E,
+    tau,
+    b,
+    progressbar
   );
 
   Rcpp::NumericMatrix resultMatrix(result.size(), 5);

@@ -36,8 +36,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppGCCM4Grid
-Rcpp::NumericMatrix RcppGCCM4Grid(const Rcpp::NumericMatrix& xMatrix, const Rcpp::NumericMatrix& yMatrix, const Rcpp::IntegerVector& lib_sizes, const Rcpp::IntegerMatrix& pred, int E);
-RcppExport SEXP _spEDM_RcppGCCM4Grid(SEXP xMatrixSEXP, SEXP yMatrixSEXP, SEXP lib_sizesSEXP, SEXP predSEXP, SEXP ESEXP) {
+Rcpp::NumericMatrix RcppGCCM4Grid(const Rcpp::NumericMatrix& xMatrix, const Rcpp::NumericMatrix& yMatrix, const Rcpp::IntegerVector& lib_sizes, const Rcpp::IntegerMatrix& pred, int E, int tau, int b, bool progressbar);
+RcppExport SEXP _spEDM_RcppGCCM4Grid(SEXP xMatrixSEXP, SEXP yMatrixSEXP, SEXP lib_sizesSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -46,7 +46,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type lib_sizes(lib_sizesSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type pred(predSEXP);
     Rcpp::traits::input_parameter< int >::type E(ESEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppGCCM4Grid(xMatrix, yMatrix, lib_sizes, pred, E));
+    Rcpp::traits::input_parameter< int >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< int >::type b(bSEXP);
+    Rcpp::traits::input_parameter< bool >::type progressbar(progressbarSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppGCCM4Grid(xMatrix, yMatrix, lib_sizes, pred, E, tau, b, progressbar));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -103,8 +106,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppGCCM4Lattice
-Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, const Rcpp::IntegerVector& libsizes, int E);
-RcppExport SEXP _spEDM_RcppGCCM4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP libsizesSEXP, SEXP ESEXP) {
+Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, const Rcpp::IntegerVector& libsizes, int E, int tau, int b, bool progressbar);
+RcppExport SEXP _spEDM_RcppGCCM4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP libsizesSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -113,7 +116,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type libsizes(libsizesSEXP);
     Rcpp::traits::input_parameter< int >::type E(ESEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppGCCM4Lattice(x, y, nb, libsizes, E));
+    Rcpp::traits::input_parameter< int >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< int >::type b(bSEXP);
+    Rcpp::traits::input_parameter< bool >::type progressbar(progressbarSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppGCCM4Lattice(x, y, nb, libsizes, E, tau, b, progressbar));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -121,12 +127,12 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppLaggedVar4Grid", (DL_FUNC) &_spEDM_RcppLaggedVar4Grid, 2},
     {"_spEDM_RcppGenGridEmbeddings", (DL_FUNC) &_spEDM_RcppGenGridEmbeddings, 2},
-    {"_spEDM_RcppGCCM4Grid", (DL_FUNC) &_spEDM_RcppGCCM4Grid, 5},
+    {"_spEDM_RcppGCCM4Grid", (DL_FUNC) &_spEDM_RcppGCCM4Grid, 8},
     {"_spEDM_RcppConfidence", (DL_FUNC) &_spEDM_RcppConfidence, 3},
     {"_spEDM_RcppLinearTrendRM", (DL_FUNC) &_spEDM_RcppLinearTrendRM, 4},
     {"_spEDM_RcppLaggedVar4Lattice", (DL_FUNC) &_spEDM_RcppLaggedVar4Lattice, 2},
     {"_spEDM_RcppGenLatticeEmbeddings", (DL_FUNC) &_spEDM_RcppGenLatticeEmbeddings, 3},
-    {"_spEDM_RcppGCCM4Lattice", (DL_FUNC) &_spEDM_RcppGCCM4Lattice, 5},
+    {"_spEDM_RcppGCCM4Lattice", (DL_FUNC) &_spEDM_RcppGCCM4Lattice, 8},
     {NULL, NULL, 0}
 };
 

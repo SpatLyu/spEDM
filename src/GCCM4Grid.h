@@ -25,12 +25,14 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
 
 // GCCM4Grid function
 std::vector<std::vector<double>> GCCM4Grid(
-    const std::vector<std::vector<double>>& xMatrix,
-    const std::vector<std::vector<double>>& yMatrix,
-    const std::vector<int>& lib_sizes,
-    const std::vector<std::pair<int, int>>& pred,
-    int E,
-    int tau = 1,
-    int b = 0);
+    const std::vector<std::vector<double>>& xMatrix, // Two dimension matrix of X variable
+    const std::vector<std::vector<double>>& yMatrix, // Two dimension matrix of Y variable
+    const std::vector<int>& lib_sizes,               // Vector of library sizes to use
+    const std::vector<std::pair<int, int>>& pred,    // Indices of spatial units to be predicted
+    int E,                                           // Number of dimensions for the attractor reconstruction
+    int tau = 1,                                     // Step of spatial lags
+    int b = 0,                                       // Number of nearest neighbors to use for prediction
+    bool progressbar = true                           // Whether to print the progress bar
+);
 
 #endif // GCCM4Grid_H

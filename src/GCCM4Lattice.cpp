@@ -66,17 +66,21 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
 // Function to compute GCCM4Lattice
 std::vector<std::vector<double>> GCCM4Lattice(
     const std::vector<std::vector<double>>& x_vectors,  // Reconstructed state-space (each row is a separate vector/state)
-    const std::vector<double>& y,                      // Time series to cross map to
-    const std::vector<int>& lib_sizes,                 // Vector of library sizes to use
-    const std::vector<std::pair<int, int>>& lib,       // Matrix (n x 2) using n sequences of data to construct libraries
-    const std::vector<std::pair<int, int>>& pred,      // Matrix (n x 2) using n sequences of data to predict from
-    int E,                                             // Number of dimensions for the attractor reconstruction
-    int tau = 1,                                       // Time lag for the lagged-vector construction
-    int b = 0                                          // Number of nearest neighbors to use for prediction
+    const std::vector<double>& y,                       // Spatial cross-section series to cross map to
+    const std::vector<int>& lib_sizes,                  // Vector of library sizes to use
+    const std::vector<std::pair<int, int>>& lib,        // Matrix (n x 2) using n sequences of data to construct libraries
+    const std::vector<std::pair<int, int>>& pred,       // Matrix (n x 2) using n sequences of data to predict from
+    int E,                                              // Number of dimensions for the attractor reconstruction
+    int tau = 1,                                        // Spatial lag for the lagged-vector construction
+    int b = 0,                                          // Number of nearest neighbors to use for prediction
+    bool progressbar = true                             // Whether to print the progress bar
 ) {
-  int n = x_vectors.size();
-  b = E + 1; // Set b to E + 1 if not provided
+  // If b is not provided correctly, default it to E + 2
+  if (b <= 0) {
+    b = E + 2;
+  }
 
+  int n = x_vectors.size();
   // Setup pred_indices
   std::vector<bool> pred_indices(n, false);
   for (const auto& p : pred) {
@@ -124,13 +128,21 @@ std::vector<std::vector<double>> GCCM4Lattice(
   // }
 
   // Perform the operations using RcppThread
-  RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
-  RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
-    int lib_size = unique_lib_sizes[i];
-    auto results = GCCMSingle4Lattice(x_vectors, y, lib_indices, lib_size, max_lib_size, possible_lib_indices, pred_indices, b);
-    x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
-    bar++;
-  });
+  if (progressbar) {
+    RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
+    RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
+      int lib_size = unique_lib_sizes[i];
+      auto results = GCCMSingle4Lattice(x_vectors, y, lib_indices, lib_size, max_lib_size, possible_lib_indices, pred_indices, b);
+      x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+      bar++;
+    });
+  } else {
+    RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
+      int lib_size = unique_lib_sizes[i];
+      auto results = GCCMSingle4Lattice(x_vectors, y, lib_indices, lib_size, max_lib_size, possible_lib_indices, pred_indices, b);
+      x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+    });
+  }
 
   // Group by the first int and compute the mean
   std::map<int, std::vector<double>> grouped_results;
