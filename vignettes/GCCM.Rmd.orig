@@ -117,7 +117,7 @@ pd_res
 
 Visualize the result:
 
-```{r fig1,fig.width=6.75,fig.height=5.5,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 1**. The cross-mapping prediction outputs between population density and county-level Precipitation.")}
+```{r fig1,fig.width=6.75,fig.height=5.5,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. The cross-mapping prediction outputs between population density and county-level Precipitation.")}
 windowsFonts(TNR = windowsFont("Times New Roman"))
 
 plot(pd_res,limits = c(0, 2800),family = "TNR")
@@ -127,7 +127,7 @@ plot(pd_res,limits = c(0, 2800),family = "TNR")
 
 Load data and package:
 
-```{r fig2,fig.width=6.55,fig.height=2.15,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 2**. Maps of farmland NPP and climate factors.")}
+```{r fig2,fig.width=6.55,fig.height=2.15,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. Maps of farmland NPP and climate factors.")}
 npp = terra::rast(system.file("extdata/npp.tif", package = "spEDM"))
 npp
 
@@ -170,6 +170,6 @@ npp_res
 
 Visualize the result:
 
-```{r fig3,fig.width=4.5,fig.height=3.5,fig.dpi=300,fig.cap=knitr::asis_output("**Figure 3**. The cross-mapping prediction outputs between farmland NPP and precipitation.")}
+```{r fig3,fig.width=4.5,fig.height=3.5,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 3**. The cross-mapping prediction outputs between farmland NPP and precipitation.")}
 plot(npp_res,limits = c(9, 101),family = "TNR")
 ```
