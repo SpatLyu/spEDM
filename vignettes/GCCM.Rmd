@@ -158,7 +158,7 @@ pd_res = gccm(cause = "Pre",
               progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 19.90492 mins
+## Time difference of 20.3045 mins
 pd_res
 ##    libsizes popDensity->Pre Pre->popDensity
 ## 1        10      0.01130395      0.06607465
@@ -267,7 +267,7 @@ npp_res = gccm(cause = "pre",
                progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 24.91822 mins
+## Time difference of 26.41701 mins
 npp_res
 ##    libsizes     npp->pre   pre->npp
 ## 1        10  0.049237491 0.07312462
@@ -297,10 +297,8 @@ Visualize the result:
 
 ``` r
 plot(npp_res,family = "TNR",xlimits = c(9, 101),ylimits = c(-0.05,1))
-## Warning: Removed 5 rows containing missing values or values outside the scale range
-## (`geom_line()`).
-## Warning: Removed 1 row containing missing values or values outside the scale range
-## (`geom_line()`).
+## Warning: Removed 1 row containing missing values or values outside the scale range (`geom_line()`).
+## Removed 1 row containing missing values or values outside the scale range (`geom_line()`).
 ```
 
 ![**Figure 3**. The cross-mapping prediction outputs between farmland NPP and precipitation.](../man/figures/gccm/fig3-1.png)
