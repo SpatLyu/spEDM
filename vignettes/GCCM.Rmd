@@ -197,7 +197,7 @@ Visualize the result:
 ``` r
 windowsFonts(TNR = windowsFont("Times New Roman"))
 
-plot(pd_res,family = "TNR",xlimits = c(0, 2800))
+plot(pd_res,xlimits = c(0, 2800))
 ```
 
 ![**Figure 1**. The cross-mapping prediction outputs between population density and county-level Precipitation.](../man/figures/gccm/fig1-1.png)
@@ -296,7 +296,7 @@ Visualize the result:
 
 
 ``` r
-plot(npp_res,family = "TNR",xlimits = c(9, 101),ylimits = c(-0.05,1))
+plot(npp_res,xlimits = c(9, 101),ylimits = c(-0.05,1))
 ## Warning: Removed 1 row containing missing values or values outside the scale range (`geom_line()`).
 ## Removed 1 row containing missing values or values outside the scale range (`geom_line()`).
 ```

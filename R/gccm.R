@@ -64,6 +64,8 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 #' \item{\code{varname}}{names of causal and effect variable}
 #' }
 #' @export
+#' @importFrom methods setGeneric
+#' @importFrom methods setMethod
 #' @name gccm
 #' @rdname gccm
 #' @aliases gccm,sf-method

@@ -119,9 +119,7 @@ pd_res
 Visualize the result:
 
 ```{r fig1,fig.width=6.15,fig.height=5.05,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. The cross-mapping prediction outputs between population density and county-level Precipitation.")}
-windowsFonts(TNR = windowsFont("Times New Roman"))
-
-plot(pd_res,family = "TNR",xlimits = c(0, 2800))
+plot(pd_res,xlimits = c(0, 2800))
 ```
 
 ### 2.3 An example of grid data about farmland NPP
@@ -175,5 +173,5 @@ npp_res
 Visualize the result:
 
 ```{r fig3,fig.width=4.5,fig.height=3.5,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 3**. The cross-mapping prediction outputs between farmland NPP and precipitation.")}
-plot(npp_res,family = "TNR",xlimits = c(9, 101),ylimits = c(-0.05,1))
+plot(npp_res,xlimits = c(9, 101),ylimits = c(-0.05,1))
 ```
