@@ -100,12 +100,13 @@ print.gccm_res = \(x,...){
 #' plot gccm result
 #' @noRd
 #' @export
-plot.gccm_res = \(x,breaks = NULL,limits = NULL,family = "serif",...){
+plot.gccm_res = \(x, family = "serif", xbreaks = NULL, xlimits = NULL,
+                  ybreaks = seq(0, 1, by = 0.1), ylimits = c(-0.05, 1), ...){
   resdf = x$xmap
   resdf = resdf[,c("libsizes", "x_xmap_y_mean", "y_xmap_x_mean")]
 
-  if(is.null(breaks)) breaks = resdf$libsizes
-  if(is.null(limits)) limits = c(min(breaks)-1,max(breaks)+1)
+  if(is.null(xbreaks)) xbreaks = resdf$libsizes
+  if(is.null(xlimits)) xlimits = c(min(xbreaks)-1,max(xbreaks)+1)
   fig1 = ggplot2::ggplot(data = resdf,
                          ggplot2::aes(x = libsizes)) +
     ggplot2::geom_line(ggplot2::aes(y = x_xmap_y_mean,
@@ -114,12 +115,10 @@ plot.gccm_res = \(x,breaks = NULL,limits = NULL,family = "serif",...){
     ggplot2::geom_line(ggplot2::aes(y = y_xmap_x_mean,
                                     color = "y xmap x"),
                        lwd = 1.25) +
-    ggplot2::scale_y_continuous(breaks = seq(0, 1, by = 0.1),
-                                limits = c(-0.05, 1), expand = c(0, 0),
-                                name = expression(rho)) +
-    ggplot2::scale_x_continuous(name = "Lib of Sizes",
-                                breaks = breaks,
-                                limits = limits, expand = c(0, 0)) +
+    ggplot2::scale_y_continuous(breaks = ybreaks, limits = ylimits,
+                                expand = c(0, 0), name = expression(rho)) +
+    ggplot2::scale_x_continuous(name = "Lib of Sizes", breaks = xbreaks,
+                                limits = xlimits, expand = c(0, 0)) +
     ggplot2::scale_color_manual(values = c("x xmap y" = "#608dbe",
                                            "y xmap x" = "#ed795b"),
                                 labels = c(paste0(x$varname[2], " causes ", x$varname[1]),
