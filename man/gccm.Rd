@@ -10,9 +10,12 @@ gccm(
   data,
   libsizes,
   E = 3,
+  tau = 1,
+  k = E + 2,
   nb = NULL,
   RowCol = NULL,
-  trendRM = TRUE
+  trendRM = TRUE,
+  progressbar = TRUE
 )
 }
 \arguments{
@@ -26,11 +29,17 @@ gccm(
 
 \item{E}{(optional) The dimensions of the embedding.}
 
+\item{tau}{(optional) The step of spatial lags.}
+
+\item{k}{(optional) Number of nearest neighbors to use for prediction.}
+
 \item{nb}{(optional) The neighbours list.}
 
 \item{RowCol}{(optional) Matrix of selected row and cols numbers.}
 
 \item{trendRM}{(optional) Whether to remove the linear trend.}
+
+\item{progressbar}{(optional) whether to print the progress bar.}
 }
 \value{
 A list.
