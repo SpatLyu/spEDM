@@ -175,5 +175,5 @@ npp_res
 Visualize the result:
 
 ```{r fig3,fig.width=4.5,fig.height=3.5,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 3**. The cross-mapping prediction outputs between farmland NPP and precipitation.")}
-plot(npp_res,family = "TNR",xlimits = c(9, 101),ylimits = c(0,1))
+plot(npp_res,family = "TNR",xlimits = c(9, 101),ylimits = c(-0.05,1))
 ```

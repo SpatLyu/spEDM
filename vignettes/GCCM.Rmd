@@ -98,7 +98,7 @@ popd_nb
 popdensity = readr::read_csv(system.file("extdata/popdensity.csv",
                                          package = "spEDM"))
 ## Rows: 2806 Columns: 7
-## ── Column specification ───────────────────────────────────────────────────────────────────────
+## ── Column specification ────────────────────────────────────────────────────────────────────────
 ## Delimiter: ","
 ## dbl (7): x, y, popDensity, DEM, Tem, Pre, slop
 ## 
@@ -158,7 +158,7 @@ pd_res = gccm(cause = "Pre",
               progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 19.38865 mins
+## Time difference of 19.90492 mins
 pd_res
 ##    libsizes popDensity->Pre Pre->popDensity
 ## 1        10      0.01130395      0.06607465
@@ -260,34 +260,44 @@ startTime = Sys.time()
 npp_res = gccm(cause = "pre",
                effect = "npp",
                data = npp,
-               libsizes = seq(10,130,10),
+               libsizes = seq(10,130,5),
                E = 2,
                k = 5,
                RowCol = pred,
                progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 12.84768 mins
+## Time difference of 24.91822 mins
 npp_res
-##    libsizes    npp->pre   pre->npp
-## 1        10  0.04923749 0.07312462
-## 2        20  0.08000948 0.12935898
-## 3        30  0.10475806 0.15943448
-## 4        40  0.11916936 0.18985868
-## 5        50  0.14896894 0.24764600
-## 6        60  0.17386847 0.30697776
-## 7        70  0.15723184 0.28574340
-## 8        80  0.05897772 0.22701677
-## 9        90 -0.02285342 0.23577169
-## 10      100 -0.03429827 0.72561637
+##    libsizes     npp->pre   pre->npp
+## 1        10  0.049237491 0.07312462
+## 2        15  0.063939456 0.10307461
+## 3        20  0.080009483 0.12935898
+## 4        25  0.097903289 0.14718470
+## 5        30  0.104758061 0.15943448
+## 6        35  0.111686523 0.17026742
+## 7        40  0.119169359 0.18985868
+## 8        45  0.132677547 0.21607528
+## 9        50  0.148968939 0.24764600
+## 10       55  0.165193950 0.28759045
+## 11       60  0.173868473 0.30697776
+## 12       65  0.179777011 0.31209341
+## 13       70  0.157231842 0.28574340
+## 14       75  0.108711472 0.24817243
+## 15       80  0.058977718 0.22701677
+## 16       85 -0.003501071 0.23364337
+## 17       90 -0.022853416 0.23577169
+## 18       95 -0.042780283 0.34364441
+## 19      100 -0.034298266 0.72561637
+## 20      105 -0.070605553 0.77999128
 ```
 
 Visualize the result:
 
 
 ``` r
-plot(npp_res,family = "TNR",xlimits = c(9, 101),ylimits = c(0,0.7))
-## Warning: Removed 2 rows containing missing values or values outside the scale range
+plot(npp_res,family = "TNR",xlimits = c(9, 101),ylimits = c(-0.05,1))
+## Warning: Removed 5 rows containing missing values or values outside the scale range
 ## (`geom_line()`).
 ## Warning: Removed 1 row containing missing values or values outside the scale range
 ## (`geom_line()`).
