@@ -23,7 +23,7 @@
 #' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
 #'                        quiet=TRUE)
 #' \donttest{
-#' g = gccm("HOVAL", "CRIME", data = columbus, libsizes = seq(5,45,5))
+#' g = gccm("HOVAL", "CRIME", data = columbus, libsizes = seq(5,45,5), k = 4)
 #' g
 #' plot(g,ylimits = c(0,0.65))
 #' }
