@@ -5,9 +5,12 @@
 #' @param data The observation data, must be `sf` or `SpatRaster` object.
 #' @param libsizes A vector of library sizes to use.
 #' @param E (optional) The dimensions of the embedding.
+#' @param tau (optional) The step of spatial lags.
+#' @param k (optional) Number of nearest neighbors to use for prediction.
 #' @param nb (optional) The neighbours list.
 #' @param RowCol (optional) Matrix of selected row and cols numbers.
 #' @param trendRM (optional) Whether to remove the linear trend.
+#' @param progressbar (optional) whether to print the progress bar.
 #'
 #' @return A list.
 #' \describe{
@@ -24,8 +27,8 @@
 #' g
 #' plot(g,ylimits = c(0,0.65))
 #' }
-gccm = \(cause, effect, data, libsizes, E = 3,
-         nb = NULL, RowCol = NULL, trendRM =TRUE) {
+gccm = \(cause, effect, data, libsizes, E = 3, tau = 1, k = E+2,
+         nb = NULL, RowCol = NULL, trendRM =TRUE, progressbar = TRUE) {
   if (!inherits(cause,"character") || !inherits(effect,"character")) {
     stop("The `cause` and `effect` must be character.")
   }
@@ -45,8 +48,8 @@ gccm = \(cause, effect, data, libsizes, E = 3,
       effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
     }
 
-    x_xmap_y = RcppGCCM4Lattice(cause,effect,nb,libsizes,E)
-    y_xmap_x = RcppGCCM4Lattice(effect,cause,nb,libsizes,E)
+    x_xmap_y = RcppGCCM4Lattice(cause,effect,nb,libsizes,E,tau,k,progressbar)
+    y_xmap_x = RcppGCCM4Lattice(effect,cause,nb,libsizes,E,tau,k,progressbar)
 
   } else if (inherits(data,"SpatRaster")) {
     data = data[[c(cause,effect)]]
@@ -64,8 +67,8 @@ gccm = \(cause, effect, data, libsizes, E = 3,
     selvec = seq(5,maxlibsize,5)
     if (is.null(RowCol)) RowCol = as.matrix(expand.grid(selvec,selvec))
 
-    x_xmap_y = RcppGCCM4Grid(causemat,effectmat,libsizes,RowCol,E)
-    y_xmap_x = RcppGCCM4Grid(effectmat,causemat,libsizes,RowCol,E)
+    x_xmap_y = RcppGCCM4Grid(causemat,effectmat,libsizes,RowCol,E,tau,k,progressbar)
+    y_xmap_x = RcppGCCM4Grid(effectmat,causemat,libsizes,RowCol,E,tau,k,progressbar)
 
   } else {
     stop("The data should be `sf` or `SpatRaster` object!")
