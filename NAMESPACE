@@ -2,5 +2,5 @@
 
 S3method(plot,ccm_res)
 S3method(print,ccm_res)
-export(gccm)
+exportMethods(gccm)
 useDynLib(spEDM, .registration = TRUE)
