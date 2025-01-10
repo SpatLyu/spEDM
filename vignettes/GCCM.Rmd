@@ -195,8 +195,6 @@ Visualize the result:
 
 
 ``` r
-windowsFonts(TNR = windowsFont("Times New Roman"))
-
 plot(pd_res,xlimits = c(0, 2800))
 ```
 
