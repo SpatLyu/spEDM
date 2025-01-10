@@ -23,11 +23,11 @@
 #' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
 #'                        quiet=TRUE)
 #' \donttest{
-#' g = gccm("HOVAL", "CRIME", data = columbus, libsizes = seq(5,45,5), k = 4)
+#' g = gccm("HOVAL", "CRIME", data = columbus, libsizes = seq(5,45,5))
 #' g
 #' plot(g,ylimits = c(0,0.65))
 #' }
-gccm = \(cause, effect, data, libsizes, E = 3, tau = 1, k = E + 2,
+gccm = \(cause, effect, data, libsizes, E = 3, tau = 1, k = E + 1,
          nb = NULL, RowCol = NULL, trendRM = TRUE, progressbar = TRUE) {
   if (!inherits(cause,"character") || !inherits(effect,"character")) {
     stop("The `cause` and `effect` must be character.")
