@@ -6,7 +6,7 @@ Authors@R:
            email = "lyu.geosocial@gmail.com", 
            role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0009-0002-6003-3800"))
-Description: Integrates empirical dynamic modeling (EDM) with geospatial cross-sectional data to analyze causality via geographical convergent cross mapping (GCCM) described in Gao et al. (2023) <doi:10.1038/s41467-023-41619-6>.
+Description: Analyze causality in geospatial data using empirical dynamic modeling (EDM) through geographical convergent cross mapping (GCCM) by Gao et al. (2023) <doi:10.1038/s41467-023-41619-6> and multispatial convergent cross mapping (multispatialCCM) by Clark et al. (2015) <doi:10.1890/14-1479.1>.
 License: GPL-3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
