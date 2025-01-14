@@ -6,6 +6,8 @@
 
 * Add `print` and `plot` s3 methods for `gccm` result (#64).
 
+* Require `sdsfun` package version `0.7.0` or higher (#61).
+
 # spEDM 1.1
 
 * Resolve CRAN auto check issues, no significant API changes.
