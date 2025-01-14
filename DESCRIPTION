@@ -22,7 +22,7 @@ Imports:
     dplyr,
     ggplot2,
     methods,
-    sdsfun (>= 0.6.0),
+    sdsfun (>= 0.7.0),
     terra
 Suggests: 
     knitr,
