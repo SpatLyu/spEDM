@@ -4,7 +4,9 @@
 #include <stdexcept>
 #include <numeric> // for std::accumulate
 #include <limits>  // for std::numeric_limits
-#include <Rcpp.h>
+// #include <Rcpp.h>
+#include <RcppArmadillo.h>
+// [[Rcpp::depends(RcppArmadillo)]]
 
 // Function to check if a value is NA
 bool isNA(double value) {
@@ -74,7 +76,6 @@ std::vector<double> CppSumNormalize(const std::vector<double>& vec,
 
   return normalizedVec;
 }
-
 
 // Function to calculate the variance of a vector, ignoring NA values
 double CppVariance(const std::vector<double>& vec, bool NA_rm = false) {
@@ -156,6 +157,55 @@ std::vector<double> CppConfidence(double r, int n,
   return {r_upper, r_lower};
 }
 
+// Function to compute SVD similar to R's svd()
+// Input:
+//   - X: A matrix represented as std::vector<std::vector<double>>
+// Output:
+//   - A std::vector containing three components:
+//     1. d: A vector of singular values (std::vector<double>)
+//     2. u: A matrix of left singular vectors (std::vector<std::vector<double>>)
+//     3. v: A matrix of right singular vectors (std::vector<std::vector<double>>)
+std::vector<std::vector<std::vector<double>>> CppSVD(const std::vector<std::vector<double>>& X) {
+  // Convert input matrix to Armadillo matrix
+  size_t m = X.size();
+  size_t n = X[0].size();
+  arma::mat A(m, n);
+  for (size_t i = 0; i < m; ++i) {
+    for (size_t j = 0; j < n; ++j) {
+      A(i, j) = X[i][j];
+    }
+  }
+
+  // Perform SVD using Armadillo
+  arma::mat U; // Left singular vectors
+  arma::vec S; // Singular values
+  arma::mat V; // Right singular vectors
+  arma::svd(U, S, V, A);
+
+  // Convert Armadillo objects back to std::vector
+  std::vector<std::vector<double>> u(m, std::vector<double>(m));
+  for (size_t i = 0; i < m; ++i) {
+    for (size_t j = 0; j < m; ++j) {
+      u[i][j] = U(i, j);
+    }
+  }
+
+  std::vector<double> d(S.n_elem);
+  for (size_t i = 0; i < S.n_elem; ++i) {
+    d[i] = S(i);
+  }
+
+  std::vector<std::vector<double>> v(V.n_rows, std::vector<double>(V.n_cols));
+  for (size_t i = 0; i < V.n_rows; ++i) {
+    for (size_t j = 0; j < V.n_cols; ++j) {
+      v[i][j] = V(i, j);
+    }
+  }
+
+  // Return as a std::vector to match R's svd() output
+  return {u, {d}, v};
+}
+
 // Function to perform Linear Trend Removal
 std::vector<double> LinearTrendRM(const std::vector<double>& vec,
                                   const std::vector<double>& xcoord,
@@ -196,6 +246,50 @@ std::vector<double> LinearTrendRM(const std::vector<double>& vec,
   std::vector<double> result(vec.size());
   for (size_t i = 0; i < vec.size(); ++i) {
     result[i] = vec[i] - vec_hat[i];
+  }
+
+  return result;
+}
+
+// Function to remove linear trend using Armadillo for internal calculations
+std::vector<double> ArmaLinearTrendRM(const std::vector<double>& vec,
+                                      const std::vector<double>& xcoord,
+                                      const std::vector<double>& ycoord,
+                                      bool NA_rm = false) {
+  if (vec.size() != xcoord.size() || vec.size() != ycoord.size()) {
+    throw std::invalid_argument("Input vectors must have the same size.");
+  }
+
+  // Convert input vectors to Armadillo vectors
+  arma::vec arma_vec(vec.size());
+  arma::vec arma_xcoord(xcoord.size());
+  arma::vec arma_ycoord(ycoord.size());
+
+  for (size_t i = 0; i < vec.size(); ++i) {
+    arma_vec(i) = vec[i];
+    arma_xcoord(i) = xcoord[i];
+    arma_ycoord(i) = ycoord[i];
+  }
+
+  // Create design matrix for linear regression
+  arma::mat X(vec.size(), 3);
+  X.col(0) = arma::ones<arma::vec>(vec.size()); // Intercept
+  X.col(1) = arma_xcoord; // x1
+  X.col(2) = arma_ycoord; // x2
+
+  // Perform linear regression using Armadillo
+  arma::vec coefficients;
+  if (!arma::solve(coefficients, X, arma_vec)) {
+    throw std::invalid_argument("Linear regression failed due to singular matrix.");
+  }
+
+  // Predict vec_hat using the linear regression model
+  arma::vec arma_vec_hat = X * coefficients;
+
+  // Calculate vec - vec_hat
+  std::vector<double> result(vec.size());
+  for (size_t i = 0; i < vec.size(); ++i) {
+    result[i] = vec[i] - arma_vec_hat(i);
   }
 
   return result;
