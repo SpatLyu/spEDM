@@ -4,7 +4,6 @@
 #include <numeric>
 #include <utility>
 #include <limits>
-#include <iostream>
 #include "CppStats.h"
 
 // Function to compute the S-map prediction
