@@ -17,7 +17,8 @@ Depends:
     R (>= 4.1.0)
 LinkingTo: 
     Rcpp,
-    RcppThread
+    RcppThread,
+    RcppArmadillo
 Imports: 
     dplyr,
     ggplot2,

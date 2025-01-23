@@ -84,7 +84,7 @@ double SMap(
     std::vector<std::vector<std::vector<double>>> svd_result = CppSVD(A);
     std::vector<std::vector<double>> U = svd_result[0];
     std::vector<double> S = svd_result[1][0];
-    std::vector<std::vector<double>> V = result[2];
+    std::vector<std::vector<double>> V = svd_result[2];
 
     // Remove singular values that are too small
     double max_s = *std::max_element(S.begin(), S.end());
