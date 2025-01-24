@@ -20,6 +20,14 @@ double CppMean(const std::vector<double>& vec,
 double CppSum(const std::vector<double>& vec,
               bool NA_rm = false);
 
+double CppMAE(const std::vector<double>& x1,
+              const std::vector<double>& x2,
+              bool NA_rm = false);
+
+double CppRMSE(const std::vector<double>& x1,
+               const std::vector<double>& x2,
+               bool NA_rm = false);
+
 std::vector<double> CppAbs(const std::vector<double>& vec1,
                            const std::vector<double>& vec2);
 
