@@ -256,24 +256,45 @@ std::vector<double> ArmaLinearTrendRM(const std::vector<double>& vec,
                                       const std::vector<double>& xcoord,
                                       const std::vector<double>& ycoord,
                                       bool NA_rm = false) {
+  // Check input sizes
   if (vec.size() != xcoord.size() || vec.size() != ycoord.size()) {
     throw std::invalid_argument("Input vectors must have the same size.");
   }
 
-  // Convert input vectors to Armadillo vectors
-  arma::vec arma_vec(vec.size());
-  arma::vec arma_xcoord(xcoord.size());
-  arma::vec arma_ycoord(ycoord.size());
+  // Create a vector to store the result
+  std::vector<double> result(vec.size(), std::numeric_limits<double>::quiet_NaN()); // Initialize with NA
 
+  // Find indices where all three vectors are not NA
+  std::vector<size_t> valid_indices;
   for (size_t i = 0; i < vec.size(); ++i) {
-    arma_vec(i) = vec[i];
-    arma_xcoord(i) = xcoord[i];
-    arma_ycoord(i) = ycoord[i];
+    if (!isNA(vec[i]) && !isNA(xcoord[i]) && !isNA(ycoord[i])) {
+      valid_indices.push_back(i);
+    } else if (!NA_rm) {
+      throw std::invalid_argument("Input contains NA values and NA_rm is false.");
+    }
   }
 
+  // If no valid data, return the result filled with NA
+  if (valid_indices.empty()) {
+    return result;
+  }
+
+  // Extract non-NA values
+  std::vector<double> clean_vec, clean_xcoord, clean_ycoord;
+  for (size_t i : valid_indices) {
+    clean_vec.push_back(vec[i]);
+    clean_xcoord.push_back(xcoord[i]);
+    clean_ycoord.push_back(ycoord[i]);
+  }
+
+  // Convert cleaned vectors to Armadillo vectors
+  arma::vec arma_vec(clean_vec);
+  arma::vec arma_xcoord(clean_xcoord);
+  arma::vec arma_ycoord(clean_ycoord);
+
   // Create design matrix for linear regression
-  arma::mat X(vec.size(), 3);
-  X.col(0) = arma::ones<arma::vec>(vec.size()); // Intercept
+  arma::mat X(clean_vec.size(), 3);
+  X.col(0) = arma::ones<arma::vec>(clean_vec.size()); // Intercept
   X.col(1) = arma_xcoord; // x1
   X.col(2) = arma_ycoord; // x2
 
@@ -286,10 +307,9 @@ std::vector<double> ArmaLinearTrendRM(const std::vector<double>& vec,
   // Predict vec_hat using the linear regression model
   arma::vec arma_vec_hat = X * coefficients;
 
-  // Calculate vec - vec_hat
-  std::vector<double> result(vec.size());
-  for (size_t i = 0; i < vec.size(); ++i) {
-    result[i] = vec[i] - arma_vec_hat(i);
+  // Fill the result vector
+  for (size_t i = 0; i < valid_indices.size(); ++i) {
+    result[valid_indices[i]] = clean_vec[i] - arma_vec_hat(i);
   }
 
   return result;

@@ -21,8 +21,16 @@ RcppLinearTrendRM <- function(vec, xcoord, ycoord, NA_rm = FALSE) {
     .Call(`_spEDM_RcppLinearTrendRM`, vec, xcoord, ycoord, NA_rm)
 }
 
+RcppArmaLinearTrendRM <- function(vec, xcoord, ycoord, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppArmaLinearTrendRM`, vec, xcoord, ycoord, NA_rm)
+}
+
 RcppLaggedVar4Lattice <- function(nb, lagNum) {
     .Call(`_spEDM_RcppLaggedVar4Lattice`, nb, lagNum)
+}
+
+RcppSVD <- function(X) {
+    .Call(`_spEDM_RcppSVD`, X)
 }
 
 RcppGenLatticeEmbeddings <- function(vec, nb, E) {
