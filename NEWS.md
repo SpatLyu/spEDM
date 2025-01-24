@@ -1,5 +1,7 @@
 # spEDM 1.3
 
+* Add `S-maps` cross-prediction support to `gccm` (#81).
+
 # spEDM 1.2
 
 * Encapsulate the `gccm` function using the S4 class (#72).
