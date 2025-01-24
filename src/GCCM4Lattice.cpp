@@ -8,6 +8,7 @@
 #include "CppStats.h"
 #include "CppLatticeUtils.h"
 #include "SimplexProjection.h"
+#include "SMap.h"
 #include <RcppThread.h>
 
 // [[Rcpp::plugins(cpp11)]]
@@ -22,7 +23,9 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
     int max_lib_size,                                  // Maximum size of the library
     const std::vector<int>& possible_lib_indices,      // Indices of possible library states
     const std::vector<bool>& pred_indices,             // Vector of T/F values (which states to predict from)
-    int b                                              // Number of neighbors to use for simplex projection
+    int b,                                             // Number of neighbors to use for simplex projection
+    bool simplex,                                      // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
+    double theta                                       // Distance weighting parameter for the local neighbours in the manifold
 ) {
   int n = x_vectors.size();
   std::vector<std::pair<int, double>> x_xmap_y;
@@ -55,7 +58,12 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
       }
 
       // Run cross map and store results
-      double rho = SimplexProjection(x_vectors, y, lib_indices, pred_indices, b);
+      double rho;
+      if (simplex) {
+        rho = SimplexProjection(x_vectors, y, lib_indices, pred_indices, b);
+      } else {
+        rho = SMap(x_vectors, y, lib_indices, pred_indices, b, theta);
+      }
       x_xmap_y.emplace_back(lib_size, rho);
     }
   }
@@ -73,6 +81,8 @@ std::vector<std::vector<double>> GCCM4Lattice(
     int E,                                              // Number of dimensions for the attractor reconstruction
     int tau,                                            // Spatial lag for the lagged-vector construction
     int b,                                              // Number of nearest neighbors to use for prediction
+    bool simplex,                                       // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
+    double theta,                                       // Distance weighting parameter for the local neighbours in the manifold
     bool progressbar = true                             // Whether to print the progress bar
 ) {
   // If b is not provided correctly, default it to E + 2
@@ -132,14 +142,14 @@ std::vector<std::vector<double>> GCCM4Lattice(
     RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
     RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
       int lib_size = unique_lib_sizes[i];
-      auto results = GCCMSingle4Lattice(x_vectors, y, lib_indices, lib_size, max_lib_size, possible_lib_indices, pred_indices, b);
+      auto results = GCCMSingle4Lattice(x_vectors, y, lib_indices, lib_size, max_lib_size, possible_lib_indices, pred_indices, b, simplex, theta);
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
       bar++;
     });
   } else {
     RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
       int lib_size = unique_lib_sizes[i];
-      auto results = GCCMSingle4Lattice(x_vectors, y, lib_indices, lib_size, max_lib_size, possible_lib_indices, pred_indices, b);
+      auto results = GCCMSingle4Lattice(x_vectors, y, lib_indices, lib_size, max_lib_size, possible_lib_indices, pred_indices, b, simplex, theta);
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
     });
   }
