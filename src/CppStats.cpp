@@ -43,6 +43,81 @@ double CppSum(const std::vector<double>& vec,
   return sum;
 }
 
+// Function to compute Mean Absolute Error (MAE) between two vectors
+double CppMAE(const std::vector<double>& vec1,
+              const std::vector<double>& vec2,
+              bool NA_rm = false) {
+  // Check if input vectors have the same size
+  if (vec1.size() != vec2.size()) {
+    throw std::invalid_argument("Input vectors must have the same size.");
+  }
+
+  // Initialize variables for MAE calculation
+  double sum_abs_diff = 0.0; // Sum of absolute differences
+  size_t valid_count = 0;    // Count of valid (non-NaN) pairs
+
+  // Iterate through the vectors
+  for (size_t i = 0; i < vec1.size(); ++i) {
+    // Check if either vec1[i] or vec2[i] is NaN
+    if (isNA(vec1[i]) || isNA(vec2[i])) {
+      if (!NA_rm) {
+        // If NA_rm is false and NaN is encountered, return NaN
+        return std::numeric_limits<double>::quiet_NaN();
+      }
+    } else {
+      // If both values are valid, compute absolute difference and add to sum
+      sum_abs_diff += std::fabs(vec1[i] - vec2[i]);
+      valid_count++;
+    }
+  }
+
+  // If no valid pairs are found, return NaN
+  if (valid_count == 0) {
+    return std::numeric_limits<double>::quiet_NaN();
+  }
+
+  // Compute and return MAE
+  return sum_abs_diff / static_cast<double>(valid_count);
+}
+
+// Function to compute Root Mean Squared Error (RMSE) between two vectors
+double CppRMSE(const std::vector<double>& vec1,
+               const std::vector<double>& vec2,
+               bool NA_rm = false) {
+  // Check if input vectors have the same size
+  if (vec1.size() != vec2.size()) {
+    throw std::invalid_argument("Input vectors must have the same size.");
+  }
+
+  // Initialize variables for RMSE calculation
+  double sum_squared_diff = 0.0; // Sum of squared differences
+  size_t valid_count = 0;        // Count of valid (non-NaN) pairs
+
+  // Iterate through the vectors
+  for (size_t i = 0; i < vec1.size(); ++i) {
+    // Check if either vec1[i] or vec2[i] is NaN
+    if (isNA(vec1[i]) || isNA(vec2[i])) {
+      if (!NA_rm) {
+        // If NA_rm is false and NaN is encountered, return NaN
+        return std::numeric_limits<double>::quiet_NaN();
+      }
+    } else {
+      // If both values are valid, compute squared difference and add to sum
+      double diff = vec1[i] - vec2[i];
+      sum_squared_diff += std::pow(diff, 2);
+      valid_count++;
+    }
+  }
+
+  // If no valid pairs are found, return NaN
+  if (valid_count == 0) {
+    return std::numeric_limits<double>::quiet_NaN();
+  }
+
+  // Compute and return RMSE
+  return std::sqrt(sum_squared_diff / static_cast<double>(valid_count));
+}
+
 // Function to calculate the absolute difference between two vectors
 std::vector<double> CppAbs(const std::vector<double>& vec1,
                            const std::vector<double>& vec2) {
@@ -112,20 +187,98 @@ double CppCovariance(const std::vector<double>& vec1,
   return count > 1 ? cov / (count - 1) : std::numeric_limits<double>::quiet_NaN();
 }
 
-// Function to calculate the Pearson correlation coefficient, ignoring NA values
+// Function to compute Pearson correlation using Armadillo
 double PearsonCor(const std::vector<double>& y,
                   const std::vector<double>& y_hat,
                   bool NA_rm = false) {
+  // Check input sizes
   if (y.size() != y_hat.size()) {
-    throw std::invalid_argument("Vectors must have the same size");
+    throw std::invalid_argument("Input vectors must have the same size.");
   }
 
-  double cov_yy_hat = CppCovariance(y, y_hat, NA_rm);
-  double var_y = CppVariance(y, NA_rm);
-  double var_y_hat = CppVariance(y_hat, NA_rm);
+  // Handle NA values
+  std::vector<double> clean_y, clean_y_hat;
+  for (size_t i = 0; i < y.size(); ++i) {
+    bool is_na = isNA(y[i]) || isNA(y_hat[i]);
+    if (is_na) {
+      if (!NA_rm) {
+        return std::numeric_limits<double>::quiet_NaN(); // Return NaN if NA_rm is false
+      }
+    } else {
+      clean_y.push_back(y[i]);
+      clean_y_hat.push_back(y_hat[i]);
+    }
+  }
 
-  return cov_yy_hat / std::sqrt(var_y * var_y_hat);
+  // If no valid data, return NaN
+  if (clean_y.empty()) {
+    return std::numeric_limits<double>::quiet_NaN();
+  }
+
+  // Convert cleaned vectors to Armadillo vectors
+  arma::vec arma_y(clean_y);
+  arma::vec arma_y_hat(clean_y_hat);
+
+  // Compute Pearson correlation using Armadillo
+  double corr = arma::as_scalar(arma::cor(arma_y, arma_y_hat));
+
+  // Ensure correlation is within valid range [-1, 1]
+  if (corr < -1.0) corr = -1.0;
+  if (corr > 1.0) corr = 1.0;
+
+  return corr;
 }
+
+// // Function to calculate the Pearson correlation coefficient, ignoring NA values
+// double PearsonCor(const std::vector<double>& y,
+//                   const std::vector<double>& y_hat,
+//                   bool NA_rm = false) {
+//   if (y.size() != y_hat.size()) {
+//     throw std::invalid_argument("Vectors must have the same size");
+//   }
+//
+//   // Handle NA values
+//   std::vector<double> clean_y, clean_y_hat;
+//   for (size_t i = 0; i < y.size(); ++i) {
+//     bool is_na = isNA(y[i]) || isNA(y_hat[i]);
+//     if (is_na) {
+//       if (!NA_rm) {
+//         return std::numeric_limits<double>::quiet_NaN(); // Return NaN if NA_rm is false
+//       }
+//     } else {
+//       clean_y.push_back(y[i]);
+//       clean_y_hat.push_back(y_hat[i]);
+//     }
+//   }
+//
+//   // If no valid data, return NaN
+//   if (clean_y.empty()) {
+//     return std::numeric_limits<double>::quiet_NaN();
+//   }
+//
+//   double cov_yy_hat = CppCovariance(clean_y, clean_y_hat, true);
+//   double var_y = CppVariance(clean_y, true);
+//   double var_y_hat = CppVariance(clean_y_hat, true);
+//
+//   // If any of the values is NaN, return NaN
+//   if (isNA(cov_yy_hat) || isNA(var_y) || isNA(var_y_hat)) {
+//     return std::numeric_limits<double>::quiet_NaN();
+//   }
+//
+//   // Check if variances are zero
+//   if (var_y == 0.0 || var_y_hat == 0.0) {
+//     return std::numeric_limits<double>::quiet_NaN(); // Return NaN if variance is zero
+//   }
+//
+//   // Calculate Pearson correlation coefficient
+//   double corr = cov_yy_hat / std::sqrt(var_y * var_y_hat);
+//
+//   // Ensure correlation is within valid range [-1, 1]
+//   if (corr < -1.0) corr = -1.0;
+//   if (corr > 1.0) corr = 1.0;
+//
+//   return corr;
+// }
 
 // Function to calculate the significance of a correlation coefficient
 double CppSignificance(double r, int n) {
@@ -206,56 +359,11 @@ std::vector<std::vector<std::vector<double>>> CppSVD(const std::vector<std::vect
   return {u, {d}, v};
 }
 
-// Function to perform Linear Trend Removal
+// Function to remove linear trend using Armadillo for internal calculations
 std::vector<double> LinearTrendRM(const std::vector<double>& vec,
                                   const std::vector<double>& xcoord,
                                   const std::vector<double>& ycoord,
                                   bool NA_rm = false) {
-  if (vec.size() != xcoord.size() || vec.size() != ycoord.size()) {
-    throw std::invalid_argument("Input vectors must have the same size.");
-  }
-
-  // Perform linear regression
-  double x1_mean = CppMean(xcoord, NA_rm);
-  double x2_mean = CppMean(ycoord, NA_rm);
-  double y_mean = CppMean(vec, NA_rm);
-
-  double x1_var = CppVariance(xcoord, NA_rm);
-  double x2_var = CppVariance(ycoord, NA_rm);
-  double x1_x2_cov = CppCovariance(xcoord, ycoord, NA_rm);
-
-  double x1_y_cov = CppCovariance(xcoord, vec, NA_rm);
-  double x2_y_cov = CppCovariance(ycoord, vec, NA_rm);
-
-  double denom = x1_var * x2_var - x1_x2_cov * x1_x2_cov;
-  if (denom == 0.0) {
-    throw std::invalid_argument("Linear regression cannot be performed due to collinearity.");
-  }
-
-  double b1 = (x2_var * x1_y_cov - x1_x2_cov * x2_y_cov) / denom;
-  double b2 = (x1_var * x2_y_cov - x1_x2_cov * x1_y_cov) / denom;
-  double b0 = y_mean - b1 * x1_mean - b2 * x2_mean;
-
-  // Predict vec_hat using the linear regression model
-  std::vector<double> vec_hat(vec.size());
-  for (size_t i = 0; i < vec.size(); ++i) {
-    vec_hat[i] = b0 + b1 * xcoord[i] + b2 * ycoord[i];
-  }
-
-  // Calculate vec - vec_hat
-  std::vector<double> result(vec.size());
-  for (size_t i = 0; i < vec.size(); ++i) {
-    result[i] = vec[i] - vec_hat[i];
-  }
-
-  return result;
-}
-
-// Function to remove linear trend using Armadillo for internal calculations
-std::vector<double> ArmaLinearTrendRM(const std::vector<double>& vec,
-                                      const std::vector<double>& xcoord,
-                                      const std::vector<double>& ycoord,
-                                      bool NA_rm = false) {
   // Check input sizes
   if (vec.size() != xcoord.size() || vec.size() != ycoord.size()) {
     throw std::invalid_argument("Input vectors must have the same size.");
@@ -314,3 +422,48 @@ std::vector<double> ArmaLinearTrendRM(const std::vector<double>& vec,
 
   return result;
 }
+
+// // Function to perform Linear Trend Removal
+// std::vector<double> LinearTrendRM(const std::vector<double>& vec,
+//                                   const std::vector<double>& xcoord,
+//                                   const std::vector<double>& ycoord,
+//                                   bool NA_rm = false) {
+//   if (vec.size() != xcoord.size() || vec.size() != ycoord.size()) {
+//     throw std::invalid_argument("Input vectors must have the same size.");
+//   }
+//
+//   // Perform linear regression
+//   double x1_mean = CppMean(xcoord, NA_rm);
+//   double x2_mean = CppMean(ycoord, NA_rm);
+//   double y_mean = CppMean(vec, NA_rm);
+//
+//   double x1_var = CppVariance(xcoord, NA_rm);
+//   double x2_var = CppVariance(ycoord, NA_rm);
+//   double x1_x2_cov = CppCovariance(xcoord, ycoord, NA_rm);
+//
+//   double x1_y_cov = CppCovariance(xcoord, vec, NA_rm);
+//   double x2_y_cov = CppCovariance(ycoord, vec, NA_rm);
+//
+//   double denom = x1_var * x2_var - x1_x2_cov * x1_x2_cov;
+//   if (denom == 0.0) {
+//     throw std::invalid_argument("Linear regression cannot be performed due to collinearity.");
+//   }
+//
+//   double b1 = (x2_var * x1_y_cov - x1_x2_cov * x2_y_cov) / denom;
+//   double b2 = (x1_var * x2_y_cov - x1_x2_cov * x1_y_cov) / denom;
+//   double b0 = y_mean - b1 * x1_mean - b2 * x2_mean;
+//
+//   // Predict vec_hat using the linear regression model
+//   std::vector<double> vec_hat(vec.size());
+//   for (size_t i = 0; i < vec.size(); ++i) {
+//     vec_hat[i] = b0 + b1 * xcoord[i] + b2 * ycoord[i];
+//   }
+//
+//   // Calculate vec - vec_hat
+//   std::vector<double> result(vec.size());
+//   for (size_t i = 0; i < vec.size(); ++i) {
+//     result[i] = vec[i] - vec_hat[i];
+//   }
+//
+//   return result;
+// }
