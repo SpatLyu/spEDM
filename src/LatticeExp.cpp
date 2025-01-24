@@ -32,6 +32,24 @@ Rcpp::NumericVector RcppLinearTrendRM(const Rcpp::NumericVector& vec,
   return Rcpp::wrap(result);
 }
 
+// Rcpp wrapper function for ArmaLinearTrendRM
+// [[Rcpp::export]]
+Rcpp::NumericVector RcppArmaLinearTrendRM(const Rcpp::NumericVector& vec,
+                                          const Rcpp::NumericVector& xcoord,
+                                          const Rcpp::NumericVector& ycoord,
+                                          bool NA_rm = false) {
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> vec_cpp(vec.begin(), vec.end());
+  std::vector<double> xcoord_cpp(xcoord.begin(), xcoord.end());
+  std::vector<double> ycoord_cpp(ycoord.begin(), ycoord.end());
+
+  // Call the original ArmaLinearTrendRM function
+  std::vector<double> result = ArmaLinearTrendRM(vec_cpp, xcoord_cpp, ycoord_cpp, NA_rm);
+
+  // Convert the result back to Rcpp::NumericVector
+  return Rcpp::NumericVector(result.begin(), result.end());
+}
+
 // Wrapper function to calculate lagged indices and return a List
 // [[Rcpp::export]]
 Rcpp::List RcppLaggedVar4Lattice(const Rcpp::List& nb, int lagNum) {
