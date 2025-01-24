@@ -11,6 +11,9 @@
 #include "SMap.h"
 #include <RcppThread.h>
 
+// [[Rcpp::plugins(cpp11)]]
+// [[Rcpp::depends(RcppThread)]]
+
 // Function to locate the index in a 2D grid
 int locate(int curRow, int curCol, int totalRow, int totalCol) {
   return (curRow - 1) * totalCol + curCol - 1;

@@ -34,6 +34,12 @@ std::vector<double> CppAbs(const std::vector<double>& vec1,
 std::vector<double> CppSumNormalize(const std::vector<double>& vec,
                                     bool NA_rm = false);
 
+double CppVariance(const std::vector<double>& vec, bool NA_rm = false);
+
+double CppCovariance(const std::vector<double>& vec1,
+                     const std::vector<double>& vec2,
+                     bool NA_rm = false);
+
 double PearsonCor(const std::vector<double>& y,
                   const std::vector<double>& y_hat,
                   bool NA_rm = false);

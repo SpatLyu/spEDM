@@ -1,7 +1,8 @@
 #include <vector>
 #include "CppGridUtils.h"
 #include "GCCM4Grid.h"
-#include <Rcpp.h>
+// 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
+// #include <Rcpp.h>
 
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppLaggedVar4Grid(Rcpp::NumericMatrix mat, int lagNum) {

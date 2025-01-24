@@ -13,6 +13,50 @@ RcppGCCM4Grid <- function(xMatrix, yMatrix, lib_sizes, pred, E, tau, b, simplex,
     .Call(`_spEDM_RcppGCCM4Grid`, xMatrix, yMatrix, lib_sizes, pred, E, tau, b, simplex, theta, progressbar)
 }
 
+RcppLaggedVar4Lattice <- function(nb, lagNum) {
+    .Call(`_spEDM_RcppLaggedVar4Lattice`, nb, lagNum)
+}
+
+RcppGenLatticeEmbeddings <- function(vec, nb, E) {
+    .Call(`_spEDM_RcppGenLatticeEmbeddings`, vec, nb, E)
+}
+
+RcppGCCM4Lattice <- function(x, y, nb, libsizes, E, tau, b, simplex, theta, progressbar) {
+    .Call(`_spEDM_RcppGCCM4Lattice`, x, y, nb, libsizes, E, tau, b, simplex, theta, progressbar)
+}
+
+RcppMean <- function(vec, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppMean`, vec, NA_rm)
+}
+
+RcppSum <- function(vec, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppSum`, vec, NA_rm)
+}
+
+RcppVariance <- function(vec, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppVariance`, vec, NA_rm)
+}
+
+RcppCovariance <- function(vec1, vec2, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppCovariance`, vec1, vec2, NA_rm)
+}
+
+RcppMAE <- function(vec1, vec2, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppMAE`, vec1, vec2, NA_rm)
+}
+
+RcppRMSE <- function(vec1, vec2, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppRMSE`, vec1, vec2, NA_rm)
+}
+
+RcppAbs <- function(vec1, vec2) {
+    .Call(`_spEDM_RcppAbs`, vec1, vec2)
+}
+
+RcppSumNormalize <- function(vec, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppSumNormalize`, vec, NA_rm)
+}
+
 RcppPearsonCor <- function(y, y_hat, NA_rm = FALSE) {
     .Call(`_spEDM_RcppPearsonCor`, y, y_hat, NA_rm)
 }
@@ -35,17 +79,5 @@ RcppArmaLinearTrendRM <- function(vec, xcoord, ycoord, NA_rm = FALSE) {
 
 RcppSVD <- function(X) {
     .Call(`_spEDM_RcppSVD`, X)
-}
-
-RcppLaggedVar4Lattice <- function(nb, lagNum) {
-    .Call(`_spEDM_RcppLaggedVar4Lattice`, nb, lagNum)
-}
-
-RcppGenLatticeEmbeddings <- function(vec, nb, E) {
-    .Call(`_spEDM_RcppGenLatticeEmbeddings`, vec, nb, E)
-}
-
-RcppGCCM4Lattice <- function(x, y, nb, libsizes, E, tau, b, simplex, theta, progressbar) {
-    .Call(`_spEDM_RcppGCCM4Lattice`, x, y, nb, libsizes, E, tau, b, simplex, theta, progressbar)
 }
 

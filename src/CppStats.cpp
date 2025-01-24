@@ -44,11 +44,11 @@ double CppSum(const std::vector<double>& vec,
 }
 
 // Function to compute Mean Absolute Error (MAE) between two vectors
-double CppMAE(const std::vector<double>& x1,
-              const std::vector<double>& x2,
+double CppMAE(const std::vector<double>& vec1,
+              const std::vector<double>& vec2,
               bool NA_rm = false) {
   // Check if input vectors have the same size
-  if (x1.size() != x2.size()) {
+  if (vec1.size() != vec2.size()) {
     throw std::invalid_argument("Input vectors must have the same size.");
   }
 
@@ -57,16 +57,16 @@ double CppMAE(const std::vector<double>& x1,
   size_t valid_count = 0;    // Count of valid (non-NaN) pairs
 
   // Iterate through the vectors
-  for (size_t i = 0; i < x1.size(); ++i) {
-    // Check if either x1[i] or x2[i] is NaN
-    if (isNA(x1[i]) || isNA(x2[i])) {
+  for (size_t i = 0; i < vec1.size(); ++i) {
+    // Check if either vec1[i] or vec2[i] is NaN
+    if (isNA(vec1[i]) || isNA(vec2[i])) {
       if (!NA_rm) {
         // If NA_rm is false and NaN is encountered, return NaN
         return std::numeric_limits<double>::quiet_NaN();
       }
     } else {
       // If both values are valid, compute absolute difference and add to sum
-      sum_abs_diff += std::fabs(x1[i] - x2[i]);
+      sum_abs_diff += std::fabs(vec1[i] - vec2[i]);
       valid_count++;
     }
   }
@@ -81,11 +81,11 @@ double CppMAE(const std::vector<double>& x1,
 }
 
 // Function to compute Root Mean Squared Error (RMSE) between two vectors
-double CppRMSE(const std::vector<double>& x1,
-               const std::vector<double>& x2,
+double CppRMSE(const std::vector<double>& vec1,
+               const std::vector<double>& vec2,
                bool NA_rm = false) {
   // Check if input vectors have the same size
-  if (x1.size() != x2.size()) {
+  if (vec1.size() != vec2.size()) {
     throw std::invalid_argument("Input vectors must have the same size.");
   }
 
@@ -94,16 +94,16 @@ double CppRMSE(const std::vector<double>& x1,
   size_t valid_count = 0;        // Count of valid (non-NaN) pairs
 
   // Iterate through the vectors
-  for (size_t i = 0; i < x1.size(); ++i) {
-    // Check if either x1[i] or x2[i] is NaN
-    if (isNA(x1[i]) || isNA(x2[i])) {
+  for (size_t i = 0; i < vec1.size(); ++i) {
+    // Check if either vec1[i] or vec2[i] is NaN
+    if (isNA(vec1[i]) || isNA(vec2[i])) {
       if (!NA_rm) {
         // If NA_rm is false and NaN is encountered, return NaN
         return std::numeric_limits<double>::quiet_NaN();
       }
     } else {
       // If both values are valid, compute squared difference and add to sum
-      double diff = x1[i] - x2[i];
+      double diff = vec1[i] - vec2[i];
       sum_squared_diff += std::pow(diff, 2);
       valid_count++;
     }

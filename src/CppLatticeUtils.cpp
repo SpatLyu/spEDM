@@ -4,36 +4,6 @@
 #include <algorithm> // for std::sort, std::unique, std::accumulate
 #include <unordered_set> // for std::unordered_set
 #include <limits> // for std::numeric_limits
-#include <Rcpp.h>
-
-// Function to convert Rcpp::List to std::vector<std::vector<int>>
-std::vector<std::vector<int>> nb2vec(Rcpp::List nb) {
-  // Get the number of elements in the nb object
-  int n = nb.size();
-
-  // Create a vector<vector<int>> to store the result
-  std::vector<std::vector<int>> result(n);
-
-  // Iterate over each element in the nb object
-  for (int i = 0; i < n; ++i) {
-    // Get the current element (should be an integer vector)
-    Rcpp::IntegerVector current_nb = nb[i];
-
-    // Create a vector<int> to store the current subset of elements
-    std::vector<int> current_subset;
-
-    // Iterate over each element in the current subset
-    for (int j = 0; j < current_nb.size(); ++j) {
-      // Subtract one from each element to convert from R's 1-based indexing to C++'s 0-based indexing
-      current_subset.push_back(current_nb[j] - 1);
-    }
-
-    // Add the current subset to the result
-    result[i] = current_subset;
-  }
-
-  return result;
-}
 
 // Function to compute lagged neighborhoods for a given lag number
 // **Note that the return value corresponds to the cumulative neighbor indices for lagNum**

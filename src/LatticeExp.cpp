@@ -1,126 +1,36 @@
 #include <vector>
-#include "CppStats.h"
 #include "CppLatticeUtils.h"
 #include "GCCM4Lattice.h"
-#include <Rcpp.h>
+// 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
+// #include <Rcpp.h>
 
-// [[Rcpp::export]]
-double RcppPearsonCor(const Rcpp::NumericVector& y,
-                          const Rcpp::NumericVector& y_hat,
-                          bool NA_rm = false) {
-  // Convert Rcpp::NumericVector to std::vector<double>
-  std::vector<double> y_vec = Rcpp::as<std::vector<double>>(y);
-  std::vector<double> y_hat_vec = Rcpp::as<std::vector<double>>(y_hat);
+// Function to convert Rcpp::List to std::vector<std::vector<int>>
+std::vector<std::vector<int>> nb2vec(Rcpp::List nb) {
+  // Get the number of elements in the nb object
+  int n = nb.size();
 
-  // Call the ArmaPearsonCor function
-  return PearsonCor(y_vec, y_hat_vec, NA_rm);
-}
+  // Create a vector<vector<int>> to store the result
+  std::vector<std::vector<int>> result(n);
 
-// [[Rcpp::export]]
-double RcppArmaPearsonCor(const Rcpp::NumericVector& y,
-                          const Rcpp::NumericVector& y_hat,
-                          bool NA_rm = false) {
-  // Convert Rcpp::NumericVector to std::vector<double>
-  std::vector<double> y_vec = Rcpp::as<std::vector<double>>(y);
-  std::vector<double> y_hat_vec = Rcpp::as<std::vector<double>>(y_hat);
+  // Iterate over each element in the nb object
+  for (int i = 0; i < n; ++i) {
+    // Get the current element (should be an integer vector)
+    Rcpp::IntegerVector current_nb = nb[i];
 
-  // Call the ArmaPearsonCor function
-  return ArmaPearsonCor(y_vec, y_hat_vec, NA_rm);
-}
+    // Create a vector<int> to store the current subset of elements
+    std::vector<int> current_subset;
 
-// Wrapper function to calculate the confidence interval for a correlation coefficient and return a NumericVector
-// [[Rcpp::export]]
-Rcpp::NumericVector RcppConfidence(double r, int n, double level = 0.05) {
-  // Calculate the confidence interval
-  std::vector<double> result = CppConfidence(r, n, level);
-
-  // Convert std::vector<double> to Rcpp::NumericVector
-  return Rcpp::wrap(result);
-}
-
-// Wrapper function to perform Linear Trend Removal and return a NumericVector
-// [[Rcpp::export]]
-Rcpp::NumericVector RcppLinearTrendRM(const Rcpp::NumericVector& vec,
-                                      const Rcpp::NumericVector& xcoord,
-                                      const Rcpp::NumericVector& ycoord,
-                                      bool NA_rm = false) {
-  // Convert Rcpp::NumericVector to std::vector<double>
-  std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
-  std::vector<double> xcoord_std = Rcpp::as<std::vector<double>>(xcoord);
-  std::vector<double> ycoord_std = Rcpp::as<std::vector<double>>(ycoord);
-
-  // Perform Linear Trend Removal
-  std::vector<double> result = LinearTrendRM(vec_std, xcoord_std, ycoord_std, NA_rm);
-
-  // Convert std::vector<double> to Rcpp::NumericVector
-  return Rcpp::wrap(result);
-}
-
-// Rcpp wrapper function for ArmaLinearTrendRM
-// [[Rcpp::export]]
-Rcpp::NumericVector RcppArmaLinearTrendRM(const Rcpp::NumericVector& vec,
-                                          const Rcpp::NumericVector& xcoord,
-                                          const Rcpp::NumericVector& ycoord,
-                                          bool NA_rm = false) {
-  // Convert Rcpp::NumericVector to std::vector<double>
-  std::vector<double> vec_cpp(vec.begin(), vec.end());
-  std::vector<double> xcoord_cpp(xcoord.begin(), xcoord.end());
-  std::vector<double> ycoord_cpp(ycoord.begin(), ycoord.end());
-
-  // Call the original ArmaLinearTrendRM function
-  std::vector<double> result = ArmaLinearTrendRM(vec_cpp, xcoord_cpp, ycoord_cpp, NA_rm);
-
-  // Convert the result back to Rcpp::NumericVector
-  return Rcpp::NumericVector(result.begin(), result.end());
-}
-
-// Rcpp wrapper function for CppSVD
-// [[Rcpp::export]]
-Rcpp::List RcppSVD(const Rcpp::NumericMatrix& X) {
-  // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
-  size_t m = X.nrow();
-  size_t n = X.ncol();
-  std::vector<std::vector<double>> X_vec(m, std::vector<double>(n));
-  for (size_t i = 0; i < m; ++i) {
-    for (size_t j = 0; j < n; ++j) {
-      X_vec[i][j] = X(i, j);
+    // Iterate over each element in the current subset
+    for (int j = 0; j < current_nb.size(); ++j) {
+      // Subtract one from each element to convert from R's 1-based indexing to C++'s 0-based indexing
+      current_subset.push_back(current_nb[j] - 1);
     }
+
+    // Add the current subset to the result
+    result[i] = current_subset;
   }
 
-  // Call the original CppSVD function
-  std::vector<std::vector<std::vector<double>>> result = CppSVD(X_vec);
-
-  // Extract results from CppSVD output
-  std::vector<std::vector<double>> u = result[0]; // Left singular vectors
-  std::vector<double> d = result[1][0];           // Singular values
-  std::vector<std::vector<double>> v = result[2]; // Right singular vectors
-
-  // Convert std::vector results to Rcpp objects
-  Rcpp::NumericMatrix u_rcpp(m, m);
-  for (size_t i = 0; i < m; ++i) {
-    for (size_t j = 0; j < m; ++j) {
-      u_rcpp(i, j) = u[i][j];
-    }
-  }
-
-  Rcpp::NumericVector d_rcpp(d.size());
-  for (size_t i = 0; i < d.size(); ++i) {
-    d_rcpp(i) = d[i];
-  }
-
-  Rcpp::NumericMatrix v_rcpp(v.size(), v[0].size());
-  for (size_t i = 0; i < v.size(); ++i) {
-    for (size_t j = 0; j < v[0].size(); ++j) {
-      v_rcpp(i, j) = v[i][j];
-    }
-  }
-
-  // Return results as an Rcpp::List to match R's svd() output
-  return Rcpp::List::create(
-    Rcpp::Named("u") = u_rcpp, // Left singular vectors
-    Rcpp::Named("d") = d_rcpp, // Singular values
-    Rcpp::Named("v") = v_rcpp  // Right singular vectors
-  );
+  return result;
 }
 
 // Wrapper function to calculate lagged indices and return a List
