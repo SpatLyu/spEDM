@@ -1,5 +1,7 @@
 # spEDM 1.3
 
+* Fix incorrect Pearson correlation calculation in `C++` code when input contains NA (#83).
+
 * Add `S-maps` cross-prediction support to `gccm` (#81).
 
 # spEDM 1.2
