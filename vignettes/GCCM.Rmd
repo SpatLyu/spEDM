@@ -1,7 +1,7 @@
 ---
 title: "Geographical Convergent Cross Mapping (GCCM)"
 author: "Wenbo Lv"
-date: "2025-01-11"
+date: "2025-01-24"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{GCCM}
@@ -85,8 +85,8 @@ Load data and package:
 ``` r
 popd_nb = spdep::read.gal(system.file("extdata/popdensity_nb.gal",
                                       package = "spEDM"))
-## Warning in spdep::read.gal(system.file("extdata/popdensity_nb.gal", package = "spEDM")):
-## neighbour object has 4 sub-graphs
+## Warning in spdep::read.gal(system.file("extdata/popdensity_nb.gal", package
+## = "spEDM")): neighbour object has 4 sub-graphs
 popd_nb
 ## Neighbour list object:
 ## Number of regions: 2806 
@@ -98,7 +98,7 @@ popd_nb
 popdensity = readr::read_csv(system.file("extdata/popdensity.csv",
                                          package = "spEDM"))
 ## Rows: 2806 Columns: 7
-## ── Column specification ───────────────────────────────────────────────────────────────────────
+## ── Column specification ─────────────────────────────────────────────────────
 ## Delimiter: ","
 ## dbl (7): x, y, popDensity, DEM, Tem, Pre, slop
 ## 
@@ -158,7 +158,7 @@ pd_res = gccm(data = popd_sf,
               progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 19.59433 mins
+## Time difference of 33.34293 mins
 pd_res
 ##    libsizes popDensity->Pre Pre->popDensity
 ## 1        10      0.01130395      0.06607465
@@ -265,29 +265,29 @@ npp_res = gccm(data = npp,
                progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 24.49013 mins
+## Time difference of 41.5022 mins
 npp_res
 ##    libsizes     npp->pre   pre->npp
-## 1        10  0.049237491 0.07312462
-## 2        15  0.063939456 0.10307461
-## 3        20  0.080009483 0.12935898
-## 4        25  0.097903289 0.14718470
-## 5        30  0.104758061 0.15943448
-## 6        35  0.111686523 0.17026742
-## 7        40  0.119169359 0.18985868
-## 8        45  0.132677547 0.21607528
-## 9        50  0.148968939 0.24764600
-## 10       55  0.165193950 0.28759045
-## 11       60  0.173868473 0.30697776
-## 12       65  0.179777011 0.31209341
-## 13       70  0.157231842 0.28574340
-## 14       75  0.108711472 0.24817243
-## 15       80  0.058977718 0.22701677
-## 16       85 -0.003501071 0.23364337
-## 17       90 -0.022853416 0.23577169
-## 18       95 -0.042780283 0.34364441
-## 19      100 -0.034298266 0.72561637
-## 20      105 -0.070605553 0.77999128
+## 1        10  0.050262114 0.07242779
+## 2        15  0.065181707 0.10266083
+## 3        20  0.082563327 0.13095972
+## 4        25  0.101798849 0.15087739
+## 5        30  0.109432567 0.16476945
+## 6        35  0.116999013 0.17751038
+## 7        40  0.124597212 0.19939830
+## 8        45  0.136665655 0.22822918
+## 9        50  0.153091450 0.26365069
+## 10       55  0.173191560 0.30945352
+## 11       60  0.187344431 0.33153642
+## 12       65  0.199217458 0.33890945
+## 13       70  0.177644941 0.31063817
+## 14       75  0.124683030 0.26886033
+## 15       80  0.072827616 0.24447842
+## 16       85 -0.005050523 0.24551575
+## 17       90 -0.036492523 0.23655060
+## 18       95 -0.068835748 0.33665038
+## 19      100 -0.067770047 0.69555384
+## 20      105 -0.165445351 0.94248996
 ```
 
 Visualize the result:
@@ -295,8 +295,10 @@ Visualize the result:
 
 ``` r
 plot(npp_res,xlimits = c(9, 101),ylimits = c(-0.05,1))
-## Warning: Removed 1 row containing missing values or values outside the scale range (`geom_line()`).
-## Removed 1 row containing missing values or values outside the scale range (`geom_line()`).
+## Warning: Removed 3 rows containing missing values or values outside the scale range
+## (`geom_line()`).
+## Warning: Removed 1 row containing missing values or values outside the scale range
+## (`geom_line()`).
 ```
 
 ![**Figure 3**. The cross-mapping prediction outputs between farmland NPP and precipitation.](../man/figures/gccm/fig3-1.png)
