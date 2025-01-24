@@ -13,6 +13,14 @@ RcppGCCM4Grid <- function(xMatrix, yMatrix, lib_sizes, pred, E, tau, b, simplex,
     .Call(`_spEDM_RcppGCCM4Grid`, xMatrix, yMatrix, lib_sizes, pred, E, tau, b, simplex, theta, progressbar)
 }
 
+RcppPearsonCor <- function(y, y_hat, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppPearsonCor`, y, y_hat, NA_rm)
+}
+
+RcppArmaPearsonCor <- function(y, y_hat, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppArmaPearsonCor`, y, y_hat, NA_rm)
+}
+
 RcppConfidence <- function(r, n, level = 0.05) {
     .Call(`_spEDM_RcppConfidence`, r, n, level)
 }
@@ -25,12 +33,12 @@ RcppArmaLinearTrendRM <- function(vec, xcoord, ycoord, NA_rm = FALSE) {
     .Call(`_spEDM_RcppArmaLinearTrendRM`, vec, xcoord, ycoord, NA_rm)
 }
 
-RcppLaggedVar4Lattice <- function(nb, lagNum) {
-    .Call(`_spEDM_RcppLaggedVar4Lattice`, nb, lagNum)
-}
-
 RcppSVD <- function(X) {
     .Call(`_spEDM_RcppSVD`, X)
+}
+
+RcppLaggedVar4Lattice <- function(nb, lagNum) {
+    .Call(`_spEDM_RcppLaggedVar4Lattice`, nb, lagNum)
 }
 
 RcppGenLatticeEmbeddings <- function(vec, nb, E) {

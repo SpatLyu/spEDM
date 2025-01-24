@@ -127,6 +127,45 @@ double PearsonCor(const std::vector<double>& y,
   return cov_yy_hat / std::sqrt(var_y * var_y_hat);
 }
 
+// Function to compute Pearson correlation using Armadillo
+double ArmaPearsonCor(const std::vector<double>& y,
+                      const std::vector<double>& y_hat,
+                      bool NA_rm = false) {
+  // Check input sizes
+  if (y.size() != y_hat.size()) {
+    throw std::invalid_argument("Input vectors must have the same size.");
+  }
+
+  // Handle NA values
+  std::vector<double> clean_y, clean_y_hat;
+  for (size_t i = 0; i < y.size(); ++i) {
+    bool is_na = isNA(y[i]) || isNA(y_hat[i]);
+    if (is_na) {
+      if (!NA_rm) {
+        return std::numeric_limits<double>::quiet_NaN(); // Return NaN if NA_rm is false
+      }
+    } else {
+      clean_y.push_back(y[i]);
+      clean_y_hat.push_back(y_hat[i]);
+    }
+  }
+
+  // If no valid data, return NaN
+  if (clean_y.empty()) {
+    return std::numeric_limits<double>::quiet_NaN();
+  }
+
+  // Convert cleaned vectors to Armadillo vectors
+  arma::vec arma_y(clean_y);
+  arma::vec arma_y_hat(clean_y_hat);
+
+  // Compute Pearson correlation using Armadillo
+  double corr = arma::as_scalar(arma::cor(arma_y, arma_y_hat));
+
+  return corr;
+}
+
+
 // Function to calculate the significance of a correlation coefficient
 double CppSignificance(double r, int n) {
   double t = r * std::sqrt((n - 2) / (1 - r * r));

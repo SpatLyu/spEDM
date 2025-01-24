@@ -4,6 +4,30 @@
 #include "GCCM4Lattice.h"
 #include <Rcpp.h>
 
+// [[Rcpp::export]]
+double RcppPearsonCor(const Rcpp::NumericVector& y,
+                          const Rcpp::NumericVector& y_hat,
+                          bool NA_rm = false) {
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> y_vec = Rcpp::as<std::vector<double>>(y);
+  std::vector<double> y_hat_vec = Rcpp::as<std::vector<double>>(y_hat);
+
+  // Call the ArmaPearsonCor function
+  return PearsonCor(y_vec, y_hat_vec, NA_rm);
+}
+
+// [[Rcpp::export]]
+double RcppArmaPearsonCor(const Rcpp::NumericVector& y,
+                          const Rcpp::NumericVector& y_hat,
+                          bool NA_rm = false) {
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> y_vec = Rcpp::as<std::vector<double>>(y);
+  std::vector<double> y_hat_vec = Rcpp::as<std::vector<double>>(y_hat);
+
+  // Call the ArmaPearsonCor function
+  return ArmaPearsonCor(y_vec, y_hat_vec, NA_rm);
+}
+
 // Wrapper function to calculate the confidence interval for a correlation coefficient and return a NumericVector
 // [[Rcpp::export]]
 Rcpp::NumericVector RcppConfidence(double r, int n, double level = 0.05) {
@@ -48,26 +72,6 @@ Rcpp::NumericVector RcppArmaLinearTrendRM(const Rcpp::NumericVector& vec,
 
   // Convert the result back to Rcpp::NumericVector
   return Rcpp::NumericVector(result.begin(), result.end());
-}
-
-// Wrapper function to calculate lagged indices and return a List
-// [[Rcpp::export]]
-Rcpp::List RcppLaggedVar4Lattice(const Rcpp::List& nb, int lagNum) {
-  int n = nb.size();
-
-  // Convert Rcpp::List to std::vector<std::vector<int>>
-  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
-
-  // Calculate lagged indices
-  std::vector<std::vector<int>> lagged_indices = CppLaggedVar4Lattice(nb_vec, lagNum);
-
-  // Convert std::vector<std::vector<int>> to Rcpp::List
-  Rcpp::List result(n);
-  for (int i = 0; i < n; ++i) {
-    result[i] = Rcpp::wrap(lagged_indices[i]);
-  }
-
-  return result;
 }
 
 // Rcpp wrapper function for CppSVD
@@ -117,6 +121,26 @@ Rcpp::List RcppSVD(const Rcpp::NumericMatrix& X) {
     Rcpp::Named("d") = d_rcpp, // Singular values
     Rcpp::Named("v") = v_rcpp  // Right singular vectors
   );
+}
+
+// Wrapper function to calculate lagged indices and return a List
+// [[Rcpp::export]]
+Rcpp::List RcppLaggedVar4Lattice(const Rcpp::List& nb, int lagNum) {
+  int n = nb.size();
+
+  // Convert Rcpp::List to std::vector<std::vector<int>>
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
+
+  // Calculate lagged indices
+  std::vector<std::vector<int>> lagged_indices = CppLaggedVar4Lattice(nb_vec, lagNum);
+
+  // Convert std::vector<std::vector<int>> to Rcpp::List
+  Rcpp::List result(n);
+  for (int i = 0; i < n; ++i) {
+    result[i] = Rcpp::wrap(lagged_indices[i]);
+  }
+
+  return result;
 }
 
 // Wrapper function to generate embeddings and return a NumericMatrix
