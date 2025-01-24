@@ -80,7 +80,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 #' \donttest{
 #' g = gccm(columbus, "HOVAL", "CRIME", libsizes = seq(5,45,5))
 #' g
-#' plot(g, ylimits = c(0,0.65), xlimits = c(3,47))
+#' plot(g, ylimits = c(0,0.65))
 #' }
 methods::setMethod("gccm", "sf", .gccm_sf_method)
 

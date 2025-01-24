@@ -6,7 +6,7 @@
 #include <limits>
 #include "CppStats.h"
 
-// Function to compute the S-map prediction
+// Function to compute the 'S-maps' prediction
 double SMap(
     const std::vector<std::vector<double>>& vectors,  // Reconstructed state-space (each row is a separate vector/state)
     const std::vector<double>& target,                // Spatial cross-section series to be used as the target (should line up with vectors)
