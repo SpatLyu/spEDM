@@ -8,6 +8,7 @@
 #include "CppStats.h"
 #include "CppGridUtils.h"
 #include "SimplexProjection.h"
+#include "SMap.h"
 #include <RcppThread.h>
 
 // Function to locate the index in a 2D grid
@@ -23,7 +24,9 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
     const std::vector<std::pair<int, int>>& pred,
     int totalRow,
     int totalCol,
-    int b) {
+    int b,
+    bool simplex,
+    double theta) {
 
   std::vector<std::pair<int, double>> x_xmap_y;
 
@@ -65,7 +68,12 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
       }
 
       // Run cross map and store results
-      double results = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
+      double results;
+      if (simplex){
+        results = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
+      } else {
+        results = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
+      }
       x_xmap_y.emplace_back(lib_size, results);
     }
   }
@@ -82,6 +90,8 @@ std::vector<std::vector<double>> GCCM4Grid(
     int E,                                           // Number of dimensions for the attractor reconstruction
     int tau,                                         // Step of spatial lags
     int b,                                           // Number of nearest neighbors to use for prediction
+    bool simplex,                                    // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
+    double theta,                                    // Distance weighting parameter for the local neighbours in the manifold
     bool progressbar                                 // Whether to print the progress bar
 ) {
   // If b is not provided correctly, default it to E + 2
@@ -126,14 +136,14 @@ std::vector<std::vector<double>> GCCM4Grid(
     RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
     RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
       int lib_size = unique_lib_sizes[i];
-      auto results = GCCMSingle4Grid(xEmbedings, yPred, lib_size, pred, totalRow, totalCol, b);
+      auto results = GCCMSingle4Grid(xEmbedings, yPred, lib_size, pred, totalRow, totalCol, b, simplex, theta);
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
       bar++;
     });
   } else {
     RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
       int lib_size = unique_lib_sizes[i];
-      auto results = GCCMSingle4Grid(xEmbedings, yPred, lib_size, pred, totalRow, totalCol, b);
+      auto results = GCCMSingle4Grid(xEmbedings, yPred, lib_size, pred, totalRow, totalCol, b, simplex, theta);
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
     });
   }
