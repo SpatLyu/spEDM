@@ -39,8 +39,9 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   selvec = seq(5,maxlibsize,5)
   if (is.null(RowCol)) RowCol = as.matrix(expand.grid(selvec,selvec))
 
-  x_xmap_y = RcppGCCM4Grid(causemat,effectmat,libsizes,RowCol,E,tau,k,progressbar)
-  y_xmap_x = RcppGCCM4Grid(effectmat,causemat,libsizes,RowCol,E,tau,k,progressbar)
+  simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
+  x_xmap_y = RcppGCCM4Grid(causemat,effectmat,libsizes,RowCol,E,tau,k,simplex,theta,progressbar)
+  y_xmap_x = RcppGCCM4Grid(effectmat,causemat,libsizes,RowCol,E,tau,k,simplex,theta,progressbar)
 
   return(.bind_xmapdf(x_xmap_y,y_xmap_x,varname))
 }
