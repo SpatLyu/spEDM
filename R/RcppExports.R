@@ -29,7 +29,7 @@ RcppGenLatticeEmbeddings <- function(vec, nb, E) {
     .Call(`_spEDM_RcppGenLatticeEmbeddings`, vec, nb, E)
 }
 
-RcppGCCM4Lattice <- function(x, y, nb, libsizes, E, tau, b, progressbar) {
-    .Call(`_spEDM_RcppGCCM4Lattice`, x, y, nb, libsizes, E, tau, b, progressbar)
+RcppGCCM4Lattice <- function(x, y, nb, libsizes, E, tau, b, simplex, theta, progressbar) {
+    .Call(`_spEDM_RcppGCCM4Lattice`, x, y, nb, libsizes, E, tau, b, simplex, theta, progressbar)
 }
 
