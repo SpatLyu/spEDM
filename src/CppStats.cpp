@@ -57,6 +57,81 @@ std::vector<double> CppAbs(const std::vector<double>& vec1,
   return result;
 }
 
+// Function to compute Mean Absolute Error (MAE) between two vectors
+double CppMAE(const std::vector<double>& x1,
+              const std::vector<double>& x2,
+              bool NA_rm = false) {
+  // Check if input vectors have the same size
+  if (x1.size() != x2.size()) {
+    throw std::invalid_argument("Input vectors must have the same size.");
+  }
+
+  // Initialize variables for MAE calculation
+  double sum_abs_diff = 0.0; // Sum of absolute differences
+  size_t valid_count = 0;    // Count of valid (non-NaN) pairs
+
+  // Iterate through the vectors
+  for (size_t i = 0; i < x1.size(); ++i) {
+    // Check if either x1[i] or x2[i] is NaN
+    if (isNA(x1[i]) || isNA(x2[i])) {
+      if (!NA_rm) {
+        // If NA_rm is false and NaN is encountered, return NaN
+        return std::numeric_limits<double>::quiet_NaN();
+      }
+    } else {
+      // If both values are valid, compute absolute difference and add to sum
+      sum_abs_diff += std::fabs(x1[i] - x2[i]);
+      valid_count++;
+    }
+  }
+
+  // If no valid pairs are found, return NaN
+  if (valid_count == 0) {
+    return std::numeric_limits<double>::quiet_NaN();
+  }
+
+  // Compute and return MAE
+  return sum_abs_diff / static_cast<double>(valid_count);
+}
+
+// Function to compute Root Mean Squared Error (RMSE) between two vectors
+double CppRMSE(const std::vector<double>& x1,
+               const std::vector<double>& x2,
+               bool NA_rm = false) {
+  // Check if input vectors have the same size
+  if (x1.size() != x2.size()) {
+    throw std::invalid_argument("Input vectors must have the same size.");
+  }
+
+  // Initialize variables for RMSE calculation
+  double sum_squared_diff = 0.0; // Sum of squared differences
+  size_t valid_count = 0;        // Count of valid (non-NaN) pairs
+
+  // Iterate through the vectors
+  for (size_t i = 0; i < x1.size(); ++i) {
+    // Check if either x1[i] or x2[i] is NaN
+    if (isNA(x1[i]) || isNA(x2[i])) {
+      if (!NA_rm) {
+        // If NA_rm is false and NaN is encountered, return NaN
+        return std::numeric_limits<double>::quiet_NaN();
+      }
+    } else {
+      // If both values are valid, compute squared difference and add to sum
+      double diff = x1[i] - x2[i];
+      sum_squared_diff += std::pow(diff, 2);
+      valid_count++;
+    }
+  }
+
+  // If no valid pairs are found, return NaN
+  if (valid_count == 0) {
+    return std::numeric_limits<double>::quiet_NaN();
+  }
+
+  // Compute and return RMSE
+  return std::sqrt(sum_squared_diff / static_cast<double>(valid_count));
+}
+
 // Function to normalize a vector by dividing each element by the sum of all elements
 std::vector<double> CppSumNormalize(const std::vector<double>& vec,
                                     bool NA_rm = false) {
