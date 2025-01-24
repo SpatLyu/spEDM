@@ -195,11 +195,47 @@ double PearsonCor(const std::vector<double>& y,
     throw std::invalid_argument("Vectors must have the same size");
   }
 
-  double cov_yy_hat = CppCovariance(y, y_hat, NA_rm);
-  double var_y = CppVariance(y, NA_rm);
-  double var_y_hat = CppVariance(y_hat, NA_rm);
+  // Handle NA values
+  std::vector<double> clean_y, clean_y_hat;
+  for (size_t i = 0; i < y.size(); ++i) {
+    bool is_na = isNA(y[i]) || isNA(y_hat[i]);
+    if (is_na) {
+      if (!NA_rm) {
+        return std::numeric_limits<double>::quiet_NaN(); // Return NaN if NA_rm is false
+      }
+    } else {
+      clean_y.push_back(y[i]);
+      clean_y_hat.push_back(y_hat[i]);
+    }
+  }
 
-  return cov_yy_hat / std::sqrt(var_y * var_y_hat);
+  // If no valid data, return NaN
+  if (clean_y.empty()) {
+    return std::numeric_limits<double>::quiet_NaN();
+  }
+
+  double cov_yy_hat = CppCovariance(clean_y, clean_y_hat, true);
+  double var_y = CppVariance(clean_y, true);
+  double var_y_hat = CppVariance(clean_y_hat, true);
+
+  // If any of the values is NaN, return NaN
+  if (isNA(cov_yy_hat) || isNA(var_y) || isNA(var_y_hat)) {
+    return std::numeric_limits<double>::quiet_NaN();
+  }
+
+  // Check if variances are zero
+  if (var_y == 0.0 || var_y_hat == 0.0) {
+    return std::numeric_limits<double>::quiet_NaN(); // Return NaN if variance is zero
+  }
+
+  // Calculate Pearson correlation coefficient
+  double corr = cov_yy_hat / std::sqrt(var_y * var_y_hat);
+
+  // Ensure correlation is within valid range [-1, 1]
+  if (corr < -1.0) corr = -1.0;
+  if (corr > 1.0) corr = 1.0;
+
+  return corr;
 }
 
 // Function to compute Pearson correlation using Armadillo
@@ -236,6 +272,10 @@ double ArmaPearsonCor(const std::vector<double>& y,
 
   // Compute Pearson correlation using Armadillo
   double corr = arma::as_scalar(arma::cor(arma_y, arma_y_hat));
+
+  // Ensure correlation is within valid range [-1, 1]
+  if (corr < -1.0) corr = -1.0;
+  if (corr > 1.0) corr = 1.0;
 
   return corr;
 }
