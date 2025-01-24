@@ -14,6 +14,8 @@
   E = 3,
   tau = 1,
   k = E + 1,
+  theta = 1,
+  algorithm = "simplex",
   nb = NULL,
   trendRM = TRUE,
   progressbar = TRUE
@@ -27,6 +29,8 @@
   E = 3,
   tau = 1,
   k = E + 3,
+  theta = 1,
+  algorithm = "simplex",
   RowCol = NULL,
   trendRM = TRUE,
   progressbar = TRUE
@@ -46,6 +50,10 @@
 \item{tau}{(optional) The step of spatial lags.}
 
 \item{k}{(optional) Number of nearest neighbors to use for prediction.}
+
+\item{theta}{(optional) Weighting parameter for distances, useful when \code{algorithm} is \code{smap}.}
+
+\item{algorithm}{(optional) Algorithm used for prediction.}
 
 \item{nb}{(optional) The neighbours list.}
 

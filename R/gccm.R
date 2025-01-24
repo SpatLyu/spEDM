@@ -1,7 +1,7 @@
 methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 
-.gccm_sf_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = E+1,
-                    nb = NULL, trendRM = TRUE, progressbar = TRUE){
+.gccm_sf_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = E+1, theta = 1,
+                    algorithm = "simplex", nb = NULL, trendRM = TRUE, progressbar = TRUE){
   varname = .check_character(cause, effect)
   coords = sdsfun::sf_coordinates(data)
   cause = data[,cause,drop = TRUE]
@@ -14,14 +14,15 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
     effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
   }
 
-  x_xmap_y = RcppGCCM4Lattice(cause,effect,nb,libsizes,E,tau,k,progressbar)
-  y_xmap_x = RcppGCCM4Lattice(effect,cause,nb,libsizes,E,tau,k,progressbar)
+  simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
+  x_xmap_y = RcppGCCM4Lattice(cause,effect,nb,libsizes,E,tau,k,simplex,theta,progressbar)
+  y_xmap_x = RcppGCCM4Lattice(effect,cause,nb,libsizes,E,tau,k,simplex,theta,progressbar)
 
   return(.bind_xmapdf(x_xmap_y,y_xmap_x,varname))
 }
 
-.gccm_spatraster_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = E+3,
-                            RowCol = NULL, trendRM = TRUE, progressbar = TRUE){
+.gccm_spatraster_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = E+3, theta = 1,
+                            algorithm = "simplex", RowCol = NULL, trendRM = TRUE, progressbar = TRUE){
   varname = .check_character(cause, effect)
   data = data[[c(cause,effect)]]
   names(data) = c("cause","effect")
@@ -38,8 +39,9 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   selvec = seq(5,maxlibsize,5)
   if (is.null(RowCol)) RowCol = as.matrix(expand.grid(selvec,selvec))
 
-  x_xmap_y = RcppGCCM4Grid(causemat,effectmat,libsizes,RowCol,E,tau,k,progressbar)
-  y_xmap_x = RcppGCCM4Grid(effectmat,causemat,libsizes,RowCol,E,tau,k,progressbar)
+  simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
+  x_xmap_y = RcppGCCM4Grid(causemat,effectmat,libsizes,RowCol,E,tau,k,simplex,theta,progressbar)
+  y_xmap_x = RcppGCCM4Grid(effectmat,causemat,libsizes,RowCol,E,tau,k,simplex,theta,progressbar)
 
   return(.bind_xmapdf(x_xmap_y,y_xmap_x,varname))
 }
@@ -53,6 +55,8 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 #' @param E (optional) The dimensions of the embedding.
 #' @param tau (optional) The step of spatial lags.
 #' @param k (optional) Number of nearest neighbors to use for prediction.
+#' @param theta (optional) Weighting parameter for distances, useful when `algorithm` is `smap`.
+#' @param algorithm (optional) Algorithm used for prediction.
 #' @param nb (optional) The neighbours list.
 #' @param RowCol (optional) Matrix of selected row and cols numbers.
 #' @param trendRM (optional) Whether to remove the linear trend.

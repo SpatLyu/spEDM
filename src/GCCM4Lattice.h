@@ -11,6 +11,7 @@
 #include "CppStats.h"
 #include "CppLatticeUtils.h"
 #include "SimplexProjection.h"
+#include "SMap.h"
 #include <RcppThread.h>
 
 // Function to compute GCCMSingle4Lattice
@@ -22,7 +23,9 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
     int max_lib_size,                                  // Maximum size of the library
     const std::vector<int>& possible_lib_indices,      // Indices of possible library states
     const std::vector<bool>& pred_indices,             // Vector of T/F values (which states to predict from)
-    int b                                              // Number of neighbors to use for simplex projection
+    int b,                                             // Number of neighbors to use for simplex projection
+    bool simplex,                                      // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
+    double theta                                       // Distance weighting parameter for the local neighbours in the manifold
 );
 
 // Function to compute GCCM4Lattice
@@ -35,6 +38,8 @@ std::vector<std::vector<double>> GCCM4Lattice(
     int E,                                              // Number of dimensions for the attractor reconstruction
     int tau,                                            // Spatial lag for the lagged-vector construction
     int b,                                              // Number of nearest neighbors to use for prediction
+    bool simplex,                                       // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
+    double theta,                                       // Distance weighting parameter for the local neighbours in the manifold
     bool progressbar = true                             // Whether to print the progress bar
 );
 
