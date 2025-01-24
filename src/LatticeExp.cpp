@@ -70,6 +70,55 @@ Rcpp::List RcppLaggedVar4Lattice(const Rcpp::List& nb, int lagNum) {
   return result;
 }
 
+// Rcpp wrapper function for CppSVD
+// [[Rcpp::export]]
+Rcpp::List RcppSVD(const Rcpp::NumericMatrix& X) {
+  // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
+  size_t m = X.nrow();
+  size_t n = X.ncol();
+  std::vector<std::vector<double>> X_vec(m, std::vector<double>(n));
+  for (size_t i = 0; i < m; ++i) {
+    for (size_t j = 0; j < n; ++j) {
+      X_vec[i][j] = X(i, j);
+    }
+  }
+
+  // Call the original CppSVD function
+  std::vector<std::vector<std::vector<double>>> result = CppSVD(X_vec);
+
+  // Extract results from CppSVD output
+  std::vector<std::vector<double>> u = result[0]; // Left singular vectors
+  std::vector<double> d = result[1][0];           // Singular values
+  std::vector<std::vector<double>> v = result[2]; // Right singular vectors
+
+  // Convert std::vector results to Rcpp objects
+  Rcpp::NumericMatrix u_rcpp(m, m);
+  for (size_t i = 0; i < m; ++i) {
+    for (size_t j = 0; j < m; ++j) {
+      u_rcpp(i, j) = u[i][j];
+    }
+  }
+
+  Rcpp::NumericVector d_rcpp(d.size());
+  for (size_t i = 0; i < d.size(); ++i) {
+    d_rcpp(i) = d[i];
+  }
+
+  Rcpp::NumericMatrix v_rcpp(v.size(), v[0].size());
+  for (size_t i = 0; i < v.size(); ++i) {
+    for (size_t j = 0; j < v[0].size(); ++j) {
+      v_rcpp(i, j) = v[i][j];
+    }
+  }
+
+  // Return results as an Rcpp::List to match R's svd() output
+  return Rcpp::List::create(
+    Rcpp::Named("u") = u_rcpp, // Left singular vectors
+    Rcpp::Named("d") = d_rcpp, // Singular values
+    Rcpp::Named("v") = v_rcpp  // Right singular vectors
+  );
+}
+
 // Wrapper function to generate embeddings and return a NumericMatrix
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec,
