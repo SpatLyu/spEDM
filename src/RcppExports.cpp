@@ -213,19 +213,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// RcppArmaPearsonCor
-double RcppArmaPearsonCor(const Rcpp::NumericVector& y, const Rcpp::NumericVector& y_hat, bool NA_rm);
-RcppExport SEXP _spEDM_RcppArmaPearsonCor(SEXP ySEXP, SEXP y_hatSEXP, SEXP NA_rmSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y_hat(y_hatSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppArmaPearsonCor(y, y_hat, NA_rm));
-    return rcpp_result_gen;
-END_RCPP
-}
 // RcppConfidence
 Rcpp::NumericVector RcppConfidence(double r, int n, double level);
 RcppExport SEXP _spEDM_RcppConfidence(SEXP rSEXP, SEXP nSEXP, SEXP levelSEXP) {
@@ -250,20 +237,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type ycoord(ycoordSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppLinearTrendRM(vec, xcoord, ycoord, NA_rm));
-    return rcpp_result_gen;
-END_RCPP
-}
-// RcppArmaLinearTrendRM
-Rcpp::NumericVector RcppArmaLinearTrendRM(const Rcpp::NumericVector& vec, const Rcpp::NumericVector& xcoord, const Rcpp::NumericVector& ycoord, bool NA_rm);
-RcppExport SEXP _spEDM_RcppArmaLinearTrendRM(SEXP vecSEXP, SEXP xcoordSEXP, SEXP ycoordSEXP, SEXP NA_rmSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type xcoord(xcoordSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type ycoord(ycoordSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppArmaLinearTrendRM(vec, xcoord, ycoord, NA_rm));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -295,10 +268,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppAbs", (DL_FUNC) &_spEDM_RcppAbs, 2},
     {"_spEDM_RcppSumNormalize", (DL_FUNC) &_spEDM_RcppSumNormalize, 2},
     {"_spEDM_RcppPearsonCor", (DL_FUNC) &_spEDM_RcppPearsonCor, 3},
-    {"_spEDM_RcppArmaPearsonCor", (DL_FUNC) &_spEDM_RcppArmaPearsonCor, 3},
     {"_spEDM_RcppConfidence", (DL_FUNC) &_spEDM_RcppConfidence, 3},
     {"_spEDM_RcppLinearTrendRM", (DL_FUNC) &_spEDM_RcppLinearTrendRM, 4},
-    {"_spEDM_RcppArmaLinearTrendRM", (DL_FUNC) &_spEDM_RcppArmaLinearTrendRM, 4},
     {"_spEDM_RcppSVD", (DL_FUNC) &_spEDM_RcppSVD, 1},
     {NULL, NULL, 0}
 };

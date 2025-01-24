@@ -61,20 +61,12 @@ RcppPearsonCor <- function(y, y_hat, NA_rm = FALSE) {
     .Call(`_spEDM_RcppPearsonCor`, y, y_hat, NA_rm)
 }
 
-RcppArmaPearsonCor <- function(y, y_hat, NA_rm = FALSE) {
-    .Call(`_spEDM_RcppArmaPearsonCor`, y, y_hat, NA_rm)
-}
-
 RcppConfidence <- function(r, n, level = 0.05) {
     .Call(`_spEDM_RcppConfidence`, r, n, level)
 }
 
 RcppLinearTrendRM <- function(vec, xcoord, ycoord, NA_rm = FALSE) {
     .Call(`_spEDM_RcppLinearTrendRM`, vec, xcoord, ycoord, NA_rm)
-}
-
-RcppArmaLinearTrendRM <- function(vec, xcoord, ycoord, NA_rm = FALSE) {
-    .Call(`_spEDM_RcppArmaLinearTrendRM`, vec, xcoord, ycoord, NA_rm)
 }
 
 RcppSVD <- function(X) {

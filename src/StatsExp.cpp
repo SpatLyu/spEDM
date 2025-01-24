@@ -106,18 +106,6 @@ double RcppPearsonCor(const Rcpp::NumericVector& y,
   return PearsonCor(y_vec, y_hat_vec, NA_rm);
 }
 
-// [[Rcpp::export]]
-double RcppArmaPearsonCor(const Rcpp::NumericVector& y,
-                          const Rcpp::NumericVector& y_hat,
-                          bool NA_rm = false) {
-  // Convert Rcpp::NumericVector to std::vector<double>
-  std::vector<double> y_vec = Rcpp::as<std::vector<double>>(y);
-  std::vector<double> y_hat_vec = Rcpp::as<std::vector<double>>(y_hat);
-
-  // Call the ArmaPearsonCor function
-  return ArmaPearsonCor(y_vec, y_hat_vec, NA_rm);
-}
-
 // Wrapper function to calculate the confidence interval for a correlation coefficient and return a NumericVector
 // [[Rcpp::export]]
 Rcpp::NumericVector RcppConfidence(double r, int n, double level = 0.05) {
@@ -144,23 +132,6 @@ Rcpp::NumericVector RcppLinearTrendRM(const Rcpp::NumericVector& vec,
 
   // Convert std::vector<double> to Rcpp::NumericVector
   return Rcpp::wrap(result);
-}
-
-// [[Rcpp::export]]
-Rcpp::NumericVector RcppArmaLinearTrendRM(const Rcpp::NumericVector& vec,
-                                          const Rcpp::NumericVector& xcoord,
-                                          const Rcpp::NumericVector& ycoord,
-                                          bool NA_rm = false) {
-  // Convert Rcpp::NumericVector to std::vector<double>
-  std::vector<double> vec_cpp(vec.begin(), vec.end());
-  std::vector<double> xcoord_cpp(xcoord.begin(), xcoord.end());
-  std::vector<double> ycoord_cpp(ycoord.begin(), ycoord.end());
-
-  // Call the original ArmaLinearTrendRM function
-  std::vector<double> result = ArmaLinearTrendRM(vec_cpp, xcoord_cpp, ycoord_cpp, NA_rm);
-
-  // Convert the result back to Rcpp::NumericVector
-  return Rcpp::NumericVector(result.begin(), result.end());
 }
 
 // Rcpp wrapper function for CppSVD
