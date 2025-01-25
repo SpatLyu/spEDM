@@ -128,8 +128,7 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
     }
   }
 
-  // Remove columns from xEmbedings that are entirely NaN
-  std::vector<std::vector<double>> filteredEmbeddings;
+  // Calculate validColumns (indices of columns that are not entirely NaN)
   std::vector<size_t> validColumns; // To store indices of valid columns
 
   // Iterate over each column to check if it contains any non-NaN values
@@ -146,21 +145,26 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
     }
   }
 
-  // If any columns are removed, issue a warning
-  if (validColumns.size() < xEmbedings[0].size()) {
-    std::cerr << "Warning: remove all-NA embedding vector columns caused by excessive embedding dimension E selection." << std::endl;
-  }
+  // If no columns are removed, return the original xEmbedings
+  if (validColumns.size() == xEmbedings[0].size()) {
+    return xEmbedings;
+  } else {
+    // Step 3: Issue a warning if any columns are removed
+    // std::cerr << "Warning: remove all-NA embedding vector columns caused by excessive embedding dimension E selection." << std::endl;
 
-  // Construct the filtered embeddings matrix
-  for (size_t row = 0; row < xEmbedings.size(); ++row) {
-    std::vector<double> filteredRow;
-    for (size_t col : validColumns) {
-      filteredRow.push_back(xEmbedings[row][col]);
+    // Construct the filtered embeddings matrix
+    std::vector<std::vector<double>> filteredEmbeddings;
+    for (size_t row = 0; row < xEmbedings.size(); ++row) {
+      std::vector<double> filteredRow;
+      for (size_t col : validColumns) {
+        filteredRow.push_back(xEmbedings[row][col]);
+      }
+      filteredEmbeddings.push_back(filteredRow);
     }
-    filteredEmbeddings.push_back(filteredRow);
-  }
 
-  return filteredEmbeddings;
+    // Return the filtered embeddings matrix
+    return filteredEmbeddings;
+  }
 }
 
 // #include <iostream>
