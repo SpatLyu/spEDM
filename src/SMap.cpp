@@ -64,6 +64,11 @@ double SMap(
     // Find nearest neighbors
     std::vector<size_t> neighbors(distances.size());
     std::iota(neighbors.begin(), neighbors.end(), 0);
+    // Check if num_neighbors_sizet exceeds the size of neighbors
+    // If so, adjust num_neighbors_sizet to the maximum allowed value (neighbors.size())
+    if (num_neighbors_sizet > neighbors.size()) {
+      num_neighbors_sizet = neighbors.size();
+    }
     std::partial_sort(neighbors.begin(), neighbors.begin() + num_neighbors_sizet, neighbors.end(),
                       [&](size_t a, size_t b) { return distances[a] < distances[b]; });
 
