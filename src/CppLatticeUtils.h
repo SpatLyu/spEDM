@@ -7,6 +7,7 @@
 #include <algorithm> // for std::sort, std::unique, std::accumulate
 #include <unordered_set> // for std::unordered_set
 #include <limits> // for std::numeric_limits
+#include <cmath> // For std::isnan
 
 std::vector<std::vector<int>> CppLaggedVar4Lattice(std::vector<std::vector<int>> spNeighbor,
                                                    int lagNum);
