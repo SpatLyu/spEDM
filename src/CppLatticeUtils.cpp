@@ -149,7 +149,7 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
   if (validColumns.size() == xEmbedings[0].size()) {
     return xEmbedings;
   } else {
-    // Step 3: Issue a warning if any columns are removed
+    // Issue a warning if any columns are removed
     // std::cerr << "Warning: remove all-NA embedding vector columns caused by excessive embedding dimension E selection." << std::endl;
 
     // Construct the filtered embeddings matrix
