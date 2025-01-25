@@ -102,6 +102,11 @@ double SMap(
       }
     }
 
+    // Multiply by b to get the final coefficients
+    for (size_t i = 0; i < map_coeffs.size(); ++i) {
+      map_coeffs[i] *= b[i];
+    }
+
     // Make prediction
     double prediction = 0.0;
     for (size_t i = 0; i < vectors[p].size(); ++i) {
