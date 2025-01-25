@@ -1,5 +1,7 @@
 # spEDM 1.3
 
+* Resolve r crash caused by invalid `E` and `k` parameter settings in `gccm` (#89,#90).
+
 * Fix incorrect Pearson correlation calculation in `C++` code when input contains NA (#83).
 
 * Add `S-maps` cross-prediction support to `gccm` (#81).
