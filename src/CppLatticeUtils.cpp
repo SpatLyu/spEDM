@@ -4,6 +4,7 @@
 #include <algorithm> // for std::sort, std::unique, std::accumulate
 #include <unordered_set> // for std::unordered_set
 #include <limits> // for std::numeric_limits
+#include <cmath> // For std::isnan
 
 // Function to compute lagged neighborhoods for a given lag number
 // **Note that the return value corresponds to the cumulative neighbor indices for lagNum**
@@ -127,7 +128,43 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
     }
   }
 
-  return xEmbedings;
+  // Calculate validColumns (indices of columns that are not entirely NaN)
+  std::vector<size_t> validColumns; // To store indices of valid columns
+
+  // Iterate over each column to check if it contains any non-NaN values
+  for (size_t col = 0; col < xEmbedings[0].size(); ++col) {
+    bool isAllNaN = true;
+    for (size_t row = 0; row < xEmbedings.size(); ++row) {
+      if (!std::isnan(xEmbedings[row][col])) {
+        isAllNaN = false;
+        break;
+      }
+    }
+    if (!isAllNaN) {
+      validColumns.push_back(col); // Store the index of valid columns
+    }
+  }
+
+  // If no columns are removed, return the original xEmbedings
+  if (validColumns.size() == xEmbedings[0].size()) {
+    return xEmbedings;
+  } else {
+    // Issue a warning if any columns are removed
+    // std::cerr << "Warning: remove all-NA embedding vector columns caused by excessive embedding dimension E selection." << std::endl;
+
+    // Construct the filtered embeddings matrix
+    std::vector<std::vector<double>> filteredEmbeddings;
+    for (size_t row = 0; row < xEmbedings.size(); ++row) {
+      std::vector<double> filteredRow;
+      for (size_t col : validColumns) {
+        filteredRow.push_back(xEmbedings[row][col]);
+      }
+      filteredEmbeddings.push_back(filteredRow);
+    }
+
+    // Return the filtered embeddings matrix
+    return filteredEmbeddings;
+  }
 }
 
 // #include <iostream>
