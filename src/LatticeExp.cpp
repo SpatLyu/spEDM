@@ -80,6 +80,65 @@ Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec,
   return result;
 }
 
+// Description: Computes Simplex projection for lattice data and returns a matrix containing
+//              the embedding dimension (E), Pearson correlation coefficient (PearsonCor),
+//              mean absolute error (MAE), and root mean squared error (RMSE).
+// Parameters:
+//   - x: A NumericVector containing the time series data.
+//   - nb: A List containing neighborhood information for lattice data.
+//   - lib: An IntegerVector specifying the library indices (1-based in R, converted to 0-based in C++).
+//   - pred: An IntegerVector specifying the prediction indices (1-based in R, converted to 0-based in C++).
+//   - E: An IntegerVector specifying the embedding dimensions to test.
+//   - b: An integer specifying the number of neighbors to use for simplex projection.
+// Returns: A NumericMatrix where each row contains {E, PearsonCor, CppMAE, CppRMSE}.
+// [[Rcpp::export]]
+Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
+                                        const Rcpp::List& nb,
+                                        const Rcpp::IntegerVector& lib,
+                                        const Rcpp::IntegerVector& pred,
+                                        const Rcpp::IntegerVector& E,
+                                        int b) {
+  // Convert neighborhood list to std::vector<std::vector<int>>
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
+
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> vec_std = Rcpp::as<std::vector<double>>(x);
+
+  // Initialize lib_indices and pred_indices with all false
+  std::vector<bool> lib_indices(vec_std.size(), false);
+  std::vector<bool> pred_indices(vec_std.size(), false);
+
+  // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
+  for (int i = 0; i < lib.size(); ++i) {
+    lib_indices[lib[i] - 1] = true; // Convert to 0-based index
+  }
+  for (int i = 0; i < pred.size(); ++i) {
+    pred_indices[pred[i] - 1] = true; // Convert to 0-based index
+  }
+
+  // Initialize the result matrix
+  Rcpp::NumericMatrix result(E.size(), 4); // Columns: E, PearsonCor, MAE, RMSE
+
+  // Loop over each embedding dimension E
+  for (int i = 0; i < E.size(); ++i) {
+    // Generate embeddings for the current E
+    std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(vec_std, nb_vec, E[i]);
+
+    // Call SimplexBehavior to compute metrics
+    std::vector<double> metrics = SimplexBehavior(embeddings, vec_std, lib_indices, pred_indices, b);
+
+    // Store results in the matrix
+    result(i, 0) = E[i];               // Embedding dimension
+    result(i, 1) = metrics[0];         // PearsonCor
+    result(i, 2) = metrics[1];         // MAE
+    result(i, 3) = metrics[2];         // RMSE
+  }
+
+  // Set column names for the result matrix
+  Rcpp::colnames(result) = Rcpp::CharacterVector::create("E", "rho", "mae", "rmse");
+  return result;
+}
+
 // Wrapper function to perform GCCM Lattice and return a NumericMatrix
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,

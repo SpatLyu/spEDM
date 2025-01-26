@@ -64,6 +64,67 @@ Rcpp::NumericMatrix RcppGenGridEmbeddings(Rcpp::NumericMatrix mat, int E) {
 }
 
 // [[Rcpp::export]]
+Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
+                                     const Rcpp::IntegerMatrix& lib,
+                                     const Rcpp::IntegerMatrix& pred,
+                                     const Rcpp::IntegerVector& E,
+                                     int b) {
+  // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
+  int numRows = mat.nrow();
+  int numCols = mat.ncol();
+  std::vector<std::vector<double>> cppMat(numRows, std::vector<double>(numCols));
+
+  for (int r = 0; r < numRows; ++r) {
+    for (int c = 0; c < numCols; ++c) {
+      cppMat[r][c] = mat(r, c);
+    }
+  }
+
+  std::vector<double> vec_std;
+  vec_std.reserve(numRows * numCols); // Reserve space for efficiency
+
+  for (int i = 0; i < numRows; ++i) {
+    for (int j = 0; j < numCols; ++j) {
+      vec_std.push_back(mat(i, j)); // Add element to the vector
+    }
+  }
+
+  // Initialize lib_indices and pred_indices with all false
+  std::vector<bool> pred_indices(numRows * numCols, false);
+  std::vector<bool> lib_indices(numRows * numCols, false);
+
+  // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
+  for (int i = 0; i < lib.nrow(); ++i) {
+    lib_indices[LocateGridIndices(lib(i,0), lib(i,1), numRows, numCols)] = true; // Convert to 0-based index
+  }
+  for (int i = 0; i < pred.nrow(); ++i) {
+    pred_indices[LocateGridIndices(lib(i,0), lib(i,1), numRows, numCols)] = true; // Convert to 0-based index
+  }
+
+  // Initialize the result matrix
+  Rcpp::NumericMatrix result(E.size(), 4); // Columns: E, PearsonCor, MAE, RMSE
+
+  // Loop over each embedding dimension E
+  for (int i = 0; i < E.size(); ++i) {
+    // Call the GenGridEmbeddings function
+    std::vector<std::vector<double>> embeddings = GenGridEmbeddings(cppMat, E[i]);
+
+    // Call SimplexBehavior to compute metrics
+    std::vector<double> metrics = SimplexBehavior(embeddings, vec_std, lib_indices, pred_indices, b);
+
+    // Store results in the matrix
+    result(i, 0) = E[i];               // Embedding dimension
+    result(i, 1) = metrics[0];         // PearsonCor
+    result(i, 2) = metrics[1];         // MAE
+    result(i, 3) = metrics[2];         // RMSE
+  }
+
+  // Set column names for the result matrix
+  Rcpp::colnames(result) = Rcpp::CharacterVector::create("E", "rho", "mae", "rmse");
+  return result;
+}
+
+// [[Rcpp::export]]
 Rcpp::NumericMatrix RcppGCCM4Grid(
     const Rcpp::NumericMatrix& xMatrix,
     const Rcpp::NumericMatrix& yMatrix,
