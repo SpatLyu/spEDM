@@ -14,6 +14,9 @@
 #include "SMap.h"
 #include <RcppThread.h>
 
+int LocateGridIndices(int curRow, int curCol,
+                      int totalRow, int totalCol);
+
 // GCCMSingle4Grid function
 std::vector<std::pair<int, double>> GCCMSingle4Grid(
     const std::vector<std::vector<double>>& xEmbedings,

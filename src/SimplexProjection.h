@@ -28,4 +28,12 @@ double SimplexProjection(
     int num_neighbors                                 // Number of neighbors to use for simplex projection
 );
 
+std::vector<double> SimplexBehavior(
+    const std::vector<std::vector<double>>& vectors,
+    const std::vector<double>& target,
+    const std::vector<bool>& lib_indices,
+    const std::vector<bool>& pred_indices,
+    int num_neighbors
+);
+
 #endif // SimplexProjection_H

@@ -15,7 +15,7 @@
 // [[Rcpp::depends(RcppThread)]]
 
 // Function to locate the index in a 2D grid
-int locate(int curRow, int curCol, int totalRow, int totalCol) {
+int LocateGridIndices(int curRow, int curCol, int totalRow, int totalCol) {
   return (curRow - 1) * totalCol + curCol - 1;
 }
 
@@ -42,7 +42,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
 
       // Set prediction indices
       for (const auto& p : pred) {
-        pred_indices[locate(p.first, p.second, totalRow, totalCol)] = true;
+        pred_indices[LocateGridIndices(p.first, p.second, totalRow, totalCol)] = true;
       }
 
       // Exclude NA values in yPred from prediction indices
@@ -55,7 +55,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
       // Set library indices
       for (int i = r; i < r + lib_size; ++i) {
         for (int j = c; j < c + lib_size; ++j) {
-          lib_indices[locate(i, j, totalRow, totalCol)] = true;
+          lib_indices[LocateGridIndices(i, j, totalRow, totalCol)] = true;
         }
       }
 
