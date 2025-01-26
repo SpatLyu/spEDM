@@ -21,8 +21,8 @@ RcppLaggedVar4Lattice <- function(nb, lagNum) {
     .Call(`_spEDM_RcppLaggedVar4Lattice`, nb, lagNum)
 }
 
-RcppGenLatticeEmbeddings <- function(vec, nb, E) {
-    .Call(`_spEDM_RcppGenLatticeEmbeddings`, vec, nb, E)
+RcppGenLatticeEmbeddings <- function(vec, nb, E, includeself) {
+    .Call(`_spEDM_RcppGenLatticeEmbeddings`, vec, nb, E, includeself)
 }
 
 RcppSimplex4Lattice <- function(x, nb, lib, pred, E, b) {

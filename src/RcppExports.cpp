@@ -84,15 +84,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppGenLatticeEmbeddings
-Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec, const Rcpp::List& nb, int E);
-RcppExport SEXP _spEDM_RcppGenLatticeEmbeddings(SEXP vecSEXP, SEXP nbSEXP, SEXP ESEXP) {
+Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec, const Rcpp::List& nb, int E, bool includeself);
+RcppExport SEXP _spEDM_RcppGenLatticeEmbeddings(SEXP vecSEXP, SEXP nbSEXP, SEXP ESEXP, SEXP includeselfSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
     Rcpp::traits::input_parameter< int >::type E(ESEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppGenLatticeEmbeddings(vec, nb, E));
+    Rcpp::traits::input_parameter< bool >::type includeself(includeselfSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppGenLatticeEmbeddings(vec, nb, E, includeself));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -289,7 +290,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppSimplex4Grid", (DL_FUNC) &_spEDM_RcppSimplex4Grid, 5},
     {"_spEDM_RcppGCCM4Grid", (DL_FUNC) &_spEDM_RcppGCCM4Grid, 10},
     {"_spEDM_RcppLaggedVar4Lattice", (DL_FUNC) &_spEDM_RcppLaggedVar4Lattice, 2},
-    {"_spEDM_RcppGenLatticeEmbeddings", (DL_FUNC) &_spEDM_RcppGenLatticeEmbeddings, 3},
+    {"_spEDM_RcppGenLatticeEmbeddings", (DL_FUNC) &_spEDM_RcppGenLatticeEmbeddings, 4},
     {"_spEDM_RcppSimplex4Lattice", (DL_FUNC) &_spEDM_RcppSimplex4Lattice, 6},
     {"_spEDM_RcppGCCM4Lattice", (DL_FUNC) &_spEDM_RcppGCCM4Lattice, 10},
     {"_spEDM_RcppMean", (DL_FUNC) &_spEDM_RcppMean, 2},

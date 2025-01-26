@@ -12,8 +12,10 @@
 std::vector<std::vector<int>> CppLaggedVar4Lattice(std::vector<std::vector<int>> spNeighbor,
                                                    int lagNum);
 
-std::vector<std::vector<double>> GenLatticeEmbeddings(const std::vector<double>& vec,
-                                                      const std::vector<std::vector<int>>& nb,
-                                                      int E);
+std::vector<std::vector<double>> GenLatticeEmbeddings(
+    const std::vector<double>& vec,
+    const std::vector<std::vector<int>>& nb,
+    int E,
+    bool includeself);
 
 #endif // CppLatticeUtils_H

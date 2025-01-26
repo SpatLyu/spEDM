@@ -57,7 +57,8 @@ Rcpp::List RcppLaggedVar4Lattice(const Rcpp::List& nb, int lagNum) {
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec,
                                              const Rcpp::List& nb,
-                                             int E) {
+                                             int E,
+                                             bool includeself) {
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
 
@@ -65,7 +66,7 @@ Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec,
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
   // Generate embeddings
-  std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(vec_std, nb_vec, E);
+  std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(vec_std, nb_vec, E, includeself);
 
   // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
   int rows = embeddings.size();
@@ -122,7 +123,7 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
   // Loop over each embedding dimension E
   for (int i = 0; i < E.size(); ++i) {
     // Generate embeddings for the current E
-    std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(vec_std, nb_vec, E[i]);
+    std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(vec_std, nb_vec, E[i], false);
 
     // Call SimplexBehavior to compute metrics
     std::vector<double> metrics = SimplexBehavior(embeddings, vec_std, lib_indices, pred_indices, b);
@@ -159,7 +160,7 @@ Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
   // Generate embeddings
-  std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(x_std, nb_vec, E);
+  std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(x_std, nb_vec, E, false);
 
   // Convert Rcpp::IntegerVector to std::vector<int>
   std::vector<int> libsizes_std = Rcpp::as<std::vector<int>>(libsizes);
