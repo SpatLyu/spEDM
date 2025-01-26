@@ -30,4 +30,13 @@ double SMap(
     double theta                                      // Weighting parameter for distances
 );
 
+std::vector<double> SMapBehavior(
+    const std::vector<std::vector<double>>& vectors,
+    const std::vector<double>& target,
+    const std::vector<bool>& lib_indices,
+    const std::vector<bool>& pred_indices,
+    int num_neighbors,
+    double theta
+);
+
 #endif // SMap_H

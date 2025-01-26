@@ -116,3 +116,34 @@ double SimplexProjection(
   // Return the Pearson correlation coefficient
   return PearsonCor(target_pred, pred_pred, true);
 }
+
+// Description: Computes the simplex projection and returns a vector containing
+//              Pearson correlation coefficient (PearsonCor), mean absolute error (MAE),
+//              and root mean squared error (RMSE).
+// Parameters:
+//   - vectors: Reconstructed state-space (each row is a separate vector/state).
+//   - target: Spatial cross-section series to be used as the target (should align with vectors).
+//   - lib_indices: Vector of T/F values (which states to include when searching for neighbors).
+//   - pred_indices: Vector of T/F values (which states to predict from).
+//   - num_neighbors: Number of neighbors to use for simplex projection.
+// Returns: A vector<double> containing {PearsonCor, MAE, RMSE}.
+std::vector<double> SimplexBehavior(
+    const std::vector<std::vector<double>>& vectors,
+    const std::vector<double>& target,
+    const std::vector<bool>& lib_indices,
+    const std::vector<bool>& pred_indices,
+    int num_neighbors
+) {
+  // Call SimplexProjectionPrediction to get the prediction results
+  std::pair<std::vector<double>, std::vector<double>> result = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors);
+  std::vector<double> target_pred = result.first;
+  std::vector<double> pred_pred = result.second;
+
+  // Compute PearsonCor, CppMAE, and CppRMSE
+  double pearson = PearsonCor(target_pred, pred_pred, true);
+  double mae = CppMAE(target_pred, pred_pred);
+  double rmse = CppRMSE(target_pred, pred_pred);
+
+  // Return the three metrics as a vector
+  return {pearson, mae, rmse};
+}
