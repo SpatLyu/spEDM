@@ -81,8 +81,15 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
   // Initialize the embeddings matrix with NaN values
   std::vector<std::vector<double>> xEmbedings(n, std::vector<double>(E, std::numeric_limits<double>::quiet_NaN()));
 
+  // When E >= 1, fill the first column of xEmbedings with the values from vec
+  if (E >= 1) {
+    for (int i = 0; i < n; ++i) {
+      xEmbedings[i][0] = vec[i]; // Fill the first column with vec values
+    }
+  }
+
   // Compute embeddings for each lag number from 1 to E
-  for (int lagNum = 1; lagNum <= E; ++lagNum) {
+  for (int lagNum = 1; lagNum < E; ++lagNum) {
     // Compute the lagged neighborhoods
     std::vector<std::vector<int>> laggedResults = CppLaggedVar4Lattice(nb, lagNum);
 
@@ -124,7 +131,7 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
       double sum = std::accumulate(neighbors.begin(), neighbors.end(), 0.0, [&](double acc, int idx) {
         return acc + vec[idx];
       });
-      xEmbedings[l][lagNum - 1] = sum / neighbors.size();
+      xEmbedings[l][lagNum] = sum / neighbors.size();
     }
   }
 

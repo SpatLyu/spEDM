@@ -58,8 +58,8 @@ std::vector<std::vector<double>> GenGridEmbeddings(
     total_elements += subset.size();
   }
 
-  // Initialize the result matrix with total_elements rows and E+1 columns
-  std::vector<std::vector<double>> result(total_elements, std::vector<double>(E + 1, 0.0));
+  // Initialize the result matrix with total_elements rows and E columns
+  std::vector<std::vector<double>> result(total_elements, std::vector<double>(E, 0.0));
 
   // Fill the first column with the elements from mat
   int row = 0;
@@ -70,8 +70,8 @@ std::vector<std::vector<double>> GenGridEmbeddings(
     }
   }
 
-  // Fill the remaining columns (2 to E+1) with the averaged lagged variables
-  for (int lagNum = 1; lagNum <= E; ++lagNum) {
+  // Fill the remaining columns (2 to E) with the averaged lagged variables
+  for (int lagNum = 1; lagNum < E; ++lagNum) {
     // Calculate the lagged variables for the current lagNum
     std::vector<std::vector<double>> lagged_vars = CppLaggedVar4Grid(mat, lagNum);
 
@@ -102,7 +102,7 @@ std::vector<std::vector<double>> GenGridEmbeddings(
 // std::vector<std::vector<std::vector<double>>> GenGridEmbeddings2(
 //     const std::vector<std::vector<double>>& mat, int E) {
 //   // Initialize a vector to store the embeddings
-//   std::vector<std::vector<std::vector<double>>> xEmbeddings(E + 1);
+//   std::vector<std::vector<std::vector<double>>> xEmbeddings(E);
 //
 //   // The first embedding is the transpose of the input matrix
 //   int numRows = mat.size();
@@ -116,7 +116,7 @@ std::vector<std::vector<double>> GenGridEmbeddings(
 //   }
 //
 //   // Generate the remaining embeddings using laggedVariableAs2Dim
-//   for (int i = 1; i <= E; ++i) {
+//   for (int i = 1; i < E; ++i) {
 //     xEmbeddings[i] = CppLaggedVar4Grid(mat, i);
 //   }
 //
