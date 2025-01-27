@@ -28,3 +28,7 @@ reference:
   contents:
   - gccm
 
+- title: Utils Functions
+  contents:
+  - detectThreads
+
