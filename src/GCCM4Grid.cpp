@@ -95,12 +95,17 @@ std::vector<std::vector<double>> GCCM4Grid(
     int b,                                           // Number of nearest neighbors to use for prediction
     bool simplex,                                    // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
     double theta,                                    // Distance weighting parameter for the local neighbours in the manifold
+    int threads,                                     // Number of threads used from the global pool
     bool progressbar                                 // Whether to print the progress bar
 ) {
   // If b is not provided correctly, default it to E + 2
   if (b <= 0) {
     b = E + 2;
   }
+
+  size_t threads_sizet = static_cast<size_t>(threads);
+  unsigned int max_threads = std::thread::hardware_concurrency();
+  threads_sizet = std::min(static_cast<size_t>(max_threads), threads_sizet);
 
   // Get the dimensions of the xMatrix
   int totalRow = xMatrix.size();
@@ -142,13 +147,13 @@ std::vector<std::vector<double>> GCCM4Grid(
       auto results = GCCMSingle4Grid(xEmbedings, yPred, lib_size, pred, totalRow, totalCol, b, simplex, theta);
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
       bar++;
-    });
+    }, threads_sizet);
   } else {
     RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
       int lib_size = unique_lib_sizes[i];
       auto results = GCCMSingle4Grid(xEmbedings, yPred, lib_size, pred, totalRow, totalCol, b, simplex, theta);
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
-    });
+    }, threads_sizet);
   }
 
   // Group by the first int and compute the mean

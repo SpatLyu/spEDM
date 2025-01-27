@@ -151,6 +151,7 @@ Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,
                                      int b,
                                      bool simplex,
                                      double theta,
+                                     int threads,
                                      bool progressbar) {
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
@@ -181,6 +182,7 @@ Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,
     b,
     simplex,
     theta,
+    threads,
     progressbar);
 
   // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix

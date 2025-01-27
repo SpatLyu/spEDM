@@ -40,6 +40,7 @@ std::vector<std::vector<double>> GCCM4Lattice(
     int b,                                              // Number of nearest neighbors to use for prediction
     bool simplex,                                       // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
     double theta,                                       // Distance weighting parameter for the local neighbours in the manifold
+    int threads,                                        // Number of threads used from the global pool
     bool progressbar = true                             // Whether to print the progress bar
 );
 

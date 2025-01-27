@@ -83,12 +83,17 @@ std::vector<std::vector<double>> GCCM4Lattice(
     int b,                                              // Number of nearest neighbors to use for prediction
     bool simplex,                                       // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
     double theta,                                       // Distance weighting parameter for the local neighbours in the manifold
+    int threads,                                        // Number of threads used from the global pool
     bool progressbar = true                             // Whether to print the progress bar
 ) {
   // If b is not provided correctly, default it to E + 2
   if (b <= 0) {
     b = E + 2;
   }
+
+  size_t threads_sizet = static_cast<size_t>(threads);
+  unsigned int max_threads = std::thread::hardware_concurrency();
+  threads_sizet = std::min(static_cast<size_t>(max_threads), threads_sizet);
 
   int n = x_vectors.size();
   // Setup pred_indices
@@ -145,13 +150,13 @@ std::vector<std::vector<double>> GCCM4Lattice(
       auto results = GCCMSingle4Lattice(x_vectors, y, lib_indices, lib_size, max_lib_size, possible_lib_indices, pred_indices, b, simplex, theta);
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
       bar++;
-    });
+    }, threads_sizet);
   } else {
     RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
       int lib_size = unique_lib_sizes[i];
       auto results = GCCMSingle4Lattice(x_vectors, y, lib_indices, lib_size, max_lib_size, possible_lib_indices, pred_indices, b, simplex, theta);
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
-    });
+    }, threads_sizet);
   }
 
   // Group by the first int and compute the mean
