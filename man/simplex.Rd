@@ -4,7 +4,7 @@
 \alias{simplex}
 \alias{simplex,sf-method}
 \alias{simplex,SpatRaster-method}
-\title{generate embeddings}
+\title{simplex forecasting}
 \usage{
 \S4method{simplex}{sf}(
   data,
@@ -40,12 +40,12 @@
 A matrix
 }
 \description{
-generate embeddings
+simplex forecasting
 }
 \examples{
 columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
                        quiet=TRUE)
 #' \donttest{
-simplex(columbus,target = "CRIME")
+simplex(columbus,target = "CRIME",lib = 1:29,pred = 30:49)
 }
 }
