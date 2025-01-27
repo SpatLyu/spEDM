@@ -30,5 +30,6 @@ reference:
 
 - title: Utils Functions
   contents:
+  - embedded
   - detectThreads
 
