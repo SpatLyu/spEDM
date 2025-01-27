@@ -69,7 +69,8 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
                                      const Rcpp::IntegerMatrix& lib,
                                      const Rcpp::IntegerMatrix& pred,
                                      const Rcpp::IntegerVector& E,
-                                     int b) {
+                                     int b,
+                                     int threads) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = mat.nrow();
   int numCols = mat.ncol();
@@ -78,15 +79,6 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
   for (int r = 0; r < numRows; ++r) {
     for (int c = 0; c < numCols; ++c) {
       cppMat[r][c] = mat(r, c);
-    }
-  }
-
-  std::vector<double> vec_std;
-  vec_std.reserve(numRows * numCols); // Reserve space for efficiency
-
-  for (int i = 0; i < numRows; ++i) {
-    for (int j = 0; j < numCols; ++j) {
-      vec_std.push_back(mat(i, j)); // Add element to the vector
     }
   }
 
@@ -102,22 +94,22 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
     pred_indices[LocateGridIndices(lib(i,0), lib(i,1), numRows, numCols)] = true; // Convert to 0-based index
   }
 
-  // Initialize the result matrix
-  Rcpp::NumericMatrix result(E.size(), 4); // Columns: E, PearsonCor, MAE, RMSE
+  // Convert Rcpp::IntegerVector to std::vector<int>
+  std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
 
-  // Loop over each embedding dimension E
-  for (int i = 0; i < E.size(); ++i) {
-    // Call the GenGridEmbeddings function
-    std::vector<std::vector<double>> embeddings = GenGridEmbeddings(cppMat, E[i], true);
+  std::vector<std::vector<double>> res_std = Simplex4Grid(cppMat,lib_indices,pred_indices,E_std,b,threads);
 
-    // Call SimplexBehavior to compute metrics
-    std::vector<double> metrics = SimplexBehavior(embeddings, vec_std, lib_indices, pred_indices, b);
+  size_t n_rows = res_std.size();
+  size_t n_cols = res_std[0].size();
 
-    // Store results in the matrix
-    result(i, 0) = E[i];               // Embedding dimension
-    result(i, 1) = metrics[0];         // PearsonCor
-    result(i, 2) = metrics[1];         // MAE
-    result(i, 3) = metrics[2];         // RMSE
+  // Create an Rcpp::NumericMatrix with the same dimensions
+  Rcpp::NumericMatrix result(n_rows, n_cols);
+
+  // Fill the Rcpp::NumericMatrix with data from res_std
+  for (size_t i = 0; i < n_rows; ++i) {
+    for (size_t j = 0; j < n_cols; ++j) {
+      result(i, j) = res_std[i][j];
+    }
   }
 
   // Set column names for the result matrix

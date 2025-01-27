@@ -5,12 +5,12 @@ RcppLaggedVar4Grid <- function(mat, lagNum) {
     .Call(`_spEDM_RcppLaggedVar4Grid`, mat, lagNum)
 }
 
-RcppGenGridEmbeddings <- function(mat, E) {
-    .Call(`_spEDM_RcppGenGridEmbeddings`, mat, E)
+RcppGenGridEmbeddings <- function(mat, E, includeself) {
+    .Call(`_spEDM_RcppGenGridEmbeddings`, mat, E, includeself)
 }
 
-RcppSimplex4Grid <- function(mat, lib, pred, E, b) {
-    .Call(`_spEDM_RcppSimplex4Grid`, mat, lib, pred, E, b)
+RcppSimplex4Grid <- function(mat, lib, pred, E, b, threads) {
+    .Call(`_spEDM_RcppSimplex4Grid`, mat, lib, pred, E, b, threads)
 }
 
 RcppGCCM4Grid <- function(xMatrix, yMatrix, lib_sizes, pred, E, tau, b, simplex, theta, threads, progressbar) {
