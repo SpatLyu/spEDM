@@ -17,7 +17,7 @@
   theta = 1,
   algorithm = "simplex",
   nb = NULL,
-  threads = 8,
+  threads = detectThreads(),
   trendRM = TRUE,
   progressbar = TRUE
 )
@@ -33,7 +33,7 @@
   theta = 1,
   algorithm = "simplex",
   RowCol = NULL,
-  threads = 8,
+  threads = detectThreads(),
   trendRM = TRUE,
   progressbar = TRUE
 )
