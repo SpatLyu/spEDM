@@ -51,7 +51,8 @@ std::vector<std::vector<double>> CppLaggedVar4Grid(
 // Similar to GenLatticeEmbeddings
 std::vector<std::vector<double>> GenGridEmbeddings(
     const std::vector<std::vector<double>>& mat,
-    int E) {
+    int E,
+    bool includeself) {
   // Calculate the total number of elements in all subsets of mat
   int total_elements = 0;
   for (const auto& subset : mat) {
@@ -61,38 +62,66 @@ std::vector<std::vector<double>> GenGridEmbeddings(
   // Initialize the result matrix with total_elements rows and E columns
   std::vector<std::vector<double>> result(total_elements, std::vector<double>(E, 0.0));
 
-  // Fill the first column with the elements from mat
-  int row = 0;
-  for (const auto& subset : mat) {
-    for (double value : subset) {
-      result[row][0] = value;
-      ++row;
+  if (includeself) {
+    // Fill the first column with the elements from mat
+    int row = 0;
+    for (const auto& subset : mat) {
+      for (double value : subset) {
+        result[row][0] = value;
+        ++row;
+      }
     }
-  }
 
-  // Fill the remaining columns (2 to E) with the averaged lagged variables
-  for (int lagNum = 1; lagNum < E; ++lagNum) {
-    // Calculate the lagged variables for the current lagNum
-    std::vector<std::vector<double>> lagged_vars = CppLaggedVar4Grid(mat, lagNum);
+    // Fill the remaining columns (2 to E) with the averaged lagged variables
+    for (int lagNum = 1; lagNum < E; ++lagNum) {
+      // Calculate the lagged variables for the current lagNum
+      std::vector<std::vector<double>> lagged_vars = CppLaggedVar4Grid(mat, lagNum);
 
-    // Fill the current column (lagNum + 1) with the averaged lagged variables
-    row = 0;
-    for (const auto& subset : lagged_vars) {
-      double sum = 0.0;
-      int count = 0;
-      for (int i = 0; i < 8; ++i) {
-        double val = subset[i];
-        if (!std::isnan(val)) {
-          sum += val;
-          ++count;
+      // Fill the current column (lagNum + 1) with the averaged lagged variables
+      row = 0;
+      for (const auto& subset : lagged_vars) {
+        double sum = 0.0;
+        int count = 0;
+        for (int i = 0; i < 8; ++i) {
+          double val = subset[i];
+          if (!std::isnan(val)) {
+            sum += val;
+            ++count;
+          }
         }
+        if (count > 0) {
+          result[row][lagNum] = sum / count;
+        } else {
+          result[row][lagNum] = std::numeric_limits<double>::quiet_NaN();
+        }
+        ++row;
       }
-      if (count > 0) {
-        result[row][lagNum] = sum / count;
-      } else {
-        result[row][lagNum] = std::numeric_limits<double>::quiet_NaN();
+    }
+  } else {
+    int row = 0;
+    for (int lagNum = 1; lagNum <= E; ++lagNum) {
+      // Calculate the lagged variables for the current lagNum
+      std::vector<std::vector<double>> lagged_vars = CppLaggedVar4Grid(mat, lagNum);
+
+      // Fill the current column (lagNum) with the averaged lagged variables
+      row = 0;
+      for (const auto& subset : lagged_vars) {
+        double sum = 0.0;
+        int count = 0;
+        for (int i = 0; i < 8; ++i) {
+          double val = subset[i];
+          if (!std::isnan(val)) {
+            sum += val;
+            ++count;
+          }
+        }
+        if (count > 0) {
+          result[row][lagNum-1] = sum / count;
+        } else {
+          result[row][lagNum-1] = std::numeric_limits<double>::quiet_NaN();
+        }
+        ++row;
       }
-      ++row;
     }
   }
 
