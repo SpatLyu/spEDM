@@ -1,5 +1,6 @@
 #include <vector>
 #include "CppLatticeUtils.h"
+#include "Forecast4Lattice.h"
 #include "GCCM4Lattice.h"
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
@@ -98,12 +99,16 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
                                         const Rcpp::IntegerVector& lib,
                                         const Rcpp::IntegerVector& pred,
                                         const Rcpp::IntegerVector& E,
-                                        int b) {
+                                        int b,
+                                        int threads) {
   // Convert neighborhood list to std::vector<std::vector<int>>
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> vec_std = Rcpp::as<std::vector<double>>(x);
+
+  // Convert Rcpp::IntegerVector to std::vector<int>
+  std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
 
   // Initialize lib_indices and pred_indices with all false
   std::vector<bool> lib_indices(vec_std.size(), false);
@@ -117,22 +122,19 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
     pred_indices[pred[i] - 1] = true; // Convert to 0-based index
   }
 
-  // Initialize the result matrix
-  Rcpp::NumericMatrix result(E.size(), 4); // Columns: E, PearsonCor, MAE, RMSE
+  std::vector<std::vector<double>> res_std = Simplex4Lattice(vec_std,nb_vec,lib_indices,pred_indices,E_std,b,threads);
 
-  // Loop over each embedding dimension E
-  for (int i = 0; i < E.size(); ++i) {
-    // Generate embeddings for the current E
-    std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(vec_std, nb_vec, E[i], false);
+  size_t n_rows = res_std.size();
+  size_t n_cols = res_std[0].size();
 
-    // Call SimplexBehavior to compute metrics
-    std::vector<double> metrics = SimplexBehavior(embeddings, vec_std, lib_indices, pred_indices, b);
+  // Create an Rcpp::NumericMatrix with the same dimensions
+  Rcpp::NumericMatrix result(n_rows, n_cols);
 
-    // Store results in the matrix
-    result(i, 0) = E[i];               // Embedding dimension
-    result(i, 1) = metrics[0];         // PearsonCor
-    result(i, 2) = metrics[1];         // MAE
-    result(i, 3) = metrics[2];         // RMSE
+  // Fill the Rcpp::NumericMatrix with data from res_std
+  for (size_t i = 0; i < n_rows; ++i) {
+    for (size_t j = 0; j < n_cols; ++j) {
+      result(i, j) = res_std[i][j];
+    }
   }
 
   // Set column names for the result matrix
