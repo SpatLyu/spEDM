@@ -1,4 +1,4 @@
-#' detect the max number of threads that can be used
+#' detect the number of available threads
 #'
 #' @return An integer
 #' @export
