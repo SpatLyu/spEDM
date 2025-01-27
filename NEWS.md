@@ -1,6 +1,6 @@
 # spEDM 1.3
 
-* Support testing causal links in GCCM with different `E` and `k` for cause and effect variables (#95).
+* Support testing causal links in GCCM with different `E` and `k` for cause and effect variables (#96).
 
 * Add thread settings for `gccm` (#94).
 
