@@ -1,12 +1,13 @@
-methods::setGeneric("embedded", function(data, ...) standardGeneric("embedded"))
+methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
 
-.embedded_sf_method = \(data,target,E = 3,nb = NULL,include.self = FALSE){
+.simplex_sf_method = \(data,target,lib,pred,E = 1:10,k = 4,
+                       nb = NULL,threads = detectThreads()){
   vec = .uni_lattice(data,target)
   if (is.null(nb)) nb = sdsfun::spdep_nb(data)
   return(RcppGenLatticeEmbeddings(vec,nb,E,include.self))
 }
 
-.embedded_spatraster_method = \(data,target,E = 3,include.self = TRUE){
+.simplex_spatraster_method = \(data,target,lib,pred,E = 1:10,k = 4,threads = detectThreads()){
   mat = .uni_grid(data,target)
   return(RcppGenGridEmbeddings(mat,E,include.self))
 }
@@ -22,16 +23,16 @@ methods::setGeneric("embedded", function(data, ...) standardGeneric("embedded"))
 #' @return A matrix
 #' @export
 #'
-#' @name embedded
-#' @rdname embedded
-#' @aliases embedded,sf-method
+#' @name simplex
+#' @rdname simplex
+#' @aliases simplex,sf-method
 #'
 #' @examples
 #' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
 #'                        quiet=TRUE)
-#' embedded(columbus,target = "CRIME", E = 3)
+#' simplex(columbus,target = "CRIME", E = 3)
 #'
-methods::setMethod("embedded", "sf", .embedded_sf_method)
+methods::setMethod("simplex", "sf", .simplex_sf_method)
 
-#' @rdname embedded
-methods::setMethod("embedded", "SpatRaster", .embedded_spatraster_method)
+#' @rdname simplex
+methods::setMethod("simplex", "SpatRaster", .simplex_spatraster_method)
