@@ -1,8 +1,10 @@
 methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 
-.gccm_sf_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = E+1, theta = 1, algorithm = "simplex",
+.gccm_sf_method = \(data, cause, effect, libsizes, E = c(3,3), tau = 1, k = E+1, theta = 1, algorithm = "simplex",
                     nb = NULL, threads = detectThreads(), trendRM = TRUE, progressbar = TRUE){
   varname = .check_character(cause, effect)
+  E = .check_input2element(E)
+  k = .check_input2element(k)
   coords = sdsfun::sf_coordinates(data)
   cause = data[,cause,drop = TRUE]
   effect = data[,effect,drop = TRUE]
@@ -15,15 +17,17 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   }
 
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
-  x_xmap_y = RcppGCCM4Lattice(cause,effect,nb,libsizes,E,tau,k,simplex,theta,threads,progressbar)
-  y_xmap_x = RcppGCCM4Lattice(effect,cause,nb,libsizes,E,tau,k,simplex,theta,threads,progressbar)
+  x_xmap_y = RcppGCCM4Lattice(cause,effect,nb,libsizes,E[1],tau,k[1],simplex,theta,threads,progressbar)
+  y_xmap_x = RcppGCCM4Lattice(effect,cause,nb,libsizes,E[2],tau,k[2],simplex,theta,threads,progressbar)
 
   return(.bind_xmapdf(x_xmap_y,y_xmap_x,varname))
 }
 
-.gccm_spatraster_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = E+3, theta = 1, algorithm = "simplex",
+.gccm_spatraster_method = \(data, cause, effect, libsizes, E = c(3,3), tau = 1, k = E+3, theta = 1, algorithm = "simplex",
                             RowCol = NULL, threads = detectThreads(), trendRM = TRUE, progressbar = TRUE){
   varname = .check_character(cause, effect)
+  E = .check_input2element(E)
+  k = .check_input2element(k)
   data = data[[c(cause,effect)]]
   names(data) = c("cause","effect")
 
@@ -40,8 +44,8 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   if (is.null(RowCol)) RowCol = as.matrix(expand.grid(selvec,selvec))
 
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
-  x_xmap_y = RcppGCCM4Grid(causemat,effectmat,libsizes,RowCol,E,tau,k,simplex,theta,threads,progressbar)
-  y_xmap_x = RcppGCCM4Grid(effectmat,causemat,libsizes,RowCol,E,tau,k,simplex,theta,threads,progressbar)
+  x_xmap_y = RcppGCCM4Grid(causemat,effectmat,libsizes,RowCol,E[1],tau,k[1],simplex,theta,threads,progressbar)
+  y_xmap_x = RcppGCCM4Grid(effectmat,causemat,libsizes,RowCol,E[2],tau,k[2],simplex,theta,threads,progressbar)
 
   return(.bind_xmapdf(x_xmap_y,y_xmap_x,varname))
 }
