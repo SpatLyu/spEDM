@@ -9,7 +9,7 @@
 
 // Calculate the optimal embedding dimension of lattice data using simplex projection
 // Parameters:
-//   - vec_std: A vector of embedding values
+//   - vec: A vector of embedding values
 //   - nb_vec: A 2D vector of neighbor indices
 //   - lib_indices: A boolean vector indicating library (training) set indices
 //   - pred_indices: A boolean vector indicating prediction set indices
@@ -18,7 +18,7 @@
 //   - threads: Number of threads used from the global pool
 // Returns:
 //   - A 2D vector where each row contains [E, rho, mae, rmse] for a given embedding dimension
-std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& vec_std,
+std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& vec,
                                                  const std::vector<std::vector<int>>& nb_vec,
                                                  const std::vector<bool>& lib_indices,
                                                  const std::vector<bool>& pred_indices,
@@ -35,10 +35,10 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& vec_
   // Parallel loop over each embedding dimension E
   RcppThread::parallelFor(0, E.size(), [&](size_t i) {
     // Generate embeddings for the current E
-    std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(vec_std, nb_vec, E[i], false);
+    std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(vec, nb_vec, E[i], false);
 
     // Compute metrics using SimplexBehavior
-    std::vector<double> metrics = SimplexBehavior(embeddings, vec_std, lib_indices, pred_indices, b);
+    std::vector<double> metrics = SimplexBehavior(embeddings, vec, lib_indices, pred_indices, b);
 
     // Store results in the matrix (no mutex needed since each thread writes to a unique index)
     result[i][0] = E[i];               // Embedding dimension

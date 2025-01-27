@@ -1,5 +1,6 @@
 #include <vector>
 #include "CppGridUtils.h"
+#include "Forecast4Grid.h"
 #include "GCCM4Grid.h"
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
@@ -35,7 +36,7 @@ Rcpp::NumericMatrix RcppLaggedVar4Grid(Rcpp::NumericMatrix mat, int lagNum) {
 }
 
 // [[Rcpp::export]]
-Rcpp::NumericMatrix RcppGenGridEmbeddings(Rcpp::NumericMatrix mat, int E) {
+Rcpp::NumericMatrix RcppGenGridEmbeddings(Rcpp::NumericMatrix mat, int E, bool includeself) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = mat.nrow();
   int numCols = mat.ncol();
@@ -48,7 +49,7 @@ Rcpp::NumericMatrix RcppGenGridEmbeddings(Rcpp::NumericMatrix mat, int E) {
   }
 
   // Call the GenGridEmbeddings function
-  std::vector<std::vector<double>> embeddings = GenGridEmbeddings(cppMat, E);
+  std::vector<std::vector<double>> embeddings = GenGridEmbeddings(cppMat, E, includeself);
 
   // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
   int rows = embeddings.size();
@@ -107,7 +108,7 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
   // Loop over each embedding dimension E
   for (int i = 0; i < E.size(); ++i) {
     // Call the GenGridEmbeddings function
-    std::vector<std::vector<double>> embeddings = GenGridEmbeddings(cppMat, E[i]);
+    std::vector<std::vector<double>> embeddings = GenGridEmbeddings(cppMat, E[i], true);
 
     // Call SimplexBehavior to compute metrics
     std::vector<double> metrics = SimplexBehavior(embeddings, vec_std, lib_indices, pred_indices, b);

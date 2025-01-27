@@ -118,7 +118,7 @@ std::vector<std::vector<double>> GCCM4Grid(
   }
 
   // Generate embeddings for xMatrix
-  std::vector<std::vector<double>> xEmbedings = GenGridEmbeddings(xMatrix, E);
+  std::vector<std::vector<double>> xEmbedings = GenGridEmbeddings(xMatrix, E, true);
 
   // Ensure the minimum value in unique_lib_sizes is E + 2 and remove duplicates
   std::vector<int> unique_lib_sizes;

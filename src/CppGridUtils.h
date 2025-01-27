@@ -15,7 +15,7 @@ std::vector<std::vector<double>> CppLaggedVar4Grid(
 
 std::vector<std::vector<double>> GenGridEmbeddings(
     const std::vector<std::vector<double>>& mat,
-    int E
-);
+    int E,
+    bool includeself);
 
 #endif // CppGridUtils_H
