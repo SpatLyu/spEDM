@@ -1,13 +1,13 @@
-methods::setGeneric("embed", function(data, ...) standardGeneric("embed"))
+methods::setGeneric("embedded", function(data, ...) standardGeneric("embedded"))
 
-.embed_sf_method = \(data,target,E = 3,nb = NULL,include.self = FALSE){
+.embedded_sf_method = \(data,target,E = 3,nb = NULL,include.self = FALSE){
   target = .check_tgcharacter(target)
   if (is.null(nb)) nb = sdsfun::spdep_nb(data)
   scsvec = data[,target,drop = TRUE]
   return(RcppGenLatticeEmbeddings(scsvec,nb,E,include.self))
 }
 
-.embed_spatraster_method = \(data,target,E = 3,include.self = TRUE){
+.embedded_spatraster_method = \(data,target,E = 3,include.self = TRUE){
   target = .check_tgcharacter(target)
   data = data[[target]]
   mat = matrix(terra::values(data),nrow = terra::nrow(data),byrow = TRUE)
@@ -25,16 +25,16 @@ methods::setGeneric("embed", function(data, ...) standardGeneric("embed"))
 #' @return A matrix
 #' @export
 #'
-#' @name embed
-#' @rdname embed
-#' @aliases embed,sf-method
+#' @name embedded
+#' @rdname embedded
+#' @aliases embedded,sf-method
 #'
 #' @examples
 #' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
 #'                        quiet=TRUE)
-#' embed(columbus,target = "CRIME", E = 3)
+#' embedded(columbus,target = "CRIME", E = 3)
 #'
-methods::setMethod("embed", "sf", .embed_sf_method)
+methods::setMethod("embedded", "sf", .embedded_sf_method)
 
-#' @rdname embed
-methods::setMethod("embed", "SpatRaster", .embed_spatraster_method)
+#' @rdname embedded
+methods::setMethod("embedded", "SpatRaster", .embedded_spatraster_method)
