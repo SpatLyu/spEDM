@@ -83,6 +83,6 @@ columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
 \donttest{
 g = gccm(columbus,"HOVAL","CRIME",libsizes = seq(5,45,5),E = c(6,5))
 g
-plot(g, ylimits = c(0,0.65))
+plot(g, ylimits = c(0,0.8))
 }
 }
