@@ -13,8 +13,12 @@ RcppSimplex4Grid <- function(mat, lib, pred, E, b) {
     .Call(`_spEDM_RcppSimplex4Grid`, mat, lib, pred, E, b)
 }
 
-RcppGCCM4Grid <- function(xMatrix, yMatrix, lib_sizes, pred, E, tau, b, simplex, theta, progressbar) {
-    .Call(`_spEDM_RcppGCCM4Grid`, xMatrix, yMatrix, lib_sizes, pred, E, tau, b, simplex, theta, progressbar)
+RcppGCCM4Grid <- function(xMatrix, yMatrix, lib_sizes, pred, E, tau, b, simplex, theta, threads, progressbar) {
+    .Call(`_spEDM_RcppGCCM4Grid`, xMatrix, yMatrix, lib_sizes, pred, E, tau, b, simplex, theta, threads, progressbar)
+}
+
+DetectMaxNumThreads <- function() {
+    .Call(`_spEDM_DetectMaxNumThreads`)
 }
 
 RcppLaggedVar4Lattice <- function(nb, lagNum) {
@@ -29,8 +33,8 @@ RcppSimplex4Lattice <- function(x, nb, lib, pred, E, b) {
     .Call(`_spEDM_RcppSimplex4Lattice`, x, nb, lib, pred, E, b)
 }
 
-RcppGCCM4Lattice <- function(x, y, nb, libsizes, E, tau, b, simplex, theta, progressbar) {
-    .Call(`_spEDM_RcppGCCM4Lattice`, x, y, nb, libsizes, E, tau, b, simplex, theta, progressbar)
+RcppGCCM4Lattice <- function(x, y, nb, libsizes, E, tau, b, simplex, theta, threads, progressbar) {
+    .Call(`_spEDM_RcppGCCM4Lattice`, x, y, nb, libsizes, E, tau, b, simplex, theta, threads, progressbar)
 }
 
 RcppMean <- function(vec, NA_rm = FALSE) {

@@ -135,6 +135,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
     int b,
     bool simplex,
     double theta,
+    int threads,
     bool progressbar) {
 
   // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
@@ -176,6 +177,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
     b,
     simplex,
     theta,
+    threads,
     progressbar
   );
 

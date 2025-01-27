@@ -2,6 +2,7 @@
 
 S3method(plot,ccm_res)
 S3method(print,ccm_res)
+export(detectThreads)
 exportMethods(gccm)
 importFrom(methods,setGeneric)
 importFrom(methods,setMethod)
