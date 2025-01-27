@@ -1,4 +1,11 @@
-.check_character = \(cause,effect){
+.check_tgcharacter = \(tg){
+  if (!inherits(tg,"character")) {
+    stop("`target` must be character.")
+  }
+  return(tg)
+}
+
+.check_cecharacter = \(cause,effect){
   if (!inherits(cause,"character") || !inherits(effect,"character")) {
     stop("The `cause` and `effect` must be character.")
   }
