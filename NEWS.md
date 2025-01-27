@@ -1,5 +1,7 @@
 # spEDM 1.3
 
+* Support testing causal links in GCCM with different `E` and `k` for cause and effect variables (#95).
+
 * Add thread settings for `gccm` (#94).
 
 * Resolve r crash caused by invalid `E` [#90](https://github.com/stscl/spEDM/pull/90) and `k` [#89](https://github.com/stscl/spEDM/pull/89) parameter settings in `gccm`.
