@@ -19,6 +19,10 @@
   return(x)
 }
 
+.check_indices = \(x,totalnum){
+  return(x[(x<=totalnum)&(x>=1)])
+}
+
 .uni_lattice = \(data,target){
   target = .check_tgcharacter(target)
   res = data[,target,drop = TRUE]
