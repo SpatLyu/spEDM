@@ -2,7 +2,7 @@
 % Please edit documentation in R/detectThreads.R
 \name{detectThreads}
 \alias{detectThreads}
-\title{detect the max number of threads that can be used}
+\title{detect the number of available threads}
 \usage{
 detectThreads()
 }
@@ -10,7 +10,7 @@ detectThreads()
 An integer
 }
 \description{
-detect the max number of threads that can be used
+detect the number of available threads
 }
 \examples{
 \donttest{
