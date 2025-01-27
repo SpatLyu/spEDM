@@ -1,16 +1,13 @@
 methods::setGeneric("embedded", function(data, ...) standardGeneric("embedded"))
 
 .embedded_sf_method = \(data,target,E = 3,nb = NULL,include.self = FALSE){
-  target = .check_tgcharacter(target)
+  vec = .uni_lattice(data,target)
   if (is.null(nb)) nb = sdsfun::spdep_nb(data)
-  scsvec = data[,target,drop = TRUE]
-  return(RcppGenLatticeEmbeddings(scsvec,nb,E,include.self))
+  return(RcppGenLatticeEmbeddings(vec,nb,E,include.self))
 }
 
 .embedded_spatraster_method = \(data,target,E = 3,include.self = TRUE){
-  target = .check_tgcharacter(target)
-  data = data[[target]]
-  mat = matrix(terra::values(data),nrow = terra::nrow(data),byrow = TRUE)
+  mat = .uni_grid(data,target)
   return(RcppGenGridEmbeddings(mat,E,include.self))
 }
 

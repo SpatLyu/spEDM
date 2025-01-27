@@ -18,3 +18,20 @@
   if (length(x) > 2) x = x[c(1,2)]
   return(x)
 }
+
+.check_indices = \(x,totalnum){
+  return(x[(x<=totalnum)&(x>=1)])
+}
+
+.uni_lattice = \(data,target){
+  target = .check_tgcharacter(target)
+  res = data[,target,drop = TRUE]
+  return(res)
+}
+
+.uni_grid = \(data,target){
+  target = .check_tgcharacter(target)
+  data = data[[target]]
+  res = matrix(terra::values(data),nrow = terra::nrow(data),byrow = TRUE)
+  return(res)
+}

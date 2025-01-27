@@ -26,6 +26,7 @@ authors:
 reference:
 - title: Spatial EDM Methods
   contents:
+  - simplex
   - gccm
 
 - title: Utils Functions
