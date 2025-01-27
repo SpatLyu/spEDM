@@ -25,6 +25,10 @@ methods::setGeneric("embed", function(data, ...) standardGeneric("embed"))
 #' @return A matrix
 #' @export
 #'
+#' @name embed
+#' @rdname embed
+#' @aliases embed,sf-method
+#'
 #' @examples
 #' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
 #'                        quiet=TRUE)
