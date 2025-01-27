@@ -2,7 +2,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 
 .gccm_sf_method = \(data, cause, effect, libsizes, E = c(3,3), tau = 1, k = E+1, theta = 1, algorithm = "simplex",
                     nb = NULL, threads = detectThreads(), trendRM = TRUE, progressbar = TRUE){
-  varname = .check_character(cause, effect)
+  varname = .check_cecharacter(cause, effect)
   E = .check_input2element(E)
   k = .check_input2element(k)
   coords = sdsfun::sf_coordinates(data)
@@ -25,7 +25,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 
 .gccm_spatraster_method = \(data, cause, effect, libsizes, E = c(3,3), tau = 1, k = E+3, theta = 1, algorithm = "simplex",
                             RowCol = NULL, threads = detectThreads(), trendRM = TRUE, progressbar = TRUE){
-  varname = .check_character(cause, effect)
+  varname = .check_cecharacter(cause, effect)
   E = .check_input2element(E)
   k = .check_input2element(k)
   data = data[[c(cause,effect)]]

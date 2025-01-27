@@ -1,5 +1,7 @@
 # spEDM 1.3
 
+* Provide an R-level API for generating embeddings (#97).
+
 * Support testing causal links in GCCM with different `E` and `k` for cause and effect variables (#96).
 
 * Add thread settings for `gccm` (#94).
