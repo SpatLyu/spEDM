@@ -1,5 +1,7 @@
 # spEDM 1.3
 
+* Provide a complete `GCCM` workflow for spatial lattice and grid data in the `gccm` vignette (#100).
+
 * Add `simplex` function to support selecting the optimal embedding dimension for variables (#98).
 
 * Provide an R-level API for generating embeddings (#97).
