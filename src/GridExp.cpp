@@ -77,7 +77,8 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
                                      const Rcpp::IntegerMatrix& pred,
                                      const Rcpp::IntegerVector& E,
                                      int b,
-                                     int threads) {
+                                     int threads,
+                                     bool includeself) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = mat.nrow();
   int numCols = mat.ncol();
@@ -118,7 +119,14 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
   // Convert Rcpp::IntegerVector to std::vector<int>
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
 
-  std::vector<std::vector<double>> res_std = Simplex4Grid(cppMat,lib_indices,pred_indices,E_std,b,threads);
+  std::vector<std::vector<double>> res_std = Simplex4Grid(
+    cppMat,
+    lib_indices,
+    pred_indices,
+    E_std,
+    b,
+    threads,
+    includeself);
 
   size_t n_rows = res_std.size();
   size_t n_cols = res_std[0].size();
@@ -150,6 +158,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
     bool simplex,
     double theta,
     int threads,
+    bool includeself,
     bool progressbar) {
 
   // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
@@ -192,6 +201,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
     simplex,
     theta,
     threads,
+    includeself,
     progressbar
   );
 

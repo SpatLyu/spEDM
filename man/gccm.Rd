@@ -13,11 +13,12 @@
   libsizes,
   E = c(3, 3),
   tau = 1,
-  k = E + 1,
+  k = 4,
   theta = 1,
   algorithm = "simplex",
   nb = NULL,
   threads = detectThreads(),
+  include.self = FALSE,
   trendRM = TRUE,
   progressbar = TRUE
 )
@@ -29,11 +30,12 @@
   libsizes,
   E = c(3, 3),
   tau = 1,
-  k = E + 3,
+  k = 4,
   theta = 1,
   algorithm = "simplex",
   RowCol = NULL,
   threads = detectThreads(),
+  include.self = FALSE,
   trendRM = TRUE,
   progressbar = TRUE
 )
@@ -60,6 +62,8 @@
 \item{nb}{(optional) The neighbours list.}
 
 \item{threads}{(optional) Number of threads.}
+
+\item{include.self}{(optional) Whether to include the current state when constructing the embedding vector.}
 
 \item{trendRM}{(optional) Whether to remove the linear trend.}
 

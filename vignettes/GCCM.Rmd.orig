@@ -78,7 +78,7 @@ install.packages("spEDM", dep = TRUE)
 
 Load the `spEDM` package:
 
-```{r}
+```{r load_pkg}
 library(spEDM)
 ```
 
@@ -86,7 +86,7 @@ library(spEDM)
 
 Load data and package:
 
-```{r}
+```{r load_lattice_data}
 popd_nb = spdep::read.gal(system.file("extdata/popdensity_nb.gal",
                                       package = "spEDM"))
 popd_nb
@@ -111,10 +111,9 @@ simplex(popd_sf,"popDensity",lib = 1:2000,pred = 2001:nrow(popd_sf),k = 6,nb = p
 
 We choose the E with the highest rho and the lowest MAE and RMSE as the most suitable one. Under the selected lib and pred, the optimal embedding dimension E for the variable `Pre` is 1, and for the variable `popDensity`, it is 6.
 
-
 Run GCCM:
 
-```{r}
+```{r gccm_lattice}
 startTime = Sys.time()
 pd_res = gccm(data = popd_sf,
               cause = "Pre",
@@ -152,7 +151,7 @@ terra::plot(npp, nc = 3,
 
 *To save the computation time, we will aggregate the data by 3 times and select 3000 non-NA pixels to predict:*
 
-```{r}
+```{r sample_grid}
 npp = terra::aggregate(npp, fact = 3, na.rm = TRUE)
 terra::global(npp,"isNA")
 terra::ncell(npp)
@@ -177,18 +176,18 @@ simplex(npp,"pre",lib,pred,k = 8)
 simplex(npp,"npp",lib,pred,k = 8)
 ```
 
-Under the selected lib and pred, the optimal embedding dimension E for the variable `pre` is 2, and for the variable `npp`, it is 5.
+Under the selected lib and pred, the optimal embedding dimension E for the variable `pre` is 2, and for the variable `npp`, it is 4.
 
 Run GCCM:
 
-```{r}
+```{r gccm_grid}
 startTime = Sys.time()
 npp_res = gccm(data = npp,
                cause = "pre",
                effect = "npp",
                libsizes = seq(10,130,5),
-               E = c(2,5),
-               k = 8,
+               E = c(2,4),
+               k = 12,
                RowCol = pred,
                progressbar = FALSE)
 endTime = Sys.time()

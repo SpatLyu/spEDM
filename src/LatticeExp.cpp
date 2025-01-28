@@ -92,7 +92,8 @@ Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec,
 //   - pred: An IntegerVector specifying the prediction indices (1-based in R, converted to 0-based in C++).
 //   - E: An IntegerVector specifying the embedding dimensions to test.
 //   - b: An integer specifying the number of neighbors to use for simplex projection.
-// Returns: A NumericMatrix where each row contains {E, PearsonCor, CppMAE, CppRMSE}.
+//   - includeself: Whether to include the current state when constructing the embedding vector
+// Returns: A NumericMatrix where each row contains {E, PearsonCor, MAE, RMSE}.
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
                                         const Rcpp::List& nb,
@@ -100,7 +101,8 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
                                         const Rcpp::IntegerVector& pred,
                                         const Rcpp::IntegerVector& E,
                                         int b,
-                                        int threads) {
+                                        int threads,
+                                        bool includeself) {
   // Convert neighborhood list to std::vector<std::vector<int>>
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
@@ -122,7 +124,15 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
     pred_indices[pred[i] - 1] = true; // Convert to 0-based index
   }
 
-  std::vector<std::vector<double>> res_std = Simplex4Lattice(vec_std,nb_vec,lib_indices,pred_indices,E_std,b,threads);
+  std::vector<std::vector<double>> res_std = Simplex4Lattice(
+    vec_std,
+    nb_vec,
+    lib_indices,
+    pred_indices,
+    E_std,
+    b,
+    threads,
+    includeself);
 
   size_t n_rows = res_std.size();
   size_t n_cols = res_std[0].size();
@@ -154,6 +164,7 @@ Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,
                                      bool simplex,
                                      double theta,
                                      int threads,
+                                     bool includeself,
                                      bool progressbar) {
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
@@ -163,7 +174,7 @@ Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
   // Generate embeddings
-  std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(x_std, nb_vec, E, false);
+  std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(x_std, nb_vec, E, includeself);
 
   // Convert Rcpp::IntegerVector to std::vector<int>
   std::vector<int> libsizes_std = Rcpp::as<std::vector<int>>(libsizes);

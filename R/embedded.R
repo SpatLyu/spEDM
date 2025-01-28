@@ -6,7 +6,7 @@ methods::setGeneric("embedded", function(data, ...) standardGeneric("embedded"))
   return(RcppGenLatticeEmbeddings(vec,nb,E,include.self))
 }
 
-.embedded_spatraster_method = \(data,target,E = 3,include.self = TRUE){
+.embedded_spatraster_method = \(data,target,E = 3,include.self = FALSE){
   mat = .uni_grid(data,target)
   return(RcppGenGridEmbeddings(mat,E,include.self))
 }
@@ -17,7 +17,7 @@ methods::setGeneric("embedded", function(data, ...) standardGeneric("embedded"))
 #' @param target Name of target variable.
 #' @param E (optional) The dimensions of the embedding.
 #' @param nb (optional) The neighbours list.
-#' @param include.self (optional) Whether to include the current state.
+#' @param include.self (optional) Whether to include the current state when constructing the embedding vector.
 #'
 #' @return A matrix
 #' @export

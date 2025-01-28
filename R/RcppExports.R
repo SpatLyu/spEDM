@@ -13,16 +13,20 @@ RcppLocateGridIndices <- function(curRow, curCol, totalRow, totalCol) {
     .Call(`_spEDM_RcppLocateGridIndices`, curRow, curCol, totalRow, totalCol)
 }
 
-RcppSimplex4Grid <- function(mat, lib, pred, E, b, threads) {
-    .Call(`_spEDM_RcppSimplex4Grid`, mat, lib, pred, E, b, threads)
+RcppSimplex4Grid <- function(mat, lib, pred, E, b, threads, includeself) {
+    .Call(`_spEDM_RcppSimplex4Grid`, mat, lib, pred, E, b, threads, includeself)
 }
 
-RcppGCCM4Grid <- function(xMatrix, yMatrix, lib_sizes, pred, E, tau, b, simplex, theta, threads, progressbar) {
-    .Call(`_spEDM_RcppGCCM4Grid`, xMatrix, yMatrix, lib_sizes, pred, E, tau, b, simplex, theta, threads, progressbar)
+RcppGCCM4Grid <- function(xMatrix, yMatrix, lib_sizes, pred, E, tau, b, simplex, theta, threads, includeself, progressbar) {
+    .Call(`_spEDM_RcppGCCM4Grid`, xMatrix, yMatrix, lib_sizes, pred, E, tau, b, simplex, theta, threads, includeself, progressbar)
 }
 
 DetectMaxNumThreads <- function() {
     .Call(`_spEDM_DetectMaxNumThreads`)
+}
+
+OptEmdedDim <- function(Emat) {
+    .Call(`_spEDM_OptEmdedDim`, Emat)
 }
 
 RcppLaggedVar4Lattice <- function(nb, lagNum) {
@@ -33,12 +37,12 @@ RcppGenLatticeEmbeddings <- function(vec, nb, E, includeself) {
     .Call(`_spEDM_RcppGenLatticeEmbeddings`, vec, nb, E, includeself)
 }
 
-RcppSimplex4Lattice <- function(x, nb, lib, pred, E, b, threads) {
-    .Call(`_spEDM_RcppSimplex4Lattice`, x, nb, lib, pred, E, b, threads)
+RcppSimplex4Lattice <- function(x, nb, lib, pred, E, b, threads, includeself) {
+    .Call(`_spEDM_RcppSimplex4Lattice`, x, nb, lib, pred, E, b, threads, includeself)
 }
 
-RcppGCCM4Lattice <- function(x, y, nb, libsizes, E, tau, b, simplex, theta, threads, progressbar) {
-    .Call(`_spEDM_RcppGCCM4Lattice`, x, y, nb, libsizes, E, tau, b, simplex, theta, threads, progressbar)
+RcppGCCM4Lattice <- function(x, y, nb, libsizes, E, tau, b, simplex, theta, threads, includeself, progressbar) {
+    .Call(`_spEDM_RcppGCCM4Lattice`, x, y, nb, libsizes, E, tau, b, simplex, theta, threads, includeself, progressbar)
 }
 
 RcppMean <- function(vec, NA_rm = FALSE) {

@@ -14,10 +14,20 @@
   E = 1:10,
   k = 4,
   nb = NULL,
-  threads = detectThreads()
+  threads = detectThreads(),
+  include.self = FALSE
 )
 
-\S4method{simplex}{SpatRaster}(data, target, lib, pred, E = 1:10, k = 4, threads = detectThreads())
+\S4method{simplex}{SpatRaster}(
+  data,
+  target,
+  lib,
+  pred,
+  E = 1:10,
+  k = 4,
+  threads = detectThreads(),
+  include.self = FALSE
+)
 }
 \arguments{
 \item{data}{The observation data.}
@@ -35,6 +45,8 @@
 \item{nb}{(optional) The neighbours list.}
 
 \item{threads}{(optional) Number of threads.}
+
+\item{include.self}{(optional) Whether to include the current state when constructing the embedding vector.}
 }
 \value{
 A matrix

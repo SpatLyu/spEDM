@@ -127,6 +127,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
  * @param simplex      If true, use Simplex Projection; if false, use S-Mapping.
  * @param theta        The distance weighting parameter for S-Mapping (ignored if simplex is true).
  * @param threads      The number of threads to use for parallel processing.
+ * @param includeself  Whether to include the current state when constructing the embedding vector.
  * @param progressbar  If true, display a progress bar during computation.
  * @return             A 2D vector where each row contains the library size, mean cross mapping result,
  *                     significance, and confidence interval bounds.
@@ -142,6 +143,7 @@ std::vector<std::vector<double>> GCCM4Grid(
     bool simplex,                                    // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
     double theta,                                    // Distance weighting parameter for the local neighbours in the manifold
     int threads,                                     // Number of threads used from the global pool
+    bool includeself,                                // Whether to include the current state when constructing the embedding vector
     bool progressbar                                 // Whether to print the progress bar
 ) {
   // If b is not provided correctly, default it to E + 2
@@ -164,7 +166,7 @@ std::vector<std::vector<double>> GCCM4Grid(
   }
 
   // Generate embeddings for xMatrix
-  std::vector<std::vector<double>> xEmbedings = GenGridEmbeddings(xMatrix, E, true);
+  std::vector<std::vector<double>> xEmbedings = GenGridEmbeddings(xMatrix, E, includeself);
 
   // Ensure the minimum value in unique_lib_sizes is E + 2 and remove duplicates
   std::vector<int> unique_lib_sizes;
