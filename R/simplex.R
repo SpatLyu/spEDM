@@ -6,13 +6,17 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
   lib = .check_indices(lib,length(vec))
   pred = .check_indices(pred,length(vec))
   if (is.null(nb)) nb = sdsfun::spdep_nb(data)
-  return(RcppSimplex4Lattice(vec,nb,lib,pred,E,k,threads,include.self))
+  res = RcppSimplex4Lattice(vec,nb,lib,pred,E,k,threads,include.self)
+  cat("The optimal embedding dimension E is ", OptEmdedDim(res), "\n")
+  return(res)
 }
 
 .simplex_spatraster_method = \(data,target,lib,pred,E = 1:10,k = 4,
                                threads = detectThreads(),include.self = FALSE){
   mat = .uni_grid(data,target)
-  return(RcppSimplex4Grid(mat,lib,pred,E,k,threads,include.self))
+  res = RcppSimplex4Grid(mat,lib,pred,E,k,threads,include.self)
+  cat("The optimal embedding dimension E is ", OptEmdedDim(res), "\n")
+  return(res)
 }
 
 #' simplex forecasting
