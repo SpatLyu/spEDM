@@ -1,5 +1,7 @@
 # spEDM 1.3
 
+* Include an option in `gccm` to determine whether to include the current state when generating embedding vectors (#103).
+
 * Provide a complete `GCCM` workflow for spatial lattice and grid data in the `gccm` vignette (#100).
 
 * Add `simplex` function to support selecting the optimal embedding dimension for variables (#98).
