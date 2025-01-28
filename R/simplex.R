@@ -7,7 +7,7 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
   pred = .check_indices(pred,length(vec))
   if (is.null(nb)) nb = sdsfun::spdep_nb(data)
   res = RcppSimplex4Lattice(vec,nb,lib,pred,E,k,threads,include.self)
-  cat(paste0("The optimal embedding dimension E for variable ",target," is ",OptEmdedDim(res)), "\n")
+  cat(paste0("The suggested embedding dimension E for variable ",target," is ",OptEmdedDim(res)), "\n")
   return(res)
 }
 
@@ -15,7 +15,7 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
                                threads = detectThreads(),include.self = FALSE){
   mat = .uni_grid(data,target)
   res = RcppSimplex4Grid(mat,lib,pred,E,k,threads,include.self)
-  cat(paste0("The optimal embedding dimension E for variable ",target," is ",OptEmdedDim(res)), "\n")
+  cat(paste0("The suggested embedding dimension E for variable ",target," is ",OptEmdedDim(res)), "\n")
   return(res)
 }
 
