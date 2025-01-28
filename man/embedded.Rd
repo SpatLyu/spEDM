@@ -19,7 +19,7 @@
 
 \item{nb}{(optional) The neighbours list.}
 
-\item{include.self}{(optional) Whether to include the current state.}
+\item{include.self}{(optional) Whether to include the current state when constructing the embedding vector.}
 }
 \value{
 A matrix

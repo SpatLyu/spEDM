@@ -154,6 +154,7 @@ Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,
                                      bool simplex,
                                      double theta,
                                      int threads,
+                                     bool includeself,
                                      bool progressbar) {
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
@@ -163,7 +164,7 @@ Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
   // Generate embeddings
-  std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(x_std, nb_vec, E, false);
+  std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(x_std, nb_vec, E, includeself);
 
   // Convert Rcpp::IntegerVector to std::vector<int>
   std::vector<int> libsizes_std = Rcpp::as<std::vector<int>>(libsizes);

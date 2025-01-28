@@ -1,7 +1,7 @@
 methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 
 .gccm_sf_method = \(data, cause, effect, libsizes, E = c(3,3), tau = 1, k = E+1, theta = 1, algorithm = "simplex",
-                    nb = NULL, threads = detectThreads(), trendRM = TRUE, progressbar = TRUE){
+                    nb = NULL, threads = detectThreads(), include.self = FALSE, trendRM = TRUE, progressbar = TRUE){
   varname = .check_cecharacter(cause, effect)
   E = .check_input2element(E)
   k = .check_input2element(k)
@@ -17,14 +17,14 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   }
 
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
-  x_xmap_y = RcppGCCM4Lattice(cause,effect,nb,libsizes,E[1],tau,k[1],simplex,theta,threads,progressbar)
-  y_xmap_x = RcppGCCM4Lattice(effect,cause,nb,libsizes,E[2],tau,k[2],simplex,theta,threads,progressbar)
+  x_xmap_y = RcppGCCM4Lattice(cause,effect,nb,libsizes,E[1],tau,k[1],simplex,theta,threads,include.self,progressbar)
+  y_xmap_x = RcppGCCM4Lattice(effect,cause,nb,libsizes,E[2],tau,k[2],simplex,theta,threads,include.self,progressbar)
 
   return(.bind_xmapdf(x_xmap_y,y_xmap_x,varname))
 }
 
 .gccm_spatraster_method = \(data, cause, effect, libsizes, E = c(3,3), tau = 1, k = E+3, theta = 1, algorithm = "simplex",
-                            RowCol = NULL, threads = detectThreads(), trendRM = TRUE, progressbar = TRUE){
+                            RowCol = NULL, threads = detectThreads(), include.self = FALSE, trendRM = TRUE, progressbar = TRUE){
   varname = .check_cecharacter(cause, effect)
   E = .check_input2element(E)
   k = .check_input2element(k)
@@ -44,8 +44,8 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   if (is.null(RowCol)) RowCol = as.matrix(expand.grid(selvec,selvec))
 
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
-  x_xmap_y = RcppGCCM4Grid(causemat,effectmat,libsizes,RowCol,E[1],tau,k[1],simplex,theta,threads,progressbar)
-  y_xmap_x = RcppGCCM4Grid(effectmat,causemat,libsizes,RowCol,E[2],tau,k[2],simplex,theta,threads,progressbar)
+  x_xmap_y = RcppGCCM4Grid(causemat,effectmat,libsizes,RowCol,E[1],tau,k[1],simplex,theta,threads,include.self,progressbar)
+  y_xmap_x = RcppGCCM4Grid(effectmat,causemat,libsizes,RowCol,E[2],tau,k[2],simplex,theta,threads,include.self,progressbar)
 
   return(.bind_xmapdf(x_xmap_y,y_xmap_x,varname))
 }
@@ -64,6 +64,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 #' @param nb (optional) The neighbours list.
 #' @param RowCol (optional) Matrix of selected row and cols numbers.
 #' @param threads (optional) Number of threads.
+#' @param include.self (optional) Whether to include the current state when constructing the embedding vector.
 #' @param trendRM (optional) Whether to remove the linear trend.
 #' @param progressbar (optional) whether to print the progress bar.
 #'

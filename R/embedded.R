@@ -17,7 +17,7 @@ methods::setGeneric("embedded", function(data, ...) standardGeneric("embedded"))
 #' @param target Name of target variable.
 #' @param E (optional) The dimensions of the embedding.
 #' @param nb (optional) The neighbours list.
-#' @param include.self (optional) Whether to include the current state.
+#' @param include.self (optional) Whether to include the current state when constructing the embedding vector.
 #'
 #' @return A matrix
 #' @export
