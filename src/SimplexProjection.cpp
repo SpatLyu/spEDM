@@ -139,7 +139,7 @@ std::vector<double> SimplexBehavior(
   std::vector<double> target_pred = result.first;
   std::vector<double> pred_pred = result.second;
 
-  // Compute PearsonCor, CppMAE, and CppRMSE
+  // Compute PearsonCor, MAE, and RMSE
   double pearson = PearsonCor(target_pred, pred_pred, true);
   double mae = CppMAE(target_pred, pred_pred, true);
   double rmse = CppRMSE(target_pred, pred_pred, true);
