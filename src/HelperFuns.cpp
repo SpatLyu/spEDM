@@ -1,6 +1,8 @@
 #include <RcppThread.h>
-#include <Rcpp.h>
+#include <RcppArmadillo.h>
+
 // [[Rcpp::depends(RcppThread)]]
+// [[Rcpp::depends(RcppArmadillo)]]
 
 // [[Rcpp::export]]
 unsigned int DetectMaxNumThreads(){
