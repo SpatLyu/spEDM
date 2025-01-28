@@ -104,8 +104,8 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
   }
   for (int i = 0; i < pred.nrow(); ++i) {
     // Convert to 0-based index
-    currow = lib(i,0) - 1;
-    curcol = lib(i,1) - 1;
+    currow = pred(i,0) - 1;
+    curcol = pred(i,1) - 1;
     pred_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
   }
 
