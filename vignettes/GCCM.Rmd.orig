@@ -176,7 +176,7 @@ simplex(npp,"pre",lib,pred,k = 8)
 simplex(npp,"npp",lib,pred,k = 8)
 ```
 
-Under the selected lib and pred, the optimal embedding dimension E for the variable `pre` is 2, and for the variable `npp`, it is 7.
+Under the selected lib and pred, the optimal embedding dimension E for the variable `pre` is 2, and for the variable `npp`, it is 4.
 
 Run GCCM:
 
@@ -186,8 +186,8 @@ npp_res = gccm(data = npp,
                cause = "pre",
                effect = "npp",
                libsizes = seq(10,130,5),
-               E = c(2,5),
-               k = 8,
+               E = c(2,4),
+               k = 12,
                RowCol = pred,
                progressbar = FALSE)
 endTime = Sys.time()
