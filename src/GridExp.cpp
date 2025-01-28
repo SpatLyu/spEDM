@@ -65,6 +65,13 @@ Rcpp::NumericMatrix RcppGenGridEmbeddings(Rcpp::NumericMatrix mat, int E, bool i
 }
 
 // [[Rcpp::export]]
+int RcppLocateGridIndices(int curRow, int curCol,
+                          int totalRow, int totalCol){
+  int indices = LocateGridIndices(curRow,curCol,totalRow,totalCol);
+  return indices;
+};
+
+// [[Rcpp::export]]
 Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
                                      const Rcpp::IntegerMatrix& lib,
                                      const Rcpp::IntegerMatrix& pred,
