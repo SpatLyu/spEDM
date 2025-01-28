@@ -169,11 +169,11 @@ pred = nnaindice[indices,]
 Due to the high number of NA values in the npp raster data, we used all non-NA cell indices when testing for the most suitable embedding dimension.
 
 ```{r optE1_grid}
-simplex(npp,"pre",nnaindice,nnaindice,k = 8)
+simplex(npp,"pre",nnaindice,nnaindice,k = 5)
 ```
 
 ```{r optE2_grid}
-simplex(npp,"npp",nnaindice,nnaindice,k = 8)
+simplex(npp,"npp",nnaindice,nnaindice,k = 5)
 ```
 
 Under the selected lib and pred, the optimal embedding dimension E for the variable `pre` is 2, and for the variable `npp`, it is also 2.
@@ -187,7 +187,7 @@ npp_res = gccm(data = npp,
                effect = "npp",
                libsizes = seq(10,130,5),
                E = 2,
-               k = 8,
+               k = 5,
                RowCol = pred,
                progressbar = FALSE)
 endTime = Sys.time()
