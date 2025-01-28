@@ -111,10 +111,9 @@ simplex(popd_sf,"popDensity",lib = 1:2000,pred = 2001:nrow(popd_sf),k = 6,nb = p
 
 We choose the E with the highest rho and the lowest MAE and RMSE as the most suitable one. Under the selected lib and pred, the optimal embedding dimension E for the variable `Pre` is 1, and for the variable `popDensity`, it is 6.
 
-
 Run GCCM:
 
-```{r}
+```{r gccm_lattice}
 startTime = Sys.time()
 pd_res = gccm(data = popd_sf,
               cause = "Pre",
@@ -152,7 +151,7 @@ terra::plot(npp, nc = 3,
 
 *To save the computation time, we will aggregate the data by 3 times and select 3000 non-NA pixels to predict:*
 
-```{r}
+```{r sample_grid}
 npp = terra::aggregate(npp, fact = 3, na.rm = TRUE)
 terra::global(npp,"isNA")
 terra::ncell(npp)
@@ -181,7 +180,7 @@ Under the selected lib and pred, the optimal embedding dimension E for the varia
 
 Run GCCM:
 
-```{r}
+```{r gccm_grid}
 startTime = Sys.time()
 npp_res = gccm(data = npp,
                cause = "pre",
