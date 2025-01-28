@@ -148,7 +148,7 @@ Select the appropriate embedding dimension E:
 
 ``` r
 simplex(popd_sf,"Pre",lib = 1:2000,pred = 2001:nrow(popd_sf),k = 6,nb = popd_nb)
-## The optimal embedding dimension E for variable Pre is 1
+## The suggested embedding dimension E for variable Pre is 1
 ##        E       rho      mae     rmse
 ##  [1,]  1 0.9944769 29.19078 44.20362
 ##  [2,]  2 0.9938551 29.75890 46.68020
@@ -165,7 +165,7 @@ simplex(popd_sf,"Pre",lib = 1:2000,pred = 2001:nrow(popd_sf),k = 6,nb = popd_nb)
 
 ``` r
 simplex(popd_sf,"popDensity",lib = 1:2000,pred = 2001:nrow(popd_sf),k = 6,nb = popd_nb)
-## The optimal embedding dimension E for variable popDensity is 6
+## The suggested embedding dimension E for variable popDensity is 6
 ##        E       rho      mae     rmse
 ##  [1,]  1 0.8033220 717.2946 2390.767
 ##  [2,]  2 0.8964891 599.2670 1826.370
@@ -196,7 +196,7 @@ pd_res = gccm(data = popd_sf,
               progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 22.21286 mins
+## Time difference of 22.22306 mins
 pd_res
 ##    libsizes popDensity->Pre Pre->popDensity
 ## 1        10      0.00805187      0.04643586
@@ -289,43 +289,43 @@ lib = nnaindice[-indices,]
 pred = nnaindice[indices,]
 ```
 
-Select the appropriate embedding dimension E:
+Due to the high number of NA values in the npp raster data, we used all non-NA cell indices when testing for the most suitable embedding dimension.
 
 
 ``` r
-simplex(npp,"pre",lib,pred,k = 8)
-## The optimal embedding dimension E for variable pre is 2
+simplex(npp,"pre",nnaindice,nnaindice,k = 8)
+## The suggested embedding dimension E for variable pre is 2
 ##        E       rho      mae     rmse
-##  [1,]  1 0.9986893 183.9074 251.8857
-##  [2,]  2 0.9989867 153.1760 220.8124
-##  [3,]  3 0.9987665 165.4989 243.9867
-##  [4,]  4 0.9984710 183.8567 271.5982
-##  [5,]  5 0.9982236 196.5187 292.6010
-##  [6,]  6 0.9980173 209.4455 309.4099
-##  [7,]  7 0.9978050 217.2941 325.3601
-##  [8,]  8 0.9976748 227.3263 334.7036
-##  [9,]  9 0.9975697 232.7360 342.2481
-## [10,] 10 0.9973707 240.3327 356.1283
+##  [1,]  1 0.9986822 177.2353 247.7597
+##  [2,]  2 0.9990542 142.9373 209.8525
+##  [3,]  3 0.9989947 146.8244 216.7058
+##  [4,]  4 0.9988843 155.5419 228.4578
+##  [5,]  5 0.9987501 166.1402 241.7503
+##  [6,]  6 0.9986065 177.5328 255.3343
+##  [7,]  7 0.9985375 181.9100 261.4156
+##  [8,]  8 0.9984485 189.0341 269.3130
+##  [9,]  9 0.9983863 192.9706 274.6716
+## [10,] 10 0.9982880 198.7309 283.0404
 ```
 
 
 ``` r
-simplex(npp,"npp",lib,pred,k = 8)
-## The optimal embedding dimension E for variable npp is 7
+simplex(npp,"npp",nnaindice,nnaindice,k = 8)
+## The suggested embedding dimension E for variable npp is 2
 ##        E       rho      mae     rmse
-##  [1,]  1 0.9633140 425.8325 641.7362
-##  [2,]  2 0.9678922 378.9006 598.8432
-##  [3,]  3 0.9708172 361.3486 572.7524
-##  [4,]  4 0.9710194 357.5127 568.4213
-##  [5,]  5 0.9713380 361.2625 564.8431
-##  [6,]  6 0.9706332 362.0352 572.1780
-##  [7,]  7 0.9717924 364.5031 560.9212
-##  [8,]  8 0.9716443 369.5046 562.6092
-##  [9,]  9 0.9710155 374.0819 568.8065
-## [10,] 10 0.9707681 376.5773 571.4094
+##  [1,]  1 0.9646361 421.1264 631.9305
+##  [2,]  2 0.9697691 377.6247 582.8577
+##  [3,]  3 0.9669591 364.4588 610.7955
+##  [4,]  4 0.9676491 354.1172 603.7429
+##  [5,]  5 0.9677260 357.5205 602.7438
+##  [6,]  6 0.9651462 359.9642 626.4934
+##  [7,]  7 0.9681853 356.1901 597.2504
+##  [8,]  8 0.9671941 361.1308 606.3268
+##  [9,]  9 0.9665862 366.8357 611.8506
+## [10,] 10 0.9667007 367.2202 610.7939
 ```
 
-Under the selected lib and pred, the optimal embedding dimension E for the variable `pre` is 2, and for the variable `npp`, it is 4.
+Under the selected lib and pred, the optimal embedding dimension E for the variable `pre` is 2, and for the variable `npp`, it is also 2.
 
 Run GCCM:
 
@@ -336,35 +336,35 @@ npp_res = gccm(data = npp,
                cause = "pre",
                effect = "npp",
                libsizes = seq(10,130,5),
-               E = c(2,4),
-               k = 12,
+               E = 2,
+               k = 8,
                RowCol = pred,
                progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 26.9252 mins
+## Time difference of 25.28639 mins
 npp_res
-##    libsizes    npp->pre    pre->npp
-## 1        10  0.06416495  0.08686229
-## 2        15  0.07874713  0.11053171
-## 3        20  0.08609531  0.14533013
-## 4        25  0.10580122  0.17751592
-## 5        30  0.11600625  0.19996579
-## 6        35  0.13163121  0.23553036
-## 7        40  0.13865953  0.26590562
-## 8        45  0.14855229  0.31211179
-## 9        50  0.16692439  0.36223075
-## 10       55  0.18709534  0.36914780
-## 11       60  0.19905397  0.34206742
-## 12       65  0.21690957  0.29567725
-## 13       70  0.20792943  0.21920355
-## 14       75  0.16969755  0.13708926
-## 15       80  0.15152887  0.09677873
-## 16       85  0.02021065  0.18705811
-## 17       90  0.02619818  0.15685076
-## 18       95  0.01046558  0.16668902
-## 19      100 -0.05790607  0.04389603
-## 20      105 -0.07639378 -0.33499155
+##    libsizes   npp->pre   pre->npp
+## 1        10 0.05740000 0.06653809
+## 2        15 0.06593626 0.08012391
+## 3        20 0.08400060 0.11441672
+## 4        25 0.10460948 0.13401015
+## 5        30 0.11916766 0.15201758
+## 6        35 0.12875745 0.16187685
+## 7        40 0.13431273 0.17497419
+## 8        45 0.14618055 0.20029010
+## 9        50 0.16535551 0.23093965
+## 10       55 0.19262572 0.25101785
+## 11       60 0.21566290 0.25707437
+## 12       65 0.23555554 0.24606888
+## 13       70 0.23571425 0.23038831
+## 14       75 0.21680170 0.20847992
+## 15       80 0.20202568 0.21112107
+## 16       85 0.14080027 0.22734529
+## 17       90 0.13585590 0.25920863
+## 18       95 0.10754714 0.28377246
+## 19      100 0.10447653 0.26996791
+## 20      105 0.08238034 0.32737051
 ```
 
 Visualize the result:
@@ -372,8 +372,8 @@ Visualize the result:
 
 ``` r
 plot(npp_res,xlimits = c(9, 101),ylimits = c(-0.05,1))
-## Warning: Removed 2 rows containing missing values or values outside the scale range (`geom_line()`).
 ## Warning: Removed 1 row containing missing values or values outside the scale range (`geom_line()`).
+## Removed 1 row containing missing values or values outside the scale range (`geom_line()`).
 ```
 
 ![**Figure 3**. The cross-mapping prediction outputs between farmland NPP and precipitation.](../man/figures/gccm/fig3-1.png)
