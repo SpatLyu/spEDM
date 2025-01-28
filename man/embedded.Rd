@@ -8,7 +8,7 @@
 \usage{
 \S4method{embedded}{sf}(data, target, E = 3, nb = NULL, include.self = FALSE)
 
-\S4method{embedded}{SpatRaster}(data, target, E = 3, include.self = TRUE)
+\S4method{embedded}{SpatRaster}(data, target, E = 3, include.self = FALSE)
 }
 \arguments{
 \item{data}{The observation data.}
