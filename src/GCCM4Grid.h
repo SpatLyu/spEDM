@@ -14,6 +14,18 @@
 #include "SMap.h"
 #include <RcppThread.h>
 
+/**
+ * Calculate the one-dimensional index for a specified position in a 2D grid.
+ *
+ * This function converts a row and column position in a 2D grid into a corresponding
+ * one-dimensional index, assuming the grid is stored in row-major order (i.e., rows are stored sequentially).
+ *
+ * @param curRow   The current row number (1-based indexing).
+ * @param curCol   The current column number (1-based indexing).
+ * @param totalRow The total number of rows in the grid.
+ * @param totalCol The total number of columns in the grid.
+ * @return         The calculated one-dimensional index (0-based indexing).
+ */
 int LocateGridIndices(int curRow, int curCol,
                       int totalRow, int totalCol);
 

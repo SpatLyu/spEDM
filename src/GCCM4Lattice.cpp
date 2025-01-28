@@ -14,7 +14,6 @@
 // [[Rcpp::plugins(cpp11)]]
 // [[Rcpp::depends(RcppThread)]]
 
-// Function to compute GCCMSingle4Lattice
 std::vector<std::pair<int, double>> GCCMSingle4Lattice(
     const std::vector<std::vector<double>>& x_vectors,  // Reconstructed state-space (each row is a separate vector/state)
     const std::vector<double>& y,                       // Spatial cross-section series to be used as the target (should line up with vectors)
@@ -71,7 +70,6 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
   return x_xmap_y;
 }
 
-// Function to compute GCCM4Lattice
 std::vector<std::vector<double>> GCCM4Lattice(
     const std::vector<std::vector<double>>& x_vectors,  // Reconstructed state-space (each row is a separate vector/state)
     const std::vector<double>& y,                       // Spatial cross-section series to cross map to
