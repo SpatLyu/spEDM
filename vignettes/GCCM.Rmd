@@ -376,4 +376,4 @@ plot(npp_res,xlimits = c(9, 101),ylimits = c(-0.05,1))
 ## Warning: Removed 1 row containing missing values or values outside the scale range (`geom_line()`).
 ```
 
-![**Figure 3**. The cross-mapping prediction outputs between farmland NPP and precipitation.](man/figures/gccm/fig3-1.png)
+![**Figure 3**. The cross-mapping prediction outputs between farmland NPP and precipitation.](../man/figures/gccm/fig3-1.png)
