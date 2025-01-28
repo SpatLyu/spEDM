@@ -17,7 +17,6 @@
 int LocateGridIndices(int curRow, int curCol,
                       int totalRow, int totalCol);
 
-// GCCMSingle4Grid function
 std::vector<std::pair<int, double>> GCCMSingle4Grid(
     const std::vector<std::vector<double>>& xEmbedings,
     const std::vector<double>& yPred,
@@ -30,7 +29,6 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
     double theta
 );
 
-// GCCM4Grid function
 std::vector<std::vector<double>> GCCM4Grid(
     const std::vector<std::vector<double>>& xMatrix, // Two dimension matrix of X variable
     const std::vector<std::vector<double>>& yMatrix, // Two dimension matrix of Y variable

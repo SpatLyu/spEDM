@@ -100,13 +100,17 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
     // Convert to 0-based index
     currow = lib(i,0) - 1;
     curcol = lib(i,1) - 1;
-    lib_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+    if (!std::isnan(cppMat[currow][curcol])){
+      lib_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+    }
   }
   for (int i = 0; i < pred.nrow(); ++i) {
     // Convert to 0-based index
     currow = pred(i,0) - 1;
     curcol = pred(i,1) - 1;
-    pred_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+    if (!std::isnan(cppMat[currow][curcol])){
+      pred_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+    }
   }
 
   // Convert Rcpp::IntegerVector to std::vector<int>
