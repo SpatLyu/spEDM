@@ -1,17 +1,18 @@
 methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
 
-.simplex_sf_method = \(data,target,lib,pred,E = 1:10,k = 4,
-                       nb = NULL,threads = detectThreads()){
+.simplex_sf_method = \(data,target,lib,pred,E = 1:10,k = 4,nb = NULL,
+                       threads = detectThreads(),include.self = FALSE){
   vec = .uni_lattice(data,target)
   lib = .check_indices(lib,length(vec))
   pred = .check_indices(pred,length(vec))
   if (is.null(nb)) nb = sdsfun::spdep_nb(data)
-  return(RcppSimplex4Lattice(vec,nb,lib,pred,E,k,threads))
+  return(RcppSimplex4Lattice(vec,nb,lib,pred,E,k,threads,include.self))
 }
 
-.simplex_spatraster_method = \(data,target,lib,pred,E = 1:10,k = 4,threads = detectThreads()){
+.simplex_spatraster_method = \(data,target,lib,pred,E = 1:10,k = 4,
+                               threads = detectThreads(),include.self = FALSE){
   mat = .uni_grid(data,target)
-  return(RcppSimplex4Grid(mat,lib,pred,E,k,threads))
+  return(RcppSimplex4Grid(mat,lib,pred,E,k,threads,include.self))
 }
 
 #' simplex forecasting
@@ -24,6 +25,7 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
 #' @param k (optional) Number of nearest neighbors to use for prediction.
 #' @param nb (optional) The neighbours list.
 #' @param threads (optional) Number of threads.
+#' @param include.self (optional) Whether to include the current state when constructing the embedding vector.
 #'
 #' @return A matrix
 #' @export

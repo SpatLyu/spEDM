@@ -12,6 +12,7 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
                                               const std::vector<bool>& pred_indices,
                                               const std::vector<int>& E,
                                               double b,
-                                              int threads);
+                                              int threads,
+                                              bool includeself);
 
 #endif // Forecast4Grid_H

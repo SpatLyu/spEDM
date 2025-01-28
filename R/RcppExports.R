@@ -13,8 +13,8 @@ RcppLocateGridIndices <- function(curRow, curCol, totalRow, totalCol) {
     .Call(`_spEDM_RcppLocateGridIndices`, curRow, curCol, totalRow, totalCol)
 }
 
-RcppSimplex4Grid <- function(mat, lib, pred, E, b, threads) {
-    .Call(`_spEDM_RcppSimplex4Grid`, mat, lib, pred, E, b, threads)
+RcppSimplex4Grid <- function(mat, lib, pred, E, b, threads, includeself) {
+    .Call(`_spEDM_RcppSimplex4Grid`, mat, lib, pred, E, b, threads, includeself)
 }
 
 RcppGCCM4Grid <- function(xMatrix, yMatrix, lib_sizes, pred, E, tau, b, simplex, theta, threads, includeself, progressbar) {
@@ -33,8 +33,8 @@ RcppGenLatticeEmbeddings <- function(vec, nb, E, includeself) {
     .Call(`_spEDM_RcppGenLatticeEmbeddings`, vec, nb, E, includeself)
 }
 
-RcppSimplex4Lattice <- function(x, nb, lib, pred, E, b, threads) {
-    .Call(`_spEDM_RcppSimplex4Lattice`, x, nb, lib, pred, E, b, threads)
+RcppSimplex4Lattice <- function(x, nb, lib, pred, E, b, threads, includeself) {
+    .Call(`_spEDM_RcppSimplex4Lattice`, x, nb, lib, pred, E, b, threads, includeself)
 }
 
 RcppGCCM4Lattice <- function(x, y, nb, libsizes, E, tau, b, simplex, theta, threads, includeself, progressbar) {

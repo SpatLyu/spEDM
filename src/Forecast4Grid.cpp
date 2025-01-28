@@ -12,7 +12,8 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
                                               const std::vector<bool>& pred_indices,
                                               const std::vector<int>& E,
                                               double b,
-                                              int threads) {
+                                              int threads,
+                                              bool includeself) {
   size_t threads_sizet = static_cast<size_t>(threads);
   unsigned int max_threads = std::thread::hardware_concurrency();
   threads_sizet = std::min(static_cast<size_t>(max_threads), threads_sizet);
@@ -35,7 +36,7 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
   // Parallel loop over each embedding dimension E
   RcppThread::parallelFor(0, E.size(), [&](size_t i) {
     // Generate embeddings for the current E
-    std::vector<std::vector<double>> embeddings = GenGridEmbeddings(mat, E[i], false);
+    std::vector<std::vector<double>> embeddings = GenGridEmbeddings(mat, E[i], includeself);
 
     // Compute metrics using SimplexBehavior
     std::vector<double> metrics = SimplexBehavior(embeddings, vec_std, lib_indices, pred_indices, b);
