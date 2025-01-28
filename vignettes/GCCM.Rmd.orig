@@ -78,7 +78,7 @@ install.packages("spEDM", dep = TRUE)
 
 Load the `spEDM` package:
 
-```{r}
+```{r load_pkg}
 library(spEDM)
 ```
 
@@ -86,7 +86,7 @@ library(spEDM)
 
 Load data and package:
 
-```{r}
+```{r load_lattice_data}
 popd_nb = spdep::read.gal(system.file("extdata/popdensity_nb.gal",
                                       package = "spEDM"))
 popd_nb
