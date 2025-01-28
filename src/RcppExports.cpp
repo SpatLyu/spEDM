@@ -100,6 +100,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// OptEmdedDim
+int OptEmdedDim(Rcpp::NumericMatrix Emat);
+RcppExport SEXP _spEDM_OptEmdedDim(SEXP EmatSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Emat(EmatSEXP);
+    rcpp_result_gen = Rcpp::wrap(OptEmdedDim(Emat));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppLaggedVar4Lattice
 Rcpp::List RcppLaggedVar4Lattice(const Rcpp::List& nb, int lagNum);
 RcppExport SEXP _spEDM_RcppLaggedVar4Lattice(SEXP nbSEXP, SEXP lagNumSEXP) {
@@ -324,6 +335,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppSimplex4Grid", (DL_FUNC) &_spEDM_RcppSimplex4Grid, 7},
     {"_spEDM_RcppGCCM4Grid", (DL_FUNC) &_spEDM_RcppGCCM4Grid, 12},
     {"_spEDM_DetectMaxNumThreads", (DL_FUNC) &_spEDM_DetectMaxNumThreads, 0},
+    {"_spEDM_OptEmdedDim", (DL_FUNC) &_spEDM_OptEmdedDim, 1},
     {"_spEDM_RcppLaggedVar4Lattice", (DL_FUNC) &_spEDM_RcppLaggedVar4Lattice, 2},
     {"_spEDM_RcppGenLatticeEmbeddings", (DL_FUNC) &_spEDM_RcppGenLatticeEmbeddings, 4},
     {"_spEDM_RcppSimplex4Lattice", (DL_FUNC) &_spEDM_RcppSimplex4Lattice, 8},

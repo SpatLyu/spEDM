@@ -25,6 +25,10 @@ DetectMaxNumThreads <- function() {
     .Call(`_spEDM_DetectMaxNumThreads`)
 }
 
+OptEmdedDim <- function(Emat) {
+    .Call(`_spEDM_OptEmdedDim`, Emat)
+}
+
 RcppLaggedVar4Lattice <- function(nb, lagNum) {
     .Call(`_spEDM_RcppLaggedVar4Lattice`, nb, lagNum)
 }
