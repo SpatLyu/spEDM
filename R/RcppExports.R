@@ -9,6 +9,10 @@ RcppGenGridEmbeddings <- function(mat, E, includeself) {
     .Call(`_spEDM_RcppGenGridEmbeddings`, mat, E, includeself)
 }
 
+RcppLocateGridIndices <- function(curRow, curCol, totalRow, totalCol) {
+    .Call(`_spEDM_RcppLocateGridIndices`, curRow, curCol, totalRow, totalCol)
+}
+
 RcppSimplex4Grid <- function(mat, lib, pred, E, b, threads) {
     .Call(`_spEDM_RcppSimplex4Grid`, mat, lib, pred, E, b, threads)
 }

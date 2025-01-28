@@ -65,6 +65,13 @@ Rcpp::NumericMatrix RcppGenGridEmbeddings(Rcpp::NumericMatrix mat, int E, bool i
 }
 
 // [[Rcpp::export]]
+int RcppLocateGridIndices(int curRow, int curCol,
+                          int totalRow, int totalCol){
+  int indices = LocateGridIndices(curRow,curCol,totalRow,totalCol);
+  return indices + 1;
+};
+
+// [[Rcpp::export]]
 Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
                                      const Rcpp::IntegerMatrix& lib,
                                      const Rcpp::IntegerMatrix& pred,
@@ -86,12 +93,20 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
   std::vector<bool> pred_indices(numRows * numCols, false);
   std::vector<bool> lib_indices(numRows * numCols, false);
 
+  int currow;
+  int curcol;
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
   for (int i = 0; i < lib.nrow(); ++i) {
-    lib_indices[LocateGridIndices(lib(i,0), lib(i,1), numRows, numCols)] = true; // Convert to 0-based index
+    // Convert to 0-based index
+    currow = lib(i,0) - 1;
+    curcol = lib(i,1) - 1;
+    lib_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
   }
   for (int i = 0; i < pred.nrow(); ++i) {
-    pred_indices[LocateGridIndices(lib(i,0), lib(i,1), numRows, numCols)] = true; // Convert to 0-based index
+    // Convert to 0-based index
+    currow = pred(i,0) - 1;
+    curcol = pred(i,1) - 1;
+    pred_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
   }
 
   // Convert Rcpp::IntegerVector to std::vector<int>

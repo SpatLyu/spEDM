@@ -11,9 +11,6 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
 
 .simplex_spatraster_method = \(data,target,lib,pred,E = 1:10,k = 4,threads = detectThreads()){
   mat = .uni_grid(data,target)
-  ncell = nrow(mat) * ncol(mat)
-  lib = .check_indices(lib,ncell)
-  pred = .check_indices(pred,ncell)
   return(RcppSimplex4Grid(mat,lib,pred,E,k,threads))
 }
 
@@ -21,8 +18,8 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
 #'
 #' @param data The observation data.
 #' @param target Name of target variable.
-#' @param lib vector with start and stop indices of input data used to create the library from observations.
-#' @param pred vector with start and stop indices of input data used for predictions.
+#' @param lib The row numbers(`vector`) of lattice data or the row-column numbers(`matrix`) of grid data for creating the library from observations.
+#' @param pred The row numbers(`vector`) of lattice data or the row-column numbers(`matrix`) of grid data used for predictions.
 #' @param E (optional) The dimensions of the embedding.
 #' @param k (optional) Number of nearest neighbors to use for prediction.
 #' @param nb (optional) The neighbours list.

@@ -24,9 +24,9 @@
 
 \item{target}{Name of target variable.}
 
-\item{lib}{vector with start and stop indices of input data used to create the library from observations.}
+\item{lib}{The row numbers(\code{vector}) of lattice data or the row-column numbers(\code{matrix}) of grid data for creating the library from observations.}
 
-\item{pred}{vector with start and stop indices of input data used for predictions.}
+\item{pred}{The row numbers(\code{vector}) of lattice data or the row-column numbers(\code{matrix}) of grid data used for predictions.}
 
 \item{E}{(optional) The dimensions of the embedding.}
 

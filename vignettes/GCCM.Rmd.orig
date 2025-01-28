@@ -99,6 +99,19 @@ popd_sf = sf::st_as_sf(popdensity, coords = c("x","y"), crs = 4326)
 popd_sf
 ```
 
+Select the appropriate embedding dimension E:
+
+```{r optE1_lattice}
+simplex(popd_sf,"Pre",lib = 1:2000,pred = 2001:nrow(popd_sf),k = 6,nb = popd_nb)
+```
+
+```{r optE2_lattice}
+simplex(popd_sf,"popDensity",lib = 1:2000,pred = 2001:nrow(popd_sf),k = 6,nb = popd_nb)
+```
+
+We choose the E with the highest rho and the lowest MAE and RMSE as the most suitable one. Under the selected lib and pred, the optimal embedding dimension E for the variable `Pre` is 1, and for the variable `popDensity`, it is 6.
+
+
 Run GCCM:
 
 ```{r}
@@ -107,8 +120,8 @@ pd_res = gccm(data = popd_sf,
               cause = "Pre",
               effect = "popDensity",
               libsizes = seq(10, 2800, by = 100),
-              E = 3,
-              k = 4,
+              E = c(1,6),
+              k = 6,
               nb = popd_nb,
               progressbar = FALSE)
 endTime = Sys.time()
@@ -144,13 +157,24 @@ npp = terra::aggregate(npp, fact = 3, na.rm = TRUE)
 terra::global(npp,"isNA")
 terra::ncell(npp)
 
-namat = terra::as.matrix(!is.na(npp[[1]]), wide = TRUE)
-pred = terra::rowColFromCell(npp,which(namat))
-dim(pred)
+nnamat = terra::as.matrix(!is.na(npp[[1]]), wide = TRUE)
+nnaindice = terra::rowColFromCell(npp,which(nnamat))
+dim(nnaindice)
 
 set.seed(42)
-indices = sample(nrow(pred), size = 3000, replace = FALSE)
-pred = pred[indices,]
+indices = sample(nrow(nnaindice), size = 3000, replace = FALSE)
+lib = nnaindice[-indices,]
+pred = nnaindice[indices,]
+```
+
+Select the appropriate embedding dimension E:
+
+```{r optE1_grid}
+simplex(npp,"pre",lib,pred,k = 8)
+```
+
+```{r optE2_grid}
+simplex(npp,"npp",lib,pred,k = 8)
 ```
 
 Run GCCM:

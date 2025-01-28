@@ -37,6 +37,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppLocateGridIndices
+int RcppLocateGridIndices(int curRow, int curCol, int totalRow, int totalCol);
+RcppExport SEXP _spEDM_RcppLocateGridIndices(SEXP curRowSEXP, SEXP curColSEXP, SEXP totalRowSEXP, SEXP totalColSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type curRow(curRowSEXP);
+    Rcpp::traits::input_parameter< int >::type curCol(curColSEXP);
+    Rcpp::traits::input_parameter< int >::type totalRow(totalRowSEXP);
+    Rcpp::traits::input_parameter< int >::type totalCol(totalColSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppLocateGridIndices(curRow, curCol, totalRow, totalCol));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppSimplex4Grid
 Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, const Rcpp::IntegerVector& E, int b, int threads);
 RcppExport SEXP _spEDM_RcppSimplex4Grid(SEXP matSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP bSEXP, SEXP threadsSEXP) {
@@ -302,6 +316,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppLaggedVar4Grid", (DL_FUNC) &_spEDM_RcppLaggedVar4Grid, 2},
     {"_spEDM_RcppGenGridEmbeddings", (DL_FUNC) &_spEDM_RcppGenGridEmbeddings, 3},
+    {"_spEDM_RcppLocateGridIndices", (DL_FUNC) &_spEDM_RcppLocateGridIndices, 4},
     {"_spEDM_RcppSimplex4Grid", (DL_FUNC) &_spEDM_RcppSimplex4Grid, 6},
     {"_spEDM_RcppGCCM4Grid", (DL_FUNC) &_spEDM_RcppGCCM4Grid, 11},
     {"_spEDM_DetectMaxNumThreads", (DL_FUNC) &_spEDM_DetectMaxNumThreads, 0},
