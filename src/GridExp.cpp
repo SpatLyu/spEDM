@@ -68,7 +68,7 @@ Rcpp::NumericMatrix RcppGenGridEmbeddings(Rcpp::NumericMatrix mat, int E, bool i
 int RcppLocateGridIndices(int curRow, int curCol,
                           int totalRow, int totalCol){
   int indices = LocateGridIndices(curRow,curCol,totalRow,totalCol);
-  return indices;
+  return indices + 1;
 };
 
 // [[Rcpp::export]]
