@@ -280,6 +280,76 @@ double PearsonCor(const std::vector<double>& y,
 //   return corr;
 // }
 
+// Function to compute Partial Correlation using Armadillo
+// y: Dependent variable vector
+// y_hat: Predicted variable vector
+// controls: Matrix of control variables (each column represents a control variable)
+// NA_rm: Boolean flag to indicate whether to remove NA values
+// Returns: Partial correlation between y and y_hat after controlling for the variables in controls
+double PartialCor(const std::vector<double>& y,
+                  const std::vector<double>& y_hat,
+                  const std::vector<std::vector<double>>& controls,
+                  bool NA_rm = false) {
+  // Check input sizes
+  if (y.size() != y_hat.size()) {
+    throw std::invalid_argument("Input vectors y and y_hat must have the same size.");
+  }
+  if (!controls.empty() && controls[0].size() != y.size()) {
+    throw std::invalid_argument("Control variables must have the same number of observations as y and y_hat.");
+  }
+
+  // Handle NA values
+  std::vector<double> clean_y, clean_y_hat;
+  std::vector<std::vector<double>> clean_controls(controls.size());
+
+  for (size_t i = 0; i < y.size(); ++i) {
+    bool is_na = isNA(y[i]) || isNA(y_hat[i]);
+    for (const auto& control : controls) {
+      if (isNA(control[i])) {
+        is_na = true;
+        break;
+      }
+    }
+    if (is_na) {
+      if (!NA_rm) {
+        return std::numeric_limits<double>::quiet_NaN(); // Return NaN if NA_rm is false
+      }
+    } else {
+      clean_y.push_back(y[i]);
+      clean_y_hat.push_back(y_hat[i]);
+      for (size_t j = 0; j < controls.size(); ++j) {
+        clean_controls[j].push_back(controls[j][i]);
+      }
+    }
+  }
+
+  // If no valid data, return NaN
+  if (clean_y.empty()) {
+    return std::numeric_limits<double>::quiet_NaN();
+  }
+
+  // Convert cleaned vectors to Armadillo vectors/matrices
+  arma::vec arma_y(clean_y);
+  arma::vec arma_y_hat(clean_y_hat);
+  arma::mat arma_controls(clean_y.size(), controls.size());
+  for (size_t i = 0; i < controls.size(); ++i) {
+    arma_controls.col(i) = arma::vec(clean_controls[i]);
+  }
+
+  // Compute residuals of y and y_hat after regressing on controls
+  arma::vec residuals_y = arma_y - arma_controls * arma::solve(arma_controls, arma_y);
+  arma::vec residuals_y_hat = arma_y_hat - arma_controls * arma::solve(arma_controls, arma_y_hat);
+
+  // Compute Pearson correlation of the residuals
+  double partial_corr = arma::as_scalar(arma::cor(residuals_y, residuals_y_hat));
+
+  // Ensure partial correlation is within valid range [-1, 1]
+  if (partial_corr < -1.0) partial_corr = -1.0;
+  if (partial_corr > 1.0) partial_corr = 1.0;
+
+  return partial_corr;
+}
+
 // Function to calculate the significance of a correlation coefficient
 double CppSignificance(double r, int n) {
   double t = r * std::sqrt((n - 2) / (1 - r * r));
