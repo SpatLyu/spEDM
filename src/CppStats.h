@@ -47,7 +47,8 @@ double PearsonCor(const std::vector<double>& y,
 double PartialCor(const std::vector<double>& y,
                   const std::vector<double>& y_hat,
                   const std::vector<std::vector<double>>& controls,
-                  bool NA_rm = false);
+                  bool NA_rm = false,
+                  bool linear = false);
 
 double CppSignificance(double r, int n);
 

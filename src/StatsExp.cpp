@@ -113,21 +113,22 @@ double RcppPearsonCor(const Rcpp::NumericVector& y,
 double RcppPartialCor(Rcpp::NumericVector y,
                       Rcpp::NumericVector y_hat,
                       Rcpp::NumericMatrix controls,
-                      bool NA_rm = false) {
+                      bool NA_rm = false,
+                      bool linear = false) {
 
   // Convert Rcpp NumericVector to std::vector
   std::vector<double> std_y = Rcpp::as<std::vector<double>>(y);
   std::vector<double> std_y_hat = Rcpp::as<std::vector<double>>(y_hat);
 
   // Convert Rcpp NumericMatrix to std::vector of std::vectors
-  std::vector<std::vector<double>> std_controls(controls.nrow());
+  std::vector<std::vector<double>> std_controls(controls.ncol());
   for (int i = 0; i < controls.ncol(); ++i) {
     Rcpp::NumericVector covvar = controls.column(i);
     std_controls[i] = Rcpp::as<std::vector<double>>(covvar);
   }
 
   // Call the PartialCor function
-  return PartialCor(std_y, std_y_hat, std_controls, NA_rm);
+  return PartialCor(std_y, std_y_hat, std_controls, NA_rm, linear);
 }
 
 // Wrapper function to calculate the confidence interval for a correlation coefficient and return a NumericVector
