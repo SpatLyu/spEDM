@@ -45,6 +45,38 @@ double PartialSimplex4Lattice(
   return rho;
 }
 
+double PartialSMap4Lattice(
+    const std::vector<std::vector<double>>& vectors,  // Reconstructed state-space (each row is a separate vector/state)
+    const std::vector<double>& target,                // Spatial cross-section series to be used as the target (should line up with vectors)
+    const std::vector<std::vector<double>>& controls, // Cross-sectional data of control variables (**stored by row**)
+    const std::vector<std::vector<int>>& nb_vec,      // Neighbor indices vector of the spatial units
+    const std::vector<bool>& lib_indices,             // Vector of T/F values (which states to include when searching for neighbors)
+    const std::vector<bool>& pred_indices,            // Vector of T/F values (which states to predict from)
+    const std::vector<int>& conEs,                    // Number of dimensions for the attractor reconstruction with control variables
+    int num_neighbors,                                // Number of neighbors to use for simplex projection
+    double theta,                                     // Weighting parameter for distances
+    bool includeself                                  // Whether to include the current state when constructing the embedding vector
+){
+  int n_controls = controls.size();
+  std::vector<double> temp_pred;
+  std::vector<std::vector<double>> temp_embedding;
+
+  for (int i = 0; i < n_controls; ++i) {
+    if (i == 0){
+      temp_pred = SMapPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors, theta);
+    } else {
+      temp_pred = SMapPrediction(temp_embedding, controls[i], lib_indices, pred_indices, num_neighbors, theta);
+    }
+    temp_embedding = GenLatticeEmbeddings(temp_pred,nb_vec,conEs[i],includeself);
+  }
+
+  std::vector<double> con_pred = SMapPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors, theta);
+  std::vector<double> target_pred = SMapPrediction(vectors, target, lib_indices, pred_indices, num_neighbors, theta);
+
+  double rho = PartialCorTrivar(target,target_pred,con_pred,true,false);
+  return rho;
+}
+
 std::vector<std::pair<int, double>> SCPCMSingle4Lattice(
     const std::vector<std::vector<double>>& x_vectors,  // Reconstructed state-space (each row is a separate vector/state)
     const std::vector<double>& y,                       // Spatial cross-section series to be used as the target (should line up with vectors)
@@ -75,6 +107,8 @@ std::vector<std::pair<int, double>> SCPCMSingle4Lattice(
     double rho;
     if (simplex) {
       rho = PartialSimplex4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, b, includeself);
+    } else {
+      rho = PartialSMap4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, b, theta, includeself);
     }
     x_xmap_y.emplace_back(lib_size, rho);
   } else {
@@ -99,6 +133,8 @@ std::vector<std::pair<int, double>> SCPCMSingle4Lattice(
       double rho;
       if (simplex) {
         rho = PartialSimplex4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, b, includeself);
+      } else {
+        rho = PartialSMap4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, b, theta, includeself);
       }
       x_xmap_y.emplace_back(lib_size, rho);
     }
