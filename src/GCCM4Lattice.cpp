@@ -28,6 +28,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
 ) {
   int n = x_vectors.size();
   std::vector<std::pair<int, double>> x_xmap_y;
+  double rho;
 
   if (lib_size == max_lib_size) { // No possible library variation if using all vectors
     std::vector<bool> lib_indices(n, false);
@@ -36,7 +37,6 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
     }
 
     // Run cross map and store results
-    double rho;
     if (simplex) {
       rho = SimplexProjection(x_vectors, y, lib_indices, pred_indices, b);
     } else {
@@ -62,7 +62,6 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
       }
 
       // Run cross map and store results
-      double rho;
       if (simplex) {
         rho = SimplexProjection(x_vectors, y, lib_indices, pred_indices, b);
       } else {

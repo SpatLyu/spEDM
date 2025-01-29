@@ -14,6 +14,37 @@
 // [[Rcpp::plugins(cpp11)]]
 // [[Rcpp::depends(RcppThread)]]
 
+double PartialSimplex4Lattice(
+    const std::vector<std::vector<double>>& vectors,  // Reconstructed state-space (each row is a separate vector/state)
+    const std::vector<double>& target,                // Spatial cross-section series to be used as the target (should line up with vectors)
+    const std::vector<std::vector<double>>& controls, // Cross-sectional data of control variables (**stored by row**)
+    const std::vector<std::vector<int>>& nb_vec,      // Neighbor indices vector of the spatial units
+    const std::vector<bool>& lib_indices,             // Vector of T/F values (which states to include when searching for neighbors)
+    const std::vector<bool>& pred_indices,            // Vector of T/F values (which states to predict from)
+    const std::vector<int>& conEs,                    // Number of dimensions for the attractor reconstruction with control variables
+    int num_neighbors,                                // Number of neighbors to use for simplex projection
+    bool includeself                                  // Whether to include the current state when constructing the embedding vector
+){
+  int n_controls = controls.size();
+  std::vector<double> temp_pred;
+  std::vector<std::vector<double>> temp_embedding;
+
+  for (int i = 0; i < n_controls; ++i) {
+    if (i == 0){
+      temp_pred = SimplexProjectionPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors);
+    } else {
+      temp_pred = SimplexProjectionPrediction(temp_embedding, controls[i], lib_indices, pred_indices, num_neighbors);
+    }
+    temp_embedding = GenLatticeEmbeddings(temp_pred,nb_vec,conEs[i],includeself);
+  }
+
+  std::vector<double> con_pred = SimplexProjectionPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors);
+  std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors);
+
+  double rho = PartialCorTrivar(target,target_pred,con_pred,true,false);
+  return rho;
+}
+
 std::vector<std::pair<int, double>> SCPCMSingle4Lattice(
     const std::vector<std::vector<double>>& x_vectors,  // Reconstructed state-space (each row is a separate vector/state)
     const std::vector<double>& y,                       // Spatial cross-section series to be used as the target (should line up with vectors)
@@ -24,6 +55,7 @@ std::vector<std::pair<int, double>> SCPCMSingle4Lattice(
     int max_lib_size,                                   // Maximum size of the library
     const std::vector<int>& possible_lib_indices,       // Indices of possible library states
     const std::vector<bool>& pred_indices,              // Vector of T/F values (which states to predict from)
+    const std::vector<int>& conEs,                      // Number of dimensions for the attractor reconstruction with control variables
     int E,                                              // Number of dimensions for the attractor reconstruction
     int b,                                              // Number of neighbors to use for simplex projection
     bool simplex,                                       // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
@@ -33,11 +65,6 @@ std::vector<std::pair<int, double>> SCPCMSingle4Lattice(
   int n = x_vectors.size();
   std::vector<std::pair<int, double>> x_xmap_y;
 
-  int n_controls = controls.size();
-  std::vector<double> temp_pred;
-  std::vector<std::vector<double>> temp_embedding;
-  std::pair<std::vector<double>, std::vector<double>> temp_res;
-
   if (lib_size == max_lib_size) { // No possible library variation if using all vectors
     std::vector<bool> lib_indices(n, false);
     for (int idx : possible_lib_indices) {
@@ -45,21 +72,10 @@ std::vector<std::pair<int, double>> SCPCMSingle4Lattice(
     }
 
     // Run partial cross map and store results
-    for (int i = 0; i < n_controls; ++i) {
-      if (i == 0){
-        temp_res = SimplexProjectionPrediction(x_vectors, controls[i], lib_indices, pred_indices, b);
-      } else {
-        temp_res = SimplexProjectionPrediction(temp_embedding, controls[i], lib_indices, pred_indices, b);
-      }
-      temp_pred = temp_res.second;
-      temp_embedding = GenLatticeEmbeddings(temp_pred,nb_vec,E,includeself);
+    double rho;
+    if (simplex) {
+      rho = PartialSimplex4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, b, includeself);
     }
-    temp_res = SimplexProjectionPrediction(temp_embedding, y, lib_indices, pred_indices, b);
-
-    std::vector<double> con_pred = SimplexProjectionPrediction(temp_embedding, y, lib_indices, pred_indices, b).second;
-    std::vector<double> y_pred = SimplexProjectionPrediction(x_vectors, y, lib_indices, pred_indices, b).second;
-
-    double rho = PartialCorTrivar(y,y_pred,con_pred);
     x_xmap_y.emplace_back(lib_size, rho);
   } else {
     for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
@@ -80,21 +96,10 @@ std::vector<std::pair<int, double>> SCPCMSingle4Lattice(
       }
 
       // Run partial cross map and store results
-      for (int i = 0; i < n_controls; ++i) {
-        if (i == 0){
-          temp_res = SimplexProjectionPrediction(x_vectors, controls[i], lib_indices, pred_indices, b);
-        } else {
-          temp_res = SimplexProjectionPrediction(temp_embedding, controls[i], lib_indices, pred_indices, b);
-        }
-        temp_pred = temp_res.second;
-        temp_embedding = GenLatticeEmbeddings(temp_pred,nb_vec,E,includeself);
+      double rho;
+      if (simplex) {
+        rho = PartialSimplex4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, b, includeself);
       }
-      temp_res = SimplexProjectionPrediction(temp_embedding, y, lib_indices, pred_indices, b);
-
-      std::vector<double> con_pred = SimplexProjectionPrediction(temp_embedding, y, lib_indices, pred_indices, b).second;
-      std::vector<double> y_pred = SimplexProjectionPrediction(x_vectors, y, lib_indices, pred_indices, b).second;
-
-      double rho = PartialCorTrivar(y,y_pred,con_pred);
       x_xmap_y.emplace_back(lib_size, rho);
     }
   }
@@ -110,6 +115,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
     const std::vector<int>& lib_sizes,                  // Vector of library sizes to use
     const std::vector<std::pair<int, int>>& lib,        // Matrix (n x 2) using n sequences of data to construct libraries
     const std::vector<std::pair<int, int>>& pred,       // Matrix (n x 2) using n sequences of data to predict from
+    const std::vector<int>& conEs,                      // Number of dimensions for the attractor reconstruction with control variables
     int E,                                              // Number of dimensions for the attractor reconstruction
     int tau,                                            // Spatial lag for the lagged-vector construction
     int b,                                              // Number of nearest neighbors to use for prediction
@@ -195,6 +201,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
         max_lib_size,
         possible_lib_indices,
         pred_indices,
+        conEs,
         E,
         b,
         simplex,
@@ -217,6 +224,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
         max_lib_size,
         possible_lib_indices,
         pred_indices,
+        conEs,
         E,
         b,
         simplex,

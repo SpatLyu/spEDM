@@ -59,6 +59,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
     double theta) {
 
   std::vector<std::pair<int, double>> x_xmap_y;
+  double rho;
 
   for (int r = 1; r <= totalRow - lib_size + 1; ++r) {
     for (int c = 1; c <= totalCol - lib_size + 1; ++c) {
@@ -98,13 +99,12 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
       }
 
       // Run cross map and store results
-      double results;
       if (simplex){
-        results = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
+        rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
       } else {
-        results = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
+        rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
       }
-      x_xmap_y.emplace_back(lib_size, results);
+      x_xmap_y.emplace_back(lib_size, rho);
     }
   }
 
