@@ -7,8 +7,8 @@
 #include "CppStats.h"
 
 // Function to compute the 'simplex projection' prediction
-// Returns a pair of vectors: (target_pred, pred_pred)
-std::pair<std::vector<double>, std::vector<double>> SimplexProjectionPrediction(
+// Returns a vectors: target_pred
+std::vector<double> SimplexProjectionPrediction(
     const std::vector<std::vector<double>>& vectors,  // Reconstructed state-space (each row is a separate vector/state)
     const std::vector<double>& target,                // Spatial cross-section series to be used as the target (should line up with vectors)
     const std::vector<bool>& lib_indices,             // Vector of T/F values (which states to include when searching for neighbors)
@@ -100,18 +100,7 @@ std::pair<std::vector<double>, std::vector<double>> SimplexProjectionPrediction(
     local_lib_indices[p] = temp_lib;
   }
 
-  // Extract the target and prediction values for the prediction indices
-  std::vector<double> target_pred;
-  std::vector<double> pred_pred;
-  for (size_t i = 0; i < pred_indices.size(); ++i) {
-    if (pred_indices[i]) {
-      target_pred.push_back(target[i]);
-      pred_pred.push_back(pred[i]);
-    }
-  }
-
-  // Return the pair of vectors (target_pred, pred_pred)
-  return std::make_pair(target_pred, pred_pred);
+  return pred;
 }
 
 // Rho value by the 'simplex projection' prediction
@@ -122,12 +111,8 @@ double SimplexProjection(
     const std::vector<bool>& pred_indices,            // Vector of T/F values (which states to predict from)
     int num_neighbors                                 // Number of neighbors to use for simplex projection
 ) {
-  std::pair<std::vector<double>, std::vector<double>> result = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors);
-  std::vector<double> target_pred = result.first;
-  std::vector<double> pred_pred = result.second;
-
-  // Return the Pearson correlation coefficient
-  return PearsonCor(target_pred, pred_pred, true);
+  std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors);
+  return PearsonCor(target_pred, target, true);
 }
 
 // Description: Computes the simplex projection and returns a vector containing
@@ -148,14 +133,12 @@ std::vector<double> SimplexBehavior(
     int num_neighbors
 ) {
   // Call SimplexProjectionPrediction to get the prediction results
-  std::pair<std::vector<double>, std::vector<double>> result = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors);
-  std::vector<double> target_pred = result.first;
-  std::vector<double> pred_pred = result.second;
+  std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors);
 
   // Compute PearsonCor, MAE, and RMSE
-  double pearson = PearsonCor(target_pred, pred_pred, true);
-  double mae = CppMAE(target_pred, pred_pred, true);
-  double rmse = CppRMSE(target_pred, pred_pred, true);
+  double pearson = PearsonCor(target_pred, target, true);
+  double mae = CppMAE(target_pred, target, true);
+  double rmse = CppRMSE(target_pred, target, true);
 
   // Return the three metrics as a vector
   return {pearson, mae, rmse};
