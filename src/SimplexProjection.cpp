@@ -83,16 +83,16 @@ std::pair<std::vector<double>, std::vector<double>> SimplexProjectionPrediction(
 
     // Make prediction(use inner product or iterate element-wise for computation)
 
-    std::vector<double> target_neighbors;
-    for (size_t i = 0; i < num_neighbors_sizet; ++i) {
-      target_neighbors.push_back(target[libs[neighbors[i]]]);
-    }
-    double prediction = std::inner_product(weights.begin(), weights.end(), target_neighbors.begin(), 0.0);
-
-    // double prediction = 0.0;
+    // std::vector<double> target_neighbors;
     // for (size_t i = 0; i < num_neighbors_sizet; ++i) {
-    //   prediction += weights[i] * target[libs[neighbors[i]]];
+    //   target_neighbors.push_back(target[libs[neighbors[i]]]);
     // }
+    // double prediction = std::inner_product(weights.begin(), weights.end(), target_neighbors.begin(), 0.0);
+
+    double prediction = 0.0;
+    for (size_t i = 0; i < num_neighbors_sizet; ++i) {
+      prediction += weights[i] * target[libs[neighbors[i]]];
+    }
 
     pred[p] = prediction / total_weight;
 
