@@ -1,5 +1,7 @@
 # spEDM 1.3
 
+* Relax `gccm` C++ source code `libsizes` minimum value constraint of `E+2` (#109).
+
 * Include an option in `gccm` to determine whether to include the current state when generating embedding vectors (#103).
 
 * Provide a complete `GCCM` workflow for spatial lattice and grid data in the `gccm` vignette (#100).
