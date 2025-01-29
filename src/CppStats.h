@@ -50,6 +50,12 @@ double PartialCor(const std::vector<double>& y,
                   bool NA_rm = false,
                   bool linear = false);
 
+double PartialCorTrivar(const std::vector<double>& y,
+                        const std::vector<double>& y_hat,
+                        const std::vector<double>& control,
+                        bool NA_rm = false,
+                        bool linear = false);
+
 double CppSignificance(double r, int n);
 
 std::vector<double> CppConfidence(double r, int n,

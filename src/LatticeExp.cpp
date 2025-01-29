@@ -153,6 +153,7 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
 }
 
 // Wrapper function to perform GCCM Lattice and return a NumericMatrix
+// predict y based on x ====> x xmap y ====> y causes x
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,
                                      const Rcpp::NumericVector& y,

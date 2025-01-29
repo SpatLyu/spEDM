@@ -374,6 +374,18 @@ double PartialCor(const std::vector<double>& y,
   return partial_corr;
 }
 
+double PartialCorTrivar(const std::vector<double>& y,
+                        const std::vector<double>& y_hat,
+                        const std::vector<double>& control,
+                        bool NA_rm = false,
+                        bool linear = false){
+  std::vector<std::vector<double>> conmat;
+  conmat.push_back(control);
+
+  double res = PartialCor(y,y_hat,conmat,NA_rm,linear);
+  return res;
+}
+
 // Function to calculate the significance of a correlation coefficient
 double CppSignificance(double r, int n) {
   double t = r * std::sqrt((n - 2) / (1 - r * r));
