@@ -283,7 +283,7 @@ double PearsonCor(const std::vector<double>& y,
 // Function to compute Partial Correlation using Armadillo
 // y: Dependent variable vector
 // y_hat: Predicted variable vector
-// controls: Matrix of control variables (each column represents a control variable)
+// controls: Matrix of control variables (**each row represents a control variable**)
 // NA_rm: Boolean flag to indicate whether to remove NA values
 // Returns: Partial correlation between y and y_hat after controlling for the variables in controls
 double PartialCor(const std::vector<double>& y,

@@ -2,6 +2,8 @@
 #include "CppStats.h"
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
+#include <RcppArmadillo.h>
+// [[Rcpp::depends(RcppArmadillo)]]
 
 // [[Rcpp::export]]
 double RcppMean(const Rcpp::NumericVector& vec,
@@ -104,6 +106,28 @@ double RcppPearsonCor(const Rcpp::NumericVector& y,
 
   // Call the ArmaPearsonCor function
   return PearsonCor(y_vec, y_hat_vec, NA_rm);
+}
+
+// Rcpp wrapper for PartialCor function
+// [[Rcpp::export]]
+double RcppPartialCor(Rcpp::NumericVector y,
+                      Rcpp::NumericVector y_hat,
+                      Rcpp::NumericMatrix controls,
+                      bool NA_rm = false) {
+
+  // Convert Rcpp NumericVector to std::vector
+  std::vector<double> std_y = Rcpp::as<std::vector<double>>(y);
+  std::vector<double> std_y_hat = Rcpp::as<std::vector<double>>(y_hat);
+
+  // Convert Rcpp NumericMatrix to std::vector of std::vectors
+  std::vector<std::vector<double>> std_controls(controls.nrow());
+  for (int i = 0; i < controls.ncol(); ++i) {
+    Rcpp::NumericVector covvar = controls.column(i);
+    std_controls[i] = Rcpp::as<std::vector<double>>(covvar);
+  }
+
+  // Call the PartialCor function
+  return PartialCor(std_y, std_y_hat, std_controls, NA_rm);
 }
 
 // Wrapper function to calculate the confidence interval for a correlation coefficient and return a NumericVector
