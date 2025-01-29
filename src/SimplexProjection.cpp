@@ -45,7 +45,12 @@ std::pair<std::vector<double>, std::vector<double>> SimplexProjectionPrediction(
           sum_na += 1.0;
         }
       }
-      distances.push_back(std::sqrt(sum_sq / sum_na));
+
+      if (sum_na > 0) {
+        distances.push_back(std::sqrt(sum_sq / sum_na));
+      } else {
+        distances.push_back(std::numeric_limits<double>::quiet_NaN());
+      }
     }
 
     // Find nearest neighbors
@@ -76,11 +81,19 @@ std::pair<std::vector<double>, std::vector<double>> SimplexProjectionPrediction(
     }
     double total_weight = std::accumulate(weights.begin(), weights.end(), 0.0);
 
-    // Make prediction
-    double prediction = 0.0;
+    // Make prediction(use inner product or iterate element-wise for computation)
+
+    std::vector<double> target_neighbors;
     for (size_t i = 0; i < num_neighbors_sizet; ++i) {
-      prediction += weights[i] * target[libs[neighbors[i]]];
+      target_neighbors.push_back(target[libs[neighbors[i]]]);
     }
+    double prediction = std::inner_product(weights.begin(), weights.end(), target_neighbors.begin(), 0.0);
+
+    // double prediction = 0.0;
+    // for (size_t i = 0; i < num_neighbors_sizet; ++i) {
+    //   prediction += weights[i] * target[libs[neighbors[i]]];
+    // }
+
     pred[p] = prediction / total_weight;
 
     // Restore the original lib_indices state

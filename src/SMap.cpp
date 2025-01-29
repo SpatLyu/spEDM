@@ -46,7 +46,12 @@ std::pair<std::vector<double>, std::vector<double>> SMapPrediction(
           sum_na += 1.0;
         }
       }
-      distances.push_back(std::sqrt(sum_sq / sum_na));
+
+      if (sum_na > 0) {
+        distances.push_back(std::sqrt(sum_sq / sum_na));
+      } else {
+        distances.push_back(std::numeric_limits<double>::quiet_NaN());
+      }
     }
 
     // Compute mean distance
