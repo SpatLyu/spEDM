@@ -179,9 +179,9 @@ Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,
   // Convert Rcpp::IntegerVector to std::vector<int>
   std::vector<int> libsizes_std = Rcpp::as<std::vector<int>>(libsizes);
 
-  // Define the interval [1, n] as a std::vector<std::pair<int, int>>
+  // Define the interval [0, n-1] as a std::vector<std::pair<int, int>>
   int n = nb_vec.size();
-  std::vector<std::pair<int, int>> interval = {{1, n}};
+  std::vector<std::pair<int, int>> interval = {{0, n-1}};
 
   // Perform GCCM Lattice
   std::vector<std::vector<double>> result = GCCM4Lattice(

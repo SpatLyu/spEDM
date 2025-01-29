@@ -99,7 +99,7 @@ std::vector<std::vector<double>> GCCM4Lattice(
   for (const auto& p : pred) {
     int row_start = p.first + (E - 1) * tau;
     int row_end = p.second;
-    if (row_end > row_start) {
+    if (row_end > row_start && row_start >= 0 && row_end < n) {
       std::fill(pred_indices.begin() + row_start, pred_indices.begin() + row_end + 1, true);
     }
   }
@@ -109,7 +109,7 @@ std::vector<std::vector<double>> GCCM4Lattice(
   for (const auto& l : lib) {
     int row_start = l.first + (E - 1) * tau;
     int row_end = l.second;
-    if (row_end > row_start) {
+    if (row_end > row_start && row_start >= 0 && row_end < n) {
       std::fill(lib_indices.begin() + row_start, lib_indices.begin() + row_end + 1, true);
     }
   }
@@ -122,16 +122,20 @@ std::vector<std::vector<double>> GCCM4Lattice(
     }
   }
 
-  // Make sure max lib size not exceeded and remove duplicates;
-  // Ensure the minimum value in unique_lib_sizes is E + 2
-  std::vector<int> unique_lib_sizes;
-  std::unique_copy(lib_sizes.begin(), lib_sizes.end(), std::back_inserter(unique_lib_sizes),
-                   [&](int a, int b) { return a == b; });
+  std::vector<int> unique_lib_sizes(lib_sizes.begin(), lib_sizes.end());
+
+  // Transform to ensure no size exceeds max_lib_size
   std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
                  [&](int size) { return std::min(size, max_lib_size); });
-  std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
-                 [&](int size) { return std::max(size, E + 2); });
 
+  // Ensure the minimum value in unique_lib_sizes is E + 2 (uncomment this section if required)
+  // std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
+  //                [&](int size) { return std::max(size, E + 2); });
+
+  // Remove duplicates
+  unique_lib_sizes.erase(std::unique(unique_lib_sizes.begin(), unique_lib_sizes.end()), unique_lib_sizes.end());
+
+  // Initialize the result container
   std::vector<std::pair<int, double>> x_xmap_y;
 
   // // Sequential version of the for loop
