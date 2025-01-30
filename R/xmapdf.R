@@ -9,7 +9,7 @@
                            "x_xmap_y_upper","x_xmap_y_lower")
     x_xmap_y = as.data.frame(x_xmap_y)
     resdf = x_xmap_y |>
-      dplyr::left_join(y_xmap_x, by = "libsizes") |>
+      dplyr::full_join(y_xmap_x, by = "libsizes") |>
       dplyr::arrange(libsizes)
   } else {
     resdf = dplyr::arrange(y_xmap_x,libsizes)
