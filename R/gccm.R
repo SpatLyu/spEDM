@@ -7,14 +7,19 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   k = .check_inputelementnum(k,2)
   if (is.null(nb)) nb = sdsfun::spdep_nb(data)
   if (length(cause) != length(nb)) stop("Incompatible Data Dimensions!")
-  coords = sdsfun::sf_coordinates(data)
+  coords = as.data.frame(sdsfun::sf_coordinates(data))
+  data = sf::st_drop_geometry(data)
+  data = data[,varname]
+
+  if (trendRM){
+    data = dplyr::bind_cols(data,coords)
+    for (i in 1:length(varname)){
+      data[,varname[i]] = sdsfun::rm_lineartrend(paste0(varname[i],"~X+Y"), data = data)
+    }
+  }
+
   cause = data[,cause,drop = TRUE]
   effect = data[,effect,drop = TRUE]
-  if (trendRM){
-    dtf = data.frame(cause = cause, effect = effect, x = coords[,1], y = coords[,2])
-    cause = sdsfun::rm_lineartrend("cause~x+y", data = dtf)
-    effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
-  }
 
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
   x_xmap_y = RcppGCCM4Lattice(cause,effect,nb,libsizes,E[1],tau,k[1],simplex,theta,threads,include.self,progressbar)
