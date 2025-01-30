@@ -218,9 +218,26 @@ std::vector<std::vector<double>> SCPCM4Lattice(
   // Initialize the result container
   std::vector<std::pair<int, double>> x_xmap_y;
 
-  // // Sequential version of the for loop
+  // Sequential version of the for loop
   // for (int lib_size : unique_lib_sizes) {
-  //   auto results = GCCMSingle4Lattice(x_vectors, y, lib_indices, lib_size, max_lib_size, possible_lib_indices, pred_indices, b);
+  //   RcppThread::Rcout << "lib_size: " << lib_size << "\n";
+  //   auto results = SCPCMSingle4Lattice(
+  //     x_vectors,
+  //     y,
+  //     controls,
+  //     nb_vec,
+  //     lib_indices,
+  //     lib_size,
+  //     max_lib_size,
+  //     possible_lib_indices,
+  //     pred_indices,
+  //     conEs,
+  //     Ex,
+  //     b,
+  //     simplex,
+  //     theta,
+  //     includeself
+  //   );
   //   x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
   // }
 
