@@ -24,12 +24,12 @@ Imports:
     ggplot2,
     methods,
     sdsfun (>= 0.7.0),
+    sf,
     terra
 Suggests: 
     knitr,
     Rcpp,
     RcppThread,
     rmarkdown,
-    sf,
     spdep
 VignetteBuilder: knitr

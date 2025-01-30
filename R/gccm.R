@@ -2,14 +2,14 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 
 .gccm_sf_method = \(data, cause, effect, libsizes, E = c(3,3), tau = 1, k = 4, theta = 1, algorithm = "simplex",
                     nb = NULL, threads = detectThreads(), include.self = FALSE, trendRM = TRUE, progressbar = TRUE){
-  varname = .check_cecharacter(cause, effect)
-  E = .check_input2element(E)
-  k = .check_input2element(k)
+  varname = .check_character(cause, effect)
+  E = .check_inputelementnum(E,2)
+  k = .check_inputelementnum(k,2)
+  if (is.null(nb)) nb = sdsfun::spdep_nb(data)
+  if (length(cause) != length(nb)) stop("Incompatible Data Dimensions!")
   coords = sdsfun::sf_coordinates(data)
   cause = data[,cause,drop = TRUE]
   effect = data[,effect,drop = TRUE]
-  if (is.null(nb)) nb = sdsfun::spdep_nb(data)
-  if (length(cause) != length(nb)) stop("Incompatible Data Dimensions!")
   if (trendRM){
     dtf = data.frame(cause = cause, effect = effect, x = coords[,1], y = coords[,2])
     cause = sdsfun::rm_lineartrend("cause~x+y", data = dtf)
@@ -25,9 +25,9 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 
 .gccm_spatraster_method = \(data, cause, effect, libsizes, E = c(3,3), tau = 1, k = 4, theta = 1, algorithm = "simplex",
                             RowCol = NULL, threads = detectThreads(), include.self = FALSE, trendRM = TRUE, progressbar = TRUE){
-  varname = .check_cecharacter(cause, effect)
-  E = .check_input2element(E)
-  k = .check_input2element(k)
+  varname = .check_character(cause, effect)
+  E = .check_inputelementnum(E,2)
+  k = .check_inputelementnum(k,2)
   data = data[[c(cause,effect)]]
   names(data) = c("cause","effect")
 
