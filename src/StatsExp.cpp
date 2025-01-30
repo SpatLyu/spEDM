@@ -131,6 +131,22 @@ double RcppPartialCor(Rcpp::NumericVector y,
   return PartialCor(std_y, std_y_hat, std_controls, NA_rm, linear);
 }
 
+// [[Rcpp::export]]
+double RcppPartialCorTrivar(Rcpp::NumericVector y,
+                            Rcpp::NumericVector y_hat,
+                            Rcpp::NumericVector control,
+                            bool NA_rm = false,
+                            bool linear = false) {
+
+  // Convert Rcpp NumericVector to std::vector
+  std::vector<double> std_y = Rcpp::as<std::vector<double>>(y);
+  std::vector<double> std_y_hat = Rcpp::as<std::vector<double>>(y_hat);
+  std::vector<double> std_control = Rcpp::as<std::vector<double>>(control);
+
+  // Call the PartialCor function
+  return PartialCorTrivar(std_y, std_y_hat, std_control, NA_rm, linear);
+}
+
 // Wrapper function to calculate the confidence interval for a correlation coefficient and return a NumericVector
 // [[Rcpp::export]]
 Rcpp::NumericVector RcppConfidence(double r, int n, double level = 0.05) {
