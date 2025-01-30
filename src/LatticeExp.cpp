@@ -252,7 +252,7 @@ Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x,
   std::vector<std::pair<int, int>> interval = {{0, n-1}};
 
   // Perform SCPCM For Lattice
-  std::vector<std::vector<double>> result = GCCM4Lattice(
+  std::vector<std::vector<double>> result = SCPCM4Lattice(
     x_std,
     y_std,
     z_std,
