@@ -327,6 +327,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppPartialCorTrivar
+double RcppPartialCorTrivar(Rcpp::NumericVector y, Rcpp::NumericVector y_hat, Rcpp::NumericVector control, bool NA_rm, bool linear);
+RcppExport SEXP _spEDM_RcppPartialCorTrivar(SEXP ySEXP, SEXP y_hatSEXP, SEXP controlSEXP, SEXP NA_rmSEXP, SEXP linearSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type y(ySEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type y_hat(y_hatSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type control(controlSEXP);
+    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
+    Rcpp::traits::input_parameter< bool >::type linear(linearSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppPartialCorTrivar(y, y_hat, control, NA_rm, linear));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppConfidence
 Rcpp::NumericVector RcppConfidence(double r, int n, double level);
 RcppExport SEXP _spEDM_RcppConfidence(SEXP rSEXP, SEXP nSEXP, SEXP levelSEXP) {
@@ -389,6 +404,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppSumNormalize", (DL_FUNC) &_spEDM_RcppSumNormalize, 2},
     {"_spEDM_RcppPearsonCor", (DL_FUNC) &_spEDM_RcppPearsonCor, 3},
     {"_spEDM_RcppPartialCor", (DL_FUNC) &_spEDM_RcppPartialCor, 5},
+    {"_spEDM_RcppPartialCorTrivar", (DL_FUNC) &_spEDM_RcppPartialCorTrivar, 5},
     {"_spEDM_RcppConfidence", (DL_FUNC) &_spEDM_RcppConfidence, 3},
     {"_spEDM_RcppLinearTrendRM", (DL_FUNC) &_spEDM_RcppLinearTrendRM, 4},
     {"_spEDM_RcppSVD", (DL_FUNC) &_spEDM_RcppSVD, 1},
