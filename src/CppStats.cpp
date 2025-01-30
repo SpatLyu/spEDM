@@ -354,8 +354,8 @@ double PartialCor(const std::vector<double>& y,
     for (size_t i = 0; i < controls.size(); ++i) {
       data.col(i) = arma::vec(clean_controls[i]);
     }
-    data.col(i) = arma::vec(y);
-    data.col(j) = arma::vec(y_hat);
+    data.col(i) = arma::vec(clean_y);
+    data.col(j) = arma::vec(clean_y_hat);
 
     // Compute the correlation matrix of the data
     arma::mat corrm = arma::cor(data);
