@@ -1,7 +1,7 @@
 methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 
-.gccm_sf_method = \(data, cause, effect, libsizes, E = c(3,3), tau = 1, k = 4, theta = 1, algorithm = "simplex",
-                    nb = NULL, threads = detectThreads(), include.self = FALSE, trendRM = TRUE, progressbar = TRUE){
+.gccm_sf_method = \(data, cause, effect, libsizes, E = c(3,3), tau = 1, k = 4, theta = 1, algorithm = "simplex", nb = NULL,
+                    threads = detectThreads(), bidirectional = TRUE, include.self = FALSE, trendRM = TRUE, progressbar = TRUE){
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
   k = .check_inputelementnum(k,2)
@@ -22,14 +22,17 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   effect = data[,effect,drop = TRUE]
 
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
-  x_xmap_y = RcppGCCM4Lattice(cause,effect,nb,libsizes,E[1],tau,k[1],simplex,theta,threads,include.self,progressbar)
+  x_xmap_y = NULL
+  if (bidirectional){
+    x_xmap_y = RcppGCCM4Lattice(cause,effect,nb,libsizes,E[1],tau,k[1],simplex,theta,threads,include.self,progressbar)
+  }
   y_xmap_x = RcppGCCM4Lattice(effect,cause,nb,libsizes,E[2],tau,k[2],simplex,theta,threads,include.self,progressbar)
 
-  return(.bind_xmapdf(x_xmap_y,y_xmap_x,varname))
+  return(.bind_xmapdf(varname,y_xmap_x,x_xmap_y))
 }
 
-.gccm_spatraster_method = \(data, cause, effect, libsizes, E = c(3,3), tau = 1, k = 4, theta = 1, algorithm = "simplex",
-                            RowCol = NULL, threads = detectThreads(), include.self = FALSE, trendRM = TRUE, progressbar = TRUE){
+.gccm_spatraster_method = \(data, cause, effect, libsizes, E = c(3,3), tau = 1, k = 4, theta = 1, algorithm = "simplex", RowCol = NULL,
+                            threads = detectThreads(), bidirectional = TRUE, include.self = FALSE, trendRM = TRUE, progressbar = TRUE){
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
   k = .check_inputelementnum(k,2)
@@ -49,10 +52,13 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   if (is.null(RowCol)) RowCol = as.matrix(expand.grid(selvec,selvec))
 
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
-  x_xmap_y = RcppGCCM4Grid(causemat,effectmat,libsizes,RowCol,E[1],tau,k[1],simplex,theta,threads,include.self,progressbar)
+  x_xmap_y = NULL
+  if (bidirectional){
+    x_xmap_y = RcppGCCM4Grid(causemat,effectmat,libsizes,RowCol,E[1],tau,k[1],simplex,theta,threads,include.self,progressbar)
+  }
   y_xmap_x = RcppGCCM4Grid(effectmat,causemat,libsizes,RowCol,E[2],tau,k[2],simplex,theta,threads,include.self,progressbar)
 
-  return(.bind_xmapdf(x_xmap_y,y_xmap_x,varname))
+  return(.bind_xmapdf(varname,y_xmap_x,x_xmap_y))
 }
 
 #' geographical convergent cross mapping
@@ -69,6 +75,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 #' @param nb (optional) The neighbours list.
 #' @param RowCol (optional) Matrix of selected row and cols numbers.
 #' @param threads (optional) Number of threads.
+#' @param bidirectional (optional) whether to identify bidirectional potential causal relationships.
 #' @param include.self (optional) Whether to include the current state when constructing the embedding vector.
 #' @param trendRM (optional) Whether to remove the linear trend.
 #' @param progressbar (optional) whether to print the progress bar.
@@ -77,6 +84,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 #' \describe{
 #' \item{\code{xmap}}{cross-mapping prediction outputs}
 #' \item{\code{varname}}{names of causal and effect variable}
+#' \item{\code{bidirectional}}{whether to identify bidirectional potential causal relationships}
 #' }
 #' @export
 #' @importFrom methods setGeneric

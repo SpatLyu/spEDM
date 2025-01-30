@@ -1,5 +1,5 @@
-.scpcm_sf_method = \(data, cause, effect, mediator, libsizes, E = 3, tau = 1, k = 4, theta = 1, algorithm = "simplex",
-                     nb = NULL, threads = detectThreads(), include.self = FALSE, trendRM = TRUE, progressbar = TRUE){
+.scpcm_sf_method = \(data, cause, effect, mediator, libsizes, E = 3, tau = 1, k = 4, theta = 1, algorithm = "simplex", nb = NULL,
+                     threads = detectThreads(), bidirectional = TRUE, include.self = FALSE, trendRM = TRUE, progressbar = TRUE){
   varname = .check_character(c(cause, effect, mediator))
   E = .check_inputelementnum(E,length(varname))
   k = .check_inputelementnum(k,2)
@@ -21,8 +21,11 @@
   medmat = as.matrix(data[,mediator])
 
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
-  x_xmap_y = RcppSCPCM4Lattice(cause,effect,medmat,nb,libsizes,E[-2],tau,k[1],simplex,theta,threads,include.self,progressbar)
+  x_xmap_y = NULL
+  if (bidirectional){
+    x_xmap_y = RcppSCPCM4Lattice(cause,effect,medmat,nb,libsizes,E[-2],tau,k[1],simplex,theta,threads,include.self,progressbar)
+  }
   y_xmap_x = RcppSCPCM4Lattice(effect,cause,medmat,nb,libsizes,E[-1],tau,k[2],simplex,theta,threads,include.self,progressbar)
 
-  return(.bind_xmapdf(x_xmap_y,y_xmap_x,varname[1:2]))
+  return(.bind_xmapdf(varname[1:2],y_xmap_x,x_xmap_y))
 }
