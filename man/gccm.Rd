@@ -18,6 +18,7 @@
   algorithm = "simplex",
   nb = NULL,
   threads = detectThreads(),
+  bidirectional = TRUE,
   include.self = FALSE,
   trendRM = TRUE,
   progressbar = TRUE
@@ -35,6 +36,7 @@
   algorithm = "simplex",
   RowCol = NULL,
   threads = detectThreads(),
+  bidirectional = TRUE,
   include.self = FALSE,
   trendRM = TRUE,
   progressbar = TRUE
@@ -63,6 +65,8 @@
 
 \item{threads}{(optional) Number of threads.}
 
+\item{bidirectional}{(optional) whether to identify bidirectional potential causal relationships.}
+
 \item{include.self}{(optional) Whether to include the current state when constructing the embedding vector.}
 
 \item{trendRM}{(optional) Whether to remove the linear trend.}
@@ -76,6 +80,7 @@ A list.
 \describe{
 \item{\code{xmap}}{cross-mapping prediction outputs}
 \item{\code{varname}}{names of causal and effect variable}
+\item{\code{bidirectional}}{whether to identify bidirectional potential causal relationships}
 }
 }
 \description{

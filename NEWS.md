@@ -1,5 +1,7 @@
 # spEDM 1.3
 
+* Support for calculating unidirectional mappings in the `gccm` function (#117).
+
 * Relax `gccm` C++ source code `libsizes` minimum value constraint of `E+2` (#109).
 
 * Include an option in `gccm` to determine whether to include the current state when generating embedding vectors (#103).
