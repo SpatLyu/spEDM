@@ -28,7 +28,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   }
   y_xmap_x = RcppGCCM4Lattice(effect,cause,nb,libsizes,E[2],tau,k[2],simplex,theta,threads,include.self,progressbar)
 
-  return(.bind_xmapdf(varname,y_xmap_x,x_xmap_y))
+  return(.bind_xmapdf(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
 
 .gccm_spatraster_method = \(data, cause, effect, libsizes, E = c(3,3), tau = 1, k = 4, theta = 1, algorithm = "simplex", RowCol = NULL,
@@ -58,7 +58,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   }
   y_xmap_x = RcppGCCM4Grid(effectmat,causemat,libsizes,RowCol,E[2],tau,k[2],simplex,theta,threads,include.self,progressbar)
 
-  return(.bind_xmapdf(varname,y_xmap_x,x_xmap_y))
+  return(.bind_xmapdf(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
 
 #' geographical convergent cross mapping
