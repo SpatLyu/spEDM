@@ -96,6 +96,7 @@ std::vector<std::pair<int, double>> SCPCMSingle4Lattice(
 ) {
   int n = x_vectors.size();
   std::vector<std::pair<int, double>> x_xmap_y;
+  double rho;
 
   if (lib_size == max_lib_size) { // No possible library variation if using all vectors
     std::vector<bool> lib_indices(n, false);
@@ -104,7 +105,6 @@ std::vector<std::pair<int, double>> SCPCMSingle4Lattice(
     }
 
     // Run partial cross map and store results
-    double rho;
     if (simplex) {
       rho = PartialSimplex4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, b, includeself);
     } else {
@@ -130,7 +130,6 @@ std::vector<std::pair<int, double>> SCPCMSingle4Lattice(
       }
 
       // Run partial cross map and store results
-      double rho;
       if (simplex) {
         rho = PartialSimplex4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, b, includeself);
       } else {
