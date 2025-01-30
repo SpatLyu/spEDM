@@ -6,10 +6,10 @@ print.ccm_res = \(x,...){
   bidirectional = x$bidirectional
 
   if (bidirectional){
-    resdf = resdf[,c("libsizes", "x_xmap_y_mean", "y_xmap_x_mean")]
+    resdf = resdf[,c("libsizes", "y_xmap_x_mean", "x_xmap_y_mean")]
     names(resdf) = c('libsizes',
-                     paste0(x$varname[2], "->", x$varname[1]),
-                     paste0(x$varname[1], "->", x$varname[2]))
+                     paste0(x$varname[1], "->", x$varname[2]),
+                     paste0(x$varname[2], "->", x$varname[1]))
   } else {
     resdf = resdf[,c("libsizes", "y_xmap_x_mean")]
     names(resdf) = c('libsizes',
