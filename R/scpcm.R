@@ -5,10 +5,10 @@
   k = .check_inputelementnum(k,2)
   coords = as.data.frame(sdsfun::sf_coordinates(data))
   if (is.null(nb)) nb = sdsfun::spdep_nb(data)
-  if (length(cause) != length(nb)) stop("Incompatible Data Dimensions!")
+  if (nrow(data) != length(nb)) stop("Incompatible Data Dimensions!")
   data = sf::st_drop_geometry(data)
   data = data[,varname]
-  
+
   if (trendRM){
     data = dplyr::bind_cols(data,coords)
     for (i in 1:length(varname)){

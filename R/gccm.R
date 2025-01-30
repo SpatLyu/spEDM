@@ -6,7 +6,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   E = .check_inputelementnum(E,2)
   k = .check_inputelementnum(k,2)
   if (is.null(nb)) nb = sdsfun::spdep_nb(data)
-  if (length(cause) != length(nb)) stop("Incompatible Data Dimensions!")
+  if (nrow(data) != length(nb)) stop("Incompatible Data Dimensions!")
   coords = as.data.frame(sdsfun::sf_coordinates(data))
   data = sf::st_drop_geometry(data)
   data = data[,varname]
