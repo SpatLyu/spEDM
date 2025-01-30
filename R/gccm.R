@@ -2,19 +2,24 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 
 .gccm_sf_method = \(data, cause, effect, libsizes, E = c(3,3), tau = 1, k = 4, theta = 1, algorithm = "simplex",
                     nb = NULL, threads = detectThreads(), include.self = FALSE, trendRM = TRUE, progressbar = TRUE){
-  varname = .check_cecharacter(cause, effect)
-  E = .check_input2element(E)
-  k = .check_input2element(k)
-  coords = sdsfun::sf_coordinates(data)
-  cause = data[,cause,drop = TRUE]
-  effect = data[,effect,drop = TRUE]
+  varname = .check_character(cause, effect)
+  E = .check_inputelementnum(E,2)
+  k = .check_inputelementnum(k,2)
   if (is.null(nb)) nb = sdsfun::spdep_nb(data)
   if (length(cause) != length(nb)) stop("Incompatible Data Dimensions!")
+  coords = as.data.frame(sdsfun::sf_coordinates(data))
+  data = sf::st_drop_geometry(data)
+  data = data[,varname]
+
   if (trendRM){
-    dtf = data.frame(cause = cause, effect = effect, x = coords[,1], y = coords[,2])
-    cause = sdsfun::rm_lineartrend("cause~x+y", data = dtf)
-    effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
+    data = dplyr::bind_cols(data,coords)
+    for (i in 1:length(varname)){
+      data[,varname[i]] = sdsfun::rm_lineartrend(paste0(varname[i],"~X+Y"), data = data)
+    }
   }
+
+  cause = data[,cause,drop = TRUE]
+  effect = data[,effect,drop = TRUE]
 
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
   x_xmap_y = RcppGCCM4Lattice(cause,effect,nb,libsizes,E[1],tau,k[1],simplex,theta,threads,include.self,progressbar)
@@ -25,9 +30,9 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 
 .gccm_spatraster_method = \(data, cause, effect, libsizes, E = c(3,3), tau = 1, k = 4, theta = 1, algorithm = "simplex",
                             RowCol = NULL, threads = detectThreads(), include.self = FALSE, trendRM = TRUE, progressbar = TRUE){
-  varname = .check_cecharacter(cause, effect)
-  E = .check_input2element(E)
-  k = .check_input2element(k)
+  varname = .check_character(cause, effect)
+  E = .check_inputelementnum(E,2)
+  k = .check_inputelementnum(k,2)
   data = data[[c(cause,effect)]]
   names(data) = c("cause","effect")
 

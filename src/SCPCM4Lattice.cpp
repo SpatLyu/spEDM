@@ -96,6 +96,7 @@ std::vector<std::pair<int, double>> SCPCMSingle4Lattice(
 ) {
   int n = x_vectors.size();
   std::vector<std::pair<int, double>> x_xmap_y;
+  double rho;
 
   if (lib_size == max_lib_size) { // No possible library variation if using all vectors
     std::vector<bool> lib_indices(n, false);
@@ -104,7 +105,6 @@ std::vector<std::pair<int, double>> SCPCMSingle4Lattice(
     }
 
     // Run partial cross map and store results
-    double rho;
     if (simplex) {
       rho = PartialSimplex4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, b, includeself);
     } else {
@@ -130,7 +130,6 @@ std::vector<std::pair<int, double>> SCPCMSingle4Lattice(
       }
 
       // Run partial cross map and store results
-      double rho;
       if (simplex) {
         rho = PartialSimplex4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, b, includeself);
       } else {
@@ -151,8 +150,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
     const std::vector<int>& lib_sizes,                  // Vector of library sizes to use
     const std::vector<std::pair<int, int>>& lib,        // Matrix (n x 2) using n sequences of data to construct libraries
     const std::vector<std::pair<int, int>>& pred,       // Matrix (n x 2) using n sequences of data to predict from
-    const std::vector<int>& conEs,                      // Number of dimensions for the attractor reconstruction with control variables
-    int E,                                              // Number of dimensions for the attractor reconstruction
+    const std::vector<int>& Es,                         // Number of dimensions for the attractor reconstruction with the x and control variables
     int tau,                                            // Spatial lag for the lagged-vector construction
     int b,                                              // Number of nearest neighbors to use for prediction
     bool simplex,                                       // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
@@ -161,21 +159,25 @@ std::vector<std::vector<double>> SCPCM4Lattice(
     bool includeself,                                   // Whether to include the current state when constructing the embedding vector
     bool progressbar = true                             // Whether to print the progress bar
 ) {
-  // If b is not provided correctly, default it to E + 2
+  int Ex = Es[0];
+  std::vector<int> conEs = Es;
+  conEs.erase(conEs.begin());
+
+  // If b is not provided correctly, default it to Ex + 2
   if (b <= 0) {
-    b = E + 2;
+    b = Ex + 2;
   }
 
   size_t threads_sizet = static_cast<size_t>(threads);
   unsigned int max_threads = std::thread::hardware_concurrency();
   threads_sizet = std::min(static_cast<size_t>(max_threads), threads_sizet);
 
-  std::vector<std::vector<double>> x_vectors = GenLatticeEmbeddings(x,nb_vec,E,includeself);
+  std::vector<std::vector<double>> x_vectors = GenLatticeEmbeddings(x,nb_vec,Ex,includeself);
   int n = x_vectors.size();
   // Setup pred_indices
   std::vector<bool> pred_indices(n, false);
   for (const auto& p : pred) {
-    int row_start = p.first + (E - 1) * tau;
+    int row_start = p.first + (Ex - 1) * tau;
     int row_end = p.second;
     if (row_end > row_start && row_start >= 0 && row_end < n) {
       std::fill(pred_indices.begin() + row_start, pred_indices.begin() + row_end + 1, true);
@@ -185,7 +187,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
   // Setup lib_indices
   std::vector<bool> lib_indices(n, false);
   for (const auto& l : lib) {
-    int row_start = l.first + (E - 1) * tau;
+    int row_start = l.first + (Ex - 1) * tau;
     int row_end = l.second;
     if (row_end > row_start && row_start >= 0 && row_end < n) {
       std::fill(lib_indices.begin() + row_start, lib_indices.begin() + row_end + 1, true);
@@ -206,9 +208,9 @@ std::vector<std::vector<double>> SCPCM4Lattice(
   std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
                  [&](int size) { return std::min(size, max_lib_size); });
 
-  // Ensure the minimum value in unique_lib_sizes is E + 2 (uncomment this section if required)
+  // Ensure the minimum value in unique_lib_sizes is Ex + 2 (uncomment this section if required)
   // std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
-  //                [&](int size) { return std::max(size, E + 2); });
+  //                [&](int size) { return std::max(size, Ex + 2); });
 
   // Remove duplicates
   unique_lib_sizes.erase(std::unique(unique_lib_sizes.begin(), unique_lib_sizes.end()), unique_lib_sizes.end());
@@ -238,7 +240,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
         possible_lib_indices,
         pred_indices,
         conEs,
-        E,
+        Ex,
         b,
         simplex,
         theta,
@@ -261,7 +263,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
         possible_lib_indices,
         pred_indices,
         conEs,
-        E,
+        Ex,
         b,
         simplex,
         theta,

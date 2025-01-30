@@ -1,21 +1,16 @@
-.check_tgcharacter = \(tg){
-  if (!inherits(tg,"character")) {
-    stop("`target` must be character.")
+.check_character = \(x,...){
+  xstrs = c(x,...)
+  for (i in xstrs){
+    if (!inherits(i,"character")) {
+      stop("Please check the characters in the function input.")
+    }
   }
-  return(tg)
+  return(xstrs)
 }
 
-.check_cecharacter = \(cause,effect){
-  if (!inherits(cause,"character") || !inherits(effect,"character")) {
-    stop("The `cause` and `effect` must be character.")
-  }
-  varname = c(cause,effect)
-  return(varname)
-}
-
-.check_input2element = \(x){
-  if (length(x) == 1) x = rep(x,times = 2)
-  if (length(x) > 2) x = x[c(1,2)]
+.check_inputelementnum = \(x,n){
+  if (length(x) == 1) x = rep(x,times = n)
+  if (length(x) > 2) x = x[seq(1,n,by = 1)]
   return(x)
 }
 
@@ -24,13 +19,13 @@
 }
 
 .uni_lattice = \(data,target){
-  target = .check_tgcharacter(target)
+  target = .check_character(target)
   res = data[,target,drop = TRUE]
   return(res)
 }
 
 .uni_grid = \(data,target){
-  target = .check_tgcharacter(target)
+  target = .check_character(target)
   data = data[[target]]
   res = matrix(terra::values(data),nrow = terra::nrow(data),byrow = TRUE)
   return(res)

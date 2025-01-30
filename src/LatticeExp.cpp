@@ -2,6 +2,7 @@
 #include "CppLatticeUtils.h"
 #include "Forecast4Lattice.h"
 #include "GCCM4Lattice.h"
+#include "SCPCM4Lattice.h"
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
 
@@ -192,6 +193,74 @@ Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,
     interval,
     interval,
     E,
+    tau,
+    b,
+    simplex,
+    theta,
+    threads,
+    progressbar);
+
+  // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
+  Rcpp::NumericMatrix resultMatrix(result.size(), 5);
+  for (size_t i = 0; i < result.size(); ++i) {
+    resultMatrix(i, 0) = result[i][0];
+    resultMatrix(i, 1) = result[i][1];
+    resultMatrix(i, 2) = result[i][2];
+    resultMatrix(i, 3) = result[i][3];
+    resultMatrix(i, 4) = result[i][4];
+  }
+
+  return resultMatrix;
+}
+
+// Wrapper function to perform SCPCM Lattice and return a NumericMatrix
+// predict y based on x ====> x xmap y ====> y causes x (account for controls)
+// [[Rcpp::export]]
+Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x,
+                                      const Rcpp::NumericVector& y,
+                                      const Rcpp::NumericMatrix& z,
+                                      const Rcpp::List& nb,
+                                      const Rcpp::IntegerVector& libsizes,
+                                      const Rcpp::IntegerVector& E,
+                                      int tau,
+                                      int b,
+                                      bool simplex,
+                                      double theta,
+                                      int threads,
+                                      bool includeself,
+                                      bool progressbar) {
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
+  std::vector<double> y_std = Rcpp::as<std::vector<double>>(y);
+
+  // Convert Rcpp NumericMatrix to std::vector of std::vectors
+  std::vector<std::vector<double>> z_std(z.ncol());
+  for (int i = 0; i < z.ncol(); ++i) {
+    Rcpp::NumericVector covvar = z.column(i);
+    z_std[i] = Rcpp::as<std::vector<double>>(covvar);
+  }
+
+  // Convert Rcpp::List to std::vector<std::vector<int>>
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
+
+  // Convert Rcpp::IntegerVector to std::vector<int>
+  std::vector<int> libsizes_std = Rcpp::as<std::vector<int>>(libsizes);
+  std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
+
+  // Define the interval [0, n-1] as a std::vector<std::pair<int, int>>
+  int n = nb_vec.size();
+  std::vector<std::pair<int, int>> interval = {{0, n-1}};
+
+  // Perform SCPCM For Lattice
+  std::vector<std::vector<double>> result = SCPCM4Lattice(
+    x_std,
+    y_std,
+    z_std,
+    nb_vec,
+    libsizes_std,
+    interval,
+    interval,
+    E_std,
     tau,
     b,
     simplex,

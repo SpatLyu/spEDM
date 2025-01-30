@@ -45,6 +45,10 @@ RcppGCCM4Lattice <- function(x, y, nb, libsizes, E, tau, b, simplex, theta, thre
     .Call(`_spEDM_RcppGCCM4Lattice`, x, y, nb, libsizes, E, tau, b, simplex, theta, threads, includeself, progressbar)
 }
 
+RcppSCPCM4Lattice <- function(x, y, z, nb, libsizes, E, tau, b, simplex, theta, threads, includeself, progressbar) {
+    .Call(`_spEDM_RcppSCPCM4Lattice`, x, y, z, nb, libsizes, E, tau, b, simplex, theta, threads, includeself, progressbar)
+}
+
 RcppMean <- function(vec, NA_rm = FALSE) {
     .Call(`_spEDM_RcppMean`, vec, NA_rm)
 }
