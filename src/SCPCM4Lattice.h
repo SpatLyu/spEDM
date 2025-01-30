@@ -40,8 +40,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
     const std::vector<int>& lib_sizes,                  // Vector of library sizes to use
     const std::vector<std::pair<int, int>>& lib,        // Matrix (n x 2) using n sequences of data to construct libraries
     const std::vector<std::pair<int, int>>& pred,       // Matrix (n x 2) using n sequences of data to predict from
-    const std::vector<int>& conEs,                      // Number of dimensions for the attractor reconstruction with control variables
-    int E,                                              // Number of dimensions for the attractor reconstruction
+    const std::vector<int>& Es,                         // Number of dimensions for the attractor reconstruction with the x and control variables
     int tau,                                            // Spatial lag for the lagged-vector construction
     int b,                                              // Number of nearest neighbors to use for prediction
     bool simplex,                                       // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
