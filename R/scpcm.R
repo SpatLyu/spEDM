@@ -11,7 +11,7 @@
 
   if (trendRM){
     data = dplyr::bind_cols(data,coords)
-    for (i in 1:length(varname)){
+    for (i in seq_along(varname)){
       data[,varname[i]] = sdsfun::rm_lineartrend(paste0(varname[i],"~X+Y"), data = data)
     }
   }
@@ -29,3 +29,37 @@
 
   return(.bind_xmapdf2(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
+
+.scpcm_spatraster_method = \(data, cause, effect, mediator, libsizes, E = 3, tau = 1, k = 4, theta = 1, algorithm = "simplex", RowCol = NULL,
+                             threads = detectThreads(), bidirectional = TRUE, cumulate = FALSE, include.self = TRUE, trendRM = TRUE, progressbar = TRUE){
+  varname = .check_character(cause, effect, mediator)
+  E = .check_inputelementnum(E,length(varname))
+  k = .check_inputelementnum(k,2)
+  data = data[[varname]]
+  zs = paste0("z",seq_along(mediator))
+  names(data) = c(c("cause","effect"),zs)
+
+  dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
+  if (trendRM){
+    for (i in seq_along(varname)){
+      dtf[,varname[i]] = sdsfun::rm_lineartrend(paste0(varname[i],"~x+y"), data = dtf)
+    }
+  }
+  causemat = matrix(dtf[,"cause"],nrow = terra::nrow(data),byrow = TRUE)
+  effectmat = matrix(dtf[,"effect"],nrow = terra::nrow(data),byrow = TRUE)
+  medmat = as.matrix(dtf[,zs])
+
+  maxlibsize = min(dim(causemat))
+  selvec = seq(5,maxlibsize,5)
+  if (is.null(RowCol)) RowCol = as.matrix(expand.grid(selvec,selvec))
+
+  simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
+  x_xmap_y = NULL
+  if (bidirectional){
+    x_xmap_y = RcppSCPCM4Grid(causemat,effectmat,medmat,libsizes,E[-2],RowCol,tau,k[1],simplex,theta,threads,cumulate,include.self,progressbar)
+  }
+  y_xmap_x = RcppSCPCM4Grid(effectmat,causemat,medmat,libsizes,E[-1],RowCol,tau,k[2],simplex,theta,threads,cumulate,include.self,progressbar)
+
+  return(.bind_xmapdf2(varname,x_xmap_y,y_xmap_x,bidirectional))
+}
+

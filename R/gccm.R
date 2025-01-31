@@ -44,8 +44,8 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
     dtf$cause = sdsfun::rm_lineartrend("cause~x+y", data = dtf)
     dtf$effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
   }
-  causemat = matrix(dtf[,3],nrow = terra::nrow(data),byrow = TRUE)
-  effectmat = matrix(dtf[,4],nrow = terra::nrow(data),byrow = TRUE)
+  causemat = matrix(dtf[,"cause"],nrow = terra::nrow(data),byrow = TRUE)
+  effectmat = matrix(dtf[,"effect"],nrow = terra::nrow(data),byrow = TRUE)
 
   maxlibsize = min(dim(causemat))
   selvec = seq(5,maxlibsize,5)
