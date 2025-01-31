@@ -56,9 +56,9 @@ double PartialCorTrivar(const std::vector<double>& y,
                         bool NA_rm = false,
                         bool linear = false);
 
-double CppSignificance(double r, int n);
+double CppSignificance(double r, int n, int k = 0);
 
-std::vector<double> CppConfidence(double r, int n,
+std::vector<double> CppConfidence(double r, int n, int k = 0,
                                   double level = 0.05);
 
 std::vector<std::vector<std::vector<double>>> CppSVD(const std::vector<std::vector<double>>& X);
