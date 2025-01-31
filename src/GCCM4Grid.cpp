@@ -229,8 +229,8 @@ std::vector<std::vector<double>> GCCM4Grid(
   // Calculate significance and confidence interval for each result
   for (size_t i = 0; i < final_results.size(); ++i) {
     double rho = final_results[i][1];
-    double significance = CppSignificance(rho, n);
-    std::vector<double> confidence_interval = CppConfidence(rho, n);
+    double significance = CppCorSignificance(rho, n);
+    std::vector<double> confidence_interval = CppCorConfidence(rho, n);
 
     final_results[i].push_back(significance);
     final_results[i].push_back(confidence_interval[0]);
