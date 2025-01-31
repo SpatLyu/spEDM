@@ -21,6 +21,34 @@ int LocateGridIndices(int curRow, int curCol, int totalRow, int totalCol) {
   return (curRow - 1) * totalCol + curCol - 1;
 }
 
+// Function to save the grid data matrix format as a vector row by row
+std::vector<double> GridMat2Vec(const std::vector<std::vector<double>>& Matrix){
+  std::vector<double> vec;
+  for (const auto& row : Matrix) {
+    vec.insert(vec.end(), row.begin(), row.end());
+  }
+  return vec;
+}
+
+// Function to save the grid data vector format as a matrix by rows
+std::vector<std::vector<double>> GridVec2Mat(const std::vector<double>& Vec,
+                                             int NROW){
+  // Calculate the number of columns based on the vector size and number of rows
+  int NCOL = Vec.size() / NROW;
+
+  // Create the resulting matrix with NROW rows and NCOL columns
+  std::vector<std::vector<double>> matrix(NROW, std::vector<double>(NCOL));
+
+  // Fill the matrix with values from the input vector
+  for (int i = 0; i < NROW; ++i) {
+    for (int j = 0; j < NCOL; ++j) {
+      matrix[i][j] = Vec[i * NCOL + j];
+    }
+  }
+
+  return matrix;
+}
+
 // Note that the return value is the value of the lagged order position, not the index.
 std::vector<std::vector<double>> CppLaggedVar4Grid(
     const std::vector<std::vector<double>>& mat,

@@ -23,6 +23,13 @@
 int LocateGridIndices(int curRow, int curCol,
                       int totalRow, int totalCol);
 
+// Function to save the grid data matrix format as a vector row by row
+std::vector<double> GridMat2Vec(const std::vector<std::vector<double>>& Matrix);
+
+// Function to save the grid data vector format as a matrix by rows
+std::vector<std::vector<double>> GridVec2Mat(const std::vector<double>& Vec,
+                                             int NROW);
+
 std::vector<std::vector<double>> CppLaggedVar4Grid(
     const std::vector<std::vector<double>>& mat,
     int lagNum
