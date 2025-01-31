@@ -22,11 +22,11 @@ std::vector<double> PartialSimplex4Grid(
     const std::vector<bool>& lib_indices,               // Vector of T/F values (which states to include when searching for neighbors)
     const std::vector<bool>& pred_indices,              // Vector of T/F values (which states to predict from)
     const std::vector<int>& conEs,                      // Number of dimensions for the attractor reconstruction with control variables
+    int nrow,                                           // Number of rows fot the input spatial grid data
     int num_neighbors,                                  // Number of neighbors to use for simplex projection
     bool cumulate,                                      // Whether to cumulate the partial correlations
     bool includeself                                    // Whether to include the current state when constructing the embedding vector
 ){
-  int nrow = controls[0].size();
   int n_controls = controls.size();
   std::vector<double> rho(2);
 
@@ -78,12 +78,12 @@ std::vector<double> PartialSMap4Grid(
     const std::vector<bool>& lib_indices,               // Vector of T/F values (which states to include when searching for neighbors)
     const std::vector<bool>& pred_indices,              // Vector of T/F values (which states to predict from)
     const std::vector<int>& conEs,                      // Number of dimensions for the attractor reconstruction with control variables
+    int nrow,                                           // Number of rows fot the input spatial grid data
     int num_neighbors,                                  // Number of neighbors to use for simplex projection
     double theta,                                       // Weighting parameter for distances
     bool cumulate,                                      // Whether to cumulate the partial correlations
     bool includeself                                    // Whether to include the current state when constructing the embedding vector
 ){
-  int nrow = controls[0].size();
   int n_controls = controls.size();
   std::vector<double> rho(2);
 

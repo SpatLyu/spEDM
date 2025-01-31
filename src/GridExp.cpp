@@ -226,7 +226,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
 Rcpp::NumericMatrix RcppSCPCM4Grid(
     const Rcpp::NumericMatrix& xMatrix,
     const Rcpp::NumericMatrix& yMatrix,
-    const Rcpp::NumericMatrix& zMatrixs,
+    const Rcpp::NumericMatrix& zMatrix,
     const Rcpp::IntegerVector& lib_sizes,
     const Rcpp::IntegerMatrix& pred,
     int E,
