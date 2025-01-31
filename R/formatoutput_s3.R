@@ -18,6 +18,21 @@ print.ccm_res = \(x,...){
   print(resdf)
 }
 
+#' print pcm result
+#' @noRd
+#' @export
+print.pcm_res = \(x,...){
+  pxmap = x[-2]
+  xmap = x[-1]
+  class(pxmap) = "ccm"
+  class(xmap) = "ccm"
+
+  cat("partial cross mapping prediction: \n")
+  print.ccm_res(pxamp)
+  cat("cross mapping prediction: \n")
+  print.ccm_res(xamp)
+}
+
 #' plot ccm result
 #' @noRd
 #' @export
@@ -71,4 +86,19 @@ plot.ccm_res = \(x, family = "serif", xbreaks = NULL, xlimits = NULL,
                    legend.background = ggplot2::element_rect(fill = 'transparent'),
                    legend.text = ggplot2::element_text(family = family))
   return(fig1)
+}
+
+#' plot pcm result
+#' @noRd
+#' @export
+plot.pcm_res = \(x, ...){
+  pxmap = x[-2]
+  xmap = x[-1]
+  class(pxmap) = "ccm"
+  class(xmap) = "ccm"
+
+  cat("plot partial cross mapping prediction: \n")
+  print.ccm_res(pxamp,...)
+  cat("plot cross mapping prediction: \n")
+  print.ccm_res(xamp,...)
 }
