@@ -16,15 +16,15 @@
 // [[Rcpp::depends(RcppThread)]]
 
 std::vector<double> PartialSimplex4Grid(
-    const std::vector<std::vector<double>>& vectors,                 // Reconstructed state-space (each row is a separate vector/state)
-    const std::vector<double>& target,                               // Spatial cross-section series to be used as the target (should line up with vectors)
-    const std::vector<std::vector<std::vector<double>>>& controls,   // Cross-sectional data of control variables (**each matirx stored by row**)
-    const std::vector<bool>& lib_indices,                            // Vector of T/F values (which states to include when searching for neighbors)
-    const std::vector<bool>& pred_indices,                           // Vector of T/F values (which states to predict from)
-    const std::vector<int>& conEs,                                   // Number of dimensions for the attractor reconstruction with control variables
-    int num_neighbors,                                               // Number of neighbors to use for simplex projection
-    bool cumulate,                                                   // Whether to cumulate the partial correlations
-    bool includeself                                                 // Whether to include the current state when constructing the embedding vector
+    const std::vector<std::vector<double>>& vectors,    // Reconstructed state-space (each row is a separate vector/state)
+    const std::vector<double>& target,                  // Spatial cross-section series to be used as the target (should line up with vectors)
+    const std::vector<std::vector<double>>& controls,   // Cross-sectional data of control variables (**each matirx stored by row**)
+    const std::vector<bool>& lib_indices,               // Vector of T/F values (which states to include when searching for neighbors)
+    const std::vector<bool>& pred_indices,              // Vector of T/F values (which states to predict from)
+    const std::vector<int>& conEs,                      // Number of dimensions for the attractor reconstruction with control variables
+    int num_neighbors,                                  // Number of neighbors to use for simplex projection
+    bool cumulate,                                      // Whether to cumulate the partial correlations
+    bool includeself                                    // Whether to include the current state when constructing the embedding vector
 ){
   int nrow = controls[0].size();
   int n_controls = controls.size();
@@ -32,16 +32,14 @@ std::vector<double> PartialSimplex4Grid(
 
   if (cumulate) {
     std::vector<double> temp_pred;
-    std::vector<double> temp_convec;
     std::vector<std::vector<double>> temp_conmat;
     std::vector<std::vector<double>> temp_embedding;
 
     for (int i = 0; i < n_controls; ++i) {
-      temp_convec = GridMat2Vec(controls[i]);
       if (i == 0){
-        temp_pred = SimplexProjectionPrediction(vectors, temp_convec, lib_indices, pred_indices, num_neighbors);
+        temp_pred = SimplexProjectionPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors);
       } else {
-        temp_pred = SimplexProjectionPrediction(temp_embedding, temp_convec, lib_indices, pred_indices, num_neighbors);
+        temp_pred = SimplexProjectionPrediction(temp_embedding, controls[i], lib_indices, pred_indices, num_neighbors);
       }
       temp_conmat = GridVec2Mat(temp_pred,nrow);
       temp_embedding = GenGridEmbeddings(temp_conmat,conEs[i],includeself);
@@ -55,13 +53,11 @@ std::vector<double> PartialSimplex4Grid(
   } else {
     std::vector<std::vector<double>> con_pred(n_controls);
     std::vector<double> temp_pred;
-    std::vector<double> temp_convec;
     std::vector<std::vector<double>> temp_conmat;
     std::vector<std::vector<double>> temp_embedding;
 
     for (int i = 0; i < n_controls; ++i) {
-      temp_convec = GridMat2Vec(controls[i]);
-      temp_pred = SimplexProjectionPrediction(vectors, temp_convec, lib_indices, pred_indices, num_neighbors);
+      temp_pred = SimplexProjectionPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors);
       temp_conmat = GridVec2Mat(temp_pred,nrow);
       temp_embedding = GenGridEmbeddings(temp_conmat,conEs[i],includeself);
       temp_pred = SimplexProjectionPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors);
@@ -76,16 +72,16 @@ std::vector<double> PartialSimplex4Grid(
 }
 
 std::vector<double> PartialSMap4Grid(
-    const std::vector<std::vector<double>>& vectors,                 // Reconstructed state-space (each row is a separate vector/state)
-    const std::vector<double>& target,                               // Spatial cross-section series to be used as the target (should line up with vectors)
-    const std::vector<std::vector<std::vector<double>>>& controls,   // Cross-sectional data of control variables (**each matirx stored by row**)
-    const std::vector<bool>& lib_indices,                            // Vector of T/F values (which states to include when searching for neighbors)
-    const std::vector<bool>& pred_indices,                           // Vector of T/F values (which states to predict from)
-    const std::vector<int>& conEs,                                   // Number of dimensions for the attractor reconstruction with control variables
-    int num_neighbors,                                               // Number of neighbors to use for simplex projection
-    double theta,                                                    // Weighting parameter for distances
-    bool cumulate,                                                   // Whether to cumulate the partial correlations
-    bool includeself                                                 // Whether to include the current state when constructing the embedding vector
+    const std::vector<std::vector<double>>& vectors,    // Reconstructed state-space (each row is a separate vector/state)
+    const std::vector<double>& target,                  // Spatial cross-section series to be used as the target (should line up with vectors)
+    const std::vector<std::vector<double>>& controls,   // Cross-sectional data of control variables (**each variable stored by one row**)
+    const std::vector<bool>& lib_indices,               // Vector of T/F values (which states to include when searching for neighbors)
+    const std::vector<bool>& pred_indices,              // Vector of T/F values (which states to predict from)
+    const std::vector<int>& conEs,                      // Number of dimensions for the attractor reconstruction with control variables
+    int num_neighbors,                                  // Number of neighbors to use for simplex projection
+    double theta,                                       // Weighting parameter for distances
+    bool cumulate,                                      // Whether to cumulate the partial correlations
+    bool includeself                                    // Whether to include the current state when constructing the embedding vector
 ){
   int nrow = controls[0].size();
   int n_controls = controls.size();
@@ -93,16 +89,14 @@ std::vector<double> PartialSMap4Grid(
 
   if (cumulate){
     std::vector<double> temp_pred;
-    std::vector<double> temp_convec;
     std::vector<std::vector<double>> temp_conmat;
     std::vector<std::vector<double>> temp_embedding;
 
     for (int i = 0; i < n_controls; ++i) {
-      temp_convec = GridMat2Vec(controls[i]);
       if (i == 0){
-        temp_pred = SMapPrediction(vectors, temp_convec, lib_indices, pred_indices, num_neighbors, theta);
+        temp_pred = SMapPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors, theta);
       } else {
-        temp_pred = SMapPrediction(temp_embedding, temp_convec, lib_indices, pred_indices, num_neighbors, theta);
+        temp_pred = SMapPrediction(temp_embedding, controls[i], lib_indices, pred_indices, num_neighbors, theta);
       }
       temp_conmat = GridVec2Mat(temp_pred,nrow);
       temp_embedding = GenGridEmbeddings(temp_conmat,conEs[i],includeself);
@@ -116,13 +110,11 @@ std::vector<double> PartialSMap4Grid(
   } else {
     std::vector<std::vector<double>> con_pred(n_controls);
     std::vector<double> temp_pred;
-    std::vector<double> temp_convec;
     std::vector<std::vector<double>> temp_conmat;
     std::vector<std::vector<double>> temp_embedding;
 
     for (int i = 0; i < n_controls; ++i) {
-      temp_convec = GridMat2Vec(controls[i]);
-      temp_pred = SMapPrediction(vectors, temp_convec, lib_indices, pred_indices, num_neighbors, theta);
+      temp_pred = SMapPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors, theta);
       temp_conmat = GridVec2Mat(temp_pred,nrow);
       temp_embedding = GenGridEmbeddings(temp_conmat,conEs[i],includeself);
       temp_pred = SMapPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors, theta);
@@ -145,7 +137,7 @@ std::vector<double> PartialSMap4Grid(
  *
  * @param xEmbedings   A 2D matrix of the predictor variable's embeddings (spatial cross-section data).
  * @param yPred        A 1D vector of the response variable's values (spatial cross-section data).
- * @param controls     A vector of 2D matrices that stores the control variables.
+ * @param controls     A 2D matrix that stores the control variables.
  * @param lib_size     The size of the library (number of spatial units) used for prediction.
  * @param pred         A vector of pairs representing the indices (row, column) of spatial units to be predicted.
  * @param conEs        Number of dimensions for the attractor reconstruction with control variables
@@ -161,7 +153,7 @@ std::vector<double> PartialSMap4Grid(
 std::vector<PartialCorRes> SCPCMSingle4Grid(
     const std::vector<std::vector<double>>& xEmbedings,
     const std::vector<double>& yPred,
-    const std::vector<std::vector<std::vector<double>>>& controls,
+    const std::vector<std::vector<double>>& controls,
     int lib_size,
     const std::vector<std::pair<int, int>>& pred,
     const std::vector<int>& conEs,
@@ -234,7 +226,7 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
  *
  * @param xMatrix      A 2D matrix of the predictor variable's values (spatial cross-section data).
  * @param yMatrix      A 2D matrix of the response variable's values (spatial cross-section data).
- * @param zMatrixs     A vector of 2D matrices that stores the control variables.
+ * @param zMatrixs     A 2D matrix that stores the control variables.
  * @param lib_sizes    A vector of library sizes (number of spatial units) to use for prediction.
  * @param pred         A vector of pairs representing the indices (row, column) of spatial units to be predicted.
  * @param Es           Number of dimensions for the attractor reconstruction with the x and control variables.
@@ -250,20 +242,20 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
  *                     significance, and confidence interval bounds.
  */
 std::vector<std::vector<double>> SCPCM4Grid(
-    const std::vector<std::vector<double>>& xMatrix,               // Two dimension matrix of X variable
-    const std::vector<std::vector<double>>& yMatrix,               // Two dimension matrix of Y variable
-    const std::vector<std::vector<std::vector<double>>>& zMatrixs, // vector of 2D matrices that stores the control variables
-    const std::vector<int>& lib_sizes,                             // Vector of library sizes to use
-    const std::vector<std::pair<int, int>>& pred,                  // Indices of spatial units to be predicted
-    const std::vector<int>& Es,                                    // Number of dimensions for the attractor reconstruction with the x and control variables
-    int tau,                                                       // Step of spatial lags
-    int b,                                                         // Number of nearest neighbors to use for prediction
-    bool simplex,                                                  // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
-    double theta,                                                  // Distance weighting parameter for the local neighbours in the manifold
-    int threads,                                                   // Number of threads used from the global pool
-    bool cumulate,                                                 // Whether to cumulate the partial correlations
-    bool includeself,                                              // Whether to include the current state when constructing the embedding vector
-    bool progressbar                                               // Whether to print the progress bar
+    const std::vector<std::vector<double>>& xMatrix,     // Two dimension matrix of X variable
+    const std::vector<std::vector<double>>& yMatrix,     // Two dimension matrix of Y variable
+    const std::vector<std::vector<double>>& zMatrixs,    // 2D matrix that stores the control variables
+    const std::vector<int>& lib_sizes,                   // Vector of library sizes to use
+    const std::vector<std::pair<int, int>>& pred,        // Indices of spatial units to be predicted
+    const std::vector<int>& Es,                          // Number of dimensions for the attractor reconstruction with the x and control variables
+    int tau,                                             // Step of spatial lags
+    int b,                                               // Number of nearest neighbors to use for prediction
+    bool simplex,                                        // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
+    double theta,                                        // Distance weighting parameter for the local neighbours in the manifold
+    int threads,                                         // Number of threads used from the global pool
+    bool cumulate,                                       // Whether to cumulate the partial correlations
+    bool includeself,                                    // Whether to include the current state when constructing the embedding vector
+    bool progressbar                                     // Whether to print the progress bar
 ) {
   int Ex = Es[0];
   std::vector<int> conEs = Es;

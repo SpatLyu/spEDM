@@ -23,7 +23,7 @@
  *
  * @param xEmbedings   A 2D matrix of the predictor variable's embeddings (spatial cross-section data).
  * @param yPred        A 1D vector of the response variable's values (spatial cross-section data).
- * @param controls     A vector of 2D matrices that stores the control variables.
+ * @param controls     A 2D matrix that stores the control variables.
  * @param lib_size     The size of the library (number of spatial units) used for prediction.
  * @param pred         A vector of pairs representing the indices (row, column) of spatial units to be predicted.
  * @param conEs        Number of dimensions for the attractor reconstruction with control variables
@@ -39,7 +39,7 @@
 std::vector<PartialCorRes> SCPCMSingle4Grid(
     const std::vector<std::vector<double>>& xEmbedings,
     const std::vector<double>& yPred,
-    const std::vector<std::vector<std::vector<double>>>& controls,
+    const std::vector<std::vector<double>>& controls,
     int lib_size,
     const std::vector<std::pair<int, int>>& pred,
     const std::vector<int>& conEs,
@@ -59,7 +59,7 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
  *
  * @param xMatrix      A 2D matrix of the predictor variable's values (spatial cross-section data).
  * @param yMatrix      A 2D matrix of the response variable's values (spatial cross-section data).
- * @param zMatrixs     A vector of 2D matrices that stores the control variables.
+ * @param zMatrixs     A 2D matrix that stores the control variables.
  * @param lib_sizes    A vector of library sizes (number of spatial units) to use for prediction.
  * @param pred         A vector of pairs representing the indices (row, column) of spatial units to be predicted.
  * @param Es           Number of dimensions for the attractor reconstruction with the x and control variables.
@@ -75,20 +75,20 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
  *                     significance, and confidence interval bounds.
  */
 std::vector<std::vector<double>> SCPCM4Grid(
-    const std::vector<std::vector<double>>& xMatrix,               // Two dimension matrix of X variable
-    const std::vector<std::vector<double>>& yMatrix,               // Two dimension matrix of Y variable
-    const std::vector<std::vector<std::vector<double>>>& zMatrixs, // vector of 2D matrices that stores the control variables
-    const std::vector<int>& lib_sizes,                             // Vector of library sizes to use
-    const std::vector<std::pair<int, int>>& pred,                  // Indices of spatial units to be predicted
-    const std::vector<int>& Es,                                    // Number of dimensions for the attractor reconstruction with the x and control variables
-    int tau,                                                       // Step of spatial lags
-    int b,                                                         // Number of nearest neighbors to use for prediction
-    bool simplex,                                                  // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
-    double theta,                                                  // Distance weighting parameter for the local neighbours in the manifold
-    int threads,                                                   // Number of threads used from the global pool
-    bool cumulate,                                                 // Whether to cumulate the partial correlations
-    bool includeself,                                              // Whether to include the current state when constructing the embedding vector
-    bool progressbar                                               // Whether to print the progress bar
+    const std::vector<std::vector<double>>& xMatrix,     // Two dimension matrix of X variable
+    const std::vector<std::vector<double>>& yMatrix,     // Two dimension matrix of Y variable
+    const std::vector<std::vector<double>>& zMatrixs,    // 2D matrix that stores the control variables
+    const std::vector<int>& lib_sizes,                   // Vector of library sizes to use
+    const std::vector<std::pair<int, int>>& pred,        // Indices of spatial units to be predicted
+    const std::vector<int>& Es,                          // Number of dimensions for the attractor reconstruction with the x and control variables
+    int tau,                                             // Step of spatial lags
+    int b,                                               // Number of nearest neighbors to use for prediction
+    bool simplex,                                        // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
+    double theta,                                        // Distance weighting parameter for the local neighbours in the manifold
+    int threads,                                         // Number of threads used from the global pool
+    bool cumulate,                                       // Whether to cumulate the partial correlations
+    bool includeself,                                    // Whether to include the current state when constructing the embedding vector
+    bool progressbar                                     // Whether to print the progress bar
 );
 
 #endif // SCPCM4Grid_H
