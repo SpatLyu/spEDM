@@ -14,7 +14,6 @@
  * @param Emat A NumericMatrix with four columns: "E", "rho", "mae", and "rmse".
  * @return The optimal embedding dimension (E) as an integer.
  */
-// [[Rcpp::export]]
 int OptEmdedDim(Rcpp::NumericMatrix Emat);
 
 /**

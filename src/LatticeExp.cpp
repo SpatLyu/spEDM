@@ -153,6 +153,85 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
   return result;
 }
 
+/**
+ * Parameters:
+ *   - x: A NumericVector containing the time series data.
+ *   - nb: A List containing neighborhood information for lattice data.
+ *   - lib: An IntegerVector specifying the library indices (1-based in R, converted to 0-based in C++).
+ *   - pred: An IntegerVector specifying the prediction indices (1-based in R, converted to 0-based in C++).
+ *   - theta: A NumericVector containing the parameter values to be tested for theta.
+ *   - E: An integer specifying the embedding dimension to test.
+ *   - b: An integer specifying the number of neighbors to use for Simplex Mapping.
+ *   - threads: An integer specifying the number of threads to use for parallel computation.
+ *   - includeself: A boolean indicating whether to include the current state when constructing the embedding vector.
+ *
+ * Returns:
+ *   A NumericMatrix where each row contains {theta, PearsonCor, MAE, RMSE}:
+ *   - theta: The tested parameter value.
+ *   - PearsonCor: The Pearson correlation coefficient between the predicted and actual values.
+ *   - MAE: The mean absolute error between the predicted and actual values.
+ *   - RMSE: The root mean squared error between the predicted and actual values.
+ *
+ * This function utilizes parallel processing for faster computation across different values of theta.
+ */
+// [[Rcpp::export]]
+Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& x,
+                                     const Rcpp::List& nb,
+                                     const Rcpp::IntegerVector& lib,
+                                     const Rcpp::IntegerVector& pred,
+                                     const Rcpp::NumericVector& theta,
+                                     int E,
+                                     int b,
+                                     int threads,
+                                     bool includeself) {
+  // Convert neighborhood list to std::vector<std::vector<int>>
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
+
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> vec_std = Rcpp::as<std::vector<double>>(x);
+  std::vector<double> theta_std = Rcpp::as<std::vector<double>>(theta);
+
+  // Initialize lib_indices and pred_indices with all false
+  std::vector<bool> lib_indices(vec_std.size(), false);
+  std::vector<bool> pred_indices(vec_std.size(), false);
+
+  // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
+  for (int i = 0; i < lib.size(); ++i) {
+    lib_indices[lib[i] - 1] = true; // Convert to 0-based index
+  }
+  for (int i = 0; i < pred.size(); ++i) {
+    pred_indices[pred[i] - 1] = true; // Convert to 0-based index
+  }
+
+  std::vector<std::vector<double>> res_std = SMap4Lattice(
+    vec_std,
+    nb_vec,
+    lib_indices,
+    pred_indices,
+    theta_std,
+    E,
+    b,
+    threads,
+    includeself);
+
+  size_t n_rows = res_std.size();
+  size_t n_cols = res_std[0].size();
+
+  // Create an Rcpp::NumericMatrix with the same dimensions
+  Rcpp::NumericMatrix result(n_rows, n_cols);
+
+  // Fill the Rcpp::NumericMatrix with data from res_std
+  for (size_t i = 0; i < n_rows; ++i) {
+    for (size_t j = 0; j < n_cols; ++j) {
+      result(i, j) = res_std[i][j];
+    }
+  }
+
+  // Set column names for the result matrix
+  Rcpp::colnames(result) = Rcpp::CharacterVector::create("theta", "rho", "mae", "rmse");
+  return result;
+}
+
 // Wrapper function to perform GCCM Lattice and return a NumericMatrix
 // predict y based on x ====> x xmap y ====> y causes x
 // [[Rcpp::export]]

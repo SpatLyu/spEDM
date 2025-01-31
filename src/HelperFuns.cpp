@@ -78,6 +78,7 @@ int OptEmdedDim(Rcpp::NumericMatrix Emat) {
  * @param Thetamat A NumericMatrix with four columns: "theta", "rho", "mae", and "rmse".
  * @return The optimal theta parameter as a double.
  */
+// [[Rcpp::export]]
 double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
   // Check if the input matrix has exactly 4 columns
   if (Thetamat.ncol() != 4) {

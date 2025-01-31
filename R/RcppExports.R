@@ -17,6 +17,10 @@ RcppSimplex4Grid <- function(mat, lib, pred, E, b, threads, includeself) {
     .Call(`_spEDM_RcppSimplex4Grid`, mat, lib, pred, E, b, threads, includeself)
 }
 
+RcppSMap4Grid <- function(mat, lib, pred, theta, E, b, threads, includeself) {
+    .Call(`_spEDM_RcppSMap4Grid`, mat, lib, pred, theta, E, b, threads, includeself)
+}
+
 RcppGCCM4Grid <- function(xMatrix, yMatrix, lib_sizes, pred, E, tau, b, simplex, theta, threads, includeself, progressbar) {
     .Call(`_spEDM_RcppGCCM4Grid`, xMatrix, yMatrix, lib_sizes, pred, E, tau, b, simplex, theta, threads, includeself, progressbar)
 }
@@ -33,6 +37,10 @@ OptEmdedDim <- function(Emat) {
     .Call(`_spEDM_OptEmdedDim`, Emat)
 }
 
+OptThetaParm <- function(Thetamat) {
+    .Call(`_spEDM_OptThetaParm`, Thetamat)
+}
+
 RcppLaggedVar4Lattice <- function(nb, lagNum) {
     .Call(`_spEDM_RcppLaggedVar4Lattice`, nb, lagNum)
 }
@@ -43,6 +51,10 @@ RcppGenLatticeEmbeddings <- function(vec, nb, E, includeself) {
 
 RcppSimplex4Lattice <- function(x, nb, lib, pred, E, b, threads, includeself) {
     .Call(`_spEDM_RcppSimplex4Lattice`, x, nb, lib, pred, E, b, threads, includeself)
+}
+
+RcppSMap4Lattice <- function(x, nb, lib, pred, theta, E, b, threads, includeself) {
+    .Call(`_spEDM_RcppSMap4Lattice`, x, nb, lib, pred, theta, E, b, threads, includeself)
 }
 
 RcppGCCM4Lattice <- function(x, y, nb, libsizes, E, tau, b, simplex, theta, threads, includeself, progressbar) {
