@@ -23,25 +23,44 @@ double PartialSimplex4Lattice(
     const std::vector<bool>& pred_indices,            // Vector of T/F values (which states to predict from)
     const std::vector<int>& conEs,                    // Number of dimensions for the attractor reconstruction with control variables
     int num_neighbors,                                // Number of neighbors to use for simplex projection
+    bool cumulate,                                    // Whether to cumulate the partial correlations
     bool includeself                                  // Whether to include the current state when constructing the embedding vector
 ){
   int n_controls = controls.size();
-  std::vector<double> temp_pred;
-  std::vector<std::vector<double>> temp_embedding;
+  double rho;
 
-  for (int i = 0; i < n_controls; ++i) {
-    if (i == 0){
-      temp_pred = SimplexProjectionPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors);
-    } else {
-      temp_pred = SimplexProjectionPrediction(temp_embedding, controls[i], lib_indices, pred_indices, num_neighbors);
+  if (cumulate) {
+    std::vector<double> temp_pred;
+    std::vector<std::vector<double>> temp_embedding;
+
+    for (int i = 0; i < n_controls; ++i) {
+      if (i == 0){
+        temp_pred = SimplexProjectionPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors);
+      } else {
+        temp_pred = SimplexProjectionPrediction(temp_embedding, controls[i], lib_indices, pred_indices, num_neighbors);
+      }
+      temp_embedding = GenLatticeEmbeddings(temp_pred,nb_vec,conEs[i],includeself);
     }
-    temp_embedding = GenLatticeEmbeddings(temp_pred,nb_vec,conEs[i],includeself);
+
+    std::vector<double> con_pred = SimplexProjectionPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors);
+    std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors);
+
+    rho = PartialCorTrivar(target,target_pred,con_pred,true,false);
+  } else {
+    std::vector<std::vector<double>> con_pred(n_controls);
+    std::vector<double> temp_pred;
+    std::vector<std::vector<double>> temp_embedding;
+
+    for (int i = 0; i < n_controls; ++i) {
+      temp_pred = SimplexProjectionPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors);
+      temp_embedding = GenLatticeEmbeddings(temp_pred,nb_vec,conEs[i],includeself);
+      temp_pred = SimplexProjectionPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors);
+      con_pred[i] = temp_pred;
+    }
+    std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors);
+
+    rho = PartialCor(target,target_pred,con_pred,true,false);
   }
-
-  std::vector<double> con_pred = SimplexProjectionPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors);
-  std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors);
-
-  double rho = PartialCorTrivar(target,target_pred,con_pred,true,false);
   return rho;
 }
 
@@ -55,25 +74,45 @@ double PartialSMap4Lattice(
     const std::vector<int>& conEs,                    // Number of dimensions for the attractor reconstruction with control variables
     int num_neighbors,                                // Number of neighbors to use for simplex projection
     double theta,                                     // Weighting parameter for distances
+    bool cumulate,                                    // Whether to cumulate the partial correlations
     bool includeself                                  // Whether to include the current state when constructing the embedding vector
 ){
   int n_controls = controls.size();
-  std::vector<double> temp_pred;
-  std::vector<std::vector<double>> temp_embedding;
+  double rho;
 
-  for (int i = 0; i < n_controls; ++i) {
-    if (i == 0){
-      temp_pred = SMapPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors, theta);
-    } else {
-      temp_pred = SMapPrediction(temp_embedding, controls[i], lib_indices, pred_indices, num_neighbors, theta);
+  if (cumulate){
+    std::vector<double> temp_pred;
+    std::vector<std::vector<double>> temp_embedding;
+
+    for (int i = 0; i < n_controls; ++i) {
+      if (i == 0){
+        temp_pred = SMapPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors, theta);
+      } else {
+        temp_pred = SMapPrediction(temp_embedding, controls[i], lib_indices, pred_indices, num_neighbors, theta);
+      }
+      temp_embedding = GenLatticeEmbeddings(temp_pred,nb_vec,conEs[i],includeself);
     }
-    temp_embedding = GenLatticeEmbeddings(temp_pred,nb_vec,conEs[i],includeself);
+
+    std::vector<double> con_pred = SMapPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors, theta);
+    std::vector<double> target_pred = SMapPrediction(vectors, target, lib_indices, pred_indices, num_neighbors, theta);
+
+    rho = PartialCorTrivar(target,target_pred,con_pred,true,false);
+  } else {
+    std::vector<std::vector<double>> con_pred(n_controls);
+    std::vector<double> temp_pred;
+    std::vector<std::vector<double>> temp_embedding;
+
+    for (int i = 0; i < n_controls; ++i) {
+      temp_pred = SMapPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors, theta);
+      temp_embedding = GenLatticeEmbeddings(temp_pred,nb_vec,conEs[i],includeself);
+      temp_pred = SMapPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors, theta);
+      con_pred[i] = temp_pred;
+    }
+    std::vector<double> target_pred = SMapPrediction(vectors, target, lib_indices, pred_indices, num_neighbors, theta);
+
+    rho = PartialCor(target,target_pred,con_pred,true,false);
   }
 
-  std::vector<double> con_pred = SMapPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors, theta);
-  std::vector<double> target_pred = SMapPrediction(vectors, target, lib_indices, pred_indices, num_neighbors, theta);
-
-  double rho = PartialCorTrivar(target,target_pred,con_pred,true,false);
   return rho;
 }
 
@@ -92,6 +131,7 @@ std::vector<std::pair<int, double>> SCPCMSingle4Lattice(
     int b,                                              // Number of neighbors to use for simplex projection
     bool simplex,                                       // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
     double theta,                                       // Distance weighting parameter for the local neighbours in the manifold
+    bool cumulate,                                      // Whether to cumulate the partial correlations
     bool includeself                                    // Whether to include the current state when constructing the embedding vector
 ) {
   int n = x_vectors.size();
@@ -106,9 +146,9 @@ std::vector<std::pair<int, double>> SCPCMSingle4Lattice(
 
     // Run partial cross map and store results
     if (simplex) {
-      rho = PartialSimplex4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, b, includeself);
+      rho = PartialSimplex4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, b, cumulate, includeself);
     } else {
-      rho = PartialSMap4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, b, theta, includeself);
+      rho = PartialSMap4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, b, theta, cumulate, includeself);
     }
     x_xmap_y.emplace_back(lib_size, rho);
   } else {
@@ -131,9 +171,9 @@ std::vector<std::pair<int, double>> SCPCMSingle4Lattice(
 
       // Run partial cross map and store results
       if (simplex) {
-        rho = PartialSimplex4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, b, includeself);
+        rho = PartialSimplex4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, b, cumulate, includeself);
       } else {
-        rho = PartialSMap4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, b, theta, includeself);
+        rho = PartialSMap4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, b, theta, cumulate, includeself);
       }
       x_xmap_y.emplace_back(lib_size, rho);
     }
@@ -156,6 +196,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
     bool simplex,                                       // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
     double theta,                                       // Distance weighting parameter for the local neighbours in the manifold
     int threads,                                        // Number of threads used from the global pool
+    bool cumulate,                                      // Whether to cumulate the partial correlations
     bool includeself,                                   // Whether to include the current state when constructing the embedding vector
     bool progressbar = true                             // Whether to print the progress bar
 ) {
@@ -236,6 +277,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
   //     b,
   //     simplex,
   //     theta,
+  //     cumulate,
   //     includeself
   //   );
   //   x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
@@ -261,6 +303,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
         b,
         simplex,
         theta,
+        cumulate,
         includeself
       );
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
@@ -284,6 +327,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
         b,
         simplex,
         theta,
+        cumulate,
         includeself
       );
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
