@@ -29,6 +29,7 @@ std::vector<std::pair<int, double>> SCPCMSingle4Lattice(
     int b,                                              // Number of neighbors to use for simplex projection
     bool simplex,                                       // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
     double theta,                                       // Distance weighting parameter for the local neighbours in the manifold
+    bool cumulate,                                      // Whether to cumulate the partial correlations
     bool includeself                                    // Whether to include the current state when constructing the embedding vector
 );
 
@@ -46,6 +47,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
     bool simplex,                                       // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
     double theta,                                       // Distance weighting parameter for the local neighbours in the manifold
     int threads,                                        // Number of threads used from the global pool
+    bool cumulate,                                      // Whether to cumulate the partial correlations
     bool includeself,                                   // Whether to include the current state when constructing the embedding vector
     bool progressbar = true                             // Whether to print the progress bar
 );

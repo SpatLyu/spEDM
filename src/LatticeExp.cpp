@@ -227,6 +227,7 @@ Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x,
                                       bool simplex,
                                       double theta,
                                       int threads,
+                                      bool cumulate,
                                       bool includeself,
                                       bool progressbar) {
   // Convert Rcpp::NumericVector to std::vector<double>
@@ -266,6 +267,8 @@ Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x,
     simplex,
     theta,
     threads,
+    cumulate,
+    includeself,
     progressbar);
 
   // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
