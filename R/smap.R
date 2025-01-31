@@ -1,6 +1,6 @@
 methods::setGeneric("smap", function(data, ...) standardGeneric("smap"))
 
-.smap_sf_method = \(data, target, lib, pred, E = 3, k = 4,
+.smap_sf_method = \(data, target, lib, pred = lib, E = 3, k = 4,
                     theta = c(0, 1e-04, 3e-04, 0.001, 0.003, 0.01, 0.03,
                               0.1, 0.3, 0.5, 0.75, 1, 1.5, 2, 3, 4, 6, 8),
                     nb = NULL,threads = detectThreads(),include.self = FALSE){
@@ -13,7 +13,7 @@ methods::setGeneric("smap", function(data, ...) standardGeneric("smap"))
   return(res)
 }
 
-.smap_spatraster_method = \(data, target, lib, pred, E = 3, k = 4,
+.smap_spatraster_method = \(data, target, lib, pred = lib, E = 3, k = 4,
                             theta = c(0, 1e-04, 3e-04, 0.001, 0.003, 0.01, 0.03,
                                       0.1, 0.3, 0.5, 0.75, 1, 1.5, 2, 3, 4, 6, 8),
                             threads = detectThreads(), include.self = FALSE){
@@ -39,7 +39,7 @@ methods::setGeneric("smap", function(data, ...) standardGeneric("smap"))
 #' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
 #'                        quiet=TRUE)
 #' \donttest{
-#' smap(columbus,target = "CRIME")
+#' smap(columbus,target = "INC",lib = 1:49)
 #' }
 methods::setMethod("smap", "sf", .smap_sf_method)
 

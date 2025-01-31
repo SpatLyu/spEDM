@@ -10,7 +10,7 @@
   data,
   target,
   lib,
-  pred,
+  pred = lib,
   E = 1:10,
   k = 4,
   nb = NULL,
@@ -22,7 +22,7 @@
   data,
   target,
   lib,
-  pred,
+  pred = lib,
   E = 1:10,
   k = 4,
   threads = detectThreads(),
@@ -36,7 +36,7 @@
 
 \item{lib}{The row numbers(\code{vector}) of lattice data or the row-column numbers(\code{matrix}) of grid data for creating the library from observations.}
 
-\item{pred}{The row numbers(\code{vector}) of lattice data or the row-column numbers(\code{matrix}) of grid data used for predictions.}
+\item{pred}{(optional) The row numbers(\code{vector}) of lattice data or the row-column numbers(\code{matrix}) of grid data used for predictions.}
 
 \item{E}{(optional) The dimensions of the embedding.}
 

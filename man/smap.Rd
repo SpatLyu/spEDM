@@ -10,7 +10,7 @@
   data,
   target,
   lib,
-  pred,
+  pred = lib,
   E = 3,
   k = 4,
   theta = c(0, 1e-04, 3e-04, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 0.5, 0.75, 1, 1.5, 2, 3,
@@ -24,7 +24,7 @@
   data,
   target,
   lib,
-  pred,
+  pred = lib,
   E = 3,
   k = 4,
   theta = c(0, 1e-04, 3e-04, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 0.5, 0.75, 1, 1.5, 2, 3,
@@ -40,7 +40,7 @@
 
 \item{lib}{The row numbers(\code{vector}) of lattice data or the row-column numbers(\code{matrix}) of grid data for creating the library from observations.}
 
-\item{pred}{The row numbers(\code{vector}) of lattice data or the row-column numbers(\code{matrix}) of grid data used for predictions.}
+\item{pred}{(optional) The row numbers(\code{vector}) of lattice data or the row-column numbers(\code{matrix}) of grid data used for predictions.}
 
 \item{E}{(optional) The dimensions of the embedding.}
 
@@ -64,6 +64,6 @@ smap forecasting
 columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
                        quiet=TRUE)
 \donttest{
-smap(columbus,target = "CRIME")
+smap(columbus,target = "INC",lib = 1:49)
 }
 }
