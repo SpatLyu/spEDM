@@ -15,22 +15,6 @@
 // [[Rcpp::depends(RcppThread)]]
 
 /**
- * Calculate the one-dimensional index for a specified position in a 2D grid.
- *
- * This function converts a row and column position in a 2D grid into a corresponding
- * one-dimensional index, assuming the grid is stored in row-major order (i.e., rows are stored sequentially).
- *
- * @param curRow   The current row number (1-based indexing).
- * @param curCol   The current column number (1-based indexing).
- * @param totalRow The total number of rows in the grid.
- * @param totalCol The total number of columns in the grid.
- * @return         The calculated one-dimensional index (0-based indexing).
- */
-int LocateGridIndices(int curRow, int curCol, int totalRow, int totalCol) {
-  return (curRow - 1) * totalCol + curCol - 1;
-}
-
-/**
  * Perform Grid-based Geographical Convergent Cross Mapping (GCCM) for a single library size.
  *
  * This function calculates the cross mapping between a predictor variable (xEmbedings) and a response variable (yPred)
@@ -190,7 +174,7 @@ std::vector<std::vector<double>> GCCM4Grid(
   // // Iterate over each library size
   // for (int lib_size : unique_lib_sizes) {
   //   // Perform single grid cross-mapping for the current library size
-  //   auto results = GCCMSingle4Grid(xEmbedings, yPred, lib_size, pred, totalRow, totalCol, b);
+  //   auto results = GCCMSingle4Grid(xEmbedings, yPred, lib_size, pred, totalRow, totalCol, b, simplex, theta);
   //
   //   // Append the results to the main result container
   //   x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());

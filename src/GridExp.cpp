@@ -2,6 +2,7 @@
 #include "CppGridUtils.h"
 #include "Forecast4Grid.h"
 #include "GCCM4Grid.h"
+#include "SCPCM4Grid.h"
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
 
@@ -218,6 +219,104 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
   Rcpp::colnames(resultMatrix) = Rcpp::CharacterVector::create("libsizes",
                  "x_xmap_y_mean","x_xmap_y_sig",
                  "x_xmap_y_upper","x_xmap_y_lower");
+  return resultMatrix;
+}
+
+// [[Rcpp::export]]
+Rcpp::NumericMatrix RcppSCPCM4Grid(
+    const Rcpp::NumericMatrix& xMatrix,
+    const Rcpp::NumericMatrix& yMatrix,
+    const Rcpp::NumericMatrix& zMatrix,
+    const Rcpp::IntegerVector& lib_sizes,
+    const Rcpp::IntegerVector& E,
+    const Rcpp::IntegerMatrix& pred,
+    int tau,
+    int b,
+    bool simplex,
+    double theta,
+    int threads,
+    bool cumulate,
+    bool includeself,
+    bool progressbar) {
+
+  // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
+  std::vector<std::vector<double>> xMatrix_cpp(xMatrix.nrow(), std::vector<double>(xMatrix.ncol()));
+  for (int i = 0; i < xMatrix.nrow(); ++i) {
+    for (int j = 0; j < xMatrix.ncol(); ++j) {
+      xMatrix_cpp[i][j] = xMatrix(i, j);
+    }
+  }
+
+  // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
+  std::vector<std::vector<double>> yMatrix_cpp(yMatrix.nrow(), std::vector<double>(yMatrix.ncol()));
+  for (int i = 0; i < yMatrix.nrow(); ++i) {
+    for (int j = 0; j < yMatrix.ncol(); ++j) {
+      yMatrix_cpp[i][j] = yMatrix(i, j);
+    }
+  }
+
+  // Convert Rcpp NumericMatrix to std::vector of std::vectors
+  std::vector<std::vector<double>> zMatrix_cpp(zMatrix.ncol());
+  for (int i = 0; i < zMatrix.ncol(); ++i) {
+    Rcpp::NumericVector covvar = zMatrix.column(i);
+    zMatrix_cpp[i] = Rcpp::as<std::vector<double>>(covvar);
+  }
+
+  // Convert Rcpp IntegerVector to std::vector<int>
+  std::vector<int> lib_sizes_cpp(lib_sizes.size());
+  for (int i = 0; i < lib_sizes.size(); ++i) {
+    lib_sizes_cpp[i] = lib_sizes[i];
+  }
+
+  // Convert Rcpp IntegerVector to std::vector<int>
+  std::vector<int> E_cpp(E.size());
+  for (int i = 0; i < E.size(); ++i) {
+    E_cpp[i] = E[i];
+  }
+
+  // Convert Rcpp IntegerMatrix to std::vector<std::pair<int, int>>
+  std::vector<std::pair<int, int>> pred_cpp(pred.nrow());
+  for (int i = 0; i < pred.nrow(); ++i) {
+    pred_cpp[i] = std::make_pair(pred(i, 0), pred(i, 1));
+  }
+
+  // Call the C++ function SCPCM4Grid
+  std::vector<std::vector<double>> result = SCPCM4Grid(
+    xMatrix_cpp,
+    yMatrix_cpp,
+    zMatrix_cpp,
+    lib_sizes_cpp,
+    pred_cpp,
+    E_cpp,
+    tau,
+    b,
+    simplex,
+    theta,
+    threads,
+    cumulate,
+    includeself,
+    progressbar
+  );
+
+  // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
+  Rcpp::NumericMatrix resultMatrix(result.size(), 9);
+  for (size_t i = 0; i < result.size(); ++i) {
+    resultMatrix(i, 0) = result[i][0];
+    resultMatrix(i, 1) = result[i][1];
+    resultMatrix(i, 2) = result[i][2];
+    resultMatrix(i, 3) = result[i][3];
+    resultMatrix(i, 4) = result[i][4];
+    resultMatrix(i, 5) = result[i][5];
+    resultMatrix(i, 6) = result[i][6];
+    resultMatrix(i, 7) = result[i][7];
+    resultMatrix(i, 8) = result[i][8];
+  }
+
+  // Set column names for the result matrix
+  Rcpp::colnames(resultMatrix) = Rcpp::CharacterVector::create(
+    "libsizes","T_mean","D_mean",
+    "T_sig","T_upper","T_lower",
+    "D_sig","D_upper","D_lower");
   return resultMatrix;
 }
 
