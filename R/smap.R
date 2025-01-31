@@ -26,7 +26,7 @@ methods::setGeneric("smap", function(data, ...) standardGeneric("smap"))
 #' smap forecasting
 #'
 #' @inheritParams simplex
-#' @theta (optional) Weighting parameter for distances
+#' @param theta (optional) Weighting parameter for distances
 #'
 #' @return A matrix
 #' @export
@@ -39,7 +39,7 @@ methods::setGeneric("smap", function(data, ...) standardGeneric("smap"))
 #' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
 #'                        quiet=TRUE)
 #' \donttest{
-#' smap(columbus,target = "CRIME",lib = 1:29,pred = 30:49)
+#' smap(columbus,target = "CRIME")
 #' }
 methods::setMethod("smap", "sf", .smap_sf_method)
 
