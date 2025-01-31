@@ -144,7 +144,7 @@ std::vector<std::vector<double>> GCCM4Lattice(
 
   // // Sequential version of the for loop
   // for (int lib_size : unique_lib_sizes) {
-  //   auto results = GCCMSingle4Lattice(x_vectors, y, lib_indices, lib_size, max_lib_size, possible_lib_indices, pred_indices, b);
+  //   auto results = GCCMSingle4Lattice(x_vectors, y, lib_indices, lib_size, max_lib_size, possible_lib_indices, pred_indices, b, simplex, theta);
   //   x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
   // }
 

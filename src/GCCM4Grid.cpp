@@ -174,7 +174,7 @@ std::vector<std::vector<double>> GCCM4Grid(
   // // Iterate over each library size
   // for (int lib_size : unique_lib_sizes) {
   //   // Perform single grid cross-mapping for the current library size
-  //   auto results = GCCMSingle4Grid(xEmbedings, yPred, lib_size, pred, totalRow, totalCol, b);
+  //   auto results = GCCMSingle4Grid(xEmbedings, yPred, lib_size, pred, totalRow, totalCol, b, simplex, theta);
   //
   //   // Append the results to the main result container
   //   x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
