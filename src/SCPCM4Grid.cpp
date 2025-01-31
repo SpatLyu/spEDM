@@ -207,9 +207,9 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
 
       // Run partial cross map and store results
       if (simplex) {
-        rho = PartialSimplex4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, b, cumulate, includeself);
+        rho = PartialSimplex4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, totalRow, b, cumulate, includeself);
       } else {
-        rho = PartialSMap4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, b, theta, cumulate, includeself);
+        rho = PartialSMap4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, totalRow, b, theta, cumulate, includeself);
       }
       x_xmap_y.emplace_back(lib_size, rho[0], rho[1]);
     }
