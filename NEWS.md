@@ -1,5 +1,7 @@
 # spEDM 1.3
 
+* Implement the `smap` funtion to enable the selection of the optimal theta parameter (#128).
+
 * Now bidirectional mapping in the `gccm` result uses a `full join` structure when organized on the R side (#118).
 
 * Support for calculating unidirectional mappings in the `gccm` function (#117).
