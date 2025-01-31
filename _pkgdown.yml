@@ -27,6 +27,7 @@ reference:
 - title: Spatial EDM Methods
   contents:
   - simplex
+  - smap
   - gccm
 
 - title: Utils Functions
