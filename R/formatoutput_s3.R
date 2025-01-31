@@ -2,8 +2,8 @@
 #' @noRd
 #' @export
 print.ccm_res = \(x,...){
-  resdf = x$xmap
-  bidirectional = x$bidirectional
+  resdf = x[[1]]
+  bidirectional = x[[3]]
 
   if (bidirectional){
     resdf = resdf[,c("libsizes", "y_xmap_x_mean", "x_xmap_y_mean")]
@@ -27,9 +27,13 @@ print.pcm_res = \(x,...){
   class(pxmap) = "ccm"
   class(xmap) = "ccm"
 
-  cat("partial cross mapping prediction: \n")
+  cat('-------------------------------------- \n')
+  cat("***partial cross mapping prediction*** \n")
+  cat('-------------------------------------- \n')
   print.ccm_res(pxmap)
-  cat("cross mapping prediction: \n")
+  cat("\n------------------------------ \n")
+  cat("***cross mapping prediction*** \n")
+  cat('------------------------------ \n')
   print.ccm_res(xmap)
 }
 
@@ -38,8 +42,8 @@ print.pcm_res = \(x,...){
 #' @export
 plot.ccm_res = \(x, family = "serif", xbreaks = NULL, xlimits = NULL,
                  ybreaks = seq(0, 1, by = 0.1), ylimits = c(-0.05, 1), ...){
-  resdf = x$xmap
-  bidirectional = x$bidirectional
+  resdf = x[[1]]
+  bidirectional = x[[3]]
   if (bidirectional){
     resdf = resdf[,c("libsizes", "x_xmap_y_mean", "y_xmap_x_mean")]
   } else {
@@ -93,12 +97,7 @@ plot.ccm_res = \(x, family = "serif", xbreaks = NULL, xlimits = NULL,
 #' @export
 plot.pcm_res = \(x, ...){
   pxmap = x[-2]
-  xmap = x[-1]
   class(pxmap) = "ccm"
-  class(xmap) = "ccm"
-
-  cat("plot partial cross mapping prediction: \n")
-  print.ccm_res(pxmap,...)
-  cat("plot cross mapping prediction: \n")
-  print.ccm_res(xmap,...)
+  fig1 = plot.ccm_res(pxmap,...)
+  return(fig1)
 }
