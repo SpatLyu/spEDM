@@ -386,20 +386,20 @@ double PartialCorTrivar(const std::vector<double>& y,
   return res;
 }
 
-// Function to calculate the significance of a correlation coefficient
-double CppSignificance(double r, int n) {
-  double t = r * std::sqrt((n - 2) / (1 - r * r));
+// Function to calculate the significance of a (partial) correlation coefficient
+double CppCorSignificance(double r, int n, int k = 0) {
+  double t = r * std::sqrt((n - k - 2) / (1 - r * r));
   return (1 - R::pt(t, n - 2, true, false)) * 2;
 }
 
-// Function to calculate the confidence interval for a correlation coefficient
-std::vector<double> CppConfidence(double r, int n,
-                                  double level = 0.05) {
+// Function to calculate the confidence interval for a (partial) correlation coefficient
+std::vector<double> CppCorConfidence(double r, int n, int k = 0,
+                                     double level = 0.05) {
   // Calculate the Fisher's z-transformation
   double z = 0.5 * std::log((1 + r) / (1 - r));
 
   // Calculate the standard error of z
-  double ztheta = 1 / std::sqrt(n - 3);
+  double ztheta = 1 / std::sqrt(n - k - 3);
 
   // Calculate the z-value for the given confidence level
   double qZ = R::qnorm(1 - level / 2, 0.0, 1.0, true, false);

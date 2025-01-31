@@ -343,16 +343,30 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// RcppConfidence
-Rcpp::NumericVector RcppConfidence(double r, int n, double level);
-RcppExport SEXP _spEDM_RcppConfidence(SEXP rSEXP, SEXP nSEXP, SEXP levelSEXP) {
+// RcppCorSignificance
+double RcppCorSignificance(double r, int n, int k);
+RcppExport SEXP _spEDM_RcppCorSignificance(SEXP rSEXP, SEXP nSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< double >::type r(rSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppCorSignificance(r, n, k));
+    return rcpp_result_gen;
+END_RCPP
+}
+// RcppCorConfidence
+Rcpp::NumericVector RcppCorConfidence(double r, int n, int k, double level);
+RcppExport SEXP _spEDM_RcppCorConfidence(SEXP rSEXP, SEXP nSEXP, SEXP kSEXP, SEXP levelSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type r(rSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< double >::type level(levelSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppConfidence(r, n, level));
+    rcpp_result_gen = Rcpp::wrap(RcppCorConfidence(r, n, k, level));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -406,7 +420,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppPearsonCor", (DL_FUNC) &_spEDM_RcppPearsonCor, 3},
     {"_spEDM_RcppPartialCor", (DL_FUNC) &_spEDM_RcppPartialCor, 5},
     {"_spEDM_RcppPartialCorTrivar", (DL_FUNC) &_spEDM_RcppPartialCorTrivar, 5},
-    {"_spEDM_RcppConfidence", (DL_FUNC) &_spEDM_RcppConfidence, 3},
+    {"_spEDM_RcppCorSignificance", (DL_FUNC) &_spEDM_RcppCorSignificance, 3},
+    {"_spEDM_RcppCorConfidence", (DL_FUNC) &_spEDM_RcppCorConfidence, 4},
     {"_spEDM_RcppLinearTrendRM", (DL_FUNC) &_spEDM_RcppLinearTrendRM, 4},
     {"_spEDM_RcppSVD", (DL_FUNC) &_spEDM_RcppSVD, 1},
     {NULL, NULL, 0}

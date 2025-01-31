@@ -93,8 +93,12 @@ RcppPartialCorTrivar <- function(y, y_hat, control, NA_rm = FALSE, linear = FALS
     .Call(`_spEDM_RcppPartialCorTrivar`, y, y_hat, control, NA_rm, linear)
 }
 
-RcppConfidence <- function(r, n, level = 0.05) {
-    .Call(`_spEDM_RcppConfidence`, r, n, level)
+RcppCorSignificance <- function(r, n, k = 0L) {
+    .Call(`_spEDM_RcppCorSignificance`, r, n, k)
+}
+
+RcppCorConfidence <- function(r, n, k = 0L, level = 0.05) {
+    .Call(`_spEDM_RcppCorConfidence`, r, n, k, level)
 }
 
 RcppLinearTrendRM <- function(vec, xcoord, ycoord, NA_rm = FALSE) {

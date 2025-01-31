@@ -220,6 +220,14 @@ std::vector<std::vector<double>> SCPCM4Lattice(
 
   std::vector<std::vector<double>> x_vectors = GenLatticeEmbeddings(x,nb_vec,Ex,includeself);
   int n = x_vectors.size();
+
+  int n_confounds;
+  if (cumulate){
+    n_confounds = 1;
+  } else {
+    n_confounds = controls.size();
+  }
+
   // Setup pred_indices
   std::vector<bool> pred_indices(n, false);
   for (const auto& p : pred) {
@@ -369,12 +377,12 @@ std::vector<std::vector<double>> SCPCM4Lattice(
     double rho_third = final_results[i][2];
 
     // Compute significance and confidence interval for second value
-    double significance_second = CppSignificance(rho_second, n);
-    std::vector<double> confidence_interval_second = CppConfidence(rho_second, n);
+    double significance_second = CppCorSignificance(rho_second, n);
+    std::vector<double> confidence_interval_second = CppCorConfidence(rho_second, n);
 
     // Compute significance and confidence interval for third value
-    double significance_third = CppSignificance(rho_third, n);
-    std::vector<double> confidence_interval_third = CppConfidence(rho_third, n);
+    double significance_third = CppCorSignificance(rho_third, n, n_confounds);
+    std::vector<double> confidence_interval_third = CppCorConfidence(rho_third, n, n_confounds);
 
     // Append computed statistical values to the result
     final_results[i].push_back(significance_second);
