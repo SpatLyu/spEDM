@@ -68,6 +68,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppSMap4Grid
+Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, const Rcpp::NumericVector& theta, int E, int b, int threads, bool includeself);
+RcppExport SEXP _spEDM_RcppSMap4Grid(SEXP matSEXP, SEXP libSEXP, SEXP predSEXP, SEXP thetaSEXP, SEXP ESEXP, SEXP bSEXP, SEXP threadsSEXP, SEXP includeselfSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type lib(libSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type pred(predSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type theta(thetaSEXP);
+    Rcpp::traits::input_parameter< int >::type E(ESEXP);
+    Rcpp::traits::input_parameter< int >::type b(bSEXP);
+    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< bool >::type includeself(includeselfSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSMap4Grid(mat, lib, pred, theta, E, b, threads, includeself));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppGCCM4Grid
 Rcpp::NumericMatrix RcppGCCM4Grid(const Rcpp::NumericMatrix& xMatrix, const Rcpp::NumericMatrix& yMatrix, const Rcpp::IntegerVector& lib_sizes, const Rcpp::IntegerMatrix& pred, int E, int tau, int b, bool simplex, double theta, int threads, bool includeself, bool progressbar);
 RcppExport SEXP _spEDM_RcppGCCM4Grid(SEXP xMatrixSEXP, SEXP yMatrixSEXP, SEXP lib_sizesSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP simplexSEXP, SEXP thetaSEXP, SEXP threadsSEXP, SEXP includeselfSEXP, SEXP progressbarSEXP) {
@@ -135,6 +153,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// OptThetaParm
+double OptThetaParm(Rcpp::NumericMatrix Thetamat);
+RcppExport SEXP _spEDM_OptThetaParm(SEXP ThetamatSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Thetamat(ThetamatSEXP);
+    rcpp_result_gen = Rcpp::wrap(OptThetaParm(Thetamat));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppLaggedVar4Lattice
 Rcpp::List RcppLaggedVar4Lattice(const Rcpp::List& nb, int lagNum);
 RcppExport SEXP _spEDM_RcppLaggedVar4Lattice(SEXP nbSEXP, SEXP lagNumSEXP) {
@@ -176,6 +205,25 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< bool >::type includeself(includeselfSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppSimplex4Lattice(x, nb, lib, pred, E, b, threads, includeself));
+    return rcpp_result_gen;
+END_RCPP
+}
+// RcppSMap4Lattice
+Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& x, const Rcpp::List& nb, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::NumericVector& theta, int E, int b, int threads, bool includeself);
+RcppExport SEXP _spEDM_RcppSMap4Lattice(SEXP xSEXP, SEXP nbSEXP, SEXP libSEXP, SEXP predSEXP, SEXP thetaSEXP, SEXP ESEXP, SEXP bSEXP, SEXP threadsSEXP, SEXP includeselfSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type lib(libSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type pred(predSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type theta(thetaSEXP);
+    Rcpp::traits::input_parameter< int >::type E(ESEXP);
+    Rcpp::traits::input_parameter< int >::type b(bSEXP);
+    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< bool >::type includeself(includeselfSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSMap4Lattice(x, nb, lib, pred, theta, E, b, threads, includeself));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -425,13 +473,16 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppGenGridEmbeddings", (DL_FUNC) &_spEDM_RcppGenGridEmbeddings, 3},
     {"_spEDM_RcppLocateGridIndices", (DL_FUNC) &_spEDM_RcppLocateGridIndices, 4},
     {"_spEDM_RcppSimplex4Grid", (DL_FUNC) &_spEDM_RcppSimplex4Grid, 7},
+    {"_spEDM_RcppSMap4Grid", (DL_FUNC) &_spEDM_RcppSMap4Grid, 8},
     {"_spEDM_RcppGCCM4Grid", (DL_FUNC) &_spEDM_RcppGCCM4Grid, 12},
     {"_spEDM_RcppSCPCM4Grid", (DL_FUNC) &_spEDM_RcppSCPCM4Grid, 14},
     {"_spEDM_DetectMaxNumThreads", (DL_FUNC) &_spEDM_DetectMaxNumThreads, 0},
     {"_spEDM_OptEmdedDim", (DL_FUNC) &_spEDM_OptEmdedDim, 1},
+    {"_spEDM_OptThetaParm", (DL_FUNC) &_spEDM_OptThetaParm, 1},
     {"_spEDM_RcppLaggedVar4Lattice", (DL_FUNC) &_spEDM_RcppLaggedVar4Lattice, 2},
     {"_spEDM_RcppGenLatticeEmbeddings", (DL_FUNC) &_spEDM_RcppGenLatticeEmbeddings, 4},
     {"_spEDM_RcppSimplex4Lattice", (DL_FUNC) &_spEDM_RcppSimplex4Lattice, 8},
+    {"_spEDM_RcppSMap4Lattice", (DL_FUNC) &_spEDM_RcppSMap4Lattice, 9},
     {"_spEDM_RcppGCCM4Lattice", (DL_FUNC) &_spEDM_RcppGCCM4Lattice, 12},
     {"_spEDM_RcppSCPCM4Lattice", (DL_FUNC) &_spEDM_RcppSCPCM4Lattice, 14},
     {"_spEDM_RcppMean", (DL_FUNC) &_spEDM_RcppMean, 2},

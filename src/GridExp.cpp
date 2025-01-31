@@ -148,6 +148,83 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
 }
 
 // [[Rcpp::export]]
+Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& mat,
+                                  const Rcpp::IntegerMatrix& lib,
+                                  const Rcpp::IntegerMatrix& pred,
+                                  const Rcpp::NumericVector& theta,
+                                  int E,
+                                  int b,
+                                  int threads,
+                                  bool includeself) {
+  // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
+  int numRows = mat.nrow();
+  int numCols = mat.ncol();
+  std::vector<std::vector<double>> cppMat(numRows, std::vector<double>(numCols));
+
+  for (int r = 0; r < numRows; ++r) {
+    for (int c = 0; c < numCols; ++c) {
+      cppMat[r][c] = mat(r, c);
+    }
+  }
+
+  // Initialize lib_indices and pred_indices with all false
+  std::vector<bool> pred_indices(numRows * numCols, false);
+  std::vector<bool> lib_indices(numRows * numCols, false);
+
+  // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
+  int currow;
+  int curcol;
+
+  for (int i = 0; i < lib.nrow(); ++i) {
+    // Convert to 0-based index
+    currow = lib(i,0);
+    curcol = lib(i,1);
+    if (!std::isnan(cppMat[currow-1][curcol-1])){
+      lib_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+    }
+  }
+
+  for (int i = 0; i < pred.nrow(); ++i) {
+    // Convert to 0-based index
+    currow = pred(i,0);
+    curcol = pred(i,1);
+    if (!std::isnan(cppMat[currow-1][curcol-1])){
+      pred_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+    }
+  }
+
+  // Convert Rcpp::NumericMatrix to std::vector<double>
+  std::vector<double> theta_std = Rcpp::as<std::vector<double>>(theta);
+
+  std::vector<std::vector<double>> res_std = SMap4Grid(
+    cppMat,
+    lib_indices,
+    pred_indices,
+    theta_std,
+    E,
+    b,
+    threads,
+    includeself);
+
+  size_t n_rows = res_std.size();
+  size_t n_cols = res_std[0].size();
+
+  // Create an Rcpp::NumericMatrix with the same dimensions
+  Rcpp::NumericMatrix result(n_rows, n_cols);
+
+  // Fill the Rcpp::NumericMatrix with data from res_std
+  for (size_t i = 0; i < n_rows; ++i) {
+    for (size_t j = 0; j < n_cols; ++j) {
+      result(i, j) = res_std[i][j];
+    }
+  }
+
+  // Set column names for the result matrix
+  Rcpp::colnames(result) = Rcpp::CharacterVector::create("theta", "rho", "mae", "rmse");
+  return result;
+}
+
+// [[Rcpp::export]]
 Rcpp::NumericMatrix RcppGCCM4Grid(
     const Rcpp::NumericMatrix& xMatrix,
     const Rcpp::NumericMatrix& yMatrix,
