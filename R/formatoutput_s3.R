@@ -28,9 +28,9 @@ print.pcm_res = \(x,...){
   class(xmap) = "ccm"
 
   cat("partial cross mapping prediction: \n")
-  print.ccm_res(pxamp)
+  print.ccm_res(pxmap)
   cat("cross mapping prediction: \n")
-  print.ccm_res(xamp)
+  print.ccm_res(xmap)
 }
 
 #' plot ccm result
@@ -98,7 +98,7 @@ plot.pcm_res = \(x, ...){
   class(xmap) = "ccm"
 
   cat("plot partial cross mapping prediction: \n")
-  print.ccm_res(pxamp,...)
+  print.ccm_res(pxmap,...)
   cat("plot cross mapping prediction: \n")
-  print.ccm_res(xamp,...)
+  print.ccm_res(xmap,...)
 }
