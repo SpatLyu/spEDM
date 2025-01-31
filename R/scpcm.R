@@ -1,5 +1,5 @@
 .scpcm_sf_method = \(data, cause, effect, mediator, libsizes, E = 3, tau = 1, k = 4, theta = 1, algorithm = "simplex", nb = NULL,
-                     threads = detectThreads(), bidirectional = TRUE, cumulate = FALSE, include.self = FALSE, trendRM = TRUE, progressbar = TRUE){
+                     threads = detectThreads(), bidirectional = TRUE, cumulate = FALSE, include.self = TRUE, trendRM = TRUE, progressbar = TRUE){
   varname = .check_character(c(cause, effect, mediator))
   E = .check_inputelementnum(E,length(varname))
   k = .check_inputelementnum(k,2)
