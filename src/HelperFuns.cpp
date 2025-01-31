@@ -67,3 +67,60 @@ int OptEmdedDim(Rcpp::NumericMatrix Emat) {
   // Return the optimal embedding dimension (E) from the optialmal row
   return Emat(optialmal_row, 0);
 }
+
+/**
+ * Determine the optimal theta parameter based on the evaluation metrics.
+ *
+ * This function takes a matrix `Thetamat` with columns "theta", "rho", "mae", and "rmse".
+ * It selects the optimal theta parameter by first maximizing "rho",
+ * then minimizing "rmse", and finally minimizing "mae" if necessary.
+ *
+ * @param Thetamat A NumericMatrix with four columns: "theta", "rho", "mae", and "rmse".
+ * @return The optimal theta parameter as a double.
+ */
+double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
+  // Check if the input matrix has exactly 4 columns
+  if (Thetamat.ncol() != 4) {
+    Rcpp::stop("Input matrix must have exactly 4 columns: theta, rho, mae, and rmse.");
+  }
+
+  // Initialize variables to store the optialmal row index and its metrics
+  int optialmal_row = 0;
+  double optialmal_rho = Thetamat(0, 1);  // Initialize with the first row's rho
+  double optialmal_rmse = Thetamat(0, 3); // Initialize with the first row's rmse
+  double optialmal_mae = Thetamat(0, 2);  // Initialize with the first row's mae
+
+  // Iterate through each row of the matrix
+  for (int i = 1; i < Thetamat.nrow(); ++i) {
+    double current_rho = Thetamat(i, 1);   // Current row's rho
+    double current_rmse = Thetamat(i, 3);  // Current row's rmse
+    double current_mae = Thetamat(i, 2);   // Current row's mae
+
+    // Compare rho values first
+    if (current_rho > optialmal_rho) {
+      optialmal_row = i;
+      optialmal_rho = current_rho;
+      optialmal_rmse = current_rmse;
+      optialmal_mae = current_mae;
+    } else if (current_rho == optialmal_rho) {
+      // If rho is equal, compare rmse values
+      if (current_rmse < optialmal_rmse) {
+        optialmal_row = i;
+        optialmal_rho = current_rho;
+        optialmal_rmse = current_rmse;
+        optialmal_mae = current_mae;
+      } else if (current_rmse == optialmal_rmse) {
+        // If rmse is also equal, compare mae values
+        if (current_mae < optialmal_mae) {
+          optialmal_row = i;
+          optialmal_rho = current_rho;
+          optialmal_rmse = current_rmse;
+          optialmal_mae = current_mae;
+        }
+      }
+    }
+  }
+
+  // Return the optimal theta param from the optialmal row
+  return Thetamat(optialmal_row, 0);
+}
