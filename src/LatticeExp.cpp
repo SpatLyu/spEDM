@@ -285,8 +285,8 @@ Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x,
     resultMatrix(i, 4) = result[i][4];
     resultMatrix(i, 5) = result[i][5];
     resultMatrix(i, 6) = result[i][6];
-    resultMatrix(i, 7) = result[i][8];
-    resultMatrix(i, 9) = result[i][9];
+    resultMatrix(i, 7) = result[i][7];
+    resultMatrix(i, 8) = result[i][8];
   }
 
   // Set column names for the result matrix
