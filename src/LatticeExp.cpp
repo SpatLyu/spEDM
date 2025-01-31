@@ -210,6 +210,10 @@ Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,
     resultMatrix(i, 4) = result[i][4];
   }
 
+  // Set column names for the result matrix
+  Rcpp::colnames(resultMatrix) = Rcpp::CharacterVector::create("libsizes",
+                 "x_xmap_y_mean","x_xmap_y_sig",
+                 "x_xmap_y_upper","x_xmap_y_lower");
   return resultMatrix;
 }
 
@@ -272,14 +276,23 @@ Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x,
     progressbar);
 
   // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
-  Rcpp::NumericMatrix resultMatrix(result.size(), 5);
+  Rcpp::NumericMatrix resultMatrix(result.size(), 9);
   for (size_t i = 0; i < result.size(); ++i) {
     resultMatrix(i, 0) = result[i][0];
     resultMatrix(i, 1) = result[i][1];
     resultMatrix(i, 2) = result[i][2];
     resultMatrix(i, 3) = result[i][3];
     resultMatrix(i, 4) = result[i][4];
+    resultMatrix(i, 5) = result[i][5];
+    resultMatrix(i, 6) = result[i][6];
+    resultMatrix(i, 7) = result[i][8];
+    resultMatrix(i, 9) = result[i][9];
   }
 
+  // Set column names for the result matrix
+  Rcpp::colnames(resultMatrix) = Rcpp::CharacterVector::create(
+    "libsizes","T_mean","D_mean",
+    "T_sig","T_upper","T_lower",
+    "D_sig","D_upper","D_lower");
   return resultMatrix;
 }

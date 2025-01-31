@@ -214,6 +214,10 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
     resultMatrix(i, 4) = result[i][4];
   }
 
+  // Set column names for the result matrix
+  Rcpp::colnames(resultMatrix) = Rcpp::CharacterVector::create("libsizes",
+                 "x_xmap_y_mean","x_xmap_y_sig",
+                 "x_xmap_y_upper","x_xmap_y_lower");
   return resultMatrix;
 }
 

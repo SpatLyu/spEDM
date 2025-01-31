@@ -27,5 +27,5 @@
   }
   y_xmap_x = RcppSCPCM4Lattice(effect,cause,medmat,nb,libsizes,E[-1],tau,k[2],simplex,theta,threads,cumulate,include.self,progressbar)
 
-  return(.bind_xmapdf(varname[1:2],x_xmap_y,y_xmap_x,bidirectional))
+  return(.bind_xmapdf2(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
