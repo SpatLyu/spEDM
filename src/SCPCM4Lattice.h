@@ -12,9 +12,10 @@
 #include "CppLatticeUtils.h"
 #include "SimplexProjection.h"
 #include "SMap.h"
+#include "spEDMDataStruct.h"
 #include <RcppThread.h>
 
-std::vector<std::pair<int, double>> SCPCMSingle4Lattice(
+std::vector<PartialCorRes> SCPCMSingle4Lattice(
     const std::vector<std::vector<double>>& x_vectors,  // Reconstructed state-space (each row is a separate vector/state)
     const std::vector<double>& y,                       // Spatial cross-section series to be used as the target (should line up with vectors)
     const std::vector<std::vector<double>>& controls,   // Cross-sectional data of control variables (**stored by row**)

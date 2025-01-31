@@ -9,12 +9,13 @@
 #include "CppLatticeUtils.h"
 #include "SimplexProjection.h"
 #include "SMap.h"
+#include "spEDMDataStruct.h"
 #include <RcppThread.h>
 
 // [[Rcpp::plugins(cpp11)]]
 // [[Rcpp::depends(RcppThread)]]
 
-double PartialSimplex4Lattice(
+std::vector<double> PartialSimplex4Lattice(
     const std::vector<std::vector<double>>& vectors,  // Reconstructed state-space (each row is a separate vector/state)
     const std::vector<double>& target,                // Spatial cross-section series to be used as the target (should line up with vectors)
     const std::vector<std::vector<double>>& controls, // Cross-sectional data of control variables (**stored by row**)
@@ -27,7 +28,7 @@ double PartialSimplex4Lattice(
     bool includeself                                  // Whether to include the current state when constructing the embedding vector
 ){
   int n_controls = controls.size();
-  double rho;
+  std::vector<double> rho(2);
 
   if (cumulate) {
     std::vector<double> temp_pred;
@@ -45,7 +46,8 @@ double PartialSimplex4Lattice(
     std::vector<double> con_pred = SimplexProjectionPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors);
     std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors);
 
-    rho = PartialCorTrivar(target,target_pred,con_pred,true,false);
+    rho[0] = PearsonCor(target,target_pred,true);
+    rho[1] = PartialCorTrivar(target,target_pred,con_pred,true,false);
   } else {
     std::vector<std::vector<double>> con_pred(n_controls);
     std::vector<double> temp_pred;
@@ -59,12 +61,13 @@ double PartialSimplex4Lattice(
     }
     std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors);
 
-    rho = PartialCor(target,target_pred,con_pred,true,false);
+    rho[0] = PearsonCor(target,target_pred,true);
+    rho[1] = PartialCor(target,target_pred,con_pred,true,false);
   }
   return rho;
 }
 
-double PartialSMap4Lattice(
+std::vector<double> PartialSMap4Lattice(
     const std::vector<std::vector<double>>& vectors,  // Reconstructed state-space (each row is a separate vector/state)
     const std::vector<double>& target,                // Spatial cross-section series to be used as the target (should line up with vectors)
     const std::vector<std::vector<double>>& controls, // Cross-sectional data of control variables (**stored by row**)
@@ -78,7 +81,7 @@ double PartialSMap4Lattice(
     bool includeself                                  // Whether to include the current state when constructing the embedding vector
 ){
   int n_controls = controls.size();
-  double rho;
+  std::vector<double> rho(2);
 
   if (cumulate){
     std::vector<double> temp_pred;
@@ -96,7 +99,8 @@ double PartialSMap4Lattice(
     std::vector<double> con_pred = SMapPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors, theta);
     std::vector<double> target_pred = SMapPrediction(vectors, target, lib_indices, pred_indices, num_neighbors, theta);
 
-    rho = PartialCorTrivar(target,target_pred,con_pred,true,false);
+    rho[0] = PearsonCor(target,target_pred,true);
+    rho[1] = PartialCorTrivar(target,target_pred,con_pred,true,false);
   } else {
     std::vector<std::vector<double>> con_pred(n_controls);
     std::vector<double> temp_pred;
@@ -110,13 +114,14 @@ double PartialSMap4Lattice(
     }
     std::vector<double> target_pred = SMapPrediction(vectors, target, lib_indices, pred_indices, num_neighbors, theta);
 
-    rho = PartialCor(target,target_pred,con_pred,true,false);
+    rho[0] = PearsonCor(target,target_pred,true);
+    rho[1] = PartialCor(target,target_pred,con_pred,true,false);
   }
 
   return rho;
 }
 
-std::vector<std::pair<int, double>> SCPCMSingle4Lattice(
+std::vector<PartialCorRes> SCPCMSingle4Lattice(
     const std::vector<std::vector<double>>& x_vectors,  // Reconstructed state-space (each row is a separate vector/state)
     const std::vector<double>& y,                       // Spatial cross-section series to be used as the target (should line up with vectors)
     const std::vector<std::vector<double>>& controls,   // Cross-sectional data of control variables (**stored by row**)
@@ -135,8 +140,8 @@ std::vector<std::pair<int, double>> SCPCMSingle4Lattice(
     bool includeself                                    // Whether to include the current state when constructing the embedding vector
 ) {
   int n = x_vectors.size();
-  std::vector<std::pair<int, double>> x_xmap_y;
-  double rho;
+  std::vector<PartialCorRes> x_xmap_y;
+  std::vector<double> rho;
 
   if (lib_size == max_lib_size) { // No possible library variation if using all vectors
     std::vector<bool> lib_indices(n, false);
@@ -150,7 +155,7 @@ std::vector<std::pair<int, double>> SCPCMSingle4Lattice(
     } else {
       rho = PartialSMap4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, b, theta, cumulate, includeself);
     }
-    x_xmap_y.emplace_back(lib_size, rho);
+    x_xmap_y.emplace_back(lib_size, rho[0], rho[1]);
   } else {
     for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
       std::vector<bool> lib_indices(n, false);
@@ -175,7 +180,7 @@ std::vector<std::pair<int, double>> SCPCMSingle4Lattice(
       } else {
         rho = PartialSMap4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, b, theta, cumulate, includeself);
       }
-      x_xmap_y.emplace_back(lib_size, rho);
+      x_xmap_y.emplace_back(lib_size, rho[0], rho[1]);
     }
   }
 
@@ -257,7 +262,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
   unique_lib_sizes.erase(std::unique(unique_lib_sizes.begin(), unique_lib_sizes.end()), unique_lib_sizes.end());
 
   // Initialize the result container
-  std::vector<std::pair<int, double>> x_xmap_y;
+  std::vector<PartialCorRes> x_xmap_y;
 
   // Sequential version of the for loop
   // for (int lib_size : unique_lib_sizes) {
@@ -334,27 +339,51 @@ std::vector<std::vector<double>> SCPCM4Lattice(
     }, threads_sizet);
   }
 
-  // Group by the first int and compute the mean
-  std::map<int, std::vector<double>> grouped_results;
+  // Group by the first int and store second and third values as pairs
+  std::map<int, std::vector<std::pair<double, double>>> grouped_results;
+
   for (const auto& result : x_xmap_y) {
-    grouped_results[result.first].push_back(result.second);
+    grouped_results[result.first].emplace_back(result.second, result.third);
   }
 
   std::vector<std::vector<double>> final_results;
+
+  // Compute the mean of second and third values for each group
   for (const auto& group : grouped_results) {
-    double mean_value = CppMean(group.second, true);
-    final_results.push_back({static_cast<double>(group.first), mean_value});
+    std::vector<double> second_values, third_values;
+
+    for (const auto& val : group.second) {
+      second_values.push_back(val.first);
+      third_values.push_back(val.second);
+    }
+
+    double mean_second = CppMean(second_values, true);
+    double mean_third = CppMean(third_values, true);
+
+    final_results.push_back({static_cast<double>(group.first), mean_second, mean_third});
   }
 
-  // Calculate significance and confidence interval for each result
+  // Compute significance and confidence intervals for each result
   for (size_t i = 0; i < final_results.size(); ++i) {
-    double rho = final_results[i][1];
-    double significance = CppSignificance(rho, n);
-    std::vector<double> confidence_interval = CppConfidence(rho, n);
+    double rho_second = final_results[i][1];
+    double rho_third = final_results[i][2];
 
-    final_results[i].push_back(significance);
-    final_results[i].push_back(confidence_interval[0]);
-    final_results[i].push_back(confidence_interval[1]);
+    // Compute significance and confidence interval for second value
+    double significance_second = CppSignificance(rho_second, n);
+    std::vector<double> confidence_interval_second = CppConfidence(rho_second, n);
+
+    // Compute significance and confidence interval for third value
+    double significance_third = CppSignificance(rho_third, n);
+    std::vector<double> confidence_interval_third = CppConfidence(rho_third, n);
+
+    // Append computed statistical values to the result
+    final_results[i].push_back(significance_second);
+    final_results[i].push_back(confidence_interval_second[0]);
+    final_results[i].push_back(confidence_interval_second[1]);
+
+    final_results[i].push_back(significance_third);
+    final_results[i].push_back(confidence_interval_third[0]);
+    final_results[i].push_back(confidence_interval_third[1]);
   }
 
   return final_results;

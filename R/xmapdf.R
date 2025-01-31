@@ -5,8 +5,8 @@
   y_xmap_x = as.data.frame(y_xmap_x)
 
   if (bidirectional){
-    colnames(x_xmap_y) = c("libsizes","x_xmap_y_mean","x_xmap_y_sig",
-                           "x_xmap_y_upper","x_xmap_y_lower")
+    # colnames(x_xmap_y) = c("libsizes","x_xmap_y_mean","x_xmap_y_sig",
+    #                        "x_xmap_y_upper","x_xmap_y_lower")
     x_xmap_y = as.data.frame(x_xmap_y)
     resdf = x_xmap_y |>
       dplyr::full_join(y_xmap_x, by = "libsizes") |>
