@@ -1,3 +1,5 @@
+# spEDM 1.4
+
 # spEDM 1.3
 
 * Implement the `smap` funtion to enable the selection of the optimal theta parameter (#128).
