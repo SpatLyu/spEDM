@@ -73,6 +73,8 @@
 
 \item{bidirectional}{(optional) whether to identify bidirectional potential causal relationships.}
 
+\item{cumulate}{(optional) Serial or cumulative computation of partial cross mapping.}
+
 \item{include.self}{(optional) Whether to include the current state when constructing the embedding vector.}
 
 \item{trendRM}{(optional) Whether to remove the linear trend.}
@@ -96,7 +98,7 @@ spatially convergent partial cross mapping
 \examples{
 columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
                        quiet=TRUE)
-\donttest{
+\dontrun{
 g = scpcm(columbus, "HOVAL", "CRIME", "INC",
           libsizes = seq(5,40,5), E = c(6,5,3))
 g

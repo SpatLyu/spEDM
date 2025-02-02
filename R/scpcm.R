@@ -69,6 +69,7 @@ methods::setGeneric("scpcm", function(data, ...) standardGeneric("scpcm"))
 #'
 #' @inheritParams gccm
 #' @param mediator Name of mediator variable.
+#' @param cumulate (optional) Serial or cumulative computation of partial cross mapping.
 #'
 #' @return A list.
 #' \describe{
@@ -84,7 +85,7 @@ methods::setGeneric("scpcm", function(data, ...) standardGeneric("scpcm"))
 #' @examples
 #' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
 #'                        quiet=TRUE)
-#' \donttest{
+#' \dontrun{
 #' g = scpcm(columbus, "HOVAL", "CRIME", "INC",
 #'           libsizes = seq(5,40,5), E = c(6,5,3))
 #' g
