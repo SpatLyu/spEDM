@@ -10,8 +10,6 @@
 
 * Provide an R-level API for generating embeddings (#97).
 
-* Add `S-maps` cross-prediction support to `gccm` (#81).
-
 ### enhancements
 
 * Now bidirectional mapping in the `gccm` result uses a `full join` structure when organized on the R side (#118).
@@ -27,6 +25,8 @@
 * Support testing causal links in GCCM with different `E` and `k` for cause and effect variables (#96).
 
 * Add thread settings for `gccm` (#94).
+
+* Add `S-maps` cross-prediction support to `gccm` (#81).
 
 ### bug fixes
 
