@@ -65,7 +65,7 @@
 
 \item{threads}{(optional) Number of threads.}
 
-\item{bidirectional}{(optional) whether to identify bidirectional potential causal relationships.}
+\item{bidirectional}{(optional) whether to identify bidirectional causal associations.}
 
 \item{include.self}{(optional) Whether to include the current state when constructing the embedding vector.}
 
@@ -80,7 +80,7 @@ A list.
 \describe{
 \item{\code{xmap}}{cross mapping prediction results}
 \item{\code{varname}}{names of causal and effect variable}
-\item{\code{bidirectional}}{whether to identify bidirectional potential causal relationships}
+\item{\code{bidirectional}}{whether to identify bidirectional causal associations}
 }
 }
 \description{
