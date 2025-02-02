@@ -78,7 +78,7 @@
 \value{
 A list.
 \describe{
-\item{\code{xmap}}{cross mapping prediction outputs}
+\item{\code{xmap}}{cross mapping prediction results}
 \item{\code{varname}}{names of causal and effect variable}
 \item{\code{bidirectional}}{whether to identify bidirectional potential causal relationships}
 }
