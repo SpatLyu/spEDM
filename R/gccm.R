@@ -75,7 +75,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 #' @param nb (optional) The neighbours list.
 #' @param RowCol (optional) Matrix of selected row and cols numbers.
 #' @param threads (optional) Number of threads.
-#' @param bidirectional (optional) whether to identify bidirectional potential causal relationships.
+#' @param bidirectional (optional) whether to identify bidirectional causal associations.
 #' @param include.self (optional) Whether to include the current state when constructing the embedding vector.
 #' @param trendRM (optional) Whether to remove the linear trend.
 #' @param progressbar (optional) whether to print the progress bar.
@@ -84,7 +84,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 #' \describe{
 #' \item{\code{xmap}}{cross mapping prediction results}
 #' \item{\code{varname}}{names of causal and effect variable}
-#' \item{\code{bidirectional}}{whether to identify bidirectional potential causal relationships}
+#' \item{\code{bidirectional}}{whether to identify bidirectional causal associations}
 #' }
 #' @export
 #' @importFrom methods setGeneric
