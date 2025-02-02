@@ -1,3 +1,5 @@
+methods::setGeneric("scpcm", function(data, ...) standardGeneric("scpcm"))
+
 .scpcm_sf_method = \(data, cause, effect, mediator, libsizes, E = 3, tau = 1, k = 4, theta = 1, algorithm = "simplex", nb = NULL,
                      threads = detectThreads(), bidirectional = TRUE, cumulate = FALSE, include.self = TRUE, trendRM = TRUE, progressbar = TRUE){
   varname = .check_character(c(cause, effect, mediator))
@@ -63,3 +65,32 @@
   return(.bind_xmapdf2(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
 
+#' spatially convergent partial cross mapping
+#'
+#' @inheritParams gccm
+#' @param mediator Name of mediator variable.
+#'
+#' @return A list.
+#' \describe{
+#' \item{\code{pxmap}}{partial cross mapping prediction outputs}
+#' \item{\code{xmap}}{cross mapping prediction outputs}
+#' \item{\code{varname}}{names of causal and effect variable}
+#' \item{\code{bidirectional}}{whether to identify bidirectional potential causal relationships}
+#' }
+#' @name scpcm
+#' @rdname scpcm
+#' @aliases scpcm,sf-method
+#'
+#' @examples
+#' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
+#'                        quiet=TRUE)
+#' \donttest{
+#' g = scpcm(columbus, "HOVAL", "CRIME", "INC",
+#'           libsizes = seq(5,40,5), E = c(6,5,3))
+#' g
+#' plot(g, ylimits = c(0,0.8))
+#' }
+methods::setMethod("scpcm", "sf", .scpcm_sf_method)
+
+#' @rdname scpcm
+methods::setMethod("scpcm", "SpatRaster", .scpcm_spatraster_method)
