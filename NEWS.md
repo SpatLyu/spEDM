@@ -46,7 +46,7 @@
 
 ### bug fixes
 
-* Require `sdsfun` version `0.7.0` or higher to fix the bug where the `gccm` function returns empty results when input grid data contains NA values (#61).
+* Fix the bug where the `gccm` function returns empty results when input grid data contains NA values (#61).
 
 # spEDM 1.1
 
