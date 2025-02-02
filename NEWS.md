@@ -1,6 +1,4 @@
-# spEDM 1.5
-
-# spEDM 1.4
+# spEDM 2.0
 
 # spEDM 1.3
 
