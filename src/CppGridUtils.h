@@ -76,8 +76,8 @@ std::vector<std::vector<double>> CppLaggedVar4Grid(
  * a different lagged value or the original element.
  *
  * Parameters:
- *   mat       - A 2D vector representing the grid data.
- *   E         - The number of embedding dimensions (columns in the resulting matrix).
+ *   mat         - A 2D vector representing the grid data.
+ *   E           - The number of embedding dimensions (columns in the resulting matrix).
  *   includeself - A boolean flag indicating whether the original values should be included in the first column.
  *
  * Returns:
