@@ -6,14 +6,20 @@
 #include <limits>
 #include "CppStats.h"
 
-// Function to compute the 'simplex projection' prediction
-// Returns a vectors: target_pred
+// Description: Computes predictions using the 'simplex projection' method based on state-space reconstruction.
+// Parameters:
+//   - vectors: Reconstructed state-space (each row represents a separate vector/state).
+//   - target: Spatial cross-section series used as the target (should align with vectors).
+//   - lib_indices: Vector of T/F values indicating which states to include when searching for neighbors.
+//   - pred_indices: Vector of T/F values indicating which states to predict from.
+//   - num_neighbors: Number of neighbors to use for simplex projection.
+// Returns: A vector<double> containing predicted target values (target_pred).
 std::vector<double> SimplexProjectionPrediction(
-    const std::vector<std::vector<double>>& vectors,  // Reconstructed state-space (each row is a separate vector/state)
-    const std::vector<double>& target,                // Spatial cross-section series to be used as the target (should line up with vectors)
-    const std::vector<bool>& lib_indices,             // Vector of T/F values (which states to include when searching for neighbors)
-    const std::vector<bool>& pred_indices,            // Vector of T/F values (which states to predict from)
-    int num_neighbors                                 // Number of neighbors to use for simplex projection
+    const std::vector<std::vector<double>>& vectors,
+    const std::vector<double>& target,
+    const std::vector<bool>& lib_indices,
+    const std::vector<bool>& pred_indices,
+    int num_neighbors
 ) {
   // Convert num_neighbors to size_t
   size_t num_neighbors_sizet = static_cast<size_t>(num_neighbors);
@@ -103,13 +109,20 @@ std::vector<double> SimplexProjectionPrediction(
   return pred;
 }
 
-// Rho value by the 'simplex projection' prediction
+// Description: Computes the Pearson correlation coefficient (rho) using the 'simplex projection' prediction method.
+// Parameters:
+//   - vectors: Reconstructed state-space (each row represents a separate vector/state).
+//   - target: Spatial cross-section series used as the target (should align with vectors).
+//   - lib_indices: Vector of T/F values indicating which states to include when searching for neighbors.
+//   - pred_indices: Vector of T/F values indicating which states to use for prediction.
+//   - num_neighbors: Number of neighbors to use for simplex projection.
+// Returns: A double representing the Pearson correlation coefficient (rho) between the predicted and actual target values.
 double SimplexProjection(
-    const std::vector<std::vector<double>>& vectors,  // Reconstructed state-space (each row is a separate vector/state)
-    const std::vector<double>& target,                // Spatial cross-section series to be used as the target (should line up with vectors)
-    const std::vector<bool>& lib_indices,             // Vector of T/F values (which states to include when searching for neighbors)
-    const std::vector<bool>& pred_indices,            // Vector of T/F values (which states to predict from)
-    int num_neighbors                                 // Number of neighbors to use for simplex projection
+    const std::vector<std::vector<double>>& vectors,
+    const std::vector<double>& target,
+    const std::vector<bool>& lib_indices,
+    const std::vector<bool>& pred_indices,
+    int num_neighbors
 ) {
   std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors);
   return PearsonCor(target_pred, target, true);
