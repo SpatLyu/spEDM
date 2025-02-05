@@ -14,17 +14,37 @@
 // [[Rcpp::plugins(cpp11)]]
 // [[Rcpp::depends(RcppThread)]]
 
+/*
+ * Perform GCCM on a single lib and pred for lattice data.
+ *
+ * Parameters:
+ *   - x_vectors: Reconstructed state-space (each row represents a separate vector/state).
+ *   - y: Spatial cross-section series used as the target (should align with x_vectors).
+ *   - lib_indices: A boolean vector indicating which states to include when searching for neighbors.
+ *   - lib_size: Size of the library used for cross mapping.
+ *   - max_lib_size: Maximum size of the library.
+ *   - possible_lib_indices: Indices of possible library states.
+ *   - pred_indices: A boolean vector indicating which states to use for prediction.
+ *   - b: Number of neighbors to use for simplex projection.
+ *   - simplex: If true, uses simplex projection for prediction; otherwise, uses s-mapping.
+ *   - theta: Distance weighting parameter for local neighbors in the manifold (used in s-mapping).
+ *
+ * Returns:
+ *   A vector of pairs, where each pair consists of:
+ *   - An integer representing the library size.
+ *   - A double representing the Pearson correlation coefficient (rho) between predicted and actual values.
+ */
 std::vector<std::pair<int, double>> GCCMSingle4Lattice(
-    const std::vector<std::vector<double>>& x_vectors,  // Reconstructed state-space (each row is a separate vector/state)
-    const std::vector<double>& y,                       // Spatial cross-section series to be used as the target (should line up with vectors)
-    const std::vector<bool>& lib_indices,               // Vector of T/F values (which states to include when searching for neighbors)
-    int lib_size,                                       // Size of the library
-    int max_lib_size,                                   // Maximum size of the library
-    const std::vector<int>& possible_lib_indices,       // Indices of possible library states
-    const std::vector<bool>& pred_indices,              // Vector of T/F values (which states to predict from)
-    int b,                                              // Number of neighbors to use for simplex projection
-    bool simplex,                                       // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
-    double theta                                        // Distance weighting parameter for the local neighbours in the manifold
+    const std::vector<std::vector<double>>& x_vectors,
+    const std::vector<double>& y,
+    const std::vector<bool>& lib_indices,
+    int lib_size,
+    int max_lib_size,
+    const std::vector<int>& possible_lib_indices,
+    const std::vector<bool>& pred_indices,
+    int b,
+    bool simplex,
+    double theta
 ) {
   int n = x_vectors.size();
   std::vector<std::pair<int, double>> x_xmap_y;
@@ -74,19 +94,44 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
   return x_xmap_y;
 }
 
+/**
+ * Performs GCCM on a spatial lattice data.
+ *
+ * Parameters:
+ * - x_vectors: Reconstructed state-space vectors, where each row represents a separate state vector.
+ * - y: Spatial cross-section series used as the response variable for cross mapping.
+ * - lib_sizes: A vector specifying different library sizes for GCCM analysis.
+ * - lib: A matrix (n x 2) representing sequences of data used to construct libraries.
+ * - pred: A matrix (n x 2) representing sequences of data used for prediction.
+ * - E: Embedding dimension for attractor reconstruction.
+ * - tau: The spatial lag step for constructing lagged state-space vectors.
+ * - b: Number of nearest neighbors used for prediction.
+ * - simplex: Boolean flag indicating whether to use simplex projection (true) or S-mapping (false) for prediction.
+ * - theta: Distance weighting parameter used for weighting neighbors in the S-mapping prediction.
+ * - threads: Number of threads to use for parallel computation.
+ * - progressbar: Boolean flag to indicate whether to display a progress bar during computation.
+ *
+ * Returns:
+ *    A 2D vector of results, where each row contains:
+ *      - The library size.
+ *      - The mean cross-mapping correlation.
+ *      - The statistical significance of the correlation.
+ *      - The lower bound of the confidence interval.
+ *      - The upper bound of the confidence interval.
+ */
 std::vector<std::vector<double>> GCCM4Lattice(
-    const std::vector<std::vector<double>>& x_vectors,  // Reconstructed state-space (each row is a separate vector/state)
-    const std::vector<double>& y,                       // Spatial cross-section series to cross map to
-    const std::vector<int>& lib_sizes,                  // Vector of library sizes to use
-    const std::vector<std::pair<int, int>>& lib,        // Matrix (n x 2) using n sequences of data to construct libraries
-    const std::vector<std::pair<int, int>>& pred,       // Matrix (n x 2) using n sequences of data to predict from
-    int E,                                              // Number of dimensions for the attractor reconstruction
-    int tau,                                            // Spatial lag for the lagged-vector construction
-    int b,                                              // Number of nearest neighbors to use for prediction
-    bool simplex,                                       // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
-    double theta,                                       // Distance weighting parameter for the local neighbours in the manifold
-    int threads,                                        // Number of threads used from the global pool
-    bool progressbar = true                             // Whether to print the progress bar
+    const std::vector<std::vector<double>>& x_vectors,
+    const std::vector<double>& y,
+    const std::vector<int>& lib_sizes,
+    const std::vector<std::pair<int, int>>& lib,
+    const std::vector<std::pair<int, int>>& pred,
+    int E,
+    int tau,
+    int b,
+    bool simplex,
+    double theta,
+    int threads,
+    bool progressbar = true
 ) {
   // If b is not provided correctly, default it to E + 2
   if (b <= 0) {
