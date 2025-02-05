@@ -15,7 +15,7 @@
 // [[Rcpp::depends(RcppThread)]]
 
 /**
- * Perform Grid-based Geographical Convergent Cross Mapping (GCCM) for a single library size.
+ * Perform Grid-based Geographical Convergent Cross Mapping (GCCM) for a single library size and pred indice.
  *
  * This function calculates the cross mapping between a predictor variable (xEmbedings) and a response variable (yPred)
  * over a 2D grid, using either Simplex Projection or S-Mapping.
@@ -96,7 +96,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
 }
 
 /**
- * Perform Grid-based Geographical Convergent Cross Mapping (GCCM) for multiple library sizes.
+ * Perform Geographical Convergent Cross Mapping (GCCM) for spatial grid data.
  *
  * This function calculates the cross mapping between predictor variables (xMatrix) and response variables (yMatrix)
  * over a 2D grid, using either Simplex Projection or S-Mapping. It supports parallel processing and progress tracking.
@@ -117,18 +117,18 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
  *                     significance, and confidence interval bounds.
  */
 std::vector<std::vector<double>> GCCM4Grid(
-    const std::vector<std::vector<double>>& xMatrix, // Two dimension matrix of X variable
-    const std::vector<std::vector<double>>& yMatrix, // Two dimension matrix of Y variable
-    const std::vector<int>& lib_sizes,               // Vector of library sizes to use
-    const std::vector<std::pair<int, int>>& pred,    // Indices of spatial units to be predicted
-    int E,                                           // Number of dimensions for the attractor reconstruction
-    int tau,                                         // Step of spatial lags
-    int b,                                           // Number of nearest neighbors to use for prediction
-    bool simplex,                                    // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
-    double theta,                                    // Distance weighting parameter for the local neighbours in the manifold
-    int threads,                                     // Number of threads used from the global pool
-    bool includeself,                                // Whether to include the current state when constructing the embedding vector
-    bool progressbar                                 // Whether to print the progress bar
+    const std::vector<std::vector<double>>& xMatrix,
+    const std::vector<std::vector<double>>& yMatrix,
+    const std::vector<int>& lib_sizes,
+    const std::vector<std::pair<int, int>>& pred,
+    int E,
+    int tau,
+    int b,
+    bool simplex,
+    double theta,
+    int threads,
+    bool includeself,
+    bool progressbar
 ) {
   // If b is not provided correctly, default it to E + 2
   if (b <= 0) {
