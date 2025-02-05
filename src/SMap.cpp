@@ -170,9 +170,7 @@ double SMap(
 }
 
 /*
- * Description: Computes the S-Map prediction and returns a vector containing
- *              Pearson correlation coefficient (PearsonCor), mean absolute error (MAE),
- *              and root mean squared error (RMSE).
+ * Description: Computes the S-Map prediction and evaluates prediction performance.
  *
  * Parameters:
  *   - vectors: Reconstructed state-space (each row is a separate vector/state).
