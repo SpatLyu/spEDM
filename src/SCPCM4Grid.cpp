@@ -15,17 +15,39 @@
 // [[Rcpp::plugins(cpp11)]]
 // [[Rcpp::depends(RcppThread)]]
 
+/**
+ * @brief Computes the partial correlation between a spatial cross-section series and its prediction
+ *        using the Simplex Projection method, incorporating control variables in a grid-based spatial setting.
+ *
+ * This function reconstructs the state-space and applies Simplex Projection prediction while accounting
+ * for control variables in a spatial grid data. The process can be cumulative or independent in incorporating
+ * control variables.
+ *
+ * @param vectors: Reconstructed state-space where each row represents a separate vector/state.
+ * @param target: Spatial cross-section series used as the prediction target.
+ * @param controls: Cross-sectional data of control variables, stored row-wise.
+ * @param lib_indices: Boolean vector indicating which states to include when searching for neighbors.
+ * @param pred_indices: Boolean vector indicating which states to predict from.
+ * @param conEs: Vector specifying the number of dimensions for attractor reconstruction with control variables.
+ * @param nrow: Number of rows in the input spatial grid data.
+ * @param num_neighbors: Number of neighbors to use for Simplex Projection.
+ * @param cumulate: Boolean flag to determine whether to cumulate the partial correlations.
+ * @param includeself: Boolean flag to indicate whether to include the current state in the embedding.
+ * @return A vector of size 2 containing:
+ *         - rho[0]: Pearson correlation between the target and its predicted values.
+ *         - rho[1]: Partial correlation between the target and its predicted values, adjusting for control variables.
+ */
 std::vector<double> PartialSimplex4Grid(
-    const std::vector<std::vector<double>>& vectors,    // Reconstructed state-space (each row is a separate vector/state)
-    const std::vector<double>& target,                  // Spatial cross-section series to be used as the target (should line up with vectors)
-    const std::vector<std::vector<double>>& controls,   // Cross-sectional data of control variables (**each matirx stored by row**)
-    const std::vector<bool>& lib_indices,               // Vector of T/F values (which states to include when searching for neighbors)
-    const std::vector<bool>& pred_indices,              // Vector of T/F values (which states to predict from)
-    const std::vector<int>& conEs,                      // Number of dimensions for the attractor reconstruction with control variables
-    int nrow,                                           // Number of rows fot the input spatial grid data
-    int num_neighbors,                                  // Number of neighbors to use for simplex projection
-    bool cumulate,                                      // Whether to cumulate the partial correlations
-    bool includeself                                    // Whether to include the current state when constructing the embedding vector
+    const std::vector<std::vector<double>>& vectors,
+    const std::vector<double>& target,
+    const std::vector<std::vector<double>>& controls,
+    const std::vector<bool>& lib_indices,
+    const std::vector<bool>& pred_indices,
+    const std::vector<int>& conEs,
+    int nrow,
+    int num_neighbors,
+    bool cumulate,
+    bool includeself
 ){
   int n_controls = controls.size();
   std::vector<double> rho(2);
@@ -71,18 +93,41 @@ std::vector<double> PartialSimplex4Grid(
   return rho;
 }
 
+/**
+ * @brief Computes the partial correlation between a spatial cross-section series and its prediction
+ *        using the S-Map method, incorporating control variables in a grid-based spatial setting.
+ *
+ * This function reconstructs the state-space and applies S-Map prediction while accounting for
+ * control variables in a spatial grid data. The process can be cumulative or independent in incorporating
+ * control variables.
+ *
+ * @param vectors: Reconstructed state-space where each row represents a separate vector/state.
+ * @param target: Spatial cross-section series used as the prediction target.
+ * @param controls: Cross-sectional data of control variables, stored row-wise.
+ * @param lib_indices: Boolean vector indicating which states to include when searching for neighbors.
+ * @param pred_indices: Boolean vector indicating which states to predict from.
+ * @param conEs: Vector specifying the number of dimensions for attractor reconstruction with control variables.
+ * @param nrow: Number of rows in the input spatial grid data.
+ * @param num_neighbors: Number of neighbors to use for S-Map projection.
+ * @param theta: Weighting parameter for distances in the S-Map method.
+ * @param cumulate: Boolean flag to determine whether to cumulate the partial correlations.
+ * @param includeself: Boolean flag to indicate whether to include the current state in the embedding.
+ * @return A vector of size 2 containing:
+ *         - rho[0]: Pearson correlation between the target and its predicted values.
+ *         - rho[1]: Partial correlation between the target and its predicted values, adjusting for control variables.
+ */
 std::vector<double> PartialSMap4Grid(
-    const std::vector<std::vector<double>>& vectors,    // Reconstructed state-space (each row is a separate vector/state)
-    const std::vector<double>& target,                  // Spatial cross-section series to be used as the target (should line up with vectors)
-    const std::vector<std::vector<double>>& controls,   // Cross-sectional data of control variables (**each variable stored by one row**)
-    const std::vector<bool>& lib_indices,               // Vector of T/F values (which states to include when searching for neighbors)
-    const std::vector<bool>& pred_indices,              // Vector of T/F values (which states to predict from)
-    const std::vector<int>& conEs,                      // Number of dimensions for the attractor reconstruction with control variables
-    int nrow,                                           // Number of rows fot the input spatial grid data
-    int num_neighbors,                                  // Number of neighbors to use for simplex projection
-    double theta,                                       // Weighting parameter for distances
-    bool cumulate,                                      // Whether to cumulate the partial correlations
-    bool includeself                                    // Whether to include the current state when constructing the embedding vector
+    const std::vector<std::vector<double>>& vectors,
+    const std::vector<double>& target,
+    const std::vector<std::vector<double>>& controls,
+    const std::vector<bool>& lib_indices,
+    const std::vector<bool>& pred_indices,
+    const std::vector<int>& conEs,
+    int nrow,
+    int num_neighbors,
+    double theta,
+    bool cumulate,
+    bool includeself
 ){
   int n_controls = controls.size();
   std::vector<double> rho(2);
