@@ -98,6 +98,19 @@ Rcpp::NumericVector RcppSumNormalize(const Rcpp::NumericVector& vec, bool NA_rm 
 }
 
 // [[Rcpp::export]]
+double RcppDistance(const Rcpp::NumericVector& vec1,
+                    const Rcpp::NumericVector& vec2,
+                    bool L1norm = false,
+                    bool NA_rm = false){
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> v1 = Rcpp::as<std::vector<double>>(vec1);
+  std::vector<double> v2 = Rcpp::as<std::vector<double>>(vec2);
+
+  // Call the CppDistance function
+  return CppDistance(v1, v2, L1norm ,NA_rm);
+}
+
+// [[Rcpp::export]]
 double RcppPearsonCor(const Rcpp::NumericVector& y,
                       const Rcpp::NumericVector& y_hat,
                       bool NA_rm = false) {
@@ -105,7 +118,7 @@ double RcppPearsonCor(const Rcpp::NumericVector& y,
   std::vector<double> y_vec = Rcpp::as<std::vector<double>>(y);
   std::vector<double> y_hat_vec = Rcpp::as<std::vector<double>>(y_hat);
 
-  // Call the ArmaPearsonCor function
+  // Call the PearsonCor function
   return PearsonCor(y_vec, y_hat_vec, NA_rm);
 }
 
@@ -144,7 +157,7 @@ double RcppPartialCorTrivar(Rcpp::NumericVector y,
   std::vector<double> std_y_hat = Rcpp::as<std::vector<double>>(y_hat);
   std::vector<double> std_control = Rcpp::as<std::vector<double>>(control);
 
-  // Call the PartialCor function
+  // Call the PartialCorTrivar function
   return PartialCorTrivar(std_y, std_y_hat, std_control, NA_rm, linear);
 }
 

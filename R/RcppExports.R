@@ -97,6 +97,10 @@ RcppSumNormalize <- function(vec, NA_rm = FALSE) {
     .Call(`_spEDM_RcppSumNormalize`, vec, NA_rm)
 }
 
+RcppDistance <- function(vec1, vec2, L1norm = FALSE, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppDistance`, vec1, vec2, L1norm, NA_rm)
+}
+
 RcppPearsonCor <- function(y, y_hat, NA_rm = FALSE) {
     .Call(`_spEDM_RcppPearsonCor`, y, y_hat, NA_rm)
 }
