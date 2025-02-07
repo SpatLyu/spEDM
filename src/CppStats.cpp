@@ -213,7 +213,9 @@ double CppDistance(const std::vector<double>& vec1,
 
   double dist_res = 0.0;
   if (L1norm) {
-    dist_res = CppSum(CppAbsDiff(clean_v1,clean_v2),true);
+    for (std::size_t i = 0; i < clean_v1.size(); ++i) {
+      dist_res += std::abs(clean_v1[i] - clean_v2[i]);
+    }
   } else {
     for (std::size_t i = 0; i < clean_v1.size(); ++i) {
       dist_res += (clean_v1[i] - clean_v2[i]) * (clean_v1[i] - clean_v2[i]);
