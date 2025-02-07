@@ -119,8 +119,8 @@ double CppRMSE(const std::vector<double>& vec1,
 }
 
 // Function to calculate the absolute difference between two vectors
-std::vector<double> CppAbs(const std::vector<double>& vec1,
-                           const std::vector<double>& vec2) {
+std::vector<double> CppAbsDiff(const std::vector<double>& vec1,
+                               const std::vector<double>& vec2) {
   if (vec1.size() != vec2.size()) {
     throw std::invalid_argument("Vectors must have the same size");
   }
@@ -187,6 +187,45 @@ double CppCovariance(const std::vector<double>& vec1,
   return count > 1 ? cov / (count - 1) : std::numeric_limits<double>::quiet_NaN();
 }
 
+// Function to compute distance between two vectors:
+double CppDistance(const std::vector<double>& vec1,
+                   const std::vector<double>& vec2,
+                   bool L1norm = false,
+                   bool NA_rm = false){
+  // Handle NA values
+  std::vector<double> clean_v1, clean_v2;
+  for (size_t i = 0; i < vec1.size(); ++i) {
+    bool is_na = isNA(vec1[i]) || isNA(vec2[i]);
+    if (is_na) {
+      if (!NA_rm) {
+        return std::numeric_limits<double>::quiet_NaN(); // Return NaN if NA_rm is false
+      }
+    } else {
+      clean_v1.push_back(vec1[i]);
+      clean_v2.push_back(vec2[i]);
+    }
+  }
+
+  // If no valid data, return NaN
+  if (clean_v1.empty()) {
+    return std::numeric_limits<double>::quiet_NaN();
+  }
+
+  double dist_res = 0.0;
+  if (L1norm) {
+    for (std::size_t i = 0; i < clean_v1.size(); ++i) {
+      dist_res += std::abs(clean_v1[i] - clean_v2[i]);
+    }
+  } else {
+    for (std::size_t i = 0; i < clean_v1.size(); ++i) {
+      dist_res += (clean_v1[i] - clean_v2[i]) * (clean_v1[i] - clean_v2[i]);
+    }
+    dist_res = std::sqrt(dist_res);
+  }
+
+  return dist_res;
+}
+
 // Function to compute Pearson correlation using Armadillo
 double PearsonCor(const std::vector<double>& y,
                   const std::vector<double>& y_hat,
@@ -233,9 +272,10 @@ double PearsonCor(const std::vector<double>& y,
 // double PearsonCor(const std::vector<double>& y,
 //                   const std::vector<double>& y_hat,
 //                   bool NA_rm = false) {
-//   if (y.size() != y_hat.size()) {
-//     throw std::invalid_argument("Vectors must have the same size");
-//   }
+//   // // Check input sizes
+//   // if (y.size() != y_hat.size()) {
+//   //   throw std::invalid_argument("Input vectors must have the same size.");
+//   // }
 //
 //   // Handle NA values
 //   std::vector<double> clean_y, clean_y_hat;

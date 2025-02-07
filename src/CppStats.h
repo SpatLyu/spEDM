@@ -28,8 +28,8 @@ double CppRMSE(const std::vector<double>& x1,
                const std::vector<double>& x2,
                bool NA_rm = false);
 
-std::vector<double> CppAbs(const std::vector<double>& vec1,
-                           const std::vector<double>& vec2);
+std::vector<double> CppAbsDiff(const std::vector<double>& vec1,
+                               const std::vector<double>& vec2);
 
 std::vector<double> CppSumNormalize(const std::vector<double>& vec,
                                     bool NA_rm = false);
@@ -39,6 +39,11 @@ double CppVariance(const std::vector<double>& vec, bool NA_rm = false);
 double CppCovariance(const std::vector<double>& vec1,
                      const std::vector<double>& vec2,
                      bool NA_rm = false);
+
+double CppDistance(const std::vector<double>& vec1,
+                   const std::vector<double>& vec2,
+                   bool L1norm = false,
+                   bool NA_rm = false);
 
 double PearsonCor(const std::vector<double>& y,
                   const std::vector<double>& y_hat,

@@ -89,12 +89,16 @@ RcppRMSE <- function(vec1, vec2, NA_rm = FALSE) {
     .Call(`_spEDM_RcppRMSE`, vec1, vec2, NA_rm)
 }
 
-RcppAbs <- function(vec1, vec2) {
-    .Call(`_spEDM_RcppAbs`, vec1, vec2)
+RcppAbsDiff <- function(vec1, vec2) {
+    .Call(`_spEDM_RcppAbsDiff`, vec1, vec2)
 }
 
 RcppSumNormalize <- function(vec, NA_rm = FALSE) {
     .Call(`_spEDM_RcppSumNormalize`, vec, NA_rm)
+}
+
+RcppDistance <- function(vec1, vec2, L1norm = FALSE, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppDistance`, vec1, vec2, L1norm, NA_rm)
 }
 
 RcppPearsonCor <- function(y, y_hat, NA_rm = FALSE) {
