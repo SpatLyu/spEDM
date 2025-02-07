@@ -72,13 +72,14 @@ double RcppRMSE(const Rcpp::NumericVector& vec1,
 }
 
 // [[Rcpp::export]]
-Rcpp::NumericVector RcppAbs(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2) {
+Rcpp::NumericVector RcppAbsDiff(const Rcpp::NumericVector& vec1,
+                                const Rcpp::NumericVector& vec2) {
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> vec1_cpp = Rcpp::as<std::vector<double>>(vec1);
   std::vector<double> vec2_cpp = Rcpp::as<std::vector<double>>(vec2);
 
-  // Call the CppAbs function
-  std::vector<double> result = CppAbs(vec1_cpp, vec2_cpp);
+  // Call the CppAbsDiff function
+  std::vector<double> result = CppAbsDiff(vec1_cpp, vec2_cpp);
 
   // Convert the result back to Rcpp::NumericVector
   return Rcpp::wrap(result);
