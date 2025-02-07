@@ -12,17 +12,6 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// timesTwo
-NumericVector timesTwo(NumericVector x);
-RcppExport SEXP _spEDM_timesTwo(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(timesTwo(x));
-    return rcpp_result_gen;
-END_RCPP
-}
 // RcppLaggedVar4Grid
 Rcpp::NumericMatrix RcppLaggedVar4Grid(Rcpp::NumericMatrix mat, int lagNum);
 RcppExport SEXP _spEDM_RcppLaggedVar4Grid(SEXP matSEXP, SEXP lagNumSEXP) {
@@ -284,6 +273,25 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// GCMC4Lattice
+Rcpp::NumericVector GCMC4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, const Rcpp::IntegerVector& E, int b, int max_r, int threads, bool includeself, bool progressbar);
+RcppExport SEXP _spEDM_GCMC4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP ESEXP, SEXP bSEXP, SEXP max_rSEXP, SEXP threadsSEXP, SEXP includeselfSEXP, SEXP progressbarSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type E(ESEXP);
+    Rcpp::traits::input_parameter< int >::type b(bSEXP);
+    Rcpp::traits::input_parameter< int >::type max_r(max_rSEXP);
+    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< bool >::type includeself(includeselfSEXP);
+    Rcpp::traits::input_parameter< bool >::type progressbar(progressbarSEXP);
+    rcpp_result_gen = Rcpp::wrap(GCMC4Lattice(x, y, nb, E, b, max_r, threads, includeself, progressbar));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppMean
 double RcppMean(const Rcpp::NumericVector& vec, bool NA_rm);
 RcppExport SEXP _spEDM_RcppMean(SEXP vecSEXP, SEXP NA_rmSEXP) {
@@ -494,7 +502,6 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_spEDM_timesTwo", (DL_FUNC) &_spEDM_timesTwo, 1},
     {"_spEDM_RcppLaggedVar4Grid", (DL_FUNC) &_spEDM_RcppLaggedVar4Grid, 2},
     {"_spEDM_RcppGenGridEmbeddings", (DL_FUNC) &_spEDM_RcppGenGridEmbeddings, 3},
     {"_spEDM_RcppLocateGridIndices", (DL_FUNC) &_spEDM_RcppLocateGridIndices, 4},
@@ -511,6 +518,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppSMap4Lattice", (DL_FUNC) &_spEDM_RcppSMap4Lattice, 9},
     {"_spEDM_RcppGCCM4Lattice", (DL_FUNC) &_spEDM_RcppGCCM4Lattice, 12},
     {"_spEDM_RcppSCPCM4Lattice", (DL_FUNC) &_spEDM_RcppSCPCM4Lattice, 14},
+    {"_spEDM_GCMC4Lattice", (DL_FUNC) &_spEDM_GCMC4Lattice, 9},
     {"_spEDM_RcppMean", (DL_FUNC) &_spEDM_RcppMean, 2},
     {"_spEDM_RcppSum", (DL_FUNC) &_spEDM_RcppSum, 2},
     {"_spEDM_RcppVariance", (DL_FUNC) &_spEDM_RcppVariance, 2},
