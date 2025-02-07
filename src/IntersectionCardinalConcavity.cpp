@@ -3,16 +3,7 @@
 #include <algorithm>
 #include <numeric>
 #include <limits>
-#include <iostream>
-
-// Function to compute the Euclidean distance between two vectors
-double euclidean_distance(const std::vector<double>& a, const std::vector<double>& b) {
-  double sum = 0.0;
-  for (std::size_t i = 0; i < a.size(); ++i) {
-    sum += (a[i] - b[i]) * (a[i] - b[i]);
-  }
-  return std::sqrt(sum);
-}
+#include "CppStats.h"
 
 // Function to find k-nearest neighbors of a given index in the embedding space
 std::vector<std::size_t> find_k_nearest_neighbors(
@@ -25,7 +16,8 @@ std::vector<std::size_t> find_k_nearest_neighbors(
 
   for (std::size_t i = 0; i < n; ++i) {
     if (i != target_idx) {
-      double dist = euclidean_distance(embedding_space[target_idx], embedding_space[i]);
+      double dist = CppDistance(embedding_space[target_idx],
+                                embedding_space[i],false,true);
       distances.emplace_back(dist, i);
     }
   }
