@@ -3,6 +3,7 @@
 #include "Forecast4Lattice.h"
 #include "GCCM4Lattice.h"
 #include "SCPCM4Lattice.h"
+#include "IntersectionCardinality.h"
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
 
@@ -374,4 +375,39 @@ Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x,
     "T_sig","T_upper","T_lower",
     "D_sig","D_upper","D_lower");
   return resultMatrix;
+}
+
+// Wrapper function to perform GCMC Lattice and return a NumericVector
+// [[Rcpp::export]]
+Rcpp::NumericVector RcppGCMC4Lattice(
+    const Rcpp::NumericVector& x,
+    const Rcpp::NumericVector& y,
+    const Rcpp::List& nb,
+    const Rcpp::IntegerVector& E,
+    int b,
+    int max_r,
+    int threads,
+    bool includeself,
+    bool progressbar){
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
+  std::vector<double> y_std = Rcpp::as<std::vector<double>>(y);
+
+  // Convert Rcpp::List to std::vector<std::vector<int>>
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
+  std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
+
+  // Generate embeddings
+  std::vector<std::vector<double>> e1 = GenLatticeEmbeddings(x_std, nb_vec, E[0], includeself);
+  std::vector<std::vector<double>> e2 = GenLatticeEmbeddings(y_std, nb_vec, E[1], includeself);
+
+  // Perform GCMC For Lattice
+  double cs1 = IntersectionCardinality(e1,e2,b,max_r,threads,progressbar);
+  double cs2 = IntersectionCardinality(e2,e1,b,max_r,threads,progressbar);
+
+  Rcpp::NumericVector res_vec = Rcpp::NumericVector::create(
+    Rcpp::Named("x_xmap_y",cs1),
+    Rcpp::Named("y_xmap_x",cs2));
+
+  return res_vec;
 }
