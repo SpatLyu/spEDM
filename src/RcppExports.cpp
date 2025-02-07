@@ -273,9 +273,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// GCMC4Lattice
-Rcpp::NumericVector GCMC4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, const Rcpp::IntegerVector& E, int b, int max_r, int threads, bool includeself, bool progressbar);
-RcppExport SEXP _spEDM_GCMC4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP ESEXP, SEXP bSEXP, SEXP max_rSEXP, SEXP threadsSEXP, SEXP includeselfSEXP, SEXP progressbarSEXP) {
+// RcppGCMC4Lattice
+Rcpp::NumericVector RcppGCMC4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, const Rcpp::IntegerVector& E, int b, int max_r, int threads, bool includeself, bool progressbar);
+RcppExport SEXP _spEDM_RcppGCMC4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP ESEXP, SEXP bSEXP, SEXP max_rSEXP, SEXP threadsSEXP, SEXP includeselfSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -288,7 +288,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< bool >::type includeself(includeselfSEXP);
     Rcpp::traits::input_parameter< bool >::type progressbar(progressbarSEXP);
-    rcpp_result_gen = Rcpp::wrap(GCMC4Lattice(x, y, nb, E, b, max_r, threads, includeself, progressbar));
+    rcpp_result_gen = Rcpp::wrap(RcppGCMC4Lattice(x, y, nb, E, b, max_r, threads, includeself, progressbar));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -518,7 +518,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppSMap4Lattice", (DL_FUNC) &_spEDM_RcppSMap4Lattice, 9},
     {"_spEDM_RcppGCCM4Lattice", (DL_FUNC) &_spEDM_RcppGCCM4Lattice, 12},
     {"_spEDM_RcppSCPCM4Lattice", (DL_FUNC) &_spEDM_RcppSCPCM4Lattice, 14},
-    {"_spEDM_GCMC4Lattice", (DL_FUNC) &_spEDM_GCMC4Lattice, 9},
+    {"_spEDM_RcppGCMC4Lattice", (DL_FUNC) &_spEDM_RcppGCMC4Lattice, 9},
     {"_spEDM_RcppMean", (DL_FUNC) &_spEDM_RcppMean, 2},
     {"_spEDM_RcppSum", (DL_FUNC) &_spEDM_RcppSum, 2},
     {"_spEDM_RcppVariance", (DL_FUNC) &_spEDM_RcppVariance, 2},

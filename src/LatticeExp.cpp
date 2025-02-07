@@ -379,7 +379,7 @@ Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x,
 
 // Wrapper function to perform GCMC Lattice and return a NumericVector
 // [[Rcpp::export]]
-Rcpp::NumericVector GCMC4Lattice(
+Rcpp::NumericVector RcppGCMC4Lattice(
     const Rcpp::NumericVector& x,
     const Rcpp::NumericVector& y,
     const Rcpp::List& nb,
@@ -403,7 +403,7 @@ Rcpp::NumericVector GCMC4Lattice(
 
   // Perform GCMC For Lattice
   double cs1 = IntersectionCardinality(e1,e2,b,max_r,threads,progressbar);
-  double cs2 = IntersectionCardinality(e1,e2,b,max_r,threads,progressbar);
+  double cs2 = IntersectionCardinality(e2,e1,b,max_r,threads,progressbar);
 
   Rcpp::NumericVector res_vec = Rcpp::NumericVector::create(
     Rcpp::Named("x_xmap_y",cs1),
