@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <numeric>
 #include <limits>
+#include <cmath>
 #include "CppStats.h"
 #include <RcppThread.h>
 
@@ -22,20 +23,25 @@ std::vector<std::size_t> find_k_nearest_neighbors(
     if (i != target_idx) {
       double dist = CppDistance(embedding_space[target_idx],
                                 embedding_space[i],false,true);
-      distances.emplace_back(dist, i);
+
+      // Skip NaN distances
+      if (!std::isnan(dist)) {
+        distances.emplace_back(dist, i);
+      }
     }
   }
 
-  // Partial sort to get k-nearest neighbors
-  std::partial_sort(distances.begin(), distances.begin() + k, distances.end());
+  // Partial sort to get k-nearest neighbors, excluding NaN distances
+  std::partial_sort(distances.begin(), distances.begin() + std::min(k, distances.size()), distances.end());
 
   std::vector<std::size_t> neighbors;
-  for (std::size_t i = 0; i < k; ++i) {
+  for (std::size_t i = 0; i < k && i < distances.size(); ++i) {
     neighbors.push_back(distances[i].second);
   }
 
   return neighbors;
 }
+
 
 /*
  * Computes the Intersection Cardinality (IC) causal strength score.
