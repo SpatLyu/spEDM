@@ -3,6 +3,7 @@
 #include "Forecast4Grid.h"
 #include "GCCM4Grid.h"
 #include "SCPCM4Grid.h"
+#include "IntersectionCardinality.h"
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
 
@@ -395,6 +396,51 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
     "T_sig","T_upper","T_lower",
     "D_sig","D_upper","D_lower");
   return resultMatrix;
+}
+
+// Wrapper function to perform GCMC Grid and return a NumericVector
+// [[Rcpp::export]]
+Rcpp::NumericVector RcppGCMC4Grid(
+    const Rcpp::NumericMatrix& xMatrix,
+    const Rcpp::NumericMatrix& yMatrix,
+    const Rcpp::IntegerVector& E,
+    int b,
+    int max_r,
+    int threads,
+    bool includeself,
+    bool progressbar){
+  // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
+  std::vector<std::vector<double>> xMatrix_cpp(xMatrix.nrow(), std::vector<double>(xMatrix.ncol()));
+  for (int i = 0; i < xMatrix.nrow(); ++i) {
+    for (int j = 0; j < xMatrix.ncol(); ++j) {
+      xMatrix_cpp[i][j] = xMatrix(i, j);
+    }
+  }
+
+  // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
+  std::vector<std::vector<double>> yMatrix_cpp(yMatrix.nrow(), std::vector<double>(yMatrix.ncol()));
+  for (int i = 0; i < yMatrix.nrow(); ++i) {
+    for (int j = 0; j < yMatrix.ncol(); ++j) {
+      yMatrix_cpp[i][j] = yMatrix(i, j);
+    }
+  }
+
+  // Convert Rcpp::List to std::vector<std::vector<int>>
+  std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
+
+  // Generate embeddings
+  std::vector<std::vector<double>> e1 = GenGridEmbeddings(xMatrix_cpp, E[0], includeself);
+  std::vector<std::vector<double>> e2 = GenGridEmbeddings(yMatrix_cpp, E[1], includeself);
+
+  // Perform GCMC For Lattice
+  double cs1 = IntersectionCardinality(e1,e2,b,max_r,threads,progressbar);
+  double cs2 = IntersectionCardinality(e2,e1,b,max_r,threads,progressbar);
+
+  Rcpp::NumericVector res_vec = Rcpp::NumericVector::create(
+    Rcpp::Named("x_xmap_y",cs1),
+    Rcpp::Named("y_xmap_x",cs2));
+
+  return res_vec;
 }
 
 // // [[Rcpp::export]]
