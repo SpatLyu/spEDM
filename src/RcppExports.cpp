@@ -133,7 +133,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppGCMC4Grid
-Rcpp::NumericVector RcppGCMC4Grid(const Rcpp::NumericMatrix& xMatrix, const Rcpp::NumericMatrix& yMatrix, const Rcpp::IntegerVector& E, int b, int max_r, int threads, bool includeself, bool progressbar);
+Rcpp::NumericVector RcppGCMC4Grid(const Rcpp::NumericMatrix& xMatrix, const Rcpp::NumericMatrix& yMatrix, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& b, const Rcpp::IntegerVector& max_r, int threads, bool includeself, bool progressbar);
 RcppExport SEXP _spEDM_RcppGCMC4Grid(SEXP xMatrixSEXP, SEXP yMatrixSEXP, SEXP ESEXP, SEXP bSEXP, SEXP max_rSEXP, SEXP threadsSEXP, SEXP includeselfSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -141,8 +141,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type xMatrix(xMatrixSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type yMatrix(yMatrixSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type E(ESEXP);
-    Rcpp::traits::input_parameter< int >::type b(bSEXP);
-    Rcpp::traits::input_parameter< int >::type max_r(max_rSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type b(bSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type max_r(max_rSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< bool >::type includeself(includeselfSEXP);
     Rcpp::traits::input_parameter< bool >::type progressbar(progressbarSEXP);
@@ -292,7 +292,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppGCMC4Lattice
-Rcpp::NumericVector RcppGCMC4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, const Rcpp::IntegerVector& E, int b, int max_r, int threads, bool includeself, bool progressbar);
+Rcpp::NumericVector RcppGCMC4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& b, const Rcpp::IntegerVector& max_r, int threads, bool includeself, bool progressbar);
 RcppExport SEXP _spEDM_RcppGCMC4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP ESEXP, SEXP bSEXP, SEXP max_rSEXP, SEXP threadsSEXP, SEXP includeselfSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -301,8 +301,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type E(ESEXP);
-    Rcpp::traits::input_parameter< int >::type b(bSEXP);
-    Rcpp::traits::input_parameter< int >::type max_r(max_rSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type b(bSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type max_r(max_rSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< bool >::type includeself(includeselfSEXP);
     Rcpp::traits::input_parameter< bool >::type progressbar(progressbarSEXP);
