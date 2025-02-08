@@ -16,7 +16,7 @@
   nb = NULL,
   threads = detectThreads(),
   include.self = FALSE,
-  trendRM = TRUE,
+  trendRM = FALSE,
   progressbar = TRUE
 )
 
@@ -29,7 +29,7 @@
   r = k + 10,
   threads = detectThreads(),
   include.self = FALSE,
-  trendRM = TRUE,
+  trendRM = FALSE,
   progressbar = TRUE
 )
 }
