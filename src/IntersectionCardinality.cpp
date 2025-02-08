@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <numeric>
 #include <limits>
-#include <unordered_map>
 #include "CppStats.h"
 #include <RcppThread.h>
 
@@ -74,37 +73,37 @@ double IntersectionCardinality(
   // Compute the Intersectional Cardinality (IC) curve
   std::vector<std::pair<int, double>> IC_curve;
 
-  // Iterate over each r
-  for (size_t r = k; r <= max_r; ++r) {
-    double intersection_sum = 0.0;
-
-    for (size_t t = 0; t < embedding_x.size(); ++t) {
-      // Find k-nearest neighbors in embedding_x and embedding_y
-      std::vector<std::size_t> neighbors_x = find_k_nearest_neighbors(embedding_x, t, k);
-      std::vector<std::size_t> neighbors_y = find_k_nearest_neighbors(embedding_y, t, r);
-
-      // For each neighbor in embedding_x, find its corresponding neighbor in embedding_y
-      std::vector<std::size_t> neighbors_xmapped;
-      for (std::size_t nx : neighbors_x) {
-        std::vector<std::size_t> neighbors_y = find_k_nearest_neighbors(embedding_y, nx, 1); // Map to 1 nearest neighbor
-        if (!neighbors_y.empty()) {
-          neighbors_xmapped.push_back(neighbors_y[0]);
-        }
-      }
-
-      // Compute the intersection count
-      double intersection_count = 0;
-      for (size_t nxm : neighbors_xmapped) {
-        if (std::find(neighbors_y.begin(), neighbors_y.end(), nxm) != neighbors_y.end()) {
-          intersection_count++;
-        }
-      }
-
-      intersection_sum += intersection_count;
-    }
-
-    IC_curve.emplace_back(static_cast<int>(r), intersection_sum / static_cast<double>(embedding_x.size()));
-  }
+  // // Iterate over each r
+  // for (size_t r = k; r <= max_r; ++r) {
+  //   double intersection_sum = 0.0;
+  //
+  //   for (size_t t = 0; t < embedding_x.size(); ++t) {
+  //     // Find k-nearest neighbors in embedding_x and embedding_y
+  //     std::vector<std::size_t> neighbors_x = find_k_nearest_neighbors(embedding_x, t, k);
+  //     std::vector<std::size_t> neighbors_y = find_k_nearest_neighbors(embedding_y, t, r);
+  //
+  //     // For each neighbor in embedding_x, find its corresponding neighbor in embedding_y
+  //     std::vector<std::size_t> neighbors_xmapped;
+  //     for (std::size_t nx : neighbors_x) {
+  //       std::vector<std::size_t> neighbors_y = find_k_nearest_neighbors(embedding_y, nx, 1); // Map to 1 nearest neighbor
+  //       if (!neighbors_y.empty()) {
+  //         neighbors_xmapped.push_back(neighbors_y[0]);
+  //       }
+  //     }
+  //
+  //     // Compute the intersection count
+  //     double intersection_count = 0;
+  //     for (size_t nxm : neighbors_xmapped) {
+  //       if (std::find(neighbors_y.begin(), neighbors_y.end(), nxm) != neighbors_y.end()) {
+  //         intersection_count++;
+  //       }
+  //     }
+  //
+  //     intersection_sum += intersection_count;
+  //   }
+  //
+  //   IC_curve.emplace_back(static_cast<int>(r), intersection_sum / static_cast<double>(embedding_x.size()));
+  // }
 
   // Perform the operations using RcppThread
   if (progressbar) {
