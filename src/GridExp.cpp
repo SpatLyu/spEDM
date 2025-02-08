@@ -404,8 +404,8 @@ Rcpp::NumericVector RcppGCMC4Grid(
     const Rcpp::NumericMatrix& xMatrix,
     const Rcpp::NumericMatrix& yMatrix,
     const Rcpp::IntegerVector& E,
-    int b,
-    int max_r,
+    const Rcpp::IntegerVector& b,
+    const Rcpp::IntegerVector& max_r,
     int threads,
     bool includeself,
     bool progressbar){
@@ -425,16 +425,18 @@ Rcpp::NumericVector RcppGCMC4Grid(
     }
   }
 
-  // Convert Rcpp::List to std::vector<std::vector<int>>
+  // Convert Rcpp IntegerVector to std::vector<int>
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
+  std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
+  std::vector<int> maxr_std = Rcpp::as<std::vector<int>>(max_r);
 
   // Generate embeddings
   std::vector<std::vector<double>> e1 = GenGridEmbeddings(xMatrix_cpp, E[0], includeself);
   std::vector<std::vector<double>> e2 = GenGridEmbeddings(yMatrix_cpp, E[1], includeself);
 
-  // Perform GCMC For Lattice
-  double cs1 = IntersectionCardinality(e1,e2,b,max_r,threads,progressbar);
-  double cs2 = IntersectionCardinality(e2,e1,b,max_r,threads,progressbar);
+  // Perform GCMC For Grid
+  double cs1 = IntersectionCardinality(e1,e2,b_std[0],maxr_std[0],threads,progressbar);
+  double cs2 = IntersectionCardinality(e2,e1,b_std[1],maxr_std[1],threads,progressbar);
 
   Rcpp::NumericVector res_vec = Rcpp::NumericVector::create(
     Rcpp::Named("x_xmap_y",cs1),
