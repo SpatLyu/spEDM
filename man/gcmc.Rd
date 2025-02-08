@@ -3,6 +3,7 @@
 \name{gcmc}
 \alias{gcmc}
 \alias{gcmc,sf-method}
+\alias{gcmc,SpatRaster-method}
 \title{geographical cross mapping cardinality}
 \usage{
 \S4method{gcmc}{sf}(
@@ -13,6 +14,19 @@
   k = 4,
   r = k + 10,
   nb = NULL,
+  threads = detectThreads(),
+  include.self = FALSE,
+  trendRM = TRUE,
+  progressbar = TRUE
+)
+
+\S4method{gcmc}{SpatRaster}(
+  data,
+  cause,
+  effect,
+  E = c(3, 3),
+  k = 4,
+  r = k + 10,
   threads = detectThreads(),
   include.self = FALSE,
   trendRM = TRUE,

@@ -82,5 +82,5 @@ methods::setGeneric("gcmc", function(data, ...) standardGeneric("gcmc"))
 #' }
 methods::setMethod("gcmc", "sf", .gcmc_sf_method)
 
-#' @rdname gccm
+#' @rdname gcmc
 methods::setMethod("gcmc", "SpatRaster", .gcmc_spatraster_method)
