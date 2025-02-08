@@ -42,6 +42,6 @@
 }
 
 .name_xmap2cause = \(varname){
-  return(c(paste0(varname[2], "->", x$varname[1]),
-           paste0(varname[1], "->", x$varname[2])))
+  return(c(paste0(varname[2], "->", varname[1]),
+           paste0(varname[1], "->", varname[2])))
 }
