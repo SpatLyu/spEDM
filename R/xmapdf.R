@@ -40,3 +40,8 @@
   class(res) = 'pcm_res'
   return(res)
 }
+
+.name_xmap2cause = \(varname){
+  return(c(paste0(varname[2], "->", varname[1]),
+           paste0(varname[1], "->", varname[2])))
+}
