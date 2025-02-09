@@ -129,6 +129,10 @@ RcppCorConfidence <- function(r, n, k = 0L, level = 0.05) {
     .Call(`_spEDM_RcppCorConfidence`, r, n, k, level)
 }
 
+RcppKNNIndice <- function(embedding_space, target_idx, k) {
+    .Call(`_spEDM_RcppKNNIndice`, embedding_space, target_idx, k)
+}
+
 RcppLinearTrendRM <- function(vec, xcoord, ycoord, NA_rm = FALSE) {
     .Call(`_spEDM_RcppLinearTrendRM`, vec, xcoord, ycoord, NA_rm)
 }
