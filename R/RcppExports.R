@@ -61,8 +61,8 @@ RcppSMap4Lattice <- function(x, nb, lib, pred, theta, E, b, threads, includeself
     .Call(`_spEDM_RcppSMap4Lattice`, x, nb, lib, pred, theta, E, b, threads, includeself)
 }
 
-RcppGCCM4Lattice <- function(x, y, nb, libsizes, E, tau, b, simplex, theta, threads, includeself, progressbar) {
-    .Call(`_spEDM_RcppGCCM4Lattice`, x, y, nb, libsizes, E, tau, b, simplex, theta, threads, includeself, progressbar)
+RcppGCCM4Lattice <- function(x, y, nb, libsizes, lib, pred, E, tau, b, simplex, theta, threads, includeself, progressbar) {
+    .Call(`_spEDM_RcppGCCM4Lattice`, x, y, nb, libsizes, lib, pred, E, tau, b, simplex, theta, threads, includeself, progressbar)
 }
 
 RcppSCPCM4Lattice <- function(x, y, z, nb, libsizes, E, tau, b, simplex, theta, threads, cumulate, includeself, progressbar) {

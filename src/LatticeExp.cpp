@@ -119,10 +119,12 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
   std::vector<bool> pred_indices(vec_std.size(), false);
 
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
-  for (int i = 0; i < lib.size(); ++i) {
+  int libsize_int = lib.size();
+  for (int i = 0; i < libsize_int; ++i) {
     lib_indices[lib[i] - 1] = true; // Convert to 0-based index
   }
-  for (int i = 0; i < pred.size(); ++i) {
+  int predsize_int = pred.size();
+  for (int i = 0; i < predsize_int; ++i) {
     pred_indices[pred[i] - 1] = true; // Convert to 0-based index
   }
 
@@ -197,10 +199,12 @@ Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& x,
   std::vector<bool> pred_indices(vec_std.size(), false);
 
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
-  for (int i = 0; i < lib.size(); ++i) {
+  int libsize_int = lib.size();
+  for (int i = 0; i < libsize_int; ++i) {
     lib_indices[lib[i] - 1] = true; // Convert to 0-based index
   }
-  for (int i = 0; i < pred.size(); ++i) {
+  int predsize_int = pred.size();
+  for (int i = 0; i < predsize_int; ++i) {
     pred_indices[pred[i] - 1] = true; // Convert to 0-based index
   }
 
@@ -240,6 +244,8 @@ Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,
                                      const Rcpp::NumericVector& y,
                                      const Rcpp::List& nb,
                                      const Rcpp::IntegerVector& libsizes,
+                                     const Rcpp::IntegerVector& lib,
+                                     const Rcpp::IntegerVector& pred,
                                      int E,
                                      int tau,
                                      int b,
@@ -260,18 +266,16 @@ Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,
 
   // Convert Rcpp::IntegerVector to std::vector<int>
   std::vector<int> libsizes_std = Rcpp::as<std::vector<int>>(libsizes);
-
-  // Define the interval [0, n-1] as a std::vector<std::pair<int, int>>
-  int n = nb_vec.size();
-  std::vector<std::pair<int, int>> interval = {{0, n-1}};
+  std::vector<int> lib_std = Rcpp::as<std::vector<int>>(lib);
+  std::vector<int> pred_std = Rcpp::as<std::vector<int>>(pred);
 
   // Perform GCCM Lattice
   std::vector<std::vector<double>> result = GCCM4Lattice(
     embeddings,
     y_std,
     libsizes_std,
-    interval,
-    interval,
+    lib_std,
+    pred_std,
     E,
     tau,
     b,
