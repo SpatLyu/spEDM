@@ -94,8 +94,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 #' @aliases gccm,sf-method
 #'
 #' @examples
-#' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData"),
-#'                        quiet=TRUE)
+#' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData"))
 #' \donttest{
 #' g = gccm(columbus,"HOVAL","CRIME",libsizes = seq(5,40,5),E = c(6,5))
 #' g

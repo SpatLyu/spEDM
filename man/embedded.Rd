@@ -28,8 +28,7 @@ A matrix
 generate embeddings
 }
 \examples{
-columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData"),
-                       quiet=TRUE)
+columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData"))
 embedded(columbus,target = "CRIME", E = 3)
 
 }
