@@ -15,8 +15,8 @@ methods::setGeneric("embedded", function(data, ...) standardGeneric("embedded"))
 #'
 #' @param data The observation data.
 #' @param target Name of target variable.
-#' @param E (optional) The dimensions of the embedding.
-#' @param tau (optional) The step of spatial lags.
+#' @param E (optional) Dimensions of the embedding.
+#' @param tau (optional) Step of spatial lags.
 #' @param nb (optional) The neighbours list.
 #'
 #' @return A matrix

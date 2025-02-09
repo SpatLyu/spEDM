@@ -26,7 +26,7 @@ methods::setGeneric("gcmc", function(data, ...) standardGeneric("gcmc"))
   cause = data[,"cause",drop = TRUE]
   effect = data[,"effect",drop = TRUE]
 
-  res = RcppGCMC4Lattice(cause,effect,nb,E,k,r,threads,include.self,progressbar)
+  res = RcppGCMC4Lattice(cause,effect,nb,pred,E,tau,k,r,threads,progressbar)
   names(res) = .name_xmap2cause(varname)
   return(res)
 }
@@ -53,7 +53,7 @@ methods::setGeneric("gcmc", function(data, ...) standardGeneric("gcmc"))
 
   if (is.null(pred)) pred = .internal_predmat(causemat)
 
-  res = RcppGCMC4Grid(causemat,effectmat,E,k,r,threads,include.self,progressbar)
+  res = RcppGCMC4Grid(causemat,effectmat,pred,E,tau,k,r,threads,progressbar)
   names(res) = .name_xmap2cause(varname)
   return(res)
 }
@@ -63,10 +63,11 @@ methods::setGeneric("gcmc", function(data, ...) standardGeneric("gcmc"))
 #' @param data The observation data.
 #' @param cause Name of causal variable.
 #' @param effect Name of effect variable.
-#' @param E (optional) The dimensions of the embedding.
+#' @param E (optional) Dimensions of the embedding.
+#' @param tau (optional) Step of spatial lags.
 #' @param k (optional) Number of nearest neighbors to use for prediction.
 #' @param r (optional) Maximum number of neighbors usable for intersection cardinality computation.
-#' @param pred (optional) The row numbers(`vector`) of lattice data or the row-column numbers(`matrix`) of grid data used for predictions.
+#' @param pred (optional) Row numbers(`vector`) of lattice data or row-column numbers(`matrix`) of grid data used for predictions.
 #' @param nb (optional) The neighbours list.
 #' @param threads (optional) Number of threads.
 #' @param trend.rm (optional) Whether to remove the linear trend.
