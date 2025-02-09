@@ -27,7 +27,7 @@ methods::setGeneric("embedded", function(data, ...) standardGeneric("embedded"))
 #' @aliases embedded,sf-method
 #'
 #' @examples
-#' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
+#' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData"),
 #'                        quiet=TRUE)
 #' embedded(columbus,target = "CRIME", E = 3)
 #'
