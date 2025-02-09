@@ -1,5 +1,9 @@
 # spEDM 2.0
 
+### enhancements
+
+* Improve default spatial neighbor list generation for lattice data with support from the `sdsfun` package (#159).
+
 ### breaking changes
 
 * Adjust the behavior of the `tau` parameter in the C++ source code and update the R side API (#154).

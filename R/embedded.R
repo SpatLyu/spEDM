@@ -2,7 +2,7 @@ methods::setGeneric("embedded", function(data, ...) standardGeneric("embedded"))
 
 .embedded_sf_method = \(data,target,E = 3,tau = 1,nb = NULL){
   vec = .uni_lattice(data,target)
-  if (is.null(nb)) nb = sdsfun::spdep_nb(data)
+  if (is.null(nb)) nb = .internal_lattice_nb(data)
   return(RcppGenLatticeEmbeddings(vec,nb,E,tau))
 }
 
