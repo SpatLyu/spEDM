@@ -47,6 +47,7 @@ std::vector<std::size_t> find_k_nearest_neighbors(
  * Parameters:
  *   - embedding_x:   The state-space reconstructed from the potential cause variable.
  *   - embedding_y:   The state-space reconstructed from the potential effect variable.
+ *   - pred:          A vector specifying the prediction indices(1-based in R, converted to 0-based in C++).
  *   - num_neighbors: Number of neighbors used for cross-mapping.
  *   - max_neighbors: Maximum number of neighbors usable for IC computation.
  *   - threads:       Number of threads to use for parallel processing.
@@ -58,6 +59,7 @@ std::vector<std::size_t> find_k_nearest_neighbors(
 double IntersectionCardinality(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
+    const std::vector<int>& pred,
     int num_neighbors,
     int max_neighbors,
     int threads,
@@ -78,10 +80,10 @@ double IntersectionCardinality(
   // for (size_t r = k; r <= max_r; ++r) {
   //   double intersection_sum = 0.0;
   //
-  //   for (size_t t = 0; t < embedding_x.size(); ++t) {
+  //   for (size_t t = 0; t < pred.size(); ++t) {
   //     // Find k-nearest neighbors in embedding_x and embedding_y
-  //     std::vector<std::size_t> neighbors_x = find_k_nearest_neighbors(embedding_x, t, k);
-  //     std::vector<std::size_t> neighbors_y = find_k_nearest_neighbors(embedding_y, t, r);
+  //     std::vector<std::size_t> neighbors_x = find_k_nearest_neighbors(embedding_x, pred[t]-1, k);
+  //     std::vector<std::size_t> neighbors_y = find_k_nearest_neighbors(embedding_y, pred[t]-1, r);
   //
   //     // For each neighbor in embedding_x, find its corresponding neighbor in embedding_y
   //     std::vector<std::size_t> neighbors_xmapped;
@@ -112,10 +114,10 @@ double IntersectionCardinality(
     RcppThread::parallelFor(k, max_r, [&](size_t r) {
       double intersection_sum = 0.0;
 
-      for (size_t t = 0; t < embedding_x.size(); ++t) {
+      for (size_t t = 0; t < pred.size(); ++t) {
         // Find k-nearest neighbors in embedding_x and embedding_y
-        std::vector<std::size_t> neighbors_x = find_k_nearest_neighbors(embedding_x, t, k);
-        std::vector<std::size_t> neighbors_y = find_k_nearest_neighbors(embedding_y, t, r);
+        std::vector<std::size_t> neighbors_x = find_k_nearest_neighbors(embedding_x, pred[t]-1, k);
+        std::vector<std::size_t> neighbors_y = find_k_nearest_neighbors(embedding_y, pred[t]-1, r);
 
         // For each neighbor in embedding_x, find its corresponding neighbor in embedding_y
         std::vector<std::size_t> neighbors_xmapped;
@@ -144,10 +146,10 @@ double IntersectionCardinality(
     RcppThread::parallelFor(k, max_r, [&](size_t r) {
       double intersection_sum = 0.0;
 
-      for (size_t t = 0; t < embedding_x.size(); ++t) {
+      for (size_t t = 0; t < pred.size(); ++t) {
         // Find k-nearest neighbors in embedding_x and embedding_y
-        std::vector<std::size_t> neighbors_x = find_k_nearest_neighbors(embedding_x, t, k);
-        std::vector<std::size_t> neighbors_y = find_k_nearest_neighbors(embedding_y, t, r);
+        std::vector<std::size_t> neighbors_x = find_k_nearest_neighbors(embedding_x, pred[t]-1, k);
+        std::vector<std::size_t> neighbors_y = find_k_nearest_neighbors(embedding_y, pred[t]-1, r);
 
         // For each neighbor in embedding_x, find its corresponding neighbor in embedding_y
         std::vector<std::size_t> neighbors_xmapped;

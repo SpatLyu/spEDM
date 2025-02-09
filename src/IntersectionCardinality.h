@@ -16,6 +16,7 @@
  * Parameters:
  *   - embedding_x:   The state-space reconstructed from the potential cause variable.
  *   - embedding_y:   The state-space reconstructed from the potential effect variable.
+ *   - pred:          A vector specifying the prediction indices(1-based in R, converted to 0-based in C++).
  *   - num_neighbors: Number of neighbors used for cross-mapping.
  *   - max_neighbors: Maximum number of neighbors usable for IC computation.
  *   - threads:       Number of threads to use for parallel processing.
@@ -27,6 +28,7 @@
 double IntersectionCardinality(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
+    const std::vector<int>& pred,
     int num_neighbors,
     int max_neighbors,
     int threads,
