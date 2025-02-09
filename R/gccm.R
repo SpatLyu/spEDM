@@ -1,10 +1,11 @@
 methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 
-.gccm_sf_method = \(data, cause, effect, libsizes, E = c(3,3), tau = 1, k = 4, theta = 1, algorithm = "simplex", pred = NULL, nb = NULL,
-                    threads = detectThreads(), bidirectional = TRUE, include.self = FALSE, trendRM = TRUE, progressbar = TRUE){
+.gccm_sf_method = \(data, cause, effect, libsizes, E = c(3,3), tau = 1, k = 4, theta = 1, algorithm = "simplex", pred = NULL,
+                    nb = NULL, threads = detectThreads(), bidirectional = TRUE, trend.rm = TRUE, progressbar = TRUE){
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
   k = .check_inputelementnum(k,2)
+  tau = .check_inputelementnum(tau,2)
   .varname = .internal_varname()
   lib = 1:nrow(data)
   if (is.null(pred)) pred = lib
@@ -15,7 +16,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   data = data[,varname]
   names(data) = .varname
 
-  if (trendRM){
+  if (trend.rm){
     data = dplyr::bind_cols(data,coords)
     for (i in seq_along(.varname)){
       data[,.varname[i]] = sdsfun::rm_lineartrend(paste0(.varname[i],"~X+Y"), data = data)
@@ -28,24 +29,25 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
   x_xmap_y = NULL
   if (bidirectional){
-    x_xmap_y = RcppGCCM4Lattice(cause,effect,nb,libsizes,lib,pred,E[1],tau,k[1],simplex,theta,threads,include.self,progressbar)
+    x_xmap_y = RcppGCCM4Lattice(cause,effect,nb,libsizes,lib,pred,E[1],tau[1],k[1],simplex,theta,threads,progressbar)
   }
-  y_xmap_x = RcppGCCM4Lattice(effect,cause,nb,libsizes,lib,pred,E[2],tau,k[2],simplex,theta,threads,include.self,progressbar)
+  y_xmap_x = RcppGCCM4Lattice(effect,cause,nb,libsizes,lib,pred,E[2],tau[2],k[2],simplex,theta,threads,progressbar)
 
   return(.bind_xmapdf(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
 
-.gccm_spatraster_method = \(data, cause, effect, libsizes, E = c(3,3), tau = 1, k = 4, theta = 1, algorithm = "simplex", pred = NULL,
-                            threads = detectThreads(), bidirectional = TRUE, include.self = FALSE, trendRM = TRUE, progressbar = TRUE){
+.gccm_spatraster_method = \(data, cause, effect, libsizes, E = c(3,3), tau = 1, k = 4, theta = 1, algorithm = "simplex",
+                            pred = NULL, threads = detectThreads(), bidirectional = TRUE, trend.rm = TRUE, progressbar = TRUE){
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
   k = .check_inputelementnum(k,2)
+  tau = .check_inputelementnum(tau,2)
   .varname = .internal_varname()
   data = data[[varname]]
   names(data) = .varname
 
   dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
-  if (trendRM){
+  if (trend.rm){
     for (i in seq_along(.varname)){
       dtf[,.varname[i]] = sdsfun::rm_lineartrend(paste0(.varname[i],"~x+y"), data = dtf)
     }
@@ -60,9 +62,9 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
   x_xmap_y = NULL
   if (bidirectional){
-    x_xmap_y = RcppGCCM4Grid(causemat,effectmat,libsizes,pred,E[1],tau,k[1],simplex,theta,threads,include.self,progressbar)
+    x_xmap_y = RcppGCCM4Grid(causemat,effectmat,libsizes,pred,E[1],tau[1],k[1],simplex,theta,threads,progressbar)
   }
-  y_xmap_x = RcppGCCM4Grid(effectmat,causemat,libsizes,pred,E[2],tau,k[2],simplex,theta,threads,include.self,progressbar)
+  y_xmap_x = RcppGCCM4Grid(effectmat,causemat,libsizes,pred,E[2],tau[2],k[2],simplex,theta,threads,progressbar)
 
   return(.bind_xmapdf(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
@@ -82,8 +84,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 #' @param nb (optional) The neighbours list.
 #' @param threads (optional) Number of threads.
 #' @param bidirectional (optional) whether to identify bidirectional causal associations.
-#' @param include.self (optional) Whether to include the current state when constructing the embedding vector.
-#' @param trendRM (optional) Whether to remove the linear trend.
+#' @param trend.rm (optional) Whether to remove the linear trend.
 #' @param progressbar (optional) whether to print the progress bar.
 #'
 #' @return A list.
