@@ -29,8 +29,8 @@ RcppSCPCM4Grid <- function(xMatrix, yMatrix, zMatrix, libsizes, E, tau, pred, b,
     .Call(`_spEDM_RcppSCPCM4Grid`, xMatrix, yMatrix, zMatrix, libsizes, E, tau, pred, b, simplex, theta, threads, cumulate, progressbar)
 }
 
-RcppGCMC4Grid <- function(xMatrix, yMatrix, E, b, max_r, threads, includeself, progressbar) {
-    .Call(`_spEDM_RcppGCMC4Grid`, xMatrix, yMatrix, E, b, max_r, threads, includeself, progressbar)
+RcppGCMC4Grid <- function(xMatrix, yMatrix, pred, E, tau, b, max_r, threads, progressbar) {
+    .Call(`_spEDM_RcppGCMC4Grid`, xMatrix, yMatrix, pred, E, tau, b, max_r, threads, progressbar)
 }
 
 DetectMaxNumThreads <- function() {
@@ -69,8 +69,8 @@ RcppSCPCM4Lattice <- function(x, y, z, nb, libsizes, lib, pred, E, tau, b, simpl
     .Call(`_spEDM_RcppSCPCM4Lattice`, x, y, z, nb, libsizes, lib, pred, E, tau, b, simplex, theta, threads, cumulate, progressbar)
 }
 
-RcppGCMC4Lattice <- function(x, y, nb, E, b, max_r, threads, includeself, progressbar) {
-    .Call(`_spEDM_RcppGCMC4Lattice`, x, y, nb, E, b, max_r, threads, includeself, progressbar)
+RcppGCMC4Lattice <- function(x, y, nb, pred, E, tau, b, max_r, threads, progressbar) {
+    .Call(`_spEDM_RcppGCMC4Lattice`, x, y, nb, pred, E, tau, b, max_r, threads, progressbar)
 }
 
 RcppMean <- function(vec, NA_rm = FALSE) {
@@ -127,6 +127,10 @@ RcppCorSignificance <- function(r, n, k = 0L) {
 
 RcppCorConfidence <- function(r, n, k = 0L, level = 0.05) {
     .Call(`_spEDM_RcppCorConfidence`, r, n, k, level)
+}
+
+RcppKNNIndice <- function(embedding_space, target_idx, k) {
+    .Call(`_spEDM_RcppKNNIndice`, embedding_space, target_idx, k)
 }
 
 RcppLinearTrendRM <- function(vec, xcoord, ycoord, NA_rm = FALSE) {

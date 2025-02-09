@@ -384,11 +384,12 @@ Rcpp::NumericVector RcppGCMC4Lattice(
     const Rcpp::NumericVector& x,
     const Rcpp::NumericVector& y,
     const Rcpp::List& nb,
+    const Rcpp::IntegerVector& pred,
     const Rcpp::IntegerVector& E,
+    const Rcpp::IntegerVector& tau,
     const Rcpp::IntegerVector& b,
     const Rcpp::IntegerVector& max_r,
     int threads,
-    bool includeself,
     bool progressbar){
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
@@ -398,17 +399,20 @@ Rcpp::NumericVector RcppGCMC4Lattice(
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
   // Convert Rcpp IntegerVector to std::vector<int>
+  std::vector<int> pred_std = Rcpp::as<std::vector<int>>(pred);
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
+  std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
   std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
   std::vector<int> maxr_std = Rcpp::as<std::vector<int>>(max_r);
 
+
   // Generate embeddings
-  std::vector<std::vector<double>> e1 = GenLatticeEmbeddings(x_std, nb_vec, E[0], includeself);
-  std::vector<std::vector<double>> e2 = GenLatticeEmbeddings(y_std, nb_vec, E[1], includeself);
+  std::vector<std::vector<double>> e1 = GenLatticeEmbeddings(x_std, nb_vec, E[0], tau_std[0]);
+  std::vector<std::vector<double>> e2 = GenLatticeEmbeddings(y_std, nb_vec, E[1], tau_std[1]);
 
   // Perform GCMC For Lattice
-  double cs1 = IntersectionCardinality(e1,e2,b_std[0],maxr_std[0],threads,progressbar);
-  double cs2 = IntersectionCardinality(e2,e1,b_std[1],maxr_std[1],threads,progressbar);
+  double cs1 = IntersectionCardinality(e1,e2,pred_std,b_std[0],maxr_std[0],threads,progressbar);
+  double cs2 = IntersectionCardinality(e2,e1,pred_std,b_std[1],maxr_std[1],threads,progressbar);
 
   Rcpp::NumericVector res_vec = Rcpp::NumericVector::create(
     Rcpp::Named("x_xmap_y",cs1),

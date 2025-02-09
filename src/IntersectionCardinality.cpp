@@ -9,44 +9,13 @@
 // [[Rcpp::plugins(cpp11)]]
 // [[Rcpp::depends(RcppThread)]]
 
-// Function to find k-nearest neighbors of a given index in the embedding space
-std::vector<std::size_t> find_k_nearest_neighbors(
-    const std::vector<std::vector<double>>& embedding_space,
-    std::size_t target_idx,
-    std::size_t k)
-{
-  std::size_t n = embedding_space.size();
-  std::vector<std::pair<double, std::size_t>> distances;
-
-  for (size_t i = 0; i < n; ++i) {
-    if (i != target_idx) {
-      double dist = CppDistance(embedding_space[target_idx],
-                                embedding_space[i],false,true);
-
-      // Skip NaN distances
-      if (!std::isnan(dist)) {
-        distances.emplace_back(dist, i);
-      }
-    }
-  }
-
-  // Partial sort to get k-nearest neighbors, excluding NaN distances
-  std::partial_sort(distances.begin(), distances.begin() + std::min(k, distances.size()), distances.end());
-
-  std::vector<std::size_t> neighbors;
-  for (std::size_t i = 0; i < k && i < distances.size(); ++i) {
-    neighbors.push_back(distances[i].second);
-  }
-
-  return neighbors;
-}
-
 /*
  * Computes the Intersection Cardinality (IC) causal strength score.
  *
  * Parameters:
  *   - embedding_x:   The state-space reconstructed from the potential cause variable.
  *   - embedding_y:   The state-space reconstructed from the potential effect variable.
+ *   - pred:          A vector specifying the prediction indices(1-based in R, converted to 0-based in C++).
  *   - num_neighbors: Number of neighbors used for cross-mapping.
  *   - max_neighbors: Maximum number of neighbors usable for IC computation.
  *   - threads:       Number of threads to use for parallel processing.
@@ -58,6 +27,7 @@ std::vector<std::size_t> find_k_nearest_neighbors(
 double IntersectionCardinality(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
+    const std::vector<int>& pred,
     int num_neighbors,
     int max_neighbors,
     int threads,
@@ -78,15 +48,15 @@ double IntersectionCardinality(
   // for (size_t r = k; r <= max_r; ++r) {
   //   double intersection_sum = 0.0;
   //
-  //   for (size_t t = 0; t < embedding_x.size(); ++t) {
+  //   for (size_t t = 0; t < pred.size(); ++t) {
   //     // Find k-nearest neighbors in embedding_x and embedding_y
-  //     std::vector<std::size_t> neighbors_x = find_k_nearest_neighbors(embedding_x, t, k);
-  //     std::vector<std::size_t> neighbors_y = find_k_nearest_neighbors(embedding_y, t, r);
+  //     std::vector<std::size_t> neighbors_x = CppKNNIndice(embedding_x, pred[t]-1, k);
+  //     std::vector<std::size_t> neighbors_y = CppKNNIndice(embedding_y, pred[t]-1, r);
   //
   //     // For each neighbor in embedding_x, find its corresponding neighbor in embedding_y
   //     std::vector<std::size_t> neighbors_xmapped;
   //     for (std::size_t nx : neighbors_x) {
-  //       std::vector<std::size_t> neighbors_y = find_k_nearest_neighbors(embedding_y, nx, 1); // Map to 1 nearest neighbor
+  //       std::vector<std::size_t> neighbors_y = CppKNNIndice(embedding_y, nx, 1); // Map to 1 nearest neighbor
   //       if (!neighbors_y.empty()) {
   //         neighbors_xmapped.push_back(neighbors_y[0]);
   //       }
@@ -112,15 +82,15 @@ double IntersectionCardinality(
     RcppThread::parallelFor(k, max_r, [&](size_t r) {
       double intersection_sum = 0.0;
 
-      for (size_t t = 0; t < embedding_x.size(); ++t) {
+      for (size_t t = 0; t < pred.size(); ++t) {
         // Find k-nearest neighbors in embedding_x and embedding_y
-        std::vector<std::size_t> neighbors_x = find_k_nearest_neighbors(embedding_x, t, k);
-        std::vector<std::size_t> neighbors_y = find_k_nearest_neighbors(embedding_y, t, r);
+        std::vector<std::size_t> neighbors_x = CppKNNIndice(embedding_x, pred[t]-1, k);
+        std::vector<std::size_t> neighbors_y = CppKNNIndice(embedding_y, pred[t]-1, r);
 
         // For each neighbor in embedding_x, find its corresponding neighbor in embedding_y
         std::vector<std::size_t> neighbors_xmapped;
         for (std::size_t nx : neighbors_x) {
-          std::vector<std::size_t> neighbors_y = find_k_nearest_neighbors(embedding_y, nx, 1); // Map to 1 nearest neighbor
+          std::vector<std::size_t> neighbors_y = CppKNNIndice(embedding_y, nx, 1); // Map to 1 nearest neighbor
           if (!neighbors_y.empty()) {
             neighbors_xmapped.push_back(neighbors_y[0]);
           }
@@ -144,15 +114,15 @@ double IntersectionCardinality(
     RcppThread::parallelFor(k, max_r, [&](size_t r) {
       double intersection_sum = 0.0;
 
-      for (size_t t = 0; t < embedding_x.size(); ++t) {
+      for (size_t t = 0; t < pred.size(); ++t) {
         // Find k-nearest neighbors in embedding_x and embedding_y
-        std::vector<std::size_t> neighbors_x = find_k_nearest_neighbors(embedding_x, t, k);
-        std::vector<std::size_t> neighbors_y = find_k_nearest_neighbors(embedding_y, t, r);
+        std::vector<std::size_t> neighbors_x = CppKNNIndice(embedding_x, pred[t]-1, k);
+        std::vector<std::size_t> neighbors_y = CppKNNIndice(embedding_y, pred[t]-1, r);
 
         // For each neighbor in embedding_x, find its corresponding neighbor in embedding_y
         std::vector<std::size_t> neighbors_xmapped;
         for (std::size_t nx : neighbors_x) {
-          std::vector<std::size_t> neighbors_y = find_k_nearest_neighbors(embedding_y, nx, 1); // Map to 1 nearest neighbor
+          std::vector<std::size_t> neighbors_y = CppKNNIndice(embedding_y, nx, 1); // Map to 1 nearest neighbor
           if (!neighbors_y.empty()) {
             neighbors_xmapped.push_back(neighbors_y[0]);
           }
@@ -262,8 +232,8 @@ double IntersectionCardinality(
 //   //   double intersection_sum = 0.0;
 //   //
 //   //   for (size_t t = 0; t < embedding_x.size(); ++t) {
-//   //     std::vector<std::size_t> neighbors_x = find_k_nearest_neighbors(embedding_x, t, k);
-//   //     std::vector<std::size_t> neighbors_y = find_k_nearest_neighbors(embedding_y, t, r);
+//   //     std::vector<std::size_t> neighbors_x = CppKNNIndice(embedding_x, t, k);
+//   //     std::vector<std::size_t> neighbors_y = CppKNNIndice(embedding_y, t, r);
 //   //
 //   //     // Compute the intersection count
 //   //     double intersection_count = 0;
@@ -286,8 +256,8 @@ double IntersectionCardinality(
 //       double intersection_sum = 0.0;
 //
 //       for (size_t t = 0; t < embedding_x.size(); ++t) {
-//         std::vector<std::size_t> neighbors_x = find_k_nearest_neighbors(embedding_x, t, k);
-//         std::vector<std::size_t> neighbors_y = find_k_nearest_neighbors(embedding_y, t, r);
+//         std::vector<std::size_t> neighbors_x = CppKNNIndice(embedding_x, t, k);
+//         std::vector<std::size_t> neighbors_y = CppKNNIndice(embedding_y, t, r);
 //
 //         // Compute the intersection count
 //         double intersection_count = 0;
@@ -308,8 +278,8 @@ double IntersectionCardinality(
 //       double intersection_sum = 0.0;
 //
 //       for (size_t t = 0; t < embedding_x.size(); ++t) {
-//         std::vector<std::size_t> neighbors_x = find_k_nearest_neighbors(embedding_x, t, k);
-//         std::vector<std::size_t> neighbors_y = find_k_nearest_neighbors(embedding_y, t, r);
+//         std::vector<std::size_t> neighbors_x = CppKNNIndice(embedding_x, t, k);
+//         std::vector<std::size_t> neighbors_y = CppKNNIndice(embedding_y, t, r);
 //
 //         // Compute the intersection count
 //         double intersection_count = 0;

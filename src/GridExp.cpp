@@ -408,11 +408,12 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
 Rcpp::NumericVector RcppGCMC4Grid(
     const Rcpp::NumericMatrix& xMatrix,
     const Rcpp::NumericMatrix& yMatrix,
+    const Rcpp::IntegerVector& pred,
     const Rcpp::IntegerVector& E,
+    const Rcpp::IntegerVector& tau,
     const Rcpp::IntegerVector& b,
     const Rcpp::IntegerVector& max_r,
     int threads,
-    bool includeself,
     bool progressbar){
   // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
   std::vector<std::vector<double>> xMatrix_cpp(xMatrix.nrow(), std::vector<double>(xMatrix.ncol()));
@@ -431,17 +432,19 @@ Rcpp::NumericVector RcppGCMC4Grid(
   }
 
   // Convert Rcpp IntegerVector to std::vector<int>
+  std::vector<int> pred_std = Rcpp::as<std::vector<int>>(pred);
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
+  std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
   std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
   std::vector<int> maxr_std = Rcpp::as<std::vector<int>>(max_r);
 
   // Generate embeddings
-  std::vector<std::vector<double>> e1 = GenGridEmbeddings(xMatrix_cpp, E[0], includeself);
-  std::vector<std::vector<double>> e2 = GenGridEmbeddings(yMatrix_cpp, E[1], includeself);
+  std::vector<std::vector<double>> e1 = GenGridEmbeddings(xMatrix_cpp, E[0], tau_std[0]);
+  std::vector<std::vector<double>> e2 = GenGridEmbeddings(yMatrix_cpp, E[1], tau_std[1]);
 
   // Perform GCMC For Grid
-  double cs1 = IntersectionCardinality(e1,e2,b_std[0],maxr_std[0],threads,progressbar);
-  double cs2 = IntersectionCardinality(e2,e1,b_std[1],maxr_std[1],threads,progressbar);
+  double cs1 = IntersectionCardinality(e1,e2,pred_std,b_std[0],maxr_std[0],threads,progressbar);
+  double cs2 = IntersectionCardinality(e2,e1,pred_std,b_std[1],maxr_std[1],threads,progressbar);
 
   Rcpp::NumericVector res_vec = Rcpp::NumericVector::create(
     Rcpp::Named("x_xmap_y",cs1),
