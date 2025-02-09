@@ -456,6 +456,43 @@ std::vector<double> CppCorConfidence(double r, int n, int k = 0,
   return {r_upper, r_lower};
 }
 
+// Function to find k-nearest neighbors of a given index in the embedding space
+std::vector<std::size_t> CppKNNIndice(
+    const std::vector<std::vector<double>>& embedding_space,
+    std::size_t target_idx,
+    std::size_t k)
+{
+  std::size_t n = embedding_space.size();
+  std::vector<std::pair<double, std::size_t>> distances;
+
+  for (std::size_t i = 0; i < n; ++i) {
+    if (i == target_idx) continue;
+
+    // Check if the entire embedding_space[i] is NaN
+    if (std::all_of(embedding_space[i].begin(), embedding_space[i].end(),
+                    [](double v) { return std::isnan(v); })) {
+      continue;
+    }
+
+    double dist = CppDistance(embedding_space[target_idx], embedding_space[i], false, true);
+
+    // Skip NaN distances
+    if (!std::isnan(dist)) {
+      distances.emplace_back(dist, i);
+    }
+  }
+
+  // Partial sort to get k-nearest neighbors, excluding NaN distances
+  std::partial_sort(distances.begin(), distances.begin() + std::min(k, distances.size()), distances.end());
+
+  std::vector<std::size_t> neighbors;
+  for (std::size_t i = 0; i < k && i < distances.size(); ++i) {
+    neighbors.push_back(distances[i].second);
+  }
+
+  return neighbors;
+}
+
 // Function to compute SVD similar to R's svd()
 // Input:
 //   - X: A matrix represented as std::vector<std::vector<double>>
