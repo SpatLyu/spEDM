@@ -38,3 +38,10 @@
   }
   return(.varname)
 }
+
+.internal_predmat = \(mat){
+  maxlibsize = min(dim(mat))
+  selvec = seq(5,maxlibsize,5)
+  pred = as.matrix(expand.grid(selvec,selvec))
+  return(pred)
+}
