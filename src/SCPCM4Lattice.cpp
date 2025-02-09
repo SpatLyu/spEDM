@@ -26,9 +26,9 @@
  * @param lib_indices: Boolean vector indicating which states to include when searching for neighbors.
  * @param pred_indices: Boolean vector indicating which states to use for predictions.
  * @param conEs: Vector specifying the number of dimensions for attractor reconstruction with control variables.
+ * @param taus: Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
  * @param num_neighbors: Number of neighbors to use for simplex projection.
  * @param cumulate: Flag indicating whether to cumulatively incorporate control variables.
- * @param includeself: Flag indicating whether to include the current state in the embedding vector.
  *
  * @return A std::vector<double> containing:
  *         - rho[0]: Pearson correlation between the target and its simplex projection.
@@ -42,9 +42,9 @@ std::vector<double> PartialSimplex4Lattice(
     const std::vector<bool>& lib_indices,
     const std::vector<bool>& pred_indices,
     const std::vector<int>& conEs,
+    const std::vector<int>& taus,
     int num_neighbors,
-    bool cumulate,
-    bool includeself
+    bool cumulate
 ){
   int n_controls = controls.size();
   std::vector<double> rho(2);
@@ -59,7 +59,7 @@ std::vector<double> PartialSimplex4Lattice(
       } else {
         temp_pred = SimplexProjectionPrediction(temp_embedding, controls[i], lib_indices, pred_indices, num_neighbors);
       }
-      temp_embedding = GenLatticeEmbeddings(temp_pred,nb_vec,conEs[i],includeself);
+      temp_embedding = GenLatticeEmbeddings(temp_pred,nb_vec,conEs[i],taus[i]);
     }
 
     std::vector<double> con_pred = SimplexProjectionPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors);
@@ -74,7 +74,7 @@ std::vector<double> PartialSimplex4Lattice(
 
     for (int i = 0; i < n_controls; ++i) {
       temp_pred = SimplexProjectionPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors);
-      temp_embedding = GenLatticeEmbeddings(temp_pred,nb_vec,conEs[i],includeself);
+      temp_embedding = GenLatticeEmbeddings(temp_pred,nb_vec,conEs[i],taus[i]);
       temp_pred = SimplexProjectionPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors);
       con_pred[i] = temp_pred;
     }
@@ -101,10 +101,10 @@ std::vector<double> PartialSimplex4Lattice(
  * @param lib_indices: Boolean vector indicating which states to include when searching for neighbors.
  * @param pred_indices: Boolean vector indicating which states to predict from.
  * @param conEs: Vector specifying the number of dimensions for attractor reconstruction with control variables.
+ * @param taus: Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
  * @param num_neighbors: Number of neighbors to use for S-Map prediction.
  * @param theta: Weighting parameter for distances in S-Map.
  * @param cumulate: Boolean flag to determine whether to cumulate the partial correlations.
- * @param includeself: Boolean flag to indicate whether to include the current state in the embedding.
  * @return A vector of size 2 containing:
  *         - rho[0]: Pearson correlation between the target and its predicted values.
  *         - rho[1]: Partial correlation between the target and its predicted values, adjusting for control variables.
@@ -117,10 +117,10 @@ std::vector<double> PartialSMap4Lattice(
     const std::vector<bool>& lib_indices,
     const std::vector<bool>& pred_indices,
     const std::vector<int>& conEs,
+    const std::vector<int>& taus,
     int num_neighbors,
     double theta,
-    bool cumulate,
-    bool includeself
+    bool cumulate
 ){
   int n_controls = controls.size();
   std::vector<double> rho(2);
@@ -135,7 +135,7 @@ std::vector<double> PartialSMap4Lattice(
       } else {
         temp_pred = SMapPrediction(temp_embedding, controls[i], lib_indices, pred_indices, num_neighbors, theta);
       }
-      temp_embedding = GenLatticeEmbeddings(temp_pred,nb_vec,conEs[i],includeself);
+      temp_embedding = GenLatticeEmbeddings(temp_pred,nb_vec,conEs[i],taus[i]);
     }
 
     std::vector<double> con_pred = SMapPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors, theta);
@@ -150,7 +150,7 @@ std::vector<double> PartialSMap4Lattice(
 
     for (int i = 0; i < n_controls; ++i) {
       temp_pred = SMapPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors, theta);
-      temp_embedding = GenLatticeEmbeddings(temp_pred,nb_vec,conEs[i],includeself);
+      temp_embedding = GenLatticeEmbeddings(temp_pred,nb_vec,conEs[i],taus[i]);
       temp_pred = SMapPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors, theta);
       con_pred[i] = temp_pred;
     }
@@ -174,12 +174,11 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
     const std::vector<int>& possible_lib_indices,       // Indices of possible library states
     const std::vector<bool>& pred_indices,              // Vector of T/F values (which states to predict from)
     const std::vector<int>& conEs,                      // Number of dimensions for the attractor reconstruction with control variables
-    int E,                                              // Number of dimensions for the attractor reconstruction
+    const std::vector<int>& taus,                       // Spatial lag step for constructing lagged state-space vectors with control variables
     int b,                                              // Number of neighbors to use for simplex projection
     bool simplex,                                       // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
     double theta,                                       // Distance weighting parameter for the local neighbours in the manifold
-    bool cumulate,                                      // Whether to cumulate the partial correlations
-    bool includeself                                    // Whether to include the current state when constructing the embedding vector
+    bool cumulate                                       // Whether to cumulate the partial correlations
 ) {
   int n = x_vectors.size();
   std::vector<PartialCorRes> x_xmap_y;
@@ -193,9 +192,9 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
 
     // Run partial cross map and store results
     if (simplex) {
-      rho = PartialSimplex4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, b, cumulate, includeself);
+      rho = PartialSimplex4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, taus, b, cumulate);
     } else {
-      rho = PartialSMap4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, b, theta, cumulate, includeself);
+      rho = PartialSMap4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, taus, b, theta, cumulate);
     }
     x_xmap_y.emplace_back(lib_size, rho[0], rho[1]);
   } else {
@@ -218,9 +217,9 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
 
       // Run partial cross map and store results
       if (simplex) {
-        rho = PartialSimplex4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, b, cumulate, includeself);
+        rho = PartialSimplex4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, taus, b, cumulate);
       } else {
-        rho = PartialSMap4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, b, theta, cumulate, includeself);
+        rho = PartialSMap4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, taus, b, theta, cumulate);
       }
       x_xmap_y.emplace_back(lib_size, rho[0], rho[1]);
     }
@@ -235,21 +234,24 @@ std::vector<std::vector<double>> SCPCM4Lattice(
     const std::vector<std::vector<double>>& controls,   // Cross-sectional data of control variables (**stored by row**)
     const std::vector<std::vector<int>>& nb_vec,        // Neighbor indices vector of the spatial units
     const std::vector<int>& lib_sizes,                  // Vector of library sizes to use
-    const std::vector<std::pair<int, int>>& lib,        // Matrix (n x 2) using n sequences of data to construct libraries
-    const std::vector<std::pair<int, int>>& pred,       // Matrix (n x 2) using n sequences of data to predict from
+    const std::vector<int>& lib,                        // Vector specifying the library indices
+    const std::vector<int>& pred,                       // Vector specifying the prediction indices
     const std::vector<int>& Es,                         // Number of dimensions for the attractor reconstruction with the x and control variables
-    int tau,                                            // Spatial lag for the lagged-vector construction
+    const std::vector<int>& taus,                       // Spatial lag step for constructing lagged state-space vectors with the x and control variables
     int b,                                              // Number of nearest neighbors to use for prediction
     bool simplex,                                       // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
     double theta,                                       // Distance weighting parameter for the local neighbours in the manifold
     int threads,                                        // Number of threads used from the global pool
     bool cumulate,                                      // Whether to cumulate the partial correlations
-    bool includeself,                                   // Whether to include the current state when constructing the embedding vector
-    bool progressbar = true                             // Whether to print the progress bar
+    bool progressbar                                    // Whether to print the progress bar
 ) {
   int Ex = Es[0];
   std::vector<int> conEs = Es;
   conEs.erase(conEs.begin());
+
+  int taux = taus[0];
+  std::vector<int> contaus = taus;
+  contaus.erase(contaus.begin());
 
   // If b is not provided correctly, default it to Ex + 2
   if (b <= 0) {
@@ -260,7 +262,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
   unsigned int max_threads = std::thread::hardware_concurrency();
   threads_sizet = std::min(static_cast<size_t>(max_threads), threads_sizet);
 
-  std::vector<std::vector<double>> x_vectors = GenLatticeEmbeddings(x,nb_vec,Ex,includeself);
+  std::vector<std::vector<double>> x_vectors = GenLatticeEmbeddings(x,nb_vec,Ex,taux);
   int n = x_vectors.size();
 
   int n_confounds;
@@ -270,25 +272,43 @@ std::vector<std::vector<double>> SCPCM4Lattice(
     n_confounds = controls.size();
   }
 
-  // Setup pred_indices
+  // Initialize lib_indices and pred_indices with all false
+  std::vector<bool> lib_indices(n, false);
   std::vector<bool> pred_indices(n, false);
-  for (const auto& p : pred) {
-    int row_start = p.first + (Ex - 1) * tau;
-    int row_end = p.second;
-    if (row_end > row_start && row_start >= 0 && row_end < n) {
-      std::fill(pred_indices.begin() + row_start, pred_indices.begin() + row_end + 1, true);
-    }
+
+  // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
+  int libsize_int = lib.size();
+  for (int i = 0; i < libsize_int; ++i) {
+    lib_indices[lib[i] - 1] = true; // Convert to 0-based index
+  }
+  int predsize_int = pred.size();
+  for (int i = 0; i < predsize_int; ++i) {
+    pred_indices[pred[i] - 1] = true; // Convert to 0-based index
   }
 
-  // Setup lib_indices
-  std::vector<bool> lib_indices(n, false);
-  for (const auto& l : lib) {
-    int row_start = l.first + (Ex - 1) * tau;
-    int row_end = l.second;
-    if (row_end > row_start && row_start >= 0 && row_end < n) {
-      std::fill(lib_indices.begin() + row_start, lib_indices.begin() + row_end + 1, true);
-    }
-  }
+  // /* Do not uncomment those codes;
+  //  * it's the previous implementation using `std::vector<std::pair<int, int>>`  input for lib and pred,
+  //  * kept for reference. ----- Wenbo Lv, written on 2025.02.09
+  //  */
+  // // Setup pred_indices
+  // std::vector<bool> pred_indices(n, false);
+  // for (const auto& p : pred) {
+  //   int row_start = p.first + (Ex - 1) * tau;
+  //   int row_end = p.second;
+  //   if (row_end > row_start && row_start >= 0 && row_end < n) {
+  //     std::fill(pred_indices.begin() + row_start, pred_indices.begin() + row_end + 1, true);
+  //   }
+  // }
+  //
+  // // Setup lib_indices
+  // std::vector<bool> lib_indices(n, false);
+  // for (const auto& l : lib) {
+  //   int row_start = l.first + (Ex - 1) * tau;
+  //   int row_end = l.second;
+  //   if (row_end > row_start && row_start >= 0 && row_end < n) {
+  //     std::fill(lib_indices.begin() + row_start, lib_indices.begin() + row_end + 1, true);
+  //   }
+  // }
 
   int max_lib_size = std::accumulate(lib_indices.begin(), lib_indices.end(), 0); // Maximum lib size
   std::vector<int> possible_lib_indices;
@@ -328,12 +348,11 @@ std::vector<std::vector<double>> SCPCM4Lattice(
   //     possible_lib_indices,
   //     pred_indices,
   //     conEs,
-  //     Ex,
+  //     contaus,
   //     b,
   //     simplex,
   //     theta,
-  //     cumulate,
-  //     includeself
+  //     cumulate
   //   );
   //   x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
   // }
@@ -354,12 +373,11 @@ std::vector<std::vector<double>> SCPCM4Lattice(
         possible_lib_indices,
         pred_indices,
         conEs,
-        Ex,
+        contaus,
         b,
         simplex,
         theta,
-        cumulate,
-        includeself
+        cumulate
       );
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
       bar++;
@@ -378,12 +396,11 @@ std::vector<std::vector<double>> SCPCM4Lattice(
         possible_lib_indices,
         pred_indices,
         conEs,
-        Ex,
+        contaus,
         b,
         simplex,
         theta,
-        cumulate,
-        includeself
+        cumulate
       );
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
     }, threads_sizet);

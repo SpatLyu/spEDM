@@ -27,13 +27,13 @@
  * @param lib_size     The size of the library (number of spatial units) used for prediction.
  * @param pred         A vector of pairs representing the indices (row, column) of spatial units to be predicted.
  * @param conEs        Number of dimensions for the attractor reconstruction with control variables
+ * @param taus:        Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
  * @param totalRow     The total number of rows in the 2D grid.
  * @param totalCol     The total number of columns in the 2D grid.
  * @param b            The number of nearest neighbors to use for prediction.
  * @param simplex      If true, use Simplex Projection; if false, use S-Mapping.
  * @param theta        The distance weighting parameter for S-Mapping (ignored if simplex is true).
  * @param cumulate     Whether to cumulate the partial correlations.
- * @param includeself  Whether to include the current state when constructing the embedding vector
  * @return             A vector contains the library size and the corresponding cross mapping and partial cross mapping result.
  */
 std::vector<PartialCorRes> SCPCMSingle4Grid(
@@ -43,13 +43,13 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
     int lib_size,
     const std::vector<std::pair<int, int>>& pred,
     const std::vector<int>& conEs,
+    const std::vector<int>& taus,
     int totalRow,
     int totalCol,
     int b,
     bool simplex,
     double theta,
-    bool cumulate,
-    bool includeself);
+    bool cumulate);
 
 /**
  * Perform Grid-based Spatially Convergent Partial Cross Mapping (SCPCM) for multiple library sizes.
@@ -63,13 +63,12 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
  * @param lib_sizes    A vector of library sizes (number of spatial units) to use for prediction.
  * @param pred         A vector of pairs representing the indices (row, column) of spatial units to be predicted.
  * @param Es           Number of dimensions for the attractor reconstruction with the x and control variables.
- * @param tau          The step of spatial lags for prediction.
+ * @param taus         Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
  * @param b            The number of nearest neighbors to use for prediction.
  * @param simplex      If true, use Simplex Projection; if false, use S-Mapping.
  * @param theta        The distance weighting parameter for S-Mapping (ignored if simplex is true).
  * @param threads      The number of threads to use for parallel processing.
  * @param cumulate     Whether to cumulate the partial correlations.
- * @param includeself  Whether to include the current state when constructing the embedding vector.
  * @param progressbar  If true, display a progress bar during computation.
  * @return             A 2D vector where each row contains the library size, mean cross mapping result,
  *                     significance, and confidence interval bounds.
@@ -81,13 +80,12 @@ std::vector<std::vector<double>> SCPCM4Grid(
     const std::vector<int>& lib_sizes,                   // Vector of library sizes to use
     const std::vector<std::pair<int, int>>& pred,        // Indices of spatial units to be predicted
     const std::vector<int>& Es,                          // Number of dimensions for the attractor reconstruction with the x and control variables
-    int tau,                                             // Step of spatial lags
+    const std::vector<int>& taus,                        // Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
     int b,                                               // Number of nearest neighbors to use for prediction
     bool simplex,                                        // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
     double theta,                                        // Distance weighting parameter for the local neighbours in the manifold
     int threads,                                         // Number of threads used from the global pool
     bool cumulate,                                       // Whether to cumulate the partial correlations
-    bool includeself,                                    // Whether to include the current state when constructing the embedding vector
     bool progressbar                                     // Whether to print the progress bar
 );
 

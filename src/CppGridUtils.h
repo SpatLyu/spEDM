@@ -76,9 +76,9 @@ std::vector<std::vector<double>> CppLaggedVar4Grid(
  * a different lagged value or the original element.
  *
  * Parameters:
- *   mat         - A 2D vector representing the grid data.
- *   E           - The number of embedding dimensions (columns in the resulting matrix).
- *   includeself - A boolean flag indicating whether the original values should be included in the first column.
+ *   mat  - A 2D vector representing the grid data.
+ *   E    - The number of embedding dimensions (columns in the resulting matrix).
+ *   tau  - The spatial lag step for constructing lagged state-space vectors.
  *
  * Returns:
  *   A 2D vector (matrix) where each row contains the original value (if includeself is true)
@@ -91,6 +91,6 @@ std::vector<std::vector<double>> CppLaggedVar4Grid(
 std::vector<std::vector<double>> GenGridEmbeddings(
     const std::vector<std::vector<double>>& mat,
     int E,
-    bool includeself);
+    int tau);
 
 #endif // CppGridUtils_H

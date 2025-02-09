@@ -26,12 +26,11 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
     const std::vector<int>& possible_lib_indices,       // Indices of possible library states
     const std::vector<bool>& pred_indices,              // Vector of T/F values (which states to predict from)
     const std::vector<int>& conEs,                      // Number of dimensions for the attractor reconstruction with control variables
-    int E,                                              // Number of dimensions for the attractor reconstruction
+    const std::vector<int>& taus,                       // Spatial lag step for constructing lagged state-space vectors with control variables
     int b,                                              // Number of neighbors to use for simplex projection
     bool simplex,                                       // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
     double theta,                                       // Distance weighting parameter for the local neighbours in the manifold
-    bool cumulate,                                      // Whether to cumulate the partial correlations
-    bool includeself                                    // Whether to include the current state when constructing the embedding vector
+    bool cumulate                                       // Whether to cumulate the partial correlations
 );
 
 std::vector<std::vector<double>> SCPCM4Lattice(
@@ -40,17 +39,16 @@ std::vector<std::vector<double>> SCPCM4Lattice(
     const std::vector<std::vector<double>>& controls,   // Cross-sectional data of control variables (**stored by row**)
     const std::vector<std::vector<int>>& nb_vec,        // Neighbor indices vector of the spatial units
     const std::vector<int>& lib_sizes,                  // Vector of library sizes to use
-    const std::vector<std::pair<int, int>>& lib,        // Matrix (n x 2) using n sequences of data to construct libraries
-    const std::vector<std::pair<int, int>>& pred,       // Matrix (n x 2) using n sequences of data to predict from
+    const std::vector<int>& lib,                        // Vector specifying the library indices
+    const std::vector<int>& pred,                       // Vector specifying the prediction indices
     const std::vector<int>& Es,                         // Number of dimensions for the attractor reconstruction with the x and control variables
-    int tau,                                            // Spatial lag for the lagged-vector construction
+    const std::vector<int>& taus,                       // Spatial lag step for constructing lagged state-space vectors with the x and control variables
     int b,                                              // Number of nearest neighbors to use for prediction
     bool simplex,                                       // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
     double theta,                                       // Distance weighting parameter for the local neighbours in the manifold
     int threads,                                        // Number of threads used from the global pool
     bool cumulate,                                      // Whether to cumulate the partial correlations
-    bool includeself,                                   // Whether to include the current state when constructing the embedding vector
-    bool progressbar = true                             // Whether to print the progress bar
+    bool progressbar                                    // Whether to print the progress bar
 );
 
 #endif // SCPCM4Lattice_H
