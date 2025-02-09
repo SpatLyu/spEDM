@@ -20,8 +20,7 @@
   nb = NULL,
   threads = detectThreads(),
   bidirectional = TRUE,
-  include.self = FALSE,
-  trendRM = TRUE,
+  trend.rm = TRUE,
   progressbar = TRUE
 )
 
@@ -38,8 +37,7 @@
   pred = NULL,
   threads = detectThreads(),
   bidirectional = TRUE,
-  include.self = FALSE,
-  trendRM = TRUE,
+  trend.rm = TRUE,
   progressbar = TRUE
 )
 }
@@ -70,9 +68,7 @@
 
 \item{bidirectional}{(optional) whether to identify bidirectional causal associations.}
 
-\item{include.self}{(optional) Whether to include the current state when constructing the embedding vector.}
-
-\item{trendRM}{(optional) Whether to remove the linear trend.}
+\item{trend.rm}{(optional) Whether to remove the linear trend.}
 
 \item{progressbar}{(optional) whether to print the progress bar.}
 }

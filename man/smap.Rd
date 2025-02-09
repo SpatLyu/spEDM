@@ -12,12 +12,12 @@
   lib,
   pred = lib,
   E = 3,
+  tau = 1,
   k = 4,
   theta = c(0, 1e-04, 3e-04, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 0.5, 0.75, 1, 1.5, 2, 3,
     4, 6, 8),
   nb = NULL,
-  threads = detectThreads(),
-  include.self = FALSE
+  threads = detectThreads()
 )
 
 \S4method{smap}{SpatRaster}(
@@ -26,11 +26,11 @@
   lib,
   pred = lib,
   E = 3,
+  tau = 1,
   k = 4,
   theta = c(0, 1e-04, 3e-04, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 0.5, 0.75, 1, 1.5, 2, 3,
     4, 6, 8),
-  threads = detectThreads(),
-  include.self = FALSE
+  threads = detectThreads()
 )
 }
 \arguments{
@@ -44,6 +44,8 @@
 
 \item{E}{(optional) The dimensions of the embedding.}
 
+\item{tau}{(optional) The step of spatial lags.}
+
 \item{k}{(optional) Number of nearest neighbors to use for prediction.}
 
 \item{theta}{(optional) Weighting parameter for distances}
@@ -51,8 +53,6 @@
 \item{nb}{(optional) The neighbours list.}
 
 \item{threads}{(optional) Number of threads.}
-
-\item{include.self}{(optional) Whether to include the current state when constructing the embedding vector.}
 }
 \value{
 A matrix

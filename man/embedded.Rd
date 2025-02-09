@@ -6,9 +6,9 @@
 \alias{embedded,SpatRaster-method}
 \title{generate embeddings}
 \usage{
-\S4method{embedded}{sf}(data, target, E = 3, nb = NULL, include.self = FALSE)
+\S4method{embedded}{sf}(data, target, E = 3, tau = 1, nb = NULL)
 
-\S4method{embedded}{SpatRaster}(data, target, E = 3, include.self = FALSE)
+\S4method{embedded}{SpatRaster}(data, target, E = 3, tau = 1)
 }
 \arguments{
 \item{data}{The observation data.}
@@ -17,9 +17,9 @@
 
 \item{E}{(optional) The dimensions of the embedding.}
 
-\item{nb}{(optional) The neighbours list.}
+\item{tau}{(optional) The step of spatial lags.}
 
-\item{include.self}{(optional) Whether to include the current state when constructing the embedding vector.}
+\item{nb}{(optional) The neighbours list.}
 }
 \value{
 A matrix
