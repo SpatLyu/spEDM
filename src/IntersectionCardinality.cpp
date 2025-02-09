@@ -33,6 +33,32 @@ double IntersectionCardinality(
     int threads,
     bool progressbar
 ) {
+  // Construct a valid_pred vector to store indices that are not entirely NaN
+  std::vector<int> valid_pred;
+
+  for (int idx : pred) {
+    // Ensure index is within valid range
+    if (idx < 0 || static_cast<std::size_t>(idx) >= embedding_x.size()) {
+      continue;
+    }
+
+    // Check if all values in embedding_x[idx] and embedding_y[idx] are NaN
+    bool x_all_nan = std::all_of(embedding_x[idx].begin(), embedding_x[idx].end(),
+                                 [](double v) { return std::isnan(v); });
+    bool y_all_nan = std::all_of(embedding_y[idx].begin(), embedding_y[idx].end(),
+                                 [](double v) { return std::isnan(v); });
+
+    // If at least one of them has valid data, add idx to valid_pred
+    if (!x_all_nan || !y_all_nan) {
+      valid_pred.push_back(idx);
+    }
+  }
+
+  // If no valid predictions remain, return 0.0
+  if (valid_pred.empty()) {
+    return 0.0;
+  }
+
   std::size_t k = static_cast<size_t>(num_neighbors);
   std::size_t max_r = std::min(static_cast<size_t>(max_neighbors), embedding_x.size());
   max_r = std::max(max_r,k);

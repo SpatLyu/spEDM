@@ -42,9 +42,9 @@
 
 \item{pred}{(optional) The row numbers(\code{vector}) of lattice data or the row-column numbers(\code{matrix}) of grid data used for predictions.}
 
-\item{E}{(optional) The dimensions of the embedding.}
+\item{E}{(optional) Dimensions of the embedding.}
 
-\item{tau}{(optional) The step of spatial lags.}
+\item{tau}{(optional) Step of spatial lags.}
 
 \item{k}{(optional) Number of nearest neighbors to use for prediction.}
 

@@ -408,7 +408,7 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
 Rcpp::NumericVector RcppGCMC4Grid(
     const Rcpp::NumericMatrix& xMatrix,
     const Rcpp::NumericMatrix& yMatrix,
-    const Rcpp::IntegerVector& pred,
+    const Rcpp::IntegerMatrix& pred,
     const Rcpp::IntegerVector& E,
     const Rcpp::IntegerVector& tau,
     const Rcpp::IntegerVector& b,
@@ -432,11 +432,18 @@ Rcpp::NumericVector RcppGCMC4Grid(
   }
 
   // Convert Rcpp IntegerVector to std::vector<int>
-  std::vector<int> pred_std = Rcpp::as<std::vector<int>>(pred);
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
   std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
   std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
   std::vector<int> maxr_std = Rcpp::as<std::vector<int>>(max_r);
+
+  // Convert Rcpp IntegerMatrix to std::vector<int>
+  int numRows = xMatrix.nrow();
+  int numCols = xMatrix.ncol();
+  std::vector<int> pred_std;
+  for (int i = 0; i < pred.nrow(); ++i) {
+    pred_std.push_back(LocateGridIndices(pred(i,0), pred(i,1), numRows, numCols));
+  }
 
   // Generate embeddings
   std::vector<std::vector<double>> e1 = GenGridEmbeddings(xMatrix_cpp, E[0], tau_std[0]);

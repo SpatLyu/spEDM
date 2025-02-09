@@ -55,9 +55,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   causemat = matrix(dtf[,"cause"],nrow = terra::nrow(data),byrow = TRUE)
   effectmat = matrix(dtf[,"effect"],nrow = terra::nrow(data),byrow = TRUE)
 
-  maxlibsize = min(dim(causemat))
-  selvec = seq(5,maxlibsize,5)
-  if (is.null(pred)) pred = as.matrix(expand.grid(selvec,selvec))
+  if (is.null(pred)) pred = .internal_predmat(causemat)
 
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
   x_xmap_y = NULL
@@ -75,12 +73,12 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 #' @param cause Name of causal variable.
 #' @param effect Name of effect variable.
 #' @param libsizes A vector of library sizes to use.
-#' @param E (optional) The dimensions of the embedding.
-#' @param tau (optional) The step of spatial lags.
+#' @param E (optional) Dimensions of the embedding.
+#' @param tau (optional) Step of spatial lags.
 #' @param k (optional) Number of nearest neighbors to use for prediction.
 #' @param theta (optional) Weighting parameter for distances, useful when `algorithm` is `smap`.
 #' @param algorithm (optional) Algorithm used for prediction.
-#' @param pred pred (optional) The row numbers(`vector`) of lattice data or the row-column numbers(`matrix`) of grid data used for predictions.
+#' @param pred pred (optional) Row numbers(`vector`) of lattice data or row-column numbers(`matrix`) of grid data used for predictions.
 #' @param nb (optional) The neighbours list.
 #' @param threads (optional) Number of threads.
 #' @param bidirectional (optional) whether to identify bidirectional causal associations.
