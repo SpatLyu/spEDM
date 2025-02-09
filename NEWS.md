@@ -2,7 +2,7 @@
 
 ### enhancements
 
-* Enhance spatial neighbor list generation for lattice data using the `sdsfun` package (#159).
+* Improve default spatial neighbor matrix generation for lattice data with support from the `sdsfun` package (#159).
 
 ### breaking changes
 
