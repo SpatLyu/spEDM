@@ -5,21 +5,23 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
   k = .check_inputelementnum(k,2)
+  .varname = .internal_varname()
   if (is.null(nb)) nb = sdsfun::spdep_nb(data)
   if (nrow(data) != length(nb)) stop("Incompatible Data Dimensions!")
   coords = as.data.frame(sdsfun::sf_coordinates(data))
   data = sf::st_drop_geometry(data)
   data = data[,varname]
+  names(data) = .varname
 
   if (trendRM){
     data = dplyr::bind_cols(data,coords)
-    for (i in 1:length(varname)){
-      data[,varname[i]] = sdsfun::rm_lineartrend(paste0(varname[i],"~X+Y"), data = data)
+    for (i in 1:length(.varname)){
+      data[,.varname[i]] = sdsfun::rm_lineartrend(paste0(.varname[i],"~X+Y"), data = data)
     }
   }
 
-  cause = data[,cause,drop = TRUE]
-  effect = data[,effect,drop = TRUE]
+  cause = data[,"cause",drop = TRUE]
+  effect = data[,"effect",drop = TRUE]
 
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
   x_xmap_y = NULL
@@ -36,13 +38,15 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
   k = .check_inputelementnum(k,2)
-  data = data[[c(cause,effect)]]
-  names(data) = c("cause","effect")
+  .varname = .internal_varname()
+  data = data[[varname]]
+  names(data) = .varname
 
   dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
   if (trendRM){
-    dtf$cause = sdsfun::rm_lineartrend("cause~x+y", data = dtf)
-    dtf$effect = sdsfun::rm_lineartrend("effect~x+y", data = dtf)
+    for (i in seq_along(.varname)){
+      dtf[,.varname[i]] = sdsfun::rm_lineartrend(paste0(.varname[i],"~x+y"), data = dtf)
+    }
   }
   causemat = matrix(dtf[,"cause"],nrow = terra::nrow(data),byrow = TRUE)
   effectmat = matrix(dtf[,"effect"],nrow = terra::nrow(data),byrow = TRUE)

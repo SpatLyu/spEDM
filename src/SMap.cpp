@@ -87,7 +87,10 @@ std::vector<double> SMapPrediction(
       num_neighbors_sizet = neighbors.size();
     }
     std::partial_sort(neighbors.begin(), neighbors.begin() + num_neighbors_sizet, neighbors.end(),
-                      [&](size_t a, size_t b) { return distances[a] < distances[b]; });
+                      [&](size_t a, size_t b) {
+                        return (distances[a] < distances[b]) ||
+                               (distances[a] == distances[b] && a < b);
+                        });
 
     // Prepare data for SVD
     std::vector<std::vector<double>> A(num_neighbors_sizet, std::vector<double>(vectors[p].size() + 1, 0.0));

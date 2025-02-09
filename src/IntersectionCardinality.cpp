@@ -64,7 +64,8 @@ double IntersectionCardinality(
     bool progressbar
 ) {
   std::size_t k = static_cast<size_t>(num_neighbors);
-  std::size_t max_r = static_cast<size_t>(max_neighbors);
+  std::size_t max_r = std::min(static_cast<size_t>(max_neighbors), embedding_x.size());
+  max_r = std::max(max_r,k);
 
   size_t threads_sizet = static_cast<size_t>(threads);
   unsigned int max_threads = std::thread::hardware_concurrency();
