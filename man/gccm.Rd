@@ -87,7 +87,7 @@ A list.
 geographical convergent cross mapping
 }
 \examples{
-columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
+columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData"),
                        quiet=TRUE)
 \donttest{
 g = gccm(columbus,"HOVAL","CRIME",libsizes = seq(5,40,5),E = c(6,5))

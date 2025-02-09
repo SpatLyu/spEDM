@@ -61,7 +61,7 @@ A matrix
 smap forecasting
 }
 \examples{
-columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData")[1],
+columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData"),
                        quiet=TRUE)
 \donttest{
 smap(columbus,target = "INC",lib = 1:49)
