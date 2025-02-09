@@ -9,7 +9,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   .varname = .internal_varname()
   lib = 1:nrow(data)
   if (is.null(pred)) pred = lib
-  if (is.null(nb)) nb = sdsfun::spdep_nb(data)
+  if (is.null(nb)) nb = .internal_lattice_nb(data)
   if (nrow(data) != length(nb)) stop("Incompatible Data Dimensions!")
   coords = as.data.frame(sdsfun::sf_coordinates(data))
   data = sf::st_drop_geometry(data)

@@ -45,3 +45,12 @@
   pred = as.matrix(expand.grid(selvec,selvec))
   return(pred)
 }
+
+.internal_lattice_nb = \(data){
+  if (sdsfun::sf_geometry_type(data) %in% c('point','multipoint')){
+    nb = sdsfun::spdep_nb(data,k = 8)
+  } else {
+    nb = sdsfun::spdep_nb(data)
+  }
+  return(nb)
+}
