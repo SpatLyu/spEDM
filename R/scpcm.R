@@ -1,19 +1,22 @@
 methods::setGeneric("scpcm", function(data, ...) standardGeneric("scpcm"))
 
-.scpcm_sf_method = \(data, cause, effect, mediator, libsizes, E = 3, tau = 1, k = 4, theta = 1, algorithm = "simplex", nb = NULL,
-                     threads = detectThreads(), bidirectional = TRUE, cumulate = FALSE, include.self = TRUE, trendRM = TRUE, progressbar = TRUE){
+.scpcm_sf_method = \(data, cause, effect, mediator, libsizes, E = 3, tau = 0, k = 4, theta = 1, algorithm = "simplex", pred = NULL,
+                     nb = NULL, threads = detectThreads(), bidirectional = TRUE, cumulate = FALSE, trend.rm = TRUE, progressbar = TRUE){
   varname = .check_character(c(cause, effect, mediator))
   E = .check_inputelementnum(E,length(varname))
+  tau = .check_inputelementnum(tau,length(varname))
   k = .check_inputelementnum(k,2)
   .varname = .internal_varname(mediator)
-  coords = as.data.frame(sdsfun::sf_coordinates(data))
+  lib = 1:nrow(data)
+  if (is.null(pred)) pred = lib
   if (is.null(nb)) nb = sdsfun::spdep_nb(data)
   if (nrow(data) != length(nb)) stop("Incompatible Data Dimensions!")
+  coords = as.data.frame(sdsfun::sf_coordinates(data))
   data = sf::st_drop_geometry(data)
   data = data[,varname]
   names(data) = .varname
 
-  if (trendRM){
+  if (trend.rm){
     data = dplyr::bind_cols(data,coords)
     for (i in seq_along(.varname)){
       data[,.varname[i]] = sdsfun::rm_lineartrend(paste0(.varname[i],"~X+Y"), data = data)
@@ -27,24 +30,25 @@ methods::setGeneric("scpcm", function(data, ...) standardGeneric("scpcm"))
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
   x_xmap_y = NULL
   if (bidirectional){
-    x_xmap_y = RcppSCPCM4Lattice(cause,effect,medmat,nb,libsizes,E[-2],tau,k[1],simplex,theta,threads,cumulate,include.self,progressbar)
+    x_xmap_y = RcppSCPCM4Lattice(cause,effect,medmat,nb,libsizes,lib,pred,E[-2],tau[-2],k[1],simplex,theta,threads,cumulate,progressbar)
   }
-  y_xmap_x = RcppSCPCM4Lattice(effect,cause,medmat,nb,libsizes,E[-1],tau,k[2],simplex,theta,threads,cumulate,include.self,progressbar)
+  y_xmap_x = RcppSCPCM4Lattice(effect,cause,medmat,nb,libsizes,lib,pred,E[-1],tau[-1],k[2],simplex,theta,threads,cumulate,progressbar)
 
   return(.bind_xmapdf2(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
 
-.scpcm_spatraster_method = \(data, cause, effect, mediator, libsizes, E = 3, tau = 1, k = 4, theta = 1, algorithm = "simplex", RowCol = NULL,
-                             threads = detectThreads(), bidirectional = TRUE, cumulate = FALSE, include.self = TRUE, trendRM = TRUE, progressbar = TRUE){
+.scpcm_spatraster_method = \(data, cause, effect, mediator, libsizes, E = 3, tau = 0, k = 4, theta = 1, algorithm = "simplex", pred = NULL,
+                             threads = detectThreads(), bidirectional = TRUE, cumulate = FALSE, trend.rm = TRUE, progressbar = TRUE){
   varname = .check_character(cause, effect, mediator)
   E = .check_inputelementnum(E,length(varname))
+  tau = .check_inputelementnum(tau,length(varname))
   k = .check_inputelementnum(k,2)
   .varname = .internal_varname(mediator)
   data = data[[varname]]
   names(data) = .varname
 
   dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
-  if (trendRM){
+  if (trend.rm){
     for (i in seq_along(.varname)){
       dtf[,.varname[i]] = sdsfun::rm_lineartrend(paste0(.varname[i],"~x+y"), data = dtf)
     }
@@ -55,14 +59,14 @@ methods::setGeneric("scpcm", function(data, ...) standardGeneric("scpcm"))
 
   maxlibsize = min(dim(causemat))
   selvec = seq(5,maxlibsize,5)
-  if (is.null(RowCol)) RowCol = as.matrix(expand.grid(selvec,selvec))
+  if (is.null(pred)) pred = as.matrix(expand.grid(selvec,selvec))
 
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
   x_xmap_y = NULL
   if (bidirectional){
-    x_xmap_y = RcppSCPCM4Grid(causemat,effectmat,medmat,libsizes,E[-2],RowCol,tau,k[1],simplex,theta,threads,cumulate,include.self,progressbar)
+    x_xmap_y = RcppSCPCM4Grid(causemat,effectmat,medmat,libsizes,E[-2],tau[-2],pred,k[1],simplex,theta,threads,cumulate,progressbar)
   }
-  y_xmap_x = RcppSCPCM4Grid(effectmat,causemat,medmat,libsizes,E[-1],RowCol,tau,k[2],simplex,theta,threads,cumulate,include.self,progressbar)
+  y_xmap_x = RcppSCPCM4Grid(effectmat,causemat,medmat,libsizes,E[-1],tau[-1],pred,k[2],simplex,theta,threads,cumulate,progressbar)
 
   return(.bind_xmapdf2(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
