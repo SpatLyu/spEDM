@@ -131,14 +131,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppGCMC4Grid
-Rcpp::NumericVector RcppGCMC4Grid(const Rcpp::NumericMatrix& xMatrix, const Rcpp::NumericMatrix& yMatrix, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& tau, const Rcpp::IntegerVector& b, const Rcpp::IntegerVector& max_r, int threads, bool progressbar);
+Rcpp::NumericVector RcppGCMC4Grid(const Rcpp::NumericMatrix& xMatrix, const Rcpp::NumericMatrix& yMatrix, const Rcpp::IntegerMatrix& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& tau, const Rcpp::IntegerVector& b, const Rcpp::IntegerVector& max_r, int threads, bool progressbar);
 RcppExport SEXP _spEDM_RcppGCMC4Grid(SEXP xMatrixSEXP, SEXP yMatrixSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP max_rSEXP, SEXP threadsSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type xMatrix(xMatrixSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type yMatrix(yMatrixSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type pred(predSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type pred(predSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type E(ESEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type tau(tauSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type b(bSEXP);
