@@ -73,7 +73,10 @@ std::vector<double> SimplexProjectionPrediction(
       num_neighbors_sizet = neighbors.size();
     }
     std::partial_sort(neighbors.begin(), neighbors.begin() + num_neighbors_sizet, neighbors.end(),
-                      [&](size_t a, size_t b) { return distances[a] < distances[b]; });
+                      [&](size_t a, size_t b) {
+                        return (distances[a] < distances[b]) ||
+                               (distances[a] == distances[b] && a < b);
+                        });
 
     double min_distance = distances[neighbors[0]];
 

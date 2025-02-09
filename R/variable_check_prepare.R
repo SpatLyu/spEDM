@@ -30,3 +30,11 @@
   res = matrix(terra::values(data),nrow = terra::nrow(data),byrow = TRUE)
   return(res)
 }
+
+.internal_varname = \(mediator = NULL){
+  .varname = c("cause","effect")
+  if (!is.null(mediator)){
+    .varname = c(.varname,paste0("z",seq_along(mediator)))
+  }
+  return(.varname)
+}
