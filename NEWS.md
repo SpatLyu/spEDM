@@ -1,5 +1,9 @@
 # spEDM 2.0
 
+### breaking changes
+
+* Adjust the behavior of the `tau` parameter in the C++ source code and update the R side API (#154).
+
 # spEDM 1.3
 
 ### new

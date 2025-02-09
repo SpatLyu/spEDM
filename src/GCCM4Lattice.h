@@ -54,10 +54,9 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
  * - x_vectors: Reconstructed state-space vectors, where each row represents a separate state vector.
  * - y: Spatial cross-section series used as the response variable for cross mapping.
  * - lib_sizes: A vector specifying different library sizes for GCCM analysis.
- * - lib: A matrix (n x 2) representing sequences of data used to construct libraries.
- * - pred: A matrix (n x 2) representing sequences of data used for prediction.
+ * - lib: A vector specifying the library indices (1-based in R, converted to 0-based in C++).
+ * - pred: A vector specifying the prediction indices (1-based in R, converted to 0-based in C++).
  * - E: Embedding dimension for attractor reconstruction.
- * - tau: The spatial lag step for constructing lagged state-space vectors.
  * - b: Number of nearest neighbors used for prediction.
  * - simplex: Boolean flag indicating whether to use simplex projection (true) or S-mapping (false) for prediction.
  * - theta: Distance weighting parameter used for weighting neighbors in the S-mapping prediction.
@@ -76,15 +75,14 @@ std::vector<std::vector<double>> GCCM4Lattice(
     const std::vector<std::vector<double>>& x_vectors,
     const std::vector<double>& y,
     const std::vector<int>& lib_sizes,
-    const std::vector<std::pair<int, int>>& lib,
-    const std::vector<std::pair<int, int>>& pred,
+    const std::vector<int>& lib,
+    const std::vector<int>& pred,
     int E,
-    int tau,
     int b,
     bool simplex,
     double theta,
     int threads,
-    bool progressbar = true
+    bool progressbar
 );
 
 #endif // GCCM4Lattice_H

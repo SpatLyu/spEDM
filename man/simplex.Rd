@@ -12,10 +12,10 @@
   lib,
   pred = lib,
   E = 1:10,
+  tau = 1,
   k = 4,
   nb = NULL,
-  threads = detectThreads(),
-  include.self = FALSE
+  threads = detectThreads()
 )
 
 \S4method{simplex}{SpatRaster}(
@@ -24,9 +24,9 @@
   lib,
   pred = lib,
   E = 1:10,
+  tau = 1,
   k = 4,
-  threads = detectThreads(),
-  include.self = FALSE
+  threads = detectThreads()
 )
 }
 \arguments{
@@ -40,13 +40,13 @@
 
 \item{E}{(optional) The dimensions of the embedding.}
 
+\item{tau}{(optional) The step of spatial lags.}
+
 \item{k}{(optional) Number of nearest neighbors to use for prediction.}
 
 \item{nb}{(optional) The neighbours list.}
 
 \item{threads}{(optional) Number of threads.}
-
-\item{include.self}{(optional) Whether to include the current state when constructing the embedding vector.}
 }
 \value{
 A matrix
@@ -57,6 +57,6 @@ simplex forecasting
 \examples{
 columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData"))
 \donttest{
-simplex(columbus,target = "CRIME",lib = 1:29,pred = 30:49)
+simplex(columbus,target = "CRIME",lib = 1:49)
 }
 }

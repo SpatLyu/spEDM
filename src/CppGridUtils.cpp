@@ -132,9 +132,9 @@ std::vector<std::vector<double>> CppLaggedVar4Grid(
  * a different lagged value or the original element.
  *
  * Parameters:
- *   mat         - A 2D vector representing the grid data.
- *   E           - The number of embedding dimensions (columns in the resulting matrix).
- *   includeself - A boolean flag indicating whether the original values should be included in the first column.
+ *   mat  - A 2D vector representing the grid data.
+ *   E    - The number of embedding dimensions (columns in the resulting matrix).
+ *   tau  - The spatial lag step for constructing lagged state-space vectors.
  *
  * Returns:
  *   A 2D vector (matrix) where each row contains the original value (if includeself is true)
@@ -147,7 +147,7 @@ std::vector<std::vector<double>> CppLaggedVar4Grid(
 std::vector<std::vector<double>> GenGridEmbeddings(
     const std::vector<std::vector<double>>& mat,
     int E,
-    bool includeself) {
+    int tau) {
   // Calculate the total number of elements in all subsets of mat
   int total_elements = 0;
   for (const auto& subset : mat) {
@@ -157,7 +157,7 @@ std::vector<std::vector<double>> GenGridEmbeddings(
   // Initialize the result matrix with total_elements rows and E columns
   std::vector<std::vector<double>> result(total_elements, std::vector<double>(E, 0.0));
 
-  if (includeself) {
+  if (tau == 0) {
     // Fill the first column with the elements from mat
     int row = 0;
     for (const auto& subset : mat) {
@@ -194,7 +194,7 @@ std::vector<std::vector<double>> GenGridEmbeddings(
     }
   } else {
     int row = 0;
-    for (int lagNum = 1; lagNum <= E; ++lagNum) {
+    for (int lagNum = tau; lagNum < E + tau; ++lagNum) {
       // Calculate the lagged variables for the current lagNum
       std::vector<std::vector<double>> lagged_vars = CppLaggedVar4Grid(mat, lagNum);
 
@@ -222,27 +222,3 @@ std::vector<std::vector<double>> GenGridEmbeddings(
 
   return result;
 }
-
-// std::vector<std::vector<std::vector<double>>> GenGridEmbeddings2(
-//     const std::vector<std::vector<double>>& mat, int E) {
-//   // Initialize a vector to store the embeddings
-//   std::vector<std::vector<std::vector<double>>> xEmbeddings(E);
-//
-//   // The first embedding is the transpose of the input matrix
-//   int numRows = mat.size();
-//   int numCols = mat[0].size();
-//   xEmbeddings[0].resize(numCols, std::vector<double>(numRows));
-//
-//   for (int r = 0; r < numRows; ++r) {
-//     for (int c = 0; c < numCols; ++c) {
-//       xEmbeddings[0][c][r] = mat[r][c]; // Transpose the matrix
-//     }
-//   }
-//
-//   // Generate the remaining embeddings using laggedVariableAs2Dim
-//   for (int i = 1; i < E; ++i) {
-//     xEmbeddings[i] = CppLaggedVar4Grid(mat, i);
-//   }
-//
-//   return xEmbeddings;
-// }

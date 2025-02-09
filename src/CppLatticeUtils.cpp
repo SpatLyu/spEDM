@@ -90,10 +90,10 @@ std::vector<std::vector<int>> CppLaggedVar4Lattice(std::vector<std::vector<int>>
  * for each spatial unit, considering both the immediate neighbors and neighbors up to a specified lag number.
  *
  * Parameters:
- *   vec         - A vector of values, one for each spatial unit, to be embedded.
- *   nb          - A 2D matrix where each row represents the neighbors of a spatial unit.
- *   E           - The embedding dimension, specifying how many lags to consider in the embeddings.
- *   includeself - A boolean flag indicating whether to include the spatial unit itself in its embedding.
+ *   vec  - A vector of values, one for each spatial unit, to be embedded.
+ *   nb   - A 2D matrix where each row represents the neighbors of a spatial unit.
+ *   E    - The embedding dimension, specifying how many lags to consider in the embeddings.
+ *   tau  - The spatial lag step for constructing lagged state-space vectors.
  *
  * Returns:
  *   A 2D vector representing the embeddings for each spatial unit, where each spatial unit has a row in the matrix
@@ -104,7 +104,7 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
     const std::vector<double>& vec,
     const std::vector<std::vector<int>>& nb,
     int E,
-    bool includeself)
+    int tau)
 {
   // Get the number of nodes
   int n = vec.size();
@@ -112,7 +112,7 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
   // Initialize the embeddings matrix with NaN values
   std::vector<std::vector<double>> xEmbedings(n, std::vector<double>(E, std::numeric_limits<double>::quiet_NaN()));
 
-  if (includeself) {
+  if (tau == 0) {
     // When E >= 1, fill the first column of xEmbedings with the values from vec
     if (E >= 1) {
       for (int i = 0; i < n; ++i) {
@@ -167,8 +167,8 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
       }
     }
   } else {
-    // Compute embeddings for each lag number from 1 to E
-    for (int lagNum = 1; lagNum <= E; ++lagNum) {
+    // Compute embeddings for each lag number from tau to E+tau-1
+    for (int lagNum = tau; lagNum < E + tau; ++lagNum) {
       // Compute the lagged neighborhoods
       std::vector<std::vector<int>> laggedResults = CppLaggedVar4Lattice(nb, lagNum);
 

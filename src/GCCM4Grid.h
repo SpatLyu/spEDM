@@ -58,7 +58,6 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
  * @param simplex      If true, use Simplex Projection; if false, use S-Mapping.
  * @param theta        The distance weighting parameter for S-Mapping (ignored if simplex is true).
  * @param threads      The number of threads to use for parallel processing.
- * @param includeself  Whether to include the current state when constructing the embedding vector.
  * @param progressbar  If true, display a progress bar during computation.
  * @return             A 2D vector where each row contains the library size, mean cross mapping result,
  *                     significance, and confidence interval bounds.
@@ -74,7 +73,6 @@ std::vector<std::vector<double>> GCCM4Grid(
     bool simplex,
     double theta,
     int threads,
-    bool includeself,
     bool progressbar
 );
 

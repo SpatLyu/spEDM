@@ -38,7 +38,8 @@ Rcpp::NumericMatrix RcppLaggedVar4Grid(Rcpp::NumericMatrix mat, int lagNum) {
 }
 
 // [[Rcpp::export]]
-Rcpp::NumericMatrix RcppGenGridEmbeddings(Rcpp::NumericMatrix mat, int E, bool includeself) {
+Rcpp::NumericMatrix RcppGenGridEmbeddings(Rcpp::NumericMatrix mat,
+                                          int E, int tau) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = mat.nrow();
   int numCols = mat.ncol();
@@ -51,7 +52,7 @@ Rcpp::NumericMatrix RcppGenGridEmbeddings(Rcpp::NumericMatrix mat, int E, bool i
   }
 
   // Call the GenGridEmbeddings function
-  std::vector<std::vector<double>> embeddings = GenGridEmbeddings(cppMat, E, includeself);
+  std::vector<std::vector<double>> embeddings = GenGridEmbeddings(cppMat, E, tau);
 
   // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
   int rows = embeddings.size();
@@ -78,9 +79,9 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
                                      const Rcpp::IntegerMatrix& lib,
                                      const Rcpp::IntegerMatrix& pred,
                                      const Rcpp::IntegerVector& E,
+                                     int tau,
                                      int b,
-                                     int threads,
-                                     bool includeself) {
+                                     int threads) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = mat.nrow();
   int numCols = mat.ncol();
@@ -126,9 +127,9 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
     lib_indices,
     pred_indices,
     E_std,
+    tau,
     b,
-    threads,
-    includeself);
+    threads);
 
   size_t n_rows = res_std.size();
   size_t n_cols = res_std[0].size();
@@ -154,9 +155,9 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& mat,
                                   const Rcpp::IntegerMatrix& pred,
                                   const Rcpp::NumericVector& theta,
                                   int E,
+                                  int tau,
                                   int b,
-                                  int threads,
-                                  bool includeself) {
+                                  int threads) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = mat.nrow();
   int numCols = mat.ncol();
@@ -203,9 +204,9 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& mat,
     pred_indices,
     theta_std,
     E,
+    tau,
     b,
-    threads,
-    includeself);
+    threads);
 
   size_t n_rows = res_std.size();
   size_t n_cols = res_std[0].size();
@@ -229,7 +230,7 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& mat,
 Rcpp::NumericMatrix RcppGCCM4Grid(
     const Rcpp::NumericMatrix& xMatrix,
     const Rcpp::NumericMatrix& yMatrix,
-    const Rcpp::IntegerVector& lib_sizes,
+    const Rcpp::IntegerVector& libsizes,
     const Rcpp::IntegerMatrix& pred,
     int E,
     int tau,
@@ -237,7 +238,6 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
     bool simplex,
     double theta,
     int threads,
-    bool includeself,
     bool progressbar) {
 
   // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
@@ -256,11 +256,14 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
     }
   }
 
-  // Convert Rcpp IntegerVector to std::vector<int>
-  std::vector<int> lib_sizes_cpp(lib_sizes.size());
-  for (int i = 0; i < lib_sizes.size(); ++i) {
-    lib_sizes_cpp[i] = lib_sizes[i];
-  }
+  // // Convert Rcpp IntegerVector to std::vector<int>
+  // std::vector<int> libsizes_cpp(libsizes.size());
+  // for (int i = 0; i < libsizes.size(); ++i) {
+  //   libsizes_cpp[i] = libsizes[i];
+  // }
+
+  // Convert Rcpp::IntegerVector to std::vector<int>
+  std::vector<int> libsizes_cpp = Rcpp::as<std::vector<int>>(libsizes);
 
   // Convert Rcpp IntegerMatrix to std::vector<std::pair<int, int>>
   std::vector<std::pair<int, int>> pred_cpp(pred.nrow());
@@ -272,7 +275,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
   std::vector<std::vector<double>> result = GCCM4Grid(
     xMatrix_cpp,
     yMatrix_cpp,
-    lib_sizes_cpp,
+    libsizes_cpp,
     pred_cpp,
     E,
     tau,
@@ -280,7 +283,6 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
     simplex,
     theta,
     threads,
-    includeself,
     progressbar
   );
 
@@ -305,16 +307,15 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
     const Rcpp::NumericMatrix& xMatrix,
     const Rcpp::NumericMatrix& yMatrix,
     const Rcpp::NumericMatrix& zMatrix,
-    const Rcpp::IntegerVector& lib_sizes,
+    const Rcpp::IntegerVector& libsizes,
     const Rcpp::IntegerVector& E,
+    const Rcpp::IntegerVector& tau,
     const Rcpp::IntegerMatrix& pred,
-    int tau,
     int b,
     bool simplex,
     double theta,
     int threads,
     bool cumulate,
-    bool includeself,
     bool progressbar) {
 
   // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
@@ -340,17 +341,22 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
     zMatrix_cpp[i] = Rcpp::as<std::vector<double>>(covvar);
   }
 
-  // Convert Rcpp IntegerVector to std::vector<int>
-  std::vector<int> lib_sizes_cpp(lib_sizes.size());
-  for (int i = 0; i < lib_sizes.size(); ++i) {
-    lib_sizes_cpp[i] = lib_sizes[i];
-  }
+  // // Convert Rcpp IntegerVector to std::vector<int>
+  // std::vector<int> lib_sizes_cpp(lib_sizes.size());
+  // for (int i = 0; i < lib_sizes.size(); ++i) {
+  //   lib_sizes_cpp[i] = lib_sizes[i];
+  // }
+  //
+  // // Convert Rcpp IntegerVector to std::vector<int>
+  // std::vector<int> E_cpp(E.size());
+  // for (int i = 0; i < E.size(); ++i) {
+  //   E_cpp[i] = E[i];
+  // }
 
-  // Convert Rcpp IntegerVector to std::vector<int>
-  std::vector<int> E_cpp(E.size());
-  for (int i = 0; i < E.size(); ++i) {
-    E_cpp[i] = E[i];
-  }
+  // Convert Rcpp::IntegerVector to std::vector<int>
+  std::vector<int> libsizes_cpp = Rcpp::as<std::vector<int>>(libsizes);
+  std::vector<int> E_cpp = Rcpp::as<std::vector<int>>(E);
+  std::vector<int> tau_cpp = Rcpp::as<std::vector<int>>(tau);
 
   // Convert Rcpp IntegerMatrix to std::vector<std::pair<int, int>>
   std::vector<std::pair<int, int>> pred_cpp(pred.nrow());
@@ -363,16 +369,15 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
     xMatrix_cpp,
     yMatrix_cpp,
     zMatrix_cpp,
-    lib_sizes_cpp,
+    libsizes_cpp,
     pred_cpp,
     E_cpp,
-    tau,
+    tau_cpp,
     b,
     simplex,
     theta,
     threads,
     cumulate,
-    includeself,
     progressbar
   );
 
@@ -444,39 +449,3 @@ Rcpp::NumericVector RcppGCMC4Grid(
 
   return res_vec;
 }
-
-// // [[Rcpp::export]]
-// Rcpp::List RcppGenGridEmbeddings2(Rcpp::NumericMatrix mat, int E) {
-//   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
-//   int numRows = mat.nrow();
-//   int numCols = mat.ncol();
-//   std::vector<std::vector<double>> cppMat(numRows, std::vector<double>(numCols));
-//
-//   for (int r = 0; r < numRows; ++r) {
-//     for (int c = 0; c < numCols; ++c) {
-//       cppMat[r][c] = mat(r, c);
-//     }
-//   }
-//
-//   // Call the GenGridEmbeddings function
-//   std::vector<std::vector<std::vector<double>>> embeddings = GenGridEmbeddings2(cppMat, E);
-//
-//   // Convert the result back to an Rcpp::List of Rcpp::NumericMatrix
-//   Rcpp::List result(E + 1);
-//
-//   for (int i = 0; i <= E; ++i) {
-//     int embeddingRows = embeddings[i].size();
-//     int embeddingCols = embeddings[i][0].size();
-//     Rcpp::NumericMatrix embeddingMat(embeddingRows, embeddingCols);
-//
-//     for (int r = 0; r < embeddingRows; ++r) {
-//       for (int c = 0; c < embeddingCols; ++c) {
-//         embeddingMat(r, c) = embeddings[i][r][c];
-//       }
-//     }
-//
-//     result[i] = embeddingMat;
-//   }
-//
-//   return result;
-// }

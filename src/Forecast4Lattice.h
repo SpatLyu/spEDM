@@ -16,9 +16,9 @@
  *   - lib_indices: A boolean vector indicating library (training) set indices.
  *   - pred_indices: A boolean vector indicating prediction set indices.
  *   - E: A vector of embedding dimensions to evaluate.
+ *   - tau: The spatial lag step for constructing lagged state-space vectors.
  *   - b: Number of nearest neighbors to use for prediction.
  *   - threads: Number of threads used from the global pool.
- *   - includeself: Whether to include the current state when constructing the embedding vector.
  *
  * Returns:
  *   A 2D vector where each row contains [E, rho, mae, rmse] for a given embedding dimension.
@@ -28,9 +28,9 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& vec,
                                                  const std::vector<bool>& lib_indices,
                                                  const std::vector<bool>& pred_indices,
                                                  const std::vector<int>& E,
-                                                 double b,
-                                                 int threads,
-                                                 bool includeself);
+                                                 int tau,
+                                                 int b,
+                                                 int threads);
 
 /*
  * Evaluates prediction performance of different theta parameters for lattice data using the s-mapping method.
@@ -42,9 +42,9 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& vec,
  *   - pred_indices: A boolean vector indicating prediction set indices.
  *   - theta: A vector of weighting parameters for distance calculation in SMap.
  *   - E: The embedding dimension to evaluate.
+ *   - tau: The spatial lag step for constructing lagged state-space vectors.
  *   - b: Number of nearest neighbors to use for prediction.
  *   - threads: Number of threads used from the global pool.
- *   - includeself: Whether to include the current state when constructing the embedding vector.
  *
  * Returns:
  *   A 2D vector where each row contains [theta, rho, mae, rmse] for a given theta value.
@@ -55,8 +55,8 @@ std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& vec,
                                               const std::vector<bool>& pred_indices,
                                               const std::vector<double>& theta,
                                               int E,
-                                              double b,
-                                              int threads,
-                                              bool includeself);
+                                              int tau,
+                                              int b,
+                                              int threads);
 
 #endif // Forecast4Lattice_H

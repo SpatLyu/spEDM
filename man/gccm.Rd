@@ -16,11 +16,11 @@
   k = 4,
   theta = 1,
   algorithm = "simplex",
+  pred = NULL,
   nb = NULL,
   threads = detectThreads(),
   bidirectional = TRUE,
-  include.self = FALSE,
-  trendRM = TRUE,
+  trend.rm = TRUE,
   progressbar = TRUE
 )
 
@@ -34,11 +34,10 @@
   k = 4,
   theta = 1,
   algorithm = "simplex",
-  RowCol = NULL,
+  pred = NULL,
   threads = detectThreads(),
   bidirectional = TRUE,
-  include.self = FALSE,
-  trendRM = TRUE,
+  trend.rm = TRUE,
   progressbar = TRUE
 )
 }
@@ -61,19 +60,17 @@
 
 \item{algorithm}{(optional) Algorithm used for prediction.}
 
+\item{pred}{pred (optional) The row numbers(\code{vector}) of lattice data or the row-column numbers(\code{matrix}) of grid data used for predictions.}
+
 \item{nb}{(optional) The neighbours list.}
 
 \item{threads}{(optional) Number of threads.}
 
 \item{bidirectional}{(optional) whether to identify bidirectional causal associations.}
 
-\item{include.self}{(optional) Whether to include the current state when constructing the embedding vector.}
-
-\item{trendRM}{(optional) Whether to remove the linear trend.}
+\item{trend.rm}{(optional) Whether to remove the linear trend.}
 
 \item{progressbar}{(optional) whether to print the progress bar.}
-
-\item{RowCol}{(optional) Matrix of selected row and cols numbers.}
 }
 \value{
 A list.

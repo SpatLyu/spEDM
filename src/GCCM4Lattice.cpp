@@ -101,10 +101,9 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
  * - x_vectors: Reconstructed state-space vectors, where each row represents a separate state vector.
  * - y: Spatial cross-section series used as the response variable for cross mapping.
  * - lib_sizes: A vector specifying different library sizes for GCCM analysis.
- * - lib: A matrix (n x 2) representing sequences of data used to construct libraries.
- * - pred: A matrix (n x 2) representing sequences of data used for prediction.
+ * - lib: A vector specifying the library indices (1-based in R, converted to 0-based in C++).
+ * - pred: A vector specifying the prediction indices (1-based in R, converted to 0-based in C++).
  * - E: Embedding dimension for attractor reconstruction.
- * - tau: The spatial lag step for constructing lagged state-space vectors.
  * - b: Number of nearest neighbors used for prediction.
  * - simplex: Boolean flag indicating whether to use simplex projection (true) or S-mapping (false) for prediction.
  * - theta: Distance weighting parameter used for weighting neighbors in the S-mapping prediction.
@@ -123,15 +122,14 @@ std::vector<std::vector<double>> GCCM4Lattice(
     const std::vector<std::vector<double>>& x_vectors,
     const std::vector<double>& y,
     const std::vector<int>& lib_sizes,
-    const std::vector<std::pair<int, int>>& lib,
-    const std::vector<std::pair<int, int>>& pred,
+    const std::vector<int>& lib,
+    const std::vector<int>& pred,
     int E,
-    int tau,
     int b,
     bool simplex,
     double theta,
     int threads,
-    bool progressbar = true
+    bool progressbar
 ) {
   // If b is not provided correctly, default it to E + 2
   if (b <= 0) {
@@ -143,25 +141,45 @@ std::vector<std::vector<double>> GCCM4Lattice(
   threads_sizet = std::min(static_cast<size_t>(max_threads), threads_sizet);
 
   int n = x_vectors.size();
-  // Setup pred_indices
+
+  // Initialize lib_indices and pred_indices with all false
+  std::vector<bool> lib_indices(n, false);
   std::vector<bool> pred_indices(n, false);
-  for (const auto& p : pred) {
-    int row_start = p.first + (E - 1) * tau;
-    int row_end = p.second;
-    if (row_end > row_start && row_start >= 0 && row_end < n) {
-      std::fill(pred_indices.begin() + row_start, pred_indices.begin() + row_end + 1, true);
-    }
+
+  // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
+  int libsize_int = lib.size();
+  for (int i = 0; i < libsize_int; ++i) {
+    lib_indices[lib[i] - 1] = true; // Convert to 0-based index
+  }
+  int predsize_int = pred.size();
+  for (int i = 0; i < predsize_int; ++i) {
+    pred_indices[pred[i] - 1] = true; // Convert to 0-based index
   }
 
-  // Setup lib_indices
-  std::vector<bool> lib_indices(n, false);
-  for (const auto& l : lib) {
-    int row_start = l.first + (E - 1) * tau;
-    int row_end = l.second;
-    if (row_end > row_start && row_start >= 0 && row_end < n) {
-      std::fill(lib_indices.begin() + row_start, lib_indices.begin() + row_end + 1, true);
-    }
-  }
+  // /* Do not uncomment those codes;
+  //  * it's the previous implementation using `std::vector<std::pair<int, int>>`  input for lib and pred,
+  //  * kept for reference. ----- Wenbo Lv, written on 2025.02.09
+  //  */
+  // // Setup pred_indices
+  // std::vector<bool> pred_indices(n, false);
+  //
+  // for (const auto& p : pred) {
+  //   int row_start = p.first + (E - 1) * tau;
+  //   int row_end = p.second;
+  //   if (row_end > row_start && row_start >= 0 && row_end < n) {
+  //     std::fill(pred_indices.begin() + row_start, pred_indices.begin() + row_end + 1, true);
+  //   }
+  // }
+  //
+  // // Setup lib_indices
+  // std::vector<bool> lib_indices(n, false);
+  // for (const auto& l : lib) {
+  //   int row_start = l.first + (E - 1) * tau;
+  //   int row_end = l.second;
+  //   if (row_end > row_start && row_start >= 0 && row_end < n) {
+  //     std::fill(lib_indices.begin() + row_start, lib_indices.begin() + row_end + 1, true);
+  //   }
+  // }
 
   int max_lib_size = std::accumulate(lib_indices.begin(), lib_indices.end(), 0); // Maximum lib size
   std::vector<int> possible_lib_indices;
