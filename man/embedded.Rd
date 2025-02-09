@@ -15,9 +15,9 @@
 
 \item{target}{Name of target variable.}
 
-\item{E}{(optional) The dimensions of the embedding.}
+\item{E}{(optional) Dimensions of the embedding.}
 
-\item{tau}{(optional) The step of spatial lags.}
+\item{tau}{(optional) Step of spatial lags.}
 
 \item{nb}{(optional) The neighbours list.}
 }

@@ -442,9 +442,7 @@ Rcpp::NumericVector RcppGCMC4Grid(
   int numCols = xMatrix.ncol();
   std::vector<int> pred_std;
   for (int i = 0; i < pred.nrow(); ++i) {
-    for (int j = 0; j < pred.ncol(); ++j) {
-      pred_std.push_back(LocateGridIndices(pred[i]-1, pred[j]-1, numRows, numCols));
-    }
+    pred_std.push_back(LocateGridIndices(pred(i,0), pred(i,1), numRows, numCols));
   }
 
   // Generate embeddings

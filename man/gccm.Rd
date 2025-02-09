@@ -50,9 +50,9 @@
 
 \item{libsizes}{A vector of library sizes to use.}
 
-\item{E}{(optional) The dimensions of the embedding.}
+\item{E}{(optional) Dimensions of the embedding.}
 
-\item{tau}{(optional) The step of spatial lags.}
+\item{tau}{(optional) Step of spatial lags.}
 
 \item{k}{(optional) Number of nearest neighbors to use for prediction.}
 
@@ -60,7 +60,7 @@
 
 \item{algorithm}{(optional) Algorithm used for prediction.}
 
-\item{pred}{pred (optional) The row numbers(\code{vector}) of lattice data or the row-column numbers(\code{matrix}) of grid data used for predictions.}
+\item{pred}{pred (optional) Row numbers(\code{vector}) of lattice data or row-column numbers(\code{matrix}) of grid data used for predictions.}
 
 \item{nb}{(optional) The neighbours list.}
 
