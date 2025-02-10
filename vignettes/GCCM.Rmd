@@ -342,7 +342,7 @@ npp_res = gccm(data = npp,
                progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 46.64845 mins
+## Time difference of 22.92535 mins
 npp_res
 ##    libsizes   pre->npp   npp->pre
 ## 1        10 0.06990759 0.06192514
