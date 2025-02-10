@@ -163,6 +163,32 @@ std::vector<double> PartialSMap4Lattice(
   return rho;
 }
 
+/*
+ * Perform SCPCM on a single library and prediction set for lattice data.
+ *
+ * Parameters:
+ *   - x_vectors: Reconstructed state-space (each row represents a separate vector/state).
+ *   - y: Spatial cross-section series used as the target (should align with x_vectors).
+ *   - controls: Cross-sectional data of control variables (stored by row).
+ *   - nb_vec: Neighbor indices vector of the spatial units.
+ *   - lib_indices: A boolean vector indicating which states to include when searching for neighbors.
+ *   - lib_size: Size of the library used for cross mapping.
+ *   - max_lib_size: Maximum size of the library.
+ *   - possible_lib_indices: Indices of possible library states.
+ *   - pred_indices: A boolean vector indicating which states to use for prediction.
+ *   - conEs: Number of dimensions for attractor reconstruction with control variables.
+ *   - taus: Spatial lag step for constructing lagged state-space vectors with control variables.
+ *   - b: Number of neighbors to use for simplex projection.
+ *   - simplex: If true, uses simplex projection for prediction; otherwise, uses s-mapping.
+ *   - theta: Distance weighting parameter for local neighbors in the manifold (used in s-mapping).
+ *   - cumulate: Whether to accumulate partial correlations.
+ *
+ * Returns:
+ *   A vector of PartialCorRes objects, where each contains:
+ *   - An integer representing the library size.
+ *   - A double representing the Pearson correlation coefficient (rho).
+ *   - A double representing the Partial correlation coefficient (pratial rho).
+ */
 std::vector<PartialCorRes> SCPCMSingle4Lattice(
     const std::vector<std::vector<double>>& x_vectors,  // Reconstructed state-space (each row is a separate vector/state)
     const std::vector<double>& y,                       // Spatial cross-section series to be used as the target (should line up with vectors)
@@ -228,6 +254,38 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
   return x_xmap_y;
 }
 
+/**
+ * Performs SCPCM on a spatial lattice dataset.
+ *
+ * Parameters:
+ * - x: Spatial cross-section series used as the predictor variable (**cross mapping from**).
+ * - y: Spatial cross-section series used as the target variable (**cross mapping to**).
+ * - controls: Cross-sectional data of control variables (**stored by row**).
+ * - nb_vec: A nested vector containing neighborhood information for lattice data.
+ * - lib_sizes: A vector specifying different library sizes for SCPCM analysis.
+ * - lib: A vector specifying the library indices (1-based in R, converted to 0-based in C++).
+ * - pred: A vector specifying the prediction indices (1-based in R, converted to 0-based in C++).
+ * - Es: A vector specifying the embedding dimensions for attractor reconstruction using x and control variables.
+ * - taus: A vector specifying the spatial lag steps for constructing lagged state-space vectors using x and control variables.
+ * - b: Number of nearest neighbors used for prediction.
+ * - simplex: Boolean flag indicating whether to use simplex projection (true) or S-mapping (false) for prediction.
+ * - theta: Distance weighting parameter used for weighting neighbors in the S-mapping prediction.
+ * - threads: Number of threads to use for parallel computation.
+ * - cumulate: Boolean flag indicating whether to cumulate partial correlations.
+ * - progressbar: Boolean flag indicating whether to display a progress bar during computation.
+ *
+ * Returns:
+ *    A 2D vector of results, where each row contains:
+ *      - The library size.
+ *      - The mean pearson cross-mapping correlation.
+ *      - The statistical significance of the pearson correlation.
+ *      - The lower bound of the pearson correlation confidence interval.
+ *      - The upper bound of the pearson correlation confidence interval.
+ *      - The mean partial cross-mapping partial correlation.
+ *      - The statistical significance of the partial correlation.
+ *      - The lower bound of the partial correlation confidence interval.
+ *      - The upper bound of the partial correlation confidence interval.
+ */
 std::vector<std::vector<double>> SCPCM4Lattice(
     const std::vector<double>& x,                       // Spatial cross-section series to cross map from
     const std::vector<double>& y,                       // Spatial cross-section series to cross map to
@@ -285,6 +343,15 @@ std::vector<std::vector<double>> SCPCM4Lattice(
   for (int i = 0; i < predsize_int; ++i) {
     pred_indices[pred[i] - 1] = true; // Convert to 0-based index
   }
+
+  // /* Aligned with the previous implementation,
+  //  * now deprecated in the source C++ code.
+  //  *  ----- Wenbo Lv, written on 2025.02.10
+  //  */
+  // for (int i = 0, i < (Ex - 1) * tau, ++i){
+  //   lib_indices[lib[i] - 1] = false;
+  //   pred_indices[pred[i] - 1] = false;
+  // }
 
   // /* Do not uncomment those codes;
   //  * it's the previous implementation using `std::vector<std::pair<int, int>>`  input for lib and pred,
