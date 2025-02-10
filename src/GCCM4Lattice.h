@@ -51,8 +51,8 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
  * Performs GCCM on a spatial lattice data.
  *
  * Parameters:
- * - x: Spatial cross-section series used as the predict variable for cross mapping from.
- * - y: Spatial cross-section series used as the response variable for cross mapping to.
+ * - x: Spatial cross-section series used as the predict variable (**cross mapping from**).
+ * - y: Spatial cross-section series used as the target variable (**cross mapping to**).
  * - nb_vec: A nested vector containing neighborhood information for lattice data.
  * - lib_sizes: A vector specifying different library sizes for GCCM analysis.
  * - lib: A vector specifying the library indices (1-based in R, converted to 0-based in C++).
