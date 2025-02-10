@@ -38,9 +38,9 @@
 
 \item{target}{Name of target variable.}
 
-\item{lib}{The row numbers(\code{vector}) of lattice data or the row-column numbers(\code{matrix}) of grid data for creating the library from observations.}
+\item{lib}{Row numbers(\code{vector}) of lattice data or row-column numbers(\code{matrix}) of grid data for creating the library from observations.}
 
-\item{pred}{(optional) The row numbers(\code{vector}) of lattice data or the row-column numbers(\code{matrix}) of grid data used for predictions.}
+\item{pred}{(optional) Row numbers(\code{vector}) of lattice data or row-column numbers(\code{matrix}) of grid data used for predictions.}
 
 \item{E}{(optional) Dimensions of the embedding.}
 
