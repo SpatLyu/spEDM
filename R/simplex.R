@@ -22,8 +22,8 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
 #' simplex forecasting
 #'
 #' @inheritParams embedded
-#' @param lib The row numbers(`vector`) of lattice data or the row-column numbers(`matrix`) of grid data for creating the library from observations.
-#' @param pred (optional) The row numbers(`vector`) of lattice data or the row-column numbers(`matrix`) of grid data used for predictions.
+#' @param lib Row numbers(`vector`) of lattice data or row-column numbers(`matrix`) of grid data for creating the library from observations.
+#' @param pred (optional) Row numbers(`vector`) of lattice data or row-column numbers(`matrix`) of grid data used for predictions.
 #' @param k (optional) Number of nearest neighbors to use for prediction.
 #' @param threads (optional) Number of threads.
 #'
