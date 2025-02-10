@@ -12,6 +12,37 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// RcppSimplexForecast
+Rcpp::NumericVector RcppSimplexForecast(const Rcpp::NumericMatrix& embedding, const Rcpp::NumericVector& target, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const int& num_neighbors);
+RcppExport SEXP _spEDM_RcppSimplexForecast(SEXP embeddingSEXP, SEXP targetSEXP, SEXP libSEXP, SEXP predSEXP, SEXP num_neighborsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type embedding(embeddingSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type target(targetSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type lib(libSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type pred(predSEXP);
+    Rcpp::traits::input_parameter< const int& >::type num_neighbors(num_neighborsSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSimplexForecast(embedding, target, lib, pred, num_neighbors));
+    return rcpp_result_gen;
+END_RCPP
+}
+// RcppSMapForecast
+Rcpp::NumericVector RcppSMapForecast(const Rcpp::NumericMatrix& embedding, const Rcpp::NumericVector& target, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const int& num_neighbors, const double& theta);
+RcppExport SEXP _spEDM_RcppSMapForecast(SEXP embeddingSEXP, SEXP targetSEXP, SEXP libSEXP, SEXP predSEXP, SEXP num_neighborsSEXP, SEXP thetaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type embedding(embeddingSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type target(targetSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type lib(libSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type pred(predSEXP);
+    Rcpp::traits::input_parameter< const int& >::type num_neighbors(num_neighborsSEXP);
+    Rcpp::traits::input_parameter< const double& >::type theta(thetaSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSMapForecast(embedding, target, lib, pred, num_neighbors, theta));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppLaggedVar4Grid
 Rcpp::NumericMatrix RcppLaggedVar4Grid(Rcpp::NumericMatrix mat, int lagNum);
 RcppExport SEXP _spEDM_RcppLaggedVar4Grid(SEXP matSEXP, SEXP lagNumSEXP) {
@@ -535,6 +566,8 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_spEDM_RcppSimplexForecast", (DL_FUNC) &_spEDM_RcppSimplexForecast, 5},
+    {"_spEDM_RcppSMapForecast", (DL_FUNC) &_spEDM_RcppSMapForecast, 6},
     {"_spEDM_RcppLaggedVar4Grid", (DL_FUNC) &_spEDM_RcppLaggedVar4Grid, 2},
     {"_spEDM_RcppGenGridEmbeddings", (DL_FUNC) &_spEDM_RcppGenGridEmbeddings, 3},
     {"_spEDM_RcppLocateGridIndices", (DL_FUNC) &_spEDM_RcppLocateGridIndices, 4},
