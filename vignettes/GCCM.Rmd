@@ -1,7 +1,7 @@
 ---
 title: "Geographical Convergent Cross Mapping (GCCM)"
 author: "Wenbo Lv"
-date: "2025-02-09"
+date: "2025-02-10"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{GCCM}
@@ -85,8 +85,8 @@ Load data and package:
 ``` r
 popd_nb = spdep::read.gal(system.file("extdata/popdensity_nb.gal",
                                       package = "spEDM"))
-## Warning in spdep::read.gal(system.file("extdata/popdensity_nb.gal", package = "spEDM")): neighbour
-## object has 4 sub-graphs
+## Warning in spdep::read.gal(system.file("extdata/popdensity_nb.gal", package = "spEDM")): neighbour object
+## has 4 sub-graphs
 popd_nb
 ## Neighbour list object:
 ## Number of regions: 2806 
@@ -97,50 +97,14 @@ popd_nb
 
 popdensity = readr::read_csv(system.file("extdata/popdensity.csv",
                                          package = "spEDM"))
-## Rows: 2806 Columns: 7
-## ── Column specification ────────────────────────────────────────────────────────────────────────────────
-## Delimiter: ","
-## dbl (7): x, y, popDensity, DEM, Tem, Pre, slop
-## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+## Error in loadNamespace(x): 不存在叫'readr'这个名称的程序包
 popdensity
-## # A tibble: 2,806 × 7
-##        x     y popDensity   DEM   Tem   Pre  slop
-##    <dbl> <dbl>      <dbl> <dbl> <dbl> <dbl> <dbl>
-##  1  117.  30.5       780.     8  17.4 1528. 0.452
-##  2  117.  30.6       395.    48  17.2 1487. 0.842
-##  3  117.  30.8       261.    49  16.0 1456. 3.56 
-##  4  116.  30.1       258.    23  17.4 1555. 0.932
-##  5  116.  30.5       211.   101  16.3 1494. 3.34 
-##  6  117.  31.0       386.    10  16.6 1382. 1.65 
-##  7  117.  30.2       350.    23  17.5 1569. 0.346
-##  8  117.  30.7       470.    22  17.1 1493. 1.88 
-##  9  117.  30.6      1226.    11  17.4 1526. 0.208
-## 10  116.  30.9       137.   598  13.9 1458. 5.92 
-## # ℹ 2,796 more rows
+## Error: 找不到对象'popdensity'
 
 popd_sf = sf::st_as_sf(popdensity, coords = c("x","y"), crs = 4326)
+## Error: 找不到对象'popdensity'
 popd_sf
-## Simple feature collection with 2806 features and 5 fields
-## Geometry type: POINT
-## Dimension:     XY
-## Bounding box:  xmin: 74.9055 ymin: 18.2698 xmax: 134.269 ymax: 52.9346
-## Geodetic CRS:  WGS 84
-## # A tibble: 2,806 × 6
-##    popDensity   DEM   Tem   Pre  slop          geometry
-##  *      <dbl> <dbl> <dbl> <dbl> <dbl>       <POINT [°]>
-##  1       780.     8  17.4 1528. 0.452 (116.912 30.4879)
-##  2       395.    48  17.2 1487. 0.842 (116.755 30.5877)
-##  3       261.    49  16.0 1456. 3.56  (116.541 30.7548)
-##  4       258.    23  17.4 1555. 0.932  (116.241 30.104)
-##  5       211.   101  16.3 1494. 3.34   (116.173 30.495)
-##  6       386.    10  16.6 1382. 1.65  (116.935 30.9839)
-##  7       350.    23  17.5 1569. 0.346 (116.677 30.2412)
-##  8       470.    22  17.1 1493. 1.88  (117.066 30.6514)
-##  9      1226.    11  17.4 1526. 0.208 (117.171 30.5558)
-## 10       137.   598  13.9 1458. 5.92  (116.208 30.8983)
-## # ℹ 2,796 more rows
+## Error: 找不到对象'popd_sf'
 ```
 
 Select the appropriate embedding dimension E:
@@ -148,35 +112,13 @@ Select the appropriate embedding dimension E:
 
 ``` r
 simplex(popd_sf,"Pre",lib = 1:2000,pred = 2001:nrow(popd_sf),k = 6,nb = popd_nb)
-## The suggested embedding dimension E for variable Pre is 1
-##        E       rho      mae     rmse
-##  [1,]  1 0.9944769 29.19078 44.20362
-##  [2,]  2 0.9938551 29.75890 46.68020
-##  [3,]  3 0.9923781 33.38572 52.24799
-##  [4,]  4 0.9906213 36.93827 57.98292
-##  [5,]  5 0.9879685 41.90347 66.04074
-##  [6,]  6 0.9855116 46.67320 72.81851
-##  [7,]  7 0.9831397 51.34790 79.25593
-##  [8,]  8 0.9815603 55.13373 83.48991
-##  [9,]  9 0.9801222 58.14001 87.12388
-## [10,] 10 0.9779157 62.46149 92.64490
+## Error in h(simpleError(msg, call)): 在为函数“simplex”选择方法时计算参数“data”时出错：找不到对象'popd_sf'
 ```
 
 
 ``` r
 simplex(popd_sf,"popDensity",lib = 1:2000,pred = 2001:nrow(popd_sf),k = 6,nb = popd_nb)
-## The suggested embedding dimension E for variable popDensity is 6
-##        E       rho      mae     rmse
-##  [1,]  1 0.8033220 717.2946 2390.767
-##  [2,]  2 0.8964891 599.2670 1826.370
-##  [3,]  3 0.8947098 578.9176 1820.573
-##  [4,]  4 0.8945790 576.8006 1807.979
-##  [5,]  5 0.8962965 570.3921 1807.007
-##  [6,]  6 0.9054365 550.2581 1746.493
-##  [7,]  7 0.8990063 575.2825 1797.437
-##  [8,]  8 0.8976972 555.6466 1812.048
-##  [9,]  9 0.8896512 558.8580 1861.250
-## [10,] 10 0.8948435 561.8943 1825.444
+## Error in h(simpleError(msg, call)): 在为函数“simplex”选择方法时计算参数“data”时出错：找不到对象'popd_sf'
 ```
 
 We choose the E with the highest rho and the lowest MAE and RMSE as the most suitable one. Under the selected lib and pred, the optimal embedding dimension E for the variable `Pre` is 1, and for the variable `popDensity`, it is 6.
@@ -194,39 +136,12 @@ pd_res = gccm(data = popd_sf,
               k = 6,
               nb = popd_nb,
               progressbar = FALSE)
+## Error in h(simpleError(msg, call)): 在为函数“gccm”选择方法时计算参数“data”时出错：找不到对象'popd_sf'
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 22.27982 mins
+## Time difference of 2.135038e-05 mins
 pd_res
-##    libsizes Pre->popDensity popDensity->Pre
-## 1        10      0.04645034      0.00805449
-## 2       110      0.16223010      0.01726522
-## 3       210      0.22318304      0.02271083
-## 4       310      0.25949735      0.02743318
-## 5       410      0.28995847      0.03212161
-## 6       510      0.32172353      0.03552054
-## 7       610      0.35660688      0.03725974
-## 8       710      0.38969118      0.03924114
-## 9       810      0.41668529      0.04093319
-## 10      910      0.44073658      0.04265137
-## 11     1010      0.46353489      0.04481396
-## 12     1110      0.48302501      0.04703306
-## 13     1210      0.50238564      0.04947260
-## 14     1310      0.51956650      0.05171305
-## 15     1410      0.53570755      0.05355272
-## 16     1510      0.55293176      0.05402601
-## 17     1610      0.57236430      0.05421010
-## 18     1710      0.59176733      0.05418337
-## 19     1810      0.61016875      0.05451655
-## 20     1910      0.62840034      0.05493706
-## 21     2010      0.64621018      0.05553755
-## 22     2110      0.66319432      0.05615816
-## 23     2210      0.67972718      0.05650395
-## 24     2310      0.69575258      0.05662365
-## 25     2410      0.71142528      0.05708219
-## 26     2510      0.72697356      0.05760167
-## 27     2610      0.74231147      0.05824259
-## 28     2710      0.75484801      0.05904463
+## Error: 找不到对象'pd_res'
 ```
 
 Visualize the result:
@@ -234,9 +149,8 @@ Visualize the result:
 
 ``` r
 plot(pd_res,xlimits = c(0, 2800))
+## Error: 找不到对象'pd_res'
 ```
-
-![**Figure 1**. The cross-mapping prediction outputs between population density and county-level Precipitation.](../man/figures/gccm/fig1-1.png)
 
 ### 2.3 An example of grid data about farmland NPP
 
@@ -263,7 +177,7 @@ terra::plot(npp, nc = 3,
             legend = FALSE)
 ```
 
-![**Figure 2**. Maps of farmland NPP and climate factors.](../man/figures/gccm/fig2-1.png)
+![**Figure 2**. Maps of farmland NPP and climate factors.](man/figures/gccm/fig2-1.png)
 
 *To save the computation time, we will aggregate the data by 3 times and select 3000 non-NA pixels to predict:*
 
@@ -342,27 +256,27 @@ npp_res = gccm(data = npp,
                progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 24.68367 mins
+## Time difference of 23.01136 mins
 npp_res
 ##    libsizes   pre->npp   npp->pre
-## 1        10 0.06990912 0.06192514
-## 2        15 0.08711065 0.07275609
-## 3        20 0.11581999 0.08954475
-## 4        25 0.13388646 0.11312545
-## 5        30 0.15133527 0.12053396
-## 6        35 0.16465535 0.12834855
-## 7        40 0.18151920 0.13740629
-## 8        45 0.20732869 0.15100178
+## 1        10 0.06990759 0.06192514
+## 2        15 0.08710917 0.07278791
+## 3        20 0.11579376 0.08954193
+## 4        25 0.13387798 0.11312547
+## 5        30 0.15133351 0.12053375
+## 6        35 0.16465534 0.12834833
+## 7        40 0.18151411 0.13740629
+## 8        45 0.20732921 0.15100178
 ## 9        50 0.23477955 0.17119613
 ## 10       55 0.25759086 0.20008374
-## 11       60 0.26634194 0.22521937
-## 12       65 0.25765429 0.24842751
-## 13       70 0.24071790 0.25299784
-## 14       75 0.22828746 0.23493541
-## 15       80 0.22148585 0.21775972
-## 16       85 0.22555346 0.17916316
-## 17       90 0.23947560 0.17657659
-## 18       95 0.25040161 0.18059851
+## 11       60 0.26634144 0.22521937
+## 12       65 0.25764750 0.24842751
+## 13       70 0.24068666 0.25299784
+## 14       75 0.22823792 0.23493541
+## 15       80 0.22143775 0.21775972
+## 16       85 0.22551936 0.17916316
+## 17       90 0.23926443 0.17657659
+## 18       95 0.25019360 0.18059851
 ## 19      100 0.28862493 0.15892383
 ## 20      105 0.32793539 0.14364838
 ```
@@ -376,4 +290,4 @@ plot(npp_res,xlimits = c(9, 101),ylimits = c(-0.05,1))
 ## Removed 1 row containing missing values or values outside the scale range (`geom_line()`).
 ```
 
-![**Figure 3**. The cross-mapping prediction outputs between farmland NPP and precipitation.](../man/figures/gccm/fig3-1.png)
+![**Figure 3**. The cross-mapping prediction outputs between farmland NPP and precipitation.](man/figures/gccm/fig3-1.png)
