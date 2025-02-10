@@ -266,24 +266,36 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
 /**
  * Perform Grid-based Spatially Convergent Partial Cross Mapping (SCPCM) for multiple library sizes.
  *
- * This function calculates the partial cross mapping between predictor variables (xMatrix) and response variables (yMatrix)
- * over a 2D grid, using either Simplex Projection or S-Mapping. It supports parallel processing and progress tracking.
+ * This function estimates the cross mapping and partial cross mapping between predictor variables (`xMatrix`) and response
+ * variables (`yMatrix`) over a 2D spatial grid, incorporating control variables (`zMatrixs`). It supports both Simplex Projection
+ * and S-Mapping, with options for parallel computation and progress tracking.
  *
- * @param xMatrix      A 2D matrix of the predictor variable's values (spatial cross-section data).
- * @param yMatrix      A 2D matrix of the response variable's values (spatial cross-section data).
- * @param zMatrixs     A 2D matrix that stores the control variables.
- * @param lib_sizes    A vector of library sizes (number of spatial units) to use for prediction.
- * @param pred         A vector of pairs representing the indices (row, column) of spatial units to be predicted.
- * @param Es           Number of dimensions for the attractor reconstruction with the x and control variables.
- * @param taus         Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
- * @param b            The number of nearest neighbors to use for prediction.
- * @param simplex      If true, use Simplex Projection; if false, use S-Mapping.
- * @param theta        The distance weighting parameter for S-Mapping (ignored if simplex is true).
- * @param threads      The number of threads to use for parallel processing.
- * @param cumulate     Whether to cumulate the partial correlations.
- * @param progressbar  If true, display a progress bar during computation.
- * @return             A 2D vector where each row contains the library size, mean cross mapping result,
- *                     significance, and confidence interval bounds.
+ * Parameters:
+ * - xMatrix: A 2D matrix of predictor variable values (spatial cross-section data).
+ * - yMatrix: A 2D matrix of response variable values (spatial cross-section data).
+ * - zMatrixs: A 2D matrix storing the control variables.
+ * - lib_sizes: A vector specifying different library sizes (number of spatial units) for SCPCM analysis.
+ * - pred: A vector of pairs representing the indices (row, column) of spatial units to be predicted.
+ * - Es: A vector specifying the embedding dimensions for attractor reconstruction using `xMatrix` and control variables.
+ * - taus: A vector specifying the spatial lag steps for constructing lagged state-space vectors with control variables.
+ * - b: Number of nearest neighbors used for prediction.
+ * - simplex: Boolean flag indicating whether to use Simplex Projection (true) or S-Mapping (false) for prediction.
+ * - theta: Distance weighting parameter used for weighting neighbors in the S-Mapping prediction.
+ * - threads: Number of threads to use for parallel computation.
+ * - cumulate: Boolean flag indicating whether to cumulate partial correlations.
+ * - progressbar: Boolean flag indicating whether to display a progress bar during computation.
+ *
+ * Returns:
+ *    A 2D vector of results, where each row contains:
+ *      - The library size.
+ *      - The mean pearson cross-mapping correlation.
+ *      - The statistical significance of the pearson correlation.
+ *      - The lower bound of the pearson correlation confidence interval.
+ *      - The upper bound of the pearson correlation confidence interval.
+ *      - The mean partial cross-mapping partial correlation.
+ *      - The statistical significance of the partial correlation.
+ *      - The lower bound of the partial correlation confidence interval.
+ *      - The upper bound of the partial correlation confidence interval.
  */
 std::vector<std::vector<double>> SCPCM4Grid(
     const std::vector<std::vector<double>>& xMatrix,     // Two dimension matrix of X variable
