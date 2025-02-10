@@ -51,12 +51,14 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
  * Performs GCCM on a spatial lattice data.
  *
  * Parameters:
- * - x_vectors: Reconstructed state-space vectors, where each row represents a separate state vector.
- * - y: Spatial cross-section series used as the response variable for cross mapping.
+ * - x: Spatial cross-section series used as the predict variable for cross mapping from.
+ * - y: Spatial cross-section series used as the response variable for cross mapping to.
+ * - nb_vec: A nested vector containing neighborhood information for lattice data.
  * - lib_sizes: A vector specifying different library sizes for GCCM analysis.
  * - lib: A vector specifying the library indices (1-based in R, converted to 0-based in C++).
  * - pred: A vector specifying the prediction indices (1-based in R, converted to 0-based in C++).
  * - E: Embedding dimension for attractor reconstruction.
+ * - tau: the step of spatial lags for prediction.
  * - b: Number of nearest neighbors used for prediction.
  * - simplex: Boolean flag indicating whether to use simplex projection (true) or S-mapping (false) for prediction.
  * - theta: Distance weighting parameter used for weighting neighbors in the S-mapping prediction.
@@ -72,12 +74,14 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
  *      - The upper bound of the confidence interval.
  */
 std::vector<std::vector<double>> GCCM4Lattice(
-    const std::vector<std::vector<double>>& x_vectors,
+    const std::vector<double>& x,
     const std::vector<double>& y,
+    const std::vector<std::vector<int>>& nb_vec,
     const std::vector<int>& lib_sizes,
     const std::vector<int>& lib,
     const std::vector<int>& pred,
     int E,
+    int tau,
     int b,
     bool simplex,
     double theta,
