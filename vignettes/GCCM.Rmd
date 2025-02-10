@@ -196,7 +196,7 @@ pd_res = gccm(data = popd_sf,
               progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 45.12693 mins
+## Time difference of 22.68645 mins
 pd_res
 ##    libsizes Pre->popDensity popDensity->Pre
 ## 1        10      0.04677107     0.008049854
