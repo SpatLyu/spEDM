@@ -85,8 +85,8 @@ Load data and package:
 ``` r
 popd_nb = spdep::read.gal(system.file("extdata/popdensity_nb.gal",
                                       package = "spEDM"))
-## Warning in spdep::read.gal(system.file("extdata/popdensity_nb.gal", package = "spEDM")): neighbour
-## object has 4 sub-graphs
+## Warning in spdep::read.gal(system.file("extdata/popdensity_nb.gal", package = "spEDM")): neighbour object has 4
+## sub-graphs
 popd_nb
 ## Neighbour list object:
 ## Number of regions: 2806 
@@ -98,7 +98,7 @@ popd_nb
 popdensity = readr::read_csv(system.file("extdata/popdensity.csv",
                                          package = "spEDM"))
 ## Rows: 2806 Columns: 7
-## ── Column specification ───────────────────────────────────────────────────────────────────────────
+## ── Column specification ─────────────────────────────────────────────────────────────────────────────────────────────────
 ## Delimiter: ","
 ## dbl (7): x, y, popDensity, DEM, Tem, Pre, slop
 ## 
@@ -196,7 +196,7 @@ pd_res = gccm(data = popd_sf,
               progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 22.68645 mins
+## Time difference of 26.05291 mins
 pd_res
 ##    libsizes Pre->popDensity popDensity->Pre
 ## 1        10      0.04677107     0.008049854
@@ -342,7 +342,7 @@ npp_res = gccm(data = npp,
                progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 22.92535 mins
+## Time difference of 18.06673 mins
 npp_res
 ##    libsizes   pre->npp   npp->pre
 ## 1        10 0.06990759 0.06192514
