@@ -1,6 +1,6 @@
 Package: spEDM
 Title: Spatial Empirical Dynamic Modeling
-Version: 2.0
+Version: 1.4
 Authors@R: 
     person(given = "Wenbo", family = "Lv",
            email = "lyu.geosocial@gmail.com", 

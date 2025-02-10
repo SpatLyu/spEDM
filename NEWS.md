@@ -1,4 +1,4 @@
-# spEDM 2.0
+# spEDM 1.4
 
 ### enhancements
 
