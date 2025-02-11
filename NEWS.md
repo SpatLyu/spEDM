@@ -1,5 +1,9 @@
 # spEDM 1.5
 
+### enhancements
+
+* Centered around example cases in the `gccm` vignette (#170).
+
 # spEDM 1.4
 
 ### enhancements
