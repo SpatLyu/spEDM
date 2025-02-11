@@ -26,7 +26,7 @@ install.packages("spEDM",
                  dep = TRUE)
 ```
 
-## 1.2 An example of spatial lattice
+## 1.2 An example of spatial lattice data
 
 Load the `spEDM` package:
 
