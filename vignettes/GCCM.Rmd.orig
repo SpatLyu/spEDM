@@ -34,15 +34,15 @@ install.packages("spEDM",
                  dep = TRUE)
 ```
 
+## 1.2 An example of spatial lattice
+
 Load the `spEDM` package:
 
 ```{r load_pkg}
 library(spEDM)
 ```
 
-## 1.2 An example of lattice data about county-level population density
-
-Load data and package:
+Load the county-level population density data from the `spEDM` package:
 
 ```{r load_lattice_data}
 popd_nb = spdep::read.gal(system.file("extdata/popdensity_nb.gal",
@@ -69,7 +69,7 @@ simplex(popd_sf,"popDensity",lib = 1:2000,pred = 2001:nrow(popd_sf),k = 6,nb = p
 
 We choose the E with the highest rho and the lowest MAE and RMSE as the most suitable one. Under the selected lib and pred, the optimal embedding dimension E for the variable `Pre` is 1, and for the variable `popDensity`, it is 6.
 
-Run GCCM:
+Then, run GCCM:
 
 ```{r gccm_lattice}
 startTime = Sys.time()
@@ -92,9 +92,15 @@ Visualize the result:
 plot(pd_res,xlimits = c(0, 2800))
 ```
 
-## 1.3 An example of grid data about farmland NPP
+## 1.3 An example of spatial grid data
 
-Load data and package:
+Load the `spEDM` package:
+
+```r
+library(spEDM)
+```
+
+Load the farmland NPP data from the `spEDM` package:
 
 ```{r fig2,fig.width=6.55,fig.height=2.15,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. Maps of farmland NPP and climate factors.")}
 npp = terra::rast(system.file("extdata/npp.tif", package = "spEDM"))
@@ -136,7 +142,7 @@ simplex(npp,"npp",nnaindice,nnaindice,k = 5)
 
 Under the selected lib and pred, the optimal embedding dimension E for the variable `pre` is 2, and for the variable `npp`, it is also 2.
 
-Run GCCM:
+Then, run GCCM:
 
 ```{r gccm_grid}
 startTime = Sys.time()

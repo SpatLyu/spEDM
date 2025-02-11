@@ -26,16 +26,15 @@ install.packages("spEDM",
                  dep = TRUE)
 ```
 
-Load the `spEDM` package:
+## 1.2 An example of spatial lattice
 
+Load the `spEDM` package:
 
 ``` r
 library(spEDM)
 ```
 
-## 1.2 An example of lattice data about county-level population density
-
-Load data and package:
+Load the county-level population density data from the `spEDM` package:
 
 
 ``` r
@@ -137,7 +136,7 @@ simplex(popd_sf,"popDensity",lib = 1:2000,pred = 2001:nrow(popd_sf),k = 6,nb = p
 
 We choose the E with the highest rho and the lowest MAE and RMSE as the most suitable one. Under the selected lib and pred, the optimal embedding dimension E for the variable `Pre` is 1, and for the variable `popDensity`, it is 6.
 
-Run GCCM:
+Then, run GCCM:
 
 
 ``` r
@@ -194,9 +193,15 @@ plot(pd_res,xlimits = c(0, 2800))
 
 ![**Figure 1**. The cross-mapping prediction outputs between population density and county-level Precipitation.](../man/figures/gccm/fig1-1.png)
 
-## 1.3 An example of grid data about farmland NPP
+## 1.3 An example of spatial grid data
 
-Load data and package:
+Load the `spEDM` package:
+
+``` r
+library(spEDM)
+```
+
+Load the farmland NPP data from the `spEDM` package:
 
 
 ``` r
@@ -283,7 +288,7 @@ simplex(npp,"npp",nnaindice,nnaindice,k = 5)
 
 Under the selected lib and pred, the optimal embedding dimension E for the variable `pre` is 2, and for the variable `npp`, it is also 2.
 
-Run GCCM:
+Then, run GCCM:
 
 
 ``` r
