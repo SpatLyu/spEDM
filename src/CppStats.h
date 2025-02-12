@@ -14,6 +14,8 @@ bool isNA(double value);
 
 bool checkIntNA(int value);
 
+bool checkOneDimVectorHasNaN(const std::vector<double>& vec);
+
 double CppMean(const std::vector<double>& vec,
                bool NA_rm = false);
 

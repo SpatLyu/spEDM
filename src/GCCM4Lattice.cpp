@@ -135,10 +135,10 @@ std::vector<std::vector<double>> GCCM4Lattice(
     int threads,
     bool progressbar
 ) {
-  // // If b is not provided correctly, default it to E + 2
-  // if (b <= 0) {
-  //   b = E + 2;
-  // }
+  // If b is not provided correctly, default it to E + 2
+  if (b <= 0) {
+    b = E + 2;
+  }
 
   size_t threads_sizet = static_cast<size_t>(threads);
   unsigned int max_threads = std::thread::hardware_concurrency();
@@ -156,10 +156,18 @@ std::vector<std::vector<double>> GCCM4Lattice(
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
   int libsize_int = lib.size();
   for (int i = 0; i < libsize_int; ++i) {
+    // // Do not strictly exclude spatial units with embedded state-space vectors containing NaN values from participating in cross mapping.
+    // if (!checkOneDimVectorHasNaN(x_vectors[lib[i] - 1])){
+    //   lib_indices[lib[i] - 1] = true;
+    // }
     lib_indices[lib[i] - 1] = true; // Convert to 0-based index
   }
   int predsize_int = pred.size();
   for (int i = 0; i < predsize_int; ++i) {
+    // // Do not strictly exclude spatial units with embedded state-space vectors containing NaN values from participating in cross mapping.
+    // if (!checkOneDimVectorHasNaN(x_vectors[pred[i] - 1])){
+    //   pred_indices[pred[i] - 1] = true;
+    // }
     pred_indices[pred[i] - 1] = true; // Convert to 0-based index
   }
 

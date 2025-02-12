@@ -18,6 +18,16 @@ bool checkIntNA(int value) {
   return value == std::numeric_limits<int>::min();
 }
 
+// Function to check whether a one-dimensional vector contains NaN values
+bool checkOneDimVectorHasNaN(const std::vector<double>& vec) {
+  for (double val : vec) {
+    if (std::isnan(val)) {
+      return true; // Return false if any NaN is found
+    }
+  }
+  return false;
+}
+
 // Function to calculate the mean of a vector, ignoring NA values
 double CppMean(const std::vector<double>& vec, bool NA_rm = false) {
   double sum = 0.0;
