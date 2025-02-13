@@ -172,8 +172,11 @@ double CrossMappingCardinality(
   }
   auc /= mapping_ratios.size();
 
+  double cmc_score;
   // Normalize the score to [0,1]
-  double cmc_score = std::max(0.0, 2.0 * (auc - 0.5));
+  // cmc_score = std::max(0.0, 2.0 * (auc - 0.5));
+  cmc_score = std::max(0.0, auc);
+
   return cmc_score;
 }
 
