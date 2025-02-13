@@ -44,24 +44,24 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppLaggedVar4Grid
-Rcpp::NumericMatrix RcppLaggedVar4Grid(Rcpp::NumericMatrix mat, int lagNum);
+Rcpp::NumericMatrix RcppLaggedVar4Grid(const Rcpp::NumericMatrix& mat, int lagNum);
 RcppExport SEXP _spEDM_RcppLaggedVar4Grid(SEXP matSEXP, SEXP lagNumSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< int >::type lagNum(lagNumSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppLaggedVar4Grid(mat, lagNum));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppGenGridEmbeddings
-Rcpp::NumericMatrix RcppGenGridEmbeddings(Rcpp::NumericMatrix mat, int E, int tau);
+Rcpp::NumericMatrix RcppGenGridEmbeddings(const Rcpp::NumericMatrix& mat, int E, int tau);
 RcppExport SEXP _spEDM_RcppGenGridEmbeddings(SEXP matSEXP, SEXP ESEXP, SEXP tauSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< int >::type E(ESEXP);
     Rcpp::traits::input_parameter< int >::type tau(tauSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppGenGridEmbeddings(mat, E, tau));
@@ -470,14 +470,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppPartialCor
-double RcppPartialCor(Rcpp::NumericVector y, Rcpp::NumericVector y_hat, Rcpp::NumericMatrix controls, bool NA_rm, bool linear);
+double RcppPartialCor(const Rcpp::NumericVector& y, const Rcpp::NumericVector& y_hat, const Rcpp::NumericMatrix& controls, bool NA_rm, bool linear);
 RcppExport SEXP _spEDM_RcppPartialCor(SEXP ySEXP, SEXP y_hatSEXP, SEXP controlsSEXP, SEXP NA_rmSEXP, SEXP linearSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type y(ySEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type y_hat(y_hatSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type controls(controlsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y_hat(y_hatSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type controls(controlsSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
     Rcpp::traits::input_parameter< bool >::type linear(linearSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppPartialCor(y, y_hat, controls, NA_rm, linear));
@@ -485,14 +485,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppPartialCorTrivar
-double RcppPartialCorTrivar(Rcpp::NumericVector y, Rcpp::NumericVector y_hat, Rcpp::NumericVector control, bool NA_rm, bool linear);
+double RcppPartialCorTrivar(const Rcpp::NumericVector& y, const Rcpp::NumericVector& y_hat, const Rcpp::NumericVector& control, bool NA_rm, bool linear);
 RcppExport SEXP _spEDM_RcppPartialCorTrivar(SEXP ySEXP, SEXP y_hatSEXP, SEXP controlSEXP, SEXP NA_rmSEXP, SEXP linearSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type y(ySEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type y_hat(y_hatSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type control(controlSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y_hat(y_hatSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type control(controlSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
     Rcpp::traits::input_parameter< bool >::type linear(linearSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppPartialCorTrivar(y, y_hat, control, NA_rm, linear));
@@ -527,15 +527,28 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppKNNIndice
-Rcpp::IntegerVector RcppKNNIndice(Rcpp::NumericMatrix embedding_space, int target_idx, int k);
+Rcpp::IntegerVector RcppKNNIndice(const Rcpp::NumericMatrix& embedding_space, int target_idx, int k);
 RcppExport SEXP _spEDM_RcppKNNIndice(SEXP embedding_spaceSEXP, SEXP target_idxSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type embedding_space(embedding_spaceSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type embedding_space(embedding_spaceSEXP);
     Rcpp::traits::input_parameter< int >::type target_idx(target_idxSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppKNNIndice(embedding_space, target_idx, k));
+    return rcpp_result_gen;
+END_RCPP
+}
+// RcppDistKNNIndice
+Rcpp::IntegerVector RcppDistKNNIndice(const Rcpp::NumericMatrix& dist_mat, int target_idx, int k);
+RcppExport SEXP _spEDM_RcppDistKNNIndice(SEXP dist_matSEXP, SEXP target_idxSEXP, SEXP kSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type dist_mat(dist_matSEXP);
+    Rcpp::traits::input_parameter< int >::type target_idx(target_idxSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppDistKNNIndice(dist_mat, target_idx, k));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -601,6 +614,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppCorSignificance", (DL_FUNC) &_spEDM_RcppCorSignificance, 3},
     {"_spEDM_RcppCorConfidence", (DL_FUNC) &_spEDM_RcppCorConfidence, 4},
     {"_spEDM_RcppKNNIndice", (DL_FUNC) &_spEDM_RcppKNNIndice, 3},
+    {"_spEDM_RcppDistKNNIndice", (DL_FUNC) &_spEDM_RcppDistKNNIndice, 3},
     {"_spEDM_RcppLinearTrendRM", (DL_FUNC) &_spEDM_RcppLinearTrendRM, 4},
     {"_spEDM_RcppSVD", (DL_FUNC) &_spEDM_RcppSVD, 1},
     {NULL, NULL, 0}
