@@ -403,7 +403,11 @@ Rcpp::NumericVector RcppGCMC4Lattice(
   std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
   std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
   std::vector<int> maxr_std = Rcpp::as<std::vector<int>>(max_r);
-
+  
+  // convert R based 1 index to C++ based 0 index
+  for (size_t i = 0; i < pred_std.size(); ++i) {
+    pred_std[i] -= 1;
+  }
 
   // Generate embeddings
   std::vector<std::vector<double>> e1 = GenLatticeEmbeddings(x_std, nb_vec, E[0], tau_std[0]);
