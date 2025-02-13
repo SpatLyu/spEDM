@@ -1,114 +1,175 @@
-// #include <vector>
-// #include <cmath>
-// #include <algorithm>
-// #include <numeric>
-// #include <limits>
-// #include <utility>
-// #include <unordered_set>
-//
-// /**
-//  * Computes the Cross Mapping Cardinality (CMC) causal strength score.
-//  *
-//  * Parameters:
-//  *   - embedding_x:   The state-space reconstructed from the potential cause variable.
-//  *   - embedding_y:   The state-space reconstructed from the potential effect variable.
-//  *   - num_neighbors: Number of neighbors used for cross-mapping.
-//  *   - n_excluded:    Number of excluded neighbors in the distance matrix.
-//  *
-//  * Returns:
-//  *   - A double representing the CMC causal strength score, normalized between [0,1].
-//  */
-// double CrossMappingCardinality(
-//     const std::vector<std::vector<double>>& embedding_x,
-//     const std::vector<std::vector<double>>& embedding_y,
-//     int num_neighbors,
-//     int n_excluded = 0
-// ) {
-//   // Ensure valid input dimensions
-//   if (embedding_x.size() != embedding_y.size() || embedding_x.empty()) {
-//     return 0.0;
-//   }
-//
-//   // Helper function to compute the distance matrix
-//   auto compute_distance_matrix = [](const std::vector<std::vector<double>>& embedding) {
-//     size_t n = embedding.size();
-//     std::vector<std::vector<double>> distance_matrix(n, std::vector<double>(n, 0.0));
-//     for (size_t i = 0; i < n; ++i) {
-//       for (size_t j = i + 1; j < n; ++j) {
-//         double dist = 0.0;
-//         for (size_t k = 0; k < embedding[i].size(); ++k) {
-//           dist += std::pow(embedding[i][k] - embedding[j][k], 2);
-//         }
-//         distance_matrix[i][j] = distance_matrix[j][i] = std::sqrt(dist);
-//       }
-//     }
-//     return distance_matrix;
-//   };
-//
-//   // Compute distance matrices for embedding_x and embedding_y
-//   auto distance_matrix_x = compute_distance_matrix(embedding_x);
-//   auto distance_matrix_y = compute_distance_matrix(embedding_y);
-//
-//   // Helper function to find k-nearest neighbors
-//   auto find_k_nearest_neighbors = [](const std::vector<std::vector<double>>& distance_matrix, size_t idx, int k) {
-//     std::vector<size_t> neighbors(distance_matrix.size());
-//     std::iota(neighbors.begin(), neighbors.end(), 0);
-//     std::sort(neighbors.begin(), neighbors.end(), [&](size_t a, size_t b) {
-//       return distance_matrix[idx][a] < distance_matrix[idx][b];
-//     });
-//     return std::vector<size_t>(neighbors.begin() + 1, neighbors.begin() + k + 1); // Exclude self
-//   };
-//
-//   // Compute the mapping ratios
-//   std::vector<double> mapping_ratios;
-//   for (size_t i = 0; i < embedding_x.size(); ++i) {
-//     auto neighbors_x = find_k_nearest_neighbors(distance_matrix_x, i, num_neighbors);
-//     auto neighbors_y = find_k_nearest_neighbors(distance_matrix_y, i, num_neighbors + n_excluded);
-//
-//     // Map neighbors from embedding_x to embedding_y
-//     std::unordered_set<size_t> mapped_neighbors;
-//     for (size_t nx : neighbors_x) {
-//       auto mapped = find_k_nearest_neighbors(distance_matrix_y, nx, 1);
-//       if (!mapped.empty()) {
-//         mapped_neighbors.insert(mapped[0]);
-//       }
-//     }
-//
-//     // Compute the intersection count
-//     double intersection_count = 0;
-//     for (size_t ny : neighbors_y) {
-//       if (mapped_neighbors.find(ny) != mapped_neighbors.end()) {
-//         intersection_count++;
-//       }
-//     }
-//
-//     mapping_ratios.push_back(intersection_count / neighbors_y.size());
-//   }
-//
-//   // Compute AUC and normalize the score
-//   std::sort(mapping_ratios.begin(), mapping_ratios.end());
-//   double auc = 0.0;
-//   for (size_t i = 1; i < mapping_ratios.size(); ++i) {
-//     auc += (mapping_ratios[i] + mapping_ratios[i - 1]) * 0.5;
-//   }
-//   auc /= mapping_ratios.size();
-//
-//   // Normalize the score to [0,1]
-//   double cmc_score = std::max(0.0, 2.0 * (auc - 0.5));
-//   return cmc_score;
-// }
-
-
 #include <vector>
 #include <cmath>
 #include <algorithm>
 #include <numeric>
 #include <limits>
+#include <utility>
+#include <unordered_set>
 #include "CppStats.h"
 #include <RcppThread.h>
 
 // [[Rcpp::plugins(cpp11)]]
 // [[Rcpp::depends(RcppThread)]]
+
+/**
+ * Computes the Cross Mapping Cardinality (CMC) causal strength score.
+ *
+ * Parameters:
+ *   - embedding_x:   The state-space reconstructed from the potential cause variable.
+ *   - embedding_y:   The state-space reconstructed from the potential effect variable.
+ *   - pred:          A vector specifying the prediction indices(1-based in R, converted to 0-based in C++).
+ *   - num_neighbors: Number of neighbors used for cross-mapping.
+ *   - n_excluded:    Number of excluded neighbors in the distance matrix.
+ *   - threads:       Number of threads to use for parallel processing.
+ *   - progressbar:   If true, display a progress bar during computation.
+ *
+ * Returns:
+ *   - A double representing the CMC causal strength score, normalized between [0,1].
+ */
+double CrossMappingCardinality(
+    const std::vector<std::vector<double>>& embedding_x,
+    const std::vector<std::vector<double>>& embedding_y,
+    const std::vector<int>& pred,
+    int num_neighbors,
+    int n_excluded,
+    int threads,
+    bool progressbar
+) {
+  // Ensure valid input dimensions
+  if (embedding_x.size() != embedding_y.size() || embedding_x.empty()) {
+    return 0.0;
+  }
+
+  // Construct a valid_pred vector to store indices that are not entirely NaN
+  std::vector<int> valid_pred;
+
+  for (int idx : pred) {
+    // Ensure index is within valid range
+    if (idx < 0 || static_cast<std::size_t>(idx) >= embedding_x.size()) {
+      continue;
+    }
+
+    // Check if all values in embedding_x[idx] and embedding_y[idx] are NaN
+    bool x_all_nan = std::all_of(embedding_x[idx].begin(), embedding_x[idx].end(),
+                                 [](double v) { return std::isnan(v); });
+    bool y_all_nan = std::all_of(embedding_y[idx].begin(), embedding_y[idx].end(),
+                                 [](double v) { return std::isnan(v); });
+
+    // If at least one of them has valid data, add idx to valid_pred
+    if (!x_all_nan || !y_all_nan) {
+      valid_pred.push_back(idx);
+    }
+  }
+
+  // If no valid predictions remain, return 0.0
+  if (valid_pred.empty()) {
+    return 0.0;
+  }
+
+  std::size_t k = static_cast<size_t>(num_neighbors);
+  std::size_t max_r = std::min(static_cast<size_t>(num_neighbors+n_excluded), embedding_x.size());
+
+  size_t threads_sizet = static_cast<size_t>(threads);
+  unsigned int max_threads = std::thread::hardware_concurrency();
+  threads_sizet = std::min(static_cast<size_t>(max_threads), threads_sizet);
+
+  // Compute distance matrices for embedding_x and embedding_y
+  std::vector<std::vector<double>> dist_x = CppMatDistance(embedding_x,false,true);
+  std::vector<std::vector<double>> dist_y = CppMatDistance(embedding_y,false,true);
+
+  // Compute the mapping ratios
+  std::vector<double> mapping_ratios;
+
+  // // Iterate over each valid_pred
+  // for (size_t i = 0; i < valid_pred.size(); ++i) {
+  //   std::vector<std::size_t> neighbors_x = CppDistKNNIndice(dist_x, valid_pred[i], k);
+  //   std::vector<std::size_t> neighbors_y = CppDistKNNIndice(dist_y, valid_pred[i], max_r);
+  //
+  //   // Map neighbors from embedding_x to embedding_y
+  //   std::unordered_set<size_t> mapped_neighbors;
+  //   for (size_t nx : neighbors_x) {
+  //     auto mapped = CppDistKNNIndice(dist_y, nx, 1);
+  //     if (!mapped.empty()) {
+  //       mapped_neighbors.insert(mapped[0]);
+  //     }
+  //   }
+  //
+  //   // Compute the intersection count
+  //   double intersection_count = 0;
+  //   for (size_t ny : neighbors_y) {
+  //     if (mapped_neighbors.find(ny) != mapped_neighbors.end()) {
+  //       intersection_count++;
+  //     }
+  //   }
+  //
+  //   mapping_ratios.push_back(intersection_count / neighbors_y.size());
+  // }
+
+  // Perform the operations using RcppThread
+  if (progressbar) {
+    RcppThread::ProgressBar bar(valid_pred.size(), 1);
+    RcppThread::parallelFor(0, valid_pred.size(), [&](size_t i) {
+      std::vector<std::size_t> neighbors_x = CppDistKNNIndice(dist_x, valid_pred[i], k);
+      std::vector<std::size_t> neighbors_y = CppDistKNNIndice(dist_y, valid_pred[i], max_r);
+
+      // Map neighbors from embedding_x to embedding_y
+      std::unordered_set<size_t> mapped_neighbors;
+      for (size_t nx : neighbors_x) {
+        auto mapped = CppDistKNNIndice(dist_y, nx, 1);
+        if (!mapped.empty()) {
+          mapped_neighbors.insert(mapped[0]);
+        }
+      }
+
+      // Compute the intersection count
+      double intersection_count = 0;
+      for (size_t ny : neighbors_y) {
+        if (mapped_neighbors.find(ny) != mapped_neighbors.end()) {
+          intersection_count++;
+        }
+      }
+
+      mapping_ratios.push_back(intersection_count / neighbors_y.size());
+      bar++;
+    }, threads_sizet);
+  } else {
+    RcppThread::parallelFor(0, valid_pred.size(), [&](size_t i) {
+      std::vector<std::size_t> neighbors_x = CppDistKNNIndice(dist_x, valid_pred[i], k);
+      std::vector<std::size_t> neighbors_y = CppDistKNNIndice(dist_y, valid_pred[i], max_r);
+
+      // Map neighbors from embedding_x to embedding_y
+      std::unordered_set<size_t> mapped_neighbors;
+      for (size_t nx : neighbors_x) {
+        auto mapped = CppDistKNNIndice(dist_y, nx, 1);
+        if (!mapped.empty()) {
+          mapped_neighbors.insert(mapped[0]);
+        }
+      }
+
+      // Compute the intersection count
+      double intersection_count = 0;
+      for (size_t ny : neighbors_y) {
+        if (mapped_neighbors.find(ny) != mapped_neighbors.end()) {
+          intersection_count++;
+        }
+      }
+
+      mapping_ratios.push_back(intersection_count / neighbors_y.size());
+    }, threads_sizet);
+  }
+
+  // Compute AUC and normalize the score
+  std::sort(mapping_ratios.begin(), mapping_ratios.end());
+  double auc = 0.0;
+  for (size_t i = 1; i < mapping_ratios.size(); ++i) {
+    auc += (mapping_ratios[i] + mapping_ratios[i - 1]) * 0.5;
+  }
+  auc /= mapping_ratios.size();
+
+  // Normalize the score to [0,1]
+  double cmc_score = std::max(0.0, 2.0 * (auc - 0.5));
+  return cmc_score;
+}
 
 /*
  * Computes the Intersection Cardinality (IC) causal strength score.
@@ -320,7 +381,6 @@ double IntersectionCardinality(
 
   return ICC_score;
 }
-
 
 // /*
 //  * Computes the Intersection Cardinality (IC) causal strength score.
