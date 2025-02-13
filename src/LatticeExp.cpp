@@ -3,7 +3,7 @@
 #include "Forecast4Lattice.h"
 #include "GCCM4Lattice.h"
 #include "SCPCM4Lattice.h"
-#include "IntersectionCardinality.h"
+#include "CrossMappingCardinality.h"
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
 
@@ -410,8 +410,8 @@ Rcpp::NumericVector RcppGCMC4Lattice(
   std::vector<std::vector<double>> e2 = GenLatticeEmbeddings(y_std, nb_vec, E[1], tau_std[1]);
 
   // Perform GCMC For Lattice
-  double cs1 = IntersectionCardinality(e1,e2,pred_std,b_std[0],maxr_std[0],threads,progressbar);
-  double cs2 = IntersectionCardinality(e2,e1,pred_std,b_std[1],maxr_std[1],threads,progressbar);
+  double cs1 = CrossMappingCardinality(e1,e2,pred_std,b_std[0],maxr_std[0],threads,progressbar);
+  double cs2 = CrossMappingCardinality(e2,e1,pred_std,b_std[1],maxr_std[1],threads,progressbar);
 
   Rcpp::NumericVector res_vec = Rcpp::NumericVector::create(
     Rcpp::Named("x_xmap_y",cs1),
