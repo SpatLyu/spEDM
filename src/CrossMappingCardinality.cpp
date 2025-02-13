@@ -80,30 +80,30 @@ double CrossMappingCardinality(
   // Compute the mapping ratios
   std::vector<double> mapping_ratios;
 
-  // Iterate over each valid_pred
-  for (size_t i = 0; i < valid_pred.size(); ++i) {
-    std::vector<std::size_t> neighbors_x = CppDistKNNIndice(dist_x, valid_pred[i], k);
-    std::vector<std::size_t> neighbors_y = CppDistKNNIndice(dist_y, valid_pred[i], max_r);
-
-    // Map neighbors from embedding_x to embedding_y
-    std::unordered_set<size_t> mapped_neighbors;
-    for (size_t nx : neighbors_x) {
-      auto mapped = CppDistKNNIndice(dist_y, nx, 1);
-      if (!mapped.empty()) {
-        mapped_neighbors.insert(mapped[0]);
-      }
-    }
-
-    // Compute the intersection count
-    double intersection_count = 0;
-    for (size_t ny : neighbors_y) {
-      if (mapped_neighbors.find(ny) != mapped_neighbors.end()) {
-        intersection_count++;
-      }
-    }
-
-    mapping_ratios.push_back(intersection_count / neighbors_y.size());
-  }
+  // // Iterate over each valid_pred
+  // for (size_t i = 0; i < valid_pred.size(); ++i) {
+  //   std::vector<std::size_t> neighbors_x = CppDistKNNIndice(dist_x, valid_pred[i], k);
+  //   std::vector<std::size_t> neighbors_y = CppDistKNNIndice(dist_y, valid_pred[i], max_r);
+  //
+  //   // Map neighbors from embedding_x to embedding_y
+  //   std::unordered_set<size_t> mapped_neighbors;
+  //   for (size_t nx : neighbors_x) {
+  //     auto mapped = CppDistKNNIndice(dist_y, nx, 1);
+  //     if (!mapped.empty()) {
+  //       mapped_neighbors.insert(mapped[0]);
+  //     }
+  //   }
+  //
+  //   // Compute the intersection count
+  //   double intersection_count = 0;
+  //   for (size_t ny : neighbors_y) {
+  //     if (mapped_neighbors.find(ny) != mapped_neighbors.end()) {
+  //       intersection_count++;
+  //     }
+  //   }
+  //
+  //   mapping_ratios.push_back(intersection_count / neighbors_y.size());
+  // }
 
   // Perform the operations using RcppThread
   if (progressbar) {
