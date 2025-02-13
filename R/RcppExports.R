@@ -141,6 +141,10 @@ RcppKNNIndice <- function(embedding_space, target_idx, k) {
     .Call(`_spEDM_RcppKNNIndice`, embedding_space, target_idx, k)
 }
 
+RcppDistKNNIndice <- function(dist_mat, target_idx, k) {
+    .Call(`_spEDM_RcppDistKNNIndice`, dist_mat, target_idx, k)
+}
+
 RcppLinearTrendRM <- function(vec, xcoord, ycoord, NA_rm = FALSE) {
     .Call(`_spEDM_RcppLinearTrendRM`, vec, xcoord, ycoord, NA_rm)
 }

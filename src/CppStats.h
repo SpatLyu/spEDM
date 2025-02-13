@@ -73,6 +73,11 @@ std::vector<std::size_t> CppKNNIndice(
     std::size_t target_idx,
     std::size_t k);
 
+std::vector<std::size_t> CppDistKNNIndice(
+    const std::vector<std::vector<double>>& dist_mat,
+    std::size_t target_idx,
+    std::size_t k);
+
 std::vector<std::vector<std::vector<double>>> CppSVD(const std::vector<std::vector<double>>& X);
 
 std::vector<double> LinearTrendRM(const std::vector<double>& vec,

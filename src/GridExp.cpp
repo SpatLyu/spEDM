@@ -8,7 +8,7 @@
 // #include <Rcpp.h>
 
 // [[Rcpp::export]]
-Rcpp::NumericMatrix RcppLaggedVar4Grid(Rcpp::NumericMatrix mat, int lagNum) {
+Rcpp::NumericMatrix RcppLaggedVar4Grid(const Rcpp::NumericMatrix& mat, int lagNum) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = mat.nrow();
   int numCols = mat.ncol();
@@ -38,7 +38,7 @@ Rcpp::NumericMatrix RcppLaggedVar4Grid(Rcpp::NumericMatrix mat, int lagNum) {
 }
 
 // [[Rcpp::export]]
-Rcpp::NumericMatrix RcppGenGridEmbeddings(Rcpp::NumericMatrix mat,
+Rcpp::NumericMatrix RcppGenGridEmbeddings(const Rcpp::NumericMatrix& mat,
                                           int E, int tau) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = mat.nrow();

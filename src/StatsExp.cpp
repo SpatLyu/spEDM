@@ -124,9 +124,9 @@ double RcppPearsonCor(const Rcpp::NumericVector& y,
 
 // Rcpp wrapper for PartialCor function
 // [[Rcpp::export]]
-double RcppPartialCor(Rcpp::NumericVector y,
-                      Rcpp::NumericVector y_hat,
-                      Rcpp::NumericMatrix controls,
+double RcppPartialCor(const Rcpp::NumericVector& y,
+                      const Rcpp::NumericVector& y_hat,
+                      const Rcpp::NumericMatrix& controls,
                       bool NA_rm = false,
                       bool linear = false) {
 
@@ -146,9 +146,9 @@ double RcppPartialCor(Rcpp::NumericVector y,
 }
 
 // [[Rcpp::export]]
-double RcppPartialCorTrivar(Rcpp::NumericVector y,
-                            Rcpp::NumericVector y_hat,
-                            Rcpp::NumericVector control,
+double RcppPartialCorTrivar(const Rcpp::NumericVector& y,
+                            const Rcpp::NumericVector& y_hat,
+                            const Rcpp::NumericVector& control,
                             bool NA_rm = false,
                             bool linear = false) {
 
@@ -179,7 +179,8 @@ Rcpp::NumericVector RcppCorConfidence(double r, int n, int k = 0, double level =
 
 // Wrapper function to find k-nearest neighbors of a given index in the embedding space
 // [[Rcpp::export]]
-Rcpp::IntegerVector RcppKNNIndice(Rcpp::NumericMatrix embedding_space, int target_idx, int k) {
+Rcpp::IntegerVector RcppKNNIndice(const Rcpp::NumericMatrix& embedding_space,
+                                  int target_idx, int k) {
   // Get the number of rows and columns
   std::size_t n_rows = embedding_space.nrow();
   std::size_t n_cols = embedding_space.ncol();
@@ -204,6 +205,44 @@ Rcpp::IntegerVector RcppKNNIndice(Rcpp::NumericMatrix embedding_space, int targe
 
   // Call the C++ function
   std::vector<std::size_t> knn_indices = CppKNNIndice(embedding_vec, static_cast<std::size_t>(target_idx), static_cast<std::size_t>(k));
+
+  // Convert result to Rcpp::IntegerVector (R uses 1-based indexing)
+  Rcpp::IntegerVector result(knn_indices.size());
+  for (std::size_t i = 0; i < knn_indices.size(); ++i) {
+    result[i] = static_cast<int>(knn_indices[i]) + 1;  // Convert to 1-based index
+  }
+
+  return result;
+}
+
+// Wrapper function to find k-nearest neighbors of a given index using a precomputed distance matrix
+// [[Rcpp::export]]
+Rcpp::IntegerVector RcppDistKNNIndice(const Rcpp::NumericMatrix& dist_mat,
+                                      int target_idx, int k) {
+  // Get the number of rows and columns
+  std::size_t n_rows = dist_mat.nrow();
+  std::size_t n_cols = dist_mat.ncol();
+
+  // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
+  std::vector<std::vector<double>> distmat(n_rows, std::vector<double>(n_cols));
+  for (std::size_t i = 0; i < n_rows; ++i) {
+    for (std::size_t j = 0; j < n_cols; ++j) {
+      distmat[i][j] = dist_mat(i, j);
+    }
+  }
+
+  // Ensure target index is within valid range
+  if (target_idx < 0 || static_cast<std::size_t>(target_idx) >= n_rows) {
+    Rcpp::stop("target_idx is out of range.");
+  }
+
+  // Ensure k is positive
+  if (k <= 0) {
+    Rcpp::stop("k must be greater than 0.");
+  }
+
+  // Call the C++ function
+  std::vector<std::size_t> knn_indices = CppDistKNNIndice(distmat, static_cast<std::size_t>(target_idx), static_cast<std::size_t>(k));
 
   // Convert result to Rcpp::IntegerVector (R uses 1-based indexing)
   Rcpp::IntegerVector result(knn_indices.size());
