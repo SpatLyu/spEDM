@@ -466,6 +466,22 @@ std::vector<double> CppCorConfidence(double r, int n, int k = 0,
   return {r_upper, r_lower};
 }
 
+// Function to compute distance for a matrix:
+std::vector<std::vector<double>> CppMatDistance(
+    const std::vector<std::vector<double>>& mat,
+    bool L1norm = false,
+    bool NA_rm = false){
+  size_t n = mat.size();
+  std::vector<std::vector<double>> distance_matrix(n, std::vector<double>(n, 0.0));
+
+  for (size_t i = 0; i < n; ++i) {
+    for (size_t j = i+1; j < n; ++i){
+      distance_matrix[i][j] = distance_matrix[j][i] = CppDistance(mat[i],mat[j],L1norm,NA_rm);
+    }
+  }
+  return distance_matrix;
+}
+
 // Function to find k-nearest neighbors of a given index in the embedding space
 std::vector<std::size_t> CppKNNIndice(
     const std::vector<std::vector<double>>& embedding_space,

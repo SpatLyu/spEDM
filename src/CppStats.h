@@ -68,6 +68,11 @@ double CppCorSignificance(double r, int n, int k = 0);
 std::vector<double> CppCorConfidence(double r, int n, int k = 0,
                                      double level = 0.05);
 
+std::vector<std::vector<double>> CppMatDistance(
+    const std::vector<std::vector<double>>& mat,
+    bool L1norm = false,
+    bool NA_rm = false);
+
 std::vector<std::size_t> CppKNNIndice(
     const std::vector<std::vector<double>>& embedding_space,
     std::size_t target_idx,
