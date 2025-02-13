@@ -42,11 +42,6 @@ double CppCovariance(const std::vector<double>& vec1,
                      const std::vector<double>& vec2,
                      bool NA_rm = false);
 
-double CppDistance(const std::vector<double>& vec1,
-                   const std::vector<double>& vec2,
-                   bool L1norm = false,
-                   bool NA_rm = false);
-
 double PearsonCor(const std::vector<double>& y,
                   const std::vector<double>& y_hat,
                   bool NA_rm = false);
@@ -67,6 +62,16 @@ double CppCorSignificance(double r, int n, int k = 0);
 
 std::vector<double> CppCorConfidence(double r, int n, int k = 0,
                                      double level = 0.05);
+
+double CppDistance(const std::vector<double>& vec1,
+                   const std::vector<double>& vec2,
+                   bool L1norm = false,
+                   bool NA_rm = false);
+
+std::vector<std::vector<double>> CppMatDistance(
+    const std::vector<std::vector<double>>& mat,
+    bool L1norm = false,
+    bool NA_rm = false);
 
 std::vector<std::size_t> CppKNNIndice(
     const std::vector<std::vector<double>>& embedding_space,

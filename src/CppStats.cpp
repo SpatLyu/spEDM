@@ -197,45 +197,6 @@ double CppCovariance(const std::vector<double>& vec1,
   return count > 1 ? cov / (count - 1) : std::numeric_limits<double>::quiet_NaN();
 }
 
-// Function to compute distance between two vectors:
-double CppDistance(const std::vector<double>& vec1,
-                   const std::vector<double>& vec2,
-                   bool L1norm = false,
-                   bool NA_rm = false){
-  // Handle NA values
-  std::vector<double> clean_v1, clean_v2;
-  for (size_t i = 0; i < vec1.size(); ++i) {
-    bool is_na = isNA(vec1[i]) || isNA(vec2[i]);
-    if (is_na) {
-      if (!NA_rm) {
-        return std::numeric_limits<double>::quiet_NaN(); // Return NaN if NA_rm is false
-      }
-    } else {
-      clean_v1.push_back(vec1[i]);
-      clean_v2.push_back(vec2[i]);
-    }
-  }
-
-  // If no valid data, return NaN
-  if (clean_v1.empty()) {
-    return std::numeric_limits<double>::quiet_NaN();
-  }
-
-  double dist_res = 0.0;
-  if (L1norm) {
-    for (std::size_t i = 0; i < clean_v1.size(); ++i) {
-      dist_res += std::abs(clean_v1[i] - clean_v2[i]);
-    }
-  } else {
-    for (std::size_t i = 0; i < clean_v1.size(); ++i) {
-      dist_res += (clean_v1[i] - clean_v2[i]) * (clean_v1[i] - clean_v2[i]);
-    }
-    dist_res = std::sqrt(dist_res);
-  }
-
-  return dist_res;
-}
-
 // Function to compute Pearson correlation using Armadillo
 double PearsonCor(const std::vector<double>& y,
                   const std::vector<double>& y_hat,
@@ -464,6 +425,65 @@ std::vector<double> CppCorConfidence(double r, int n, int k = 0,
 
   // Return the result as a std::vector<double>
   return {r_upper, r_lower};
+}
+
+// Function to compute distance between two vectors:
+double CppDistance(const std::vector<double>& vec1,
+                   const std::vector<double>& vec2,
+                   bool L1norm = false,
+                   bool NA_rm = false){
+  // Handle NA values
+  std::vector<double> clean_v1, clean_v2;
+  for (size_t i = 0; i < vec1.size(); ++i) {
+    bool is_na = isNA(vec1[i]) || isNA(vec2[i]);
+    if (is_na) {
+      if (!NA_rm) {
+        return std::numeric_limits<double>::quiet_NaN(); // Return NaN if NA_rm is false
+      }
+    } else {
+      clean_v1.push_back(vec1[i]);
+      clean_v2.push_back(vec2[i]);
+    }
+  }
+
+  // If no valid data, return NaN
+  if (clean_v1.empty()) {
+    return std::numeric_limits<double>::quiet_NaN();
+  }
+
+  double dist_res = 0.0;
+  if (L1norm) {
+    for (std::size_t i = 0; i < clean_v1.size(); ++i) {
+      dist_res += std::abs(clean_v1[i] - clean_v2[i]);
+    }
+  } else {
+    for (std::size_t i = 0; i < clean_v1.size(); ++i) {
+      dist_res += (clean_v1[i] - clean_v2[i]) * (clean_v1[i] - clean_v2[i]);
+    }
+    dist_res = std::sqrt(dist_res);
+  }
+
+  return dist_res;
+}
+
+// Function to compute distance for a matrix:
+std::vector<std::vector<double>> CppMatDistance(
+    const std::vector<std::vector<double>>& mat,
+    bool L1norm = false,
+    bool NA_rm = false){
+  size_t n = mat.size();
+  std::vector<std::vector<double>> distance_matrix(n, std::vector<double>(n, 0.0));
+
+  // Compute distance between every pair of rows
+  for (size_t i = 0; i < n; ++i) {
+    for (size_t j = i+1; j < n; ++j) {  // <-- Corrected: increment j
+      double distv = CppDistance(mat[i], mat[j], L1norm, NA_rm);
+      distance_matrix[i][j] = distv;  // Correctly assign distance to upper triangle
+      distance_matrix[j][i] = distv;  // Mirror the value to the lower triangle
+      // distance_matrix[i][j] = distance_matrix[j][i] = CppDistance(mat[i],mat[j],L1norm,NA_rm);
+    }
+  }
+  return distance_matrix;
 }
 
 // Function to find k-nearest neighbors of a given index in the embedding space
