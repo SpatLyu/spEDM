@@ -8,7 +8,7 @@
 // #include <Rcpp.h>
 
 // Function to convert Rcpp::List to std::vector<std::vector<int>>
-std::vector<std::vector<int>> nb2vec(Rcpp::List nb) {
+std::vector<std::vector<int>> nb2vec(const Rcpp::List& nb) {
   // Get the number of elements in the nb object
   int n = nb.size();
 
