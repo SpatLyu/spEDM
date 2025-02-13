@@ -474,8 +474,8 @@ std::vector<std::vector<double>> CppMatDistance(
   size_t n = mat.size();
   std::vector<std::vector<double>> distance_matrix(n, std::vector<double>(n, 0.0));
 
-  for (int i = 0; i < n; ++i) {
-    for (int j = i+1; j < n; ++i){
+  for (size_t i = 0; i < n; ++i) {
+    for (size_t j = i+1; j < n; ++i){
       distance_matrix[i][j] = distance_matrix[j][i] = CppDistance(mat[i],mat[j],L1norm,NA_rm);
     }
   }
