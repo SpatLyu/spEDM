@@ -137,6 +137,10 @@ RcppCorConfidence <- function(r, n, k = 0L, level = 0.05) {
     .Call(`_spEDM_RcppCorConfidence`, r, n, k, level)
 }
 
+RcppMatDistance <- function(mat, L1norm = FALSE, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppMatDistance`, mat, L1norm, NA_rm)
+}
+
 RcppKNNIndice <- function(embedding_space, target_idx, k) {
     .Call(`_spEDM_RcppKNNIndice`, embedding_space, target_idx, k)
 }

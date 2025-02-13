@@ -177,6 +177,36 @@ Rcpp::NumericVector RcppCorConfidence(double r, int n, int k = 0, double level =
   return Rcpp::wrap(result);
 }
 
+// Wrapper function to compute the distance matrix of a given matrix 'mat'
+// [[Rcpp::export]]
+Rcpp::NumericMatrix RcppMatDistance(const Rcpp::NumericMatrix& mat,
+                                    bool L1norm = false, bool NA_rm = false) {
+
+  // Convert the Rcpp::NumericMatrix to a C++ vector of vectors (std::vector)
+  size_t n = mat.nrow();
+  std::vector<std::vector<double>> cppMat(n, std::vector<double>(mat.ncol()));
+
+  // Fill cppMat with values from the R matrix
+  for (size_t i = 0; i < n; ++i) {
+    for (size_t j = 0; j < mat.ncol(); ++j) {
+      cppMat[i][j] = mat(i, j);
+    }
+  }
+
+  // Call the C++ function to compute the distance matrix
+  std::vector<std::vector<double>> distanceMatrix = CppMatDistance(cppMat, L1norm, NA_rm);
+
+  // Convert the resulting distance matrix back into an Rcpp::NumericMatrix
+  Rcpp::NumericMatrix result(n, n);
+  for (size_t i = 0; i < n; ++i) {
+    for (size_t j = 0; j < n; ++j) {
+      result(i, j) = distanceMatrix[i][j];
+    }
+  }
+
+  return result;
+}
+
 // Wrapper function to find k-nearest neighbors of a given index in the embedding space
 // [[Rcpp::export]]
 Rcpp::IntegerVector RcppKNNIndice(const Rcpp::NumericMatrix& embedding_space,
