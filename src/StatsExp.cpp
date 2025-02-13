@@ -204,7 +204,9 @@ Rcpp::IntegerVector RcppKNNIndice(const Rcpp::NumericMatrix& embedding_space,
   }
 
   // Call the C++ function
-  std::vector<std::size_t> knn_indices = CppKNNIndice(embedding_vec, static_cast<std::size_t>(target_idx), static_cast<std::size_t>(k));
+  std::vector<std::size_t> knn_indices = CppKNNIndice(embedding_vec,
+                                                      static_cast<std::size_t>(target_idx + 1),
+                                                      static_cast<std::size_t>(k));
 
   // Convert result to Rcpp::IntegerVector (R uses 1-based indexing)
   Rcpp::IntegerVector result(knn_indices.size());
@@ -242,7 +244,9 @@ Rcpp::IntegerVector RcppDistKNNIndice(const Rcpp::NumericMatrix& dist_mat,
   }
 
   // Call the C++ function
-  std::vector<std::size_t> knn_indices = CppDistKNNIndice(distmat, static_cast<std::size_t>(target_idx), static_cast<std::size_t>(k));
+  std::vector<std::size_t> knn_indices = CppDistKNNIndice(distmat,
+                                                          static_cast<std::size_t>(target_idx + 1),
+                                                          static_cast<std::size_t>(k));
 
   // Convert result to Rcpp::IntegerVector (R uses 1-based indexing)
   Rcpp::IntegerVector result(knn_indices.size());
