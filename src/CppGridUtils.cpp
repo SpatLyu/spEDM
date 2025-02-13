@@ -311,18 +311,18 @@ std::vector<std::vector<double>> GenGridEmbeddings(
 // std::vector<std::vector<double>> GenGridEmbeddings(
 //     const std::vector<std::vector<double>>& mat,
 //     int E,
-//     int tau) {
-//   // Calculate the total number of elements in all subsets of mat
-//   int total_elements = 0;
-//   for (const auto& subset : mat) {
-//     total_elements += subset.size();
-//   }
-
+//     int tau
+// ) {
+//   int numRows = mat.size();
+//   int numCols = mat[0].size();
+//   int total_elements = numRows * numCols;
+//
 //   // Initialize the result matrix with total_elements rows and E columns
-//   std::vector<std::vector<double>> result(total_elements, std::vector<double>(E, 0.0));
-
+//   // Initially fill with NaN values
+//   std::vector<std::vector<double>> result(total_elements, std::vector<double>(E, std::numeric_limits<double>::quiet_NaN()));
+//
 //   if (tau == 0) {
-//     // Fill the first column with the elements from mat
+//     // Flatten the matrix (mat) into the first column of the result matrix
 //     int row = 0;
 //     for (const auto& subset : mat) {
 //       for (double value : subset) {
@@ -330,59 +330,57 @@ std::vector<std::vector<double>> GenGridEmbeddings(
 //         ++row;
 //       }
 //     }
-
+//
 //     // Fill the remaining columns (2 to E) with the averaged lagged variables
 //     for (int lagNum = 1; lagNum < E; ++lagNum) {
 //       // Calculate the lagged variables for the current lagNum
 //       std::vector<std::vector<double>> lagged_vars = CppLaggedVar4Grid(mat, lagNum);
-
-//       // Fill the current column (lagNum + 1) with the averaged lagged variables
-//       row = 0;
-//       for (const auto& subset : lagged_vars) {
-//         double sum = 0.0;
-//         int count = 0;
-//         for (int i = 0; i < 8; ++i) {
-//           double val = subset[i];
-//           if (!std::isnan(val)) {
-//             sum += val;
-//             ++count;
-//           }
-//         }
-//         if (count > 0) {
-//           result[row][lagNum] = sum / count;
-//         } else {
-//           result[row][lagNum] = std::numeric_limits<double>::quiet_NaN();
-//         }
-//         ++row;
-//       }
-//     }
-//   } else {
-//     int row = 0;
-//     for (int lagNum = tau; lagNum < E + tau; ++lagNum) {
-//       // Calculate the lagged variables for the current lagNum
-//       std::vector<std::vector<double>> lagged_vars = CppLaggedVar4Grid(mat, lagNum);
-
+//
 //       // Fill the current column (lagNum) with the averaged lagged variables
 //       row = 0;
 //       for (const auto& subset : lagged_vars) {
 //         double sum = 0.0;
 //         int count = 0;
-//         for (int i = 0; i < 8; ++i) {
-//           double val = subset[i];
+//         for (double val : subset) {
 //           if (!std::isnan(val)) {
 //             sum += val;
 //             ++count;
 //           }
 //         }
+//
 //         if (count > 0) {
-//           result[row][lagNum-1] = sum / count;
-//         } else {
-//           result[row][lagNum-1] = std::numeric_limits<double>::quiet_NaN();
+//           result[row][lagNum] = sum / count; // Average the valid values
+//         }
+//         ++row;
+//       }
+//     }
+//   } else {
+//     // When tau != 0, start filling the result matrix from the tau-th column
+//     int row = 0;
+//     for (int lagNum = tau; lagNum < E + tau; ++lagNum) {
+//       // Calculate the lagged variables for the current lagNum
+//       std::vector<std::vector<double>> lagged_vars = CppLaggedVar4Grid(mat, lagNum);
+//
+//       // Fill the current column (lagNum - tau) with the averaged lagged variables
+//       row = 0;
+//       for (const auto& subset : lagged_vars) {
+//         double sum = 0.0;
+//         int count = 0;
+//         for (double val : subset) {
+//           if (!std::isnan(val)) {
+//             sum += val;
+//             ++count;
+//           }
+//         }
+//
+//         if (count > 0) {
+//           result[row][lagNum - tau] = sum / count; // Average the valid values
 //         }
 //         ++row;
 //       }
 //     }
 //   }
-
+//
+//   // Return the result matrix with grid embeddings
 //   return result;
 // }
