@@ -503,6 +503,39 @@ std::vector<std::size_t> CppKNNIndice(
   return neighbors;
 }
 
+// Function to find k-nearest neighbors of a given index using a precomputed distance matrix
+std::vector<std::size_t> CppDistKNNIndice(
+    const std::vector<std::vector<double>>& dist_mat,  // Precomputed n x n distance matrix
+    std::size_t target_idx,                            // Target index for which to find neighbors
+    std::size_t k)                                     // Number of nearest neighbors to find
+{
+  std::size_t n = dist_mat.size();
+  std::vector<std::pair<double, std::size_t>> distances;
+
+  // Iterate through the distance matrix to collect valid distances
+  for (std::size_t i = 0; i < n; ++i) {
+    if (i == target_idx) continue;  // Skip the target index itself
+
+    double dist = dist_mat[target_idx][i];
+
+    // Skip NaN distances
+    if (!std::isnan(dist)) {
+      distances.emplace_back(dist, i);
+    }
+  }
+
+  // Partial sort to get k-nearest neighbors, excluding NaN distances
+  std::partial_sort(distances.begin(), distances.begin() + std::min(k, distances.size()), distances.end());
+
+  // Extract the indices of the k-nearest neighbors
+  std::vector<std::size_t> neighbors;
+  for (std::size_t i = 0; i < k && i < distances.size(); ++i) {
+    neighbors.push_back(distances[i].second);
+  }
+
+  return neighbors;
+}
+
 // Function to compute SVD similar to R's svd()
 // Input:
 //   - X: A matrix represented as std::vector<std::vector<double>>
