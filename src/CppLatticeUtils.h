@@ -16,6 +16,25 @@
  * Parameters:
  *   spNeighbor - A 2D vector representing the spatial neighbors for each spatial unit, where each element is a list of neighbors.
  *   lagNum     - The number of lags to expand the neighborhoods.
+ *                A lagNum of 0 means the original spNeighbor is returned.
+ *                A lagNum of 1 means only the immediate neighbors are considered.
+ *                A lagNum >= 2 means the neighborhoods are expanded by including neighbors of neighbors, and the result is filtered to remove the immediate neighbors.
+ *
+ * Returns:
+ *   A 2D vector where each element is a list of cumulative neighbor indices for a given spatial unit,
+ *   including neighbors up to the specified lagNum. If lagNum is 0, the original spNeighbor is returned.
+ *   If lagNum >= 2, the result is filtered to remove the immediate neighbors (lagNum = 1). If the filtered result is empty, it is filled with std::numeric_limits<int>::min().
+ */
+std::vector<std::vector<int>> CppLaggedNeighbor4Lattice(std::vector<std::vector<int>> spNeighbor,
+                                                        int lagNum);
+
+/**
+ * Computes lagged neighborhoods for a given lag number, expanding the neighborhoods iteratively
+ * by including neighbors of neighbors up to the specified lag number.
+ *
+ * Parameters:
+ *   spNeighbor - A 2D vector representing the spatial neighbors for each spatial unit, where each element is a list of neighbors.
+ *   lagNum     - The number of lags to expand the neighborhoods.
  *                A lagNum of 1 means only the immediate neighbors are considered.
  *
  * Returns:
