@@ -6,28 +6,41 @@
 #include <numeric>   // for std::accumulate
 #include <algorithm> // for std::sort, std::unique, std::accumulate
 #include <unordered_set> // for std::unordered_set
+#include <unordered_map> // for std::unordered_map
 #include <limits> // for std::numeric_limits
 #include <cmath> // For std::isnan
 
 /**
- * Computes lagged neighborhoods for a given lag number, expanding the neighborhoods iteratively
- * by including neighbors of neighbors up to the specified lag number.
+ * Computes the lagged neighbors for a lattice structure up to a given lag number.
  *
- * Parameters:
- *   spNeighbor - A 2D vector representing the spatial neighbors for each spatial unit, where each element is a list of neighbors.
- *   lagNum     - The number of lags to expand the neighborhoods.
- *                A lagNum of 1 means only the immediate neighbors are considered.
+ * For lagNum=0, returns each node's index as its own neighbor.
+ * For lagNum>=1, recursively expands neighbors by looking up each previous level's
+ * neighbors, combines all results up to lagNum, and deduplicates. Empty results are
+ * filled with std::numeric_limits<int>::min().
  *
- * Returns:
- *   A 2D vector where each element is a list of cumulative neighbor indices for a given spatial unit,
- *   including neighbors up to the specified lagNum. If lagNum is less than 1, an empty vector is returned.
+ * @note This returns an accumulated sequence of neighbor indices.
  *
- * Note:
- *   The return value corresponds to the cumulative neighbor indices for the specified lagNum.
- *   The neighborhoods are expanded by including neighbors of neighbors, and duplicates are removed at each step.
+ * @param spNeighbor A 2D vector where each element contains indices of immediate neighbors.
+ * @param lagNum The number of lag steps to compute.
+ * @return A 2D vector of lagged neighbors for each spatial unit.
  */
-std::vector<std::vector<int>> CppLaggedVar4Lattice(std::vector<std::vector<int>> spNeighbor,
-                                                   int lagNum);
+std::vector<std::vector<int>> CppLaggedNeighbor4Lattice(const std::vector<std::vector<int>>& spNeighbor,
+                                                        int lagNum);
+
+/**
+ * @brief Computes the lagged values for a given vector based on the neighborhood and lag number.
+ *
+ * This function first computes the lagged neighbors for each point in the lattice using the `CppLaggedNeighbor4Lattice` function.
+ * Then, it uses these indices to extract the corresponding values from the input vector `vec`.
+ *
+ * @param vec The input vector of double values for which lagged values are to be computed.
+ * @param nb The neighborhood matrix, where each row represents the neighbors of a unit in the spatial lattice data.
+ * @param lagNum The number of lags to consider.
+ * @return A vector of vectors containing the lagged values for each unit in the spatial lattice data.
+ */
+std::vector<std::vector<double>> CppLaggedVar4Lattice(const std::vector<double>& vec,
+                                                      const std::vector<std::vector<int>>& nb,
+                                                      int lagNum);
 
 /**
  * Generates embeddings for a given vector and neighborhood matrix by computing the mean of neighbor values
