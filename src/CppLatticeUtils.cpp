@@ -101,8 +101,9 @@ std::vector<std::vector<int>> CppLaggedNeighbor4Lattice(const std::vector<std::v
 /**
  * @brief Computes the lagged values for a given vector based on the neighborhood and lag number.
  *
- * This function first computes the lagged neighbors for each point in the lattice using the `CppLaggedNeighbor4Lattice` function.
- * Then, it uses these indices to extract the corresponding values from the input vector `vec`.
+ * This function first computes the lagged neighbors for each unit in the spatial lattice data using
+ * the `CppLaggedNeighbor4Lattice` function. Then, remove duplicates indices with previous lagNum (if lagNum > 0)
+ * and it uses these indices to extract the corresponding values from the input vector `vec`.
  *
  * @param vec The input vector of double values for which lagged values are to be computed.
  * @param nb The neighborhood matrix, where each row represents the neighbors of a unit in the spatial lattice data.
@@ -112,10 +113,35 @@ std::vector<std::vector<int>> CppLaggedNeighbor4Lattice(const std::vector<std::v
 std::vector<std::vector<double>> CppLaggedVar4Lattice(const std::vector<double>& vec,
                                                       const std::vector<std::vector<int>>& nb,
                                                       int lagNum) {
+  int n = vec.size();
+
   // Compute the lagged neighbors using the provided function
   std::vector<std::vector<int>> laggedNeighbors = CppLaggedNeighbor4Lattice(nb, lagNum);
+  // Remove duplicates with previous lagNum (if lagNum > 0)
+  if (lagNum > 0) {
+    std::vector<std::vector<int>> prevLaggedResults = CppLaggedNeighbor4Lattice(nb, lagNum - 1);
+    for (int i = 0; i < n; ++i) {
+      // Convert previous lagged results to a set for fast lookup
+      std::unordered_set<int> prevSet(prevLaggedResults[i].begin(), prevLaggedResults[i].end());
 
-  int n = vec.size();
+      // Remove duplicates from current lagged results
+      std::vector<int> newIndices;
+      for (int index : laggedNeighbors[i]) {
+        if (prevSet.find(index) == prevSet.end()) {
+          newIndices.push_back(index);
+        }
+      }
+
+      // If the new indices are empty, set it to a special value (e.g., std::numeric_limits<int>::min())
+      if (newIndices.empty()) {
+        newIndices.push_back(std::numeric_limits<int>::min());
+      }
+
+      // Update the lagged results
+      laggedNeighbors[i] = newIndices;
+    }
+  }
+
   // Initialize the result vector with the same number of rows as the lagged neighbors
   std::vector<std::vector<double>> result(laggedNeighbors.size());
 
@@ -124,14 +150,19 @@ std::vector<std::vector<double>> CppLaggedVar4Lattice(const std::vector<double>&
     // Initialize the lagged values for the current point
     std::vector<double> laggedValues;
 
-    // Iterate over each neighbor index and extract the corresponding value from `vec`
-    for (int neighborIndex : laggedNeighbors[i]) {
-      // Check if the neighbor index is valid
-      if (neighborIndex >= 0 && neighborIndex < n) {
-        laggedValues.push_back(vec[neighborIndex]);
-      } else {
-        // If the index is out of bounds, push a default value (e.g., nan)
-        laggedValues.push_back(std::numeric_limits<double>::quiet_NaN());
+    if (laggedNeighbors[i].size() == 1 && laggedNeighbors[i][0] == std::numeric_limits<int>::min()){
+      // If the index is out of bounds, push a default value (e.g., nan)
+      laggedValues.push_back(std::numeric_limits<double>::quiet_NaN());
+    } else {
+      // Iterate over each neighbor index and extract the corresponding value from `vec`
+      for (int neighborIndex : laggedNeighbors[i]) {
+        // Check if the neighbor index is valid
+        if (neighborIndex >= 0 && neighborIndex < n) {
+          laggedValues.push_back(vec[neighborIndex]);
+        } else {
+          // If the index is out of bounds, push a default value (e.g., nan)
+          laggedValues.push_back(std::numeric_limits<double>::quiet_NaN());
+        }
       }
     }
 
@@ -201,7 +232,7 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
     // Get the lagged neighbor results for the current lagNum
     std::vector<std::vector<int>> laggedResults = laggedResultsMap[lagNum];
 
-    // Remove duplicates with previous lagNum (if lagNum > startLagNum)
+    // Remove duplicates with previous lagNum (if lagNum > 0)
     if (lagNum > 0) {
       std::vector<std::vector<int>> prevLaggedResults = laggedResultsMap[lagNum - 1];
       for (int i = 0; i < n; ++i) {
@@ -226,7 +257,7 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
       }
     }
 
-    // Compute the mean of neighbor values for each node
+    // Compute the mean of neighbor values for each spatial unit
     for (size_t l = 0; l < laggedResults.size(); ++l) {
       std::vector<int> neighbors = laggedResults[l];
 

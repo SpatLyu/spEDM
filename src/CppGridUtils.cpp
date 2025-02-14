@@ -89,7 +89,7 @@ std::vector<std::vector<double>> CppLaggedVar4Grid(
     int lagNum
 ) {
   // Validate input
-  if (mat.empty() || mat[0].empty() || lagNum < 1) {
+  if (mat.empty() || mat[0].empty() || lagNum < 0) {
     return {};
   }
 
@@ -97,6 +97,17 @@ std::vector<std::vector<double>> CppLaggedVar4Grid(
   const int cols = mat[0].size();
   const int numCells = rows * cols;
   const int numNeighbors = 8 * lagNum;
+
+  // If lagNum is 0, return the current values of gird row by row
+  if (lagNum == 0) {
+    std::vector<std::vector<double>> result;
+    for (int i = 0; i < rows; ++i) {
+      for (int j = 0; j < cols; ++j) {
+        result.push_back({mat[i][j]});
+      }
+    }
+    return result;
+  }
 
   // Generate all valid offsets for the given lagNum (Queen's case)
   std::vector<std::pair<int, int>> offsets;
