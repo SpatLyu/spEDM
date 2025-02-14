@@ -146,10 +146,6 @@ std::vector<std::vector<double>> CppLaggedVar4Grid(
 * Returns:
 *   A 2D vector (matrix) where each row contains the original value (if includeself is true)
 *   and the averaged lagged variables for each embedding dimension (column).
-*
-* If includeself is true, the first column will contain the original values from mat,
-* and the subsequent columns will contain averaged lagged variables computed using the specified lag numbers.
-* If includeself is false, the matrix will only contain the averaged lagged variables.
 */
 std::vector<std::vector<double>> GenGridEmbeddings(
     const std::vector<std::vector<double>>& mat,
@@ -303,10 +299,6 @@ std::vector<std::vector<double>> GenGridEmbeddings(
 //  * Returns:
 //  *   A 2D vector (matrix) where each row contains the original value (if includeself is true)
 //  *   and the averaged lagged variables for each embedding dimension (column).
-//  *
-//  * If includeself is true, the first column will contain the original values from mat,
-//  * and the subsequent columns will contain averaged lagged variables computed using the specified lag numbers.
-//  * If includeself is false, the matrix will only contain the averaged lagged variables.
 //  */
 // std::vector<std::vector<double>> GenGridEmbeddings(
 //     const std::vector<std::vector<double>>& mat,
