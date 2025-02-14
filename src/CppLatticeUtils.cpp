@@ -3,6 +3,7 @@
 #include <numeric>   // for std::accumulate
 #include <algorithm> // for std::sort, std::unique, std::accumulate
 #include <unordered_set> // for std::unordered_set
+#include <unordered_map> // for std::unordered_map
 #include <limits> // for std::numeric_limits
 #include <cmath> // For std::isnan
 
@@ -114,6 +115,7 @@ std::vector<std::vector<double>> CppLaggedVar4Lattice(const std::vector<double>&
   // Compute the lagged neighbors using the provided function
   std::vector<std::vector<int>> laggedNeighbors = CppLaggedNeighbor4Lattice(nb, lagNum);
 
+  int n = vec.size();
   // Initialize the result vector with the same number of rows as the lagged neighbors
   std::vector<std::vector<double>> result(laggedNeighbors.size());
 
@@ -125,7 +127,7 @@ std::vector<std::vector<double>> CppLaggedVar4Lattice(const std::vector<double>&
     // Iterate over each neighbor index and extract the corresponding value from `vec`
     for (int neighborIndex : laggedNeighbors[i]) {
       // Check if the neighbor index is valid
-      if (neighborIndex >= 0 && neighborIndex < vec.size()) {
+      if (neighborIndex >= 0 && neighborIndex < n) {
         laggedValues.push_back(vec[neighborIndex]);
       } else {
         // If the index is out of bounds, push a default value (e.g., nan)
