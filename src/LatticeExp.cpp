@@ -56,7 +56,7 @@ Rcpp::List RcppLaggedNeighbor4Lattice(const Rcpp::List& nb, int lagNum) {
   return result;
 }
 
-// Wrapper function to calculate accumulated lagged values and return a List
+// Wrapper function to calculate lagged values and return a List
 // [[Rcpp::export]]
 Rcpp::List RcppLaggedVar4Lattice(const Rcpp::NumericVector& vec,
                                  const Rcpp::List& nb, int lagNum) {

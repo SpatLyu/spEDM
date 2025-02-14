@@ -30,8 +30,9 @@ std::vector<std::vector<int>> CppLaggedNeighbor4Lattice(const std::vector<std::v
 /**
  * @brief Computes the lagged values for a given vector based on the neighborhood and lag number.
  *
- * This function first computes the lagged neighbors for each point in the lattice using the `CppLaggedNeighbor4Lattice` function.
- * Then, it uses these indices to extract the corresponding values from the input vector `vec`.
+ * This function first computes the lagged neighbors for each unit in the spatial lattice data using
+ * the `CppLaggedNeighbor4Lattice` function. Then, remove duplicates indices with previous lagNum (if lagNum > 0)
+ * and it uses these indices to extract the corresponding values from the input vector `vec`.
  *
  * @param vec The input vector of double values for which lagged values are to be computed.
  * @param nb The neighborhood matrix, where each row represents the neighbors of a unit in the spatial lattice data.
