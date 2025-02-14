@@ -81,16 +81,18 @@ std::vector<std::vector<double>> CppLaggedVar4Grid(
  *   tau  - The spatial lag step for constructing lagged state-space vectors.
  *
  * Returns:
- *   A 2D vector (matrix) where each row contains the original value (if includeself is true)
- *   and the averaged lagged variables for each embedding dimension (column).
+ *   A 2D vector (matrix) where each row contains the averaged lagged variables for
+ *   each embedding dimension (column). Columns where all values are NaN are removed.
  *
- * If includeself is true, the first column will contain the original values from mat,
- * and the subsequent columns will contain averaged lagged variables computed using the specified lag numbers.
- * If includeself is false, the matrix will only contain the averaged lagged variables.
+ * Note:
+ *   When tau = 0, the lagged variables are calculated for lag steps of 0, 1, ..., E-1.
+ *   When tau > 0, the lagged variables are calculated for lag steps of tau, 2*tau, ..., E*tau,
+ *   and this means the actual lag steps form an arithmetic sequence with a common difference of tau.
  */
 std::vector<std::vector<double>> GenGridEmbeddings(
     const std::vector<std::vector<double>>& mat,
     int E,
-    int tau);
+    int tau
+);
 
 #endif // CppGridUtils_H
