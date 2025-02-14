@@ -180,6 +180,23 @@ std::vector<std::vector<double>> GenGridEmbeddings(
       // Calculate the lagged variables for the current lagNum
       std::vector<std::vector<double>> lagged_vars = CppLaggedVar4Grid(mat, lagNum);
 
+      // Check if all elements in lagged_vars are NaN
+      bool allNaN = true;
+      for (const auto& subset : lagged_vars) {
+        for (double val : subset) {
+          if (!std::isnan(val)) {
+            allNaN = false;
+            break;
+          }
+        }
+        if (!allNaN) break;
+      }
+
+      // If all elements are NaN, stop further processing for this lagNum
+      if (allNaN) {
+        break;
+      }
+
       // Fill the current column (lagNum) with the averaged lagged variables
       row = 0;
       for (const auto& subset : lagged_vars) {
@@ -207,6 +224,23 @@ std::vector<std::vector<double>> GenGridEmbeddings(
       // Calculate the lagged variables for the current lagNum
       std::vector<std::vector<double>> lagged_vars = CppLaggedVar4Grid(mat, lagNum);
 
+      // Check if all elements in lagged_vars are NaN
+      bool allNaN = true;
+      for (const auto& subset : lagged_vars) {
+        for (double val : subset) {
+          if (!std::isnan(val)) {
+            allNaN = false;
+            break;
+          }
+        }
+        if (!allNaN) break;
+      }
+
+      // If all elements are NaN, stop further processing for this lagNum
+      if (allNaN) {
+        break;
+      }
+
       // Fill the current column (i-1) with the averaged lagged variables
       row = 0;
       for (const auto& subset : lagged_vars) {
@@ -227,25 +261,43 @@ std::vector<std::vector<double>> GenGridEmbeddings(
     }
   }
 
-  // Check and remove columns where all values are NaN
-  for (int col = result[0].size() - 1; col >= 0; --col) {
-    bool allNaN = true;
-    for (int row = 0; row < result.size(); ++row) {
+  // Calculate validColumns (indices of columns that are not entirely NaN)
+  std::vector<size_t> validColumns; // To store indices of valid columns
+
+  // Iterate over each column to check if it contains any non-NaN values
+  for (size_t col = 0; col < result[0].size(); ++col) {
+    bool isAllNaN = true;
+    for (size_t row = 0; row < result.size(); ++row) {
       if (!std::isnan(result[row][col])) {
-        allNaN = false;
+        isAllNaN = false;
         break;
       }
     }
-    if (allNaN) {
-      // Remove the column if all values are NaN
-      for (auto& row : result) {
-        row.erase(row.begin() + col);
-      }
+    if (!isAllNaN) {
+      validColumns.push_back(col); // Store the index of valid columns
     }
   }
 
-  // Return the result matrix with grid embeddings
-  return result;
+  // If no columns are removed, return the original result
+  if (validColumns.size() == result[0].size()) {
+    return result;
+  } else {
+    // // Issue a warning if any columns are removed
+    // std::cerr << "Warning: remove all-NA embedding vector columns caused by excessive embedding dimension E selection." << std::endl;
+
+    // Construct the filtered embeddings matrix
+    std::vector<std::vector<double>> filteredEmbeddings;
+    for (size_t row = 0; row < result.size(); ++row) {
+      std::vector<double> filteredRow;
+      for (size_t col : validColumns) {
+        filteredRow.push_back(result[row][col]);
+      }
+      filteredEmbeddings.push_back(filteredRow);
+    }
+
+    // Return the filtered embeddings matrix
+    return filteredEmbeddings;
+  }
 }
 
 // /**
