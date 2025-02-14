@@ -71,25 +71,23 @@ std::vector<std::vector<double>> CppLaggedVar4Grid(
 );
 
 /**
- * Generates grid embeddings by calculating lagged variables for each element in a grid matrix,
- * and stores the results in a matrix where each row represents an element and each column represents
- * a different lagged value or the original element.
+ * Generates embeddings for a given vector and neighborhood matrix by computing the mean of neighbor values
+ * for each spatial unit, considering both the immediate neighbors and neighbors up to a specified lag number.
  *
  * Parameters:
- *   mat  - A 2D vector representing the grid data.
- *   E    - The number of embedding dimensions (columns in the resulting matrix).
+ *   vec  - A vector of values, one for each spatial unit, to be embedded.
+ *   nb   - A 2D matrix where each row represents the neighbors of a spatial unit.
+ *   E    - The embedding dimension, specifying how many lags to consider in the embeddings.
  *   tau  - The spatial lag step for constructing lagged state-space vectors.
  *
  * Returns:
- *   A 2D vector (matrix) where each row contains the original value (if includeself is true)
- *   and the averaged lagged variables for each embedding dimension (column).
- *
- * If includeself is true, the first column will contain the original values from mat,
- * and the subsequent columns will contain averaged lagged variables computed using the specified lag numbers.
- * If includeself is false, the matrix will only contain the averaged lagged variables.
+ *   A 2D vector representing the embeddings for each spatial unit, where each spatial unit has a row in the matrix
+ *   corresponding to its embedding values for each lag number. If no valid embedding columns remain after removing
+ *   columns containing only NaN values, a filtered matrix is returned.
  */
-std::vector<std::vector<double>> GenGridEmbeddings(
-    const std::vector<std::vector<double>>& mat,
+std::vector<std::vector<double>> GenLatticeEmbeddings(
+    const std::vector<double>& vec,
+    const std::vector<std::vector<int>>& nb,
     int E,
     int tau);
 
