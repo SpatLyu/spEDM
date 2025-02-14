@@ -38,6 +38,26 @@ std::vector<std::vector<int>> nb2vec(const Rcpp::List& nb) {
 
 // Wrapper function to calculate lagged indices and return a List
 // [[Rcpp::export]]
+Rcpp::List RcppLaggedNeighbor4Lattice(const Rcpp::List& nb, int lagNum) {
+  int n = nb.size();
+
+  // Convert Rcpp::List to std::vector<std::vector<int>>
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
+
+  // Calculate lagged indices
+  std::vector<std::vector<int>> lagged_indices = CppLaggedNeighbor4Lattice(nb_vec, lagNum);
+
+  // Convert std::vector<std::vector<int>> to Rcpp::List
+  Rcpp::List result(n);
+  for (int i = 0; i < n; ++i) {
+    result[i] = Rcpp::wrap(lagged_indices[i]);
+  }
+
+  return result;
+}
+
+// Wrapper function to calculate lagged indices and return a List
+// [[Rcpp::export]]
 Rcpp::List RcppLaggedVar4Lattice(const Rcpp::List& nb, int lagNum) {
   int n = nb.size();
 
@@ -403,7 +423,7 @@ Rcpp::NumericVector RcppGCMC4Lattice(
   std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
   std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
   std::vector<int> maxr_std = Rcpp::as<std::vector<int>>(max_r);
-  
+
   // convert R based 1 index to C++ based 0 index
   for (size_t i = 0; i < pred_std.size(); ++i) {
     pred_std[i] -= 1;

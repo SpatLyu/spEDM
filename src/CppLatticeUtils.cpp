@@ -7,91 +7,92 @@
 #include <cmath> // For std::isnan
 
 /**
- * Computes lagged neighborhoods for a given lag number, expanding the neighborhoods iteratively
- * by including neighbors of neighbors up to the specified lag number.
+ * Computes the lagged neighbors for a lattice structure up to a given lag number.
  *
- * Parameters:
- *   spNeighbor - A 2D vector representing the spatial neighbors for each spatial unit, where each element is a list of neighbors.
- *   lagNum     - The number of lags to expand the neighborhoods.
- *                A lagNum of 0 means the original spNeighbor is returned.
- *                A lagNum of 1 means only the immediate neighbors are considered.
- *                A lagNum >= 2 means the neighborhoods are expanded by including neighbors of neighbors, and the result is filtered to remove the immediate neighbors.
+ * For lagNum=0, returns each node's index as its own neighbor.
+ * For lagNum>=1, recursively expands neighbors by looking up each previous level's
+ * neighbors, combines all results up to lagNum, and deduplicates. Empty results are
+ * filled with std::numeric_limits<int>::min().
  *
- * Returns:
- *   A 2D vector where each element is a list of cumulative neighbor indices for a given spatial unit,
- *   including neighbors up to the specified lagNum. If lagNum is 0, the original spNeighbor is returned.
- *   If lagNum >= 2, the result is filtered to remove the immediate neighbors (lagNum = 1). If the filtered result is empty, it is filled with std::numeric_limits<int>::min().
+ * @param spNeighbor A 2D vector where each element contains indices of immediate neighbors.
+ * @param lagNum The number of lag steps to compute.
+ * @return A 2D vector of lagged neighbors for each spatial unit.
  */
-std::vector<std::vector<int>> CppLaggedNeighbor4Lattice(std::vector<std::vector<int>> spNeighbor,
+std::vector<std::vector<int>> CppLaggedNeighbor4Lattice(const std::vector<std::vector<int>>& spNeighbor,
                                                         int lagNum) {
-  // If lagNum is less than 0, return an empty vector
+  // Handle negative lagNum: return empty vector
   if (lagNum < 0) {
     return {};
   }
 
-  // If lagNum is 0, return the original spNeighbor
+  // If lagNum is 0, return a vector of indices
   if (lagNum == 0) {
-    return spNeighbor;
+    std::vector<std::vector<int>> result;
+    for (size_t i = 0; i < spNeighbor.size(); ++i) {
+      result.push_back({static_cast<int>(i)});
+    }
+    return result;
   }
 
-  // Initialize the lagged neighborhood as a copy of spNeighbor
-  std::vector<std::vector<int>> lagSpNeighbor = spNeighbor;
+  // // Handle lagNum=1: return the immediate neighbors directly
+  // if (lagNum == 1) {
+  //   return spNeighbor;
+  // }
 
-  // If lagNum is greater than 1, expand the neighborhoods
-  if (lagNum > 1) {
-    std::vector<std::vector<int>> curSpNeighbor = spNeighbor;
+  // Recursively compute results for lagNum-1
+  std::vector<std::vector<int>> prevResult = CppLaggedNeighbor4Lattice(spNeighbor, lagNum - 1);
+  std::vector<std::vector<int>> currentResult;
 
-    // Iterate from 1 to lagNum - 1 to expand the neighborhoods
-    for (int lag = 1; lag < lagNum; ++lag) {
-      std::vector<std::vector<int>> preSpNeighbor = curSpNeighbor;
+  int n = spNeighbor.size();
+  // Process each spatial unit to compute current lagNum's neighbors
+  for (int i = 0; i < n; ++i) {
+    // Check if prevResult[i] size is equal to n
+    if (prevResult[i].size() == spNeighbor.size()) {
+      currentResult.push_back(prevResult[i]);
+      continue; // Skip further processing for this index
+    }
 
-      // Update the current neighborhood for each node
-      for (size_t i = 0; i < preSpNeighbor.size(); ++i) {
-        std::vector<int> curChain = preSpNeighbor[i];
-        std::vector<int> newRings = curChain;
+    std::unordered_set<int> mergedSet;
 
-        // Expand the neighborhood by including neighbors of neighbors
-        for (int neigh : curChain) {
-          if (neigh >= 0) {
-            std::vector<int> nextChain = spNeighbor[neigh]; // Use 0-based index
-            newRings.insert(newRings.end(), nextChain.begin(), nextChain.end());
-          }
-        }
-
-        // Remove duplicates and sort the new neighborhood
-        std::sort(newRings.begin(), newRings.end());
-        newRings.erase(std::unique(newRings.begin(), newRings.end()), newRings.end());
-
-        // Update the current neighborhood
-        curSpNeighbor[i] = newRings;
+    // Add previous lag results (lag from 0 to lagNum-1)
+    for (int elem : prevResult[i]) {
+      if (elem != std::numeric_limits<int>::min()) {
+        mergedSet.insert(elem);
       }
     }
 
-    // Remove the original neighbors and the node itself from the lagged neighborhood
-    for (size_t i = 0; i < curSpNeighbor.size(); ++i) {
-      std::vector<int> newRings = curSpNeighbor[i];
-      std::vector<int> original = spNeighbor[i];
-      original.push_back(i); // Add the node itself (0-based index)
-
-      // Remove original neighbors and the node itself
-      std::vector<int> filteredRings;
-      for (int ring : newRings) {
-        if (std::find(original.begin(), original.end(), ring) == original.end()) {
-          filteredRings.push_back(ring);
-        }
+    // Collect new elements from neighbors of previous lag's results
+    std::unordered_set<int> newElements;
+    for (int j : prevResult[i]) {
+      // Skip invalid indices and placeholder min value
+      if (j == std::numeric_limits<int>::min() || j < 0 || j >= n) {
+        continue;
       }
-
-      // If the filtered result is empty, fill it with std::numeric_limits<int>::min()
-      if (filteredRings.empty()) {
-        filteredRings.push_back(std::numeric_limits<int>::min());
+      // Aggregate neighbors of j from spNeighbor
+      for (int k : spNeighbor[j]) {
+        newElements.insert(k);
       }
-
-      // Update the lagged neighborhood
-      lagSpNeighbor[i] = filteredRings;
     }
+
+    // Merge new elements into the set
+    for (int elem : newElements) {
+      mergedSet.insert(elem);
+    }
+
+    // Convert set to sorted vector and deduplicate
+    std::vector<int> vec(mergedSet.begin(), mergedSet.end());
+    std::sort(vec.begin(), vec.end());
+    vec.erase(std::unique(vec.begin(), vec.end()), vec.end());
+
+    // Handle empty result by filling with min value
+    if (vec.empty()) {
+      vec.push_back(std::numeric_limits<int>::min());
+    }
+
+    currentResult.push_back(vec);
   }
 
-  return lagSpNeighbor;
+  return currentResult;
 }
 
 /**

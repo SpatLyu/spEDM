@@ -10,22 +10,18 @@
 #include <cmath> // For std::isnan
 
 /**
- * Computes lagged neighborhoods for a given lag number, expanding the neighborhoods iteratively
- * by including neighbors of neighbors up to the specified lag number.
+ * Computes the lagged neighbors for a lattice structure up to a given lag number.
  *
- * Parameters:
- *   spNeighbor - A 2D vector representing the spatial neighbors for each spatial unit, where each element is a list of neighbors.
- *   lagNum     - The number of lags to expand the neighborhoods.
- *                A lagNum of 0 means the original spNeighbor is returned.
- *                A lagNum of 1 means only the immediate neighbors are considered.
- *                A lagNum >= 2 means the neighborhoods are expanded by including neighbors of neighbors, and the result is filtered to remove the immediate neighbors.
+ * For lagNum=0, returns each node's index as its own neighbor.
+ * For lagNum>=1, recursively expands neighbors by looking up each previous level's
+ * neighbors, combines all results up to lagNum, and deduplicates. Empty results are
+ * filled with std::numeric_limits<int>::min().
  *
- * Returns:
- *   A 2D vector where each element is a list of cumulative neighbor indices for a given spatial unit,
- *   including neighbors up to the specified lagNum. If lagNum is 0, the original spNeighbor is returned.
- *   If lagNum >= 2, the result is filtered to remove the immediate neighbors (lagNum = 1). If the filtered result is empty, it is filled with std::numeric_limits<int>::min().
+ * @param spNeighbor A 2D vector where each element contains indices of immediate neighbors.
+ * @param lagNum The number of lag steps to compute.
+ * @return A 2D vector of lagged neighbors for each spatial unit.
  */
-std::vector<std::vector<int>> CppLaggedNeighbor4Lattice(std::vector<std::vector<int>> spNeighbor,
+std::vector<std::vector<int>> CppLaggedNeighbor4Lattice(const std::vector<std::vector<int>>& spNeighbor,
                                                         int lagNum);
 
 /**

@@ -53,6 +53,10 @@ OptThetaParm <- function(Thetamat) {
     .Call(`_spEDM_OptThetaParm`, Thetamat)
 }
 
+RcppLaggedNeighbor4Lattice <- function(nb, lagNum) {
+    .Call(`_spEDM_RcppLaggedNeighbor4Lattice`, nb, lagNum)
+}
+
 RcppLaggedVar4Lattice <- function(nb, lagNum) {
     .Call(`_spEDM_RcppLaggedVar4Lattice`, nb, lagNum)
 }
