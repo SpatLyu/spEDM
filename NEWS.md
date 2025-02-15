@@ -2,7 +2,7 @@
 
 ### enhancements
 
-* Reimplement indexing of lag values and generating embedding vectors for spatial lattice data [#186](https://github.com/stscl/spEDM/pull/186) and spatial grid data [#183](https://github.com/stscl/spEDM/pull/183).
+* Reimplement indexing of lag values and generating embedding vectors for spatial lattice data ([#186](https://github.com/stscl/spEDM/pull/186),[#184](https://github.com/stscl/spEDM/pull/184)) and spatial grid data ([#183](https://github.com/stscl/spEDM/pull/183),[#181](https://github.com/stscl/spEDM/pull/181).
 
 * Centered around example cases in the `gccm` vignette (#170).
 
