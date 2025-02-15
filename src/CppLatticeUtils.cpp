@@ -208,24 +208,87 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
   int endLagNum = (tau == 0) ? E - 1 : E * tau;
   int step = (tau == 0) ? 1 : tau;
 
-  // Generate a sequence of lagNum values that need to be computed, including lagNum and lagNum - step
-  std::unordered_set<int> lagNumNeedSet;
+  for (int lagNum = 0; lagNum <= endLagNum; ++lagNum){
+    if (lagNum == 0) { // return the current index (C++ based 0 index) for each spatial unit;
+      std::vector<std::vector<int>> result_temp;
+      for (size_t i = 0; i < nb.size(); ++i) {
+        result_temp.push_back({static_cast<int>(i)});
+      }
+      laggedResultsMap[lagNum] = result_temp;
+    } else { // when lagNum > 0, recursively compute results for lagNum-1;
+      std::vector<std::vector<int>> prevResult = laggedResultsMap[lagNum - 1];
+      std::vector<std::vector<int>> currentResult;
 
-  for (int lagNum = startLagNum; lagNum <= endLagNum; lagNum += step) {
-    lagNumNeedSet.insert(lagNum);
-    if (lagNum > 0) {
-      lagNumNeedSet.insert(lagNum - 1);
+      // Process each spatial unit to compute current lagNum's neighbors
+      for (int i = 0; i < n; ++i) {
+        // Check if prevResult[i] size is equal to n
+        if (prevResult[i].size() == nb.size()) {
+          currentResult.push_back(prevResult[i]);
+          continue; // Skip further processing for this index
+        }
+
+        std::unordered_set<int> mergedSet;
+
+        // Add previous lag results (lag from 0 to lagNum-1)
+        for (int elem : prevResult[i]) {
+          if (elem != std::numeric_limits<int>::min()) {
+            mergedSet.insert(elem);
+          }
+        }
+
+        // Collect new elements from neighbors of previous lag's results
+        std::unordered_set<int> newElements;
+        for (int j : prevResult[i]) {
+          // Skip invalid indices and placeholder min value
+          if (j == std::numeric_limits<int>::min() || j < 0 || j >= n) {
+            continue;
+          }
+          // Aggregate neighbors of j from spNeighbor
+          for (int k : nb[j]) {
+            newElements.insert(k);
+          }
+        }
+
+        // Merge new elements into the set
+        for (int elem : newElements) {
+          mergedSet.insert(elem);
+        }
+
+        // Convert set to sorted vector and deduplicate
+        std::vector<int> vec(mergedSet.begin(), mergedSet.end());
+        std::sort(vec.begin(), vec.end());
+        vec.erase(std::unique(vec.begin(), vec.end()), vec.end());
+
+        // Handle empty result by filling with min value
+        if (vec.empty()) {
+          vec.push_back(std::numeric_limits<int>::min());
+        }
+
+        currentResult.push_back(vec);
+      }
+
+      laggedResultsMap[lagNum] = currentResult;
     }
   }
 
-  // Convert the set to a sorted vector for sequential computation
-  std::vector<int> lagNumNeed(lagNumNeedSet.begin(), lagNumNeedSet.end());
-  std::sort(lagNumNeed.begin(), lagNumNeed.end());
-
-  // Compute lagged neighbor results for each lagNum in the sorted sequence
-  for (int lagNum : lagNumNeed) {
-    laggedResultsMap[lagNum] = CppLaggedNeighbor4Lattice(nb, lagNum);
-  }
+  // // Generate a sequence of lagNum values that need to be computed, including lagNum and lagNum - step
+  // std::unordered_set<int> lagNumNeedSet;
+  //
+  // for (int lagNum = startLagNum; lagNum <= endLagNum; lagNum += step) {
+  //   lagNumNeedSet.insert(lagNum);
+  //   if (lagNum > 0) {
+  //     lagNumNeedSet.insert(lagNum - 1);
+  //   }
+  // }
+  //
+  // // Convert the set to a sorted vector for sequential computation
+  // std::vector<int> lagNumNeed(lagNumNeedSet.begin(), lagNumNeedSet.end());
+  // std::sort(lagNumNeed.begin(), lagNumNeed.end());
+  //
+  // // Compute lagged neighbor results for each lagNum in the sorted sequence
+  // for (int lagNum : lagNumNeed) {
+  //   laggedResultsMap[lagNum] = CppLaggedNeighbor4Lattice(nb, lagNum);
+  // }
 
   // Compute embeddings for each lag number
   for (int lagNum = startLagNum; lagNum <= endLagNum; lagNum += step) {
