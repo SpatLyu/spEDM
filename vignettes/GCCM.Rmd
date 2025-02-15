@@ -1,7 +1,7 @@
 ---
 title: "Geographical Convergent Cross Mapping (GCCM)"
 author: "Wenbo Lv"
-date: "2025-02-13"
+date: "2025-02-15"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{GCCM}
@@ -56,7 +56,7 @@ popd_nb
 popdensity = readr::read_csv(system.file("extdata/popdensity.csv",
                                          package = "spEDM"))
 ## Rows: 2806 Columns: 7
-## ── Column specification ───────────────────────────────────────────────────────────────────────────
+## ── Column specification ────────────────────────────────────────────────────────────────────────────────
 ## Delimiter: ","
 ## dbl (7): x, y, popDensity, DEM, Tem, Pre, slop
 ## 
@@ -154,7 +154,7 @@ pd_res = gccm(data = popd_sf,
               progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 17.47827 mins
+## Time difference of 22.65241 mins
 pd_res
 ##    libsizes Pre->popDensity popDensity->Pre
 ## 1        10      0.04677107     0.008049854
@@ -306,7 +306,7 @@ npp_res = gccm(data = npp,
                progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 35.96636 mins
+## Time difference of 27.14689 mins
 npp_res
 ##    libsizes   pre->npp   npp->pre
 ## 1        10 0.06372496 0.06203369
