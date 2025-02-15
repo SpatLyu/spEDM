@@ -208,7 +208,7 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
   int endLagNum = (tau == 0) ? E - 1 : E * tau;
   int step = (tau == 0) ? 1 : tau;
 
-  for (int lagNum = startLagNum; lagNum <= endLagNum; ++lagNum){
+  for (int lagNum = 0; lagNum <= endLagNum; ++lagNum){
     if (lagNum == 0) { // return the current index (C++ based 0 index) for each spatial unit;
       std::vector<std::vector<int>> result_temp;
       for (size_t i = 0; i < nb.size(); ++i) {
