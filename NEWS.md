@@ -6,10 +6,6 @@
 
 * Centered around example cases in the `gccm` vignette (#170).
 
-### bug fixes
-
-* Fix incorrect result when extracting lag values from spatial grid data (#180).
-
 # spEDM 1.4
 
 ### enhancements
