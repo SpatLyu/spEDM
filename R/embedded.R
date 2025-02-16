@@ -1,12 +1,12 @@
 methods::setGeneric("embedded", function(data, ...) standardGeneric("embedded"))
 
-.embedded_sf_method = \(data,target,E = 3,tau = 1,nb = NULL,trend.rm = TRUE){
+.embedded_sf_method = \(data,target,E = 3,tau = 1,nb = NULL,trend.rm = FALSE){
   vec = .uni_lattice(data,target,trend.rm)
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   return(RcppGenLatticeEmbeddings(vec,nb,E,tau))
 }
 
-.embedded_spatraster_method = \(data,target,E = 3,tau = 1,trend.rm = TRUE){
+.embedded_spatraster_method = \(data,target,E = 3,tau = 1,trend.rm = FALSE){
   mat = .uni_grid(data,target,trend.rm)
   return(RcppGenGridEmbeddings(mat,E,tau))
 }

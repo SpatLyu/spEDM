@@ -6,9 +6,9 @@
 \alias{embedded,SpatRaster-method}
 \title{generate embeddings}
 \usage{
-\S4method{embedded}{sf}(data, target, E = 3, tau = 1, nb = NULL, trend.rm = TRUE)
+\S4method{embedded}{sf}(data, target, E = 3, tau = 1, nb = NULL, trend.rm = FALSE)
 
-\S4method{embedded}{SpatRaster}(data, target, E = 3, tau = 1, trend.rm = TRUE)
+\S4method{embedded}{SpatRaster}(data, target, E = 3, tau = 1, trend.rm = FALSE)
 }
 \arguments{
 \item{data}{The observation data.}
