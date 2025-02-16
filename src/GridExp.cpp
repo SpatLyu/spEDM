@@ -230,7 +230,7 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& mat,
 Rcpp::NumericMatrix RcppGCCM4Grid(
     const Rcpp::NumericMatrix& xMatrix,
     const Rcpp::NumericMatrix& yMatrix,
-    const Rcpp::IntegerVector& libsizes,
+    const Rcpp::IntegerMatrix& libsizes,
     const Rcpp::IntegerMatrix& pred,
     int E,
     int tau,
@@ -256,14 +256,14 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
     }
   }
 
-  // // Convert Rcpp IntegerVector to std::vector<int>
-  // std::vector<int> libsizes_cpp(libsizes.size());
-  // for (int i = 0; i < libsizes.size(); ++i) {
-  //   libsizes_cpp[i] = libsizes[i];
-  // }
-
-  // Convert Rcpp::IntegerVector to std::vector<int>
-  std::vector<int> libsizes_cpp = Rcpp::as<std::vector<int>>(libsizes);
+  // Convert Rcpp::IntegerMatrix libsizes to std::vector<std::vector<int>> libsizes_cpp
+  std::vector<std::vector<int>> libsizes_cpp;
+  int nlibsizes = libsizes.nrow();
+  // Fill all the sub-vector
+  for (int i = 0; i < nlibsizes; ++i) {
+    libsizes_cpp[0].push_back(libsizes(i, 0));
+    libsizes_cpp[1].push_back(libsizes(i, 1));
+  }
 
   // Convert Rcpp IntegerMatrix to std::vector<std::pair<int, int>>
   std::vector<std::pair<int, int>> pred_cpp(pred.nrow());

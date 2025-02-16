@@ -181,7 +181,7 @@ std::vector<std::vector<double>> GCCM4Grid(
   size_t row_size_count = row_lib_sizes.size();
   size_t col_size_count = col_lib_sizes.size();
   size_t min_size = std::min(row_size_count, col_size_count);
-  size_t max_size = std::max(row_size_count, col_size_count);
+  // size_t max_size = std::max(row_size_count, col_size_count);
 
   // Fill unique_lib_size_pairs based on the shorter vector
   for (size_t i = 0; i < min_size; ++i) {
