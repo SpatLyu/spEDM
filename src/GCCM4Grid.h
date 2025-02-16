@@ -20,27 +20,30 @@
  * This function calculates the cross mapping between a predictor variable (xEmbedings) and a response variable (yPred)
  * over a 2D grid, using either Simplex Projection or S-Mapping.
  *
- * @param xEmbedings   A 2D matrix of the predictor variable's embeddings (spatial cross-section data).
- * @param yPred        A 1D vector of the response variable's values (spatial cross-section data).
- * @param lib_size     The size of the library (number of spatial units) used for prediction.
- * @param pred         A vector of pairs representing the indices (row, column) of spatial units to be predicted.
- * @param totalRow     The total number of rows in the 2D grid.
- * @param totalCol     The total number of columns in the 2D grid.
- * @param b            The number of nearest neighbors to use for prediction.
- * @param simplex      If true, use Simplex Projection; if false, use S-Mapping.
- * @param theta        The distance weighting parameter for S-Mapping (ignored if simplex is true).
+ * @param xEmbedings     A 2D matrix of the predictor variable's embeddings (spatial cross-section data).
+ * @param yPred          A 1D vector of the response variable's values (spatial cross-section data).
+ * @param lib_sizes      A vector of two integers, where the first element is the row-wise library size and the second
+ *                       element is the column-wise library size.
+ * @param pred_indices   A boolean vector indicating which spatial units to be predicted.
+ * @param totalRow       The total number of rows in the 2D grid.
+ * @param totalCol       The total number of columns in the 2D grid.
+ * @param b              The number of nearest neighbors to use for prediction.
+ * @param simplex        If true, use Simplex Projection; if false, use S-Mapping.
+ * @param theta          The distance weighting parameter for S-Mapping (ignored if simplex is true).
+ * @param row_size_mark  If ture, use the row-wise libsize to mark the libsize; if false, use col-wise libsize.
  * @return             A vector of pairs, where each pair contains the library size and the corresponding cross mapping result.
  */
 std::vector<std::pair<int, double>> GCCMSingle4Grid(
     const std::vector<std::vector<double>>& xEmbedings,
     const std::vector<double>& yPred,
-    int lib_size,
-    const std::vector<std::pair<int, int>>& pred,
+    const std::vector<int>& lib_sizes,
+    const std::vector<bool>& pred_indices,
     int totalRow,
     int totalCol,
     int b,
     bool simplex,
-    double theta);
+    double theta,
+    bool row_size_mark);
 
 /**
  * Perform Geographical Convergent Cross Mapping (GCCM) for spatial grid data.
@@ -50,7 +53,8 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
  *
  * @param xMatrix      A 2D matrix of the predictor variable's values (spatial cross-section data).
  * @param yMatrix      A 2D matrix of the response variable's values (spatial cross-section data).
- * @param lib_sizes    A vector of library sizes (number of spatial units) to use for prediction.
+ * @param lib_sizes    A 2D vector where the first sub-vector contains row-wise library sizes and the second sub-vector
+ *                     contains column-wise library sizes.
  * @param pred         A vector of pairs representing the indices (row, column) of spatial units to be predicted.
  * @param E            The number of dimensions for attractor reconstruction.
  * @param tau          The step of spatial lags for prediction.
@@ -65,7 +69,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
 std::vector<std::vector<double>> GCCM4Grid(
     const std::vector<std::vector<double>>& xMatrix,
     const std::vector<std::vector<double>>& yMatrix,
-    const std::vector<int>& lib_sizes,
+    const std::vector<std::vector<int>>& lib_sizes,
     const std::vector<std::pair<int, int>>& pred,
     int E,
     int tau,
