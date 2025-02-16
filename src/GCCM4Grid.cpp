@@ -22,8 +22,9 @@
  *
  * @param xEmbedings   A 2D matrix of the predictor variable's embeddings (spatial cross-section data).
  * @param yPred        A 1D vector of the response variable's values (spatial cross-section data).
- * @param lib_size     The size of the library (number of spatial units) used for prediction.
- * @param pred         A vector of pairs representing the indices (row, column) of spatial units to be predicted.
+ * @param lib_sizes    A vector of two integers, where the first element is the row-wise library size and the second
+ *                     element is the column-wise library size.
+ * @param pred_indices A boolean vector indicating which spatial units to be predicted.
  * @param totalRow     The total number of rows in the 2D grid.
  * @param totalCol     The total number of columns in the 2D grid.
  * @param b            The number of nearest neighbors to use for prediction.
@@ -34,8 +35,8 @@
 std::vector<std::pair<int, double>> GCCMSingle4Grid(
     const std::vector<std::vector<double>>& xEmbedings,
     const std::vector<double>& yPred,
-    int lib_size,
-    const std::vector<std::pair<int, int>>& pred,
+    const std::vector<int>& lib_sizes,
+    const std::vector<bool>& pred_indices,
     int totalRow,
     int totalCol,
     int b,
@@ -45,28 +46,19 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
   std::vector<std::pair<int, double>> x_xmap_y;
   double rho;
 
-  for (int r = 1; r <= totalRow - lib_size + 1; ++r) {
-    for (int c = 1; c <= totalCol - lib_size + 1; ++c) {
+  // Extract row-wise and column-wise library sizes
+  int lib_size_row = lib_sizes[0];
+  int lib_size_col = lib_sizes[1];
 
-      // Initialize prediction and library indices
-      std::vector<bool> pred_indices(totalRow * totalCol, false);
+  for (int r = 1; r <= totalRow - lib_size_row + 1; ++r) {
+    for (int c = 1; c <= totalCol - lib_size_col + 1; ++c) {
+
+      // Initialize library indices
       std::vector<bool> lib_indices(totalRow * totalCol, false);
 
-      // Set prediction indices
-      for (const auto& p : pred) {
-        pred_indices[LocateGridIndices(p.first, p.second, totalRow, totalCol)] = true;
-      }
-
-      // Exclude NA values in yPred from prediction indices
-      for (size_t i = 0; i < yPred.size(); ++i) {
-        if (std::isnan(yPred[i])) {
-          pred_indices[i] = false;
-        }
-      }
-
       // Set library indices
-      for (int i = r; i < r + lib_size; ++i) {
-        for (int j = c; j < c + lib_size; ++j) {
+      for (int i = r; i < r + lib_size_row; ++i) {
+        for (int j = c; j < c + lib_size_col; ++j) {
           lib_indices[LocateGridIndices(i, j, totalRow, totalCol)] = true;
         }
       }
@@ -78,7 +70,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
           ++na_count;
         }
       }
-      if (na_count > (lib_size * lib_size) / 2) {
+      if (na_count > (lib_size_row * lib_size_col) / 2) {
         continue;
       }
 
@@ -88,7 +80,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
       } else {
         rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
       }
-      x_xmap_y.emplace_back(lib_size, rho);
+      x_xmap_y.emplace_back(lib_size_row * lib_size_col, rho); // Store the product of row and column library sizes
     }
   }
 
@@ -103,7 +95,8 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
  *
  * @param xMatrix      A 2D matrix of the predictor variable's values (spatial cross-section data).
  * @param yMatrix      A 2D matrix of the response variable's values (spatial cross-section data).
- * @param lib_sizes    A vector of library sizes (number of spatial units) to use for prediction.
+ * @param lib_sizes    A 2D vector where the first sub-vector contains row-wise library sizes and the second sub-vector
+ *                     contains column-wise library sizes.
  * @param pred         A vector of pairs representing the indices (row, column) of spatial units to be predicted.
  * @param E            The number of dimensions for attractor reconstruction.
  * @param tau          The step of spatial lags for prediction.
@@ -118,7 +111,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
 std::vector<std::vector<double>> GCCM4Grid(
     const std::vector<std::vector<double>>& xMatrix,
     const std::vector<std::vector<double>>& yMatrix,
-    const std::vector<int>& lib_sizes,
+    const std::vector<std::vector<int>>& lib_sizes,
     const std::vector<std::pair<int, int>>& pred,
     int E,
     int tau,
@@ -151,51 +144,100 @@ std::vector<std::vector<double>> GCCM4Grid(
   std::vector<std::vector<double>> xEmbedings = GenGridEmbeddings(xMatrix, E, tau);
 
   // Ensure the maximum value does not exceed totalRow or totalCol
-  int max_lib_size = std::max(totalRow, totalCol);
+  int max_lib_size_row = totalRow;
+  int max_lib_size_col = totalCol;
 
-  std::vector<int> unique_lib_sizes(lib_sizes.begin(), lib_sizes.end());
+  // Extract row-wise and column-wise library sizes
+  std::vector<int> row_lib_sizes = lib_sizes[0];
+  std::vector<int> col_lib_sizes = lib_sizes[1];
 
-  // Transform to ensure no size exceeds max_lib_size
-  std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
-                 [&](int size) { return std::min(size, max_lib_size); });
+  // Transform to ensure no size exceeds max_lib_size_row or max_lib_size_col
+  std::transform(row_lib_sizes.begin(), row_lib_sizes.end(), row_lib_sizes.begin(),
+                 [&](int size) { return std::min(size, max_lib_size_row); });
+  std::transform(col_lib_sizes.begin(), col_lib_sizes.end(), col_lib_sizes.begin(),
+                 [&](int size) { return std::min(size, max_lib_size_col); });
 
-  // Ensure the minimum value in unique_lib_sizes is E + 2 (uncomment this section if required)
-  // std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
-  //                [&](int size) { return std::max(size, E + 2); });
+  // Remove duplicates in row-wise and column-wise library sizes
+  row_lib_sizes.erase(std::unique(row_lib_sizes.begin(), row_lib_sizes.end()), row_lib_sizes.end());
+  col_lib_sizes.erase(std::unique(col_lib_sizes.begin(), col_lib_sizes.end()), col_lib_sizes.end());
 
-  // Remove duplicates
-  unique_lib_sizes.erase(std::unique(unique_lib_sizes.begin(), unique_lib_sizes.end()), unique_lib_sizes.end());
+  // // Generate unique pairs of row-wise and column-wise library sizes
+  // std::vector<std::pair<int, int>> unique_lib_size_pairs;
+  // for (int row_size : row_lib_sizes) {
+  //   for (int col_size : col_lib_sizes) {
+  //     unique_lib_size_pairs.emplace_back(row_size, col_size);
+  //   }
+  // }
+
+  // Generate unique pairs of row-wise and column-wise library sizes
+  std::vector<std::pair<int, int>> unique_lib_size_pairs;
+
+  // Determine which library size vector is longer
+  size_t row_size_count = row_lib_sizes.size();
+  size_t col_size_count = col_lib_sizes.size();
+  size_t min_size = std::min(row_size_count, col_size_count);
+  size_t max_size = std::max(row_size_count, col_size_count);
+
+  // Fill unique_lib_size_pairs based on the shorter vector
+  for (size_t i = 0; i < min_size; ++i) {
+    unique_lib_size_pairs.emplace_back(row_lib_sizes[i], col_lib_sizes[i]);
+  }
+
+  // Handle the excess elements for the longer vector
+  if (row_size_count > col_size_count) {
+    for (size_t i = min_size; i < row_size_count; ++i) {
+      unique_lib_size_pairs.emplace_back(row_lib_sizes[i], col_lib_sizes.back()); // Pair with the max value of col_lib_sizes
+    }
+  } else {
+    for (size_t i = min_size; i < col_size_count; ++i) {
+      unique_lib_size_pairs.emplace_back(row_lib_sizes.back(), col_lib_sizes[i]); // Pair with the max value of row_lib_sizes
+    }
+  }
+
+  // Set prediction indices
+  std::vector<bool> pred_indices(totalRow * totalCol, false);
+  for (const auto& p : pred) {
+    pred_indices[LocateGridIndices(p.first, p.second, totalRow, totalCol)] = true;
+  }
+
+  // Exclude NA values in yPred from prediction indices
+  for (size_t i = 0; i < yPred.size(); ++i) {
+    if (std::isnan(yPred[i])) {
+      pred_indices[i] = false;
+    }
+  }
 
   // Initialize the result container
   std::vector<std::pair<int, double>> x_xmap_y;
 
   // // Iterate over each library size
-  // for (int lib_size : unique_lib_sizes) {
-  //   // Perform single grid cross-mapping for the current library size
-  //   auto results = GCCMSingle4Grid(xEmbedings, yPred, lib_size, pred, totalRow, totalCol, b, simplex, theta);
-  //
-  //   // Append the results to the main result container
+  // for (size_t i = 0; i < unique_lib_size_pairs.size(); ++i) {
+  //   int lib_size_row = unique_lib_size_pairs[i].first;
+  //   int lib_size_col = unique_lib_size_pairs[i].second;
+  //   auto results = GCCMSingle4Grid(xEmbedings, yPred, {lib_size_row, lib_size_col}, pred_indices, totalRow, totalCol, b, simplex, theta);
   //   x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
   // }
 
   // Perform the operations using RcppThread
   if (progressbar) {
-    RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
-    RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
-      int lib_size = unique_lib_sizes[i];
-      auto results = GCCMSingle4Grid(xEmbedings, yPred, lib_size, pred, totalRow, totalCol, b, simplex, theta);
+    RcppThread::ProgressBar bar(unique_lib_size_pairs.size(), 1);
+    RcppThread::parallelFor(0, unique_lib_size_pairs.size(), [&](size_t i) {
+      int lib_size_row = unique_lib_size_pairs[i].first;
+      int lib_size_col = unique_lib_size_pairs[i].second;
+      auto results = GCCMSingle4Grid(xEmbedings, yPred, {lib_size_row, lib_size_col}, pred_indices, totalRow, totalCol, b, simplex, theta);
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
       bar++;
     }, threads_sizet);
   } else {
-    RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
-      int lib_size = unique_lib_sizes[i];
-      auto results = GCCMSingle4Grid(xEmbedings, yPred, lib_size, pred, totalRow, totalCol, b, simplex, theta);
+    RcppThread::parallelFor(0, unique_lib_size_pairs.size(), [&](size_t i) {
+      int lib_size_row = unique_lib_size_pairs[i].first;
+      int lib_size_col = unique_lib_size_pairs[i].second;
+      auto results = GCCMSingle4Grid(xEmbedings, yPred, {lib_size_row, lib_size_col}, pred_indices, totalRow, totalCol, b, simplex, theta);
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
     }, threads_sizet);
   }
 
-  // Group by the first int and compute the mean
+  // Group by the first int (library size) and compute the mean
   std::map<int, std::vector<double>> grouped_results;
   for (const auto& result : x_xmap_y) {
     grouped_results[result.first].push_back(result.second);
@@ -221,3 +263,211 @@ std::vector<std::vector<double>> GCCM4Grid(
 
   return final_results;
 }
+
+// /**
+//  * Perform Grid-based Geographical Convergent Cross Mapping (GCCM) for a single library size and pred indice.
+//  *
+//  * This function calculates the cross mapping between a predictor variable (xEmbedings) and a response variable (yPred)
+//  * over a 2D grid, using either Simplex Projection or S-Mapping.
+//  *
+//  * @param xEmbedings   A 2D matrix of the predictor variable's embeddings (spatial cross-section data).
+//  * @param yPred        A 1D vector of the response variable's values (spatial cross-section data).
+//  * @param lib_size     The size of the library (number of spatial units) used for prediction.
+//  * @param pred         A vector of pairs representing the indices (row, column) of spatial units to be predicted.
+//  * @param totalRow     The total number of rows in the 2D grid.
+//  * @param totalCol     The total number of columns in the 2D grid.
+//  * @param b            The number of nearest neighbors to use for prediction.
+//  * @param simplex      If true, use Simplex Projection; if false, use S-Mapping.
+//  * @param theta        The distance weighting parameter for S-Mapping (ignored if simplex is true).
+//  * @return             A vector of pairs, where each pair contains the library size and the corresponding cross mapping result.
+//  */
+// std::vector<std::pair<int, double>> GCCMSingle4Grid(
+//     const std::vector<std::vector<double>>& xEmbedings,
+//     const std::vector<double>& yPred,
+//     int lib_size,
+//     const std::vector<std::pair<int, int>>& pred,
+//     int totalRow,
+//     int totalCol,
+//     int b,
+//     bool simplex,
+//     double theta) {
+//
+//   std::vector<std::pair<int, double>> x_xmap_y;
+//   double rho;
+//
+//   for (int r = 1; r <= totalRow - lib_size + 1; ++r) {
+//     for (int c = 1; c <= totalCol - lib_size + 1; ++c) {
+//
+//       // Initialize prediction and library indices
+//       std::vector<bool> pred_indices(totalRow * totalCol, false);
+//       std::vector<bool> lib_indices(totalRow * totalCol, false);
+//
+//       // Set prediction indices
+//       for (const auto& p : pred) {
+//         pred_indices[LocateGridIndices(p.first, p.second, totalRow, totalCol)] = true;
+//       }
+//
+//       // Exclude NA values in yPred from prediction indices
+//       for (size_t i = 0; i < yPred.size(); ++i) {
+//         if (std::isnan(yPred[i])) {
+//           pred_indices[i] = false;
+//         }
+//       }
+//
+//       // Set library indices
+//       for (int i = r; i < r + lib_size; ++i) {
+//         for (int j = c; j < c + lib_size; ++j) {
+//           lib_indices[LocateGridIndices(i, j, totalRow, totalCol)] = true;
+//         }
+//       }
+//
+//       // Check if more than half of the library is NA
+//       int na_count = 0;
+//       for (size_t i = 0; i < lib_indices.size(); ++i) {
+//         if (lib_indices[i] && std::isnan(yPred[i])) {
+//           ++na_count;
+//         }
+//       }
+//       if (na_count > (lib_size * lib_size) / 2) {
+//         continue;
+//       }
+//
+//       // Run cross map and store results
+//       if (simplex){
+//         rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
+//       } else {
+//         rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
+//       }
+//       x_xmap_y.emplace_back(lib_size, rho);
+//     }
+//   }
+//
+//   return x_xmap_y;
+// }
+//
+// /**
+//  * Perform Geographical Convergent Cross Mapping (GCCM) for spatial grid data.
+//  *
+//  * This function calculates the cross mapping between predictor variables (xMatrix) and response variables (yMatrix)
+//  * over a 2D grid, using either Simplex Projection or S-Mapping. It supports parallel processing and progress tracking.
+//  *
+//  * @param xMatrix      A 2D matrix of the predictor variable's values (spatial cross-section data).
+//  * @param yMatrix      A 2D matrix of the response variable's values (spatial cross-section data).
+//  * @param lib_sizes    A vector of library sizes (number of spatial units) to use for prediction.
+//  * @param pred         A vector of pairs representing the indices (row, column) of spatial units to be predicted.
+//  * @param E            The number of dimensions for attractor reconstruction.
+//  * @param tau          The step of spatial lags for prediction.
+//  * @param b            The number of nearest neighbors to use for prediction.
+//  * @param simplex      If true, use Simplex Projection; if false, use S-Mapping.
+//  * @param theta        The distance weighting parameter for S-Mapping (ignored if simplex is true).
+//  * @param threads      The number of threads to use for parallel processing.
+//  * @param progressbar  If true, display a progress bar during computation.
+//  * @return             A 2D vector where each row contains the library size, mean cross mapping result,
+//  *                     significance, and confidence interval bounds.
+//  */
+// std::vector<std::vector<double>> GCCM4Grid(
+//     const std::vector<std::vector<double>>& xMatrix,
+//     const std::vector<std::vector<double>>& yMatrix,
+//     const std::vector<int>& lib_sizes,
+//     const std::vector<std::pair<int, int>>& pred,
+//     int E,
+//     int tau,
+//     int b,
+//     bool simplex,
+//     double theta,
+//     int threads,
+//     bool progressbar
+// ) {
+//   // If b is not provided correctly, default it to E + 2
+//   if (b <= 0) {
+//     b = E + 2;
+//   }
+//
+//   size_t threads_sizet = static_cast<size_t>(threads);
+//   unsigned int max_threads = std::thread::hardware_concurrency();
+//   threads_sizet = std::min(static_cast<size_t>(max_threads), threads_sizet);
+//
+//   // Get the dimensions of the xMatrix
+//   int totalRow = xMatrix.size();
+//   int totalCol = xMatrix[0].size();
+//
+//   // Flatten yMatrix into a 1D array (row-major order)
+//   std::vector<double> yPred;
+//   for (const auto& row : yMatrix) {
+//     yPred.insert(yPred.end(), row.begin(), row.end());
+//   }
+//
+//   // Generate embeddings for xMatrix
+//   std::vector<std::vector<double>> xEmbedings = GenGridEmbeddings(xMatrix, E, tau);
+//
+//   // Ensure the maximum value does not exceed totalRow or totalCol
+//   int max_lib_size = std::max(totalRow, totalCol);
+//
+//   std::vector<int> unique_lib_sizes(lib_sizes.begin(), lib_sizes.end());
+//
+//   // Transform to ensure no size exceeds max_lib_size
+//   std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
+//                  [&](int size) { return std::min(size, max_lib_size); });
+//
+//   // Ensure the minimum value in unique_lib_sizes is E + 2 (uncomment this section if required)
+//   // std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
+//   //                [&](int size) { return std::max(size, E + 2); });
+//
+//   // Remove duplicates
+//   unique_lib_sizes.erase(std::unique(unique_lib_sizes.begin(), unique_lib_sizes.end()), unique_lib_sizes.end());
+//
+//   // Initialize the result container
+//   std::vector<std::pair<int, double>> x_xmap_y;
+//
+//   // // Iterate over each library size
+//   // for (int lib_size : unique_lib_sizes) {
+//   //   // Perform single grid cross-mapping for the current library size
+//   //   auto results = GCCMSingle4Grid(xEmbedings, yPred, lib_size, pred, totalRow, totalCol, b, simplex, theta);
+//   //
+//   //   // Append the results to the main result container
+//   //   x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+//   // }
+//
+//   // Perform the operations using RcppThread
+//   if (progressbar) {
+//     RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
+//     RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
+//       int lib_size = unique_lib_sizes[i];
+//       auto results = GCCMSingle4Grid(xEmbedings, yPred, lib_size, pred, totalRow, totalCol, b, simplex, theta);
+//       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+//       bar++;
+//     }, threads_sizet);
+//   } else {
+//     RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
+//       int lib_size = unique_lib_sizes[i];
+//       auto results = GCCMSingle4Grid(xEmbedings, yPred, lib_size, pred, totalRow, totalCol, b, simplex, theta);
+//       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+//     }, threads_sizet);
+//   }
+//
+//   // Group by the first int and compute the mean
+//   std::map<int, std::vector<double>> grouped_results;
+//   for (const auto& result : x_xmap_y) {
+//     grouped_results[result.first].push_back(result.second);
+//   }
+//
+//   std::vector<std::vector<double>> final_results;
+//   for (const auto& group : grouped_results) {
+//     double mean_value = CppMean(group.second, true);
+//     final_results.push_back({static_cast<double>(group.first), mean_value});
+//   }
+//
+//   int n = pred.size();
+//   // Calculate significance and confidence interval for each result
+//   for (size_t i = 0; i < final_results.size(); ++i) {
+//     double rho = final_results[i][1];
+//     double significance = CppCorSignificance(rho, n);
+//     std::vector<double> confidence_interval = CppCorConfidence(rho, n);
+//
+//     final_results[i].push_back(significance);
+//     final_results[i].push_back(confidence_interval[0]);
+//     final_results[i].push_back(confidence_interval[1]);
+//   }
+//
+//   return final_results;
+// }
