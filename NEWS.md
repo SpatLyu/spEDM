@@ -2,6 +2,8 @@
 
 ### enhancements
 
+* Implement `trend.rm` support in the R API for `embedded`, `simplex`, and `smap` methods to align with `gccm` behavior (#191).
+
 * Reimplement indexing of lag values and generating embedding vectors for spatial lattice data ([#186](https://github.com/stscl/spEDM/pull/186),[#184](https://github.com/stscl/spEDM/pull/184)) and spatial grid data ([#183](https://github.com/stscl/spEDM/pull/183),[#181](https://github.com/stscl/spEDM/pull/181)).
 
 * Centered around example cases in the `gccm` vignette (#170).
