@@ -149,7 +149,7 @@ startTime = Sys.time()
 npp_res = gccm(data = npp,
                cause = "pre",
                effect = "npp",
-               libsizes = seq(10,160,10),
+               libsizes = seq(10,130,5),
                E = c(2,6),
                k = 5,
                pred = pred,
