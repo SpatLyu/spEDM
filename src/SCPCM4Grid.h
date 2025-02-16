@@ -21,27 +21,29 @@
  * This function calculates the partial cross mapping between a predictor variable (xEmbedings) and a response
  * variable (yPred) over a 2D grid, using either Simplex Projection or S-Mapping.
  *
- * @param xEmbedings   A 2D matrix of the predictor variable's embeddings (spatial cross-section data).
- * @param yPred        A 1D vector of the response variable's values (spatial cross-section data).
- * @param controls     A 2D matrix that stores the control variables.
- * @param lib_size     The size of the library (number of spatial units) used for prediction.
- * @param pred         A vector of pairs representing the indices (row, column) of spatial units to be predicted.
- * @param conEs        Number of dimensions for the attractor reconstruction with control variables
- * @param taus:        Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
- * @param totalRow     The total number of rows in the 2D grid.
- * @param totalCol     The total number of columns in the 2D grid.
- * @param b            The number of nearest neighbors to use for prediction.
- * @param simplex      If true, use Simplex Projection; if false, use S-Mapping.
- * @param theta        The distance weighting parameter for S-Mapping (ignored if simplex is true).
- * @param cumulate     Whether to cumulate the partial correlations.
- * @return             A vector contains the library size and the corresponding cross mapping and partial cross mapping result.
+ * @param xEmbedings     A 2D matrix of the predictor variable's embeddings (spatial cross-section data).
+ * @param yPred          A 1D vector of the response variable's values (spatial cross-section data).
+ * @param controls       A 2D matrix that stores the control variables.
+ * @param lib_sizes      A vector of two integers, where the first element is the row-wise library size and the second element is the column-wise library size.
+ * @param pred_indices   A boolean vector indicating which spatial units to be predicted.
+ * @param conEs          Number of dimensions for the attractor reconstruction with control variables
+ * @param taus:          Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
+ * @param totalRow       The total number of rows in the 2D grid.
+ * @param totalCol       The total number of columns in the 2D grid.
+ * @param b              The number of nearest neighbors to use for prediction.
+ * @param simplex        If true, use Simplex Projection; if false, use S-Mapping.
+ * @param theta          The distance weighting parameter for S-Mapping (ignored if simplex is true).
+ * @param cumulate       Whether to cumulate the partial correlations.
+ * @param row_size_mark  If ture, use the row-wise libsize to mark the libsize; if false, use col-wise libsize.
+ *
+ * @return  A vector contains the library size and the corresponding cross mapping and partial cross mapping result.
  */
 std::vector<PartialCorRes> SCPCMSingle4Grid(
     const std::vector<std::vector<double>>& xEmbedings,
     const std::vector<double>& yPred,
     const std::vector<std::vector<double>>& controls,
-    int lib_size,
-    const std::vector<std::pair<int, int>>& pred,
+    const std::vector<int>& lib_sizes,
+    const std::vector<bool>& pred_indices,
     const std::vector<int>& conEs,
     const std::vector<int>& taus,
     int totalRow,
@@ -49,7 +51,8 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
     int b,
     bool simplex,
     double theta,
-    bool cumulate);
+    bool cumulate,
+    bool row_size_mark);
 
 /**
  * Perform Grid-based Spatially Convergent Partial Cross Mapping (SCPCM) for multiple library sizes.
@@ -62,7 +65,7 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
  * - xMatrix: A 2D matrix of predictor variable values (spatial cross-section data).
  * - yMatrix: A 2D matrix of response variable values (spatial cross-section data).
  * - zMatrixs: A 2D matrix storing the control variables.
- * - lib_sizes: A vector specifying different library sizes (number of spatial units) for SCPCM analysis.
+ * - lib_sizes: lib_sizes    A 2D vector where the first sub-vector contains row-wise library sizes and the second sub-vector contains column-wise library sizes.
  * - pred: A vector of pairs representing the indices (row, column) of spatial units to be predicted.
  * - Es: A vector specifying the embedding dimensions for attractor reconstruction using `xMatrix` and control variables.
  * - taus: A vector specifying the spatial lag steps for constructing lagged state-space vectors with control variables.
@@ -89,7 +92,7 @@ std::vector<std::vector<double>> SCPCM4Grid(
     const std::vector<std::vector<double>>& xMatrix,     // Two dimension matrix of X variable
     const std::vector<std::vector<double>>& yMatrix,     // Two dimension matrix of Y variable
     const std::vector<std::vector<double>>& zMatrixs,    // 2D matrix that stores the control variables
-    const std::vector<int>& lib_sizes,                   // Vector of library sizes to use
+    const std::vector<std::vector<int>>& lib_sizes,      // Vector of library sizes to use
     const std::vector<std::pair<int, int>>& pred,        // Indices of spatial units to be predicted
     const std::vector<int>& Es,                          // Number of dimensions for the attractor reconstruction with the x and control variables
     const std::vector<int>& taus,                        // Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
