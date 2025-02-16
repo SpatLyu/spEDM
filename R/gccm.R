@@ -17,10 +17,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   names(data) = .varname
 
   if (trend.rm){
-    data = dplyr::bind_cols(data,coords)
-    for (i in seq_along(.varname)){
-      data[,.varname[i]] = sdsfun::rm_lineartrend(paste0(.varname[i],"~X+Y"), data = data)
-    }
+    data = .internal_trend_rm(data,.varname,coords)
   }
 
   cause = data[,"cause",drop = TRUE]
@@ -48,9 +45,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 
   dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
   if (trend.rm){
-    for (i in seq_along(.varname)){
-      dtf[,.varname[i]] = sdsfun::rm_lineartrend(paste0(.varname[i],"~x+y"), data = dtf)
-    }
+    dtf = .internal_trend_rm(dtf,.varname)
   }
   causemat = matrix(dtf[,"cause"],nrow = terra::nrow(data),byrow = TRUE)
   effectmat = matrix(dtf[,"effect"],nrow = terra::nrow(data),byrow = TRUE)
