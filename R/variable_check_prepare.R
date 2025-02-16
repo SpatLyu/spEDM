@@ -54,3 +54,17 @@
   }
   return(nb)
 }
+
+.internal_trend_rm = \(data,.varname,coords = NULL){
+  if (is.null(coords)){
+    for (i in seq_along(.varname)){
+      data[,.varname[i]] = sdsfun::rm_lineartrend(paste0(.varname[i],"~x+y"), data = data)
+    }
+  } else {
+    data = dplyr::bind_cols(data,coords)
+    for (i in seq_along(.varname)){
+      data[,.varname[i]] = sdsfun::rm_lineartrend(paste0(.varname[i],"~X+Y"), data = data)
+    }
+  }
+  return(data)
+}
