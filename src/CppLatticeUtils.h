@@ -11,33 +11,41 @@
 #include <cmath> // For std::isnan
 
 /**
- * Computes the lagged neighbors for a lattice structure up to a given lag number.
+ * Computes the lagged neighbors for a lattice structure up to a specified lag number.
+ * This function recursively expands the neighbors at each lag step, starting with direct neighbors
+ * (lag 0), and including neighbors from previous lags, until reaching the specified lag number.
  *
- * For lagNum=0, returns each node's index as its own neighbor.
- * For lagNum>=1, recursively expands neighbors by looking up each previous level's
- * neighbors, combines all results up to lagNum, and deduplicates. Empty results are
- * filled with std::numeric_limits<int>::min().
+ * For lagNum = 0, each spatial unit is its own neighbor.
+ * For lagNum >= 1, the function accumulates neighbors from all previous lags and deduplicates the results.
+ * Empty results are filled with `std::numeric_limits<int>::min()` to indicate no neighbors.
  *
- * @note This returns an accumulated sequence of neighbor indices.
+ * Parameters:
+ *   spNeighbor - A 2D vector where each element contains indices of immediate neighbors for each spatial unit.
+ *   lagNum     - The number of lag steps to compute (must be non-negative).
  *
- * @param spNeighbor A 2D vector where each element contains indices of immediate neighbors.
- * @param lagNum The number of lag steps to compute.
- * @return A 2D vector of lagged neighbors for each spatial unit.
+ * Returns:
+ *   A 2D vector where each element represents the list of lagged neighbors for a spatial unit.
  */
 std::vector<std::vector<int>> CppLaggedNeighbor4Lattice(const std::vector<std::vector<int>>& spNeighbor,
                                                         int lagNum);
 
 /**
- * @brief Computes the lagged values for a given vector based on the neighborhood and lag number.
+ * Computes the lagged values for a given vector based on the neighborhood structure and lag number.
+ * This function first determines the lagged neighbors for each spatial unit using
+ * the `CppLaggedNeighbor4Lattice` function. If `lagNum > 0`, it removes duplicate indices that
+ * appeared in previous lag levels to ensure each lag level captures only new neighbors.
  *
- * This function first computes the lagged neighbors for each unit in the spatial lattice data using
- * the `CppLaggedNeighbor4Lattice` function. Then, remove duplicates indices with previous lagNum (if lagNum > 0)
- * and it uses these indices to extract the corresponding values from the input vector `vec`.
+ * For each spatial unit, the function extracts values from `vec` corresponding to the computed
+ * lagged neighbors. If no valid neighbors exist, the function fills the result with `NaN`.
  *
- * @param vec The input vector of double values for which lagged values are to be computed.
- * @param nb The neighborhood matrix, where each row represents the neighbors of a unit in the spatial lattice data.
- * @param lagNum The number of lags to consider.
- * @return A vector of vectors containing the lagged values for each unit in the spatial lattice data.
+ * Parameters:
+ *   vec    - A vector of double values representing the spatial data for each unit.
+ *   nb     - A 2D vector where each row contains indices of immediate neighbors in the lattice.
+ *   lagNum - The number of lag steps to compute (must be non-negative).
+ *
+ * Returns:
+ *   A 2D vector where each element contains the lagged values corresponding to the computed
+ *   lagged neighbors for each spatial unit.
  */
 std::vector<std::vector<double>> CppLaggedVar4Lattice(const std::vector<double>& vec,
                                                       const std::vector<std::vector<int>>& nb,
