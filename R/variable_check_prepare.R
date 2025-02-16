@@ -18,6 +18,13 @@
   return(x[(x<=totalnum)&(x>=1)])
 }
 
+.check_libsizes_gird = \(libsizes){
+  if (!inherits(libsizes,"matrix")){
+    libsizes = cbind(libsizes,libsizes)
+  }
+  return(libsizes)
+}
+
 .internal_varname = \(mediator = NULL){
   .varname = c("cause","effect")
   if (!is.null(mediator)){
