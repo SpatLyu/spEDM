@@ -16,6 +16,78 @@
 #include <RcppThread.h>
 
 /**
+ * @brief Computes the partial correlation between a spatial cross-section series and its prediction
+ *        using the Simplex Projection method, incorporating control variables in a grid-based spatial setting.
+ *
+ * This function reconstructs the state-space and applies Simplex Projection prediction while accounting
+ * for control variables in a spatial grid data. The process can be cumulative or independent in incorporating
+ * control variables.
+ *
+ * @param vectors: Reconstructed state-space where each row represents a separate vector/state.
+ * @param target: Spatial cross-section series used as the prediction target.
+ * @param controls: Cross-sectional data of control variables, stored row-wise.
+ * @param lib_indices: Boolean vector indicating which states to include when searching for neighbors.
+ * @param pred_indices: Boolean vector indicating which states to predict from.
+ * @param conEs: Vector specifying the number of dimensions for attractor reconstruction with control variables.
+ * @param taus: Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
+ * @param num_neighbors: Number of neighbors to use for Simplex Projection.
+ * @param nrow: Number of rows in the input spatial grid data.
+ * @param cumulate: Boolean flag to determine whether to cumulate the partial correlations.
+ * @return A vector of size 2 containing:
+ *         - rho[0]: Pearson correlation between the target and its predicted values.
+ *         - rho[1]: Partial correlation between the target and its predicted values, adjusting for control variables.
+ */
+std::vector<double> PartialSimplex4Grid(
+    const std::vector<std::vector<double>>& vectors,
+    const std::vector<double>& target,
+    const std::vector<std::vector<double>>& controls,
+    const std::vector<bool>& lib_indices,
+    const std::vector<bool>& pred_indices,
+    const std::vector<int>& conEs,
+    const std::vector<int>& taus,
+    int num_neighbors,
+    int nrow,
+    bool cumulate
+);
+
+/**
+ * @brief Computes the partial correlation between a spatial cross-section series and its prediction
+ *        using the S-Map method, incorporating control variables in a grid-based spatial setting.
+ *
+ * This function reconstructs the state-space and applies S-Map prediction while accounting for
+ * control variables in a spatial grid data. The process can be cumulative or independent in incorporating
+ * control variables.
+ *
+ * @param vectors: Reconstructed state-space where each row represents a separate vector/state.
+ * @param target: Spatial cross-section series used as the prediction target.
+ * @param controls: Cross-sectional data of control variables, stored row-wise.
+ * @param lib_indices: Boolean vector indicating which states to include when searching for neighbors.
+ * @param pred_indices: Boolean vector indicating which states to predict from.
+ * @param conEs: Vector specifying the number of dimensions for attractor reconstruction with control variables.
+ * @param taus: Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
+ * @param num_neighbors: Number of neighbors to use for Simplex Projection.
+ * @param nrow: Number of rows in the input spatial grid data.
+ * @param theta: Weighting parameter for distances in the S-Map method.
+ * @param cumulate: Boolean flag to determine whether to cumulate the partial correlations.
+ * @return A vector of size 2 containing:
+ *         - rho[0]: Pearson correlation between the target and its predicted values.
+ *         - rho[1]: Partial correlation between the target and its predicted values, adjusting for control variables.
+ */
+std::vector<double> PartialSMap4Grid(
+    const std::vector<std::vector<double>>& vectors,
+    const std::vector<double>& target,
+    const std::vector<std::vector<double>>& controls,
+    const std::vector<bool>& lib_indices,
+    const std::vector<bool>& pred_indices,
+    const std::vector<int>& conEs,
+    const std::vector<int>& taus,
+    int num_neighbors,
+    int nrow,
+    double theta,
+    bool cumulate
+);
+
+/**
  * Perform Grid-based Spatially Convergent Partial Cross Mapping (SCPCM) for a single library size.
  *
  * This function calculates the partial cross mapping between a predictor variable (xEmbedings) and a response
