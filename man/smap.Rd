@@ -17,7 +17,8 @@
   theta = c(0, 1e-04, 3e-04, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 0.5, 0.75, 1, 1.5, 2, 3,
     4, 6, 8),
   nb = NULL,
-  threads = detectThreads()
+  threads = detectThreads(),
+  trend.rm = TRUE
 )
 
 \S4method{smap}{SpatRaster}(
@@ -30,7 +31,8 @@
   k = 4,
   theta = c(0, 1e-04, 3e-04, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 0.5, 0.75, 1, 1.5, 2, 3,
     4, 6, 8),
-  threads = detectThreads()
+  threads = detectThreads(),
+  trend.rm = TRUE
 )
 }
 \arguments{
@@ -53,6 +55,8 @@
 \item{nb}{(optional) The neighbours list.}
 
 \item{threads}{(optional) Number of threads.}
+
+\item{trend.rm}{(optional) Whether to remove the linear trend.}
 }
 \value{
 A matrix

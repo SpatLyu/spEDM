@@ -15,7 +15,8 @@
   tau = 1,
   k = 4,
   nb = NULL,
-  threads = detectThreads()
+  threads = detectThreads(),
+  trend.rm = TRUE
 )
 
 \S4method{simplex}{SpatRaster}(
@@ -26,7 +27,8 @@
   E = 1:10,
   tau = 1,
   k = 4,
-  threads = detectThreads()
+  threads = detectThreads(),
+  trend.rm = TRUE
 )
 }
 \arguments{
@@ -47,6 +49,8 @@
 \item{nb}{(optional) The neighbours list.}
 
 \item{threads}{(optional) Number of threads.}
+
+\item{trend.rm}{(optional) Whether to remove the linear trend.}
 }
 \value{
 A matrix
