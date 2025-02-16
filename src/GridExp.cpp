@@ -307,7 +307,7 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
     const Rcpp::NumericMatrix& xMatrix,
     const Rcpp::NumericMatrix& yMatrix,
     const Rcpp::NumericMatrix& zMatrix,
-    const Rcpp::IntegerVector& libsizes,
+    const Rcpp::IntegerMatrix& libsizes,
     const Rcpp::IntegerVector& E,
     const Rcpp::IntegerVector& tau,
     const Rcpp::IntegerMatrix& pred,
@@ -341,20 +341,16 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
     zMatrix_cpp[i] = Rcpp::as<std::vector<double>>(covvar);
   }
 
-  // // Convert Rcpp IntegerVector to std::vector<int>
-  // std::vector<int> lib_sizes_cpp(lib_sizes.size());
-  // for (int i = 0; i < lib_sizes.size(); ++i) {
-  //   lib_sizes_cpp[i] = lib_sizes[i];
-  // }
-  //
-  // // Convert Rcpp IntegerVector to std::vector<int>
-  // std::vector<int> E_cpp(E.size());
-  // for (int i = 0; i < E.size(); ++i) {
-  //   E_cpp[i] = E[i];
-  // }
+  // Convert Rcpp::IntegerMatrix libsizes to std::vector<std::vector<int>> libsizes_cpp
+  std::vector<std::vector<int>> libsizes_cpp(2);
+  int nlibsizes = libsizes.nrow();
+  // Fill all the sub-vector
+  for (int i = 0; i < nlibsizes; ++i) {
+    libsizes_cpp[0].push_back(libsizes(i, 0));
+    libsizes_cpp[1].push_back(libsizes(i, 1));
+  }
 
   // Convert Rcpp::IntegerVector to std::vector<int>
-  std::vector<int> libsizes_cpp = Rcpp::as<std::vector<int>>(libsizes);
   std::vector<int> E_cpp = Rcpp::as<std::vector<int>>(E);
   std::vector<int> tau_cpp = Rcpp::as<std::vector<int>>(tau);
 
