@@ -36,7 +36,7 @@ std::vector<std::vector<int>> nb2vec(const Rcpp::List& nb) {
   return result;
 }
 
-// Wrapper function to calculate accumulated lagged indices and return a List
+// Wrapper function to calculate accumulated lagged neighbor indices and return a List
 // [[Rcpp::export]]
 Rcpp::List RcppLaggedNeighbor4Lattice(const Rcpp::List& nb, int lagNum) {
   int n = nb.size();
