@@ -178,26 +178,26 @@ std::vector<std::vector<double>> GCCM4Grid(
   std::vector<std::pair<int, int>> unique_lib_size_pairs;
 
   // Determine which library size vector is longer
-  size_t row_size_count = row_lib_sizes.size();
-  size_t col_size_count = col_lib_sizes.size();
-  size_t min_size = std::min(row_size_count, col_size_count);
-  // size_t max_size = std::max(row_size_count, col_size_count);
+  int row_size_count = row_lib_sizes.size();
+  int col_size_count = col_lib_sizes.size();
+  int min_size = std::min(row_size_count, col_size_count);
+  // int max_size = std::max(row_size_count, col_size_count);
 
   // Fill unique_lib_size_pairs based on the shorter vector
-  for (size_t i = 0; i < min_size; ++i) {
+  for (int i = 0; i < min_size; ++i) {
     unique_lib_size_pairs.emplace_back(row_lib_sizes[i], col_lib_sizes[i]);
   }
 
   bool row_size_mark = true;
   // Handle the excess elements for the longer vector
   if (row_size_count > col_size_count) {
-    for (size_t i = min_size; i < row_size_count; ++i) {
+    for (int i = min_size; i < row_size_count; ++i) {
       unique_lib_size_pairs.emplace_back(row_lib_sizes[i], col_lib_sizes.back()); // Pair with the max value of col_lib_sizes
     }
   }
 
   if (row_size_count < col_size_count) {
-    for (size_t i = min_size; i < col_size_count; ++i) {
+    for (int i = min_size; i < col_size_count; ++i) {
       unique_lib_size_pairs.emplace_back(row_lib_sizes.back(), col_lib_sizes[i]); // Pair with the max value of row_lib_sizes
     }
     row_size_mark = false;
