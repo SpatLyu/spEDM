@@ -18,19 +18,6 @@
   return(x[(x<=totalnum)&(x>=1)])
 }
 
-.uni_lattice = \(data,target){
-  target = .check_character(target)
-  res = data[,target,drop = TRUE]
-  return(res)
-}
-
-.uni_grid = \(data,target){
-  target = .check_character(target)
-  data = data[[target]]
-  res = matrix(terra::values(data),nrow = terra::nrow(data),byrow = TRUE)
-  return(res)
-}
-
 .internal_varname = \(mediator = NULL){
   .varname = c("cause","effect")
   if (!is.null(mediator)){
@@ -67,4 +54,29 @@
     }
   }
   return(data)
+}
+
+.uni_lattice = \(data,target,trend.rm){
+  target = .check_character(target)
+  coords = as.data.frame(sdsfun::sf_coordinates(data))
+  data = sf::st_drop_geometry(data)
+  data = data[,target]
+  names(data) = "target"
+  if (trend.rm){
+    data = .internal_trend_rm(data,"target",coords)
+  }
+  res = data[,"target",drop = TRUE]
+  return(res)
+}
+
+.uni_grid = \(data,target,trend.rm){
+  target = .check_character(target)
+  data = data[[target]]
+  names(data) = "target"
+  dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
+  if (trend.rm){
+    dtf = .internal_trend_rm(dtf,"target")
+  }
+  res = matrix(dtf[,"target"],nrow = terra::nrow(data),byrow = TRUE)
+  return(res)
 }
