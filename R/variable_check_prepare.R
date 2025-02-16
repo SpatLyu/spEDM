@@ -20,7 +20,7 @@
 
 .check_libsizes_gird = \(libsizes){
   if (!inherits(libsizes,"matrix")){
-    libsizes = cbind(libsizes,libsizes)
+    libsizes = matrix(rep(libsizes,times = 2),ncol = 2)
   }
   return(libsizes)
 }

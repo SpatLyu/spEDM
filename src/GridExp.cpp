@@ -257,7 +257,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
   }
 
   // Convert Rcpp::IntegerMatrix libsizes to std::vector<std::vector<int>> libsizes_cpp
-  std::vector<std::vector<int>> libsizes_cpp;
+  std::vector<std::vector<int>> libsizes_cpp(2);
   int nlibsizes = libsizes.nrow();
   // Fill all the sub-vector
   for (int i = 0; i < nlibsizes; ++i) {
