@@ -43,8 +43,8 @@ Load the county-level population density data from the `spEDM` package:
 ``` r
 popd_nb = spdep::read.gal(system.file("extdata/popdensity_nb.gal",
                                       package = "spEDM"))
-## Warning in spdep::read.gal(system.file("extdata/popdensity_nb.gal", package = "spEDM")): neighbour
-## object has 4 sub-graphs
+## Warning in spdep::read.gal(system.file("extdata/popdensity_nb.gal", package = "spEDM")): neighbour object
+## has 4 sub-graphs
 popd_nb
 ## Neighbour list object:
 ## Number of regions: 2806 
@@ -56,7 +56,7 @@ popd_nb
 popdensity = readr::read_csv(system.file("extdata/popdensity.csv",
                                          package = "spEDM"))
 ## Rows: 2806 Columns: 7
-## ── Column specification ────────────────────────────────────────────────────────────────────────────────
+## ── Column specification ───────────────────────────────────────────────────────────────────────────────────
 ## Delimiter: ","
 ## dbl (7): x, y, popDensity, DEM, Tem, Pre, slop
 ## 
@@ -154,7 +154,7 @@ pd_res = gccm(data = popd_sf,
               progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 24.76082 mins
+## Time difference of 22.16427 mins
 pd_res
 ##    libsizes Pre->popDensity popDensity->Pre
 ## 1        10      0.05589905      0.01004636
@@ -227,7 +227,7 @@ terra::plot(npp, nc = 3,
             legend = FALSE)
 ```
 
-![**Figure 2**. Maps of farmland NPP and climate factors.](../man/figures/gccm/fig2-1.png)
+![**Figure 2**. Maps of farmland NPP and climate factors.](man/figures/gccm/fig2-1.png)
 
 *To save the computation time, we will aggregate the data by 3 times and select 3000 non-NA pixels to predict:*
 
@@ -306,7 +306,7 @@ npp_res = gccm(data = npp,
                progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 29.72249 mins
+## Time difference of 21.88618 mins
 npp_res
 ##    libsizes    pre->npp   npp->pre
 ## 1        10  0.09958645 0.06203369
