@@ -2,6 +2,8 @@
 
 ### enhancements
 
+* Apply parallel-level computations for each libsize when executing `gccm` on spatial grid data (#203).
+
 * Add `trend.rm` option in the R API for `embedded`, `simplex`, and `smap` methods to align with `gccm` behavior (#191).
 
 * Reimplement indexing of lag values and embedding vector generation for spatial lattice ([#186](https://github.com/stscl/spEDM/pull/186),[#184](https://github.com/stscl/spEDM/pull/184)) and grid data ([#183](https://github.com/stscl/spEDM/pull/183),[#181](https://github.com/stscl/spEDM/pull/181)).
