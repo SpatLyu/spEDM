@@ -46,10 +46,6 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
     double theta,
     size_t threads,
     bool row_size_mark) {
-
-  std::vector<std::pair<int, double>> x_xmap_y;
-  double rho;
-
   // Extract row-wise and column-wise library sizes
   int lib_size_row = lib_sizes[0];
   int lib_size_col = lib_sizes[1];
@@ -64,6 +60,15 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
       valid_indices.emplace_back(r, c);
     }
   }
+
+  // // Initialize the result container with the same size as valid_indices
+  // std::vector<std::pair<int, double>> x_xmap_y;
+  // x_xmap_y.resize(valid_indices.size());
+
+  // Preallocate the result vector to avoid out-of-bounds access
+  std::vector<std::pair<int, double>> x_xmap_y(valid_indices.size());
+
+  double rho;
 
   // // Iterate through precomputed (r, c) pairs
   // for (size_t i = 0; i < valid_indices.size(); ++i) {
