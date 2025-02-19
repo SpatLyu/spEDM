@@ -68,8 +68,6 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
   // Preallocate the result vector to avoid out-of-bounds access
   std::vector<std::pair<int, double>> x_xmap_y(valid_indices.size());
 
-  double rho = std::numeric_limits<double>::quiet_NaN();
-
   // // Iterate through precomputed (r, c) pairs
   // for (size_t i = 0; i < valid_indices.size(); ++i) {
   //   int r = valid_indices[i].first;
@@ -92,6 +90,8 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
   //       ++na_count;
   //     }
   //   }
+  //
+  //   double rho = std::numeric_limits<double>::quiet_NaN();
   //
   //   // if (na_count > (lib_size_row * lib_size_col) / 2) {
   //   //   rho = std::numeric_limits<double>::quiet_NaN();
@@ -139,6 +139,8 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
         ++na_count;
       }
     }
+
+    double rho = std::numeric_limits<double>::quiet_NaN();
 
     // if (na_count > (lib_size_row * lib_size_col) / 2) {
     //   rho = std::numeric_limits<double>::quiet_NaN();
