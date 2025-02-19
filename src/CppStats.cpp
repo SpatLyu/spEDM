@@ -291,13 +291,26 @@ double PearsonCor(const std::vector<double>& y,
 //   return corr;
 // }
 
-// Function to compute Partial Correlation using Armadillo
-// y: Dependent variable vector
-// y_hat: Predicted variable vector
-// controls: Matrix of control variables (**each row represents a control variable**)
-// NA_rm: Boolean flag to indicate whether to remove NA values
-// linear: Boolean flag to indicate whether to calculate the partial correlation coefficient using linear regression or correlation matrix
-// Returns: Partial correlation between y and y_hat after controlling for the variables in controls
+/*
+ * Function to compute Partial Correlation using Armadillo
+ *
+ * Computes the partial correlation between the dependent variable 'y' and the predicted variable 'y_hat',
+ * after controlling for the variables specified in the 'controls' matrix. The partial correlation can be computed
+ * either through linear regression or by using the correlation matrix, depending on the 'linear' flag.
+ * Optionally, missing values (NA) can be removed if 'NA_rm' is set to true.
+ *
+ * Parameters:
+ *   y          - A vector representing the dependent variable.
+ *   y_hat      - A vector representing the predicted variable.
+ *   controls   - A matrix where each row corresponds to a control variable to adjust for in the correlation.
+ *   NA_rm      - A boolean flag to indicate whether to remove missing values (default is false).
+ *   linear     - A boolean flag to specify whether to use linear regression (true) or correlation matrix (false)
+ *                for computing the partial correlation (default is false).
+ *
+ * Returns:
+ *   A double representing the partial correlation coefficient between 'y' and 'y_hat' after controlling for
+ *   the variables in 'controls'.
+ */
 double PartialCor(const std::vector<double>& y,
                   const std::vector<double>& y_hat,
                   const std::vector<std::vector<double>>& controls,
@@ -582,14 +595,23 @@ std::vector<std::size_t> CppDistKNNIndice(
   return neighbors;
 }
 
-// Function to compute SVD similar to R's svd()
-// Input:
-//   - X: A matrix represented as std::vector<std::vector<double>>
-// Output:
-//   - A std::vector containing three components:
-//     1. d: A vector of singular values (std::vector<double>)
-//     2. u: A matrix of left singular vectors (std::vector<std::vector<double>>)
-//     3. v: A matrix of right singular vectors (std::vector<std::vector<double>>)
+/*
+ * Function to compute Singular Value Decomposition (SVD) similar to R's svd()
+ *
+ * This function computes the Singular Value Decomposition (SVD) of the input matrix 'X'.
+ * The decomposition breaks the matrix 'X' into three components: singular values, left singular vectors,
+ * and right singular vectors. These components are returned in a nested vector structure.
+ *
+ * Parameters:
+ *   - X: A matrix represented as a std::vector<std::vector<double>>.
+ *        This matrix is decomposed into its singular values and vectors.
+ *
+ * Returns:
+ *   A std::vector containing three components:
+ *     1. d: A vector of singular values (std::vector<double>).
+ *     2. u: A matrix of left singular vectors (std::vector<std::vector<double>>).
+ *     3. v: A matrix of right singular vectors (std::vector<std::vector<double>>).
+ */
 std::vector<std::vector<std::vector<double>>> CppSVD(const std::vector<std::vector<double>>& X) {
   // Convert input matrix to Armadillo matrix
   size_t m = X.size();
