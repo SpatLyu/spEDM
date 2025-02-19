@@ -192,6 +192,7 @@ std::vector<double> PartialSMap4Grid(
  * @param b              The number of nearest neighbors to use for prediction.
  * @param simplex        If true, use Simplex Projection; if false, use S-Mapping.
  * @param theta          The distance weighting parameter for S-Mapping (ignored if simplex is true).
+ * @param threads        The number of threads to use for parallel processing.
  * @param cumulate       Whether to cumulate the partial correlations.
  * @param row_size_mark  If ture, use the row-wise libsize to mark the libsize; if false, use col-wise libsize.
  *
@@ -210,12 +211,10 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
     int b,
     bool simplex,
     double theta,
+    size_t threads,
     bool cumulate,
     bool row_size_mark)
 {
-  std::vector<PartialCorRes> x_xmap_y;
-  std::vector<double> rho;
-
   // Extract row-wise and column-wise library sizes
   int lib_size_row = lib_sizes[0];
   int lib_size_col = lib_sizes[1];
@@ -223,39 +222,98 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
   // Determine the marked libsize
   int libsize = (row_size_mark) ? lib_size_row : lib_size_col;
 
+  // Precompute valid (r, c) pairs
+  std::vector<std::pair<int, int>> valid_indices;
   for (int r = 1; r <= totalRow - lib_size_row + 1; ++r) {
     for (int c = 1; c <= totalCol - lib_size_col + 1; ++c) {
-
-      // Initialize library indices
-      std::vector<bool> lib_indices(totalRow * totalCol, false);
-
-      // Set library indices
-      for (int i = r; i < r + lib_size_row; ++i) {
-        for (int j = c; j < c + lib_size_col; ++j) {
-          lib_indices[LocateGridIndices(i, j, totalRow, totalCol)] = true;
-        }
-      }
-
-      // Check if more than half of the library is NA
-      int na_count = 0;
-      for (size_t i = 0; i < lib_indices.size(); ++i) {
-        if (lib_indices[i] && std::isnan(yPred[i])) {
-          ++na_count;
-        }
-      }
-      if (na_count > (lib_size_row * lib_size_col) / 2) {
-        continue;
-      }
-
-      // Run partial cross map and store results
-      if (simplex) {
-        rho = PartialSimplex4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, cumulate);
-      } else {
-        rho = PartialSMap4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, theta, cumulate);
-      }
-      x_xmap_y.emplace_back(libsize, rho[0], rho[1]);
+      valid_indices.emplace_back(r, c);
     }
   }
+
+  // // Initialize the result container with the same size as valid_indices
+  // std::vector<PartialCorRes> x_xmap_y;
+  // x_xmap_y.resize(valid_indices.size());
+
+  // Initialize the result container with the same size as valid_indices,
+  // and optionally set default values using the constructor of PartialCorRes
+  std::vector<PartialCorRes> x_xmap_y(valid_indices.size());
+
+  // Directly initialize std::vector<double> with two NaN values
+  std::vector<double> rho(2, std::numeric_limits<double>::quiet_NaN());
+
+  // // Iterate through precomputed (r, c) pairs
+  // for (size_t i = 0; i < valid_indices.size(); ++i) {
+  //   int r = valid_indices[i].first;
+  //   int c = valid_indices[i].second;
+  //
+  //   // Initialize library indices
+  //   std::vector<bool> lib_indices(totalRow * totalCol, false);
+  //
+  //   // Set library indices
+  //   for (int i = r; i < r + lib_size_row; ++i) {
+  //     for (int j = c; j < c + lib_size_col; ++j) {
+  //       lib_indices[LocateGridIndices(i, j, totalRow, totalCol)] = true;
+  //     }
+  //   }
+  //
+  //   // Check if more than half of the library is NA
+  //   int na_count = 0;
+  //   for (size_t i = 0; i < lib_indices.size(); ++i) {
+  //     if (lib_indices[i] && std::isnan(yPred[i])) {
+  //       ++na_count;
+  //     }
+  //   }
+  //
+  //   if (na_count <= (lib_size_row * lib_size_col) / 2) {
+  //     // Run partial cross map and store results
+  //     if (simplex) {
+  //       std::vector<double> rho = PartialSimplex4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, cumulate);
+  //     } else {
+  //       std::vector<double> rho = PartialSMap4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, theta, cumulate);
+  //     }
+  //   }
+  //
+  //   // Directly initialize a PartialCorRes struct with the three values
+  //   PartialCorRes result(libsize, rho[0], rho[1]);
+  //   x_xmap_y[i] = result;
+  // }
+
+  // Perform the operations using RcppThread
+  RcppThread::parallelFor(0, valid_indices.size(), [&](size_t i) {
+    int r = valid_indices[i].first;
+    int c = valid_indices[i].second;
+
+    // Initialize library indices
+    std::vector<bool> lib_indices(totalRow * totalCol, false);
+
+    // Set library indices
+    for (int i = r; i < r + lib_size_row; ++i) {
+      for (int j = c; j < c + lib_size_col; ++j) {
+        lib_indices[LocateGridIndices(i, j, totalRow, totalCol)] = true;
+      }
+    }
+
+    // Check if more than half of the library is NA
+    int na_count = 0;
+    for (size_t i = 0; i < lib_indices.size(); ++i) {
+      if (lib_indices[i] && std::isnan(yPred[i])) {
+        ++na_count;
+      }
+    }
+
+    if (na_count <= (lib_size_row * lib_size_col) / 2) {
+      // Run partial cross map and store results
+      if (simplex) {
+        std::vector<double> rho = PartialSimplex4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, cumulate);
+      } else {
+        std::vector<double> rho = PartialSMap4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, theta, cumulate);
+      }
+    }
+
+    // Directly initialize a PartialCorRes struct with the three values
+    PartialCorRes result(libsize, rho[0], rho[1]);
+    x_xmap_y[i] = result;
+  }, threads);
 
   return x_xmap_y;
 }
@@ -417,34 +475,10 @@ std::vector<std::vector<double>> SCPCM4Grid(
   // Initialize the result container
   std::vector<PartialCorRes> x_xmap_y;
 
-  // // Iterate over each library size
-  // for (size_t i = 0; i < unique_lib_size_pairs.size(); ++i) {
-  //   int lib_size_row = unique_lib_size_pairs[i].first;
-  //   int lib_size_col = unique_lib_size_pairs[i].second;
-  //   auto results = SCPCMSingle4Grid(
-  //     xEmbedings,
-  //     yPred,
-  //     zMatrixs,
-  //     {lib_size_row, lib_size_col},
-  //     pred_indices,
-  //     conEs,
-  //     contaus,
-  //     totalRow,
-  //     totalCol,
-  //     b,
-  //     simplex,
-  //     theta,
-  //     cumulate,
-  //     row_size_mark);
-  //
-  //   // Append the results to the main result container
-  //   x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
-  // }
-
-  // Perform the operations using RcppThread
+  // Iterate over each library size
   if (progressbar) {
     RcppThread::ProgressBar bar(unique_lib_size_pairs.size(), 1);
-    RcppThread::parallelFor(0, unique_lib_size_pairs.size(), [&](size_t i) {
+    for (size_t i = 0; i < unique_lib_size_pairs.size(); ++i) {
       int lib_size_row = unique_lib_size_pairs[i].first;
       int lib_size_col = unique_lib_size_pairs[i].second;
       auto results = SCPCMSingle4Grid(
@@ -460,14 +494,14 @@ std::vector<std::vector<double>> SCPCM4Grid(
         b,
         simplex,
         theta,
+        threads_sizet,
         cumulate,
         row_size_mark);
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
       bar++;
-    }, threads_sizet);
+    }
   } else {
-    RcppThread::ProgressBar bar(unique_lib_size_pairs.size(), 1);
-    RcppThread::parallelFor(0, unique_lib_size_pairs.size(), [&](size_t i) {
+    for (size_t i = 0; i < unique_lib_size_pairs.size(); ++i) {
       int lib_size_row = unique_lib_size_pairs[i].first;
       int lib_size_col = unique_lib_size_pairs[i].second;
       auto results = SCPCMSingle4Grid(
@@ -483,10 +517,11 @@ std::vector<std::vector<double>> SCPCM4Grid(
         b,
         simplex,
         theta,
+        threads_sizet,
         cumulate,
         row_size_mark);
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
-    }, threads_sizet);
+    }
   }
 
   // Group by the first int and store second and third values as pairs
