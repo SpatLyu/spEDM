@@ -154,7 +154,7 @@ pd_res = gccm(data = popd_sf,
               progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 25.08225 mins
+## Time difference of 25.55888 mins
 pd_res
 ##    libsizes Pre->popDensity popDensity->Pre
 ## 1        10      0.05589905      0.01004636
@@ -299,14 +299,14 @@ startTime = Sys.time()
 npp_res = gccm(data = npp,
                cause = "pre",
                effect = "npp",
-               libsizes = seq(10,130,5),
+               libsizes = seq(10,100,5),
                E = c(2,6),
                k = 5,
                pred = pred,
                progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 13.01862 mins
+## Time difference of 9.05064 mins
 npp_res
 ##    libsizes  pre->npp   npp->pre
 ## 1        10 0.1034609 0.06800981
@@ -328,21 +328,14 @@ npp_res
 ## 17       90 0.5941501 0.16207449
 ## 18       95 0.6568359 0.16705620
 ## 19      100 0.8210545 0.13783912
-## 20      105 0.9783946 0.16279722
-## 21      110       NaN        NaN
-## 22      115       NaN        NaN
-## 23      120       NaN        NaN
-## 24      125       NaN        NaN
-## 25      130       NaN        NaN
 ```
 
 Visualize the result:
 
 
 ``` r
-plot(npp_res,xlimits = c(9, 101),ylimits = c(-0.05,1))
-## Warning: Removed 6 rows containing missing values or values outside the scale range (`geom_line()`).
-## Removed 6 rows containing missing values or values outside the scale range (`geom_line()`).
+plot(npp_res,xlimits = c(9, 101),ylimits = c(-0.05,1)) +
+  ggplot2::theme(legend.justification = c(0.95,1))
 ```
 
 ![**Figure 3**. The cross-mapping prediction outputs between farmland NPP and precipitation.](../man/figures/gccm/fig3-1.png)

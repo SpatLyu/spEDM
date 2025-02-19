@@ -149,7 +149,7 @@ startTime = Sys.time()
 npp_res = gccm(data = npp,
                cause = "pre",
                effect = "npp",
-               libsizes = seq(10,130,5),
+               libsizes = seq(10,100,5),
                E = c(2,6),
                k = 5,
                pred = pred,
@@ -162,5 +162,6 @@ npp_res
 Visualize the result:
 
 ```{r fig3,fig.width=4.5,fig.height=3.5,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 3**. The cross-mapping prediction outputs between farmland NPP and precipitation.")}
-plot(npp_res,xlimits = c(9, 101),ylimits = c(-0.05,1))
+plot(npp_res,xlimits = c(9, 101),ylimits = c(-0.05,1)) +
+  ggplot2::theme(legend.justification = c(0.95,1))
 ```
