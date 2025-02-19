@@ -55,7 +55,8 @@ double CrossMappingCardinality(
 
   // Parameter initialization
   const size_t k = static_cast<size_t>(num_neighbors);
-  const size_t max_r = k + n_excluded; // Total number of neighbors = actual used + excluded ones
+  const size_t n_excluded_sizet = static_cast<size_t>(n_excluded);
+  const size_t max_r = static_cast<size_t>(num_neighbors + n_excluded); // Total number of neighbors = actual used + excluded ones
 
   size_t threads_sizet = static_cast<size_t>(threads);
   unsigned int max_threads = std::thread::hardware_concurrency();
@@ -74,7 +75,7 @@ double CrossMappingCardinality(
 
     // Get the k-nearest neighbors of x (excluding the first n_excluded ones)
     auto neighbors_x = CppDistKNNIndice(dist_x, idx, max_r);
-    if (neighbors_x.size() > n_excluded) {
+    if (neighbors_x.size() > n_excluded_sizet) {
       neighbors_x.erase(neighbors_x.begin(), neighbors_x.begin() + n_excluded);
     }
     neighbors_x.resize(k); // Keep only the k actual neighbors
