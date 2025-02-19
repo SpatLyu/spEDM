@@ -291,13 +291,26 @@ double PearsonCor(const std::vector<double>& y,
 //   return corr;
 // }
 
-// Function to compute Partial Correlation using Armadillo
-// y: Dependent variable vector
-// y_hat: Predicted variable vector
-// controls: Matrix of control variables (**each row represents a control variable**)
-// NA_rm: Boolean flag to indicate whether to remove NA values
-// linear: Boolean flag to indicate whether to calculate the partial correlation coefficient using linear regression or correlation matrix
-// Returns: Partial correlation between y and y_hat after controlling for the variables in controls
+/*
+ * Function to compute Partial Correlation using Armadillo
+ *
+ * Computes the partial correlation between the dependent variable 'y' and the predicted variable 'y_hat',
+ * after controlling for the variables specified in the 'controls' matrix. The partial correlation can be computed
+ * either through linear regression or by using the correlation matrix, depending on the 'linear' flag.
+ * Optionally, missing values (NA) can be removed if 'NA_rm' is set to true.
+ *
+ * Parameters:
+ *   y          - A vector representing the dependent variable.
+ *   y_hat      - A vector representing the predicted variable.
+ *   controls   - A matrix where each row corresponds to a control variable to adjust for in the correlation.
+ *   NA_rm      - A boolean flag to indicate whether to remove missing values (default is false).
+ *   linear     - A boolean flag to specify whether to use linear regression (true) or correlation matrix (false)
+ *                for computing the partial correlation (default is false).
+ *
+ * Returns:
+ *   A double representing the partial correlation coefficient between 'y' and 'y_hat' after controlling for
+ *   the variables in 'controls'.
+ */
 double PartialCor(const std::vector<double>& y,
                   const std::vector<double>& y_hat,
                   const std::vector<std::vector<double>>& controls,
@@ -307,8 +320,12 @@ double PartialCor(const std::vector<double>& y,
   if (y.size() != y_hat.size()) {
     throw std::invalid_argument("Input vectors y and y_hat must have the same size.");
   }
-  if (!controls.empty() && controls[0].size() != y.size()) {
-    throw std::invalid_argument("Control variables must have the same number of observations as y and y_hat.");
+  if (!controls.empty()) {
+    bool all_controls_valid = std::all_of(controls.begin(), controls.end(),
+                                          [&](const std::vector<double>& ctrl) { return ctrl.size() == y.size(); });
+    if (!all_controls_valid) {
+      throw std::invalid_argument("All control variables must have the same size as y.");
+    }
   }
 
   // Handle NA values
@@ -341,6 +358,11 @@ double PartialCor(const std::vector<double>& y,
     return std::numeric_limits<double>::quiet_NaN();
   }
 
+  // Check sample adequacy
+  if (clean_y.size() <= (clean_controls.size() + 2)) {  // n_samples > n_vars
+    return std::numeric_limits<double>::quiet_NaN();
+  }
+
   double partial_corr;
   if (linear){
     // Convert cleaned vectors to Armadillo vectors/matrices
@@ -351,9 +373,13 @@ double PartialCor(const std::vector<double>& y,
       arma_controls.col(i) = arma::vec(clean_controls[i]);
     }
 
-    // Compute residuals of y and y_hat after regressing on controls
-    arma::vec residuals_y = arma_y - arma_controls * arma::solve(arma_controls, arma_y);
-    arma::vec residuals_y_hat = arma_y_hat - arma_controls * arma::solve(arma_controls, arma_y_hat);
+    // // Compute residuals of y and y_hat after regressing on controls
+    // arma::vec residuals_y = arma_y - arma_controls * arma::solve(arma_controls, arma_y);
+    // arma::vec residuals_y_hat = arma_y_hat - arma_controls * arma::solve(arma_controls, arma_y_hat);
+
+    // Use a more robust method for solving the linear system, such as arma::pinv (pseudo-inverse):
+    arma::vec residuals_y = arma_y - arma_controls * arma::pinv(arma_controls) * arma_y;
+    arma::vec residuals_y_hat = arma_y_hat - arma_controls * arma::pinv(arma_controls) * arma_y_hat;
 
     // Compute Pearson correlation of the residuals
     partial_corr = arma::as_scalar(arma::cor(residuals_y, residuals_y_hat));
@@ -362,17 +388,30 @@ double PartialCor(const std::vector<double>& y,
     int i = controls.size();
     int j = controls.size() + 1;
     arma::mat data(clean_y.size(), i + 2);
-    for (size_t i = 0; i < controls.size(); ++i) {
-      data.col(i) = arma::vec(clean_controls[i]);
+    for (size_t k = 0; k < controls.size(); ++k) {
+      data.col(k) = arma::vec(clean_controls[k]);
     }
     data.col(i) = arma::vec(clean_y);
     data.col(j) = arma::vec(clean_y_hat);
 
+    if (data.n_rows < 2 || data.n_cols < 1) {
+      return std::numeric_limits<double>::quiet_NaN();
+    }
+
     // Compute the correlation matrix of the data
     arma::mat corrm = arma::cor(data);
 
-    // Compute the precision matrix (inverse of the correlation matrix)
-    arma::mat precm = arma::inv(corrm);
+    // // Compute the precision matrix (inverse of the correlation matrix)
+    // arma::mat precm = arma::inv(corrm);
+
+    // Moore-Penrose pseudo-inverse
+    // arma::mat precm = arma::pinv(corrm);
+    arma::mat precm;
+    try {
+      precm = arma::pinv(corrm, 1e-10);
+    } catch (...) {
+      return std::numeric_limits<double>::quiet_NaN();
+    }
 
     // Get the correlation between y and y_hat after controlling for the others
     partial_corr = -precm(i, j) / std::sqrt(precm(i, i) * precm(j, j));
@@ -556,14 +595,23 @@ std::vector<std::size_t> CppDistKNNIndice(
   return neighbors;
 }
 
-// Function to compute SVD similar to R's svd()
-// Input:
-//   - X: A matrix represented as std::vector<std::vector<double>>
-// Output:
-//   - A std::vector containing three components:
-//     1. d: A vector of singular values (std::vector<double>)
-//     2. u: A matrix of left singular vectors (std::vector<std::vector<double>>)
-//     3. v: A matrix of right singular vectors (std::vector<std::vector<double>>)
+/*
+ * Function to compute Singular Value Decomposition (SVD) similar to R's svd()
+ *
+ * This function computes the Singular Value Decomposition (SVD) of the input matrix 'X'.
+ * The decomposition breaks the matrix 'X' into three components: singular values, left singular vectors,
+ * and right singular vectors. These components are returned in a nested vector structure.
+ *
+ * Parameters:
+ *   - X: A matrix represented as a std::vector<std::vector<double>>.
+ *        This matrix is decomposed into its singular values and vectors.
+ *
+ * Returns:
+ *   A std::vector containing three components:
+ *     1. d: A vector of singular values (std::vector<double>).
+ *     2. u: A matrix of left singular vectors (std::vector<std::vector<double>>).
+ *     3. v: A matrix of right singular vectors (std::vector<std::vector<double>>).
+ */
 std::vector<std::vector<std::vector<double>>> CppSVD(const std::vector<std::vector<double>>& X) {
   // Convert input matrix to Armadillo matrix
   size_t m = X.size();
