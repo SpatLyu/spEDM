@@ -238,9 +238,6 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
   // and optionally set default values using the constructor of PartialCorRes
   std::vector<PartialCorRes> x_xmap_y(valid_indices.size());
 
-  // Directly initialize std::vector<double> with two NaN values
-  std::vector<double> rho(2, std::numeric_limits<double>::quiet_NaN());
-
   // // Iterate through precomputed (r, c) pairs
   // for (size_t i = 0; i < valid_indices.size(); ++i) {
   //   int r = valid_indices[i].first;
@@ -263,6 +260,9 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
   //       ++na_count;
   //     }
   //   }
+  //
+  //   // Directly initialize std::vector<double> with two NaN values
+  //   std::vector<double> rho(2, std::numeric_limits<double>::quiet_NaN());
   //
   //   if (na_count <= (lib_size_row * lib_size_col) / 2) {
   //     // Run partial cross map and store results
@@ -300,6 +300,9 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
         ++na_count;
       }
     }
+
+    // Directly initialize std::vector<double> with two NaN values
+    std::vector<double> rho(2, std::numeric_limits<double>::quiet_NaN());
 
     if (na_count <= (lib_size_row * lib_size_col) / 2) {
       // Run partial cross map and store results
