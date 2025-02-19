@@ -267,9 +267,9 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
   //   if (na_count <= (lib_size_row * lib_size_col) / 2) {
   //     // Run partial cross map and store results
   //     if (simplex) {
-  //       std::vector<double> rho = PartialSimplex4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, cumulate);
+  //       rho = PartialSimplex4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, cumulate);
   //     } else {
-  //       std::vector<double> rho = PartialSMap4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, theta, cumulate);
+  //       rho = PartialSMap4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, theta, cumulate);
   //     }
   //   }
   //
@@ -307,9 +307,9 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
     if (na_count <= (lib_size_row * lib_size_col) / 2) {
       // Run partial cross map and store results
       if (simplex) {
-        std::vector<double> rho = PartialSimplex4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, cumulate);
+        rho = PartialSimplex4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, cumulate);
       } else {
-        std::vector<double> rho = PartialSMap4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, theta, cumulate);
+        rho = PartialSMap4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, theta, cumulate);
       }
     }
 
