@@ -564,7 +564,7 @@ std::vector<std::size_t> CppKNNIndice(
 
 // Function to find k-nearest neighbors of a given index using a precomputed distance matrix
 std::vector<std::size_t> CppDistKNNIndice(
-    const std::vector<std::vector<double>>& dist_mat,  // Precomputed n x n distance matrix
+    const std::vector<std::vector<double>>& dist_mat,  // Precomputed n * n distance matrix
     std::size_t target_idx,                            // Target index for which to find neighbors
     std::size_t k)                                     // Number of nearest neighbors to find
 {
