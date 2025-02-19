@@ -340,7 +340,8 @@ Visualize the result:
 
 
 ``` r
-plot(npp_res,xlimits = c(9, 101),ylimits = c(-0.05,1))
+plot(npp_res,xlimits = c(9, 101),ylimits = c(-0.05,1)) + 
+  ggplot2::theme(legend.justification = c(0.95,1))
 ## Warning: Removed 6 rows containing missing values or values outside the scale range (`geom_line()`).
 ## Removed 6 rows containing missing values or values outside the scale range (`geom_line()`).
 ```
