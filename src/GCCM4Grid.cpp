@@ -68,8 +68,6 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
   // Preallocate the result vector to avoid out-of-bounds access
   std::vector<std::pair<int, double>> x_xmap_y(valid_indices.size());
 
-  double rho;
-
   // // Iterate through precomputed (r, c) pairs
   // for (size_t i = 0; i < valid_indices.size(); ++i) {
   //   int r = valid_indices[i].first;
@@ -93,9 +91,20 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
   //     }
   //   }
   //
-  //   if (na_count > (lib_size_row * lib_size_col) / 2) {
-  //     rho = std::numeric_limits<int>::min();
-  //   } else {
+  //   double rho = std::numeric_limits<double>::quiet_NaN();
+  //
+  //   // if (na_count > (lib_size_row * lib_size_col) / 2) {
+  //   //   rho = std::numeric_limits<double>::quiet_NaN();
+  //   // } else {
+  //   //   // Run cross map and store results
+  //   //   if (simplex) {
+  //   //     rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
+  //   //   } else {
+  //   //     rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
+  //   //   }
+  //   // }
+  //
+  //   if (na_count <= (lib_size_row * lib_size_col) / 2) {
   //     // Run cross map and store results
   //     if (simplex) {
   //       rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
@@ -131,9 +140,20 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
       }
     }
 
-    if (na_count > (lib_size_row * lib_size_col) / 2) {
-      rho = std::numeric_limits<int>::min();
-    } else {
+    double rho = std::numeric_limits<double>::quiet_NaN();
+
+    // if (na_count > (lib_size_row * lib_size_col) / 2) {
+    //   rho = std::numeric_limits<double>::quiet_NaN();
+    // } else {
+    //   // Run cross map and store results
+    //   if (simplex) {
+    //     rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
+    //   } else {
+    //     rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
+    //   }
+    // }
+
+    if (na_count <= (lib_size_row * lib_size_col) / 2) {
       // Run cross map and store results
       if (simplex) {
         rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);

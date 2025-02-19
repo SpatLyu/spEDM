@@ -105,6 +105,7 @@ std::vector<double> PartialSMap4Grid(
  * @param b              The number of nearest neighbors to use for prediction.
  * @param simplex        If true, use Simplex Projection; if false, use S-Mapping.
  * @param theta          The distance weighting parameter for S-Mapping (ignored if simplex is true).
+ * @param threads        The number of threads to use for parallel processing.
  * @param cumulate       Whether to cumulate the partial correlations.
  * @param row_size_mark  If ture, use the row-wise libsize to mark the libsize; if false, use col-wise libsize.
  *
@@ -123,6 +124,7 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
     int b,
     bool simplex,
     double theta,
+    size_t threads,
     bool cumulate,
     bool row_size_mark);
 
