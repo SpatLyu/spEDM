@@ -58,9 +58,9 @@ double CrossMappingCardinality(
   const size_t n_excluded_sizet = static_cast<size_t>(n_excluded);
   const size_t max_r = static_cast<size_t>(num_neighbors + n_excluded); // Total number of neighbors = actual used + excluded ones
 
+  // Configure threads
   size_t threads_sizet = static_cast<size_t>(threads);
-  unsigned int max_threads = std::thread::hardware_concurrency();
-  threads_sizet = std::min(static_cast<size_t>(max_threads), threads_sizet);
+  threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   // Precompute distance matrices (corresponding to _dismats in python package crossmapy)
   auto dist_x = CppMatDistance(embedding_x, false, true);
@@ -101,6 +101,36 @@ double CrossMappingCardinality(
     }
   };
 
+  // auto CMCSingle = [&](size_t i) {
+  //   const int idx = valid_pred[i];
+  //
+  //   // Get the k-nearest neighbors of x (excluding the first n_excluded ones)
+  //   auto neighbors_x = CppDistKNNIndice(dist_x, idx, max_r);
+  //   if (neighbors_x.size() > n_excluded_sizet) {
+  //     neighbors_x.erase(neighbors_x.begin(), neighbors_x.begin() + n_excluded);
+  //   }
+  //   neighbors_x.resize(k); // Keep only the k actual neighbors
+  //
+  //   // Retrieve y's neighbor indices (for mapping validation)
+  //   std::vector<std::vector<size_t>> y_knn(embedding_y.size());
+  //   for (size_t ny = 0; ny < embedding_y.size(); ++ny) {
+  //     y_knn[ny] = CppDistKNNIndice(dist_y, ny, k);
+  //   }
+  //
+  //   // Compute the mapping ratio for each k value
+  //   for (size_t ki = 0; ki < k; ++ki) {
+  //     size_t count = 0;
+  //     for (size_t nx : neighbors_x) {
+  //       // Check if neighbor nx of x appears in the first (ki+1) neighbors in y-space
+  //       const auto& yn = y_knn[nx];
+  //       if (std::find(yn.begin(), yn.begin() + (ki + 1), idx) != yn.begin() + (ki + 1)) {
+  //         ++count;
+  //       }
+  //     }
+  //     ratio_curves[i][ki] = static_cast<double>(count) / neighbors_x.size();
+  //   }
+  // };
+
   if (progressbar) {
     // Parallel computation with a progress bar
     RcppThread::ProgressBar bar(valid_pred.size(), 1);
@@ -127,6 +157,10 @@ double CrossMappingCardinality(
 
   // Convert to final score (corresponding to auc_to_score in python package crossmapy)
   double cmc_score = 2.0 * (mean_auc - 0.5);
+  // double cmc_score = std::max(0.0, mean_auc);
+  // if (cmc_score < 0) {
+  //   cmc_score = 2.0 * (0.5 - mean_auc);
+  // }
   return std::max(0.0, cmc_score); // Ensure non-negative result
 }
 
@@ -516,8 +550,11 @@ double IntersectionCardinality(
 //
 //   double cmc_score;
 //   // Normalize the score to [0,1]
-//   // cmc_score = std::max(0.0, 2.0 * (auc - 0.5));
-//   cmc_score = std::max(0.0, auc);
+//   cmc_score = std::max(0.0, 2.0 * (auc - 0.5));
+//   // cmc_score = std::max(0.0, auc);
+//   if (cmc_score < 0) {
+//    cmc_score = 2.0 * (0.5 - auc);
+//   }
 //
 //   return cmc_score;
 // }
