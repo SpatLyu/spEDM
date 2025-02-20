@@ -383,9 +383,9 @@ std::vector<std::vector<double>> SCPCM4Grid(
     b = Ex + 2;
   }
 
+  // Configure threads
   size_t threads_sizet = static_cast<size_t>(threads);
-  unsigned int max_threads = std::thread::hardware_concurrency();
-  threads_sizet = std::min(static_cast<size_t>(max_threads), threads_sizet);
+  threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   // Get the dimensions of the xMatrix
   int totalRow = xMatrix.size();

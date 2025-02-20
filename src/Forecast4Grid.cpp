@@ -29,9 +29,9 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
                                               int tau,
                                               int b,
                                               int threads) {
+  // Configure threads
   size_t threads_sizet = static_cast<size_t>(threads);
-  unsigned int max_threads = std::thread::hardware_concurrency();
-  threads_sizet = std::min(static_cast<size_t>(max_threads), threads_sizet);
+  threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   int numRows = mat.size();
   int numCols = mat[0].size();
@@ -90,9 +90,9 @@ std::vector<std::vector<double>> SMap4Grid(const std::vector<std::vector<double>
                                            int tau,
                                            int b,
                                            int threads) {
+  // Configure threads
   size_t threads_sizet = static_cast<size_t>(threads);
-  unsigned int max_threads = std::thread::hardware_concurrency();
-  threads_sizet = std::min(static_cast<size_t>(max_threads), threads_sizet);
+  threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   int numRows = mat.size();
   int numCols = mat[0].size();

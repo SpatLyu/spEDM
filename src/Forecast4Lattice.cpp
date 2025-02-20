@@ -31,9 +31,9 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& vec,
                                                  int tau,
                                                  int b,
                                                  int threads) {
+  // Configure threads
   size_t threads_sizet = static_cast<size_t>(threads);
-  unsigned int max_threads = std::thread::hardware_concurrency();
-  threads_sizet = std::min(static_cast<size_t>(max_threads), threads_sizet);
+  threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   // Initialize result matrix with E.size() rows and 4 columns
   std::vector<std::vector<double>> result(E.size(), std::vector<double>(4));
@@ -82,9 +82,9 @@ std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& vec,
                                               int tau,
                                               int b,
                                               int threads){
+  // Configure threads
   size_t threads_sizet = static_cast<size_t>(threads);
-  unsigned int max_threads = std::thread::hardware_concurrency();
-  threads_sizet = std::min(static_cast<size_t>(max_threads), threads_sizet);
+  threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   // Generate embeddings
   std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(vec, nb_vec, E, tau);
