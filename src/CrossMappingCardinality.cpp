@@ -126,17 +126,17 @@ double CrossMappingCardinality(
   //   neighbors_x.resize(k); // Keep only the k actual neighbors
   //
   //   // Retrieve y's neighbor indices (for mapping validation)
-  //   std::vector<std::vector<size_t>> y_neighbors(embedding_y.size());
+  //   std::vector<std::vector<size_t>> mapped_neighbors(embedding_y.size());
   //   for (size_t nx : neighbors_x) {
-  //     y_neighbors[nx] = CppDistKNNIndice(dist_y, nx, k);
+  //     mapped_neighbors[nx] = CppDistKNNIndice(dist_y, nx, k);
   //   }
   //
   //   // Compute mapping ratio for each k (corresponding to count_mapping in python package crossmapy)
   //   for (size_t ki = 0; ki < k; ++ki) {
   //     size_t count = 0;
   //     for (size_t nx : neighbors_x) {
-  //       if (ki < y_neighbors[nx].size()) {
-  //         auto& yn = y_neighbors[nx];
+  //       if (ki < mapped_neighbors[nx].size()) {
+  //         auto& yn = mapped_neighbors[nx];
   //         if (std::find(yn.begin(), yn.begin() + ki + 1, idx) != yn.begin() + ki + 1) {
   //           ++count;
   //         }
@@ -171,11 +171,12 @@ double CrossMappingCardinality(
   double mean_auc = total_auc / ratio_curves.size();
 
   // Convert to final score (corresponding to auc_to_score in python package crossmapy)
+  // double cmc_score = std::max(0.0, mean_auc); // just to ensure that the causal score is a number greater than 0.
   double cmc_score = 2.0 * (mean_auc - 0.5);
-  // double cmc_score = std::max(0.0, mean_auc);
   // if (cmc_score < 0) {
   //   cmc_score = 2.0 * (0.5 - mean_auc);
   // }
+
   return std::max(0.0, cmc_score); // Ensure non-negative result
 }
 
