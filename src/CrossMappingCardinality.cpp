@@ -80,20 +80,34 @@ double CrossMappingCardinality(
     }
     neighbors_x.resize(k); // Keep only the k actual neighbors
 
-    // Retrieve y's neighbor indices (for mapping validation)
-    std::vector<std::vector<size_t>> y_neighbors(embedding_y.size());
+    // Get the k-nearest neighbors of y (excluding the first n_excluded ones)
+    auto neighbors_y = CppDistKNNIndice(dist_y, idx, max_r);
+    if (neighbors_y.size() > n_excluded_sizet) {
+      neighbors_y.erase(neighbors_y.begin(), neighbors_y.begin() + n_excluded);
+    }
+    neighbors_y.resize(k); // Keep only the k actual neighbors
+
+    // Precompute y-neighbors set for fast lookup
+    std::unordered_set<size_t> y_neighbors_set(neighbors_y.begin(), neighbors_y.end());
+
+    // Retrieve y's neighbor indices by mapping x-neighbors through x->y mapping
+    std::vector<std::vector<size_t>> mapped_neighbors(embedding_x.size());
     for (size_t nx : neighbors_x) {
-      y_neighbors[nx] = CppDistKNNIndice(dist_y, nx, k);
+      mapped_neighbors[nx] = CppDistKNNIndice(dist_y, nx, k);
     }
 
-    // Compute mapping ratio for each k (corresponding to count_mapping in python package crossmapy)
+    // Compute intersection ratio between mapped x-neighbors and original y-neighbors
     for (size_t ki = 0; ki < k; ++ki) {
       size_t count = 0;
       for (size_t nx : neighbors_x) {
-        if (ki < y_neighbors[nx].size()) {
-          auto& yn = y_neighbors[nx];
-          if (std::find(yn.begin(), yn.begin() + ki + 1, idx) != yn.begin() + ki + 1) {
-            ++count;
+        if (ki < mapped_neighbors[nx].size()) {
+          auto& yn = mapped_neighbors[nx];
+          // Check if any of first ki+1 mapped neighbors exist in y's original neighbors
+          for (size_t pos = 0; pos <= ki && pos < yn.size(); ++pos) {
+            if (y_neighbors_set.count(yn[pos])) {
+              ++count;
+              break; // Count each x-neighbor only once if has any intersection
+            }
           }
         }
       }
@@ -112,19 +126,20 @@ double CrossMappingCardinality(
   //   neighbors_x.resize(k); // Keep only the k actual neighbors
   //
   //   // Retrieve y's neighbor indices (for mapping validation)
-  //   std::vector<std::vector<size_t>> y_knn(embedding_y.size());
-  //   for (size_t ny = 0; ny < embedding_y.size(); ++ny) {
-  //     y_knn[ny] = CppDistKNNIndice(dist_y, ny, k);
+  //   std::vector<std::vector<size_t>> mapped_neighbors(embedding_y.size());
+  //   for (size_t nx : neighbors_x) {
+  //     mapped_neighbors[nx] = CppDistKNNIndice(dist_y, nx, k);
   //   }
   //
-  //   // Compute the mapping ratio for each k value
+  //   // Compute mapping ratio for each k (corresponding to count_mapping in python package crossmapy)
   //   for (size_t ki = 0; ki < k; ++ki) {
   //     size_t count = 0;
   //     for (size_t nx : neighbors_x) {
-  //       // Check if neighbor nx of x appears in the first (ki+1) neighbors in y-space
-  //       const auto& yn = y_knn[nx];
-  //       if (std::find(yn.begin(), yn.begin() + (ki + 1), idx) != yn.begin() + (ki + 1)) {
-  //         ++count;
+  //       if (ki < mapped_neighbors[nx].size()) {
+  //         auto& yn = mapped_neighbors[nx];
+  //         if (std::find(yn.begin(), yn.begin() + ki + 1, idx) != yn.begin() + ki + 1) {
+  //           ++count;
+  //         }
   //       }
   //     }
   //     ratio_curves[i][ki] = static_cast<double>(count) / neighbors_x.size();
@@ -156,11 +171,12 @@ double CrossMappingCardinality(
   double mean_auc = total_auc / ratio_curves.size();
 
   // Convert to final score (corresponding to auc_to_score in python package crossmapy)
+  // double cmc_score = std::max(0.0, mean_auc); // just to ensure that the causal score is a number greater than 0.
   double cmc_score = 2.0 * (mean_auc - 0.5);
-  // double cmc_score = std::max(0.0, mean_auc);
   // if (cmc_score < 0) {
   //   cmc_score = 2.0 * (0.5 - mean_auc);
   // }
+
   return std::max(0.0, cmc_score); // Ensure non-negative result
 }
 
@@ -218,9 +234,9 @@ double IntersectionCardinality(
   std::size_t max_r = std::min(static_cast<size_t>(max_neighbors), embedding_x.size());
   max_r = std::max(max_r,k);
 
+  // Configure threads
   size_t threads_sizet = static_cast<size_t>(threads);
-  unsigned int max_threads = std::thread::hardware_concurrency();
-  threads_sizet = std::min(static_cast<size_t>(max_threads), threads_sizet);
+  threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   // Compute the Intersectional Cardinality (IC) curve
   std::vector<std::pair<int, double>> IC_curve;
