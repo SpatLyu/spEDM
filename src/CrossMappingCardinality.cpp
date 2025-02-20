@@ -233,9 +233,9 @@ double IntersectionCardinality(
   std::size_t max_r = std::min(static_cast<size_t>(max_neighbors), embedding_x.size());
   max_r = std::max(max_r,k);
 
+  // Configure threads
   size_t threads_sizet = static_cast<size_t>(threads);
-  unsigned int max_threads = std::thread::hardware_concurrency();
-  threads_sizet = std::min(static_cast<size_t>(max_threads), threads_sizet);
+  threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   // Compute the Intersectional Cardinality (IC) curve
   std::vector<std::pair<int, double>> IC_curve;
