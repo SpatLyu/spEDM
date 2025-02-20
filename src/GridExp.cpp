@@ -401,7 +401,7 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
 
 // Wrapper function to perform GCMC Grid and return a NumericVector
 // [[Rcpp::export]]
-Rcpp::NumericVector RcppGCMC4Grid(
+Rcpp::NumericMatrix RcppGCMC4Grid(
     const Rcpp::NumericMatrix& xMatrix,
     const Rcpp::NumericMatrix& yMatrix,
     const Rcpp::IntegerMatrix& pred,
@@ -446,12 +446,18 @@ Rcpp::NumericVector RcppGCMC4Grid(
   std::vector<std::vector<double>> e2 = GenGridEmbeddings(yMatrix_cpp, E[1], tau_std[1]);
 
   // Perform GCMC For Grid
-  double cs1 = CrossMappingCardinality(e1,e2,pred_std,b_std[0],maxr_std[0],threads,progressbar);
-  double cs2 = CrossMappingCardinality(e2,e1,pred_std,b_std[1],maxr_std[1],threads,progressbar);
+  std::vector<double> cs1 = CrossMappingCardinality(e1,e2,pred_std,b_std,maxr_std,threads,progressbar);
+  std::vector<double> cs2 = CrossMappingCardinality(e2,e1,pred_std,b_std,maxr_std,threads,progressbar);
 
-  Rcpp::NumericVector res_vec = Rcpp::NumericVector::create(
-    Rcpp::Named("x_xmap_y",cs1),
-    Rcpp::Named("y_xmap_x",cs2));
+  Rcpp::NumericMatrix resultMatrix(b_std.size(), 3);
+  for (size_t i = 0; i < b_std.size(); ++i) {
+    resultMatrix(i, 0) = b_std[i];
+    resultMatrix(i, 1) = cs1[i];
+    resultMatrix(i, 2) = cs2[i];
+  }
 
-  return res_vec;
+  // Set column names for the result matrix
+  Rcpp::colnames(resultMatrix) = Rcpp::CharacterVector::create(
+    "neighbors","x_xmap_y","y_xmap_x");
+  return resultMatrix;
 }
