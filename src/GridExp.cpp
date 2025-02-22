@@ -282,16 +282,16 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
   int num_var = xMatrix.ncol();
 
   //  if top <= 0, we choose to apply the heuristic of k (sqrt(m))
-  double k;
+  int k;
   if (top <= 0){
-    double m = CppCombine(nvar*E,num_var) - CppCombine(nvar*(E - 1),num_var);
-    k = std::sqrt(m);
+    double m = CppCombine(num_var*E,nvar) - CppCombine(num_var*(E - 1),nvar);
+    k = std::floor(std::sqrt(m));
   } else {
     k = top;
   }
 
   // Combine all the lags in the embeddings
-  std::vector<std::vector<double>> vec_std(num_row,std::vector<double>(E*num_var));
+  std::vector<std::vector<double>> vec_std(num_row,std::vector<double>(E*num_var,std::numeric_limits<double>::quiet_NaN()));
   for (int n = 0; n < num_var; ++n) {
     // Initialize a std::vector to store the column values
     std::vector<double> univec(num_row);
@@ -311,6 +311,35 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
         vec_std[row][n * E + col] = vectors[row][col];  // Copy elements
       }
     }
+  }
+
+  // Calculate validColumns (indices of columns that are not entirely NaN)
+  std::vector<size_t> validColumns; // To store indices of valid columns
+
+  // Iterate over each column to check if it contains any non-NaN values
+  for (size_t col = 0; col < vec_std[0].size(); ++col) {
+    bool isAllNaN = true;
+    for (size_t row = 0; row < vec_std.size(); ++row) {
+      if (!std::isnan(vec_std[row][col])) {
+        isAllNaN = false;
+        break;
+      }
+    }
+    if (!isAllNaN) {
+      validColumns.push_back(col); // Store the index of valid columns
+    }
+  }
+
+  if (validColumns.size() != vec_std[0].size()) {
+    std::vector<std::vector<double>> filteredEmbeddings;
+    for (size_t row = 0; row < vec_std.size(); ++row) {
+      std::vector<double> filteredRow;
+      for (size_t col : validColumns) {
+        filteredRow.push_back(vec_std[row][col]);
+      }
+      filteredEmbeddings.push_back(filteredRow);
+    }
+    vec_std = filteredEmbeddings;
   }
 
   std::vector<double> res = MultiViewEmbedding(
