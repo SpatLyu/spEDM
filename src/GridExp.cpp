@@ -230,6 +230,112 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& mat,
 }
 
 // [[Rcpp::export]]
+Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
+                                       const Rcpp::NumericMatrix& yMatrix,
+                                       const Rcpp::IntegerMatrix& lib,
+                                       const Rcpp::IntegerMatrix& pred,
+                                       int E,
+                                       int tau,
+                                       int b,
+                                       int top,
+                                       int nvar,
+                                       int threads){
+  int numRows = yMatrix.nrow();
+  int numCols = yMatrix.ncol();
+
+  // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
+  std::vector<std::vector<double>> yMatrix_cpp(yMatrix.nrow(), std::vector<double>(yMatrix.ncol()));
+  for (int i = 0; i < yMatrix.nrow(); ++i) {
+    for (int j = 0; j < yMatrix.ncol(); ++j) {
+      yMatrix_cpp[i][j] = yMatrix(i, j);
+    }
+  }
+  std::vector<double> target = GridMat2Vec(yMatrix_cpp);
+
+  // Initialize lib_indices and pred_indices with all false
+  std::vector<bool> pred_indices(numRows * numCols, false);
+  std::vector<bool> lib_indices(numRows * numCols, false);
+
+  // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
+  int currow;
+  int curcol;
+
+  for (int i = 0; i < lib.nrow(); ++i) {
+    // Convert to 0-based index
+    currow = lib(i,0);
+    curcol = lib(i,1);
+    if (!std::isnan(yMatrix_cpp[currow-1][curcol-1])){
+      lib_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+    }
+  }
+
+  for (int i = 0; i < pred.nrow(); ++i) {
+    // Convert to 0-based index
+    currow = pred(i,0);
+    curcol = pred(i,1);
+    if (!std::isnan(yMatrix_cpp[currow-1][curcol-1])){
+      pred_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+    }
+  }
+
+  int num_row = xMatrix.nrow();
+  int num_var = xMatrix.ncol();
+
+  //  if top <= 0, we choose to apply the heuristic of k (sqrt(m))
+  double k;
+  if (top <= 0){
+    double m = CppCombine(nvar*E,num_var) - CppCombine(nvar*(E - 1),num_var);
+    k = std::sqrt(m);
+  } else {
+    k = top;
+  }
+
+  // Combine all the lags in the embeddings
+  std::vector<std::vector<double>> vec_std(num_row,std::vector<double>(E*num_var));
+  for (int n = 0; n < num_var; ++n) {
+    // Initialize a std::vector to store the column values
+    std::vector<double> univec(num_row);
+
+    // Copy the nth column from the matrix to the vector
+    for (int i = 0; i < num_row; ++i) {
+      univec[i] = xMatrix(i, n);  // Access element at (i, n)
+    }
+
+    std::vector<std::vector<double>> unimat = GridVec2Mat(univec,numRows);
+
+    // Generate the embedding:
+    std::vector<std::vector<double>> vectors = GenGridEmbeddings(unimat,E,tau);
+
+    for (size_t row = 0; row < vectors.size(); ++row) {  // Loop through each row
+      for (size_t col = 0; col < vectors[0].size(); ++col) {  // Loop through each column
+        vec_std[row][n * E + col] = vectors[row][col];  // Copy elements
+      }
+    }
+  }
+
+  std::vector<double> res = MultiViewEmbedding(
+    vec_std,
+    target,
+    lib_indices,
+    pred_indices,
+    b,
+    k,
+    threads);
+
+  // Initialize a NumericMatrix with the given dimensions
+  Rcpp::NumericMatrix resmat(numRows, numCols);
+
+  // Fill the matrix with elements from res (assuming row-major order)
+  for (int i = 0; i < numRows; ++i) {
+    for (int j = 0; j < numCols; ++j) {
+      resmat(i, j) = res[i * numCols + j];  // Access element in row-major order
+    }
+  }
+
+  return resmat;
+}
+
+// [[Rcpp::export]]
 Rcpp::NumericMatrix RcppGCCM4Grid(
     const Rcpp::NumericMatrix& xMatrix,
     const Rcpp::NumericMatrix& yMatrix,
