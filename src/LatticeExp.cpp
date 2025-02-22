@@ -1,6 +1,7 @@
 #include <vector>
 #include "CppLatticeUtils.h"
 #include "Forecast4Lattice.h"
+#include "MultiViewEmbedding.h"
 #include "GCCM4Lattice.h"
 #include "SCPCM4Lattice.h"
 #include "CrossMappingCardinality.h"
@@ -258,6 +259,76 @@ Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& x,
 
   // Set column names for the result matrix
   Rcpp::colnames(result) = Rcpp::CharacterVector::create("theta", "rho", "mae", "rmse");
+  return result;
+}
+
+// [[Rcpp::export]]
+Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
+                                          const Rcpp::NumericVector& y,
+                                          const Rcpp::List& nb,
+                                          const Rcpp::IntegerVector& lib,
+                                          const Rcpp::IntegerVector& pred,
+                                          const Rcpp::IntegerVector& E,
+                                          const Rcpp::IntegerVector& tau,
+                                          int b,
+                                          int top,
+                                          int threads){
+  // Convert Rcpp NumericMatrix x to std::vector<std::vector<double>>& embedddings
+  std::vector<std::vector<double>> x_std(x.ncol());
+  for (int i = 0; i < x.ncol(); ++i) {
+    Rcpp::NumericVector univar = x.column(i);
+    x_std[i] = Rcpp::as<std::vector<double>>(univar);
+  }
+
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> target = Rcpp::as<std::vector<double>>(y);
+
+  // Convert neighborhood list to std::vector<std::vector<int>>
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
+
+  // Convert Rcpp::IntegerVector to std::vector<int>
+  std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
+  std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
+
+  // Initialize lib_indices and pred_indices with all false
+  std::vector<bool> lib_indices(target.size(), false);
+  std::vector<bool> pred_indices(target.size(), false);
+
+  // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
+  int libsize_int = lib.size();
+  for (int i = 0; i < libsize_int; ++i) {
+    lib_indices[lib[i] - 1] = true; // Convert to 0-based index
+  }
+  int predsize_int = pred.size();
+  for (int i = 0; i < predsize_int; ++i) {
+    pred_indices[pred[i] - 1] = true; // Convert to 0-based index
+  }
+
+  std::vector<std::vector<double>> res_std = Simplex4Lattice(
+    vec_std,
+    nb_vec,
+    lib_indices,
+    pred_indices,
+    E_std,
+    tau,
+    b,
+    threads);
+
+  size_t n_rows = res_std.size();
+  size_t n_cols = res_std[0].size();
+
+  // Create an Rcpp::NumericMatrix with the same dimensions
+  Rcpp::NumericMatrix result(n_rows, n_cols);
+
+  // Fill the Rcpp::NumericMatrix with data from res_std
+  for (size_t i = 0; i < n_rows; ++i) {
+    for (size_t j = 0; j < n_cols; ++j) {
+      result(i, j) = res_std[i][j];
+    }
+  }
+
+  // Set column names for the result matrix
+  Rcpp::colnames(result) = Rcpp::CharacterVector::create("E", "rho", "mae", "rmse");
   return result;
 }
 

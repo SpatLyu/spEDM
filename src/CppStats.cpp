@@ -28,6 +28,56 @@ bool checkOneDimVectorHasNaN(const std::vector<double>& vec) {
   return false;
 }
 
+/**
+ * Computes the factorial of a non-negative integer using an iterative approach.
+ *
+ * @param n The non-negative integer for which factorial is to be computed.
+ * @return The factorial of n as unsigned long long. Returns 0 if n > 20 due to overflow.
+ *
+ * @note Efficiently computes factorial in O(n) time with O(1) space complexity.
+ *       Maximum representable value is 20! (2432902008176640000) due to 64-bit limits.
+ */
+unsigned long long CppFactorial(unsigned int n) {
+  if (n > 20) {
+    return 0;  // Overflow occurs beyond 20! for 64-bit unsigned integers
+  }
+  unsigned long long result = 1;
+  for (unsigned int i = 2; i <= n; ++i) {
+    result *= i;
+  }
+  return result;
+}
+
+/**
+ * Computes the binomial coefficient C(n, k) using multiplicative decomposition.
+ *
+ * @param n The total number of items.
+ * @param k The number of items to choose.
+ * @return The binomial coefficient C(n, k) as unsigned long long. Returns 0 if k > n.
+ *
+ * @note Optimizes by selecting smaller k (or n-k) and using stepwise multiply-divide
+ *       operations to reduce intermediate overflows. Time complexity O(k), space O(1).
+ *       Result accuracy depends on final value fitting within 64-bit limits.
+ */
+unsigned long long CppCombine(unsigned int n, unsigned int k) {
+  if (k > n) {
+    return 0;  // Invalid case when selecting more items than available
+  }
+  // Use smaller k to minimize iterations (C(n, k) == C(n, n-k))
+  k = (k < n - k) ? k : n - k;
+  if (k == 0) {
+    return 1;  // Directly return 1 when no selection is required
+  }
+
+  unsigned long long result = 1;
+  for (unsigned int i = 1; i <= k; ++i) {
+    // Multiplicative formula: result = result * (n - k + i) / i
+    result *= (n - k + i);  // Accumulate numerator term
+    result /= i;            // Divide by denominator term stepwise
+  }
+  return result;
+}
+
 // Function to calculate the mean of a vector, ignoring NA values
 double CppMean(const std::vector<double>& vec, bool NA_rm = false) {
   double sum = 0.0;
