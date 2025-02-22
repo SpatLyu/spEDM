@@ -29,6 +29,10 @@ RcppSMap4Grid <- function(mat, lib, pred, theta, E, tau, b, threads) {
     .Call(`_spEDM_RcppSMap4Grid`, mat, lib, pred, theta, E, tau, b, threads)
 }
 
+RcppMultiView4Grid <- function(xMatrix, yMatrix, lib, pred, E, tau, b, top, nvar, threads) {
+    .Call(`_spEDM_RcppMultiView4Grid`, xMatrix, yMatrix, lib, pred, E, tau, b, top, nvar, threads)
+}
+
 RcppGCCM4Grid <- function(xMatrix, yMatrix, libsizes, pred, E, tau, b, simplex, theta, threads, progressbar) {
     .Call(`_spEDM_RcppGCCM4Grid`, xMatrix, yMatrix, libsizes, pred, E, tau, b, simplex, theta, threads, progressbar)
 }
