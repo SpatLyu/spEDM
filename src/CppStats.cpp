@@ -78,25 +78,6 @@ unsigned long long CppCombine(unsigned int n, unsigned int k) {
   return result;
 }
 
-// Function to calculate the cumulative sum of a vector of doubles
-// Returns a new vector where each element at index i is the sum of elements from index 0 to i in the input vector
-std::vector<double> CppCumSum(const std::vector<double>& vec) {
-  // Create a vector to hold the cumulative sums with the same size as the input vector
-  std::vector<double> cumSum(vec.size());
-
-  // Initialize the first element of the cumulative sum
-  if (!vec.empty()) {
-    cumSum[0] = vec[0];
-  }
-
-  // Calculate the cumulative sum
-  for (size_t i = 1; i < vec.size(); ++i) {
-    cumSum[i] = cumSum[i - 1] + vec[i]; // Add the current element to the previous cumulative sum
-  }
-
-  return cumSum; // Return the vector containing cumulative sums
-}
-
 // Function to calculate the mean of a vector, ignoring NA values
 double CppMean(const std::vector<double>& vec, bool NA_rm = false) {
   double sum = 0.0;
@@ -195,6 +176,25 @@ double CppRMSE(const std::vector<double>& vec1,
 
   // Compute and return RMSE
   return std::sqrt(sum_squared_diff / static_cast<double>(valid_count));
+}
+
+// Function to calculate the cumulative sum of a vector of doubles
+// Returns a new vector where each element at index i is the sum of elements from index 0 to i in the input vector
+std::vector<double> CppCumSum(const std::vector<double>& vec) {
+  // Create a vector to hold the cumulative sums with the same size as the input vector
+  std::vector<double> cumSum(vec.size());
+
+  // Initialize the first element of the cumulative sum
+  if (!vec.empty()) {
+    cumSum[0] = vec[0];
+  }
+
+  // Calculate the cumulative sum
+  for (size_t i = 1; i < vec.size(); ++i) {
+    cumSum[i] = cumSum[i - 1] + vec[i]; // Add the current element to the previous cumulative sum
+  }
+
+  return cumSum; // Return the vector containing cumulative sums
 }
 
 // Function to calculate the absolute difference between two vectors
