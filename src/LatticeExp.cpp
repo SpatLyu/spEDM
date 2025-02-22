@@ -287,7 +287,7 @@ Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& x,
  * - tau: An integer specifying the step of spatial lags.
  * - b: An integer specifying the number of neighbors to use for simplex projection.
  * - top: An integer specifying the number of top embeddings to consider; if <= 0, uses sqrt(m) heuristic.
- * - nvar: An integer specifying the number of total variables.
+ * - nvar: An integer specifying the number of `nvar`-dimensional variable combinations.
  * - threads: An integer indicating the number of threads for parallel processing.
  *
  * Returns:
@@ -331,7 +331,7 @@ Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
   //  if top <= 0, we choose to apply the heuristic of k (sqrt(m))
   int k;
   if (top <= 0){
-    double m = CppCombine(nvar*E,num_var) - CppCombine(nvar*(E - 1),num_var);
+    double m = CppCombine(num_var*E,nvar) - CppCombine(num_var*(E - 1),nvar);
     k = std::floor(std::sqrt(m));
   } else {
     k = top;
