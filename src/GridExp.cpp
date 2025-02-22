@@ -282,10 +282,10 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
   int num_var = xMatrix.ncol();
 
   //  if top <= 0, we choose to apply the heuristic of k (sqrt(m))
-  double k;
+  int k;
   if (top <= 0){
     double m = CppCombine(nvar*E,num_var) - CppCombine(nvar*(E - 1),num_var);
-    k = std::sqrt(m);
+    k = std::floor(std::sqrt(m));
   } else {
     k = top;
   }
