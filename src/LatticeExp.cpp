@@ -1,4 +1,6 @@
 #include <vector>
+#include <cmath>
+#include "CppStats.h"
 #include "CppLatticeUtils.h"
 #include "Forecast4Lattice.h"
 #include "MultiViewEmbedding.h"
@@ -272,14 +274,8 @@ Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
                                           const Rcpp::IntegerVector& tau,
                                           int b,
                                           int top,
+                                          int nvar,
                                           int threads){
-  // Convert Rcpp NumericMatrix x to std::vector<std::vector<double>>& embedddings
-  std::vector<std::vector<double>> x_std(x.ncol());
-  for (int i = 0; i < x.ncol(); ++i) {
-    Rcpp::NumericVector univar = x.column(i);
-    x_std[i] = Rcpp::as<std::vector<double>>(univar);
-  }
-
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> target = Rcpp::as<std::vector<double>>(y);
 
@@ -304,32 +300,55 @@ Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
     pred_indices[pred[i] - 1] = true; // Convert to 0-based index
   }
 
-  std::vector<std::vector<double>> res_std = Simplex4Lattice(
-    vec_std,
-    nb_vec,
-    lib_indices,
-    pred_indices,
-    E_std,
-    tau,
-    b,
-    threads);
+  // Combine all the lags in the embeddings
+  int num_row = x.nrow();
+  int num_var = x.ncol();
+  int num_E = 0;
+  for (int singleE : E_std){
+    num_E += singleE;
+  }
 
-  size_t n_rows = res_std.size();
-  size_t n_cols = res_std[0].size();
+  //  if top <= 0, we choose to apply the heuristic of k (sqrt(m))
+  double k;
+  if (top <= 0){
+    double m = CppCombine(num_E,nvar) - CppCombine(num_E - num_var,nvar);
+    k = std::sqrt(m);
+  } else {
+    k = top;
+  }
 
-  // Create an Rcpp::NumericMatrix with the same dimensions
-  Rcpp::NumericMatrix result(n_rows, n_cols);
+  std::vector<std::vector<double>> vec_std(num_row,std::vector<double>(num_E));
+  // Merge columns from each single embedding into the final embeddings
+  for (int n = 0; n < num_var; ++n) {
+    // Initialize a std::vector to store the column values
+    std::vector<double> univec(num_row);
 
-  // Fill the Rcpp::NumericMatrix with data from res_std
-  for (size_t i = 0; i < n_rows; ++i) {
-    for (size_t j = 0; j < n_cols; ++j) {
-      result(i, j) = res_std[i][j];
+    // Copy the nth column from the matrix to the vector
+    for (int i = 0; i < num_row; ++i) {
+      univec[i] = x(i, n);  // Access element at (i, n)
+    }
+
+    // Generate the embedding:
+    std::vector<std::vector<double>> vectors = GenLatticeEmbeddings(univec,nb_vec,E_std[n],tau_std[n]);
+
+    for (size_t row = 0; row < vectors.size(); ++row) {  // Loop through each row
+      for (size_t col = 0; col < vectors[0].size(); ++col) {  // Loop through each column
+        vec_std[row][n * E[n] + col] = vectors[row][col];  // Copy elements
+      }
     }
   }
 
-  // Set column names for the result matrix
-  Rcpp::colnames(result) = Rcpp::CharacterVector::create("E", "rho", "mae", "rmse");
-  return result;
+  std::vector<double> res = MultiViewEmbedding(
+    vec_std,
+    target,
+    lib_indices,
+    pred_indices,
+    b,
+    k,
+    threads);
+
+  // Convert the result back to Rcpp::NumericVector
+  return Rcpp::wrap(res);
 }
 
 // Wrapper function to perform GCCM Lattice and return a NumericMatrix

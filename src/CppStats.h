@@ -20,6 +20,8 @@ unsigned long long CppFactorial(unsigned int n);
 
 unsigned long long CppCombine(unsigned int n, unsigned int k);
 
+std::vector<double> CppCumSum(const std::vector<double>& vec);
+
 double CppMean(const std::vector<double>& vec,
                bool NA_rm = false);
 

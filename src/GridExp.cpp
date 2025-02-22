@@ -1,4 +1,6 @@
 #include <vector>
+#include <cmath>
+#include "CppStats.h"
 #include "CppGridUtils.h"
 #include "Forecast4Grid.h"
 #include "MultiViewEmbedding.h"
