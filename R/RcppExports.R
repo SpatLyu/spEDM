@@ -73,6 +73,10 @@ RcppSMap4Lattice <- function(x, nb, lib, pred, theta, E, tau, b, threads) {
     .Call(`_spEDM_RcppSMap4Lattice`, x, nb, lib, pred, theta, E, tau, b, threads)
 }
 
+RcppMultiView4Lattice <- function(x, y, nb, lib, pred, E, tau, b, top, nvar, threads) {
+    .Call(`_spEDM_RcppMultiView4Lattice`, x, y, nb, lib, pred, E, tau, b, top, nvar, threads)
+}
+
 RcppGCCM4Lattice <- function(x, y, nb, libsizes, lib, pred, E, tau, b, simplex, theta, threads, progressbar) {
     .Call(`_spEDM_RcppGCCM4Lattice`, x, y, nb, libsizes, lib, pred, E, tau, b, simplex, theta, threads, progressbar)
 }
@@ -83,6 +87,14 @@ RcppSCPCM4Lattice <- function(x, y, z, nb, libsizes, lib, pred, E, tau, b, simpl
 
 RcppGCMC4Lattice <- function(x, y, nb, pred, E, tau, b, max_r, threads, progressbar) {
     .Call(`_spEDM_RcppGCMC4Lattice`, x, y, nb, pred, E, tau, b, max_r, threads, progressbar)
+}
+
+RcppFactorial <- function(n) {
+    .Call(`_spEDM_RcppFactorial`, n)
+}
+
+RcppCombine <- function(n, k) {
+    .Call(`_spEDM_RcppCombine`, n, k)
 }
 
 RcppMean <- function(vec, NA_rm = FALSE) {
@@ -107,6 +119,10 @@ RcppMAE <- function(vec1, vec2, NA_rm = FALSE) {
 
 RcppRMSE <- function(vec1, vec2, NA_rm = FALSE) {
     .Call(`_spEDM_RcppRMSE`, vec1, vec2, NA_rm)
+}
+
+RcppCumSum <- function(vec) {
+    .Call(`_spEDM_RcppCumSum`, vec)
 }
 
 RcppAbsDiff <- function(vec1, vec2) {

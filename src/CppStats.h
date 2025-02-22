@@ -16,6 +16,10 @@ bool checkIntNA(int value);
 
 bool checkOneDimVectorHasNaN(const std::vector<double>& vec);
 
+unsigned long long CppFactorial(unsigned int n);
+
+unsigned long long CppCombine(unsigned int n, unsigned int k);
+
 double CppMean(const std::vector<double>& vec,
                bool NA_rm = false);
 
@@ -29,6 +33,8 @@ double CppMAE(const std::vector<double>& x1,
 double CppRMSE(const std::vector<double>& x1,
                const std::vector<double>& x2,
                bool NA_rm = false);
+
+std::vector<double> CppCumSum(const std::vector<double>& vec);
 
 std::vector<double> CppAbsDiff(const std::vector<double>& vec1,
                                const std::vector<double>& vec2);

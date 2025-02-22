@@ -6,6 +6,16 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 
 // [[Rcpp::export]]
+int RcppFactorial(int n){
+  return(CppFactorial(n));
+};
+
+// [[Rcpp::export]]
+double RcppCombine(int n,int k){
+  return(CppCombine(n,k));
+};
+
+// [[Rcpp::export]]
 double RcppMean(const Rcpp::NumericVector& vec,
                 bool NA_rm = false) {
   // Convert Rcpp::NumericVector to std::vector<double>
@@ -69,6 +79,18 @@ double RcppRMSE(const Rcpp::NumericVector& vec1,
 
   // Call the CppRMSE function
   return CppRMSE(x1_vec, x2_vec, NA_rm);
+}
+
+// [[Rcpp::export]]
+Rcpp::NumericVector RcppCumSum(const Rcpp::NumericVector& vec) {
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
+
+  // Call the CppCumSum function
+  std::vector<double> result = CppCumSum(vec_std);
+
+  // Convert the result back to Rcpp::NumericVector
+  return Rcpp::wrap(result);
 }
 
 // [[Rcpp::export]]

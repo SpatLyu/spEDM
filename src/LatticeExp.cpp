@@ -1,6 +1,9 @@
 #include <vector>
+#include <cmath>
+#include "CppStats.h"
 #include "CppLatticeUtils.h"
 #include "Forecast4Lattice.h"
+#include "MultiViewEmbedding.h"
 #include "GCCM4Lattice.h"
 #include "SCPCM4Lattice.h"
 #include "CrossMappingCardinality.h"
@@ -188,7 +191,7 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
  *   - pred: An IntegerVector specifying the prediction indices (1-based in R, converted to 0-based in C++).
  *   - theta: A NumericVector containing the parameter values to be tested for theta.
  *   - E: An integer specifying the embedding dimension to test.
- *   - b: An integer specifying the number of neighbors to use for Simplex Mapping.
+ *   - b: An integer specifying the number of neighbors to use for s-mapping.
  *   - threads: An integer specifying the number of threads to use for parallel computation.
  *   - includeself: A boolean indicating whether to include the current state when constructing the embedding vector.
  *
@@ -259,6 +262,103 @@ Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& x,
   // Set column names for the result matrix
   Rcpp::colnames(result) = Rcpp::CharacterVector::create("theta", "rho", "mae", "rmse");
   return result;
+}
+
+/*
+ * Wrapper function to perform multiview embedding for spatial lattice data.
+ *
+ * Parameters:
+ * - x: An Rcpp::NumericMatrix representing the selected multivariate spatial cross sectional data input.
+ * - y: An Rcpp::NumericVector representing the target variable for prediction.
+ * - nb: An Rcpp::List representing the spatial neighborhood structure.
+ * - lib: An Rcpp::IntegerVector specifying the library indices (1-based, from R).
+ * - pred: An Rcpp::IntegerVector specifying the prediction indices (1-based, from R).
+ * - E: An integer specifying the embedding dimensions.
+ * - tau: An integer specifying the step of spatial lags.
+ * - b: An integer specifying the number of neighbors to use for simplex projection.
+ * - top: An integer specifying the number of top embeddings to consider; if <= 0, uses sqrt(m) heuristic.
+ * - nvar: An integer specifying the number of total variables.
+ * - threads: An integer indicating the number of threads for parallel processing.
+ *
+ * Returns:
+ * - An Rcpp::NumericVector containing the prediction results based on the multiview embedding.
+ */
+// [[Rcpp::export]]
+Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
+                                          const Rcpp::NumericVector& y,
+                                          const Rcpp::List& nb,
+                                          const Rcpp::IntegerVector& lib,
+                                          const Rcpp::IntegerVector& pred,
+                                          int E,
+                                          int tau,
+                                          int b,
+                                          int top,
+                                          int nvar,
+                                          int threads){
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> target = Rcpp::as<std::vector<double>>(y);
+
+  // Convert neighborhood list to std::vector<std::vector<int>>
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
+
+  // Initialize lib_indices and pred_indices with all false
+  std::vector<bool> lib_indices(target.size(), false);
+  std::vector<bool> pred_indices(target.size(), false);
+
+  // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
+  int libsize_int = lib.size();
+  for (int i = 0; i < libsize_int; ++i) {
+    lib_indices[lib[i] - 1] = true; // Convert to 0-based index
+  }
+  int predsize_int = pred.size();
+  for (int i = 0; i < predsize_int; ++i) {
+    pred_indices[pred[i] - 1] = true; // Convert to 0-based index
+  }
+
+  int num_row = x.nrow();
+  int num_var = x.ncol();
+
+  //  if top <= 0, we choose to apply the heuristic of k (sqrt(m))
+  double k;
+  if (top <= 0){
+    double m = CppCombine(nvar*E,num_var) - CppCombine(nvar*(E - 1),num_var);
+    k = std::sqrt(m);
+  } else {
+    k = top;
+  }
+
+  // Combine all the lags in the embeddings
+  std::vector<std::vector<double>> vec_std(num_row,std::vector<double>(E*num_var));
+  for (int n = 0; n < num_var; ++n) {
+    // Initialize a std::vector to store the column values
+    std::vector<double> univec(num_row);
+
+    // Copy the nth column from the matrix to the vector
+    for (int i = 0; i < num_row; ++i) {
+      univec[i] = x(i, n);  // Access element at (i, n)
+    }
+
+    // Generate the embedding:
+    std::vector<std::vector<double>> vectors = GenLatticeEmbeddings(univec,nb_vec,E,tau);
+
+    for (size_t row = 0; row < vectors.size(); ++row) {  // Loop through each row
+      for (size_t col = 0; col < vectors[0].size(); ++col) {  // Loop through each column
+        vec_std[row][n * E + col] = vectors[row][col];  // Copy elements
+      }
+    }
+  }
+
+  std::vector<double> res = MultiViewEmbedding(
+    vec_std,
+    target,
+    lib_indices,
+    pred_indices,
+    b,
+    k,
+    threads);
+
+  // Convert the result back to Rcpp::NumericVector
+  return Rcpp::wrap(res);
 }
 
 // Wrapper function to perform GCCM Lattice and return a NumericMatrix

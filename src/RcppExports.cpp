@@ -288,6 +288,27 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppMultiView4Lattice
+Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, int E, int tau, int b, int top, int nvar, int threads);
+RcppExport SEXP _spEDM_RcppMultiView4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP topSEXP, SEXP nvarSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type lib(libSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type pred(predSEXP);
+    Rcpp::traits::input_parameter< int >::type E(ESEXP);
+    Rcpp::traits::input_parameter< int >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< int >::type b(bSEXP);
+    Rcpp::traits::input_parameter< int >::type top(topSEXP);
+    Rcpp::traits::input_parameter< int >::type nvar(nvarSEXP);
+    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppMultiView4Lattice(x, y, nb, lib, pred, E, tau, b, top, nvar, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppGCCM4Lattice
 Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, const Rcpp::IntegerVector& libsizes, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, int E, int tau, int b, bool simplex, double theta, int threads, bool progressbar);
 RcppExport SEXP _spEDM_RcppGCCM4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP libsizesSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP simplexSEXP, SEXP thetaSEXP, SEXP threadsSEXP, SEXP progressbarSEXP) {
@@ -353,6 +374,29 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< bool >::type progressbar(progressbarSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppGCMC4Lattice(x, y, nb, pred, E, tau, b, max_r, threads, progressbar));
+    return rcpp_result_gen;
+END_RCPP
+}
+// RcppFactorial
+int RcppFactorial(int n);
+RcppExport SEXP _spEDM_RcppFactorial(SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppFactorial(n));
+    return rcpp_result_gen;
+END_RCPP
+}
+// RcppCombine
+double RcppCombine(int n, int k);
+RcppExport SEXP _spEDM_RcppCombine(SEXP nSEXP, SEXP kSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppCombine(n, k));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -428,6 +472,17 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec2(vec2SEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppRMSE(vec1, vec2, NA_rm));
+    return rcpp_result_gen;
+END_RCPP
+}
+// RcppCumSum
+Rcpp::NumericVector RcppCumSum(const Rcpp::NumericVector& vec);
+RcppExport SEXP _spEDM_RcppCumSum(SEXP vecSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppCumSum(vec));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -623,15 +678,19 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppGenLatticeEmbeddings", (DL_FUNC) &_spEDM_RcppGenLatticeEmbeddings, 4},
     {"_spEDM_RcppSimplex4Lattice", (DL_FUNC) &_spEDM_RcppSimplex4Lattice, 8},
     {"_spEDM_RcppSMap4Lattice", (DL_FUNC) &_spEDM_RcppSMap4Lattice, 9},
+    {"_spEDM_RcppMultiView4Lattice", (DL_FUNC) &_spEDM_RcppMultiView4Lattice, 11},
     {"_spEDM_RcppGCCM4Lattice", (DL_FUNC) &_spEDM_RcppGCCM4Lattice, 13},
     {"_spEDM_RcppSCPCM4Lattice", (DL_FUNC) &_spEDM_RcppSCPCM4Lattice, 15},
     {"_spEDM_RcppGCMC4Lattice", (DL_FUNC) &_spEDM_RcppGCMC4Lattice, 10},
+    {"_spEDM_RcppFactorial", (DL_FUNC) &_spEDM_RcppFactorial, 1},
+    {"_spEDM_RcppCombine", (DL_FUNC) &_spEDM_RcppCombine, 2},
     {"_spEDM_RcppMean", (DL_FUNC) &_spEDM_RcppMean, 2},
     {"_spEDM_RcppSum", (DL_FUNC) &_spEDM_RcppSum, 2},
     {"_spEDM_RcppVariance", (DL_FUNC) &_spEDM_RcppVariance, 2},
     {"_spEDM_RcppCovariance", (DL_FUNC) &_spEDM_RcppCovariance, 3},
     {"_spEDM_RcppMAE", (DL_FUNC) &_spEDM_RcppMAE, 3},
     {"_spEDM_RcppRMSE", (DL_FUNC) &_spEDM_RcppRMSE, 3},
+    {"_spEDM_RcppCumSum", (DL_FUNC) &_spEDM_RcppCumSum, 1},
     {"_spEDM_RcppAbsDiff", (DL_FUNC) &_spEDM_RcppAbsDiff, 2},
     {"_spEDM_RcppSumNormalize", (DL_FUNC) &_spEDM_RcppSumNormalize, 2},
     {"_spEDM_RcppDistance", (DL_FUNC) &_spEDM_RcppDistance, 4},

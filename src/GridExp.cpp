@@ -1,6 +1,9 @@
 #include <vector>
+#include <cmath>
+#include "CppStats.h"
 #include "CppGridUtils.h"
 #include "Forecast4Grid.h"
+#include "MultiViewEmbedding.h"
 #include "GCCM4Grid.h"
 #include "SCPCM4Grid.h"
 #include "CrossMappingCardinality.h"
