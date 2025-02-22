@@ -111,18 +111,28 @@ Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec,
   return result;
 }
 
-// Description: Computes Simplex projection for lattice data and returns a matrix containing
-//              the embedding dimension (E), Pearson correlation coefficient (PearsonCor),
-//              mean absolute error (MAE), and root mean squared error (RMSE).
-// Parameters:
-//   - x: A NumericVector containing the time series data.
-//   - nb: A List containing neighborhood information for lattice data.
-//   - lib: An IntegerVector specifying the library indices (1-based in R, converted to 0-based in C++).
-//   - pred: An IntegerVector specifying the prediction indices (1-based in R, converted to 0-based in C++).
-//   - E: An IntegerVector specifying the embedding dimensions to test.
-//   - b: An integer specifying the number of neighbors to use for simplex projection.
-//   - includeself: Whether to include the current state when constructing the embedding vector
-// Returns: A NumericMatrix where each row contains {E, PearsonCor, MAE, RMSE}.
+/**
+ * Description:
+ *   Computes Simplex projection for lattice data and returns a matrix containing
+ *   the embedding dimension (E), Pearson correlation coefficient (PearsonCor),
+ *   mean absolute error (MAE), and root mean squared error (RMSE).
+ *
+ * Parameters:
+ *   - x: A NumericVector containing the time series data.
+ *   - nb: A List containing neighborhood information for lattice data.
+ *   - lib: An IntegerVector specifying the library indices (1-based in R, converted to 0-based in C++).
+ *   - pred: An IntegerVector specifying the prediction indices (1-based in R, converted to 0-based in C++).
+ *   - E: An IntegerVector specifying the embedding dimensions to test.
+ *   - tau: An integer specifying the step of spatial lags for prediction.
+ *   - b: An integer specifying the number of neighbors to use for simplex projection.
+ *
+ * Returns:
+ *   A NumericMatrix where each row contains {E, PearsonCor, MAE, RMSE}:
+ *   - E: The tested embedding dimension.
+ *   - PearsonCor: The Pearson correlation coefficient between the predicted and actual values.
+ *   - MAE: The mean absolute error between the predicted and actual values.
+ *   - RMSE: The root mean squared error between the predicted and actual values.
+ */
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
                                         const Rcpp::List& nb,
@@ -191,9 +201,9 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
  *   - pred: An IntegerVector specifying the prediction indices (1-based in R, converted to 0-based in C++).
  *   - theta: A NumericVector containing the parameter values to be tested for theta.
  *   - E: An integer specifying the embedding dimension to test.
+ *   - tau: the step of spatial lags for prediction.
  *   - b: An integer specifying the number of neighbors to use for s-mapping.
  *   - threads: An integer specifying the number of threads to use for parallel computation.
- *   - includeself: A boolean indicating whether to include the current state when constructing the embedding vector.
  *
  * Returns:
  *   A NumericMatrix where each row contains {theta, PearsonCor, MAE, RMSE}:
