@@ -120,8 +120,9 @@ Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec,
 //   - lib: An IntegerVector specifying the library indices (1-based in R, converted to 0-based in C++).
 //   - pred: An IntegerVector specifying the prediction indices (1-based in R, converted to 0-based in C++).
 //   - E: An IntegerVector specifying the embedding dimensions to test.
+//   - tau: the step of spatial lags for prediction.
 //   - b: An integer specifying the number of neighbors to use for simplex projection.
-//   - includeself: Whether to include the current state when constructing the embedding vector
+//
 // Returns: A NumericMatrix where each row contains {E, PearsonCor, MAE, RMSE}.
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
@@ -191,9 +192,9 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
  *   - pred: An IntegerVector specifying the prediction indices (1-based in R, converted to 0-based in C++).
  *   - theta: A NumericVector containing the parameter values to be tested for theta.
  *   - E: An integer specifying the embedding dimension to test.
+ *   - tau: the step of spatial lags for prediction.
  *   - b: An integer specifying the number of neighbors to use for s-mapping.
  *   - threads: An integer specifying the number of threads to use for parallel computation.
- *   - includeself: A boolean indicating whether to include the current state when constructing the embedding vector.
  *
  * Returns:
  *   A NumericMatrix where each row contains {theta, PearsonCor, MAE, RMSE}:
