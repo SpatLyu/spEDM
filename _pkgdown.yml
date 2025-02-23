@@ -28,6 +28,7 @@ reference:
   contents:
   - simplex
   - smap
+  - multiview
   - gccm
 
 - title: Utils Functions
