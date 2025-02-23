@@ -10,8 +10,8 @@
 #include <RcppThread.h>
 
 /**
- * Computes the multi-view embedding by evaluating multiple feature subsets using simplex projection,
- * selecting top-performing subsets, and aggregating their contributions.
+ * Computes the multi-view embedding by evaluating multiple feature embeddings using simplex projection,
+ * selecting top-performing embeddings, and aggregating their contributions.
  *
  * Parameters:
  *   - vectors: 2D vector where each row represents a sample and each column a feature.
@@ -23,7 +23,7 @@
  *   - threads: Number of threads used from the global pool.
  *
  * Returns:
- *   A vector<double> where each element is the aggregated average of predict value from selected feature columns.
+ *   A vector<double> where each element is the predict value from selected embeddings columns.
  */
 std::vector<double> MultiViewEmbedding(
     const std::vector<std::vector<double>>& vectors,
