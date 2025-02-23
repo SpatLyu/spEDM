@@ -19,7 +19,7 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
   return(res)
 }
 
-#' simplex forecasting
+#' simplex forecast
 #'
 #' @inheritParams embedded
 #' @param lib Row numbers(`vector`) of lattice data or row-column numbers(`matrix`) of grid data for creating the library from observations.

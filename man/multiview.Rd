@@ -4,7 +4,7 @@
 \alias{multiview}
 \alias{multiview,sf-method}
 \alias{multiview,SpatRaster-method}
-\title{multiview embedding}
+\title{multiview embedding forecast}
 \usage{
 \S4method{multiview}{sf}(
   data,
@@ -68,7 +68,7 @@
 A vector (when input is sf object) or matrix
 }
 \description{
-multiview embedding
+multiview embedding forecast
 }
 \examples{
 columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData"))
