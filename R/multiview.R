@@ -40,7 +40,7 @@ methods::setGeneric("multiview", function(data, ...) standardGeneric("multiview"
 #' \donttest{
 #' multiview(columbus,
 #'           columns = c("INC","CRIME","OPEN","PLUMB","DISCBD"),
-#'           target = "HOVAL", nvar = 3,lib = 1:39, pred = 40:49)
+#'           target = "HOVAL", nvar = 3,lib = 1:49, pred = 1:49)
 #' }
 methods::setMethod("multiview", "sf", .multiview_sf_method)
 
