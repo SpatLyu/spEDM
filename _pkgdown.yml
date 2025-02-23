@@ -24,15 +24,18 @@ authors:
     href: https://spatlyu.github.io/
 
 reference:
-- title: Spatial EDM Methods
+- title: State Space Reconstructions
   contents:
+  - embedded
   - simplex
   - smap
   - multiview
+
+- title: Spatial Empirical Dynamic Modeling
+  contents:
   - gccm
 
 - title: Utils Functions
   contents:
-  - embedded
   - detectThreads
 
