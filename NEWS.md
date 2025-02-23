@@ -2,7 +2,7 @@
 
 ### new
 
-* Implement the `multiview` function to enable the multiview embedding(MVE) method (#221).
+* Implement the `multiview` function to enable the multiview embedding forecast (MVE) method (#221).
 
 ### enhancements
 
