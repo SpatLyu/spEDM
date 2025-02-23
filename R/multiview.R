@@ -20,3 +20,29 @@ methods::setGeneric("multiview", function(data, ...) standardGeneric("multiview"
   res = RcppMultiView4Grid(xmat,ymat,lib,pred,E,tau,k,top,nvar,threads)
   return(res)
 }
+
+#' multiview embedding
+#'
+#' @inheritParams simplex
+#' @param columns Individual variable names.
+#' @param nvar Number of variable combinations.
+#' @param top (optional) Number of reconstructions used for MVE forecast.
+#'
+#' @return A vector (when input is sf object) or matrix
+#' @export
+#'
+#' @name multiview
+#' @rdname multiview
+#' @aliases multiview,sf-method
+#'
+#' @examples
+#' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData"))
+#' \donttest{
+#' multiview(columbus,
+#'           columns = c("INC","CRIME","OPEN","PLUMB","DISCBD"),
+#'           target = "HOVAL", nvar = 3,lib = 1:39, pred = 40:49)
+#' }
+methods::setMethod("multiview", "sf", .multiview_sf_method)
+
+#' @rdname multiview
+methods::setMethod("multiview", "SpatRaster", .multiview_spatraster_method)
