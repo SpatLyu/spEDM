@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <numeric>
 #include <cmath>
+#include "CppStats.h"
 #include "SimplexProjection.h"
 #include <RcppThread.h>
 
@@ -14,15 +15,15 @@
  *
  * Parameters:
  *   - vectors: 2D vector where each row represents a sample and each column a feature.
- *   - target: Target time-series aligned with the samples in vectors.
- *   - lib_indices: Boolean mask indicating which samples to use for neighbor search.
- *   - pred_indices: Boolean mask indicating which samples to predict.
- *   - num_neighbors: Number of neighbors for simplex projection.
- *   - top_num: Number of top-performing subsets to select.
+ *   - target: Target spatial cross sectional series aligned with the samples in vectors.
+ *   - lib_indices: Boolean flag indicating which samples to use for neighbor search.
+ *   - pred_indices: Boolean flag indicating which samples to predict.
+ *   - num_neighbors: Number of neighbors used for simplex projection.
+ *   - top_num: Number of top-performing reconstructions to select.
  *   - threads: Number of threads used from the global pool.
  *
  * Returns:
- *   A vector<double> where each element is the aggregated average of selected feature columns.
+ *   A vector<double> where each element is the aggregated average of predict value from selected feature columns.
  */
 std::vector<double> MultiViewEmbedding(
     const std::vector<std::vector<double>>& vectors,
@@ -54,6 +55,9 @@ std::vector<double> MultiViewEmbedding(
   //     return {};
   //   }
   // }
+
+  // Store the simplex projection result
+  std::vector<std::vector<double>> pred_res(num_samples, std::vector<double>(num_features,std::numeric_limits<double>::quiet_NaN()));
 
   // Evaluate each feature column as a separate subset
   std::vector<std::vector<double>> pred_metrics(num_features, std::vector<double>(3));
@@ -90,10 +94,20 @@ std::vector<double> MultiViewEmbedding(
       subset.push_back({vectors[row][col]});
     }
 
+    std::vector<double> local_pred = SimplexProjectionPrediction(subset, target, lib_indices, pred_indices, num_neighbors);
+    for (size_t row = 0; row < local_pred.size(); ++row) {
+      pred_res[row][col] = local_pred[row];
+    }
+
     // Get performance metrics for this subset
-    auto metrics = SimplexBehavior(subset, target, lib_indices, pred_indices, num_neighbors);
-    // if (metrics.size() != 3) continue;  // Skip invalid results
-    pred_metrics[col] = metrics;
+    // auto metrics = SimplexBehavior(subset, target, lib_indices, pred_indices, num_neighbors);
+    // // if (metrics.size() != 3) continue;  // Skip invalid results
+    // pred_metrics[col] = metrics;
+    double pearson = PearsonCor(local_pred, target, true);
+    double mae = CppMAE(local_pred, target, true);
+    double rmse = CppRMSE(local_pred, target, true);
+    pred_metrics[col] = {pearson, mae, rmse};
+
   }, threads_sizet);
 
   // Create indices for sorting features by performance
