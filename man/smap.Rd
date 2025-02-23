@@ -4,7 +4,7 @@
 \alias{smap}
 \alias{smap,sf-method}
 \alias{smap,SpatRaster-method}
-\title{smap forecasting}
+\title{smap forecast}
 \usage{
 \S4method{smap}{sf}(
   data,
@@ -62,7 +62,7 @@
 A matrix
 }
 \description{
-smap forecasting
+smap forecast
 }
 \examples{
 columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData"))

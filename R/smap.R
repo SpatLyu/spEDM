@@ -23,7 +23,7 @@ methods::setGeneric("smap", function(data, ...) standardGeneric("smap"))
   return(res)
 }
 
-#' smap forecasting
+#' smap forecast
 #'
 #' @inheritParams simplex
 #' @param theta (optional) Weighting parameter for distances.

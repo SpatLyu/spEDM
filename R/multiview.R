@@ -21,7 +21,7 @@ methods::setGeneric("multiview", function(data, ...) standardGeneric("multiview"
   return(res)
 }
 
-#' multiview embedding
+#' multiview embedding forecast
 #'
 #' @inheritParams simplex
 #' @param columns Individual variable names.

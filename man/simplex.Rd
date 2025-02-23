@@ -4,7 +4,7 @@
 \alias{simplex}
 \alias{simplex,sf-method}
 \alias{simplex,SpatRaster-method}
-\title{simplex forecasting}
+\title{simplex forecast}
 \usage{
 \S4method{simplex}{sf}(
   data,
@@ -56,7 +56,7 @@
 A matrix
 }
 \description{
-simplex forecasting
+simplex forecast
 }
 \examples{
 columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData"))
