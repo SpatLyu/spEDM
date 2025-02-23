@@ -87,3 +87,30 @@
   res = matrix(dtf[,"target"],nrow = terra::nrow(data),byrow = TRUE)
   return(res)
 }
+
+.multivar_lattice = \(data,columns,trend.rm){
+  columns = .check_character(columns)
+  coords = as.data.frame(sdsfun::sf_coordinates(data))
+  data = sf::st_drop_geometry(data)
+  data = data[,columns]
+  .varname = paste0("z",seq_along(columns))
+  names(data) = .varname
+  if (trend.rm){
+    data = .internal_trend_rm(data,.varname,coords)
+  }
+  res = as.matrix(data[,.varname])
+  return(res)
+}
+
+.multivar_grid = \(data,columns,trend.rm){
+  columns = .check_character(columns)
+  data = data[,columns]
+  .varname = paste0("z",seq_along(columns))
+  names(data) = .varname
+  dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
+  if (trend.rm){
+    dtf = .internal_trend_rm(dtf,.varname)
+  }
+  res = as.matrix(dtf[,.varname])
+  return(res)
+}
