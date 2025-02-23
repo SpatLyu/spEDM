@@ -24,7 +24,7 @@ authors:
     href: https://spatlyu.github.io/
 
 reference:
-- title: State Space Reconstruction
+- title: State Space Reconstructions
   contents:
   - embedded
   - simplex
