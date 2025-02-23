@@ -2,7 +2,7 @@
 
 ### new
 
-* Implement the `multiview` function to enable the multiview embedding forecast (MVE) method (#221).
+* Implement the `multiview` function for multiview embedding forecast (MVE) method (#221).
 
 ### enhancements
 
@@ -10,7 +10,7 @@
 
 * Introduce `trend.rm` option in the R API for `embedded`, `simplex`, and `smap` methods to align with `gccm` behavior (#191).
 
-* Reimplement indexing of lag values and embedding vector generation for spatial lattice ([#186](https://github.com/stscl/spEDM/pull/186),[#184](https://github.com/stscl/spEDM/pull/184)) and grid data ([#183](https://github.com/stscl/spEDM/pull/183),[#181](https://github.com/stscl/spEDM/pull/181)).
+* Refactor indexing of lag values and embedding vector generation for spatial lattice ([#186](https://github.com/stscl/spEDM/pull/186),[#184](https://github.com/stscl/spEDM/pull/184)) and grid data ([#183](https://github.com/stscl/spEDM/pull/183),[#181](https://github.com/stscl/spEDM/pull/181)).
 
 * Centered around example cases in the `gccm` vignette (#170).
 
@@ -18,7 +18,7 @@
 
 ### enhancements
 
-* Improve default spatial neighbor list generation for lattice data with support from the `sdsfun` package (#159).
+* Improve default spatial neighbors list generation for spatial lattice data with support from the `sdsfun` package (#159).
 
 ### breaking changes
 
