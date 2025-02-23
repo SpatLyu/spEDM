@@ -1,5 +1,9 @@
 # spEDM 1.5
 
+### new
+
+* Implement the `multiview` function to enable the multiview embedding(MVE) method (#221).
+
 ### enhancements
 
 * Apply parallel-level computations for each libsize when executing `gccm` on spatial grid data (#203).
@@ -24,7 +28,7 @@
 
 ### new
 
-* Implement the `smap` funtion to enable the selection of the optimal theta parameter (#128).
+* Implement the `smap` function to enable the selection of the optimal theta parameter (#128).
 
 * Add `simplex` function to support selecting the optimal embedding dimension for variables (#98).
 
