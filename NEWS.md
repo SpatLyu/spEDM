@@ -6,6 +6,8 @@
 
 ### enhancements
 
+* Eliminate redundant computations at the source C++ code level (#233).
+
 * Apply parallel-level computations for each libsize when executing `gccm` on spatial grid data (#203).
 
 * Introduce `trend.rm` option in the R API for `embedded`, `simplex`, and `smap` methods to align with `gccm` behavior (#191).
