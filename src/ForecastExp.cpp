@@ -14,10 +14,10 @@
  *
  * Parameters:
  *   - embedding: Reconstructed state-space (each row represents a separate vector/state).
- *   - target: Spatial cross-section series used as the target (should align with embedding).
+ *   - target: Spatial cross sectional series used as the target (should align with embedding).
  *   - lib: Integer vector of indices (which states to include when searching for neighbors, 1-based indexing).
  *   - pred: Integer vector of indices (which states to predict from, 1-based indexing).
- *   - num_neighbors: Number of neighbors to use for simplex projection.
+ *   - num_neighbors: Number of neighbors to be used for simplex projection.
  *
  * Returns: A Rcpp::NumericVector containing the predicted target values.
  */
@@ -75,10 +75,10 @@ Rcpp::NumericVector RcppSimplexForecast(
  *
  * Parameters:
  *   - embedding: Reconstructed state-space (each row is a separate vector/state).
- *   - target: Spatial cross-section series to be used as the target (should align with embedding).
+ *   - target: Spatial cross sectional series to be used as the target (should align with embedding).
  *   - lib: Integer vector of indices (which states to include when searching for neighbors, 1-based indexing).
  *   - pred: Integer vector of indices (which states to predict from, 1-based indexing).
- *   - num_neighbors: Number of neighbors to use for S-Map.
+ *   - num_neighbors: Number of neighbors to be used for S-Mapping.
  *   - theta: Weighting parameter for distances.
  *
  * Returns: A Rcpp::NumericVector containing the predicted target values.
