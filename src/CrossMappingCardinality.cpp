@@ -203,11 +203,12 @@ std::vector<double> CrossMappingCardinality(
     const std::vector<int>& n_excluded,
     int threads,
     bool progressbar) {
+  // Store results for each num_neighbors
+  std::vector<double> results(num_neighbors.size(), 0.0);
 
   // Input validation
-  if (embedding_x.size() != embedding_y.size() || embedding_x.empty() ||
-      num_neighbors.size() != n_excluded.size()) {
-    return {}; // Return an empty vector on invalid input
+  if (embedding_x.size() != embedding_y.size() || embedding_x.empty()) {
+    return results;
   }
 
   // Filter valid prediction points (exclude those with all NaN values)
@@ -221,7 +222,7 @@ std::vector<double> CrossMappingCardinality(
                              [](double v) { return std::isnan(v); });
     if (!x_nan && !y_nan) valid_pred.push_back(idx);
   }
-  if (valid_pred.empty()) return {}; // Return an empty vector if no valid predictions
+  if (valid_pred.empty()) return results;
 
   // Configure threads
   size_t threads_sizet = static_cast<size_t>(threads);
@@ -230,9 +231,6 @@ std::vector<double> CrossMappingCardinality(
   // Precompute distance matrices (corresponding to _dismats in python package crossmapy)
   auto dist_x = CppMatDistance(embedding_x, false, true);
   auto dist_y = CppMatDistance(embedding_y, false, true);
-
-  // Store results for each num_neighbors
-  std::vector<double> results(num_neighbors.size(), 0.0);
 
   // Main parallel computation logic for each (num_neighbors, n_excluded) pair
   // auto CMCSingle = [&](size_t j) {
@@ -415,11 +413,12 @@ std::vector<double> CrossMappingCardinality2(
     const std::vector<int>& n_excluded,
     int threads,
     bool progressbar) {
+  // Store results for each num_neighbors
+  std::vector<double> results(num_neighbors.size(), 0.0);
 
   // Input validation
-  if (embedding_x.size() != embedding_y.size() || embedding_x.empty() ||
-      num_neighbors.size() != n_excluded.size()) {
-    return {}; // Return an empty vector on invalid input
+  if (embedding_x.size() != embedding_y.size() || embedding_x.empty()) {
+    return results;
   }
 
   // Filter valid prediction points (exclude those with all NaN values)
@@ -433,7 +432,7 @@ std::vector<double> CrossMappingCardinality2(
                              [](double v) { return std::isnan(v); });
     if (!x_nan && !y_nan) valid_pred.push_back(idx);
   }
-  if (valid_pred.empty()) return {}; // Return an empty vector if no valid predictions
+  if (valid_pred.empty()) return results;
 
   // Configure threads
   size_t threads_sizet = static_cast<size_t>(threads);
@@ -442,9 +441,6 @@ std::vector<double> CrossMappingCardinality2(
   // Precompute distance matrices (corresponding to _dismats in python package crossmapy)
   auto dist_x = CppMatDistance(embedding_x, false, true);
   auto dist_y = CppMatDistance(embedding_y, false, true);
-
-  // Store results for each num_neighbors
-  std::vector<double> results(num_neighbors.size(), 0.0);
 
   // Main parallel computation logic for each (num_neighbors, n_excluded) pair
   auto CMCSingle = [&](size_t j) {
