@@ -567,6 +567,19 @@ Rcpp::NumericMatrix RcppGCMC4Lattice(
   std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
   std::vector<int> maxr_std = Rcpp::as<std::vector<int>>(max_r);
 
+  // Process b_std to handle <= 0 values
+  for (size_t i = 0; i < b_std.size(); ++i) {
+    if (b_std[i] <= 0) {
+      b_std[i] = static_cast<int>(std::floor(static_cast<double>(x_std.size()) / 4.0));
+    } else if (b_std[i] > static_cast<int>(x_std.size()) - maxr_std[i]){
+      b_std[i] = static_cast<int>(x_std.size()) - maxr_std[i];
+    }
+  }
+
+  // Remove duplicates for b_std
+  std::sort(b_std.begin(), b_std.end());
+  b_std.erase(std::unique(b_std.begin(), b_std.end()), b_std.end());
+
   // convert R based 1 index to C++ based 0 index
   for (size_t i = 0; i < pred_std.size(); ++i) {
     pred_std[i] -= 1;
