@@ -41,8 +41,8 @@
   return(res)
 }
 
-.name_xmap2cause = \(varname){
+.name_intersectdf = \(varname){
   return(c("neighbors",
-           paste0(varname[2], "->", varname[1]),
-           paste0(varname[1], "->", varname[2])))
+           paste0(varname[1], ":", varname[2]),
+           paste0(varname[2], ":", varname[1])))
 }
