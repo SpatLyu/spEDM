@@ -11,7 +11,7 @@
  *
  * Parameters:
  *   - vectors: Reconstructed state-space (each row represents a separate vector/state).
- *   - target: Spatial cross-section series used as the target (should align with vectors).
+ *   - target: Spatial cross sectional series used as the target (should align with vectors).
  *   - lib_indices: Vector of T/F values indicating which states to include when searching for neighbors.
  *   - pred_indices: Vector of T/F values indicating which states to predict from.
  *   - num_neighbors: Number of neighbors to use for simplex projection.
@@ -122,7 +122,7 @@ std::vector<double> SimplexProjectionPrediction(
  *
  * Parameters:
  *   - vectors: Reconstructed state-space (each row represents a separate vector/state).
- *   - target: Spatial cross-section series used as the target (should align with vectors).
+ *   - target: Spatial cross sectional series used as the target (should align with vectors).
  *   - lib_indices: Vector of T/F values indicating which states to include when searching for neighbors.
  *   - pred_indices: Vector of T/F values indicating which states to use for prediction.
  *   - num_neighbors: Number of neighbors to use for simplex projection.
@@ -146,7 +146,7 @@ double SimplexProjection(
  *
  * Parameters:
  *   - vectors: Reconstructed state-space (each row is a separate vector/state).
- *   - target: Spatial cross-section series to be used as the target (should align with vectors).
+ *   - target: Spatial cross sectional series to be used as the target (should align with vectors).
  *   - lib_indices: Vector of T/F values (which states to include when searching for neighbors).
  *   - pred_indices: Vector of T/F values (which states to predict from).
  *   - num_neighbors: Number of neighbors to use for simplex projection.
