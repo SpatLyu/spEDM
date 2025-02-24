@@ -240,7 +240,9 @@ std::vector<std::vector<double>> GCCM4Grid(
                  [&](int size) { return std::min(size, max_lib_size_col); });
 
   // Remove duplicates in row-wise and column-wise library sizes
+  std::sort(row_lib_sizes.begin(), row_lib_sizes.end());
   row_lib_sizes.erase(std::unique(row_lib_sizes.begin(), row_lib_sizes.end()), row_lib_sizes.end());
+  std::sort(col_lib_sizes.begin(), col_lib_sizes.end());
   col_lib_sizes.erase(std::unique(col_lib_sizes.begin(), col_lib_sizes.end()), col_lib_sizes.end());
 
   // // Generate unique pairs of row-wise and column-wise library sizes

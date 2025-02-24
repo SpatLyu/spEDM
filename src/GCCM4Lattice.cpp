@@ -224,6 +224,7 @@ std::vector<std::vector<double>> GCCM4Lattice(
   //                [&](int size) { return std::max(size, E + 2); });
 
   // Remove duplicates
+  std::sort(unique_lib_sizes.begin(), unique_lib_sizes.end());
   unique_lib_sizes.erase(std::unique(unique_lib_sizes.begin(), unique_lib_sizes.end()), unique_lib_sizes.end());
 
   // Initialize the result container
