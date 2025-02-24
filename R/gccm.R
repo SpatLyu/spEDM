@@ -74,14 +74,14 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 #' @param k (optional) Number of nearest neighbors to use for prediction.
 #' @param theta (optional) Weighting parameter for distances, useful when `algorithm` is `smap`.
 #' @param algorithm (optional) Algorithm used for prediction.
-#' @param pred pred (optional) Row numbers(`vector`) of lattice data or row-column numbers(`matrix`) of grid data used for predictions.
+#' @param pred (optional) Row numbers(`vector` for lattice data) or row-column numbers(`matrix` for grid data) used for predictions.
 #' @param nb (optional) The neighbours list.
 #' @param threads (optional) Number of threads.
 #' @param bidirectional (optional) whether to identify bidirectional causal associations.
 #' @param trend.rm (optional) Whether to remove the linear trend.
 #' @param progressbar (optional) whether to print the progress bar.
 #'
-#' @return A list.
+#' @return A list
 #' \describe{
 #' \item{\code{xmap}}{cross mapping prediction results}
 #' \item{\code{varname}}{names of causal and effect variable}

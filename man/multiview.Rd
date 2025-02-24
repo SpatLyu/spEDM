@@ -40,21 +40,21 @@
 \arguments{
 \item{data}{The observation data.}
 
-\item{columns}{Individual variable names.}
+\item{columns}{Names of individual variables.}
 
 \item{target}{Name of target variable.}
 
 \item{nvar}{Number of variable combinations.}
 
-\item{lib}{Row numbers(\code{vector}) of lattice data or row-column numbers(\code{matrix}) of grid data for creating the library from observations.}
+\item{lib}{Row numbers(\code{vector} for lattice data) or row-column numbers(\code{matrix} for grid data) to create the library from observations.}
 
-\item{pred}{(optional) Row numbers(\code{vector}) of lattice data or row-column numbers(\code{matrix}) of grid data used for predictions.}
+\item{pred}{(optional) Row numbers(\code{vector} for lattice data) or row-column numbers(\code{matrix} for grid data) used for predictions.}
 
 \item{E}{(optional) Dimensions of the embedding.}
 
 \item{tau}{(optional) Step of spatial lags.}
 
-\item{k}{(optional) Number of nearest neighbors to use for prediction.}
+\item{k}{(optional) Number of nearest neighbors used for prediction.}
 
 \item{nb}{(optional) The neighbours list.}
 
@@ -75,6 +75,6 @@ columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData"))
 \donttest{
 multiview(columbus,
           columns = c("INC","CRIME","OPEN","PLUMB","DISCBD"),
-          target = "HOVAL", nvar = 3,lib = 1:49, pred = 1:49)
+          target = "HOVAL", nvar = 3, lib = 1:49, pred = 1:49)
 }
 }

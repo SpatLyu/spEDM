@@ -40,15 +40,15 @@
 
 \item{target}{Name of target variable.}
 
-\item{lib}{Row numbers(\code{vector}) of lattice data or row-column numbers(\code{matrix}) of grid data for creating the library from observations.}
+\item{lib}{Row numbers(\code{vector} for lattice data) or row-column numbers(\code{matrix} for grid data) to create the library from observations.}
 
-\item{pred}{(optional) Row numbers(\code{vector}) of lattice data or row-column numbers(\code{matrix}) of grid data used for predictions.}
+\item{pred}{(optional) Row numbers(\code{vector} for lattice data) or row-column numbers(\code{matrix} for grid data) used for predictions.}
 
 \item{E}{(optional) Dimensions of the embedding.}
 
 \item{tau}{(optional) Step of spatial lags.}
 
-\item{k}{(optional) Number of nearest neighbors to use for prediction.}
+\item{k}{(optional) Number of nearest neighbors used for prediction.}
 
 \item{theta}{(optional) Weighting parameter for distances.}
 

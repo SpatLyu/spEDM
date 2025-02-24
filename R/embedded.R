@@ -11,7 +11,7 @@ methods::setGeneric("embedded", function(data, ...) standardGeneric("embedded"))
   return(RcppGenGridEmbeddings(mat,E,tau))
 }
 
-#' generate embeddings
+#' generate embeddings for spatial cross-sectional data
 #'
 #' @param data The observation data.
 #' @param target Name of target variable.

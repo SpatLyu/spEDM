@@ -4,7 +4,7 @@
 \alias{embedded}
 \alias{embedded,sf-method}
 \alias{embedded,SpatRaster-method}
-\title{generate embeddings}
+\title{generate embeddings for spatial cross-sectional data}
 \usage{
 \S4method{embedded}{sf}(data, target, E = 3, tau = 1, nb = NULL, trend.rm = FALSE)
 
@@ -27,7 +27,7 @@
 A matrix
 }
 \description{
-generate embeddings
+generate embeddings for spatial cross-sectional data
 }
 \examples{
 columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData"))
