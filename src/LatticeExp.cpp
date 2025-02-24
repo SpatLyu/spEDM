@@ -602,6 +602,6 @@ Rcpp::NumericMatrix RcppGCMC4Lattice(
 
   // Set column names for the result matrix
   Rcpp::colnames(resultMatrix) = Rcpp::CharacterVector::create(
-    "neighbors","x_xmap_y","y_xmap_x");
+    "neighbors","x_intersect_y","y_intersect_x");
   return resultMatrix;
 }
