@@ -60,7 +60,7 @@
 
 \item{algorithm}{(optional) Algorithm used for prediction.}
 
-\item{pred}{pred (optional) Row numbers(\code{vector}) of lattice data or row-column numbers(\code{matrix}) of grid data used for predictions.}
+\item{pred}{(optional) Row numbers(\code{vector} for lattice data) or row-column numbers(\code{matrix} for grid data) used for predictions.}
 
 \item{nb}{(optional) The neighbours list.}
 
@@ -73,7 +73,7 @@
 \item{progressbar}{(optional) whether to print the progress bar.}
 }
 \value{
-A list.
+A list
 \describe{
 \item{\code{xmap}}{cross mapping prediction results}
 \item{\code{varname}}{names of causal and effect variable}
