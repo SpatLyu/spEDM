@@ -571,6 +571,12 @@ Rcpp::NumericMatrix RcppGCMC4Grid(
   std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
   std::vector<int> maxr_std = Rcpp::as<std::vector<int>>(max_r);
 
+  // Transform to ensure no b exceeds data size
+  std::transform(b_std.begin(), b_std.end(), b_std.begin(),
+                 [&](int size) { return std::min(size, xMatrix.nrow() * xMatrix.ncol()); });
+  // Remove duplicates for b_std
+  b_std.erase(std::unique(b_std.begin(), b_std.end()), b_std.end());
+
   // Convert Rcpp IntegerMatrix to std::vector<int>
   int numRows = xMatrix.nrow();
   int numCols = xMatrix.ncol();
