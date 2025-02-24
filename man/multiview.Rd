@@ -75,6 +75,6 @@ columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData"))
 \donttest{
 multiview(columbus,
           columns = c("INC","CRIME","OPEN","PLUMB","DISCBD"),
-          target = "HOVAL", nvar = 3,lib = 1:49, pred = 1:49)
+          target = "HOVAL", nvar = 3, lib = 1:49, pred = 1:49)
 }
 }
