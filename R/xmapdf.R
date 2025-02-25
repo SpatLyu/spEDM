@@ -1,26 +1,30 @@
-.bind_xmapdf = \(varname,x_xmap_y,y_xmap_x,bidirectional = TRUE){
-
-  colnames(y_xmap_x) = c("libsizes","y_xmap_x_mean","y_xmap_x_sig",
+.internal_xmapdf_binding = \(varname,x_xmap_y,y_xmap_x,bidirectional,keyname = "libsizes"){
+  colnames(y_xmap_x) = c(keyname,"y_xmap_x_mean","y_xmap_x_sig",
                          "y_xmap_x_upper","y_xmap_x_lower")
   y_xmap_x = as.data.frame(y_xmap_x)
 
   if (bidirectional){
-    colnames(x_xmap_y) = c("libsizes","x_xmap_y_mean","x_xmap_y_sig",
+    colnames(x_xmap_y) = c(keyname,"x_xmap_y_mean","x_xmap_y_sig",
                            "x_xmap_y_upper","x_xmap_y_lower")
     x_xmap_y = as.data.frame(x_xmap_y)
     resdf = x_xmap_y |>
-      dplyr::full_join(y_xmap_x, by = "libsizes") |>
+      dplyr::full_join(y_xmap_x, by = keyname) |>
       dplyr::arrange(libsizes)
   } else {
     resdf = dplyr::arrange(y_xmap_x,libsizes)
   }
 
+  return(resdf)
+}
+
+.bind_xmapdf = \(varname,x_xmap_y,y_xmap_x,bidirectional){
+  resdf = .internal_xmapdf_binding(varname,x_xmap_y,y_xmap_x,bidirectional)
   res = list("xmap" = resdf, "varname" = varname, "bidirectional" = bidirectional)
   class(res) = 'ccm_res'
   return(res)
 }
 
-.bind_xmapdf2 = \(varname,x_xmap_y,y_xmap_x,bidirectional = TRUE){
+.bind_xmapdf2 = \(varname,x_xmap_y,y_xmap_x,bidirectional){
 
   tyxmapx = y_xmap_x[,c(1,2,4:6)]
   dyxmapx = y_xmap_x[,c(1,3,7:9)]
@@ -31,8 +35,8 @@
     dxxmapy = x_xmap_y[,c(1,3,7:9)]
   }
 
-  txmap = .bind_xmapdf(varname[1:2],txxmapy,tyxmapx,bidirectional)[[1]]
-  dxmap = .bind_xmapdf(varname[1:2],dxxmapy,dyxmapx,bidirectional)[[1]]
+  txmap = .internal_xmapdf_binding(varname[1:2],txxmapy,tyxmapx,bidirectional)
+  dxmap = .internal_xmapdf_binding(varname[1:2],dxxmapy,dyxmapx,bidirectional)
 
   res = list("pxmap" = dxmap, "xmap" = txmap,
              "varname" = varname[1:2],
@@ -41,8 +45,9 @@
   return(res)
 }
 
-.name_intersectdf = \(varname){
-  return(c("neighbors",
-           paste0(varname[1], ":", varname[2]),
-           paste0(varname[2], ":", varname[1])))
+.bind_intersectdf = \(varname,x_xmap_y,y_xmap_x,bidirectional){
+  resdf = .internal_xmapdf_binding(varname,x_xmap_y,y_xmap_x,bidirectional,keyname = "neighbors")
+  res = list("xmap" = resdf, "varname" = varname, "bidirectional" = bidirectional)
+  class(res) = 'cmc_res'
+  return(res)
 }
