@@ -209,6 +209,24 @@ Rcpp::NumericVector RcppCorConfidence(double r, int n, int k = 0, double level =
   return Rcpp::wrap(result);
 }
 
+// Wrapper function to performs delong's test for ROC AUC comparison and return a NumericVector
+// [[Rcpp::export]]
+Rcpp::NumericVector RcppDeLongTest(const Rcpp::NumericVector& cases,
+                                   const Rcpp::NumericVector& controls,
+                                   const Rcpp::CharacterVector& direction,
+                                   double level = 0.05) {
+  // Convert Rcpp inputs to standard C++ types
+  std::vector<double> cpp_cases = Rcpp::as<std::vector<double>>(cases);
+  std::vector<double> cpp_controls = Rcpp::as<std::vector<double>>(controls);
+  std::string cpp_direction = Rcpp::as<std::string>(direction[0]);
+
+  // Call the CppDeLongTest function
+  std::vector<double> result = CppDeLongTest(cpp_cases, cpp_controls, cpp_direction, level);
+
+  // Convert std::vector<double> to Rcpp::NumericVector
+  return Rcpp::wrap(result);
+}
+
 // Wrapper function to compute the distance matrix of a given matrix 'mat'
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppMatDistance(const Rcpp::NumericMatrix& mat,
@@ -389,9 +407,9 @@ Rcpp::List RcppSVD(const Rcpp::NumericMatrix& X) {
 
 // Rcpp wrapper function for CppDeLongPlacements
 // [[Rcpp::export]]
-Rcpp::List RcppDeLongPlacements(Rcpp::NumericVector cases,
-                                Rcpp::NumericVector controls,
-                                Rcpp::CharacterVector direction) {
+Rcpp::List RcppDeLongPlacements(const Rcpp::NumericVector& cases,
+                                const Rcpp::NumericVector& controls,
+                                const Rcpp::CharacterVector& direction) {
   // Convert Rcpp inputs to standard C++ types
   std::vector<double> cpp_cases = Rcpp::as<std::vector<double>>(cases);
   std::vector<double> cpp_controls = Rcpp::as<std::vector<double>>(controls);

@@ -7,6 +7,7 @@
 #include <cmath>
 #include <numeric> // for std::accumulate
 #include <limits>  // for std::numeric_limits
+#include "DeLongPlacements.h"
 // #include <Rcpp.h>
 #include <RcppArmadillo.h>
 
@@ -70,6 +71,11 @@ double CppCorSignificance(double r, int n, int k = 0);
 
 std::vector<double> CppCorConfidence(double r, int n, int k = 0,
                                      double level = 0.05);
+
+std::vector<double> CppDeLongTest(const std::vector<double>& cases,
+                                  const std::vector<double>& controls,
+                                  const std::string& direction,
+                                  double level = 0.05);
 
 double CppDistance(const std::vector<double>& vec1,
                    const std::vector<double>& vec2,
