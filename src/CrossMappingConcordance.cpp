@@ -380,16 +380,17 @@ std::vector<double> CrossMappingConcordance(
     }
 
     std::vector<double> H1sequence;
-    for (size_t i = 1; i <= k; ++i) {
+    for (size_t col = 1; col <= k; ++col) {
       std::vector<double> mean_intersect;
-      for (size_t j = 0; j <= ratio_curves.size(); ++j){
-        mean_intersect.push_back(ratio_curves[j][i]);
+      for (size_t row = 0; row <= ratio_curves.size(); ++row){
+        mean_intersect.push_back(ratio_curves[row][col]);
       }
       H1sequence.push_back(CppMean(mean_intersect,true));
     }
 
     auto dp_res = CppDeLongPlacements(H1sequence,H0sequence,">");
     double cmc_score = dp_res.theta;
+    results[j] = std::max(0.0, cmc_score); // Ensure non-negative result
   };
 
   // Parallel computation with or without a progress bar
