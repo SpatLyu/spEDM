@@ -1,5 +1,5 @@
-#ifndef CrossMappingCardinality_H
-#define CrossMappingCardinality_H
+#ifndef CrossMappingConcordance_H
+#define CrossMappingConcordance_H
 
 #include <vector>
 #include <cmath>
@@ -12,7 +12,7 @@
 #include <RcppThread.h>
 
 /*
- * Computes the Intersection Cardinality (IC) causal strength score.
+ * Computes the Intersection Concordance (IC) causal strength score.
  *
  * Parameters:
  *   embedding_x: State-space reconstruction (embedded) of the potential cause variable.
@@ -26,7 +26,7 @@
  * Returns:
  *   - A double representing the IC causal strength score, normalized between [0,1].
  */
-double IntersectionCardinality(
+double IntersectionConcordance(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
     const std::vector<int>& pred,
@@ -36,7 +36,7 @@ double IntersectionCardinality(
     bool progressbar);
 
 /**
- * Computes the Cross Mapping Cardinality (CMC) causal strength score (adjusted based on Python logic).
+ * Computes the Cross Mapping Concordance (CMC) causal strength score (adjusted based on Python logic).
  *
  * Parameters:
  *   embedding_x: State-space reconstruction (embedded) of the potential cause variable.
@@ -60,7 +60,7 @@ std::vector<double> CrossMappingCardinality(
     bool progressbar);
 
 /**
- * Computes the Cross Mapping Cardinality (CMC) causal strength score (adjusted based on Python logic).
+ * Computes the Cross Mapping Concordance (CMC) causal strength score (adjusted based on Python logic).
  *
  * Parameters:
  *   embedding_x: State-space reconstruction (embedded) of the potential cause variable.
@@ -74,7 +74,7 @@ std::vector<double> CrossMappingCardinality(
  * Returns:
  *   A vector of normalized CMC causal strength scores in the range [0,1], corresponding to each value in num_neighbors.
  */
-std::vector<double> CrossMappingCardinality2(
+std::vector<double> CrossMappingConcordance2(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
     const std::vector<int>& pred,
@@ -83,4 +83,4 @@ std::vector<double> CrossMappingCardinality2(
     int threads,
     bool progressbar);
 
-#endif // CrossMappingCardinality_H
+#endif // CrossMappingConcordance_H
