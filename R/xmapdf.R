@@ -9,9 +9,9 @@
     x_xmap_y = as.data.frame(x_xmap_y)
     resdf = x_xmap_y |>
       dplyr::full_join(y_xmap_x, by = keyname) |>
-      dplyr::arrange(libsizes)
+      dplyr::arrange({{keyname}})
   } else {
-    resdf = dplyr::arrange(y_xmap_x,libsizes)
+    resdf = dplyr::arrange(y_xmap_x,{{keyname}})
   }
 
   return(resdf)
