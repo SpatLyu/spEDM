@@ -3,6 +3,7 @@
 S3method(plot,ccm_res)
 S3method(plot,pcm_res)
 S3method(print,ccm_res)
+S3method(print,cmc_res)
 S3method(print,pcm_res)
 export(detectThreads)
 exportMethods(embedded)

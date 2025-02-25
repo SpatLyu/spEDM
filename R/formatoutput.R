@@ -1,20 +1,34 @@
+.internal_xmapdf_print = \(resdf,bidirectional,keyname = "libsizes"){
+  if (bidirectional){
+    resdf = resdf[,c(keyname, "y_xmap_x_mean", "x_xmap_y_mean")]
+    names(resdf) = c(keyname,
+                     paste0(x$varname[1], "->", x$varname[2]),
+                     paste0(x$varname[2], "->", x$varname[1]))
+  } else {
+    resdf = resdf[,c(keyname, "y_xmap_x_mean")]
+    names(resdf) = c(keyname,
+                     paste0(x$varname[1], "->", x$varname[2]))
+  }
+  return(resdf)
+}
+
 #' print ccm result
 #' @noRd
 #' @export
 print.ccm_res = \(x,...){
   resdf = x[[1]]
   bidirectional = x[[3]]
+  resdf = .internal_xmapdf_print(resdf,bidirectional)
+  print(resdf)
+}
 
-  if (bidirectional){
-    resdf = resdf[,c("libsizes", "y_xmap_x_mean", "x_xmap_y_mean")]
-    names(resdf) = c('libsizes',
-                     paste0(x$varname[1], "->", x$varname[2]),
-                     paste0(x$varname[2], "->", x$varname[1]))
-  } else {
-    resdf = resdf[,c("libsizes", "y_xmap_x_mean")]
-    names(resdf) = c('libsizes',
-                     paste0(x$varname[1], "->", x$varname[2]))
-  }
+#' print cmc result
+#' @noRd
+#' @export
+print.cmc_res = \(x,...){
+  resdf = x[[1]]
+  bidirectional = x[[3]]
+  resdf = .internal_xmapdf_print(resdf,bidirectional,keyname = "neighbors")
   print(resdf)
 }
 
