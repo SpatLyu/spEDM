@@ -22,7 +22,8 @@
  * @param cases A vector of numeric values representing positive cases.
  * @param controls A vector of numeric values representing negative controls.
  * @param direction A string indicating the comparison direction. If set to ">", values are inverted.
- * @return DeLongPlacementsRes A structure containing:
+ *
+ * @return A structure containing:
  *   - `theta`: The estimated AUC value.
  *   - `X`: A vector of normalized placement values for cases.
  *   - `Y`: A vector of normalized placement values for controls.
