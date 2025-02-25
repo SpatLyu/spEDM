@@ -19,6 +19,8 @@
  * specified `direction` (either ">" or "<"), it processes the data accordingly by inverting
  * the sign of the input values if necessary.
  *
+ * @reference https://github.com/xrobin/pROC/blob/master/src/delong.cpp
+ *
  * @param cases A vector of numeric values representing positive cases.
  * @param controls A vector of numeric values representing negative controls.
  * @param direction A string indicating the comparison direction. If set to ">", values are inverted.
