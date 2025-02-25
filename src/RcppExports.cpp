@@ -678,6 +678,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppDeLongPlacements
+Rcpp::List RcppDeLongPlacements(Rcpp::NumericVector cases, Rcpp::NumericVector controls, Rcpp::CharacterVector direction);
+RcppExport SEXP _spEDM_RcppDeLongPlacements(SEXP casesSEXP, SEXP controlsSEXP, SEXP directionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type cases(casesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type controls(controlsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type direction(directionSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppDeLongPlacements(cases, controls, direction));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppSimplexForecast", (DL_FUNC) &_spEDM_RcppSimplexForecast, 5},
@@ -725,6 +738,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppDistKNNIndice", (DL_FUNC) &_spEDM_RcppDistKNNIndice, 3},
     {"_spEDM_RcppLinearTrendRM", (DL_FUNC) &_spEDM_RcppLinearTrendRM, 4},
     {"_spEDM_RcppSVD", (DL_FUNC) &_spEDM_RcppSVD, 1},
+    {"_spEDM_RcppDeLongPlacements", (DL_FUNC) &_spEDM_RcppDeLongPlacements, 3},
     {NULL, NULL, 0}
 };
 

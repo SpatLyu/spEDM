@@ -1,5 +1,7 @@
 #include <vector>
+#include <string>
 #include "CppStats.h"
+#include "DeLongPlacements.h"
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
 #include <RcppArmadillo.h>
@@ -374,5 +376,26 @@ Rcpp::List RcppSVD(const Rcpp::NumericMatrix& X) {
     Rcpp::Named("u") = u_rcpp, // Left singular vectors
     Rcpp::Named("d") = d_rcpp, // Singular values
     Rcpp::Named("v") = v_rcpp  // Right singular vectors
+  );
+}
+
+// Rcpp wrapper function for CppDeLongPlacements
+// [[Rcpp::export]]
+Rcpp::List RcppDeLongPlacements(Rcpp::NumericVector cases,
+                                Rcpp::NumericVector controls,
+                                Rcpp::CharacterVector direction) {
+  // Convert Rcpp inputs to standard C++ types
+  std::vector<double> cpp_cases = Rcpp::as<std::vector<double>>(cases);
+  std::vector<double> cpp_controls = Rcpp::as<std::vector<double>>(controls);
+  std::string cpp_direction = Rcpp::as<std::string>(direction[0]);
+
+  // Call the CppDeLongPlacements function
+  DeLongPlacementsRes result = CppDeLongPlacements(cpp_cases, cpp_controls, cpp_direction);
+
+  // Return the result as an Rcpp List
+  return Rcpp::List::create(
+    Rcpp::Named("theta") = result.theta,
+    Rcpp::Named("X") = result.X,
+    Rcpp::Named("Y") = result.Y
   );
 }
