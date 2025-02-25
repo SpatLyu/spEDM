@@ -9,7 +9,6 @@
 #include <utility>
 #include <unordered_set>
 #include "CppStats.h"
-#include "DeLongPlacements.h"
 #include <RcppThread.h>
 
 /*
@@ -25,9 +24,12 @@
  *   progressbar: Whether to display a progress bar.
  *
  * Returns:
- *   - A double representing the IC causal strength score, normalized between [0,1].
+ *   - A vector containing the results of the DeLong test for the AUC values: [IC score, p-value, confidence interval upper bound, confidence interval lower bound].
+ *   - IC score represents the causal strength score, normalized between [0, 1].
+ *   - p-value indicates the statistical significance of the result.
+ *   - The confidence interval bounds represent the uncertainty of the IC score.
  */
-double IntersectionCardinality(
+std::vector<double> IntersectionCardinality(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
     const std::vector<int>& pred,
@@ -49,9 +51,10 @@ double IntersectionCardinality(
  *   progressbar: Whether to display a progress bar.
  *
  * Returns:
- *   A vector of normalized CMC causal strength scores in the range [0,1], corresponding to each value in num_neighbors.
+ *   A vector the results of the DeLong test for the AUC values: [IC score, p-value, confidence interval upper bound, confidence interval lower bound] one for each entry in num_neighbors.
+ *   The result contains multiple rows, each corresponding to a different number of neighbors.
  */
-std::vector<double> CrossMappingCardinality(
+std::vector<std::vector<double>> CrossMappingCardinality(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
     const std::vector<int>& pred,
@@ -73,9 +76,10 @@ std::vector<double> CrossMappingCardinality(
  *   progressbar: Whether to display a progress bar.
  *
  * Returns:
- *   A vector of normalized CMC causal strength scores in the range [0,1], corresponding to each value in num_neighbors.
+ *   A vector the results of the DeLong test for the AUC values: [IC score, p-value, confidence interval upper bound, confidence interval lower bound] one for each entry in num_neighbors.
+ *   The result contains multiple rows, each corresponding to a different number of neighbors.
  */
-std::vector<double> CrossMappingCardinality2(
+std::vector<std::vector<double>> CrossMappingCardinality2(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
     const std::vector<int>& pred,

@@ -6,7 +6,6 @@
 #include <utility>
 #include <unordered_set>
 #include "CppStats.h"
-#include "DeLongPlacements.h"
 #include <RcppThread.h>
 
 // [[Rcpp::plugins(cpp11)]]
@@ -25,9 +24,12 @@
  *   progressbar: Whether to display a progress bar.
  *
  * Returns:
- *   - A double representing the IC causal strength score, normalized between [0,1].
+ *   - A vector containing the results of the DeLong test for the AUC values: [IC score, p-value, confidence interval upper bound, confidence interval lower bound].
+ *   - IC score represents the causal strength score, normalized between [0, 1].
+ *   - p-value indicates the statistical significance of the result.
+ *   - The confidence interval bounds represent the uncertainty of the IC score.
  */
-double IntersectionCardinality(
+std::vector<double> IntersectionCardinality(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
     const std::vector<int>& pred,
@@ -38,7 +40,7 @@ double IntersectionCardinality(
 
   // Input validation
   if (embedding_x.size() != embedding_y.size() || embedding_x.empty()) {
-    return 0.0;
+    return {0, 1.0, std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN()};
   }
 
   // Filter valid prediction points (exclude those with all NaN values)
@@ -52,7 +54,7 @@ double IntersectionCardinality(
                              [](double v) { return std::isnan(v); });
     if (!x_nan && !y_nan) valid_pred.push_back(idx);
   }
-  if (valid_pred.empty()) return 0.0;
+  if (valid_pred.empty()) return {0, 1.0, std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN()};
 
   // Parameter initialization
   const size_t k = static_cast<size_t>(num_neighbors);
@@ -143,10 +145,9 @@ double IntersectionCardinality(
     H1sequence.push_back(CppMean(mean_intersect,true));
   }
 
-  DeLongPlacementsRes dp_res = CppDeLongPlacements(H1sequence,H0sequence,">");
-  double cmc_score = dp_res.theta;
+  std::vector<double> dp_res = CppDeLongTest(H1sequence,H0sequence,">");
 
-  return std::max(0.0, cmc_score); // Ensure non-negative result
+  return dp_res;
 }
 
 /**
@@ -162,9 +163,10 @@ double IntersectionCardinality(
  *   progressbar: Whether to display a progress bar.
  *
  * Returns:
- *   A vector of normalized CMC causal strength scores in the range [0,1], corresponding to each value in num_neighbors.
+ *   A vector the results of the DeLong test for the AUC values: [IC score, p-value, confidence interval upper bound, confidence interval lower bound] one for each entry in num_neighbors.
+ *   The result contains multiple rows, each corresponding to a different number of neighbors.
  */
-std::vector<double> CrossMappingCardinality(
+std::vector<std::vector<double>> CrossMappingCardinality(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
     const std::vector<int>& pred,
@@ -173,7 +175,7 @@ std::vector<double> CrossMappingCardinality(
     int threads,
     bool progressbar) {
   // Store results for each num_neighbors
-  std::vector<double> results(num_neighbors.size(), 0.0);
+  std::vector<std::vector<double>> results(num_neighbors.size(), std::vector<double>(4,std::numeric_limits<double>::quiet_NaN()));
 
   // Input validation
   if (embedding_x.size() != embedding_y.size() || embedding_x.empty()) {
@@ -269,9 +271,8 @@ std::vector<double> CrossMappingCardinality(
       H1sequence.push_back(CppMean(mean_intersect,true));
     }
 
-    DeLongPlacementsRes dp_res = CppDeLongPlacements(H1sequence,H0sequence,">");
-    double cmc_score = dp_res.theta;
-    results[j] = std::max(0.0, cmc_score); // Ensure non-negative result
+    std::vector<double> dp_res = CppDeLongTest(H1sequence,H0sequence,">");
+    results[j] = dp_res;
   };
 
   // Parallel computation with or without a progress bar
@@ -303,9 +304,10 @@ std::vector<double> CrossMappingCardinality(
  *   progressbar: Whether to display a progress bar.
  *
  * Returns:
- *   A vector of normalized CMC causal strength scores in the range [0,1], corresponding to each value in num_neighbors.
+ *   A vector the results of the DeLong test for the AUC values: [IC score, p-value, confidence interval upper bound, confidence interval lower bound] one for each entry in num_neighbors.
+ *   The result contains multiple rows, each corresponding to a different number of neighbors.
  */
-std::vector<double> CrossMappingCardinality2(
+std::vector<std::vector<double>> CrossMappingCardinality2(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
     const std::vector<int>& pred,
@@ -314,7 +316,7 @@ std::vector<double> CrossMappingCardinality2(
     int threads,
     bool progressbar) {
   // Store results for each num_neighbors
-  std::vector<double> results(num_neighbors.size(), 0.0);
+  std::vector<std::vector<double>> results(num_neighbors.size(), std::vector<double>(4,std::numeric_limits<double>::quiet_NaN()));
 
   // Input validation
   if (embedding_x.size() != embedding_y.size() || embedding_x.empty()) {
@@ -411,9 +413,8 @@ std::vector<double> CrossMappingCardinality2(
       H1sequence.push_back(CppMean(mean_intersect,true));
     }
 
-    DeLongPlacementsRes dp_res = CppDeLongPlacements(H1sequence,H0sequence,">");
-    double cmc_score = dp_res.theta;
-    results[j] = std::max(0.0, cmc_score); // Ensure non-negative result
+    std::vector<double> dp_res = CppDeLongTest(H1sequence,H0sequence,">");
+    results[j] = dp_res;
   };
 
   // Parallel computation with or without a progress bar
