@@ -9,6 +9,7 @@
 #include <utility>
 #include <unordered_set>
 #include "CppStats.h"
+#include "DeLongPlacements.h"
 #include <RcppThread.h>
 
 /*
