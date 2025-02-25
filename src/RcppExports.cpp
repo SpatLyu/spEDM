@@ -530,6 +530,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppArithmeticSeq
+Rcpp::NumericVector RcppArithmeticSeq(double from, double to, int length_out);
+RcppExport SEXP _spEDM_RcppArithmeticSeq(SEXP fromSEXP, SEXP toSEXP, SEXP length_outSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type from(fromSEXP);
+    Rcpp::traits::input_parameter< double >::type to(toSEXP);
+    Rcpp::traits::input_parameter< int >::type length_out(length_outSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppArithmeticSeq(from, to, length_out));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppDistance
 double RcppDistance(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, bool L1norm, bool NA_rm);
 RcppExport SEXP _spEDM_RcppDistance(SEXP vec1SEXP, SEXP vec2SEXP, SEXP L1normSEXP, SEXP NA_rmSEXP) {
@@ -727,6 +740,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppCumSum", (DL_FUNC) &_spEDM_RcppCumSum, 1},
     {"_spEDM_RcppAbsDiff", (DL_FUNC) &_spEDM_RcppAbsDiff, 2},
     {"_spEDM_RcppSumNormalize", (DL_FUNC) &_spEDM_RcppSumNormalize, 2},
+    {"_spEDM_RcppArithmeticSeq", (DL_FUNC) &_spEDM_RcppArithmeticSeq, 3},
     {"_spEDM_RcppDistance", (DL_FUNC) &_spEDM_RcppDistance, 4},
     {"_spEDM_RcppPearsonCor", (DL_FUNC) &_spEDM_RcppPearsonCor, 3},
     {"_spEDM_RcppPartialCor", (DL_FUNC) &_spEDM_RcppPartialCor, 5},

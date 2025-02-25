@@ -122,6 +122,14 @@ Rcpp::NumericVector RcppSumNormalize(const Rcpp::NumericVector& vec, bool NA_rm 
 }
 
 // [[Rcpp::export]]
+Rcpp::NumericVector RcppArithmeticSeq(double from, double to, int length_out) {
+  // Call the CppArithmeticSeq function
+  std::vector<double> result = CppArithmeticSeq(from, to, length_out);
+  // Convert the result back to Rcpp::NumericVector
+  return Rcpp::wrap(result);
+}
+
+// [[Rcpp::export]]
 double RcppDistance(const Rcpp::NumericVector& vec1,
                     const Rcpp::NumericVector& vec2,
                     bool L1norm = false,

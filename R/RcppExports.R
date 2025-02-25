@@ -137,6 +137,10 @@ RcppSumNormalize <- function(vec, NA_rm = FALSE) {
     .Call(`_spEDM_RcppSumNormalize`, vec, NA_rm)
 }
 
+RcppArithmeticSeq <- function(from, to, length_out) {
+    .Call(`_spEDM_RcppArithmeticSeq`, from, to, length_out)
+}
+
 RcppDistance <- function(vec1, vec2, L1norm = FALSE, NA_rm = FALSE) {
     .Call(`_spEDM_RcppDistance`, vec1, vec2, L1norm, NA_rm)
 }
