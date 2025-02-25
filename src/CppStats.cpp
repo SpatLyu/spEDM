@@ -628,7 +628,7 @@ std::vector<double> CppDeLongTest(const std::vector<double>& cases,
   ci_upper = std::min(1.0, ci_upper);
 
   // Return the results as a four-element vector
-  return {theta, p_value, ci_lower, ci_upper};
+  return {theta, p_value, ci_upper, ci_lower};
 }
 
 // Function to compute distance between two vectors:
