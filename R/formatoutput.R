@@ -1,21 +1,31 @@
+.internal_xmapdf_print = \(x,keyname = "libsizes"){
+  resdf = x[[1]]
+  bidirectional = x[[3]]
+  if (bidirectional){
+    resdf = resdf[,c(keyname, "y_xmap_x_mean", "x_xmap_y_mean")]
+    names(resdf) = c(keyname,
+                     paste0(x$varname[1], "->", x$varname[2]),
+                     paste0(x$varname[2], "->", x$varname[1]))
+  } else {
+    resdf = resdf[,c(keyname, "y_xmap_x_mean")]
+    names(resdf) = c(keyname,
+                     paste0(x$varname[1], "->", x$varname[2]))
+  }
+  return(resdf)
+}
+
 #' print ccm result
 #' @noRd
 #' @export
 print.ccm_res = \(x,...){
-  resdf = x[[1]]
-  bidirectional = x[[3]]
+  print(.internal_xmapdf_print(x))
+}
 
-  if (bidirectional){
-    resdf = resdf[,c("libsizes", "y_xmap_x_mean", "x_xmap_y_mean")]
-    names(resdf) = c('libsizes',
-                     paste0(x$varname[1], "->", x$varname[2]),
-                     paste0(x$varname[2], "->", x$varname[1]))
-  } else {
-    resdf = resdf[,c("libsizes", "y_xmap_x_mean")]
-    names(resdf) = c('libsizes',
-                     paste0(x$varname[1], "->", x$varname[2]))
-  }
-  print(resdf)
+#' print cmc result
+#' @noRd
+#' @export
+print.cmc_res = \(x,...){
+  print(.internal_xmapdf_print(x,keyname = "neighbors"))
 }
 
 #' print pcm result
@@ -24,17 +34,15 @@ print.ccm_res = \(x,...){
 print.pcm_res = \(x,...){
   pxmap = x[-2]
   xmap = x[-1]
-  class(pxmap) = "ccm"
-  class(xmap) = "ccm"
 
   cat('-------------------------------------- \n')
   cat("***partial cross mapping prediction*** \n")
   cat('-------------------------------------- \n')
-  print.ccm_res(pxmap)
+  print(.internal_xmapdf_print(pxmap))
   cat("\n------------------------------ \n")
   cat("***cross mapping prediction*** \n")
   cat('------------------------------ \n')
-  print.ccm_res(xmap)
+  print(.internal_xmapdf_print(xmap))
 }
 
 #' plot ccm result
