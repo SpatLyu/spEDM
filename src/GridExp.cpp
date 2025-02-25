@@ -6,7 +6,7 @@
 #include "MultiViewEmbedding.h"
 #include "GCCM4Grid.h"
 #include "SCPCM4Grid.h"
-#include "CrossMappingConcordance.h"
+#include "CrossMappingCardinality.h"
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
 
@@ -597,18 +597,19 @@ Rcpp::NumericMatrix RcppGCMC4Grid(
   std::vector<std::vector<double>> e2 = GenGridEmbeddings(yMatrix_cpp, E[1], tau_std[1]);
 
   // Perform GCMC For Grid
-  std::vector<double> cs1 = CrossMappingConcordance(e1,e2,pred_std,b_std,maxr_std,threads,progressbar);
-  std::vector<double> cs2 = CrossMappingConcordance(e2,e1,pred_std,b_std,maxr_std,threads,progressbar);
+  std::vector<std::vector<double>> cs1 = CrossMappingCardinality(e1,e2,pred_std,b_std,maxr_std,threads,progressbar);
 
-  Rcpp::NumericMatrix resultMatrix(b_std.size(), 3);
+  Rcpp::NumericMatrix resultMatrix(b_std.size(), 5);
   for (size_t i = 0; i < b_std.size(); ++i) {
     resultMatrix(i, 0) = b_std[i];
-    resultMatrix(i, 1) = cs1[i];
-    resultMatrix(i, 2) = cs2[i];
+    for (size_t j = 0; j < cs1[0].size(); ++j){
+      resultMatrix(i, j+1) = cs1[i][j];
+    }
   }
 
   // Set column names for the result matrix
-  Rcpp::colnames(resultMatrix) = Rcpp::CharacterVector::create(
-    "neighbors","x_intersect_y","y_intersect_x");
+  Rcpp::colnames(resultMatrix) = Rcpp::CharacterVector::create("neighbors",
+                 "x_xmap_y_mean","x_xmap_y_sig",
+                 "x_xmap_y_upper","x_xmap_y_lower");
   return resultMatrix;
 }
