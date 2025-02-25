@@ -231,6 +231,35 @@ std::vector<double> CppSumNormalize(const std::vector<double>& vec,
   return normalizedVec;
 }
 
+// Generates an arithmetic sequence of numbers starting from `from` and ending at `to`,
+// with a total of `length_out` elements. The sequence is evenly spaced.
+std::vector<double> CppArithmeticSeq(double from, double to, int length_out) {
+  // Check for invalid input
+  if (length_out < 1) {
+    throw std::invalid_argument("length_out must be at least 1.");
+  }
+
+  // Initialize the result vector
+  std::vector<double> res;
+  res.reserve(length_out); // Reserve space for efficiency
+
+  // If length_out is 1, return a vector containing only `from`
+  if (length_out == 1) {
+    res.push_back(from);
+    return res;
+  }
+
+  // Calculate the step size for evenly spaced elements
+  double step = (to - from) / (length_out - 1);
+
+  // Generate the sequence
+  for (int i = 0; i < length_out; ++i) {
+    res.push_back(from + i * step);
+  }
+
+  return res;
+}
+
 // Function to calculate the variance of a vector, ignoring NA values
 double CppVariance(const std::vector<double>& vec, bool NA_rm = false) {
   double mean_val = CppMean(vec, NA_rm);
