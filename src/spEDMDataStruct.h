@@ -13,4 +13,17 @@ struct PartialCorRes {
   PartialCorRes(int f, double s, double t) : first(f), second(s), third(t) {}
 };
 
+struct DeLongPlacementsRes {
+  double theta;
+  std::vector<double> X;
+  std::vector<double> Y;
+
+  // Default constructor
+  DeLongPlacementsRes() : theta(0.0), X(), Y() {}
+
+  // Parameterized constructor
+  DeLongPlacementsRes(double t, const std::vector<double>& x, const std::vector<double>& y)
+    : theta(t), X(x), Y(y) {}
+};
+
 #endif // spEDMDataStruct_H

@@ -2,9 +2,9 @@
 #define CppStats_H
 
 #include <iostream>
+#include <stdexcept>
 #include <vector>
 #include <cmath>
-#include <stdexcept>
 #include <numeric> // for std::accumulate
 #include <limits>  // for std::numeric_limits
 // #include <Rcpp.h>
