@@ -13,7 +13,7 @@
 // [[Rcpp::depends(RcppThread)]]
 
 /*
- * Computes the Intersection Concordance (IC) causal strength score.
+ * Computes the Intersection Cardinality (IC) causal strength score.
  *
  * Parameters:
  *   embedding_x: State-space reconstruction (embedded) of the potential cause variable.
@@ -27,7 +27,7 @@
  * Returns:
  *   - A double representing the IC causal strength score, normalized between [0,1].
  */
-double IntersectionConcordance(
+double IntersectionCardinality(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
     const std::vector<int>& pred,
@@ -150,7 +150,7 @@ double IntersectionConcordance(
 }
 
 /**
- * Computes the Cross Mapping Concordance (CMC) causal strength score (adjusted based on Python logic).
+ * Computes the Cross Mapping Cardinality (CMC) causal strength score (adjusted based on Python logic).
  *
  * Parameters:
  *   embedding_x: State-space reconstruction (embedded) of the potential cause variable.
@@ -164,7 +164,7 @@ double IntersectionConcordance(
  * Returns:
  *   A vector of normalized CMC causal strength scores in the range [0,1], corresponding to each value in num_neighbors.
  */
-std::vector<double> CrossMappingConcordance(
+std::vector<double> CrossMappingCardinality(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
     const std::vector<int>& pred,
@@ -291,7 +291,7 @@ std::vector<double> CrossMappingConcordance(
 }
 
 /**
- * Computes the Cross Mapping Concordance (CMC) causal strength score (adjusted based on Python logic).
+ * Computes the Cross Mapping Cardinality (CMC) causal strength score (adjusted based on Python logic).
  *
  * Parameters:
  *   embedding_x: State-space reconstruction (embedded) of the potential cause variable.
@@ -305,7 +305,7 @@ std::vector<double> CrossMappingConcordance(
  * Returns:
  *   A vector of normalized CMC causal strength scores in the range [0,1], corresponding to each value in num_neighbors.
  */
-std::vector<double> CrossMappingConcordance2(
+std::vector<double> CrossMappingCardinality2(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
     const std::vector<int>& pred,

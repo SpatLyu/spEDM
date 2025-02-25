@@ -6,7 +6,7 @@
 #include "MultiViewEmbedding.h"
 #include "GCCM4Lattice.h"
 #include "SCPCM4Lattice.h"
-#include "CrossMappingConcordance.h"
+#include "CrossMappingCardinality.h"
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
 
@@ -590,8 +590,8 @@ Rcpp::NumericMatrix RcppGCMC4Lattice(
   std::vector<std::vector<double>> e2 = GenLatticeEmbeddings(y_std, nb_vec, E[1], tau_std[1]);
 
   // Perform GCMC For Lattice
-  std::vector<double> cs1 = CrossMappingConcordance(e1,e2,pred_std,b_std,maxr_std,threads,progressbar);
-  std::vector<double> cs2 = CrossMappingConcordance(e2,e1,pred_std,b_std,maxr_std,threads,progressbar);
+  std::vector<double> cs1 = CrossMappingCardinality(e1,e2,pred_std,b_std,maxr_std,threads,progressbar);
+  std::vector<double> cs2 = CrossMappingCardinality(e2,e1,pred_std,b_std,maxr_std,threads,progressbar);
 
   Rcpp::NumericMatrix resultMatrix(b_std.size(), 3);
   for (size_t i = 0; i < b_std.size(); ++i) {
