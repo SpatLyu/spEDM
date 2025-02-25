@@ -50,7 +50,7 @@ double IntersectionConcordance(
  * Returns:
  *   A vector of normalized CMC causal strength scores in the range [0,1], corresponding to each value in num_neighbors.
  */
-std::vector<double> CrossMappingCardinality(
+std::vector<double> CrossMappingConcordance(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
     const std::vector<int>& pred,
