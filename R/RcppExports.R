@@ -181,3 +181,7 @@ RcppSVD <- function(X) {
     .Call(`_spEDM_RcppSVD`, X)
 }
 
+RcppDeLongPlacements <- function(cases, controls, direction) {
+    .Call(`_spEDM_RcppDeLongPlacements`, cases, controls, direction)
+}
+
