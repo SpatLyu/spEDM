@@ -570,7 +570,8 @@ Rcpp::NumericMatrix RcppGCMC4Lattice(
   // Process b_std to handle <= 0 values
   for (size_t i = 0; i < b_std.size(); ++i) {
     if (b_std[i] <= 0) {
-      b_std[i] = static_cast<int>(std::floor(static_cast<double>(x_std.size()) / 4.0));
+      // use 1/3 of sample number to search
+      b_std[i] = static_cast<int>(std::floor(static_cast<double>(x_std.size()) / 3.0));
     } else if (b_std[i] > static_cast<int>(x_std.size()) - maxr_std[i]){
       b_std[i] = static_cast<int>(x_std.size()) - maxr_std[i];
     }

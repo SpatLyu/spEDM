@@ -574,7 +574,8 @@ Rcpp::NumericMatrix RcppGCMC4Grid(
   // Process b_std to handle <= 0 values
   for (size_t i = 0; i < b_std.size(); ++i) {
     if (b_std[i] <= 0) {
-      b_std[i] = static_cast<int>(std::floor(static_cast<double>(xMatrix.nrow() * xMatrix.ncol()) / 4.0));
+      // use sqrt of sample number to search
+      b_std[i] = static_cast<int>(std::floor(std::sqrt(xMatrix.nrow() * xMatrix.ncol())));
     } else if (b_std[i] > xMatrix.nrow() * xMatrix.ncol() - maxr_std[i]){
       b_std[i] = xMatrix.nrow() * xMatrix.ncol() - maxr_std[i];
     }
