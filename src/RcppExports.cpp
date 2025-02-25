@@ -627,6 +627,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppDeLongTest
+Rcpp::NumericVector RcppDeLongTest(const Rcpp::NumericVector& cases, const Rcpp::NumericVector& controls, const Rcpp::CharacterVector& direction, double level);
+RcppExport SEXP _spEDM_RcppDeLongTest(SEXP casesSEXP, SEXP controlsSEXP, SEXP directionSEXP, SEXP levelSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type cases(casesSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type controls(controlsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type direction(directionSEXP);
+    Rcpp::traits::input_parameter< double >::type level(levelSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppDeLongTest(cases, controls, direction, level));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppMatDistance
 Rcpp::NumericMatrix RcppMatDistance(const Rcpp::NumericMatrix& mat, bool L1norm, bool NA_rm);
 RcppExport SEXP _spEDM_RcppMatDistance(SEXP matSEXP, SEXP L1normSEXP, SEXP NA_rmSEXP) {
@@ -692,14 +706,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppDeLongPlacements
-Rcpp::List RcppDeLongPlacements(Rcpp::NumericVector cases, Rcpp::NumericVector controls, Rcpp::CharacterVector direction);
+Rcpp::List RcppDeLongPlacements(const Rcpp::NumericVector& cases, const Rcpp::NumericVector& controls, const Rcpp::CharacterVector& direction);
 RcppExport SEXP _spEDM_RcppDeLongPlacements(SEXP casesSEXP, SEXP controlsSEXP, SEXP directionSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type cases(casesSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type controls(controlsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type direction(directionSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type cases(casesSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type controls(controlsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type direction(directionSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppDeLongPlacements(cases, controls, direction));
     return rcpp_result_gen;
 END_RCPP
@@ -747,6 +761,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppPartialCorTrivar", (DL_FUNC) &_spEDM_RcppPartialCorTrivar, 5},
     {"_spEDM_RcppCorSignificance", (DL_FUNC) &_spEDM_RcppCorSignificance, 3},
     {"_spEDM_RcppCorConfidence", (DL_FUNC) &_spEDM_RcppCorConfidence, 4},
+    {"_spEDM_RcppDeLongTest", (DL_FUNC) &_spEDM_RcppDeLongTest, 4},
     {"_spEDM_RcppMatDistance", (DL_FUNC) &_spEDM_RcppMatDistance, 3},
     {"_spEDM_RcppKNNIndice", (DL_FUNC) &_spEDM_RcppKNNIndice, 3},
     {"_spEDM_RcppDistKNNIndice", (DL_FUNC) &_spEDM_RcppDistKNNIndice, 3},
