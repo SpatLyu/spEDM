@@ -267,14 +267,6 @@ std::vector<std::vector<double>> CrossMappingCardinality(
       }
     }, threads_sizet);
 
-    std::vector<double> H0sequence;
-    // for (size_t i = 0; i < k; ++i) {
-    //   H0sequence.push_back(static_cast<double>(i) / k);
-    // }
-    for (size_t i = 1; i <= k; ++i) {
-      H0sequence.push_back(static_cast<double>(i) / k);
-    }
-
     std::vector<double> H1sequence;
     for (size_t col = 0; col < k; ++col) {
       std::vector<double> mean_intersect;
@@ -284,7 +276,7 @@ std::vector<std::vector<double>> CrossMappingCardinality(
       H1sequence.push_back(CppMean(mean_intersect,true));
     }
 
-    std::vector<double> dp_res = CppDeLongTest(H1sequence,H0sequence,">");
+    std::vector<double> dp_res = CppCMCTest(H1sequence,">");
     results[j] = dp_res;
   };
 
@@ -411,15 +403,6 @@ std::vector<std::vector<double>> CrossMappingCardinality2(
       }
     }
 
-    // Compute AUC for the current (num_neighbors, n_excluded) pair
-    std::vector<double> H0sequence;
-    // for (size_t i = 0; i < k; ++i) {
-    //   H0sequence.push_back(static_cast<double>(i) / k);
-    // }
-    for (size_t i = 1; i <= k; ++i) {
-      H0sequence.push_back(static_cast<double>(i) / k);
-    }
-
     std::vector<double> H1sequence;
     for (size_t col = 0; col < k; ++col) {
       std::vector<double> mean_intersect;
@@ -429,7 +412,7 @@ std::vector<std::vector<double>> CrossMappingCardinality2(
       H1sequence.push_back(CppMean(mean_intersect,true));
     }
 
-    std::vector<double> dp_res = CppDeLongTest(H1sequence,H0sequence,">");
+    std::vector<double> dp_res = CppCMCTest(H1sequence,">");
     results[j] = dp_res;
   };
 
