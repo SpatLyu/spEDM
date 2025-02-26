@@ -16,6 +16,10 @@
 
 * Centered around example cases in the `gccm` vignette (#170).
 
+### bug fixes
+
+* Fix bug in R functions `embedded`, `simplex`, `smap` when input data contains only one attribute column (#246).
+
 # spEDM 1.4
 
 ### enhancements
