@@ -98,13 +98,13 @@
   if (trend.rm){
     data = .internal_trend_rm(data,.varname,coords)
   }
-  res = as.matrix(data[,.varname])
+  res = as.matrix(data[,.varname,drop = FALSE])
   return(res)
 }
 
 .multivar_grid = \(data,columns,trend.rm){
   columns = .check_character(columns)
-  data = data[,columns]
+  data = data[[columns]]
   .varname = paste0("z",seq_along(columns))
   names(data) = .varname
   dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
