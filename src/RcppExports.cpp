@@ -644,9 +644,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// RcppDeLongTest
-Rcpp::NumericVector RcppDeLongTest(const Rcpp::NumericVector& cases, const Rcpp::NumericVector& controls, const Rcpp::CharacterVector& direction, double level);
-RcppExport SEXP _spEDM_RcppDeLongTest(SEXP casesSEXP, SEXP controlsSEXP, SEXP directionSEXP, SEXP levelSEXP) {
+// RcppDeLongAUCConfidence
+Rcpp::NumericVector RcppDeLongAUCConfidence(const Rcpp::NumericVector& cases, const Rcpp::NumericVector& controls, const Rcpp::CharacterVector& direction, double level);
+RcppExport SEXP _spEDM_RcppDeLongAUCConfidence(SEXP casesSEXP, SEXP controlsSEXP, SEXP directionSEXP, SEXP levelSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -654,7 +654,20 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type controls(controlsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type direction(directionSEXP);
     Rcpp::traits::input_parameter< double >::type level(levelSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppDeLongTest(cases, controls, direction, level));
+    rcpp_result_gen = Rcpp::wrap(RcppDeLongAUCConfidence(cases, controls, direction, level));
+    return rcpp_result_gen;
+END_RCPP
+}
+// RcppCMCTest
+Rcpp::NumericVector RcppCMCTest(const Rcpp::NumericVector& cases, const Rcpp::CharacterVector& direction, double level);
+RcppExport SEXP _spEDM_RcppCMCTest(SEXP casesSEXP, SEXP directionSEXP, SEXP levelSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type cases(casesSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type direction(directionSEXP);
+    Rcpp::traits::input_parameter< double >::type level(levelSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppCMCTest(cases, direction, level));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -779,7 +792,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppPartialCorTrivar", (DL_FUNC) &_spEDM_RcppPartialCorTrivar, 5},
     {"_spEDM_RcppCorSignificance", (DL_FUNC) &_spEDM_RcppCorSignificance, 3},
     {"_spEDM_RcppCorConfidence", (DL_FUNC) &_spEDM_RcppCorConfidence, 4},
-    {"_spEDM_RcppDeLongTest", (DL_FUNC) &_spEDM_RcppDeLongTest, 4},
+    {"_spEDM_RcppDeLongAUCConfidence", (DL_FUNC) &_spEDM_RcppDeLongAUCConfidence, 4},
+    {"_spEDM_RcppCMCTest", (DL_FUNC) &_spEDM_RcppCMCTest, 3},
     {"_spEDM_RcppMatDistance", (DL_FUNC) &_spEDM_RcppMatDistance, 3},
     {"_spEDM_RcppKNNIndice", (DL_FUNC) &_spEDM_RcppKNNIndice, 3},
     {"_spEDM_RcppDistKNNIndice", (DL_FUNC) &_spEDM_RcppDistKNNIndice, 3},

@@ -169,8 +169,12 @@ RcppCorConfidence <- function(r, n, k = 0L, level = 0.05) {
     .Call(`_spEDM_RcppCorConfidence`, r, n, k, level)
 }
 
-RcppDeLongTest <- function(cases, controls, direction, level = 0.05) {
-    .Call(`_spEDM_RcppDeLongTest`, cases, controls, direction, level)
+RcppDeLongAUCConfidence <- function(cases, controls, direction, level = 0.05) {
+    .Call(`_spEDM_RcppDeLongAUCConfidence`, cases, controls, direction, level)
+}
+
+RcppCMCTest <- function(cases, direction, level = 0.05) {
+    .Call(`_spEDM_RcppCMCTest`, cases, direction, level)
 }
 
 RcppMatDistance <- function(mat, L1norm = FALSE, NA_rm = FALSE) {
