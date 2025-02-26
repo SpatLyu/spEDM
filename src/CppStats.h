@@ -72,6 +72,15 @@ double CppCorSignificance(double r, int n, int k = 0);
 std::vector<double> CppCorConfidence(double r, int n, int k = 0,
                                      double level = 0.05);
 
+std::vector<double> CppDeLongAUCConfidence(const std::vector<double>& cases,
+                                           const std::vector<double>& controls,
+                                           const std::string& direction,
+                                           double level = 0.05);
+
+std::vector<double> CppCMCTest(const std::vector<double>& cases,
+                               const std::string& direction,
+                               double level = 0.05);
+
 std::vector<double> CppDeLongTest(const std::vector<double>& cases,
                                   const std::vector<double>& controls,
                                   const std::string& direction,
