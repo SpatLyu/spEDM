@@ -12,7 +12,7 @@
 #include <RcppThread.h>
 
 /*
- * Computes the Intersection Cardinality (IC) causal strength score.
+ * Computes the Intersection Cardinality (IC)
  *
  * Parameters:
  *   embedding_x: State-space reconstruction (embedded) of the potential cause variable.
@@ -23,11 +23,8 @@
  *   threads: Number of parallel threads.
  *   progressbar: Whether to display a progress bar.
  *
- * Returns:
- *   - A vector containing the results of the DeLong test for the AUC values: [IC score, p-value, confidence interval upper bound, confidence interval lower bound].
- *   - IC score represents the causal strength score, normalized between [0, 1].
- *   - p-value indicates the statistical significance of the result.
- *   - The confidence interval bounds represent the uncertainty of the IC score.
+ * * Returns:
+ *   - A vector representing the intersection cardinality (IC), normalized between [0, 1].
  */
 std::vector<double> IntersectionCardinality(
     const std::vector<std::vector<double>>& embedding_x,
