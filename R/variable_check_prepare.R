@@ -67,7 +67,7 @@
   target = .check_character(target)
   coords = as.data.frame(sdsfun::sf_coordinates(data))
   data = sf::st_drop_geometry(data)
-  data = data[,target]
+  data = data[,target,drop = FALSE]
   names(data) = "target"
   if (trend.rm){
     data = .internal_trend_rm(data,"target",coords)
@@ -92,7 +92,7 @@
   columns = .check_character(columns)
   coords = as.data.frame(sdsfun::sf_coordinates(data))
   data = sf::st_drop_geometry(data)
-  data = data[,columns]
+  data = data[,columns,drop = FALSE]
   .varname = paste0("z",seq_along(columns))
   names(data) = .varname
   if (trend.rm){
@@ -111,6 +111,6 @@
   if (trend.rm){
     dtf = .internal_trend_rm(dtf,.varname)
   }
-  res = as.matrix(dtf[,.varname])
+  res = as.matrix(dtf[,.varname,drop = FALSE])
   return(res)
 }
