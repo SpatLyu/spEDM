@@ -12,7 +12,7 @@
 // [[Rcpp::depends(RcppThread)]]
 
 /*
- * Computes the Intersection Cardinality (IC) causal strength score.
+ * Computes the Intersection Cardinality (IC)
  *
  * Parameters:
  *   embedding_x: State-space reconstruction (embedded) of the potential cause variable.
@@ -23,11 +23,8 @@
  *   threads: Number of parallel threads.
  *   progressbar: Whether to display a progress bar.
  *
- * Returns:
- *   - A vector containing the results of the DeLong test for the AUC values: [IC score, p-value, confidence interval upper bound, confidence interval lower bound].
- *   - IC score represents the causal strength score, normalized between [0, 1].
- *   - p-value indicates the statistical significance of the result.
- *   - The confidence interval bounds represent the uncertainty of the IC score.
+ * * Returns:
+ *   - A vector representing the intersection cardinality (IC), normalized between [0, 1].
  */
 std::vector<double> IntersectionCardinality(
     const std::vector<std::vector<double>>& embedding_x,
@@ -130,11 +127,27 @@ std::vector<double> IntersectionCardinality(
     RcppThread::parallelFor(0, valid_pred.size(), CMCSingle, threads_sizet);
   }
 
-  // Compute AUC (corresponding to ratio_to_auc in python package crossmapy)
-  std::vector<double> H0sequence;
-  for (size_t i = 1; i <= k; ++i) {
-    H0sequence.push_back(static_cast<double>(i) / k);
-  }
+  // // Compute AUC (corresponding to ratio_to_auc in python package crossmapy)
+  // std::vector<double> H0sequence;
+  // // for (size_t i = 0; i < k; ++i) {
+  // //   H0sequence.push_back(static_cast<double>(i) / k);
+  // // }
+  // for (size_t i = 1; i <= k; ++i) {
+  //   H0sequence.push_back(static_cast<double>(i) / k);
+  // }
+  //
+  // std::vector<double> H1sequence;
+  // for (size_t col = 0; col < k; ++col) {
+  //   std::vector<double> mean_intersect;
+  //   for (size_t row = 0; row < ratio_curves.size(); ++row){
+  //     mean_intersect.push_back(ratio_curves[row][col]);
+  //   }
+  //   H1sequence.push_back(CppMean(mean_intersect,true));
+  // }
+  //
+  // std::vector<double> dp_res = CppDeLongTest(H1sequence,H0sequence,">");
+  //
+  // return dp_res;
 
   std::vector<double> H1sequence;
   for (size_t col = 0; col < k; ++col) {
@@ -144,10 +157,7 @@ std::vector<double> IntersectionCardinality(
     }
     H1sequence.push_back(CppMean(mean_intersect,true));
   }
-
-  std::vector<double> dp_res = CppDeLongTest(H1sequence,H0sequence,">");
-
-  return dp_res;
+  return H1sequence;
 }
 
 /**
@@ -258,6 +268,9 @@ std::vector<std::vector<double>> CrossMappingCardinality(
     }, threads_sizet);
 
     std::vector<double> H0sequence;
+    // for (size_t i = 0; i < k; ++i) {
+    //   H0sequence.push_back(static_cast<double>(i) / k);
+    // }
     for (size_t i = 1; i <= k; ++i) {
       H0sequence.push_back(static_cast<double>(i) / k);
     }
@@ -400,6 +413,9 @@ std::vector<std::vector<double>> CrossMappingCardinality2(
 
     // Compute AUC for the current (num_neighbors, n_excluded) pair
     std::vector<double> H0sequence;
+    // for (size_t i = 0; i < k; ++i) {
+    //   H0sequence.push_back(static_cast<double>(i) / k);
+    // }
     for (size_t i = 1; i <= k; ++i) {
       H0sequence.push_back(static_cast<double>(i) / k);
     }
