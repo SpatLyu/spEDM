@@ -627,17 +627,17 @@ std::vector<double> CppDeLongAUCConfidence(const std::vector<double>& cases,
 }
 
 /**
- * Computes the 2*AUC (2*theta), p-value, and confidence interval using the DeLong method.
+ * Computes the AUC (theta), p-value, and confidence interval using the DeLong method.
  *
  * @param cases A vector of scores for the cases (positive class).
  * @param direction A string indicating the direction of comparison (">" for greater, "<" for less).
  * @param level The confidence level, default is 0.05.
  *
  * @return A vector of four elements:
- *   - 2*theta: Double of the computed AUC value.
- *   - p_value: The p-value for testing the null hypothesis that 2*theta = 1 (AUC = 0.5).
- *   - ci_lower: The lower bound of the confidence interval for 2*theta.
- *   - ci_upper: The upper bound of the confidence interval for 2*theta.
+ *   - theta: The computed AUC value.
+ *   - p_value: The p-value for testing the null hypothesis that AUC = 0.5.
+ *   - ci_lower: The lower bound of the confidence interval.
+ *   - ci_upper: The upper bound of the confidence interval.
  */
 std::vector<double> CppCMCTest(const std::vector<double>& cases,
                                const std::string& direction,
@@ -660,7 +660,7 @@ std::vector<double> CppCMCTest(const std::vector<double>& cases,
 
   // If there are too few cases or controls, return default values
   if (m <= 1 || n <= 1) {
-    return {2 * theta, 1.0, std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN()}; // Default values for invalid input
+    return {theta, 1.0, std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN()}; // Default values for invalid input
   }
 
   // Compute variances SX and SY
@@ -678,8 +678,8 @@ std::vector<double> CppCMCTest(const std::vector<double>& cases,
   // Compute the overall variance S
   double S = SX / m + SY / n;
 
-  // Compute the Z-score for the p-value, adjusted for 2 * theta
-  double z = (2 * theta - 1) / std::sqrt(4 * S);
+  // Compute the Z-score for the p-value
+  double z = (theta - 0.5) / std::sqrt(S);
 
   // // Compute the two-tailed p-value (AUC ≠ 0.5)
   // double p_value = 2 * R::pnorm(-std::abs(z), 0.0, 1.0, true, false);
@@ -687,16 +687,16 @@ std::vector<double> CppCMCTest(const std::vector<double>& cases,
   // Compute the one-sided test (right-tailed) p-value (AUC > 0.5)
   double p_value = R::pnorm(z, 0.0, 1.0, true, false);
 
-  // Compute the confidence interval for 2 * theta using R::qnorm
-  double ci_lower = R::qnorm(level / 2, 2 * theta, std::sqrt(4 * S), true, false);
-  double ci_upper = R::qnorm(1 - level / 2, 2 * theta, std::sqrt(4 * S), true, false);
+  // Compute the confidence interval using R::qnorm
+  double ci_lower = R::qnorm(level / 2, theta, std::sqrt(S), true, false);
+  double ci_upper = R::qnorm(1 - level / 2, theta, std::sqrt(S), true, false);
 
-  // Ensure the confidence interval is within [0, 2]
+  // Ensure the confidence interval is within [0, 1]
   ci_lower = std::max(0.0, ci_lower);
-  ci_upper = std::min(2.0, ci_upper);
+  ci_upper = std::min(1.0, ci_upper);
 
   // Return the results as a four-element vector
-  return {2 * theta, p_value, ci_upper, ci_lower};
+  return {theta, p_value, ci_upper, ci_lower};
 }
 
 // Function to compute distance between two vectors:
