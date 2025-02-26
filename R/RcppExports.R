@@ -9,6 +9,10 @@ RcppSMapForecast <- function(embedding, target, lib, pred, num_neighbors, theta)
     .Call(`_spEDM_RcppSMapForecast`, embedding, target, lib, pred, num_neighbors, theta)
 }
 
+RcppIntersectionCardinality <- function(embedding_x, embedding_y, pred, num_neighbors, n_excluded, threads, progressbar) {
+    .Call(`_spEDM_RcppIntersectionCardinality`, embedding_x, embedding_y, pred, num_neighbors, n_excluded, threads, progressbar)
+}
+
 RcppLaggedVar4Grid <- function(mat, lagNum) {
     .Call(`_spEDM_RcppLaggedVar4Grid`, mat, lagNum)
 }
