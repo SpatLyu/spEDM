@@ -12,7 +12,7 @@
 // [[Rcpp::depends(RcppThread)]]
 
 /*
- * Computes the Intersection Cardinality (IC)
+ * Computes the Intersection Cardinality (IC) scores
  *
  * Parameters:
  *   embedding_x: State-space reconstruction (embedded) of the potential cause variable.
@@ -24,7 +24,7 @@
  *   progressbar: Whether to display a progress bar.
  *
  * * Returns:
- *   - A vector representing the intersection cardinality (IC), normalized between [0, 1].
+ *   - A vector representing the intersection cardinality (IC) scores, normalized between [0, 1].
  */
 std::vector<double> IntersectionCardinality(
     const std::vector<std::vector<double>>& embedding_x,

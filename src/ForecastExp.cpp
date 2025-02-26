@@ -133,7 +133,7 @@ Rcpp::NumericVector RcppSMapForecast(
 }
 
 /*
- * Computes the Intersection Cardinality (IC) score
+ * Computes the Intersection Cardinality (IC) scores
  *
  * This function serves as an interface between R and C++ to compute the Intersection Cardinality (IC) score,
  * which quantifies the causal relationship between two variables by comparing the intersection
@@ -150,7 +150,7 @@ Rcpp::NumericVector RcppSMapForecast(
  *   progressbar: A boolean value specifying whether to display a progress bar during computation.
  *
  * Returns:
- *   A NumericVector containing the intersection cardinality values.
+ *   A NumericVector containing the intersection cardinality scores.
  */
 // [[Rcpp::export]]
 Rcpp::NumericVector RcppIntersectionCardinality(
