@@ -1,13 +1,22 @@
-.internal_xmapdf_print = \(x,keyname = "libsizes"){
+.internal_xmapdf_print = \(x,keyname = "libsizes",significant = FALSE){
   resdf = x[[1]]
   bidirectional = x[[3]]
   if (bidirectional){
-    resdf = resdf[,c(keyname, "y_xmap_x_mean", "x_xmap_y_mean")]
+    if (significant) {
+      resdf = resdf[resdf$x_xmap_y_sig < 0.05 & resdf$y_xmap_x_sig < 0.05,
+                    c(keyname, "y_xmap_x_mean", "x_xmap_y_mean")]
+    } else {
+      resdf = resdf[,c(keyname, "y_xmap_x_mean", "x_xmap_y_mean")]
+    }
     names(resdf) = c(keyname,
                      paste0(x$varname[1], "->", x$varname[2]),
                      paste0(x$varname[2], "->", x$varname[1]))
   } else {
-    resdf = resdf[,c(keyname, "y_xmap_x_mean")]
+    if (significant) {
+      resdf = resdf[resdf$y_xmap_x_sig < 0.05,c(keyname, "y_xmap_x_mean")]
+    } else {
+      resdf = resdf[,c(keyname, "y_xmap_x_mean")]
+    }
     names(resdf) = c(keyname,
                      paste0(x$varname[1], "->", x$varname[2]))
   }
@@ -25,7 +34,7 @@ print.ccm_res = \(x,...){
 #' @noRd
 #' @export
 print.cmc_res = \(x,...){
-  print(.internal_xmapdf_print(x,keyname = "neighbors"))
+  print(.internal_xmapdf_print(x,"neighbors",TRUE))
 }
 
 #' print pcm result
@@ -52,19 +61,8 @@ plot.ccm_res = \(x, family = "serif", xbreaks = NULL, xlimits = NULL,
                  ybreaks = seq(0, 1, by = 0.1), ylimits = c(-0.05, 1), ...){
   resdf = x[[1]]
   bidirectional = x[[3]]
-  if (bidirectional){
-    resdf = resdf[,c("libsizes", "x_xmap_y_mean", "y_xmap_x_mean")]
-  } else {
-    resdf = resdf[,c("libsizes", "y_xmap_x_mean")]
-  }
   if(is.null(xbreaks)) xbreaks = resdf$libsizes
   if(is.null(xlimits)) xlimits = c(min(xbreaks)-1,max(xbreaks)+1)
-
-  if (bidirectional){
-    resdf = resdf[,c("libsizes", "x_xmap_y_mean", "y_xmap_x_mean")]
-  } else {
-    resdf = resdf[,c("libsizes", "y_xmap_x_mean")]
-  }
 
   fig1 = ggplot2::ggplot(data = resdf,
                          ggplot2::aes(x = libsizes)) +
