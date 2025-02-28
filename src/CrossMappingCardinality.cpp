@@ -127,28 +127,6 @@ std::vector<double> IntersectionCardinality(
     RcppThread::parallelFor(0, valid_pred.size(), CMCSingle, threads_sizet);
   }
 
-  // // Compute AUC (corresponding to ratio_to_auc in python package crossmapy)
-  // std::vector<double> H0sequence;
-  // // for (size_t i = 0; i < k; ++i) {
-  // //   H0sequence.push_back(static_cast<double>(i) / k);
-  // // }
-  // for (size_t i = 1; i <= k; ++i) {
-  //   H0sequence.push_back(static_cast<double>(i) / k);
-  // }
-  //
-  // std::vector<double> H1sequence;
-  // for (size_t col = 0; col < k; ++col) {
-  //   std::vector<double> mean_intersect;
-  //   for (size_t row = 0; row < ratio_curves.size(); ++row){
-  //     mean_intersect.push_back(ratio_curves[row][col]);
-  //   }
-  //   H1sequence.push_back(CppMean(mean_intersect,true));
-  // }
-  //
-  // std::vector<double> dp_res = CppDeLongTest(H1sequence,H0sequence,">");
-  //
-  // return dp_res;
-
   std::vector<double> H1sequence;
   for (size_t col = 0; col < k; ++col) {
     std::vector<double> mean_intersect;
