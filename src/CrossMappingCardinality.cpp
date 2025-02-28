@@ -257,8 +257,7 @@ std::vector<std::vector<double>> CrossMappingCardinality(
     return H1sequence;
   };
 
-  auto max_it = std::max_element(num_neighbors.begin(), num_neighbors.end());
-  std::vector<double> cmcH1 = CMCSingle(static_cast<size_t>(*max_it));
+  std::vector<double> cmcH1 = CMCSingle(num_neighbors.size());
 
   // Parallel computation with or without a progress bar
   if (progressbar) {
