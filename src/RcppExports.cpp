@@ -659,15 +659,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppCMCTest
-Rcpp::NumericVector RcppCMCTest(const Rcpp::NumericVector& cases, const Rcpp::CharacterVector& direction, double level);
-RcppExport SEXP _spEDM_RcppCMCTest(SEXP casesSEXP, SEXP directionSEXP, SEXP levelSEXP) {
+Rcpp::NumericVector RcppCMCTest(const Rcpp::NumericVector& cases, const Rcpp::CharacterVector& direction, double level, int num_samples);
+RcppExport SEXP _spEDM_RcppCMCTest(SEXP casesSEXP, SEXP directionSEXP, SEXP levelSEXP, SEXP num_samplesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type cases(casesSEXP);
     Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type direction(directionSEXP);
     Rcpp::traits::input_parameter< double >::type level(levelSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppCMCTest(cases, direction, level));
+    Rcpp::traits::input_parameter< int >::type num_samples(num_samplesSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppCMCTest(cases, direction, level, num_samples));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -793,7 +794,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppCorSignificance", (DL_FUNC) &_spEDM_RcppCorSignificance, 3},
     {"_spEDM_RcppCorConfidence", (DL_FUNC) &_spEDM_RcppCorConfidence, 4},
     {"_spEDM_RcppDeLongAUCConfidence", (DL_FUNC) &_spEDM_RcppDeLongAUCConfidence, 4},
-    {"_spEDM_RcppCMCTest", (DL_FUNC) &_spEDM_RcppCMCTest, 3},
+    {"_spEDM_RcppCMCTest", (DL_FUNC) &_spEDM_RcppCMCTest, 4},
     {"_spEDM_RcppMatDistance", (DL_FUNC) &_spEDM_RcppMatDistance, 3},
     {"_spEDM_RcppKNNIndice", (DL_FUNC) &_spEDM_RcppKNNIndice, 3},
     {"_spEDM_RcppDistKNNIndice", (DL_FUNC) &_spEDM_RcppDistKNNIndice, 3},

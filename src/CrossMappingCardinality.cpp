@@ -127,28 +127,6 @@ std::vector<double> IntersectionCardinality(
     RcppThread::parallelFor(0, valid_pred.size(), CMCSingle, threads_sizet);
   }
 
-  // // Compute AUC (corresponding to ratio_to_auc in python package crossmapy)
-  // std::vector<double> H0sequence;
-  // // for (size_t i = 0; i < k; ++i) {
-  // //   H0sequence.push_back(static_cast<double>(i) / k);
-  // // }
-  // for (size_t i = 1; i <= k; ++i) {
-  //   H0sequence.push_back(static_cast<double>(i) / k);
-  // }
-  //
-  // std::vector<double> H1sequence;
-  // for (size_t col = 0; col < k; ++col) {
-  //   std::vector<double> mean_intersect;
-  //   for (size_t row = 0; row < ratio_curves.size(); ++row){
-  //     mean_intersect.push_back(ratio_curves[row][col]);
-  //   }
-  //   H1sequence.push_back(CppMean(mean_intersect,true));
-  // }
-  //
-  // std::vector<double> dp_res = CppDeLongTest(H1sequence,H0sequence,">");
-  //
-  // return dp_res;
-
   std::vector<double> H1sequence;
   for (size_t col = 0; col < k; ++col) {
     std::vector<double> mean_intersect;
@@ -280,7 +258,7 @@ std::vector<std::vector<double>> CrossMappingCardinality(
     RcppThread::ProgressBar bar(num_neighbors, 1);
     for (int i = 0; i < num_neighbors; ++i) {
       std::vector<double> H1sliced(H1sequence.begin(), H1sequence.begin() + i + 1);
-      std::vector<double> dp_res = CppCMCTest(H1sliced,">");
+      std::vector<double> dp_res = CppCMCTest(H1sliced,">",0.05,num_neighbors);
       dp_res.insert(dp_res.begin(), i + 1);
       results[i] = dp_res;
       bar++;
@@ -288,12 +266,11 @@ std::vector<std::vector<double>> CrossMappingCardinality(
   } else {
     for (int i = 0; i < num_neighbors; ++i) {
       std::vector<double> H1sliced(H1sequence.begin(), H1sequence.begin() + i + 1);
-      std::vector<double> dp_res = CppCMCTest(H1sliced,">");
+      std::vector<double> dp_res = CppCMCTest(H1sliced,">",0.05,num_neighbors);
       dp_res.insert(dp_res.begin(), i + 1);
       results[i] = dp_res;
     }
   }
-
   return results; // Return the vector of results
 }
 
