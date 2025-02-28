@@ -97,7 +97,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 #' @examples
 #' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData"))
 #' \donttest{
-#' g = gccm(columbus,"HOVAL","CRIME",libsizes = seq(5,40,5),E = 6)
+#' g = gccm(columbus,"HOVAL","CRIME",libsizes = seq(5,45,5),E = 6)
 #' g
 #' plot(g, ylimits = c(0,0.85))
 #' }
