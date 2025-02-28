@@ -173,8 +173,8 @@ RcppDeLongAUCConfidence <- function(cases, controls, direction, level = 0.05) {
     .Call(`_spEDM_RcppDeLongAUCConfidence`, cases, controls, direction, level)
 }
 
-RcppCMCTest <- function(cases, direction, level = 0.05) {
-    .Call(`_spEDM_RcppCMCTest`, cases, direction, level)
+RcppCMCTest <- function(cases, direction, level = 0.05, num_samples = 0L) {
+    .Call(`_spEDM_RcppCMCTest`, cases, direction, level, num_samples)
 }
 
 RcppMatDistance <- function(mat, L1norm = FALSE, NA_rm = FALSE) {
