@@ -545,8 +545,8 @@ Rcpp::NumericMatrix RcppGCMC4Grid(
     const Rcpp::IntegerMatrix& pred,
     const Rcpp::IntegerVector& E,
     const Rcpp::IntegerVector& tau,
-    int b,
-    int max_r,
+    const Rcpp::IntegerVector& b,
+    const Rcpp::IntegerVector& max_r,
     int threads,
     bool progressbar){
   // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
@@ -558,9 +558,13 @@ Rcpp::NumericMatrix RcppGCMC4Grid(
   }
 
   // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
+  double validCellNum = 0;
   std::vector<std::vector<double>> yMatrix_cpp(yMatrix.nrow(), std::vector<double>(yMatrix.ncol()));
   for (int i = 0; i < yMatrix.nrow(); ++i) {
     for (int j = 0; j < yMatrix.ncol(); ++j) {
+      if (!std::isnan(yMatrix(i, j))){
+        validCellNum += 1;
+      }
       yMatrix_cpp[i][j] = yMatrix(i, j);
     }
   }
@@ -568,21 +572,33 @@ Rcpp::NumericMatrix RcppGCMC4Grid(
   // Convert Rcpp IntegerVector to std::vector<int>
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
   std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
+  std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
+  std::vector<int> maxr_std = Rcpp::as<std::vector<int>>(max_r);
 
-  // Process b to handle <= 0 values
-  if (b <= 0) {
-    // use sqrt of sample number to search
-    b = static_cast<int>(std::floor(std::sqrt(xMatrix.nrow() * xMatrix.ncol())));
-  } else if (b > xMatrix.nrow() * xMatrix.ncol() - max_r){
-    b = xMatrix.nrow() * xMatrix.ncol() - max_r;
+  // Process b_std to handle <= 0 values
+  for (size_t i = 0; i < b_std.size(); ++i) {
+    if (b_std[i] <= 0) {
+      // use sqrt of sample number to search
+      b_std[i] = static_cast<int>(std::floor(std::sqrt(validCellNum)));
+    } else if (b_std[i] > validCellNum - maxr_std[i]){
+      b_std[i] = validCellNum - maxr_std[i];
+    }
   }
 
+  // Remove duplicates for b_std
+  std::sort(b_std.begin(), b_std.end());
+  b_std.erase(std::unique(b_std.begin(), b_std.end()), b_std.end());
+
   // Convert Rcpp IntegerMatrix to std::vector<int>
-  int numRows = xMatrix.nrow();
-  int numCols = xMatrix.ncol();
+  int numRows = yMatrix.nrow();
+  int numCols = yMatrix.ncol();
   std::vector<int> pred_std;
   for (int i = 0; i < pred.nrow(); ++i) {
-    pred_std.push_back(LocateGridIndices(pred(i,0), pred(i,1), numRows, numCols));
+    int rowPredIndice = pred(i,0);
+    int colPredIndice = pred(i,1);
+    if (!std::isnan(yMatrix_cpp[rowPredIndice-1][colPredIndice-1])){
+      pred_std.push_back(LocateGridIndices(rowPredIndice, colPredIndice, numRows, numCols));
+    }
   }
 
   // Generate embeddings
@@ -590,10 +606,10 @@ Rcpp::NumericMatrix RcppGCMC4Grid(
   std::vector<std::vector<double>> e2 = GenGridEmbeddings(yMatrix_cpp, E[1], tau_std[1]);
 
   // Perform GCMC For Grid
-  std::vector<std::vector<double>> cs1 = CrossMappingCardinality(e1,e2,pred_std,b,max_r,threads,progressbar);
+  std::vector<std::vector<double>> cs1 = CrossMappingCardinality(e1,e2,pred_std,b_std,maxr_std,threads,progressbar);
 
-  Rcpp::NumericMatrix resultMatrix(b, 5);
-  for (int i = 0; i < b; ++i) {
+  Rcpp::NumericMatrix resultMatrix(b_std.size(), 5);
+  for (size_t i = 0; i < b_std.size(); ++i) {
     for (size_t j = 0; j < cs1[0].size(); ++j){
       resultMatrix(i, j) = cs1[i][j];
     }
