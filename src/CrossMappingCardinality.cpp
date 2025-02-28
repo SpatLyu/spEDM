@@ -253,24 +253,44 @@ std::vector<std::vector<double>> CrossMappingCardinality(
     H1sequence.push_back(CppMean(mean_intersect,true));
   }
 
+  // // Sequential version of the for loop
+  // if (progressbar) {
+  //   RcppThread::ProgressBar bar(num_neighbors, 1);
+  //   for (int i = 0; i < num_neighbors; ++i) {
+  //     std::vector<double> H1sliced(H1sequence.begin(), H1sequence.begin() + i + 1);
+  //     std::vector<double> dp_res = CppCMCTest(H1sliced,">",0.05,num_neighbors);
+  //     dp_res.insert(dp_res.begin(), i + 1);
+  //     results[i] = dp_res;
+  //     bar++;
+  //   };
+  // } else {
+  //   for (int i = 0; i < num_neighbors; ++i) {
+  //     std::vector<double> H1sliced(H1sequence.begin(), H1sequence.begin() + i + 1);
+  //     std::vector<double> dp_res = CppCMCTest(H1sliced,">",0.05,num_neighbors);
+  //     dp_res.insert(dp_res.begin(), i + 1);
+  //     results[i] = dp_res;
+  //   }
+  // }
+
   // Parallel computation with or without a progress bar
   if (progressbar) {
     RcppThread::ProgressBar bar(num_neighbors, 1);
-    for (int i = 0; i < num_neighbors; ++i) {
+    RcppThread::parallelFor(0, num_neighbors, [&](int i) {
       std::vector<double> H1sliced(H1sequence.begin(), H1sequence.begin() + i + 1);
       std::vector<double> dp_res = CppCMCTest(H1sliced,">",0.05,num_neighbors);
       dp_res.insert(dp_res.begin(), i + 1);
       results[i] = dp_res;
       bar++;
-    };
+    }, threads_sizet);
   } else {
-    for (int i = 0; i < num_neighbors; ++i) {
+    RcppThread::parallelFor(0, num_neighbors, [&](int i) {
       std::vector<double> H1sliced(H1sequence.begin(), H1sequence.begin() + i + 1);
       std::vector<double> dp_res = CppCMCTest(H1sliced,">",0.05,num_neighbors);
       dp_res.insert(dp_res.begin(), i + 1);
       results[i] = dp_res;
-    }
+    }, threads_sizet);
   }
+
   return results; // Return the vector of results
 }
 
