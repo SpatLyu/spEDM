@@ -231,13 +231,14 @@ Rcpp::NumericVector RcppDeLongAUCConfidence(const Rcpp::NumericVector& cases,
 // [[Rcpp::export]]
 Rcpp::NumericVector RcppCMCTest(const Rcpp::NumericVector& cases,
                                 const Rcpp::CharacterVector& direction,
-                                double level = 0.05) {
+                                double level = 0.05,
+                                int num_samples = 0) {
   // Convert Rcpp inputs to standard C++ types
   std::vector<double> cpp_cases = Rcpp::as<std::vector<double>>(cases);
   std::string cpp_direction = Rcpp::as<std::string>(direction[0]);
 
   // Call the CppCMCTest function
-  std::vector<double> result = CppCMCTest(cpp_cases, cpp_direction, level);
+  std::vector<double> result = CppCMCTest(cpp_cases, cpp_direction, level, num_samples);
 
   // Convert std::vector<double> to Rcpp::NumericVector
   return Rcpp::wrap(result);

@@ -643,19 +643,19 @@ std::vector<double> CppDeLongAUCConfidence(const std::vector<double>& cases,
 std::vector<double> CppCMCTest(const std::vector<double>& cases,
                                const std::string& direction,
                                double level = 0.05,
-                               int sample_num = 0) {
+                               int num_samples = 0) {
   size_t m = cases.size(), n = cases.size();  // Both m and n are set to cases.size()
 
-  if (sample_num == 0){
-    sample_num = static_cast<int>(m);
+  if (num_samples == 0){
+    num_samples = static_cast<int>(m);
   }
 
   std::vector<double> controls;
   // for (size_t i = 0; i < cases.size(); ++i) {
-  //   controls.push_back(static_cast<double>(i) / sample_num);
+  //   controls.push_back(static_cast<double>(i) / num_samples);
   // }
   for (size_t i = 1; i <= cases.size(); ++i) {
-    controls.push_back(static_cast<double>(i) / sample_num);
+    controls.push_back(static_cast<double>(i) / num_samples);
   }
 
   // Compute DeLong placements
