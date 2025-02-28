@@ -257,7 +257,7 @@ std::vector<std::vector<double>> CrossMappingCardinality(
     return H1sequence;
   };
 
-  std::vector<double> cmcH1 = CMCSingle(num_neighbors.size());
+  std::vector<double> cmcH1 = CMCSingle(num_neighbors.size() - 1);
 
   // Parallel computation with or without a progress bar
   if (progressbar) {
