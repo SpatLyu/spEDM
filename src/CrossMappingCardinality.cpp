@@ -271,7 +271,6 @@ std::vector<std::vector<double>> CrossMappingCardinality(
       results[i] = dp_res;
     }
   }
-
   return results; // Return the vector of results
 }
 
