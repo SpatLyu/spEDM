@@ -49,6 +49,16 @@ Rcpp::List RcppLaggedNeighbor4Lattice(const Rcpp::List& nb, int lagNum) {
 
   // Calculate lagged indices
   std::vector<std::vector<int>> lagged_indices = CppLaggedNeighbor4Lattice(nb_vec, lagNum);
+  // Restore the 0-based index from C++ to the 1-based index in R
+  for (auto& row : lagged_indices) {
+    for (auto& val : row) {
+      val += 1;
+    }
+  }
+  // // A more modern C++ implementation, provided for comparison only. -- Wenbo Lv, 2025.3.3
+  // for (auto& row : lagged_indices) {
+  //   std::transform(row.begin(), row.end(), row.begin(), [](int x) { return x + 1; });
+  // }
 
   // Convert std::vector<std::vector<int>> to Rcpp::List
   Rcpp::List result(n);
