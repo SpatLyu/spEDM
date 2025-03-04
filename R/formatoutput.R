@@ -54,6 +54,21 @@ print.pcm_res = \(x,...){
   print(.internal_xmapdf_print(xmap))
 }
 
+#' print xmap_self result
+#' @noRd
+#' @export
+print.xmap_self = \(x,...){
+  res = x$xmap
+  if (ncol(res) == 5){
+    outres = OptEmbedDim(res)
+    cat(paste0("The suggested E and k for variable ",target," is ",outres[1]," and ",outres[2]), "\n")
+  } else if (ncol(res) == 4){
+    cat(paste0("The suggested theta for variable ",target," is ",OptThetaParm(res)), "\n")
+  } else {
+    print(res)
+  }
+}
+
 #' plot ccm result
 #' @noRd
 #' @export

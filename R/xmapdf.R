@@ -51,3 +51,9 @@
   class(res) = 'cmc_res'
   return(res)
 }
+
+.bind_xmapself = \(x,...){
+  res = list("xmap" = x)
+  class(res) = "xmap_self"
+  return(res)
+}
