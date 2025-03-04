@@ -483,7 +483,7 @@ Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x,
                                       const Rcpp::IntegerVector& pred,
                                       const Rcpp::IntegerVector& E,
                                       const Rcpp::IntegerVector& tau,
-                                      int b,
+                                      const Rcpp::IntegerVector& b,
                                       bool simplex,
                                       double theta,
                                       int threads,
@@ -509,6 +509,7 @@ Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x,
   std::vector<int> pred_std = Rcpp::as<std::vector<int>>(pred);
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
   std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
+  std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
 
   // Perform SCPCM For Lattice
   std::vector<std::vector<double>> result = SCPCM4Lattice(
@@ -521,7 +522,7 @@ Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x,
     pred_std,
     E_std,
     tau_std,
-    b,
+    b_std,
     simplex,
     theta,
     threads,
