@@ -14,8 +14,7 @@
  * @param Emat A NumericMatrix with five columns: "E", k", "rho", "mae", and "rmse".
  * @return The optimal embedding dimension (E) and number of nearest neighbors (k) as an integer vector.
  */
-// [[Rcpp::export]]
-Rcpp::IntegerVector OptEmdedDim(Rcpp::NumericMatrix Emat);
+Rcpp::IntegerVector OptEmbedDim(Rcpp::NumericMatrix Emat);
 
 /**
  * Determine the optimal theta parameter based on the evaluation metrics.

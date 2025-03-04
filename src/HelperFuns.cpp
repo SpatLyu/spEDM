@@ -21,7 +21,7 @@ unsigned int DetectMaxNumThreads(){
  * @return The optimal embedding dimension (E) and number of nearest neighbors (k) as an integer vector.
  */
 // [[Rcpp::export]]
-Rcpp::IntegerVector OptEmdedDim(Rcpp::NumericMatrix Emat) {
+Rcpp::IntegerVector OptEmbedDim(Rcpp::NumericMatrix Emat) {
   // Check if the input matrix has exactly 5 columns
   if (Emat.ncol() != 5) {
     Rcpp::stop("Input matrix must have exactly 5 columns: E, k, rho, mae, and rmse.");

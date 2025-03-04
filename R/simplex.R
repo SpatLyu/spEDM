@@ -7,7 +7,7 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
   pred = .check_indices(pred,length(vec))
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   res = RcppSimplex4Lattice(vec,nb,lib,pred,E,k,tau,threads)
-  outres = OptEmdedDim(res)
+  outres = OptEmbedDim(res)
   cat(paste0("The suggested E and k for variable ",target," is ",outres[0]," and ",outres[1]), "\n")
   return(res)
 }
@@ -16,7 +16,7 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
                                threads = detectThreads(), trend.rm = TRUE){
   mat = .uni_grid(data,target,trend.rm)
   res = RcppSimplex4Grid(mat,lib,pred,E,k,tau,threads)
-  outres = OptEmdedDim(res)
+  outres = OptEmbedDim(res)
   cat(paste0("The suggested E and k for variable ",target," is ",outres[0]," and ",outres[1]), "\n")
   return(res)
 }
