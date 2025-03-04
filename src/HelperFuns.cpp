@@ -11,33 +11,33 @@ unsigned int DetectMaxNumThreads(){
 }
 
 /**
- * Determine the optimal embedding dimension (E) based on the evaluation metrics.
+ * Determine the optimal embedding dimension (E) and number of nearest neighbors (k).
  *
- * This function takes a matrix `Emat` with columns "E", "rho", "mae", and "rmse".
- * It selects the optialmal embedding dimension (E) by first maximizing "rho", then minimizing "rmse",
- * and finally minimizing "mae" if necessary.
+ * This function takes a matrix `Emat` with columns "E", "k", "rho", "mae", and "rmse".
+ * It selects the optialmal embedding dimension (E) and number of nearest neighbors (k)
+ * by first maximizing "rho", then minimizing "rmse", and finally minimizing "mae" if necessary.
  *
- * @param Emat A NumericMatrix with four columns: "E", "rho", "mae", and "rmse".
- * @return The optimal embedding dimension (E) as an integer.
+ * @param Emat A NumericMatrix with five columns: "E", k", "rho", "mae", and "rmse".
+ * @return The optimal embedding dimension (E) and number of nearest neighbors (k) as an integer vector.
  */
 // [[Rcpp::export]]
-int OptEmdedDim(Rcpp::NumericMatrix Emat) {
-  // Check if the input matrix has exactly 4 columns
-  if (Emat.ncol() != 4) {
-    Rcpp::stop("Input matrix must have exactly 4 columns: E, rho, mae, and rmse.");
+Rcpp::IntegerVector OptEmdedDim(Rcpp::NumericMatrix Emat) {
+  // Check if the input matrix has exactly 5 columns
+  if (Emat.ncol() != 5) {
+    Rcpp::stop("Input matrix must have exactly 5 columns: E, k, rho, mae, and rmse.");
   }
 
   // Initialize variables to store the optialmal row index and its metrics
   int optialmal_row = 0;
-  double optialmal_rho = Emat(0, 1); // Initialize with the first row's rho
-  double optialmal_rmse = Emat(0, 3); // Initialize with the first row's rmse
-  double optialmal_mae = Emat(0, 2); // Initialize with the first row's mae
+  double optialmal_rho = Emat(0, 2); // Initialize with the first row's rho
+  double optialmal_rmse = Emat(0, 4); // Initialize with the first row's rmse
+  double optialmal_mae = Emat(0, 3); // Initialize with the first row's mae
 
   // Iterate through each row of the matrix
   for (int i = 1; i < Emat.nrow(); ++i) {
-    double current_rho = Emat(i, 1); // Current row's rho
-    double current_rmse = Emat(i, 3); // Current row's rmse
-    double current_mae = Emat(i, 2); // Current row's mae
+    double current_rho = Emat(i, 2); // Current row's rho
+    double current_rmse = Emat(i, 4); // Current row's rmse
+    double current_mae = Emat(i, 3); // Current row's mae
 
     // Compare rho values first
     if (current_rho > optialmal_rho) {
@@ -64,8 +64,12 @@ int OptEmdedDim(Rcpp::NumericMatrix Emat) {
     }
   }
 
-  // Return the optimal embedding dimension (E) from the optialmal row
-  return Emat(optialmal_row, 0);
+  // Return the optimal E and b from the optialmal row
+  Rcpp::IntegerVector result(2);
+  result[0] = static_cast<int>(Emat(optialmal_row, 0));
+  result[1] = static_cast<int>(Emat(optialmal_row, 1));
+
+  return result;
 }
 
 /**

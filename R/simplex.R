@@ -14,7 +14,7 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
 .simplex_spatraster_method = \(data,target,lib,pred = lib,E = 1:10,tau = 1,k = E + 2,
                                threads = detectThreads(), trend.rm = TRUE){
   mat = .uni_grid(data,target,trend.rm)
-  res = RcppSimplex4Grid(mat,lib,pred,E,tau,k,threads)
+  res = RcppSimplex4Grid(mat,lib,pred,E,k,tau,threads)
   cat(paste0("The suggested embedding dimension E for variable ",target," is ",OptEmdedDim(res)), "\n")
   return(res)
 }
