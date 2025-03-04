@@ -1,6 +1,6 @@
 methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
 
-.simplex_sf_method = \(data,target,lib,pred = lib,E = 1:10,tau = 1,k = E + 2,
+.simplex_sf_method = \(data,target,lib,pred = lib,E = 1:10,tau = 1,k = E+2,
                        nb = NULL, threads = detectThreads(), trend.rm = TRUE){
   vec = .uni_lattice(data,target,trend.rm)
   lib = .check_indices(lib,length(vec))
@@ -12,7 +12,7 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
   return(res)
 }
 
-.simplex_spatraster_method = \(data,target,lib,pred = lib,E = 1:10,tau = 1,k = E + 2,
+.simplex_spatraster_method = \(data,target,lib,pred = lib,E = 1:10,tau = 1,k = E+2,
                                threads = detectThreads(), trend.rm = TRUE){
   mat = .uni_grid(data,target,trend.rm)
   res = RcppSimplex4Grid(mat,lib,pred,E,k,tau,threads)
