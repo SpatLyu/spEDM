@@ -27,7 +27,7 @@
  * @param pred_indices: Boolean vector indicating which states to use for predictions.
  * @param conEs: Vector specifying the number of dimensions for attractor reconstruction with control variables.
  * @param taus: Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
- * @param num_neighbors: Number of neighbors to use for simplex projection.
+ * @param num_neighbors: Vector specifying the numbers of neighbors to use for simplex projection.
  * @param cumulate: Flag indicating whether to cumulatively incorporate control variables.
  *
  * @return A std::vector<double> containing:
@@ -43,7 +43,7 @@ std::vector<double> PartialSimplex4Lattice(
     const std::vector<bool>& pred_indices,
     const std::vector<int>& conEs,
     const std::vector<int>& taus,
-    int num_neighbors,
+    const std::vector<int>& num_neighbors,
     bool cumulate
 ){
   int n_controls = controls.size();
@@ -55,15 +55,15 @@ std::vector<double> PartialSimplex4Lattice(
 
     for (int i = 0; i < n_controls; ++i) {
       if (i == 0){
-        temp_pred = SimplexProjectionPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors);
+        temp_pred = SimplexProjectionPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors[0]);
       } else {
-        temp_pred = SimplexProjectionPrediction(temp_embedding, controls[i], lib_indices, pred_indices, num_neighbors);
+        temp_pred = SimplexProjectionPrediction(temp_embedding, controls[i], lib_indices, pred_indices, num_neighbors[i]);
       }
       temp_embedding = GenLatticeEmbeddings(temp_pred,nb_vec,conEs[i],taus[i]);
     }
 
-    std::vector<double> con_pred = SimplexProjectionPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors);
-    std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors);
+    std::vector<double> con_pred = SimplexProjectionPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors[n_controls]);
+    std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors[0]);
 
     rho[0] = PearsonCor(target,target_pred,true);
     rho[1] = PartialCorTrivar(target,target_pred,con_pred,true,false);
@@ -73,12 +73,12 @@ std::vector<double> PartialSimplex4Lattice(
     std::vector<std::vector<double>> temp_embedding;
 
     for (int i = 0; i < n_controls; ++i) {
-      temp_pred = SimplexProjectionPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors);
+      temp_pred = SimplexProjectionPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors[0]);
       temp_embedding = GenLatticeEmbeddings(temp_pred,nb_vec,conEs[i],taus[i]);
-      temp_pred = SimplexProjectionPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors);
+      temp_pred = SimplexProjectionPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors[i+1]);
       con_pred[i] = temp_pred;
     }
-    std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors);
+    std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors[0]);
 
     rho[0] = PearsonCor(target,target_pred,true);
     rho[1] = PartialCor(target,target_pred,con_pred,true,false);
@@ -102,7 +102,7 @@ std::vector<double> PartialSimplex4Lattice(
  * @param pred_indices: Boolean vector indicating which states to predict from.
  * @param conEs: Vector specifying the number of dimensions for attractor reconstruction with control variables.
  * @param taus: Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
- * @param num_neighbors: Number of neighbors to use for S-Map prediction.
+ * @param num_neighbors: Vector specifying the numbers of neighbors to use for S-Map prediction.
  * @param theta: Weighting parameter for distances in S-Map.
  * @param cumulate: Boolean flag to determine whether to cumulate the partial correlations.
  * @return A vector of size 2 containing:
@@ -118,7 +118,7 @@ std::vector<double> PartialSMap4Lattice(
     const std::vector<bool>& pred_indices,
     const std::vector<int>& conEs,
     const std::vector<int>& taus,
-    int num_neighbors,
+    const std::vector<int>& num_neighbors,
     double theta,
     bool cumulate
 ){
@@ -131,15 +131,15 @@ std::vector<double> PartialSMap4Lattice(
 
     for (int i = 0; i < n_controls; ++i) {
       if (i == 0){
-        temp_pred = SMapPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors, theta);
+        temp_pred = SMapPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors[0], theta);
       } else {
-        temp_pred = SMapPrediction(temp_embedding, controls[i], lib_indices, pred_indices, num_neighbors, theta);
+        temp_pred = SMapPrediction(temp_embedding, controls[i], lib_indices, pred_indices, num_neighbors[i], theta);
       }
       temp_embedding = GenLatticeEmbeddings(temp_pred,nb_vec,conEs[i],taus[i]);
     }
 
-    std::vector<double> con_pred = SMapPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors, theta);
-    std::vector<double> target_pred = SMapPrediction(vectors, target, lib_indices, pred_indices, num_neighbors, theta);
+    std::vector<double> con_pred = SMapPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors[n_controls], theta);
+    std::vector<double> target_pred = SMapPrediction(vectors, target, lib_indices, pred_indices, num_neighbors[0], theta);
 
     rho[0] = PearsonCor(target,target_pred,true);
     rho[1] = PartialCorTrivar(target,target_pred,con_pred,true,false);
@@ -149,12 +149,12 @@ std::vector<double> PartialSMap4Lattice(
     std::vector<std::vector<double>> temp_embedding;
 
     for (int i = 0; i < n_controls; ++i) {
-      temp_pred = SMapPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors, theta);
+      temp_pred = SMapPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors[0], theta);
       temp_embedding = GenLatticeEmbeddings(temp_pred,nb_vec,conEs[i],taus[i]);
-      temp_pred = SMapPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors, theta);
+      temp_pred = SMapPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors[i+1], theta);
       con_pred[i] = temp_pred;
     }
-    std::vector<double> target_pred = SMapPrediction(vectors, target, lib_indices, pred_indices, num_neighbors, theta);
+    std::vector<double> target_pred = SMapPrediction(vectors, target, lib_indices, pred_indices, num_neighbors[0], theta);
 
     rho[0] = PearsonCor(target,target_pred,true);
     rho[1] = PartialCor(target,target_pred,con_pred,true,false);
@@ -178,7 +178,7 @@ std::vector<double> PartialSMap4Lattice(
  *   - pred_indices: A boolean vector indicating which states to use for prediction.
  *   - conEs: Number of dimensions for attractor reconstruction with control variables.
  *   - taus: Spatial lag step for constructing lagged state-space vectors with control variables.
- *   - b: Number of neighbors to use for simplex projection.
+ *   - b: A vector specifying the numbers of neighbors to use for simplex projection.
  *   - simplex: If true, uses simplex projection for prediction; otherwise, uses s-mapping.
  *   - theta: Distance weighting parameter for local neighbors in the manifold (used in s-mapping).
  *   - cumulate: Whether to accumulate partial correlations.
@@ -201,7 +201,7 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
     const std::vector<bool>& pred_indices,              // Vector of T/F values (which states to predict from)
     const std::vector<int>& conEs,                      // Number of dimensions for the attractor reconstruction with control variables
     const std::vector<int>& taus,                       // Spatial lag step for constructing lagged state-space vectors with control variables
-    int b,                                              // Number of neighbors to use for simplex projection
+    const std::vector<int>& b,                          // Numbers of neighbors to use for simplex projection
     bool simplex,                                       // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
     double theta,                                       // Distance weighting parameter for the local neighbours in the manifold
     bool cumulate                                       // Whether to cumulate the partial correlations
@@ -267,7 +267,7 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
  * - pred: A vector specifying the prediction indices (1-based in R, converted to 0-based in C++).
  * - Es: A vector specifying the embedding dimensions for attractor reconstruction using x and control variables.
  * - taus: A vector specifying the spatial lag steps for constructing lagged state-space vectors using x and control variables.
- * - b: Number of nearest neighbors used for prediction.
+ * - b: A vector specifying the numbers of nearest neighbors used for prediction.
  * - simplex: Boolean flag indicating whether to use simplex projection (true) or S-mapping (false) for prediction.
  * - theta: Distance weighting parameter used for weighting neighbors in the S-mapping prediction.
  * - threads: Number of threads to use for parallel computation.
@@ -296,13 +296,20 @@ std::vector<std::vector<double>> SCPCM4Lattice(
     const std::vector<int>& pred,                       // Vector specifying the prediction indices
     const std::vector<int>& Es,                         // Number of dimensions for the attractor reconstruction with the x and control variables
     const std::vector<int>& taus,                       // Spatial lag step for constructing lagged state-space vectors with the x and control variables
-    int b,                                              // Number of nearest neighbors to use for prediction
+    const std::vector<int>& b,                          // Numbers of nearest neighbors to use for prediction
     bool simplex,                                       // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
     double theta,                                       // Distance weighting parameter for the local neighbours in the manifold
     int threads,                                        // Number of threads used from the global pool
     bool cumulate,                                      // Whether to cumulate the partial correlations
     bool progressbar                                    // Whether to print the progress bar
 ) {
+  // If b is not provided correctly, default it to E + 2
+  std::vector<int> bs = b;
+  for (size_t i = 0; i < bs.size(); ++i)
+  if (bs[i] <= 0) {
+    bs[i] = Es[i] + 2;
+  }
+
   int Ex = Es[0];
   std::vector<int> conEs = Es;
   conEs.erase(conEs.begin());
@@ -310,11 +317,6 @@ std::vector<std::vector<double>> SCPCM4Lattice(
   int taux = taus[0];
   std::vector<int> contaus = taus;
   contaus.erase(contaus.begin());
-
-  // If b is not provided correctly, default it to Ex + 2
-  if (b <= 0) {
-    b = Ex + 2;
-  }
 
   // Configure threads
   size_t threads_sizet = static_cast<size_t>(threads);
@@ -425,7 +427,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
   //     pred_indices,
   //     conEs,
   //     contaus,
-  //     b,
+  //     bs,
   //     simplex,
   //     theta,
   //     cumulate
@@ -450,7 +452,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
         pred_indices,
         conEs,
         contaus,
-        b,
+        bs,
         simplex,
         theta,
         cumulate
@@ -473,7 +475,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
         pred_indices,
         conEs,
         contaus,
-        b,
+        bs,
         simplex,
         theta,
         cumulate
