@@ -133,12 +133,13 @@ Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec,
  *   - lib: An IntegerVector specifying the library indices (1-based in R, converted to 0-based in C++).
  *   - pred: An IntegerVector specifying the prediction indices (1-based in R, converted to 0-based in C++).
  *   - E: An IntegerVector specifying the embedding dimensions to test.
+ *   - b: An IntegerVector specifying the numbers of neighbors to use for simplex projection.
  *   - tau: An integer specifying the step of spatial lags for prediction.
- *   - b: An integer specifying the number of neighbors to use for simplex projection.
  *
  * Returns:
- *   A NumericMatrix where each row contains {E, PearsonCor, MAE, RMSE}:
+ *   A NumericMatrix where each row contains {E, b, PearsonCor, MAE, RMSE}:
  *   - E: The tested embedding dimension.
+ *   - b: The tested numbers of neighbors
  *   - PearsonCor: The Pearson correlation coefficient between the predicted and actual values.
  *   - MAE: The mean absolute error between the predicted and actual values.
  *   - RMSE: The root mean squared error between the predicted and actual values.
@@ -149,8 +150,8 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
                                         const Rcpp::IntegerVector& lib,
                                         const Rcpp::IntegerVector& pred,
                                         const Rcpp::IntegerVector& E,
+                                        const Rcpp::IntegerVector& b,
                                         int tau,
-                                        int b,
                                         int threads) {
   // Convert neighborhood list to std::vector<std::vector<int>>
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
@@ -160,6 +161,7 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
 
   // Convert Rcpp::IntegerVector to std::vector<int>
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
+  std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
 
   // Initialize lib_indices and pred_indices with all false
   std::vector<bool> lib_indices(vec_std.size(), false);
@@ -181,8 +183,8 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
     lib_indices,
     pred_indices,
     E_std,
+    b_std,
     tau,
-    b,
     threads);
 
   size_t n_rows = res_std.size();
@@ -199,7 +201,7 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
   }
 
   // Set column names for the result matrix
-  Rcpp::colnames(result) = Rcpp::CharacterVector::create("E", "rho", "mae", "rmse");
+  Rcpp::colnames(result) = Rcpp::CharacterVector::create("E", "k", "rho", "mae", "rmse");
   return result;
 }
 
