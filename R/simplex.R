@@ -1,17 +1,17 @@
 methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
 
-.simplex_sf_method = \(data,target,lib,pred = lib,E = 1:10,tau = 1,k = 4,
+.simplex_sf_method = \(data,target,lib,pred = lib,E = 1:10,tau = 1,k = E + 2,
                        nb = NULL, threads = detectThreads(), trend.rm = TRUE){
   vec = .uni_lattice(data,target,trend.rm)
   lib = .check_indices(lib,length(vec))
   pred = .check_indices(pred,length(vec))
   if (is.null(nb)) nb = .internal_lattice_nb(data)
-  res = RcppSimplex4Lattice(vec,nb,lib,pred,E,tau,k,threads)
+  res = RcppSimplex4Lattice(vec,nb,lib,pred,E,k,tau,threads)
   cat(paste0("The suggested embedding dimension E for variable ",target," is ",OptEmdedDim(res)), "\n")
   return(res)
 }
 
-.simplex_spatraster_method = \(data,target,lib,pred = lib,E = 1:10,tau = 1,k = 4,
+.simplex_spatraster_method = \(data,target,lib,pred = lib,E = 1:10,tau = 1,k = E + 2,
                                threads = detectThreads(), trend.rm = TRUE){
   mat = .uni_grid(data,target,trend.rm)
   res = RcppSimplex4Grid(mat,lib,pred,E,tau,k,threads)
