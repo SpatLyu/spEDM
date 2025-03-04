@@ -1,6 +1,6 @@
 methods::setGeneric("multiview", function(data, ...) standardGeneric("multiview"))
 
-.multiview_sf_method = \(data,columns,target,nvar,lib,pred = lib,E = 3,tau = 1,k = 4,
+.multiview_sf_method = \(data,columns,target,nvar,lib,pred = lib,E = 3,tau = 1,k = E+2,
                          nb = NULL, top = NULL, threads = detectThreads(), trend.rm = TRUE){
   xmat = .multivar_lattice(data,columns,trend.rm)
   yvec = .uni_lattice(data,target,trend.rm)
@@ -12,7 +12,7 @@ methods::setGeneric("multiview", function(data, ...) standardGeneric("multiview"
   return(res)
 }
 
-.multiview_spatraster_method = \(data,columns,target,nvar,lib,pred = lib,E = 3,tau = 1,k = 4,
+.multiview_spatraster_method = \(data,columns,target,nvar,lib,pred = lib,E = 3,tau = 1,k = E+2,
                                  top = NULL, threads = detectThreads(), trend.rm = TRUE){
   xmat = .multivar_grid(data,columns,trend.rm)
   ymat = .uni_grid(data,target,trend.rm)
