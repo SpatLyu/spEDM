@@ -1,6 +1,6 @@
 methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 
-.gccm_sf_method = \(data, cause, effect, libsizes, E = c(3,3), tau = 1, k = 4, theta = 1, algorithm = "simplex", pred = NULL,
+.gccm_sf_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = E+2, theta = 1, algorithm = "simplex", pred = NULL,
                     nb = NULL, threads = detectThreads(), bidirectional = TRUE, trend.rm = TRUE, progressbar = TRUE){
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
@@ -33,7 +33,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   return(.bind_xmapdf(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
 
-.gccm_spatraster_method = \(data, cause, effect, libsizes, E = c(3,3), tau = 1, k = 4, theta = 1, algorithm = "simplex",
+.gccm_spatraster_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = E+2, theta = 1, algorithm = "simplex",
                             pred = NULL, threads = detectThreads(), bidirectional = TRUE, trend.rm = TRUE, progressbar = TRUE){
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
