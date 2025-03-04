@@ -9,8 +9,7 @@ methods::setGeneric("smap", function(data, ...) standardGeneric("smap"))
   pred = .check_indices(pred,length(vec))
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   res = RcppSMap4Lattice(vec,nb,lib,pred,theta,E,tau,k,threads)
-  cat(paste0("The suggested theta for variable ",target," is ",OptThetaParm(res)), "\n")
-  return(res)
+  return(.bind_xmapself(res,target))
 }
 
 .smap_spatraster_method = \(data, target, lib, pred = lib, E = 3, tau = 1, k = 4,
@@ -19,8 +18,7 @@ methods::setGeneric("smap", function(data, ...) standardGeneric("smap"))
                             threads = detectThreads(), trend.rm = TRUE){
   mat = .uni_grid(data,target,trend.rm)
   res = RcppSMap4Grid(mat,lib,pred,theta,E,tau,k,threads)
-  cat(paste0("The suggested theta for variable ",target," is ",OptThetaParm(res)), "\n")
-  return(res)
+  return(.bind_xmapself(res,target))
 }
 
 #' smap forecast
@@ -28,7 +26,11 @@ methods::setGeneric("smap", function(data, ...) standardGeneric("smap"))
 #' @inheritParams simplex
 #' @param theta (optional) Weighting parameter for distances.
 #'
-#' @return A matrix
+#' @return A list
+#' \describe{
+#' \item{\code{xmap}}{self mapping prediction results}
+#' \item{\code{varname}}{name of target variable}
+#' }
 #' @export
 #'
 #' @name smap
