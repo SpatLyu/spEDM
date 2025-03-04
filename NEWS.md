@@ -6,6 +6,8 @@
 
 ### enhancements
 
+* Set the default `k` to `E+2` in the `gccm` R API (#261).
+
 * Eliminate redundant computations at the source C++ code level (#233).
 
 * Apply parallel-level computations for each libsize when executing `gccm` on spatial grid data (#203).
