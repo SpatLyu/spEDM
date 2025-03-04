@@ -305,9 +305,10 @@ std::vector<std::vector<double>> SCPCM4Lattice(
 ) {
   // If b is not provided correctly, default it to E + 2
   std::vector<int> bs = b;
-  for (size_t i = 0; i < bs.size(); ++i)
-  if (bs[i] <= 0) {
-    bs[i] = Es[i] + 2;
+  for (size_t i = 0; i < bs.size(); ++i){
+    if (bs[i] <= 0) {
+      bs[i] = Es[i] + 2;
+    }
   }
 
   int Ex = Es[0];

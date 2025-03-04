@@ -30,7 +30,7 @@
  * @param pred_indices: Boolean vector indicating which states to predict from.
  * @param conEs: Vector specifying the number of dimensions for attractor reconstruction with control variables.
  * @param taus: Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
- * @param num_neighbors: Number of neighbors to use for Simplex Projection.
+ * @param num_neighbors: Vector specifying the numbers of neighbors to use for Simplex Projection.
  * @param nrow: Number of rows in the input spatial grid data.
  * @param cumulate: Boolean flag to determine whether to cumulate the partial correlations.
  * @return A vector of size 2 containing:
@@ -45,7 +45,7 @@ std::vector<double> PartialSimplex4Grid(
     const std::vector<bool>& pred_indices,
     const std::vector<int>& conEs,
     const std::vector<int>& taus,
-    int num_neighbors,
+    const std::vector<int>& num_neighbors,
     int nrow,
     bool cumulate
 );
@@ -65,7 +65,7 @@ std::vector<double> PartialSimplex4Grid(
  * @param pred_indices: Boolean vector indicating which states to predict from.
  * @param conEs: Vector specifying the number of dimensions for attractor reconstruction with control variables.
  * @param taus: Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
- * @param num_neighbors: Number of neighbors to use for Simplex Projection.
+ * @param num_neighbors: Vector specifying the numbers of neighbors to use for Simplex Projection.
  * @param nrow: Number of rows in the input spatial grid data.
  * @param theta: Weighting parameter for distances in the S-Map method.
  * @param cumulate: Boolean flag to determine whether to cumulate the partial correlations.
@@ -81,7 +81,7 @@ std::vector<double> PartialSMap4Grid(
     const std::vector<bool>& pred_indices,
     const std::vector<int>& conEs,
     const std::vector<int>& taus,
-    int num_neighbors,
+    const std::vector<int>& num_neighbors,
     int nrow,
     double theta,
     bool cumulate
@@ -102,7 +102,7 @@ std::vector<double> PartialSMap4Grid(
  * @param taus:          Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
  * @param totalRow       The total number of rows in the 2D grid.
  * @param totalCol       The total number of columns in the 2D grid.
- * @param b              The number of nearest neighbors to use for prediction.
+ * @param b              The numbers of nearest neighbors to use for prediction.
  * @param simplex        If true, use Simplex Projection; if false, use S-Mapping.
  * @param theta          The distance weighting parameter for S-Mapping (ignored if simplex is true).
  * @param threads        The number of threads to use for parallel processing.
@@ -119,9 +119,9 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
     const std::vector<bool>& pred_indices,
     const std::vector<int>& conEs,
     const std::vector<int>& taus,
+    const std::vector<int>& b,
     int totalRow,
     int totalCol,
-    int b,
     bool simplex,
     double theta,
     size_t threads,
@@ -143,7 +143,7 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
  * - pred: A vector of pairs representing the indices (row, column) of spatial units to be predicted.
  * - Es: A vector specifying the embedding dimensions for attractor reconstruction using `xMatrix` and control variables.
  * - taus: A vector specifying the spatial lag steps for constructing lagged state-space vectors with control variables.
- * - b: Number of nearest neighbors used for prediction.
+ * - b: A vector specifying the numbers of nearest neighbors used for prediction.
  * - simplex: Boolean flag indicating whether to use Simplex Projection (true) or S-Mapping (false) for prediction.
  * - theta: Distance weighting parameter used for weighting neighbors in the S-Mapping prediction.
  * - threads: Number of threads to use for parallel computation.
@@ -170,7 +170,7 @@ std::vector<std::vector<double>> SCPCM4Grid(
     const std::vector<std::pair<int, int>>& pred,        // Indices of spatial units to be predicted
     const std::vector<int>& Es,                          // Number of dimensions for the attractor reconstruction with the x and control variables
     const std::vector<int>& taus,                        // Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
-    int b,                                               // Number of nearest neighbors to use for prediction
+    const std::vector<int>& b,                           // Numbers of nearest neighbors to use for prediction
     bool simplex,                                        // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
     double theta,                                        // Distance weighting parameter for the local neighbours in the manifold
     int threads,                                         // Number of threads used from the global pool
