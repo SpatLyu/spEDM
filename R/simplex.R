@@ -7,18 +7,14 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
   pred = .check_indices(pred,length(vec))
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   res = RcppSimplex4Lattice(vec,nb,lib,pred,E,k,tau,threads)
-  outres = OptEmbedDim(res)
-  cat(paste0("The suggested E and k for variable ",target," is ",outres[0]," and ",outres[1]), "\n")
-  return(res)
+  return(.bind_xmapself(res,target))
 }
 
 .simplex_spatraster_method = \(data,target,lib,pred = lib,E = 1:10,tau = 1,k = E+2,
                                threads = detectThreads(), trend.rm = TRUE){
   mat = .uni_grid(data,target,trend.rm)
   res = RcppSimplex4Grid(mat,lib,pred,E,k,tau,threads)
-  outres = OptEmbedDim(res)
-  cat(paste0("The suggested E and k for variable ",target," is ",outres[0]," and ",outres[1]), "\n")
-  return(res)
+  return(.bind_xmapself(res,target))
 }
 
 #' simplex forecast
@@ -29,7 +25,11 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
 #' @param k (optional) Number of nearest neighbors used for prediction.
 #' @param threads (optional) Number of threads.
 #'
-#' @return A matrix
+#' @return A list
+#' \describe{
+#' \item{\code{xmap}}{self mapping prediction results}
+#' \item{\code{varname}}{name of target variable}
+#' }
 #' @export
 #'
 #' @name simplex
