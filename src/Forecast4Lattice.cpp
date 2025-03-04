@@ -1,4 +1,6 @@
 #include <vector>
+#include <algorithm>
+#include <utility>
 #include "CppLatticeUtils.h"
 #include "SimplexProjection.h"
 #include "SMap.h"
@@ -8,7 +10,8 @@
 // [[Rcpp::depends(RcppThread)]]
 
 /*
- * Evaluates prediction performance of different embedding dimensions for lattice data using simplex projection.
+ * Evaluates prediction performance of different combinations of embedding dimensions and number of nearest neighbors
+ * for lattice data using simplex projection.
  *
  * Parameters:
  *   - vec: A vector to be embedded.
@@ -16,41 +19,59 @@
  *   - lib_indices: A boolean vector indicating library (training) set indices.
  *   - pred_indices: A boolean vector indicating prediction set indices.
  *   - E: A vector of embedding dimensions to evaluate.
+ *   - b: A vector of nearest neighbor values to evaluate.
  *   - tau: The spatial lag step for constructing lagged state-space vectors.
- *   - b: Number of nearest neighbors to use for prediction.
  *   - threads: Number of threads used from the global pool.
  *
  * Returns:
- *   A 2D vector where each row contains [E, rho, mae, rmse] for a given embedding dimension.
+ *   A 2D vector where each row contains [E, b, rho, mae, rmse] for a given combination of embedding dimension and nearest neighbors.
  */
 std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& vec,
                                                  const std::vector<std::vector<int>>& nb_vec,
                                                  const std::vector<bool>& lib_indices,
                                                  const std::vector<bool>& pred_indices,
                                                  const std::vector<int>& E,
+                                                 const std::vector<int>& b,
                                                  int tau,
-                                                 int b,
                                                  int threads) {
   // Configure threads
   size_t threads_sizet = static_cast<size_t>(threads);
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
-  // Initialize result matrix with E.size() rows and 4 columns
-  std::vector<std::vector<double>> result(E.size(), std::vector<double>(4));
+  // Sort and remove duplicates
+  std::vector<int> Es = E;
+  std::sort(Es.begin(), Es.end());
+  Es.erase(std::unique(Es.begin(), Es.end()), Es.end());
+
+  std::vector<int> bs = b;
+  std::sort(bs.begin(), bs.end());
+  bs.erase(std::unique(bs.begin(), bs.end()), bs.end());
+
+  // Generate unique pairs of E and b
+  std::vector<std::pair<int, int>> unique_Ebcom;
+  for (size_t i = 0; i < Es.size(); ++i){
+    for (size_t j = 0; j < bs.size(); ++j){
+      unique_Ebcom.emplace_back(Es[i],bs[j]); // Pair with E and b
+    }
+  }
+
+  // Initialize result matrix with unique_Ebcom.size() rows and 5 columns
+  std::vector<std::vector<double>> result(unique_Ebcom.size(), std::vector<double>(5));
 
   // Parallel loop over each embedding dimension E
-  RcppThread::parallelFor(0, E.size(), [&](size_t i) {
+  RcppThread::parallelFor(0, unique_Ebcom.size(), [&](size_t i) {
     // Generate embeddings for the current E
-    std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(vec, nb_vec, E[i], tau);
+    std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(vec, nb_vec, unique_Ebcom[i].first, tau);
 
     // Compute metrics using SimplexBehavior
-    std::vector<double> metrics = SimplexBehavior(embeddings, vec, lib_indices, pred_indices, b);
+    std::vector<double> metrics = SimplexBehavior(embeddings, vec, lib_indices, pred_indices, unique_Ebcom[i].second);
 
     // Store results in the matrix (no mutex needed since each thread writes to a unique index)
-    result[i][0] = E[i];               // Embedding dimension
-    result[i][1] = metrics[0];         // Pearson correlation (rho)
-    result[i][2] = metrics[1];         // Mean Absolute Error (MAE)
-    result[i][3] = metrics[2];         // Root Mean Squared Error (RMSE)
+    result[i][0] = unique_Ebcom[i].first;   // Embedding dimension
+    result[i][1] = unique_Ebcom[i].second;  // Number of nearest neighbors
+    result[i][2] = metrics[0];              // Pearson correlation (rho)
+    result[i][3] = metrics[1];              // Mean Absolute Error (MAE)
+    result[i][4] = metrics[2];              // Root Mean Squared Error (RMSE)
   }, threads_sizet);
 
   return result;

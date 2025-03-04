@@ -53,8 +53,8 @@ DetectMaxNumThreads <- function() {
     .Call(`_spEDM_DetectMaxNumThreads`)
 }
 
-OptEmdedDim <- function(Emat) {
-    .Call(`_spEDM_OptEmdedDim`, Emat)
+OptEmbedDim <- function(Emat) {
+    .Call(`_spEDM_OptEmbedDim`, Emat)
 }
 
 OptThetaParm <- function(Thetamat) {
@@ -73,8 +73,8 @@ RcppGenLatticeEmbeddings <- function(vec, nb, E, tau) {
     .Call(`_spEDM_RcppGenLatticeEmbeddings`, vec, nb, E, tau)
 }
 
-RcppSimplex4Lattice <- function(x, nb, lib, pred, E, tau, b, threads) {
-    .Call(`_spEDM_RcppSimplex4Lattice`, x, nb, lib, pred, E, tau, b, threads)
+RcppSimplex4Lattice <- function(x, nb, lib, pred, E, b, tau, threads) {
+    .Call(`_spEDM_RcppSimplex4Lattice`, x, nb, lib, pred, E, b, tau, threads)
 }
 
 RcppSMap4Lattice <- function(x, nb, lib, pred, theta, E, tau, b, threads) {

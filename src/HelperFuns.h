@@ -5,16 +5,16 @@
 #include <RcppArmadillo.h>
 
 /**
- * Determine the optimal embedding dimension (E) based on the evaluation metrics.
+ * Determine the optimal embedding dimension (E) and number of nearest neighbors (k).
  *
- * This function takes a matrix `Emat` with columns "E", "rho", "mae", and "rmse".
- * It selects the optialmal embedding dimension (E) by first maximizing "rho", then minimizing "rmse",
- * and finally minimizing "mae" if necessary.
+ * This function takes a matrix `Emat` with columns "E", "k", "rho", "mae", and "rmse".
+ * It selects the optialmal embedding dimension (E) and number of nearest neighbors (k)
+ * by first maximizing "rho", then minimizing "rmse", and finally minimizing "mae" if necessary.
  *
- * @param Emat A NumericMatrix with four columns: "E", "rho", "mae", and "rmse".
- * @return The optimal embedding dimension (E) as an integer.
+ * @param Emat A NumericMatrix with five columns: "E", k", "rho", "mae", and "rmse".
+ * @return The optimal embedding dimension (E) and number of nearest neighbors (k) as an integer vector.
  */
-int OptEmdedDim(Rcpp::NumericMatrix Emat);
+Rcpp::IntegerVector OptEmbedDim(Rcpp::NumericMatrix Emat);
 
 /**
  * Determine the optimal theta parameter based on the evaluation metrics.
