@@ -56,6 +56,7 @@
 A list
 \describe{
 \item{\code{xmap}}{self mapping prediction results}
+\item{\code{varname}}{name of target variable}
 }
 }
 \description{
