@@ -7,14 +7,14 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
   pred = .check_indices(pred,length(vec))
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   res = RcppSimplex4Lattice(vec,nb,lib,pred,E,k,tau,threads)
-  return(.bind_xmapself(res))
+  return(.bind_xmapself(res,target))
 }
 
 .simplex_spatraster_method = \(data,target,lib,pred = lib,E = 1:10,tau = 1,k = E+2,
                                threads = detectThreads(), trend.rm = TRUE){
   mat = .uni_grid(data,target,trend.rm)
   res = RcppSimplex4Grid(mat,lib,pred,E,k,tau,threads)
-  return(.bind_xmapself(res))
+  return(.bind_xmapself(res,target))
 }
 
 #' simplex forecast
@@ -28,6 +28,7 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
 #' @return A list
 #' \describe{
 #' \item{\code{xmap}}{self mapping prediction results}
+#' \item{\code{varname}}{name of target variable}
 #' }
 #' @export
 #'

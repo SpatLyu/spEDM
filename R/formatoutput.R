@@ -61,11 +61,11 @@ print.xmap_self = \(x,...){
   res = x$xmap
   if (ncol(res) == 5){
     outres = OptEmbedDim(res)
-    cat(paste0("The suggested E and k for variable ",target," is ",outres[1]," and ",outres[2]), "\n")
+    cat(paste0("The suggested E and k for variable ",x$varname," is ",outres[1]," and ",outres[2]), "\n")
   } else if (ncol(res) == 4){
-    cat(paste0("The suggested theta for variable ",target," is ",OptThetaParm(res)), "\n")
+    cat(paste0("The suggested theta for variable ",x$varname," is ",OptThetaParm(res)), "\n")
   } else {
-    print(res)
+    print(x)
   }
 }
 
