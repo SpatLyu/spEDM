@@ -25,8 +25,8 @@ RcppLocateGridIndices <- function(curRow, curCol, totalRow, totalCol) {
     .Call(`_spEDM_RcppLocateGridIndices`, curRow, curCol, totalRow, totalCol)
 }
 
-RcppSimplex4Grid <- function(mat, lib, pred, E, tau, b, threads) {
-    .Call(`_spEDM_RcppSimplex4Grid`, mat, lib, pred, E, tau, b, threads)
+RcppSimplex4Grid <- function(mat, lib, pred, E, b, tau, threads) {
+    .Call(`_spEDM_RcppSimplex4Grid`, mat, lib, pred, E, b, tau, threads)
 }
 
 RcppSMap4Grid <- function(mat, lib, pred, theta, E, tau, b, threads) {

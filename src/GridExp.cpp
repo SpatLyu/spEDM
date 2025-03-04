@@ -82,8 +82,8 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
                                      const Rcpp::IntegerMatrix& lib,
                                      const Rcpp::IntegerMatrix& pred,
                                      const Rcpp::IntegerVector& E,
+                                     const Rcpp::IntegerVector& b,
                                      int tau,
-                                     int b,
                                      int threads) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = mat.nrow();
@@ -124,14 +124,15 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
 
   // Convert Rcpp::IntegerVector to std::vector<int>
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
+  std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
 
   std::vector<std::vector<double>> res_std = Simplex4Grid(
     cppMat,
     lib_indices,
     pred_indices,
     E_std,
+    b_std,
     tau,
-    b,
     threads);
 
   size_t n_rows = res_std.size();
@@ -148,7 +149,7 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
   }
 
   // Set column names for the result matrix
-  Rcpp::colnames(result) = Rcpp::CharacterVector::create("E", "rho", "mae", "rmse");
+  Rcpp::colnames(result) = Rcpp::CharacterVector::create("E", "k", "rho", "mae", "rmse");
   return result;
 }
 
