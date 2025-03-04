@@ -15,7 +15,7 @@
   pred = lib,
   E = 3,
   tau = 1,
-  k = 4,
+  k = E + 2,
   nb = NULL,
   top = NULL,
   threads = detectThreads(),
@@ -31,7 +31,7 @@
   pred = lib,
   E = 3,
   tau = 1,
-  k = 4,
+  k = E + 2,
   top = NULL,
   threads = detectThreads(),
   trend.rm = TRUE
