@@ -13,7 +13,7 @@
   pred = lib,
   E = 1:10,
   tau = 1,
-  k = 4,
+  k = E + 2,
   nb = NULL,
   threads = detectThreads(),
   trend.rm = TRUE
@@ -26,7 +26,7 @@
   pred = lib,
   E = 1:10,
   tau = 1,
-  k = 4,
+  k = E + 2,
   threads = detectThreads(),
   trend.rm = TRUE
 )
@@ -53,7 +53,10 @@
 \item{trend.rm}{(optional) Whether to remove the linear trend.}
 }
 \value{
-A matrix
+A list
+\describe{
+\item{\code{xmap}}{self mapping prediction results}
+}
 }
 \description{
 simplex forecast
