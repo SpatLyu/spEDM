@@ -18,6 +18,10 @@
 
 * Centered around example cases in the `gccm` vignette (#170).
 
+### breaking changes
+
+* Refine `simplex` & `smap` output on the R side (#263).
+
 ### bug fixes
 
 * Fix bug in R functions `embedded`, `simplex`, `smap` when input data contains only one attribute column (#246).
