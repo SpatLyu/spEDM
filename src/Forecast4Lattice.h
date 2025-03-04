@@ -2,13 +2,16 @@
 #define Forecast4Lattice_H
 
 #include <vector>
+#include <algorithm>
+#include <utility>
 #include "CppLatticeUtils.h"
 #include "SimplexProjection.h"
 #include "SMap.h"
 #include <RcppThread.h>
 
 /*
- * Evaluates prediction performance of different embedding dimensions for lattice data using simplex projection.
+ * Evaluates prediction performance of different combinations of embedding dimensions and number of nearest neighbors
+ * for lattice data using simplex projection.
  *
  * Parameters:
  *   - vec: A vector to be embedded.
@@ -16,20 +19,20 @@
  *   - lib_indices: A boolean vector indicating library (training) set indices.
  *   - pred_indices: A boolean vector indicating prediction set indices.
  *   - E: A vector of embedding dimensions to evaluate.
+ *   - b: A vector of nearest neighbor values to evaluate.
  *   - tau: The spatial lag step for constructing lagged state-space vectors.
- *   - b: Number of nearest neighbors to use for prediction.
  *   - threads: Number of threads used from the global pool.
  *
  * Returns:
- *   A 2D vector where each row contains [E, rho, mae, rmse] for a given embedding dimension.
+ *   A 2D vector where each row contains [E, b, rho, mae, rmse] for a given combination of embedding dimension and nearest neighbors.
  */
 std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& vec,
                                                  const std::vector<std::vector<int>>& nb_vec,
                                                  const std::vector<bool>& lib_indices,
                                                  const std::vector<bool>& pred_indices,
                                                  const std::vector<int>& E,
+                                                 const std::vector<int>& b,
                                                  int tau,
-                                                 int b,
                                                  int threads);
 
 /*
