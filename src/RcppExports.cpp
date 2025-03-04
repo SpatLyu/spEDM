@@ -176,8 +176,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppSCPCM4Grid
-Rcpp::NumericMatrix RcppSCPCM4Grid(const Rcpp::NumericMatrix& xMatrix, const Rcpp::NumericMatrix& yMatrix, const Rcpp::NumericMatrix& zMatrix, const Rcpp::IntegerMatrix& libsizes, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& tau, const Rcpp::IntegerMatrix& pred, int b, bool simplex, double theta, int threads, bool cumulate, bool progressbar);
-RcppExport SEXP _spEDM_RcppSCPCM4Grid(SEXP xMatrixSEXP, SEXP yMatrixSEXP, SEXP zMatrixSEXP, SEXP libsizesSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP predSEXP, SEXP bSEXP, SEXP simplexSEXP, SEXP thetaSEXP, SEXP threadsSEXP, SEXP cumulateSEXP, SEXP progressbarSEXP) {
+Rcpp::NumericMatrix RcppSCPCM4Grid(const Rcpp::NumericMatrix& xMatrix, const Rcpp::NumericMatrix& yMatrix, const Rcpp::NumericMatrix& zMatrix, const Rcpp::IntegerMatrix& libsizes, const Rcpp::IntegerMatrix& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& tau, const Rcpp::IntegerVector& b, bool simplex, double theta, int threads, bool cumulate, bool progressbar);
+RcppExport SEXP _spEDM_RcppSCPCM4Grid(SEXP xMatrixSEXP, SEXP yMatrixSEXP, SEXP zMatrixSEXP, SEXP libsizesSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP simplexSEXP, SEXP thetaSEXP, SEXP threadsSEXP, SEXP cumulateSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -185,16 +185,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type yMatrix(yMatrixSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type zMatrix(zMatrixSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type libsizes(libsizesSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type pred(predSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type E(ESEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type tau(tauSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type pred(predSEXP);
-    Rcpp::traits::input_parameter< int >::type b(bSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type b(bSEXP);
     Rcpp::traits::input_parameter< bool >::type simplex(simplexSEXP);
     Rcpp::traits::input_parameter< double >::type theta(thetaSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< bool >::type cumulate(cumulateSEXP);
     Rcpp::traits::input_parameter< bool >::type progressbar(progressbarSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppSCPCM4Grid(xMatrix, yMatrix, zMatrix, libsizes, E, tau, pred, b, simplex, theta, threads, cumulate, progressbar));
+    rcpp_result_gen = Rcpp::wrap(RcppSCPCM4Grid(xMatrix, yMatrix, zMatrix, libsizes, pred, E, tau, b, simplex, theta, threads, cumulate, progressbar));
     return rcpp_result_gen;
 END_RCPP
 }
