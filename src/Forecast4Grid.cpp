@@ -1,4 +1,5 @@
 #include <vector>
+#include <cmath>
 #include <algorithm>
 #include <utility>
 #include "CppGridUtils.h"
@@ -33,7 +34,7 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
                                               int tau,
                                               int threads) {
   // Configure threads
-  size_t threads_sizet = static_cast<size_t>(threads);
+  size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   int numRows = mat.size();
@@ -112,7 +113,7 @@ std::vector<std::vector<double>> SMap4Grid(const std::vector<std::vector<double>
                                            int b,
                                            int threads) {
   // Configure threads
-  size_t threads_sizet = static_cast<size_t>(threads);
+  size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   int numRows = mat.size();

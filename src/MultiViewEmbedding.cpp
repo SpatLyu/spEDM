@@ -35,7 +35,7 @@ std::vector<double> MultiViewEmbedding(
     int threads
 ) {
   // Configure threads
-  size_t threads_sizet = static_cast<size_t>(threads);
+  size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   // // Validate input dimensions

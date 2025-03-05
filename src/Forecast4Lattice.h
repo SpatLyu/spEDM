@@ -2,6 +2,7 @@
 #define Forecast4Lattice_H
 
 #include <vector>
+#include <cmath>
 #include <algorithm>
 #include <utility>
 #include "CppLatticeUtils.h"

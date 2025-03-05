@@ -1,4 +1,5 @@
 #include <vector>
+#include <cmath>
 #include <algorithm>
 #include <utility>
 #include "CppLatticeUtils.h"
@@ -35,7 +36,7 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& vec,
                                                  int tau,
                                                  int threads) {
   // Configure threads
-  size_t threads_sizet = static_cast<size_t>(threads);
+  size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   // Sort and remove duplicates
@@ -104,7 +105,7 @@ std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& vec,
                                               int b,
                                               int threads){
   // Configure threads
-  size_t threads_sizet = static_cast<size_t>(threads);
+  size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   // Generate embeddings
