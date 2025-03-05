@@ -9,9 +9,7 @@
 }
 
 .check_inputelementnum = \(x,n){
-  if (length(x) == 1) x = rep(x,times = n)
-  if (length(x) > 2) x = x[seq(1,n,by = 1)]
-  return(x)
+  return(abs(rep(x,length.out = n)))
 }
 
 .check_indices = \(x,totalnum){
