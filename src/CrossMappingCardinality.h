@@ -17,6 +17,7 @@
  * Parameters:
  *   embedding_x: State-space reconstruction (embedded) of the potential cause variable.
  *   embedding_y: State-space reconstruction (embedded) of the potential effect variable.
+ *   lib: Library index vector (1-based in R, converted to 0-based).
  *   pred: Prediction index vector (1-based in R, converted to 0-based).
  *   num_neighbors: Number of neighbors used for cross mapping (corresponding to n_neighbor in python package crossmapy).
  *   n_excluded: Number of neighbors excluded from the distance matrix (corresponding to n_excluded in python package crossmapy).
@@ -29,6 +30,7 @@
 std::vector<double> IntersectionCardinality(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
+    const std::vector<int>& lib,
     const std::vector<int>& pred,
     int num_neighbors,
     int n_excluded,
@@ -41,6 +43,7 @@ std::vector<double> IntersectionCardinality(
  * Parameters:
  *   embedding_x: State-space reconstruction (embedded) of the potential cause variable.
  *   embedding_y: State-space reconstruction (embedded) of the potential effect variable.
+ *   lib: Library index vector (1-based in R, converted to 0-based).
  *   pred: Prediction index vector (1-based in R, converted to 0-based).
  *   num_neighbors: Vector of numbers of neighbors used for cross mapping (corresponding to n_neighbor in python package crossmapy).
  *   n_excluded: Vector of numbers of neighbors excluded from the distance matrix (corresponding to n_excluded in python package crossmapy).
@@ -54,6 +57,7 @@ std::vector<double> IntersectionCardinality(
 std::vector<std::vector<double>> CrossMappingCardinality(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
+    const std::vector<int>& lib,
     const std::vector<int>& pred,
     const std::vector<int>& num_neighbors,
     const std::vector<int>& n_excluded,
@@ -66,6 +70,7 @@ std::vector<std::vector<double>> CrossMappingCardinality(
  * Parameters:
  *   embedding_x: State-space reconstruction (embedded) of the potential cause variable.
  *   embedding_y: State-space reconstruction (embedded) of the potential effect variable.
+ *   lib: Library index vector (1-based in R, converted to 0-based).
  *   pred: Prediction index vector (1-based in R, converted to 0-based).
  *   num_neighbors: Number of neighbors used for cross mapping (corresponding to n_neighbor in python package crossmapy).
  *   n_excluded: Number of neighbors excluded from the distance matrix (corresponding to n_excluded in python package crossmapy).
@@ -79,6 +84,7 @@ std::vector<std::vector<double>> CrossMappingCardinality(
 std::vector<std::vector<double>> CrossMappingCardinality2(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
+    const std::vector<int>& lib,
     const std::vector<int>& pred,
     int num_neighbors,
     int n_excluded,
