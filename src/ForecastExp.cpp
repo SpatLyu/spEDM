@@ -143,6 +143,7 @@ Rcpp::NumericVector RcppSMapForecast(
  * Parameters:
  *   embedding_x: A NumericMatrix representing the state-space reconstruction (embedded) of the potential cause variable.
  *   embedding_y: A NumericMatrix representing the state-space reconstruction (embedded) of the potential effect variable.
+ *   lib: An IntegerVector containing the library indices. These are 1-based indices in R, and will be converted to 0-based indices in C++.
  *   pred: An IntegerVector containing the prediction indices. These are 1-based indices in R, and will be converted to 0-based indices in C++.
  *   num_neighbors: An integer specifying the number of neighbors to use for cross mapping.
  *   n_excluded: An integer indicating the number of neighbors to exclude from the distance matrix.
@@ -156,6 +157,7 @@ Rcpp::NumericVector RcppSMapForecast(
 Rcpp::NumericVector RcppIntersectionCardinality(
     const Rcpp::NumericMatrix& embedding_x,
     const Rcpp::NumericMatrix& embedding_y,
+    const Rcpp::IntegerVector& lib,
     const Rcpp::IntegerVector& pred,
     const int& num_neighbors,
     const int& n_excluded,
@@ -178,9 +180,13 @@ Rcpp::NumericVector RcppIntersectionCardinality(
   }
 
   // Convert Rcpp IntegerVector to std::vector<int>
+  std::vector<int> lib_std = Rcpp::as<std::vector<int>>(lib);
   std::vector<int> pred_std = Rcpp::as<std::vector<int>>(pred);
 
-  // Convert pred_std (1-based in R) to 0-based in C++
+  // Convert lib_std and pred_std (1-based in R) to 0-based in C++
+  for (size_t i = 0; i < lib_std.size(); ++i) {
+    lib_std[i] = lib_std[i] - 1; // Convert to 0-based index
+  }
   for (size_t i = 0; i < pred_std.size(); ++i) {
     pred_std[i] = pred_std[i] - 1; // Convert to 0-based index
   }
@@ -189,6 +195,7 @@ Rcpp::NumericVector RcppIntersectionCardinality(
   std::vector<double> pred_res = IntersectionCardinality(
     e1,
     e2,
+    lib_std,
     pred_std,
     num_neighbors,
     n_excluded,
