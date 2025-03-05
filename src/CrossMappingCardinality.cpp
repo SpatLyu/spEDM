@@ -82,7 +82,8 @@ std::vector<double> IntersectionCardinality(
 
   // Main parallel computation logic
   auto CMCSingle = [&](size_t i) {
-    const int idx = valid_pred[i];
+    // const int idx = valid_pred[i]; // this was used when all of embedding_x and embedding_y were used previously.
+    const int idx = i;
 
     // Get the k-nearest neighbors of x (excluding the first n_excluded ones)
     auto neighbors_x = CppDistKNNIndice(dist_x, idx, max_r);
@@ -223,7 +224,8 @@ std::vector<std::vector<double>> CrossMappingCardinality(
 
     // Perform the operations using RcppThread
     RcppThread::parallelFor(0, valid_pred.size(), [&](size_t i) {
-      const int idx = valid_pred[i];
+      // const int idx = valid_pred[i]; // this was used when all of embedding_x and embedding_y were used previously.
+      const int idx = i;
 
       // Get the k-nearest neighbors of x (excluding the first n_excluded ones)
       auto neighbors_x = CppDistKNNIndice(dist_x, idx, max_r);
@@ -376,7 +378,8 @@ std::vector<std::vector<double>> CrossMappingCardinality2(
 
   // Perform the operations using RcppThread
   RcppThread::parallelFor(0, valid_pred.size(), [&](size_t i) {
-    const int idx = valid_pred[i];
+    // const int idx = valid_pred[i]; // this was used when all of embedding_x and embedding_y were used previously.
+    const int idx = i;
 
     // Get the k-nearest neighbors of x (excluding the first n_excluded ones)
     auto neighbors_x = CppDistKNNIndice(dist_x, idx, max_r);
