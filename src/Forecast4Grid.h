@@ -2,6 +2,7 @@
 #define Forecast4Grid_H
 
 #include <vector>
+#include <cmath>
 #include <algorithm>
 #include <utility>
 #include "CppGridUtils.h"
