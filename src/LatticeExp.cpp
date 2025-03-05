@@ -597,6 +597,9 @@ Rcpp::NumericMatrix RcppGCMC4Lattice(
   b_std.erase(std::unique(b_std.begin(), b_std.end()), b_std.end());
 
   // convert R based 1 index to C++ based 0 index
+  for (size_t i = 0; i < lib_std.size(); ++i) {
+    lib_std[i] -= 1;
+  }
   for (size_t i = 0; i < pred_std.size(); ++i) {
     pred_std[i] -= 1;
   }
