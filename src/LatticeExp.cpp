@@ -559,6 +559,7 @@ Rcpp::NumericMatrix RcppGCMC4Lattice(
     const Rcpp::NumericVector& x,
     const Rcpp::NumericVector& y,
     const Rcpp::List& nb,
+    const Rcpp::IntegerVector& lib,
     const Rcpp::IntegerVector& pred,
     const Rcpp::IntegerVector& E,
     const Rcpp::IntegerVector& tau,
@@ -574,6 +575,7 @@ Rcpp::NumericMatrix RcppGCMC4Lattice(
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
   // Convert Rcpp IntegerVector to std::vector<int>
+  std::vector<int> lib_std = Rcpp::as<std::vector<int>>(lib);
   std::vector<int> pred_std = Rcpp::as<std::vector<int>>(pred);
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
   std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
@@ -604,7 +606,7 @@ Rcpp::NumericMatrix RcppGCMC4Lattice(
   std::vector<std::vector<double>> e2 = GenLatticeEmbeddings(y_std, nb_vec, E[1], tau_std[1]);
 
   // Perform GCMC For Lattice
-  std::vector<std::vector<double>> cs1 = CrossMappingCardinality(e1,e2,pred_std,b_std,maxr_std,threads,progressbar);
+  std::vector<std::vector<double>> cs1 = CrossMappingCardinality(e1,e2,lib_std,pred_std,b_std,maxr_std,threads,progressbar);
 
   Rcpp::NumericMatrix resultMatrix(b_std.size(), 5);
   for (size_t i = 0; i < b_std.size(); ++i) {

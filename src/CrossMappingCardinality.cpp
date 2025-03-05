@@ -17,6 +17,7 @@
  * Parameters:
  *   embedding_x: State-space reconstruction (embedded) of the potential cause variable.
  *   embedding_y: State-space reconstruction (embedded) of the potential effect variable.
+ *   lib: Library index vector (1-based in R, converted to 0-based).
  *   pred: Prediction index vector (1-based in R, converted to 0-based).
  *   num_neighbors: Number of neighbors used for cross mapping (corresponding to n_neighbor in python package crossmapy).
  *   n_excluded: Number of neighbors excluded from the distance matrix (corresponding to n_excluded in python package crossmapy).
@@ -29,6 +30,7 @@
 std::vector<double> IntersectionCardinality(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
+    const std::vector<int>& lib,
     const std::vector<int>& pred,
     int num_neighbors,
     int n_excluded,
@@ -62,9 +64,18 @@ std::vector<double> IntersectionCardinality(
   size_t threads_sizet = static_cast<size_t>(threads);
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
+  std::vector<std::vector<double>> ex, ey;
+
+  // Iterate over the indices in lib
+  for (int idx : lib) {
+    // Extract corresponding rows from embedding_x and embedding_y
+    ex.push_back(embedding_x[idx]);
+    ey.push_back(embedding_y[idx]);
+  }
+
   // Precompute distance matrices (corresponding to _dismats in python package crossmapy)
-  auto dist_x = CppMatDistance(embedding_x, false, true);
-  auto dist_y = CppMatDistance(embedding_y, false, true);
+  auto dist_x = CppMatDistance(ex, false, true);
+  auto dist_y = CppMatDistance(ey, false, true);
 
   // Store mapping ratio curves for each prediction point (corresponding to ratios_x2y in python package crossmapy)
   std::vector<std::vector<double>> ratio_curves(valid_pred.size(), std::vector<double>(k, 0.0));
@@ -91,7 +102,7 @@ std::vector<double> IntersectionCardinality(
     std::unordered_set<size_t> y_neighbors_set(neighbors_y.begin(), neighbors_y.end());
 
     // Retrieve y's neighbor indices by mapping x-neighbors through x->y mapping
-    std::vector<std::vector<size_t>> mapped_neighbors(embedding_x.size());
+    std::vector<std::vector<size_t>> mapped_neighbors(ex.size());
     for (size_t nx : neighbors_x) {
       mapped_neighbors[nx] = CppDistKNNIndice(dist_y, nx, k);
     }
@@ -144,6 +155,7 @@ std::vector<double> IntersectionCardinality(
  * Parameters:
  *   embedding_x: State-space reconstruction (embedded) of the potential cause variable.
  *   embedding_y: State-space reconstruction (embedded) of the potential effect variable.
+ *   lib: Library index vector (1-based in R, converted to 0-based).
  *   pred: Prediction index vector (1-based in R, converted to 0-based).
  *   num_neighbors: Vector of numbers of neighbors used for cross mapping (corresponding to n_neighbor in python package crossmapy).
  *   n_excluded: Vector of numbers of neighbors excluded from the distance matrix (corresponding to n_excluded in python package crossmapy).
@@ -157,6 +169,7 @@ std::vector<double> IntersectionCardinality(
 std::vector<std::vector<double>> CrossMappingCardinality(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
+    const std::vector<int>& lib,
     const std::vector<int>& pred,
     const std::vector<int>& num_neighbors,
     const std::vector<int>& n_excluded,
@@ -187,9 +200,18 @@ std::vector<std::vector<double>> CrossMappingCardinality(
   size_t threads_sizet = static_cast<size_t>(threads);
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
+  std::vector<std::vector<double>> ex, ey;
+
+  // Iterate over the indices in lib
+  for (int idx : lib) {
+    // Extract corresponding rows from embedding_x and embedding_y
+    ex.push_back(embedding_x[idx]);
+    ey.push_back(embedding_y[idx]);
+  }
+
   // Precompute distance matrices (corresponding to _dismats in python package crossmapy)
-  auto dist_x = CppMatDistance(embedding_x, false, true);
-  auto dist_y = CppMatDistance(embedding_y, false, true);
+  auto dist_x = CppMatDistance(ex, false, true);
+  auto dist_y = CppMatDistance(ey, false, true);
 
   auto CMCSingle = [&](size_t j) {
     const size_t k = static_cast<size_t>(num_neighbors[j]);
@@ -221,7 +243,7 @@ std::vector<std::vector<double>> CrossMappingCardinality(
       std::unordered_set<size_t> y_neighbors_set(neighbors_y.begin(), neighbors_y.end());
 
       // Retrieve y's neighbor indices by mapping x-neighbors through x->y mapping
-      std::vector<std::vector<size_t>> mapped_neighbors(embedding_x.size());
+      std::vector<std::vector<size_t>> mapped_neighbors(ex.size());
       for (size_t nx : neighbors_x) {
         mapped_neighbors[nx] = CppDistKNNIndice(dist_y, nx, k);
       }
@@ -287,6 +309,7 @@ std::vector<std::vector<double>> CrossMappingCardinality(
  * Parameters:
  *   embedding_x: State-space reconstruction (embedded) of the potential cause variable.
  *   embedding_y: State-space reconstruction (embedded) of the potential effect variable.
+ *   lib: Library index vector (1-based in R, converted to 0-based).
  *   pred: Prediction index vector (1-based in R, converted to 0-based).
  *   num_neighbors: Number of neighbors used for cross mapping (corresponding to n_neighbor in python package crossmapy).
  *   n_excluded: Number of neighbors excluded from the distance matrix (corresponding to n_excluded in python package crossmapy).
@@ -300,6 +323,7 @@ std::vector<std::vector<double>> CrossMappingCardinality(
 std::vector<std::vector<double>> CrossMappingCardinality2(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
+    const std::vector<int>& lib,
     const std::vector<int>& pred,
     int num_neighbors,
     int n_excluded,
@@ -330,9 +354,18 @@ std::vector<std::vector<double>> CrossMappingCardinality2(
   size_t threads_sizet = static_cast<size_t>(threads);
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
+  std::vector<std::vector<double>> ex, ey;
+
+  // Iterate over the indices in lib
+  for (int idx : lib) {
+    // Extract corresponding rows from embedding_x and embedding_y
+    ex.push_back(embedding_x[idx]);
+    ey.push_back(embedding_y[idx]);
+  }
+
   // Precompute distance matrices (corresponding to _dismats in python package crossmapy)
-  auto dist_x = CppMatDistance(embedding_x, false, true);
-  auto dist_y = CppMatDistance(embedding_y, false, true);
+  auto dist_x = CppMatDistance(ex, false, true);
+  auto dist_y = CppMatDistance(ey, false, true);
 
   const size_t k = static_cast<size_t>(num_neighbors);
   const size_t n_excluded_sizet = static_cast<size_t>(n_excluded);
@@ -363,7 +396,7 @@ std::vector<std::vector<double>> CrossMappingCardinality2(
     std::unordered_set<size_t> y_neighbors_set(neighbors_y.begin(), neighbors_y.end());
 
     // Retrieve y's neighbor indices by mapping x-neighbors through x->y mapping
-    std::vector<std::vector<size_t>> mapped_neighbors(embedding_x.size());
+    std::vector<std::vector<size_t>> mapped_neighbors(ex.size());
     for (size_t nx : neighbors_x) {
       mapped_neighbors[nx] = CppDistKNNIndice(dist_y, nx, k);
     }

@@ -544,6 +544,7 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
 Rcpp::NumericMatrix RcppGCMC4Grid(
     const Rcpp::NumericMatrix& xMatrix,
     const Rcpp::NumericMatrix& yMatrix,
+    const Rcpp::IntegerMatrix& lib,
     const Rcpp::IntegerMatrix& pred,
     const Rcpp::IntegerVector& E,
     const Rcpp::IntegerVector& tau,
@@ -594,6 +595,14 @@ Rcpp::NumericMatrix RcppGCMC4Grid(
   // Convert Rcpp IntegerMatrix to std::vector<int>
   int numRows = yMatrix.nrow();
   int numCols = yMatrix.ncol();
+  std::vector<int> lib_std;
+  for (int i = 0; i < lib.nrow(); ++i) {
+    int rowLibIndice = lib(i,0);
+    int colLibIndice = lib(i,1);
+    if (!std::isnan(yMatrix_cpp[rowLibIndice-1][colLibIndice-1])){
+      lib_std.push_back(LocateGridIndices(rowLibIndice, colLibIndice, numRows, numCols));
+    }
+  }
   std::vector<int> pred_std;
   for (int i = 0; i < pred.nrow(); ++i) {
     int rowPredIndice = pred(i,0);
@@ -608,7 +617,7 @@ Rcpp::NumericMatrix RcppGCMC4Grid(
   std::vector<std::vector<double>> e2 = GenGridEmbeddings(yMatrix_cpp, E[1], tau_std[1]);
 
   // Perform GCMC For Grid
-  std::vector<std::vector<double>> cs1 = CrossMappingCardinality(e1,e2,pred_std,b_std,maxr_std,threads,progressbar);
+  std::vector<std::vector<double>> cs1 = CrossMappingCardinality(e1,e2,lib_std,pred_std,b_std,maxr_std,threads,progressbar);
 
   Rcpp::NumericMatrix resultMatrix(b_std.size(), 5);
   for (size_t i = 0; i < b_std.size(); ++i) {

@@ -9,8 +9,8 @@ RcppSMapForecast <- function(embedding, target, lib, pred, num_neighbors, theta)
     .Call(`_spEDM_RcppSMapForecast`, embedding, target, lib, pred, num_neighbors, theta)
 }
 
-RcppIntersectionCardinality <- function(embedding_x, embedding_y, pred, num_neighbors, n_excluded, threads, progressbar) {
-    .Call(`_spEDM_RcppIntersectionCardinality`, embedding_x, embedding_y, pred, num_neighbors, n_excluded, threads, progressbar)
+RcppIntersectionCardinality <- function(embedding_x, embedding_y, lib, pred, num_neighbors, n_excluded, threads, progressbar) {
+    .Call(`_spEDM_RcppIntersectionCardinality`, embedding_x, embedding_y, lib, pred, num_neighbors, n_excluded, threads, progressbar)
 }
 
 RcppLaggedVar4Grid <- function(mat, lagNum) {
@@ -45,8 +45,8 @@ RcppSCPCM4Grid <- function(xMatrix, yMatrix, zMatrix, libsizes, pred, E, tau, b,
     .Call(`_spEDM_RcppSCPCM4Grid`, xMatrix, yMatrix, zMatrix, libsizes, pred, E, tau, b, simplex, theta, threads, cumulate, progressbar)
 }
 
-RcppGCMC4Grid <- function(xMatrix, yMatrix, pred, E, tau, b, max_r, threads, progressbar) {
-    .Call(`_spEDM_RcppGCMC4Grid`, xMatrix, yMatrix, pred, E, tau, b, max_r, threads, progressbar)
+RcppGCMC4Grid <- function(xMatrix, yMatrix, lib, pred, E, tau, b, max_r, threads, progressbar) {
+    .Call(`_spEDM_RcppGCMC4Grid`, xMatrix, yMatrix, lib, pred, E, tau, b, max_r, threads, progressbar)
 }
 
 DetectMaxNumThreads <- function() {
@@ -93,8 +93,8 @@ RcppSCPCM4Lattice <- function(x, y, z, nb, libsizes, lib, pred, E, tau, b, simpl
     .Call(`_spEDM_RcppSCPCM4Lattice`, x, y, z, nb, libsizes, lib, pred, E, tau, b, simplex, theta, threads, cumulate, progressbar)
 }
 
-RcppGCMC4Lattice <- function(x, y, nb, pred, E, tau, b, max_r, threads, progressbar) {
-    .Call(`_spEDM_RcppGCMC4Lattice`, x, y, nb, pred, E, tau, b, max_r, threads, progressbar)
+RcppGCMC4Lattice <- function(x, y, nb, lib, pred, E, tau, b, max_r, threads, progressbar) {
+    .Call(`_spEDM_RcppGCMC4Lattice`, x, y, nb, lib, pred, E, tau, b, max_r, threads, progressbar)
 }
 
 RcppFactorial <- function(n) {
