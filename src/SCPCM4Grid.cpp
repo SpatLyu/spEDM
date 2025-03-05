@@ -387,7 +387,7 @@ std::vector<std::vector<double>> SCPCM4Grid(
   contaus.erase(contaus.begin());
 
   // Configure threads
-  size_t threads_sizet = static_cast<size_t>(threads);
+  size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   // Get the dimensions of the xMatrix

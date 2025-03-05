@@ -320,7 +320,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
   contaus.erase(contaus.begin());
 
   // Configure threads
-  size_t threads_sizet = static_cast<size_t>(threads);
+  size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   std::vector<std::vector<double>> x_vectors = GenLatticeEmbeddings(x,nb_vec,Ex,taux);
