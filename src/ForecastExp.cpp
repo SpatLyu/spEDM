@@ -46,12 +46,12 @@ Rcpp::NumericVector RcppSimplexForecast(
   std::vector<bool> pred_indices(target_std.size(), false);
 
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
-  int libsize_int = lib.size();
-  for (int i = 0; i < libsize_int; ++i) {
+  size_t n_libsize = lib.size();   // convert R R_xlen_t to C++ size_t
+  for (size_t i = 0; i < n_libsize; ++i) {
     lib_indices[lib[i] - 1] = true; // Convert to 0-based index
   }
-  int predsize_int = pred.size();
-  for (int i = 0; i < predsize_int; ++i) {
+  size_t n_predsize = pred.size();   // convert R R_xlen_t to C++ size_t
+  for (size_t i = 0; i < n_predsize; ++i) {
     pred_indices[pred[i] - 1] = true; // Convert to 0-based index
   }
 
@@ -109,12 +109,12 @@ Rcpp::NumericVector RcppSMapForecast(
   std::vector<bool> pred_indices(target_std.size(), false);
 
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
-  int libsize_int = lib.size();
-  for (int i = 0; i < libsize_int; ++i) {
+  size_t n_libsize = lib.size();   // convert R R_xlen_t to C++ size_t
+  for (size_t i = 0; i < n_libsize; ++i) {
     lib_indices[lib[i] - 1] = true; // Convert to 0-based index
   }
-  int predsize_int = pred.size();
-  for (int i = 0; i < predsize_int; ++i) {
+  size_t n_predsize = pred.size();   // convert R R_xlen_t to C++ size_t
+  for (size_t i = 0; i < n_predsize; ++i) {
     pred_indices[pred[i] - 1] = true; // Convert to 0-based index
   }
 
