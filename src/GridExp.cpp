@@ -397,9 +397,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
 
   // Convert Rcpp::IntegerMatrix libsizes to std::vector<std::vector<int>> libsizes_cpp
   std::vector<std::vector<int>> libsizes_cpp(2);
-  int nlibsizes = libsizes.nrow();
-  // Fill all the sub-vector
-  for (int i = 0; i < nlibsizes; ++i) {
+  for (int i = 0; i < libsizes.nrow(); ++i) { // Fill all the sub-vector
     libsizes_cpp[0].push_back(libsizes(i, 0));
     libsizes_cpp[1].push_back(libsizes(i, 1));
   }
@@ -482,9 +480,7 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
 
   // Convert Rcpp::IntegerMatrix libsizes to std::vector<std::vector<int>> libsizes_cpp
   std::vector<std::vector<int>> libsizes_cpp(2);
-  int nlibsizes = libsizes.nrow();
-  // Fill all the sub-vector
-  for (int i = 0; i < nlibsizes; ++i) {
+  for (int i = 0; i < libsizes.nrow(); ++i) { // Fill all the sub-vector
     libsizes_cpp[0].push_back(libsizes(i, 0));
     libsizes_cpp[1].push_back(libsizes(i, 1));
   }
