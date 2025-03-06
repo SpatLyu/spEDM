@@ -168,10 +168,12 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
   std::vector<bool> pred_indices(vec_std.size(), false);
 
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
-  for (size_t i = 0; i < lib.size(); ++i) {
+  size_t n_libsize = lib.size();   // convert R R_xlen_t to C++ size_t
+  for (size_t i = 0; i < n_libsize; ++i) {
     lib_indices[lib[i] - 1] = true; // Convert to 0-based index
   }
-  for (size_t i = 0; i < pred.size(); ++i) {
+  size_t n_predsize = pred.size();   // convert R R_xlen_t to C++ size_t
+  for (size_t i = 0; i < n_predsize; ++i) {
     pred_indices[pred[i] - 1] = true; // Convert to 0-based index
   }
 
@@ -246,10 +248,12 @@ Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& x,
   std::vector<bool> pred_indices(vec_std.size(), false);
 
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
-  for (size_t i = 0; i < lib.size(); ++i) {
+  size_t n_libsize = lib.size();   // convert R R_xlen_t to C++ size_t
+  for (size_t i = 0; i < n_libsize; ++i) {
     lib_indices[lib[i] - 1] = true; // Convert to 0-based index
   }
-  for (size_t i = 0; i < pred.size(); ++i) {
+  size_t n_predsize = pred.size();   // convert R R_xlen_t to C++ size_t
+  for (size_t i = 0; i < n_predsize; ++i) {
     pred_indices[pred[i] - 1] = true; // Convert to 0-based index
   }
 
@@ -324,10 +328,12 @@ Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
   std::vector<bool> pred_indices(target.size(), false);
 
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
-  for (size_t i = 0; i < lib.size(); ++i) {
+  size_t n_libsize = lib.size();   // convert R R_xlen_t to C++ size_t
+  for (size_t i = 0; i < n_libsize; ++i) {
     lib_indices[lib[i] - 1] = true; // Convert to 0-based index
   }
-  for (size_t i = 0; i < pred.size(); ++i) {
+  size_t n_predsize = pred.size();   // convert R R_xlen_t to C++ size_t
+  for (size_t i = 0; i < n_predsize; ++i) {
     pred_indices[pred[i] - 1] = true; // Convert to 0-based index
   }
 
