@@ -168,12 +168,10 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
   std::vector<bool> pred_indices(vec_std.size(), false);
 
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
-  int libsize_int = lib.size();
-  for (int i = 0; i < libsize_int; ++i) {
+  for (size_t i = 0; i < lib.size(); ++i) {
     lib_indices[lib[i] - 1] = true; // Convert to 0-based index
   }
-  int predsize_int = pred.size();
-  for (int i = 0; i < predsize_int; ++i) {
+  for (size_t i = 0; i < pred.size(); ++i) {
     pred_indices[pred[i] - 1] = true; // Convert to 0-based index
   }
 
@@ -248,12 +246,10 @@ Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& x,
   std::vector<bool> pred_indices(vec_std.size(), false);
 
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
-  int libsize_int = lib.size();
-  for (int i = 0; i < libsize_int; ++i) {
+  for (size_t i = 0; i < lib.size(); ++i) {
     lib_indices[lib[i] - 1] = true; // Convert to 0-based index
   }
-  int predsize_int = pred.size();
-  for (int i = 0; i < predsize_int; ++i) {
+  for (size_t i = 0; i < pred.size(); ++i) {
     pred_indices[pred[i] - 1] = true; // Convert to 0-based index
   }
 
@@ -328,12 +324,10 @@ Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
   std::vector<bool> pred_indices(target.size(), false);
 
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
-  int libsize_int = lib.size();
-  for (int i = 0; i < libsize_int; ++i) {
+  for (size_t i = 0; i < lib.size(); ++i) {
     lib_indices[lib[i] - 1] = true; // Convert to 0-based index
   }
-  int predsize_int = pred.size();
-  for (int i = 0; i < predsize_int; ++i) {
+  for (size_t i = 0; i < pred.size(); ++i) {
     pred_indices[pred[i] - 1] = true; // Convert to 0-based index
   }
 
