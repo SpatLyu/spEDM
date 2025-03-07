@@ -51,7 +51,8 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   causemat = matrix(dtf[,"cause"],nrow = terra::nrow(data),byrow = TRUE)
   effectmat = matrix(dtf[,"effect"],nrow = terra::nrow(data),byrow = TRUE)
 
-  if (is.null(pred)) pred = .internal_predmat(causemat)
+  if (is.null(lib)) lib = .internal_samplemat(causemat)
+  if (is.null(pred)) pred = lib
 
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
   x_xmap_y = NULL
