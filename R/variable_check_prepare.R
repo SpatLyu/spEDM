@@ -34,7 +34,7 @@
 .internal_samplemat = \(mat,size,seed = 123){
   nnaindice = which(!is.na(mat), arr.ind = TRUE)
   set.seed(seed)
-  indices = sample(nrow(nnaindice), size = size, replace = FALSE)
+  indices = sample(nrow(nnaindice), size = min(size,nrow(nnaindice)), replace = FALSE)
   return(nnaindice[indices])
 }
 
