@@ -135,8 +135,15 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
  * This function takes a NumericMatrix as input and returns a matrix
  * containing the row and column indices of all non-NA elements in the input matrix.
  *
+ * The processing order can be controlled using the `byrow` parameter:
+ *   - If `byrow` is true, the matrix is processed row by row.
+ *   - If `byrow` is false, the matrix is processed column by column.
+ *
  * Parameters:
  *   - mat: A NumericMatrix object that is to be processed.
+ *   - byrow: A boolean parameter to control the processing order.
+ *     - If true, the matrix is processed row by row (default is true).
+ *     - If false, the matrix is processed column by column.
  *
  * Returns:
  *   - A NumericMatrix with two columns:
@@ -144,8 +151,8 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
  *     - The second column contains the column indices of non-NA elements.
  */
 // [[Rcpp::export]]
-Rcpp::NumericMatrix MatNotNAIndice(Rcpp::NumericMatrix mat) {
-  // Initialize a vector to store the row and column indices of non-NA elements
+Rcpp::NumericMatrix MatNotNAIndice(Rcpp::NumericMatrix mat, bool byrow = true) {
+  // Initialize vectors to store the row and column indices of non-NA elements
   std::vector<double> row_indices;
   std::vector<double> col_indices;
 
@@ -153,14 +160,29 @@ Rcpp::NumericMatrix MatNotNAIndice(Rcpp::NumericMatrix mat) {
   int nrow = mat.nrow();
   int ncol = mat.ncol();
 
-  // Loop through each element of the matrix
-  for (int i = 0; i < nrow; i++) {
+  // Loop through the matrix depending on the value of 'byrow'
+  if (byrow) {
+    // Process by row (row-wise iteration)
+    for (int i = 0; i < nrow; i++) {
+      for (int j = 0; j < ncol; j++) {
+        // Check if the element is not NA
+        if (!Rcpp::NumericMatrix::is_na(mat(i, j))) {
+          // Record the row and column indices (1-based indexing for R compatibility)
+          row_indices.push_back(i + 1);
+          col_indices.push_back(j + 1);
+        }
+      }
+    }
+  } else {
+    // Process by column (column-wise iteration)
     for (int j = 0; j < ncol; j++) {
-      // Check if the element is not NA
-      if (!Rcpp::NumericMatrix::is_na(mat(i, j))) {
-        // Record the row and column indices (1-based indexing for R compatibility)
-        row_indices.push_back(i + 1);
-        col_indices.push_back(j + 1);
+      for (int i = 0; i < nrow; i++) {
+        // Check if the element is not NA
+        if (!Rcpp::NumericMatrix::is_na(mat(i, j))) {
+          // Record the row and column indices (1-based indexing for R compatibility)
+          row_indices.push_back(i + 1);
+          col_indices.push_back(j + 1);
+        }
       }
     }
   }
