@@ -20,17 +20,18 @@
  * This function calculates the cross mapping between a predictor variable (xEmbedings) and a response variable (yPred)
  * over a 2D grid, using either Simplex Projection or S-Mapping.
  *
- * @param xEmbedings     A 2D matrix of the predictor variable's embeddings (spatial cross-section data).
- * @param yPred          A 1D vector of the response variable's values (spatial cross-section data).
- * @param lib_sizes      A vector of two integers, where the first element is the row-wise library size and the second element is the column-wise library size.
- * @param pred_indices   A boolean vector indicating which spatial units to be predicted.
- * @param totalRow       The total number of rows in the 2D grid.
- * @param totalCol       The total number of columns in the 2D grid.
- * @param b              The number of nearest neighbors to use for prediction.
- * @param simplex        If true, use Simplex Projection; if false, use S-Mapping.
- * @param theta          The distance weighting parameter for S-Mapping (ignored if simplex is true).
- * @param threads        The number of threads to use for parallel processing.
- * @param row_size_mark  If true, use the row-wise libsize to mark the libsize; if false, use col-wise libsize.
+ * @param xEmbedings           A 2D matrix of the predictor variable's embeddings (spatial cross-section data).
+ * @param yPred                A 1D vector of the response variable's values (spatial cross-section data).
+ * @param lib_sizes            A vector of two integers, where the first element is the row-wise library size and the second element is the column-wise library size.
+ * @param possible_lib_indices A boolean vector indicating which spatial units are valid for inclusion in the library.
+ * @param pred_indices         A boolean vector indicating which spatial units to be predicted.
+ * @param totalRow             The total number of rows in the 2D grid.
+ * @param totalCol             The total number of columns in the 2D grid.
+ * @param b                    The number of nearest neighbors to use for prediction.
+ * @param simplex              If true, use Simplex Projection; if false, use S-Mapping.
+ * @param theta                The distance weighting parameter for S-Mapping (ignored if simplex is true).
+ * @param threads              The number of threads to use for parallel processing.
+ * @param row_size_mark        If true, use the row-wise libsize to mark the libsize; if false, use col-wise libsize.
  *
  * @return  A vector of pairs, where each pair contains the library size and the corresponding cross mapping result.
  */
@@ -38,6 +39,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
     const std::vector<std::vector<double>>& xEmbedings,
     const std::vector<double>& yPred,
     const std::vector<int>& lib_sizes,
+    const std::vector<bool>& possible_lib_indices,
     const std::vector<bool>& pred_indices,
     int totalRow,
     int totalCol,
@@ -76,10 +78,13 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
   //   // Initialize library indices
   //   std::vector<bool> lib_indices(totalRow * totalCol, false);
   //
-  //   // Set library indices
+  //   // Set library indices only if possible_lib_indices is true
   //   for (int i = r; i < r + lib_size_row; ++i) {
   //     for (int j = c; j < c + lib_size_col; ++j) {
-  //       lib_indices[LocateGridIndices(i, j, totalRow, totalCol)] = true;
+  //       int index = LocateGridIndices(i, j, totalRow, totalCol);
+  //       if (possible_lib_indices[index]) {
+  //         lib_indices[index] = true;
+  //       }
   //     }
   //   }
   //
@@ -125,13 +130,15 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
     // Initialize library indices
     std::vector<bool> lib_indices(totalRow * totalCol, false);
 
-    // Set library indices
+    // Set library indices only if possible_lib_indices is true
     for (int i = r; i < r + lib_size_row; ++i) {
       for (int j = c; j < c + lib_size_col; ++j) {
-        lib_indices[LocateGridIndices(i, j, totalRow, totalCol)] = true;
+        int index = LocateGridIndices(i, j, totalRow, totalCol);
+        if (possible_lib_indices[index]) {
+          lib_indices[index] = true;
+        }
       }
     }
-
     // Check if more than half of the library is NA
     int na_count = 0;
     for (size_t i = 0; i < lib_indices.size(); ++i) {
@@ -178,6 +185,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
  * @param xMatrix      A 2D matrix of the predictor variable's values (spatial cross-section data).
  * @param yMatrix      A 2D matrix of the response variable's values (spatial cross-section data).
  * @param lib_sizes    A 2D vector where the first sub-vector contains row-wise library sizes and the second sub-vector contains column-wise library sizes.
+ * @param lib          A vector of pairs representing the indices (row, column) of spatial units to be the library.
  * @param pred         A vector of pairs representing the indices (row, column) of spatial units to be predicted.
  * @param E            The number of dimensions for attractor reconstruction.
  * @param tau          The step of spatial lags for prediction.
@@ -194,6 +202,7 @@ std::vector<std::vector<double>> GCCM4Grid(
     const std::vector<std::vector<double>>& xMatrix,
     const std::vector<std::vector<double>>& yMatrix,
     const std::vector<std::vector<int>>& lib_sizes,
+    const std::vector<std::pair<int, int>>& lib,
     const std::vector<std::pair<int, int>>& pred,
     int E,
     int tau,
@@ -280,6 +289,12 @@ std::vector<std::vector<double>> GCCM4Grid(
       unique_lib_size_pairs.emplace_back(row_lib_sizes.back(), col_lib_sizes[i]); // Pair with the max value of row_lib_sizes
     }
     row_size_mark = false;
+  }
+
+  // Set library indices
+  std::vector<bool> lib_indices(totalRow * totalCol, false);
+  for (const auto& l : lib) {
+    lib_indices[LocateGridIndices(l.first, l.second, totalRow, totalCol)] = true;
   }
 
   // Set prediction indices
