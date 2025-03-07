@@ -319,7 +319,18 @@ std::vector<std::vector<double>> GCCM4Grid(
     for (size_t i = 0; i < unique_lib_size_pairs.size(); ++i) {
       int lib_size_row = unique_lib_size_pairs[i].first;
       int lib_size_col = unique_lib_size_pairs[i].second;
-      auto results = GCCMSingle4Grid(xEmbedings, yPred, {lib_size_row, lib_size_col}, pred_indices, totalRow, totalCol, b, simplex, theta, threads_sizet, row_size_mark);
+      auto results = GCCMSingle4Grid(xEmbedings,
+                                     yPred,
+                                     {lib_size_row, lib_size_col},
+                                     lib_indices,
+                                     pred_indices,
+                                     totalRow,
+                                     totalCol,
+                                     b,
+                                     simplex,
+                                     theta,
+                                     threads_sizet,
+                                     row_size_mark);
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
       bar++;
     }
@@ -327,7 +338,18 @@ std::vector<std::vector<double>> GCCM4Grid(
     for (size_t i = 0; i < unique_lib_size_pairs.size(); ++i) {
       int lib_size_row = unique_lib_size_pairs[i].first;
       int lib_size_col = unique_lib_size_pairs[i].second;
-      auto results = GCCMSingle4Grid(xEmbedings, yPred, {lib_size_row, lib_size_col}, pred_indices, totalRow, totalCol, b, simplex, theta, threads_sizet, row_size_mark);
+      auto results = GCCMSingle4Grid(xEmbedings,
+                                     yPred,
+                                     {lib_size_row, lib_size_col},
+                                     lib_indices,
+                                     pred_indices,
+                                     totalRow,
+                                     totalCol,
+                                     b,
+                                     simplex,
+                                     theta,
+                                     threads_sizet,
+                                     row_size_mark);
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
     }
   }

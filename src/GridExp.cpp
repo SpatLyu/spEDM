@@ -370,6 +370,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
     const Rcpp::NumericMatrix& xMatrix,
     const Rcpp::NumericMatrix& yMatrix,
     const Rcpp::IntegerMatrix& libsizes,
+    const Rcpp::IntegerMatrix& lib,
     const Rcpp::IntegerMatrix& pred,
     int E,
     int tau,
