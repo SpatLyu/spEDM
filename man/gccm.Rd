@@ -16,6 +16,7 @@
   k = E + 2,
   theta = 1,
   algorithm = "simplex",
+  lib = NULL,
   pred = NULL,
   nb = NULL,
   threads = detectThreads(),
@@ -34,6 +35,7 @@
   k = E + 2,
   theta = 1,
   algorithm = "simplex",
+  lib = NULL,
   pred = NULL,
   threads = detectThreads(),
   bidirectional = TRUE,
@@ -59,6 +61,8 @@
 \item{theta}{(optional) Weighting parameter for distances, useful when \code{algorithm} is \code{smap}.}
 
 \item{algorithm}{(optional) Algorithm used for prediction.}
+
+\item{lib}{(optional) Row numbers(\code{vector} for lattice data) or row-column numbers(\code{matrix} for grid data) used as libraries.}
 
 \item{pred}{(optional) Row numbers(\code{vector} for lattice data) or row-column numbers(\code{matrix} for grid data) used for predictions.}
 

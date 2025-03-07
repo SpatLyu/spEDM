@@ -31,11 +31,11 @@
   return(.varname)
 }
 
-.internal_predmat = \(mat){
-  maxlibsize = min(dim(mat))
-  selvec = seq(5,maxlibsize,5)
-  pred = as.matrix(expand.grid(selvec,selvec))
-  return(pred)
+.internal_samplemat = \(mat,size,seed = 123){
+  nnaindice = which(!is.na(mat), arr.ind = TRUE)
+  set.seed(seed)
+  indices = sample(nrow(nnaindice), size = min(size,nrow(nnaindice)), replace = FALSE)
+  return(nnaindice[indices])
 }
 
 .internal_lattice_nb = \(data){
