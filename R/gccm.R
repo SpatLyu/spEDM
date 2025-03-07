@@ -7,8 +7,6 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   k = .check_inputelementnum(k,2)
   tau = .check_inputelementnum(tau,2)
   .varname = .internal_varname()
-  if (is.null(lib)) lib = 1:nrow(data)
-  if (is.null(pred)) pred = lib
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   if (nrow(data) != length(nb)) stop("Incompatible Data Dimensions!")
   coords = as.data.frame(sdsfun::sf_coordinates(data))
@@ -19,9 +17,11 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   if (trend.rm){
     data = .internal_trend_rm(data,.varname,coords)
   }
-
   cause = data[,"cause",drop = TRUE]
   effect = data[,"effect",drop = TRUE]
+
+  if (is.null(lib)) lib = 1:nrow(data)
+  if (is.null(pred)) pred = lib
 
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
   x_xmap_y = NULL
