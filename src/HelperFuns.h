@@ -1,6 +1,7 @@
 #ifndef HelperFuns_H
 #define HelperFuns_H
 
+#include <vector>
 #include <RcppThread.h>
 #include <RcppArmadillo.h>
 
@@ -27,5 +28,26 @@ Rcpp::IntegerVector OptEmbedDim(Rcpp::NumericMatrix Emat);
  * @return The optimal theta parameter as a double.
  */
 double OptThetaParm(Rcpp::NumericMatrix Thetamat);
+
+/**
+ * This function takes a NumericMatrix as input and returns a matrix
+ * containing the row and column indices of all non-NA elements in the input matrix.
+ *
+ * The processing order can be controlled using the `byrow` parameter:
+ *   - If `byrow` is true, the matrix is processed row by row.
+ *   - If `byrow` is false, the matrix is processed column by column.
+ *
+ * Parameters:
+ *   - mat: A NumericMatrix object that is to be processed.
+ *   - byrow: A boolean parameter to control the processing order.
+ *     - If true, the matrix is processed row by row (default is true).
+ *     - If false, the matrix is processed column by column.
+ *
+ * Returns:
+ *   - A NumericMatrix with two columns:
+ *     - The first column contains the row indices,
+ *     - The second column contains the column indices of non-NA elements.
+ */
+Rcpp::NumericMatrix MatNotNAIndice(Rcpp::NumericMatrix mat, bool byrow = true);
 
 #endif // HelperFuns

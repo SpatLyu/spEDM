@@ -61,6 +61,10 @@ OptThetaParm <- function(Thetamat) {
     .Call(`_spEDM_OptThetaParm`, Thetamat)
 }
 
+MatNotNAIndice <- function(mat, byrow = TRUE) {
+    .Call(`_spEDM_MatNotNAIndice`, mat, byrow)
+}
+
 RcppLaggedNeighbor4Lattice <- function(nb, lagNum) {
     .Call(`_spEDM_RcppLaggedNeighbor4Lattice`, nb, lagNum)
 }
