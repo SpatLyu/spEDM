@@ -370,6 +370,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
     const Rcpp::NumericMatrix& xMatrix,
     const Rcpp::NumericMatrix& yMatrix,
     const Rcpp::IntegerMatrix& libsizes,
+    const Rcpp::IntegerMatrix& lib,
     const Rcpp::IntegerMatrix& pred,
     int E,
     int tau,
@@ -403,6 +404,10 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
   }
 
   // Convert Rcpp IntegerMatrix to std::vector<std::pair<int, int>>
+  std::vector<std::pair<int, int>> lib_cpp(lib.nrow());
+  for (int i = 0; i < lib.nrow(); ++i) {
+    lib_cpp[i] = std::make_pair(lib(i, 0), lib(i, 1));
+  }
   std::vector<std::pair<int, int>> pred_cpp(pred.nrow());
   for (int i = 0; i < pred.nrow(); ++i) {
     pred_cpp[i] = std::make_pair(pred(i, 0), pred(i, 1));
@@ -413,6 +418,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
     xMatrix_cpp,
     yMatrix_cpp,
     libsizes_cpp,
+    lib_cpp,
     pred_cpp,
     E,
     tau,
