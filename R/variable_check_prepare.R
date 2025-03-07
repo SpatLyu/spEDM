@@ -31,11 +31,15 @@
   return(.varname)
 }
 
-.internal_samplemat = \(mat,size,seed = 123){
+.internal_samplemat = \(mat,size = NULL,seed = 123){
   nnaindice = which(!is.na(mat), arr.ind = TRUE)
-  set.seed(seed)
-  indices = sample(nrow(nnaindice), size = min(size,nrow(nnaindice)), replace = FALSE)
-  return(nnaindice[indices])
+  if (is.null(size)){
+    return(nnaindice)
+  } else {
+    set.seed(seed)
+    indices = sample(nrow(nnaindice), size = min(size,nrow(nnaindice)), replace = FALSE)
+    return(nnaindice[indices])
+  }
 }
 
 .internal_lattice_nb = \(data){
