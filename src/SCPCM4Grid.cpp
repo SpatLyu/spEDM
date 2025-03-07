@@ -340,7 +340,8 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
  * - xMatrix: A 2D matrix of predictor variable values (spatial cross-section data).
  * - yMatrix: A 2D matrix of response variable values (spatial cross-section data).
  * - zMatrixs: A 2D matrix storing the control variables.
- * - lib_sizes: lib_sizes    A 2D vector where the first sub-vector contains row-wise library sizes and the second sub-vector contains column-wise library sizes.
+ * - lib_sizes: A 2D vector where the first sub-vector contains row-wise library sizes and the second sub-vector contains column-wise library sizes.
+ * - lib: A vector of pairs representing the indices (row, column) of spatial units to be the library.
  * - pred: A vector of pairs representing the indices (row, column) of spatial units to be predicted.
  * - Es: A vector specifying the embedding dimensions for attractor reconstruction using `xMatrix` and control variables.
  * - taus: A vector specifying the spatial lag steps for constructing lagged state-space vectors with control variables.
@@ -368,6 +369,7 @@ std::vector<std::vector<double>> SCPCM4Grid(
     const std::vector<std::vector<double>>& yMatrix,     // Two dimension matrix of Y variable
     const std::vector<std::vector<double>>& zMatrixs,    // 2D matrix that stores the control variables
     const std::vector<std::vector<int>>& lib_sizes,      // Vector of library sizes to use
+    const std::vector<std::pair<int, int>>& lib,         // Indices of spatial units to be the library
     const std::vector<std::pair<int, int>>& pred,        // Indices of spatial units to be predicted
     const std::vector<int>& Es,                          // Number of dimensions for the attractor reconstruction with the x and control variables
     const std::vector<int>& taus,                        // Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
@@ -475,15 +477,22 @@ std::vector<std::vector<double>> SCPCM4Grid(
     row_size_mark = false;
   }
 
+  // Set library indices
+  std::vector<bool> lib_indices(totalRow * totalCol, false);
+  for (const auto& l : lib) {
+    lib_indices[LocateGridIndices(l.first, l.second, totalRow, totalCol)] = true;
+  }
+
   // Set prediction indices
   std::vector<bool> pred_indices(totalRow * totalCol, false);
   for (const auto& p : pred) {
     pred_indices[LocateGridIndices(p.first, p.second, totalRow, totalCol)] = true;
   }
 
-  // Exclude NA values in yPred from prediction indices
+  // Exclude NA values in yPred from the library and prediction indices
   for (size_t i = 0; i < yPred.size(); ++i) {
     if (std::isnan(yPred[i])) {
+      lib_indices[i] = false;
       pred_indices[i] = false;
     }
   }
@@ -502,6 +511,7 @@ std::vector<std::vector<double>> SCPCM4Grid(
         yPred,
         zMatrixs,
         {lib_size_row, lib_size_col},
+        lib_indices,
         pred_indices,
         conEs,
         contaus,
@@ -525,6 +535,7 @@ std::vector<std::vector<double>> SCPCM4Grid(
         yPred,
         zMatrixs,
         {lib_size_row, lib_size_col},
+        lib_indices,
         pred_indices,
         conEs,
         contaus,
