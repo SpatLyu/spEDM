@@ -1,6 +1,8 @@
 #ifndef spEDMDataStruct_H
 #define spEDMDataStruct_H
 
+#include <vector>
+
 struct PartialCorRes {
   int first;
   double second;
