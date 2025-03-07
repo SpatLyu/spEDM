@@ -1,3 +1,4 @@
+#include <vector>
 #include <RcppThread.h>
 #include <RcppArmadillo.h>
 
@@ -128,4 +129,52 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
 
   // Return the optimal theta param from the optialmal row
   return Thetamat(optialmal_row, 0);
+}
+
+/**
+ * This function takes a NumericMatrix as input and returns a matrix
+ * containing the row and column indices of all non-NA elements in the input matrix.
+ *
+ * Parameters:
+ *   - mat: A NumericMatrix object that is to be processed.
+ *
+ * Returns:
+ *   - A NumericMatrix with two columns:
+ *     - The first column contains the row indices,
+ *     - The second column contains the column indices of non-NA elements.
+ */
+// [[Rcpp::export]]
+Rcpp::NumericMatrix MatNotNAIndice(Rcpp::NumericMatrix mat) {
+  // Initialize a vector to store the row and column indices of non-NA elements
+  std::vector<double> row_indices;
+  std::vector<double> col_indices;
+
+  // Get the number of rows and columns in the input matrix
+  int nrow = mat.nrow();
+  int ncol = mat.ncol();
+
+  // Loop through each element of the matrix
+  for (int i = 0; i < nrow; i++) {
+    for (int j = 0; j < ncol; j++) {
+      // Check if the element is not NA
+      if (!Rcpp::NumericMatrix::is_na(mat(i, j))) {
+        // Record the row and column indices (1-based indexing for R compatibility)
+        row_indices.push_back(i + 1);
+        col_indices.push_back(j + 1);
+      }
+    }
+  }
+
+  // Create a NumericMatrix to store the result
+  int n = row_indices.size();
+  Rcpp::NumericMatrix result(n, 2);
+
+  // Fill the result matrix with the row and column indices
+  for (int i = 0; i < n; i++) {
+    result(i, 0) = row_indices[i];
+    result(i, 1) = col_indices[i];
+  }
+
+  // Return the result matrix
+  return result;
 }
