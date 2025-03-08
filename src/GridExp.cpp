@@ -491,7 +491,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
   int pred_dim = pred.ncol();
   std::vector<int> pred_cpp1;
   std::vector<std::pair<int, int>> pred_cpp2(pred.nrow());
-  if (predsizes_dim == 1){
+  if (libsizes_dim == 1){
     if (pred_dim == 1){
       for (int i = 0; i < pred.nrow(); ++i) {
         pred_cpp1.push_back(pred(i, 0));
@@ -661,7 +661,7 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
   int pred_dim = pred.ncol();
   std::vector<int> pred_cpp1;
   std::vector<std::pair<int, int>> pred_cpp2(pred.nrow());
-  if (predsizes_dim == 1){
+  if (libsizes_dim == 1){
     if (pred_dim == 1){
       for (int i = 0; i < pred.nrow(); ++i) {
         pred_cpp1.push_back(pred(i, 0));
