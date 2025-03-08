@@ -62,9 +62,9 @@
 
 \item{algorithm}{(optional) Algorithm used for prediction.}
 
-\item{lib}{(optional) Row numbers(\code{vector} for lattice data) or row-column numbers(\code{matrix} for grid data) used as libraries.}
+\item{lib}{(optional) Libraries indices.}
 
-\item{pred}{(optional) Row numbers(\code{vector} for lattice data) or row-column numbers(\code{matrix} for grid data) used for predictions.}
+\item{pred}{(optional) Predictions indices.}
 
 \item{nb}{(optional) The neighbours list.}
 

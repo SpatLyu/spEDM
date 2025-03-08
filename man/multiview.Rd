@@ -46,9 +46,9 @@
 
 \item{nvar}{Number of variable combinations.}
 
-\item{lib}{Row numbers(\code{vector} for lattice data) or row-column numbers(\code{matrix} for grid data) to create the library from observations.}
+\item{lib}{Libraries indices.}
 
-\item{pred}{(optional) Row numbers(\code{vector} for lattice data) or row-column numbers(\code{matrix} for grid data) used for predictions.}
+\item{pred}{(optional) Predictions indices.}
 
 \item{E}{(optional) Dimensions of the embedding.}
 
