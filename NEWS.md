@@ -6,6 +6,8 @@
 
 ### enhancements
 
+* Parallelize within each `libsize` operation for spatial lattice ([#301](https://github.com/stscl/spEDM/pull/301)) and grid data ([#303](https://github.com/stscl/spEDM/pull/303)).
+
 * Integrate `lib` parameter in `gccm` R side API for library units selection (#278).
 
 * Set the default `k` to `E+2` in the `gccm` R API (#261).
