@@ -131,6 +131,49 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
     bool row_size_mark);
 
 /**
+ * Perform Grid-based Spatially Convergent Partial Cross Mapping (SCPCM) for a single library size.
+ *
+ * This function follows the same library construction logic as SCPCMSingle4Lattice, where libraries
+ * are created by selecting consecutive indices from possible_lib_indices with possible wraparound.
+ *
+ * @param xEmbedings           State-space embeddings for the predictor variable (each row is a spatial vector)
+ * @param yPred                Target spatial cross-section series
+ * @param controls             Control variables stored by row
+ * @param lib_size             Number of consecutive spatial units to include in each library
+ * @param max_lib_size         Maximum possible library size (total valid spatial units)
+ * @param possible_lib_indices Integer vector indicating the indices of eligible spatial units for library construction
+ * @param pred_indices         Boolean vector indicating spatial units to predict
+ * @param conEs                Embedding dimensions for control variables
+ * @param taus                 Spatial lag steps for control variable embeddings
+ * @param b                    Number of nearest neighbors for prediction
+ * @param totalRow             Total rows in spatial grid
+ * @param totalCol             Total columns in spatial grid
+ * @param simplex              Use simplex projection if true, S-mapping if false
+ * @param theta                Distance weighting parameter for S-mapping
+ * @param threads              Number of parallel threads
+ * @param cumulate             Enable cumulative partial correlations
+ *
+ * @return Vector of PartialCorRes containing mapping results for each library configuration
+ */
+std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
+    const std::vector<std::vector<double>>& xEmbedings,
+    const std::vector<double>& yPred,
+    const std::vector<std::vector<double>>& controls,
+    int lib_size,
+    int max_lib_size,
+    const std::vector<int>& possible_lib_indices,
+    const std::vector<bool>& pred_indices,
+    const std::vector<int>& conEs,
+    const std::vector<int>& taus,
+    const std::vector<int>& b,
+    int totalRow,
+    int totalCol,
+    bool simplex,
+    double theta,
+    size_t threads,
+    bool cumulate);
+
+/**
  * Perform Grid-based Spatially Convergent Partial Cross Mapping (SCPCM) for multiple library sizes.
  *
  * This function estimates the cross mapping and partial cross mapping between predictor variables (`xMatrix`) and response
