@@ -12,13 +12,6 @@
   return(abs(rep(x,length.out = n)))
 }
 
-.check_libsizes_gird = \(libsizes){
-  if (!inherits(libsizes,"matrix")){
-    libsizes = matrix(rep(libsizes,times = 2),ncol = 2)
-  }
-  return(libsizes)
-}
-
 .internal_varname = \(mediator = NULL){
   .varname = c("cause","effect")
   if (!is.null(mediator)){

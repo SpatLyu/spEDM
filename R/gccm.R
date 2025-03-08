@@ -39,6 +39,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   E = .check_inputelementnum(E,2)
   k = .check_inputelementnum(k,2)
   tau = .check_inputelementnum(tau,2)
+  libsizes = as.matrix(libsizes)
   libsizes = .check_libsizes_gird(libsizes)
   .varname = .internal_varname()
   data = data[[varname]]
