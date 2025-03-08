@@ -41,7 +41,7 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
 #' @examples
 #' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData"))
 #' \donttest{
-#' simplex(columbus,target = "CRIME",lib = 1:49)
+#' simplex(columbus,target = "CRIME")
 #' }
 methods::setMethod("simplex", "sf", .simplex_sf_method)
 
