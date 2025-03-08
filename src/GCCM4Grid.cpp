@@ -235,7 +235,7 @@ std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
       }
     }
 
-    x_xmap_y.emplace_back(libsize, rho); // Store the product of row and column library sizes
+    x_xmap_y.emplace_back(lib_size, rho); // Store the product of row and column library sizes
   } else {
     for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
       std::vector<bool> lib_indices(n, false);
@@ -272,7 +272,7 @@ std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
         }
       }
 
-      x_xmap_y.emplace_back(libsize, rho); // Store the product of row and column library sizes
+      x_xmap_y.emplace_back(lib_size, rho); // Store the product of row and column library sizes
     }
   }
 
@@ -592,7 +592,7 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
         pred_indices,
         totalRow,
         totalCol,
-        b
+        b,
         simplex,
         theta
       );
@@ -611,7 +611,7 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
         pred_indices,
         totalRow,
         totalCol,
-        b
+        b,
         simplex,
         theta
       );
