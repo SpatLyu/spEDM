@@ -101,6 +101,7 @@ std::vector<double> PartialSMap4Lattice(
  *   - b: A vector specifying the numbers of neighbors to use for simplex projection.
  *   - simplex: If true, uses simplex projection for prediction; otherwise, uses s-mapping.
  *   - theta: Distance weighting parameter for local neighbors in the manifold (used in s-mapping).
+ *   - threads: The number of threads to use for parallel processing.
  *   - cumulate: Whether to accumulate partial correlations.
  *
  * Returns:
@@ -123,6 +124,7 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
     const std::vector<int>& b,                          // Numbers of neighbors to use for simplex projection
     bool simplex,                                       // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
     double theta,                                       // Distance weighting parameter for the local neighbours in the manifold
+    size_t threads,                                     // Number of threads to use for parallel processing
     bool cumulate                                       // Whether to cumulate the partial correlations
 );
 

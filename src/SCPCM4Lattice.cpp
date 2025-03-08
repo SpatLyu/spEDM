@@ -180,6 +180,7 @@ std::vector<double> PartialSMap4Lattice(
  *   - b: A vector specifying the numbers of neighbors to use for simplex projection.
  *   - simplex: If true, uses simplex projection for prediction; otherwise, uses s-mapping.
  *   - theta: Distance weighting parameter for local neighbors in the manifold (used in s-mapping).
+ *   - threads: The number of threads to use for parallel processing.
  *   - cumulate: Whether to accumulate partial correlations.
  *
  * Returns:
@@ -202,17 +203,19 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
     const std::vector<int>& b,                          // Numbers of neighbors to use for simplex projection
     bool simplex,                                       // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
     double theta,                                       // Distance weighting parameter for the local neighbours in the manifold
+    size_t threads,                                     // Number of threads to use for parallel processing
     bool cumulate                                       // Whether to cumulate the partial correlations
 ) {
   int n = x_vectors.size();
-  std::vector<PartialCorRes> x_xmap_y;
 
-  if (lib_size == max_lib_size) { // No possible library variation if using all vectors
+  // No possible library variation if using all vectors
+  if (lib_size == max_lib_size) {
     std::vector<bool> lib_indices(n, false);
     for (int idx : possible_lib_indices) {
       lib_indices[idx] = true;
     }
 
+    std::vector<PartialCorRes> x_xmap_y;
     // Run partial cross map and store results
     std::vector<double> rho;
     if (simplex) {
@@ -221,22 +224,38 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
       rho = PartialSMap4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, taus, b, theta, cumulate);
     }
     x_xmap_y.emplace_back(lib_size, rho[0], rho[1]);
+    return x_xmap_y;
   } else {
+    // Precompute valid indices for the library
+    std::vector<std::vector<int>> valid_lib_indices;
     for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
-      std::vector<bool> lib_indices(n, false);
-      // Setup changing library
-      if (start_lib + lib_size > max_lib_size) { // Loop around to beginning of lib indices
+      std::vector<int> local_lib_indices;
+      // Loop around to beginning of lib indices
+      if (start_lib + lib_size > max_lib_size) {
         for (int i = start_lib; i < max_lib_size; ++i) {
-          lib_indices[possible_lib_indices[i]] = true;
+          local_lib_indices.emplace_back(i);
         }
         int num_vectors_remaining = lib_size - (max_lib_size - start_lib);
         for (int i = 0; i < num_vectors_remaining; ++i) {
-          lib_indices[possible_lib_indices[i]] = true;
+          local_lib_indices.emplace_back(i);
         }
       } else {
         for (int i = start_lib; i < start_lib + lib_size; ++i) {
-          lib_indices[possible_lib_indices[i]] = true;
+          local_lib_indices.emplace_back(i);
         }
+      }
+      valid_lib_indices.emplace_back(local_lib_indices);
+    }
+
+    // Preallocate the result vector to avoid out-of-bounds access
+    std::vector<PartialCorRes> x_xmap_y(valid_lib_indices.size());
+
+    // Perform the operations using RcppThread
+    RcppThread::parallelFor(0, valid_lib_indices.size(), [&](size_t i) {
+      std::vector<bool> lib_indices(n, false);
+      std::vector<int> local_lib_indices = valid_lib_indices[i];
+      for(int& li : local_lib_indices){
+        lib_indices[possible_lib_indices[li]] = true;
       }
 
       // Run partial cross map and store results
@@ -246,11 +265,13 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
       } else {
         rho = PartialSMap4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, taus, b, theta, cumulate);
       }
-      x_xmap_y.emplace_back(lib_size, rho[0], rho[1]);
-    }
-  }
+      // Directly initialize a PartialCorRes struct with the three values
+      PartialCorRes result(libsize, rho[0], rho[1]);
+      x_xmap_y[i] = result;
+    }, threads);
 
-  return x_xmap_y;
+    return x_xmap_y;
+  }
 }
 
 /**
