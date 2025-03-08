@@ -150,6 +150,7 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
  * @param totalCol             Total columns in spatial grid
  * @param simplex              Use simplex projection if true, S-mapping if false
  * @param theta                Distance weighting parameter for S-mapping
+ * @param threads              The number of threads to use for parallel processing
  * @param cumulate             Enable cumulative partial correlations
  *
  * @return Vector of PartialCorRes containing mapping results for each library configuration
@@ -169,6 +170,7 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
     int totalCol,
     bool simplex,
     double theta,
+    size_t threads,
     bool cumulate);
 
 /**

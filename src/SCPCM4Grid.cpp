@@ -349,6 +349,7 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
  * @param totalCol             Total columns in spatial grid
  * @param simplex              Use simplex projection if true, S-mapping if false
  * @param theta                Distance weighting parameter for S-mapping
+ * @param threads              The number of threads to use for parallel processing
  * @param cumulate             Enable cumulative partial correlations
  *
  * @return Vector of PartialCorRes containing mapping results for each library configuration
@@ -368,11 +369,12 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
     int totalCol,
     bool simplex,
     double theta,
+    size_t threads,
     bool cumulate) {
   int n = yPred.size();
-  std::vector<PartialCorRes> x_xmap_y;
 
-  if (lib_size == max_lib_size) { // No possible library variation if using all vectors
+  // No possible library variation if using all vectors
+  if (lib_size == max_lib_size) {
     std::vector<bool> lib_indices(n, false);
     for (int idx : possible_lib_indices) {
       lib_indices[idx] = true;
@@ -386,6 +388,7 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
       }
     }
 
+    std::vector<PartialCorRes> x_xmap_y;
     std::vector<double> rho(2, std::numeric_limits<double>::quiet_NaN());
     if (na_count <= max_lib_size / 2.0) {
       // Run partial cross map and store results
@@ -397,22 +400,39 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
     }
 
     x_xmap_y.emplace_back(lib_size, rho[0], rho[1]);
+    return x_xmap_y;
   } else {
+
+    // Precompute valid indices for the library
+    std::vector<std::vector<int>> valid_lib_indices;
     for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
-      std::vector<bool> lib_indices(n, false);
-      // Setup changing library
-      if (start_lib + lib_size > max_lib_size) { // Loop around to beginning of lib indices
+      std::vector<int> local_lib_indices;
+      // Loop around to beginning of lib indices
+      if (start_lib + lib_size > max_lib_size) {
         for (int i = start_lib; i < max_lib_size; ++i) {
-          lib_indices[possible_lib_indices[i]] = true;
+          local_lib_indices.emplace_back(i);
         }
         int num_vectors_remaining = lib_size - (max_lib_size - start_lib);
         for (int i = 0; i < num_vectors_remaining; ++i) {
-          lib_indices[possible_lib_indices[i]] = true;
+          local_lib_indices.emplace_back(i);
         }
       } else {
         for (int i = start_lib; i < start_lib + lib_size; ++i) {
-          lib_indices[possible_lib_indices[i]] = true;
+          local_lib_indices.emplace_back(i);
         }
+      }
+      valid_lib_indices.emplace_back(local_lib_indices);
+    }
+
+    // Preallocate the result vector to avoid out-of-bounds access
+    std::vector<PartialCorRes> x_xmap_y(valid_lib_indices.size());
+
+    // Perform the operations using RcppThread
+    RcppThread::parallelFor(0, valid_lib_indices.size(), [&](size_t i) {
+      std::vector<bool> lib_indices(n, false);
+      std::vector<int> local_lib_indices = valid_lib_indices[i];
+      for(int& li : local_lib_indices){
+        lib_indices[possible_lib_indices[li]] = true;
       }
 
       // Check if more than half of the library is NA
@@ -433,11 +453,13 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
         }
       }
 
-      x_xmap_y.emplace_back(lib_size, rho[0], rho[1]);
-    }
-  }
+      // Directly initialize a PartialCorRes struct with the three values
+      PartialCorRes result(lib_size, rho[0], rho[1]);
+      x_xmap_y[i] = result;
+    }, threads);
 
-  return x_xmap_y;
+    return x_xmap_y;
+  }
 }
 
 /**
@@ -838,8 +860,7 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
   // Iterate over each library size
   if (progressbar) {
     RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
-    RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
-      int lib_size = unique_lib_sizes[i];
+    for (int lib_size : unique_lib_sizes) {
       auto results = SCPCMSingle4GridOneDim(
         xEmbedings,
         yPred,
@@ -855,14 +876,14 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
         totalCol,
         simplex,
         theta,
+        threads_sizet,
         cumulate
       );
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
       bar++;
-    }, threads_sizet);
+    }
   } else {
-    RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
-      int lib_size = unique_lib_sizes[i];
+    for (int lib_size : unique_lib_sizes) {
       auto results = SCPCMSingle4GridOneDim(
         xEmbedings,
         yPred,
@@ -878,10 +899,11 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
         totalCol,
         simplex,
         theta,
+        threads_sizet,
         cumulate
       );
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
-    }, threads_sizet);
+    }
   }
 
   // Group by the first int and store second and third values as pairs
