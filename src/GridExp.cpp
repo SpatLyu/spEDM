@@ -103,22 +103,36 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
   int currow;
   int curcol;
+  int lib_col = lib.ncol();
+  int pred_col = pred.ncol();
 
-  for (int i = 0; i < lib.nrow(); ++i) {
-    // Convert to 0-based index
-    currow = lib(i,0);
-    curcol = lib(i,1);
-    if (!std::isnan(cppMat[currow-1][curcol-1])){
-      lib_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+  if (lib_col == 1){
+    for (int i = 0; i < lib.nrow(); ++i) {
+      lib_indices[lib(i,0)-1] = true;
+    }
+  } else {
+    for (int i = 0; i < lib.nrow(); ++i) {
+      // Convert to 0-based index
+      currow = lib(i,0);
+      curcol = lib(i,1);
+      if (!std::isnan(cppMat[currow-1][curcol-1])){
+        lib_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+      }
     }
   }
 
-  for (int i = 0; i < pred.nrow(); ++i) {
-    // Convert to 0-based index
-    currow = pred(i,0);
-    curcol = pred(i,1);
-    if (!std::isnan(cppMat[currow-1][curcol-1])){
-      pred_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+  if (pred_col == 1){
+    for (int i = 0; i < pred.nrow(); ++i) {
+      pred_indices[pred(i,0)-1] = true;
+    }
+  } else {
+    for (int i = 0; i < pred.nrow(); ++i) {
+      // Convert to 0-based index
+      currow = pred(i,0);
+      curcol = pred(i,1);
+      if (!std::isnan(cppMat[currow-1][curcol-1])){
+        pred_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+      }
     }
   }
 
@@ -180,22 +194,36 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& mat,
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
   int currow;
   int curcol;
+  int lib_col = lib.ncol();
+  int pred_col = pred.ncol();
 
-  for (int i = 0; i < lib.nrow(); ++i) {
-    // Convert to 0-based index
-    currow = lib(i,0);
-    curcol = lib(i,1);
-    if (!std::isnan(cppMat[currow-1][curcol-1])){
-      lib_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+  if (lib_col == 1){
+    for (int i = 0; i < lib.nrow(); ++i) {
+      lib_indices[lib(i,0)-1] = true;
+    }
+  } else {
+    for (int i = 0; i < lib.nrow(); ++i) {
+      // Convert to 0-based index
+      currow = lib(i,0);
+      curcol = lib(i,1);
+      if (!std::isnan(cppMat[currow-1][curcol-1])){
+        lib_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+      }
     }
   }
 
-  for (int i = 0; i < pred.nrow(); ++i) {
-    // Convert to 0-based index
-    currow = pred(i,0);
-    curcol = pred(i,1);
-    if (!std::isnan(cppMat[currow-1][curcol-1])){
-      pred_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+  if (pred_col == 1){
+    for (int i = 0; i < pred.nrow(); ++i) {
+      pred_indices[pred(i,0)-1] = true;
+    }
+  } else {
+    for (int i = 0; i < pred.nrow(); ++i) {
+      // Convert to 0-based index
+      currow = pred(i,0);
+      curcol = pred(i,1);
+      if (!std::isnan(cppMat[currow-1][curcol-1])){
+        pred_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+      }
     }
   }
 
@@ -260,22 +288,36 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
   int currow;
   int curcol;
+  int lib_col = lib.ncol();
+  int pred_col = pred.ncol();
 
-  for (int i = 0; i < lib.nrow(); ++i) {
-    // Convert to 0-based index
-    currow = lib(i,0);
-    curcol = lib(i,1);
-    if (!std::isnan(yMatrix_cpp[currow-1][curcol-1])){
-      lib_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+  if (lib_col == 1){
+    for (int i = 0; i < lib.nrow(); ++i) {
+      lib_indices[lib(i,0)-1] = true;
+    }
+  } else {
+    for (int i = 0; i < lib.nrow(); ++i) {
+      // Convert to 0-based index
+      currow = lib(i,0);
+      curcol = lib(i,1);
+      if (!std::isnan(yMatrix_cpp[currow-1][curcol-1])){
+        lib_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+      }
     }
   }
 
-  for (int i = 0; i < pred.nrow(); ++i) {
-    // Convert to 0-based index
-    currow = pred(i,0);
-    curcol = pred(i,1);
-    if (!std::isnan(yMatrix_cpp[currow-1][curcol-1])){
-      pred_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+  if (pred_col == 1){
+    for (int i = 0; i < pred.nrow(); ++i) {
+      pred_indices[pred(i,0)-1] = true;
+    }
+  } else {
+    for (int i = 0; i < pred.nrow(); ++i) {
+      // Convert to 0-based index
+      currow = pred(i,0);
+      curcol = pred(i,1);
+      if (!std::isnan(yMatrix_cpp[currow-1][curcol-1])){
+        pred_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+      }
     }
   }
 

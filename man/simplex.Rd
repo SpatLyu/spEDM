@@ -9,8 +9,8 @@
 \S4method{simplex}{sf}(
   data,
   target,
-  lib,
-  pred = lib,
+  lib = NULL,
+  pred = NULL,
   E = 1:10,
   tau = 1,
   k = E + 2,
@@ -22,8 +22,8 @@
 \S4method{simplex}{SpatRaster}(
   data,
   target,
-  lib,
-  pred = lib,
+  lib = NULL,
+  pred = NULL,
   E = 1:10,
   tau = 1,
   k = E + 2,
@@ -36,7 +36,7 @@
 
 \item{target}{Name of target variable.}
 
-\item{lib}{Libraries indices.}
+\item{lib}{(optional) Libraries indices.}
 
 \item{pred}{(optional) Predictions indices.}
 

@@ -12,10 +12,6 @@
   return(abs(rep(x,length.out = n)))
 }
 
-.check_indices = \(x,totalnum){
-  return(x[(x<=totalnum)&(x>=1)])
-}
-
 .check_libsizes_gird = \(libsizes){
   if (!inherits(libsizes,"matrix")){
     libsizes = matrix(rep(libsizes,times = 2),ncol = 2)
