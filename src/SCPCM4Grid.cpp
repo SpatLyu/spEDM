@@ -371,7 +371,6 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
     bool cumulate) {
   int n = yPred.size();
   std::vector<PartialCorRes> x_xmap_y;
-  std::vector<double> rho(2, std::numeric_limits<double>::quiet_NaN());
 
   if (lib_size == max_lib_size) { // No possible library variation if using all vectors
     std::vector<bool> lib_indices(n, false);
@@ -387,6 +386,7 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
       }
     }
 
+    std::vector<double> rho(2, std::numeric_limits<double>::quiet_NaN());
     if (na_count <= max_lib_size / 2.0) {
       // Run partial cross map and store results
       if (simplex) {
@@ -423,6 +423,7 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
         }
       }
 
+      std::vector<double> rho(2, std::numeric_limits<double>::quiet_NaN());
       if (na_count <= max_lib_size / 2.0) {
         // Run partial cross map and store results
         if (simplex) {
