@@ -601,22 +601,38 @@ Rcpp::NumericMatrix RcppGCMC4Grid(
   b_std.erase(std::unique(b_std.begin(), b_std.end()), b_std.end());
 
   // Convert Rcpp IntegerMatrix to std::vector<int>
+  int n_libcol = lib.ncol();
+  int n_predcol = lib.ncol();
   int numRows = yMatrix.nrow();
   int numCols = yMatrix.ncol();
+
   std::vector<int> lib_std;
-  for (int i = 0; i < lib.nrow(); ++i) {
-    int rowLibIndice = lib(i,0);
-    int colLibIndice = lib(i,1);
-    if (!std::isnan(yMatrix_cpp[rowLibIndice-1][colLibIndice-1])){
-      lib_std.push_back(LocateGridIndices(rowLibIndice, colLibIndice, numRows, numCols));
+  if (n_libcol == 1){
+    for (int i = 0; i < lib.nrow(); ++i) {
+      lib_std.push_back(lib(i,0) - 1);
+    }
+  } else {
+    for (int i = 0; i < lib.nrow(); ++i) {
+      int rowLibIndice = lib(i,0);
+      int colLibIndice = lib(i,1);
+      if (!std::isnan(yMatrix_cpp[rowLibIndice-1][colLibIndice-1])){
+        lib_std.push_back(LocateGridIndices(rowLibIndice, colLibIndice, numRows, numCols));
+      }
     }
   }
+
   std::vector<int> pred_std;
-  for (int i = 0; i < pred.nrow(); ++i) {
-    int rowPredIndice = pred(i,0);
-    int colPredIndice = pred(i,1);
-    if (!std::isnan(yMatrix_cpp[rowPredIndice-1][colPredIndice-1])){
-      pred_std.push_back(LocateGridIndices(rowPredIndice, colPredIndice, numRows, numCols));
+  if (n_predcol == 1){
+    for (int i = 0; i < pred.nrow(); ++i) {
+      pred_std.push_back(pred(i,0) - 1);
+    }
+  } else {
+    for (int i = 0; i < pred.nrow(); ++i) {
+      int rowPredIndice = pred(i,0);
+      int colPredIndice = pred(i,1);
+      if (!std::isnan(yMatrix_cpp[rowPredIndice-1][colPredIndice-1])){
+        pred_std.push_back(LocateGridIndices(rowPredIndice, colPredIndice, numRows, numCols));
+      }
     }
   }
 
