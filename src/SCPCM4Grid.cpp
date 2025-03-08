@@ -373,13 +373,33 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
   std::vector<PartialCorRes> x_xmap_y;
   std::vector<double> rho(2, std::numeric_limits<double>::quiet_NaN());
 
-  std::vector<bool> lib_indices(n, false);
   if (lib_size == max_lib_size) { // No possible library variation if using all vectors
+    std::vector<bool> lib_indices(n, false);
     for (int idx : possible_lib_indices) {
       lib_indices[idx] = true;
     }
+
+    // Check if more than half of the library is NA
+    int na_count = 0;
+    for (size_t i = 0; i < lib_indices.size(); ++i) {
+      if (lib_indices[i] && std::isnan(yPred[i])) {
+        ++na_count;
+      }
+    }
+
+    if (na_count <= max_lib_size / 2.0) {
+      // Run partial cross map and store results
+      if (simplex) {
+        rho = PartialSimplex4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, cumulate);
+      } else {
+        rho = PartialSMap4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, theta, cumulate);
+      }
+    }
+
+    x_xmap_y.emplace_back(lib_size, rho[0], rho[1]);
   } else {
     for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
+      std::vector<bool> lib_indices(n, false);
       // Setup changing library
       if (start_lib + lib_size > max_lib_size) { // Loop around to beginning of lib indices
         for (int i = start_lib; i < max_lib_size; ++i) {
@@ -394,27 +414,28 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
           lib_indices[possible_lib_indices[i]] = true;
         }
       }
+
+      // Check if more than half of the library is NA
+      int na_count = 0;
+      for (size_t i = 0; i < lib_indices.size(); ++i) {
+        if (lib_indices[i] && std::isnan(yPred[i])) {
+          ++na_count;
+        }
+      }
+
+      if (na_count <= max_lib_size / 2.0) {
+        // Run partial cross map and store results
+        if (simplex) {
+          rho = PartialSimplex4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, cumulate);
+        } else {
+          rho = PartialSMap4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, theta, cumulate);
+        }
+      }
+
+      x_xmap_y.emplace_back(lib_size, rho[0], rho[1]);
     }
   }
 
-  // Check if more than half of the library is NA
-  int na_count = 0;
-  for (size_t i = 0; i < lib_indices.size(); ++i) {
-    if (lib_indices[i] && std::isnan(yPred[i])) {
-      ++na_count;
-    }
-  }
-
-  if (na_count <= max_lib_size / 2.0) {
-    // Run partial cross map and store results
-    if (simplex) {
-      rho = PartialSimplex4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, cumulate);
-    } else {
-      rho = PartialSMap4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, theta, cumulate);
-    }
-  }
-
-  x_xmap_y.emplace_back(lib_size, rho[0], rho[1]);
   return x_xmap_y;
 }
 
