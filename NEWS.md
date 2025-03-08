@@ -2,19 +2,17 @@
 
 ### new
 
-* Integrate `lib` parameter in `gccm` R side API for library units selection (#278).
-
 * Implement the `multiview` function for multiview embedding forecasting (MVE) method (#221).
 
-* Introduce `trend.rm` option in the R API for `embedded`, `simplex`, and `smap` methods to align with `gccm` behavior (#191).
-
 ### enhancements
+
+* Integrate `lib` parameter in `gccm` R side API for library units selection (#278).
 
 * Set the default `k` to `E+2` in the `gccm` R API (#261).
 
 * Eliminate redundant computations at the source C++ code level (#233).
 
-* Apply parallel-level computations for each libsize when executing `gccm` on spatial grid data (#203).
+* Add `trend.rm` option in the R API for `embedded`, `simplex`, and `smap` methods to align with `gccm` behavior (#191).
 
 * Refactor indexing of lag values and embedding vector generation for spatial lattice ([#186](https://github.com/stscl/spEDM/pull/186),[#184](https://github.com/stscl/spEDM/pull/184)) and grid data ([#183](https://github.com/stscl/spEDM/pull/183),[#181](https://github.com/stscl/spEDM/pull/181)).
 

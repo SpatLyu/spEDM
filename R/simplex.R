@@ -14,7 +14,7 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
                                k = E+2, threads = detectThreads(), trend.rm = TRUE){
   mat = .uni_grid(data,target,trend.rm)
   if (is.null(lib)) lib = .internal_samplemat(mat)
-  if (is.null(pred)) pred = .internal_samplemat(mat,floor(sqrt(length(mat))))
+  if (is.null(pred)) pred = lib
   res = RcppSimplex4Grid(mat,lib,pred,E,k,tau,threads)
   return(.bind_xmapself(res,target))
 }
@@ -41,7 +41,7 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
 #' @examples
 #' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData"))
 #' \donttest{
-#' simplex(columbus,target = "CRIME",lib = 1:49)
+#' simplex(columbus,target = "CRIME")
 #' }
 methods::setMethod("simplex", "sf", .simplex_sf_method)
 

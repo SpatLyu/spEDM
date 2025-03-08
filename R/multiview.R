@@ -17,7 +17,7 @@ methods::setGeneric("multiview", function(data, ...) standardGeneric("multiview"
   xmat = .multivar_grid(data,columns,trend.rm)
   ymat = .uni_grid(data,target,trend.rm)
   if (is.null(lib)) lib = .internal_samplemat(ymat)
-  if (is.null(pred)) pred = .internal_samplemat(ymat,floor(sqrt(length(ymat))))
+  if (is.null(pred)) pred = lib
   if (is.null(top)) top = 0
   res = RcppMultiView4Grid(xmat,ymat,lib,pred,E,tau,k,top,nvar,threads)
   return(res)
@@ -42,7 +42,7 @@ methods::setGeneric("multiview", function(data, ...) standardGeneric("multiview"
 #' \donttest{
 #' multiview(columbus,
 #'           columns = c("INC","CRIME","OPEN","PLUMB","DISCBD"),
-#'           target = "HOVAL", nvar = 3, lib = 1:49, pred = 1:49)
+#'           target = "HOVAL", nvar = 3)
 #' }
 methods::setMethod("multiview", "sf", .multiview_sf_method)
 
