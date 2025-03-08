@@ -349,7 +349,6 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
  * @param totalCol             Total columns in spatial grid
  * @param simplex              Use simplex projection if true, S-mapping if false
  * @param theta                Distance weighting parameter for S-mapping
- * @param threads              Number of parallel threads
  * @param cumulate             Enable cumulative partial correlations
  *
  * @return Vector of PartialCorRes containing mapping results for each library configuration
@@ -369,7 +368,6 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
     int totalCol,
     bool simplex,
     double theta,
-    size_t threads,
     bool cumulate) {
   int n = yPred.size();
   std::vector<PartialCorRes> x_xmap_y;
@@ -640,6 +638,228 @@ std::vector<std::vector<double>> SCPCM4Grid(
         row_size_mark);
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
     }
+  }
+
+  // Group by the first int and store second and third values as pairs
+  std::map<int, std::vector<std::pair<double, double>>> grouped_results;
+
+  for (const auto& result : x_xmap_y) {
+    grouped_results[result.first].emplace_back(result.second, result.third);
+  }
+
+  std::vector<std::vector<double>> final_results;
+
+  // Compute the mean of second and third values for each group
+  for (const auto& group : grouped_results) {
+    std::vector<double> second_values, third_values;
+
+    for (const auto& val : group.second) {
+      second_values.push_back(val.first);
+      third_values.push_back(val.second);
+    }
+
+    double mean_second = CppMean(second_values, true);
+    double mean_third = CppMean(third_values, true);
+
+    final_results.push_back({static_cast<double>(group.first), mean_second, mean_third});
+  }
+
+  int n = pred.size();
+  // Compute significance and confidence intervals for each result
+  for (size_t i = 0; i < final_results.size(); ++i) {
+    double rho_second = final_results[i][1];
+    double rho_third = final_results[i][2];
+
+    // Compute significance and confidence interval for second value
+    double significance_second = CppCorSignificance(rho_second, n);
+    std::vector<double> confidence_interval_second = CppCorConfidence(rho_second, n);
+
+    // Compute significance and confidence interval for third value
+    double significance_third = CppCorSignificance(rho_third, n, n_confounds);
+    std::vector<double> confidence_interval_third = CppCorConfidence(rho_third, n, n_confounds);
+
+    // Append computed statistical values to the result
+    final_results[i].push_back(significance_second);
+    final_results[i].push_back(confidence_interval_second[0]);
+    final_results[i].push_back(confidence_interval_second[1]);
+
+    final_results[i].push_back(significance_third);
+    final_results[i].push_back(confidence_interval_third[0]);
+    final_results[i].push_back(confidence_interval_third[1]);
+  }
+
+  return final_results;
+}
+
+/**
+ * Performs Grid-based Spatially Convergent Partial Cross Mapping (SCPCM).
+ *
+ * Parameters:
+ * - xMatrix: 2D grid of predictor variable values (row-major order)
+ * - yMatrix: 2D grid of target variable values (row-major order)
+ * - zMatrixs: Control variables stored as 2D grids (vector of vectors)
+ * - lib_size: Number of consecutive spatial units to include in each library
+ * - lib: Vector specifying library locations as (row, col) pairs
+ * - pred: Vector specifying prediction locations as (row, col) pairs
+ * - Es: Embedding dimensions for x and control variables
+ * - taus: Spatial lag steps for x and control variables
+ * - b: Numbers of nearest neighbors for prediction
+ * - simplex: Use simplex projection (true) or S-mapping (false)
+ * - theta: Distance weighting parameter for S-mapping
+ * - threads: Number of parallel computation threads
+ * - cumulate: Enable cumulative partial correlations
+ * - progressbar: Display progress bar during computation
+ *
+ * Returns:
+ *   2D vector containing:
+ *     - Library size
+ *     - Mean cross-map correlation (rho)
+ *     - Rho significance
+ *     - Rho lower CI
+ *     - Rho upper CI
+ *     - Mean partial correlation
+ *     - Partial correlation significance
+ *     - Partial lower CI
+ *     - Partial upper CI
+ */
+std::vector<std::vector<double>> SCPCM4GridOneDim(
+    const std::vector<std::vector<double>>& xMatrix,
+    const std::vector<std::vector<double>>& yMatrix,
+    const std::vector<std::vector<double>>& zMatrixs,
+    const std::vector<int>& lib_sizes,
+    const std::vector<int>& lib,
+    const std::vector<int>& pred,
+    const std::vector<int>& Es,
+    const std::vector<int>& taus,
+    const std::vector<int>& b,
+    bool simplex,
+    double theta,
+    int threads,
+    bool cumulate,
+    bool progressbar){
+  // If b is not provided correctly, default it to E + 2
+  std::vector<int> bs = b;
+  for (size_t i = 0; i < bs.size(); ++i){
+    if (bs[i] <= 0) {
+      bs[i] = Es[i] + 2;
+    }
+  }
+
+  int Ex = Es[0];
+  std::vector<int> conEs = Es;
+  conEs.erase(conEs.begin());
+
+  int taux = taus[0];
+  std::vector<int> contaus = taus;
+  contaus.erase(contaus.begin());
+
+  // Configure threads
+  size_t threads_sizet = static_cast<size_t>(std::abs(threads));
+  threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
+
+  // Get the dimensions of the xMatrix
+  int totalRow = xMatrix.size();
+  int totalCol = xMatrix[0].size();
+
+  // Flatten yMatrix into a 1D array (row-major order)
+  std::vector<double> yPred;
+  for (const auto& row : yMatrix) {
+    yPred.insert(yPred.end(), row.begin(), row.end());
+  }
+
+  // Generate embeddings for xMatrix
+  std::vector<std::vector<double>> xEmbedings = GenGridEmbeddings(xMatrix, Ex, taux);
+
+  int n_confounds;
+  if (cumulate){
+    n_confounds = 1;
+  } else {
+    n_confounds = zMatrixs.size();
+  }
+
+  std::vector<int> possible_lib_indices;
+  for (size_t i = 0; i < lib.size(); ++i) {
+    int LibIndice = lib[i] - 1;
+    if (!std::isnan(yPred[LibIndice])) {
+      possible_lib_indices.push_back(LibIndice);
+    }
+  }
+  int max_lib_size = static_cast<int>(possible_lib_indices.size()); // Maximum lib size
+
+  // Initialize pred_indices with all false
+  std::vector<bool> pred_indices(totalRow*totalCol, false);
+  // Convert pred (1-based in R) to 0-based indices, exclude yPred NA and set corresponding positions to true
+  for (size_t i = 0; i < pred.size(); ++i) {
+    int PreIndice = pred[i] - 1;
+    if (!std::isnan(yPred[PreIndice])) {
+      pred_indices[PreIndice] = true;
+    }
+  }
+
+  std::vector<int> unique_lib_sizes(lib_sizes.begin(), lib_sizes.end());
+
+  // Transform to ensure no size exceeds max_lib_size
+  std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
+                 [&](int size) { return std::min(size, max_lib_size); });
+
+  // Ensure the minimum value in unique_lib_sizes is Ex + 2 (uncomment this section if required)
+  // std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
+  //                [&](int size) { return std::max(size, Ex + 2); });
+
+  // Remove duplicates
+  std::sort(unique_lib_sizes.begin(), unique_lib_sizes.end());
+  unique_lib_sizes.erase(std::unique(unique_lib_sizes.begin(), unique_lib_sizes.end()), unique_lib_sizes.end());
+
+  // Initialize the result container
+  std::vector<PartialCorRes> x_xmap_y;
+
+  // Iterate over each library size
+  if (progressbar) {
+    RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
+    RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
+      int lib_size = unique_lib_sizes[i];
+      auto results = SCPCMSingle4GridOneDim(
+        xEmbedings,
+        yPred,
+        zMatrixs,
+        lib_size,
+        max_lib_size,
+        possible_lib_indices,
+        pred_indices,
+        conEs,
+        contaus,
+        bs,
+        totalRow,
+        totalCol,
+        simplex,
+        theta,
+        cumulate
+      );
+      x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+      bar++;
+    }, threads_sizet);
+  } else {
+    RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
+      int lib_size = unique_lib_sizes[i];
+      auto results = SCPCMSingle4GridOneDim(
+        xEmbedings,
+        yPred,
+        zMatrixs,
+        lib_size,
+        max_lib_size,
+        possible_lib_indices,
+        pred_indices,
+        conEs,
+        contaus,
+        bs,
+        totalRow,
+        totalCol,
+        simplex,
+        theta,
+        cumulate
+      );
+      x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+    }, threads_sizet);
   }
 
   // Group by the first int and store second and third values as pairs

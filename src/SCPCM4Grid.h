@@ -150,7 +150,6 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
  * @param totalCol             Total columns in spatial grid
  * @param simplex              Use simplex projection if true, S-mapping if false
  * @param theta                Distance weighting parameter for S-mapping
- * @param threads              Number of parallel threads
  * @param cumulate             Enable cumulative partial correlations
  *
  * @return Vector of PartialCorRes containing mapping results for each library configuration
@@ -170,7 +169,6 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
     int totalCol,
     bool simplex,
     double theta,
-    size_t threads,
     bool cumulate);
 
 /**
@@ -223,6 +221,54 @@ std::vector<std::vector<double>> SCPCM4Grid(
     int threads,                                         // Number of threads used from the global pool
     bool cumulate,                                       // Whether to cumulate the partial correlations
     bool progressbar                                     // Whether to print the progress bar
+);
+
+/**
+ * Performs Grid-based Spatially Convergent Partial Cross Mapping (SCPCM).
+ *
+ * Parameters:
+ * - xMatrix: 2D grid of predictor variable values (row-major order)
+ * - yMatrix: 2D grid of target variable values (row-major order)
+ * - zMatrixs: Control variables stored as 2D grids (vector of vectors)
+ * - lib_size: Number of consecutive spatial units to include in each library
+ * - lib: Vector specifying library locations as (row, col) pairs
+ * - pred: Vector specifying prediction locations as (row, col) pairs
+ * - Es: Embedding dimensions for x and control variables
+ * - taus: Spatial lag steps for x and control variables
+ * - b: Numbers of nearest neighbors for prediction
+ * - simplex: Use simplex projection (true) or S-mapping (false)
+ * - theta: Distance weighting parameter for S-mapping
+ * - threads: Number of parallel computation threads
+ * - cumulate: Enable cumulative partial correlations
+ * - progressbar: Display progress bar during computation
+ *
+ * Returns:
+ *   2D vector containing:
+ *     - Library size
+ *     - Mean cross-map correlation (rho)
+ *     - Rho significance
+ *     - Rho lower CI
+ *     - Rho upper CI
+ *     - Mean partial correlation
+ *     - Partial correlation significance
+ *     - Partial lower CI
+ *     - Partial upper CI
+ */
+std::vector<std::vector<double>> SCPCM4GridOneDim(
+    const std::vector<std::vector<double>>& xMatrix,
+    const std::vector<std::vector<double>>& yMatrix,
+    const std::vector<std::vector<double>>& zMatrixs,
+    const std::vector<int>& lib_sizes,
+    const std::vector<int>& lib,
+    const std::vector<int>& pred,
+    const std::vector<int>& Es,
+    const std::vector<int>& taus,
+    const std::vector<int>& b,
+    bool simplex,
+    double theta,
+    int threads,
+    bool cumulate,
+    bool progressbar
 );
 
 #endif // SCPCM4Grid_H
