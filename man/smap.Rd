@@ -9,8 +9,8 @@
 \S4method{smap}{sf}(
   data,
   target,
-  lib,
-  pred = lib,
+  lib = NULL,
+  pred = NULL,
   E = 3,
   tau = 1,
   k = E + 2,
@@ -24,8 +24,8 @@
 \S4method{smap}{SpatRaster}(
   data,
   target,
-  lib,
-  pred = lib,
+  lib = NULL,
+  pred = NULL,
   E = 3,
   tau = 1,
   k = E + 2,
@@ -40,7 +40,7 @@
 
 \item{target}{Name of target variable.}
 
-\item{lib}{Libraries indices.}
+\item{lib}{(optional) Libraries indices.}
 
 \item{pred}{(optional) Predictions indices.}
 

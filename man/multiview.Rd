@@ -11,8 +11,8 @@
   columns,
   target,
   nvar,
-  lib,
-  pred = lib,
+  lib = NULL,
+  pred = NULL,
   E = 3,
   tau = 1,
   k = E + 2,
@@ -27,8 +27,8 @@
   columns,
   target,
   nvar,
-  lib,
-  pred = lib,
+  lib = NULL,
+  pred = NULL,
   E = 3,
   tau = 1,
   k = E + 2,
@@ -46,7 +46,7 @@
 
 \item{nvar}{Number of variable combinations.}
 
-\item{lib}{Libraries indices.}
+\item{lib}{(optional) Libraries indices.}
 
 \item{pred}{(optional) Predictions indices.}
 
