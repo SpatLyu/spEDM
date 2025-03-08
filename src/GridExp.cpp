@@ -19,7 +19,7 @@ int RcppLocateGridIndices(int curRow, int curCol,
 
 // [[Rcpp::export]]
 Rcpp::NumericVector RcppRowColFromGrid(int cellNum, int totalCol){
-  std::vector<int> result = RowColFromGrid(int cellNum, int totalCol);
+  std::vector<int> result = RowColFromGrid(cellNum, totalCol);
   for (int& val : result) {
     val += 1;
   }
