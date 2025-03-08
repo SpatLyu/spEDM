@@ -467,8 +467,8 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
     } else {
       for (int i = 0; i < lib.nrow(); ++i) {
         // Convert to 0-based index
-        currow = lib(i,0);
-        curcol = lib(i,1);
+        int currow = lib(i,0);
+        int curcol = lib(i,1);
         if (!std::isnan(yMatrix_cpp[currow-1][curcol-1])){
           lib_cpp1.push_back(LocateGridIndices(currow, curcol, numRows, numCols));
         }
@@ -499,8 +499,8 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
     } else {
       for (int i = 0; i < pred.nrow(); ++i) {
         // Convert to 0-based index
-        currow = pred(i,0);
-        curcol = pred(i,1);
+        int currow = pred(i,0);
+        int curcol = pred(i,1);
         if (!std::isnan(yMatrix_cpp[currow-1][curcol-1])){
           pred_cpp1.push_back(LocateGridIndices(currow, curcol, numRows, numCols));
         }
@@ -637,8 +637,8 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
     } else {
       for (int i = 0; i < lib.nrow(); ++i) {
         // Convert to 0-based index
-        currow = lib(i,0);
-        curcol = lib(i,1);
+        int currow = lib(i,0);
+        int curcol = lib(i,1);
         if (!std::isnan(yMatrix_cpp[currow-1][curcol-1])){
           lib_cpp1.push_back(LocateGridIndices(currow, curcol, numRows, numCols));
         }
@@ -669,8 +669,8 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
     } else {
       for (int i = 0; i < pred.nrow(); ++i) {
         // Convert to 0-based index
-        currow = pred(i,0);
-        curcol = pred(i,1);
+        int currow = pred(i,0);
+        int curcol = pred(i,1);
         if (!std::isnan(yMatrix_cpp[currow-1][curcol-1])){
           pred_cpp1.push_back(LocateGridIndices(currow, curcol, numRows, numCols));
         }
