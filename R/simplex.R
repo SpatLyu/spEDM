@@ -1,18 +1,20 @@
 methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
 
-.simplex_sf_method = \(data,target,lib,pred = lib,E = 1:10,tau = 1,k = E+2,
+.simplex_sf_method = \(data,target,lib = NULL,pred = NULL,E = 1:10,tau = 1,k = E+2,
                        nb = NULL, threads = detectThreads(), trend.rm = TRUE){
   vec = .uni_lattice(data,target,trend.rm)
-  lib = .check_indices(lib,length(vec))
-  pred = .check_indices(pred,length(vec))
+  if (is.null(lib)) lib = 1:nrow(data)
+  if (is.null(pred)) pred = lib
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   res = RcppSimplex4Lattice(vec,nb,lib,pred,E,k,tau,threads)
   return(.bind_xmapself(res,target))
 }
 
-.simplex_spatraster_method = \(data,target,lib,pred = lib,E = 1:10,tau = 1,k = E+2,
-                               threads = detectThreads(), trend.rm = TRUE){
+.simplex_spatraster_method = \(data,target,lib = NULL,pred = NULL,E = 1:10,tau = 1,
+                               k = E+2, threads = detectThreads(), trend.rm = TRUE){
   mat = .uni_grid(data,target,trend.rm)
+  if (is.null(lib)) lib = .internal_samplemat(mat)
+  if (is.null(pred)) pred = .internal_samplemat(mat,floor(sqrt(length(mat))))
   res = RcppSimplex4Grid(mat,lib,pred,E,k,tau,threads)
   return(.bind_xmapself(res,target))
 }
@@ -20,7 +22,7 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
 #' simplex forecast
 #'
 #' @inheritParams embedded
-#' @param lib Libraries indices.
+#' @param lib (optional) Libraries indices.
 #' @param pred (optional) Predictions indices.
 #' @param k (optional) Number of nearest neighbors used for prediction.
 #' @param threads (optional) Number of threads.
