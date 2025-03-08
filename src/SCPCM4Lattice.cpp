@@ -171,7 +171,6 @@ std::vector<double> PartialSMap4Lattice(
  *   - y: Spatial cross-section series used as the target (should align with x_vectors).
  *   - controls: Cross-sectional data of control variables (stored by row).
  *   - nb_vec: Neighbor indices vector of the spatial units.
- *   - lib_indices: A boolean vector indicating which states to include when searching for neighbors.
  *   - lib_size: Size of the library used for cross mapping.
  *   - max_lib_size: Maximum size of the library.
  *   - possible_lib_indices: Indices of possible library states.
@@ -194,7 +193,6 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
     const std::vector<double>& y,                       // Spatial cross-section series to be used as the target (should line up with vectors)
     const std::vector<std::vector<double>>& controls,   // Cross-sectional data of control variables (**stored by row**)
     const std::vector<std::vector<int>>& nb_vec,        // Neighbor indices vector of the spatial units
-    const std::vector<bool>& lib_indices,               // Vector of T/F values (which states to include when searching for neighbors)
     int lib_size,                                       // Size of the library
     int max_lib_size,                                   // Maximum size of the library
     const std::vector<int>& possible_lib_indices,       // Indices of possible library states
@@ -209,23 +207,14 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
   int n = x_vectors.size();
   std::vector<PartialCorRes> x_xmap_y;
   std::vector<double> rho;
+  std::vector<bool> lib_indices(n, false);
 
   if (lib_size == max_lib_size) { // No possible library variation if using all vectors
-    std::vector<bool> lib_indices(n, false);
     for (int idx : possible_lib_indices) {
       lib_indices[idx] = true;
     }
-
-    // Run partial cross map and store results
-    if (simplex) {
-      rho = PartialSimplex4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, taus, b, cumulate);
-    } else {
-      rho = PartialSMap4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, taus, b, theta, cumulate);
-    }
-    x_xmap_y.emplace_back(lib_size, rho[0], rho[1]);
   } else {
     for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
-      std::vector<bool> lib_indices(n, false);
       // Setup changing library
       if (start_lib + lib_size > max_lib_size) { // Loop around to beginning of lib indices
         for (int i = start_lib; i < max_lib_size; ++i) {
@@ -240,16 +229,15 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
           lib_indices[possible_lib_indices[i]] = true;
         }
       }
-
-      // Run partial cross map and store results
-      if (simplex) {
-        rho = PartialSimplex4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, taus, b, cumulate);
-      } else {
-        rho = PartialSMap4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, taus, b, theta, cumulate);
-      }
-      x_xmap_y.emplace_back(lib_size, rho[0], rho[1]);
-    }
   }
+
+  // Run partial cross map and store results
+  if (simplex) {
+    rho = PartialSimplex4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, taus, b, cumulate);
+  } else {
+    rho = PartialSMap4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, taus, b, theta, cumulate);
+  }
+  x_xmap_y.emplace_back(lib_size, rho[0], rho[1]);
 
   return x_xmap_y;
 }

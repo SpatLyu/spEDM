@@ -92,7 +92,6 @@ std::vector<double> PartialSMap4Lattice(
  *   - y: Spatial cross-section series used as the target (should align with x_vectors).
  *   - controls: Cross-sectional data of control variables (stored by row).
  *   - nb_vec: Neighbor indices vector of the spatial units.
- *   - lib_indices: A boolean vector indicating which states to include when searching for neighbors.
  *   - lib_size: Size of the library used for cross mapping.
  *   - max_lib_size: Maximum size of the library.
  *   - possible_lib_indices: Indices of possible library states.
@@ -115,7 +114,6 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
     const std::vector<double>& y,                       // Spatial cross-section series to be used as the target (should line up with vectors)
     const std::vector<std::vector<double>>& controls,   // Cross-sectional data of control variables (**stored by row**)
     const std::vector<std::vector<int>>& nb_vec,        // Neighbor indices vector of the spatial units
-    const std::vector<bool>& lib_indices,               // Vector of T/F values (which states to include when searching for neighbors)
     int lib_size,                                       // Size of the library
     int max_lib_size,                                   // Maximum size of the library
     const std::vector<int>& possible_lib_indices,       // Indices of possible library states
