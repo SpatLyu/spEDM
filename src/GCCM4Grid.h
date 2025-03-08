@@ -50,6 +50,39 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
     bool row_size_mark);
 
 /**
+ * Perform Grid-based Geographical Convergent Cross Mapping (GCCM) for a single library size.
+ *
+ * This function follows the same library construction logic as GCCMSingle4Lattice, where libraries
+ * are created by selecting consecutive indices from possible_lib_indices with possible wraparound.
+ *
+ * @param xEmbedings           State-space embeddings for the predictor variable (each row is a spatial vector)
+ * @param yPred                Target spatial cross-section series
+ * @param lib_size             Number of consecutive spatial units to include in each library
+ * @param max_lib_size         Maximum possible library size (total valid spatial units)
+ * @param possible_lib_indices Integer vector indicating the indices of eligible spatial units for library construction
+ * @param pred_indices         Boolean vector indicating spatial units to predict
+ * @param totalRow             Total rows in spatial grid
+ * @param totalCol             Total columns in spatial grid
+ * @param b                    Number of nearest neighbors for prediction
+ * @param simplex              Use simplex projection if true, S-mapping if false
+ * @param theta                Distance weighting parameter for S-mapping
+ *
+ * @return A vector of pairs, where each pair contains the library size and the corresponding cross mapping result.
+ */
+std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
+    const std::vector<std::vector<double>>& xEmbedings,
+    const std::vector<double>& yPred,
+    int lib_size,
+    int max_lib_size,
+    const std::vector<int>& possible_lib_indices,
+    const std::vector<bool>& pred_indices,
+    int totalRow,
+    int totalCol,
+    int b,
+    bool simplex,
+    double theta);
+
+/**
  * Perform Geographical Convergent Cross Mapping (GCCM) for spatial grid data.
  *
  * This function calculates the cross mapping between predictor variables (xMatrix) and response variables (yMatrix)
