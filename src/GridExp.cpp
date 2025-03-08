@@ -657,7 +657,8 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
   } else {
     if (lib_dim == 1){
       for (int i = 0; i < lib.nrow(); ++i) {
-        lib_cpp1.push_back(lib(i, 0));
+        std::vector<int> rowcolnum = RowColFromGrid(lib(i, 0) - 1, numCols);
+        lib_cpp2[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
       }
     } else {
       for (int i = 0; i < lib.nrow(); ++i) {
@@ -689,7 +690,8 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
   } else {
     if (pred_dim == 1){
       for (int i = 0; i < pred.nrow(); ++i) {
-        pred_cpp1.push_back(pred(i, 0));
+        std::vector<int> rowcolnum = RowColFromGrid(pred(i, 0) - 1, numCols);
+        pred_cpp2[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
       }
     } else {
       for (int i = 0; i < pred.nrow(); ++i) {
