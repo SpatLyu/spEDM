@@ -20,7 +20,6 @@
  * Parameters:
  *   - x_vectors: Reconstructed state-space (each row represents a separate vector/state).
  *   - y: Spatial cross-section series used as the target (should align with x_vectors).
- *   - lib_indices: A boolean vector indicating which states to include when searching for neighbors.
  *   - lib_size: Size of the library used for cross mapping.
  *   - max_lib_size: Maximum size of the library.
  *   - possible_lib_indices: Indices of possible library states.
@@ -37,7 +36,6 @@
 std::vector<std::pair<int, double>> GCCMSingle4Lattice(
     const std::vector<std::vector<double>>& x_vectors,
     const std::vector<double>& y,
-    const std::vector<bool>& lib_indices,
     int lib_size,
     int max_lib_size,
     const std::vector<int>& possible_lib_indices,

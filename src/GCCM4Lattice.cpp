@@ -20,7 +20,6 @@
  * Parameters:
  *   - x_vectors: Reconstructed state-space (each row represents a separate vector/state).
  *   - y: Spatial cross-section series used as the target (should align with x_vectors).
- *   - lib_indices: A boolean vector indicating which states to include when searching for neighbors.
  *   - lib_size: Size of the library used for cross mapping.
  *   - max_lib_size: Maximum size of the library.
  *   - possible_lib_indices: Indices of possible library states.
@@ -37,7 +36,6 @@
 std::vector<std::pair<int, double>> GCCMSingle4Lattice(
     const std::vector<std::vector<double>>& x_vectors,
     const std::vector<double>& y,
-    const std::vector<bool>& lib_indices,
     int lib_size,
     int max_lib_size,
     const std::vector<int>& possible_lib_indices,
@@ -149,66 +147,19 @@ std::vector<std::vector<double>> GCCM4Lattice(
 
   int n = x_vectors.size();
 
-  // Initialize lib_indices and pred_indices with all false
-  std::vector<bool> lib_indices(n, false);
-  std::vector<bool> pred_indices(n, false);
-
-  // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
+  std::vector<int> possible_lib_indices;
   for (size_t i = 0; i < lib.size(); ++i) {
-    // // Do not strictly exclude spatial units with embedded state-space vectors containing NaN values from participating in cross mapping.
-    // if (!checkOneDimVectorHasNaN(x_vectors[lib[i] - 1])){
-    //   lib_indices[lib[i] - 1] = true;
-    // }
-    lib_indices[lib[i] - 1] = true; // Convert to 0-based index
+    possible_lib_indices.push_back(lib[i]-1);
   }
+  int max_lib_size = static_cast<int>(possible_lib_indices.size()); // Maximum lib size
+
+  std::vector<bool> pred_indices(n, false);
   for (size_t i = 0; i < pred.size(); ++i) {
     // // Do not strictly exclude spatial units with embedded state-space vectors containing NaN values from participating in cross mapping.
     // if (!checkOneDimVectorHasNaN(x_vectors[pred[i] - 1])){
     //   pred_indices[pred[i] - 1] = true;
     // }
     pred_indices[pred[i] - 1] = true; // Convert to 0-based index
-  }
-
-  // /* Aligned with the previous implementation,
-  //  * now deprecated in the source C++ code.
-  //  *  ----- Wenbo Lv, written on 2025.02.10
-  //  */
-  // for (int i = 0, i < (E - 1) * tau, ++i){
-  //   lib_indices[lib[i] - 1] = false;
-  //   pred_indices[pred[i] - 1] = false;
-  // }
-
-  // /* Do not uncomment those codes;
-  //  * it's the previous implementation using `std::vector<std::pair<int, int>>`  input for lib and pred,
-  //  * kept for reference. ----- Wenbo Lv, written on 2025.02.09
-  //  */
-  // // Setup pred_indices
-  // std::vector<bool> pred_indices(n, false);
-  //
-  // for (const auto& p : pred) {
-  //   int row_start = p.first + (E - 1) * tau;
-  //   int row_end = p.second;
-  //   if (row_end > row_start && row_start >= 0 && row_end < n) {
-  //     std::fill(pred_indices.begin() + row_start, pred_indices.begin() + row_end + 1, true);
-  //   }
-  // }
-  //
-  // // Setup lib_indices
-  // std::vector<bool> lib_indices(n, false);
-  // for (const auto& l : lib) {
-  //   int row_start = l.first + (E - 1) * tau;
-  //   int row_end = l.second;
-  //   if (row_end > row_start && row_start >= 0 && row_end < n) {
-  //     std::fill(lib_indices.begin() + row_start, lib_indices.begin() + row_end + 1, true);
-  //   }
-  // }
-
-  int max_lib_size = std::accumulate(lib_indices.begin(), lib_indices.end(), 0); // Maximum lib size
-  std::vector<int> possible_lib_indices;
-  for (int i = 0; i < n; ++i) {
-    if (lib_indices[i]) {
-      possible_lib_indices.push_back(i);
-    }
   }
 
   std::vector<int> unique_lib_sizes(lib_sizes.begin(), lib_sizes.end());
@@ -230,7 +181,7 @@ std::vector<std::vector<double>> GCCM4Lattice(
 
   // // Sequential version of the for loop
   // for (int lib_size : unique_lib_sizes) {
-  //   auto results = GCCMSingle4Lattice(x_vectors, y, lib_indices, lib_size, max_lib_size, possible_lib_indices, pred_indices, b, simplex, theta);
+  //   auto results = GCCMSingle4Lattice(x_vectors, y, lib_size, max_lib_size, possible_lib_indices, pred_indices, b, simplex, theta);
   //   x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
   // }
 
@@ -239,14 +190,14 @@ std::vector<std::vector<double>> GCCM4Lattice(
     RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
     RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
       int lib_size = unique_lib_sizes[i];
-      auto results = GCCMSingle4Lattice(x_vectors, y, lib_indices, lib_size, max_lib_size, possible_lib_indices, pred_indices, b, simplex, theta);
+      auto results = GCCMSingle4Lattice(x_vectors, y, lib_size, max_lib_size, possible_lib_indices, pred_indices, b, simplex, theta);
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
       bar++;
     }, threads_sizet);
   } else {
     RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
       int lib_size = unique_lib_sizes[i];
-      auto results = GCCMSingle4Lattice(x_vectors, y, lib_indices, lib_size, max_lib_size, possible_lib_indices, pred_indices, b, simplex, theta);
+      auto results = GCCMSingle4Lattice(x_vectors, y, lib_size, max_lib_size, possible_lib_indices, pred_indices, b, simplex, theta);
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
     }, threads_sizet);
   }
