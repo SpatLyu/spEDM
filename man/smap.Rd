@@ -71,6 +71,6 @@ smap forecast
 \examples{
 columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData"))
 \donttest{
-smap(columbus,target = "INC",lib = 1:49)
+smap(columbus,target = "INC")
 }
 }
