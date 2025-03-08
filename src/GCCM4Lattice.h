@@ -27,6 +27,7 @@
  *   - b: Number of neighbors to use for simplex projection.
  *   - simplex: If true, uses simplex projection for prediction; otherwise, uses s-mapping.
  *   - theta: Distance weighting parameter for local neighbors in the manifold (used in s-mapping).
+ *   - threads: The number of threads to use for parallel processing.
  *
  * Returns:
  *   A vector of pairs, where each pair consists of:
@@ -42,7 +43,8 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
     const std::vector<bool>& pred_indices,
     int b,
     bool simplex,
-    double theta
+    double theta,
+    size_t threads
 );
 
 /**
