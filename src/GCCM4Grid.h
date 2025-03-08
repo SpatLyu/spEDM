@@ -66,6 +66,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
  * @param b                    Number of nearest neighbors for prediction
  * @param simplex              Use simplex projection if true, S-mapping if false
  * @param theta                Distance weighting parameter for S-mapping
+ * @param threads              The number of threads to use for parallel processing
  *
  * @return A vector of pairs, where each pair contains the library size and the corresponding cross mapping result.
  */
@@ -80,7 +81,8 @@ std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
     int totalCol,
     int b,
     bool simplex,
-    double theta);
+    double theta,
+    size_t threads);
 
 /**
  * Perform Geographical Convergent Cross Mapping (GCCM) for spatial grid data.
