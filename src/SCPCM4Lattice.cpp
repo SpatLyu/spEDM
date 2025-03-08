@@ -226,6 +226,7 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
     x_xmap_y.emplace_back(lib_size, rho[0], rho[1]);
     return x_xmap_y;
   } else {
+
     // Precompute valid indices for the library
     std::vector<std::vector<int>> valid_lib_indices;
     for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
@@ -266,7 +267,7 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
         rho = PartialSMap4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, taus, b, theta, cumulate);
       }
       // Directly initialize a PartialCorRes struct with the three values
-      PartialCorRes result(libsize, rho[0], rho[1]);
+      PartialCorRes result(lib_size, rho[0], rho[1]);
       x_xmap_y[i] = result;
     }, threads);
 
@@ -385,33 +386,10 @@ std::vector<std::vector<double>> SCPCM4Lattice(
   // Initialize the result container
   std::vector<PartialCorRes> x_xmap_y;
 
-  // Sequential version of the for loop
-  // for (int lib_size : unique_lib_sizes) {
-  //   RcppThread::Rcout << "lib_size: " << lib_size << "\n";
-  //   auto results = SCPCMSingle4Lattice(
-  //     x_vectors,
-  //     y,
-  //     controls,
-  //     nb_vec,
-  //     lib_size,
-  //     max_lib_size,
-  //     possible_lib_indices,
-  //     pred_indices,
-  //     conEs,
-  //     contaus,
-  //     bs,
-  //     simplex,
-  //     theta,
-  //     cumulate
-  //   );
-  //   x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
-  // }
-
-  // Perform the operations using RcppThread
+  // Iterate over each library size
   if (progressbar) {
     RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
-    RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
-      int lib_size = unique_lib_sizes[i];
+    for (int lib_size : unique_lib_sizes) {
       auto results = SCPCMSingle4Lattice(
         x_vectors,
         y,
@@ -426,14 +404,14 @@ std::vector<std::vector<double>> SCPCM4Lattice(
         bs,
         simplex,
         theta,
+        threads_sizet,
         cumulate
       );
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
       bar++;
-    }, threads_sizet);
+    }
   } else {
-    RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
-      int lib_size = unique_lib_sizes[i];
+    for (int lib_size : unique_lib_sizes) {
       auto results = SCPCMSingle4Lattice(
         x_vectors,
         y,
@@ -448,10 +426,11 @@ std::vector<std::vector<double>> SCPCM4Lattice(
         bs,
         simplex,
         theta,
+        threads_sizet,
         cumulate
       );
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
-    }, threads_sizet);
+    }
   }
 
   // Group by the first int and store second and third values as pairs
