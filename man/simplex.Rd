@@ -65,6 +65,6 @@ simplex forecast
 \examples{
 columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData"))
 \donttest{
-simplex(columbus,target = "CRIME",lib = 1:49)
+simplex(columbus,target = "CRIME")
 }
 }
