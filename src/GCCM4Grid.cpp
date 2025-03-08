@@ -602,8 +602,7 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
   // Iterate over each library size
   if (progressbar) {
     RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
-    RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
-      int lib_size = unique_lib_sizes[i];
+    for (int lib_size : unique_lib_sizes) {
       auto results = GCCMSingle4GridOneDim(
         xEmbedings,
         yPred,
@@ -615,14 +614,14 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
         totalCol,
         b,
         simplex,
-        theta
+        theta,
+        threads_sizet
       );
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
       bar++;
-    }, threads_sizet);
+    }
   } else {
-    RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
-      int lib_size = unique_lib_sizes[i];
+    for (int lib_size : unique_lib_sizes) {
       auto results = GCCMSingle4GridOneDim(
         xEmbedings,
         yPred,
@@ -634,10 +633,11 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
         totalCol,
         b,
         simplex,
-        theta
+        theta,
+        threads_sizet
       );
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
-    }, threads_sizet);
+    }
   }
 
   // Group by the first int (library size) and compute the mean
