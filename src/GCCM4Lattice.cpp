@@ -90,7 +90,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
     }
 
     // Preallocate the result vector to avoid out-of-bounds access
-    std::vector<std::pair<int, double>> x_xmap_y(valid_indices.size());
+    std::vector<std::pair<int, double>> x_xmap_y(valid_lib_indices.size());
 
     // Perform the operations using RcppThread
     RcppThread::parallelFor(0, valid_lib_indices.size(), [&](size_t i) {
@@ -203,27 +203,37 @@ std::vector<std::vector<double>> GCCM4Lattice(
   // Initialize the result container
   std::vector<std::pair<int, double>> x_xmap_y;
 
-  // // Sequential version of the for loop
-  // for (int lib_size : unique_lib_sizes) {
-  //   auto results = GCCMSingle4Lattice(x_vectors, y, lib_size, max_lib_size, possible_lib_indices, pred_indices, b, simplex, theta);
-  //   x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
-  // }
-
-  // Perform the operations using RcppThread
+  // Iterate over each library size
   if (progressbar) {
     RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
-    RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
-      int lib_size = unique_lib_sizes[i];
-      auto results = GCCMSingle4Lattice(x_vectors, y, lib_size, max_lib_size, possible_lib_indices, pred_indices, b, simplex, theta);
+    for (int lib_size : unique_lib_sizes) {
+      auto results = GCCMSingle4Lattice(x_vectors,
+                                        y,
+                                        lib_size,
+                                        max_lib_size,
+                                        possible_lib_indices,
+                                        pred_indices,
+                                        b,
+                                        simplex,
+                                        theta,
+                                        threads_sizet);
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
       bar++;
-    }, threads_sizet);
+    }
   } else {
-    RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
-      int lib_size = unique_lib_sizes[i];
-      auto results = GCCMSingle4Lattice(x_vectors, y, lib_size, max_lib_size, possible_lib_indices, pred_indices, b, simplex, theta);
+    for (int lib_size : unique_lib_sizes) {
+      auto results = GCCMSingle4Lattice(x_vectors,
+                                        y,
+                                        lib_size,
+                                        max_lib_size,
+                                        possible_lib_indices,
+                                        pred_indices,
+                                        b,
+                                        simplex,
+                                        theta,
+                                        threads_sizet);
       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
-    }, threads_sizet);
+    }
   }
 
   // Group by the first int and compute the mean
