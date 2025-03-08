@@ -26,6 +26,20 @@ int LocateGridIndices(int curRow, int curCol,
                       int totalRow, int totalCol);
 
 /**
+ * Converts a 1D grid index (cell number) to a 2D grid position (row, column) in row-major order.
+ * This function determines the corresponding row and column indices based on a given
+ * one-dimensional index within a grid of specified dimensions.
+ *
+ * Parameters:
+ *   cellNum  - The 1D index of the cell (0-based indexing).
+ *   totalCol - The total number of columns in the grid.
+ *
+ * Returns:
+ *   A std::vector<int> containing the row index and column index (both 0-based indexing).
+ */
+std::vector<int> RowColFromGrid(int cellNum, int totalCol);
+
+/**
  * Converts a 2D grid data matrix (vector of vectors) to a 1D vector by concatenating the rows.
  * This function iterates over each row of the input matrix and appends the elements to the resulting vector.
  *

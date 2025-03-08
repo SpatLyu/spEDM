@@ -11,6 +11,23 @@
 // #include <Rcpp.h>
 
 // [[Rcpp::export]]
+int RcppLocateGridIndices(int curRow, int curCol,
+                          int totalRow, int totalCol){
+  int indices = LocateGridIndices(curRow,curCol,totalRow,totalCol);
+  return indices + 1;
+};
+
+// [[Rcpp::export]]
+Rcpp::NumericVector RcppRowColFromGrid(int cellNum, int totalCol){
+  std::vector<int> result = RowColFromGrid(cellNum - 1, totalCol);
+  for (int& val : result) {
+    val += 1;
+  }
+  // Convert the result back to Rcpp::NumericVector
+  return Rcpp::wrap(result);
+};
+
+// [[Rcpp::export]]
 Rcpp::NumericMatrix RcppLaggedVar4Grid(const Rcpp::NumericMatrix& mat, int lagNum) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = mat.nrow();
@@ -69,13 +86,6 @@ Rcpp::NumericMatrix RcppGenGridEmbeddings(const Rcpp::NumericMatrix& mat,
 
   return result;
 }
-
-// [[Rcpp::export]]
-int RcppLocateGridIndices(int curRow, int curCol,
-                          int totalRow, int totalCol){
-  int indices = LocateGridIndices(curRow,curCol,totalRow,totalCol);
-  return indices + 1;
-};
 
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
