@@ -547,6 +547,8 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
     int threads,
     bool cumulate,
     bool progressbar) {
+  int numRows = yMatrix.nrow();
+  int numCols = yMatrix.ncol();
 
   // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
   std::vector<std::vector<double>> xMatrix_cpp(xMatrix.nrow(), std::vector<double>(xMatrix.ncol()));
@@ -590,27 +592,62 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
   int lib_dim = lib.ncol();
   std::vector<int> lib_cpp1;
   std::vector<std::pair<int, int>> lib_cpp2(lib.nrow());
-  if (lib_dim == 1){
-    for (int i = 0; i < lib.nrow(); ++i) {
-      lib_cpp1.push_back(lib(i, 0));
+  if (libsizes_dim == 1){
+    if (lib_dim == 1){
+      for (int i = 0; i < lib.nrow(); ++i) {
+        lib_cpp1.push_back(lib(i, 0));
+      }
+    } else {
+      for (int i = 0; i < lib.nrow(); ++i) {
+        // Convert to 0-based index
+        currow = lib(i,0);
+        curcol = lib(i,1);
+        if (!std::isnan(yMatrix_cpp[currow-1][curcol-1])){
+          lib_cpp1.push_back(LocateGridIndices(currow, curcol, numRows, numCols));
+        }
+      }
     }
   } else {
-    for (int i = 0; i < lib.nrow(); ++i) {
-      lib_cpp2[i] = std::make_pair(lib(i, 0), lib(i, 1));
+    if (lib_dim == 1){
+      for (int i = 0; i < lib.nrow(); ++i) {
+        lib_cpp1.push_back(lib(i, 0));
+      }
+    } else {
+      for (int i = 0; i < lib.nrow(); ++i) {
+        lib_cpp2[i] = std::make_pair(lib(i, 0), lib(i, 1));
+      }
     }
   }
+
 
   // Convert pred to a fundamental C++ data type
   int pred_dim = pred.ncol();
   std::vector<int> pred_cpp1;
   std::vector<std::pair<int, int>> pred_cpp2(pred.nrow());
-  if (pred_dim == 1){
-    for (int i = 0; i < pred.nrow(); ++i) {
-      pred_cpp1.push_back(pred(i, 0));
+  if (predsizes_dim == 1){
+    if (pred_dim == 1){
+      for (int i = 0; i < pred.nrow(); ++i) {
+        pred_cpp1.push_back(pred(i, 0));
+      }
+    } else {
+      for (int i = 0; i < pred.nrow(); ++i) {
+        // Convert to 0-based index
+        currow = pred(i,0);
+        curcol = pred(i,1);
+        if (!std::isnan(yMatrix_cpp[currow-1][curcol-1])){
+          pred_cpp1.push_back(LocateGridIndices(currow, curcol, numRows, numCols));
+        }
+      }
     }
   } else {
-    for (int i = 0; i < pred.nrow(); ++i) {
-      pred_cpp2[i] = std::make_pair(pred(i, 0), pred(i, 1));
+    if (pred_dim == 1){
+      for (int i = 0; i < pred.nrow(); ++i) {
+        pred_cpp1.push_back(pred(i, 0));
+      }
+    } else {
+      for (int i = 0; i < pred.nrow(); ++i) {
+        pred_cpp2[i] = std::make_pair(pred(i, 0), pred(i, 1));
+      }
     }
   }
 
