@@ -75,8 +75,8 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 #' @param k (optional) Number of nearest neighbors to use for prediction.
 #' @param theta (optional) Weighting parameter for distances, useful when `algorithm` is `smap`.
 #' @param algorithm (optional) Algorithm used for prediction.
-#' @param lib (optional) Row numbers(`vector` for lattice data) or row-column numbers(`matrix` for grid data) used as libraries.
-#' @param pred (optional) Row numbers(`vector` for lattice data) or row-column numbers(`matrix` for grid data) used for predictions.
+#' @param lib (optional) Libraries indices.
+#' @param pred (optional) Predictions indices.
 #' @param nb (optional) The neighbours list.
 #' @param threads (optional) Number of threads.
 #' @param bidirectional (optional) whether to identify bidirectional causal associations.
