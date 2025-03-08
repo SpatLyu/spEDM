@@ -646,6 +646,11 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
   return final_results;
 }
 
+/* Previously executed in parallel at the lib_sizes level for each lib_size,
+ * retained for potential activation.
+ *     ----- Wenbo Lv; 2025.03.08
+ */
+
 // #include <vector>
 // #include <algorithm>
 // #include <cmath>
@@ -734,6 +739,109 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
 //         rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
 //       }
 //       x_xmap_y.emplace_back(libsize, rho); // Store the product of row and column library sizes
+//     }
+//   }
+//
+//   return x_xmap_y;
+// }
+//
+// /**
+//  * Perform Grid-based Geographical Convergent Cross Mapping (GCCM) for a single library size.
+//  *
+//  * This function follows the same library construction logic as GCCMSingle4Lattice, where libraries
+//  * are created by selecting consecutive indices from possible_lib_indices with possible wraparound.
+//  *
+//  * @param xEmbedings           State-space embeddings for the predictor variable (each row is a spatial vector)
+//  * @param yPred                Target spatial cross-section series
+//  * @param lib_size             Number of consecutive spatial units to include in each library
+//  * @param max_lib_size         Maximum possible library size (total valid spatial units)
+//  * @param possible_lib_indices Integer vector indicating the indices of eligible spatial units for library construction
+//  * @param pred_indices         Boolean vector indicating spatial units to predict
+//  * @param totalRow             Total rows in spatial grid
+//  * @param totalCol             Total columns in spatial grid
+//  * @param b                    Number of nearest neighbors for prediction
+//  * @param simplex              Use simplex projection if true, S-mapping if false
+//  * @param theta                Distance weighting parameter for S-mapping
+//  *
+//  * @return A vector of pairs, where each pair contains the library size and the corresponding cross mapping result.
+//  */
+// std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
+//     const std::vector<std::vector<double>>& xEmbedings,
+//     const std::vector<double>& yPred,
+//     int lib_size,
+//     int max_lib_size,
+//     const std::vector<int>& possible_lib_indices,
+//     const std::vector<bool>& pred_indices,
+//     int totalRow,
+//     int totalCol,
+//     int b,
+//     bool simplex,
+//     double theta) {
+//   int n = yPred.size();
+//   std::vector<std::pair<int, double>> x_xmap_y;
+//
+//   if (lib_size == max_lib_size) { // No possible library variation if using all vectors
+//     std::vector<bool> lib_indices(n, false);
+//     for (int idx : possible_lib_indices) {
+//       lib_indices[idx] = true;
+//     }
+//
+//     // Check if more than half of the library is NA
+//     int na_count = 0;
+//     for (size_t i = 0; i < lib_indices.size(); ++i) {
+//       if (lib_indices[i] && std::isnan(yPred[i])) {
+//         ++na_count;
+//       }
+//     }
+//
+//     double rho = std::numeric_limits<double>::quiet_NaN();
+//     if (na_count <= max_lib_size / 2.0) {
+//       // Run cross map and store results
+//       if (simplex) {
+//         rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
+//       } else {
+//         rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
+//       }
+//     }
+//
+//     x_xmap_y.emplace_back(lib_size, rho); // Store the product of row and column library sizes
+//   } else {
+//     for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
+//       std::vector<bool> lib_indices(n, false);
+//       // Setup changing library
+//       if (start_lib + lib_size > max_lib_size) { // Loop around to beginning of lib indices
+//         for (int i = start_lib; i < max_lib_size; ++i) {
+//           lib_indices[possible_lib_indices[i]] = true;
+//         }
+//         int num_vectors_remaining = lib_size - (max_lib_size - start_lib);
+//         for (int i = 0; i < num_vectors_remaining; ++i) {
+//           lib_indices[possible_lib_indices[i]] = true;
+//         }
+//       } else {
+//         for (int i = start_lib; i < start_lib + lib_size; ++i) {
+//           lib_indices[possible_lib_indices[i]] = true;
+//         }
+//       }
+//
+//       // Check if more than half of the library is NA
+//       int na_count = 0;
+//       for (size_t i = 0; i < lib_indices.size(); ++i) {
+//         if (lib_indices[i] && std::isnan(yPred[i])) {
+//           ++na_count;
+//         }
+//       }
+//
+//       double rho = std::numeric_limits<double>::quiet_NaN();
+//       if (na_count <= max_lib_size / 2.0) {
+//         // Run cross map and store results
+//         if (simplex) {
+//           rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
+//         } else {
+//           rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
+//         }
+//       }
+//
+//       x_xmap_y.emplace_back(lib_size, rho); // Store the product of row and column library sizes
 //     }
 //   }
 //
@@ -890,6 +998,168 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
 //       int lib_size_row = unique_lib_size_pairs[i].first;
 //       int lib_size_col = unique_lib_size_pairs[i].second;
 //       auto results = GCCMSingle4Grid(xEmbedings, yPred, {lib_size_row, lib_size_col}, pred_indices, totalRow, totalCol, b, simplex, theta, row_size_mark);
+//       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+//     }, threads_sizet);
+//   }
+//
+//   // Group by the first int (library size) and compute the mean
+//   std::map<int, std::vector<double>> grouped_results;
+//   for (const auto& result : x_xmap_y) {
+//     grouped_results[result.first].push_back(result.second);
+//   }
+//
+//   std::vector<std::vector<double>> final_results;
+//   for (const auto& group : grouped_results) {
+//     double mean_value = CppMean(group.second, true);
+//     final_results.push_back({static_cast<double>(group.first), mean_value});
+//   }
+//
+//   int n = pred.size();
+//   // Calculate significance and confidence interval for each result
+//   for (size_t i = 0; i < final_results.size(); ++i) {
+//     double rho = final_results[i][1];
+//     double significance = CppCorSignificance(rho, n);
+//     std::vector<double> confidence_interval = CppCorConfidence(rho, n);
+//
+//     final_results[i].push_back(significance);
+//     final_results[i].push_back(confidence_interval[0]);
+//     final_results[i].push_back(confidence_interval[1]);
+//   }
+//
+//   return final_results;
+// }
+//
+// /**
+//  * Perform Geographical Convergent Cross Mapping (GCCM) for spatial grid data.
+//  *
+//  * This function calculates the cross mapping between predictor variables (xMatrix) and response variables (yMatrix)
+//  * over a 2D grid, using either Simplex Projection or S-Mapping. It supports parallel processing and progress tracking.
+//  *
+//  * @param xMatrix      A 2D matrix of the predictor variable's values (spatial cross-section data).
+//  * @param yMatrix      A 2D matrix of the response variable's values (spatial cross-section data).
+//  * @param lib_sizes    Number of consecutive spatial units to include in each library.
+//  * @param lib          A vector of representing the indices of spatial units to be the library.
+//  * @param pred         A vector of representing the indices of spatial units to be predicted.
+//  * @param E            The number of dimensions for attractor reconstruction.
+//  * @param tau          The step of spatial lags for prediction.
+//  * @param b            The number of nearest neighbors to use for prediction.
+//  * @param simplex      If true, use Simplex Projection; if false, use S-Mapping.
+//  * @param theta        The distance weighting parameter for S-Mapping (ignored if simplex is true).
+//  * @param threads      The number of threads to use for parallel processing.
+//  * @param progressbar  If true, display a progress bar during computation.
+//  *
+//  * @return A 2D vector where each row contains the library size, mean cross mapping result,
+//  *         significance, and confidence interval bounds.
+//  */
+// std::vector<std::vector<double>> GCCM4GridOneDim(
+//     const std::vector<std::vector<double>>& xMatrix,
+//     const std::vector<std::vector<double>>& yMatrix,
+//     const std::vector<int>& lib_sizes,
+//     const std::vector<int>& lib,
+//     const std::vector<int>& pred,
+//     int E,
+//     int tau,
+//     int b,
+//     bool simplex,
+//     double theta,
+//     int threads,
+//     bool progressbar
+// ) {
+//   // If b is not provided correctly, default it to E + 2
+//   if (b <= 0) {
+//     b = E + 2;
+//   }
+//
+//   // Configure threads
+//   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
+//   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
+//
+//   // Get the dimensions of the xMatrix
+//   int totalRow = xMatrix.size();
+//   int totalCol = xMatrix[0].size();
+//
+//   // Flatten yMatrix into a 1D array (row-major order)
+//   std::vector<double> yPred;
+//   for (const auto& row : yMatrix) {
+//     yPred.insert(yPred.end(), row.begin(), row.end());
+//   }
+//
+//   // Generate embeddings for xMatrix
+//   std::vector<std::vector<double>> xEmbedings = GenGridEmbeddings(xMatrix, E, tau);
+//
+//   std::vector<int> possible_lib_indices;
+//   for (size_t i = 0; i < lib.size(); ++i) {
+//     int LibIndice = lib[i] - 1;
+//     if (!std::isnan(yPred[LibIndice])) {
+//       possible_lib_indices.push_back(LibIndice);
+//     }
+//   }
+//   int max_lib_size = static_cast<int>(possible_lib_indices.size()); // Maximum lib size
+//
+//   // Initialize pred_indices with all false
+//   std::vector<bool> pred_indices(totalRow*totalCol, false);
+//   // Convert pred (1-based in R) to 0-based indices, exclude yPred NA and set corresponding positions to true
+//   for (size_t i = 0; i < pred.size(); ++i) {
+//     int PreIndice = pred[i] - 1;
+//     if (!std::isnan(yPred[PreIndice])) {
+//       pred_indices[PreIndice] = true;
+//     }
+//   }
+//
+//   std::vector<int> unique_lib_sizes(lib_sizes.begin(), lib_sizes.end());
+//
+//   // Transform to ensure no size exceeds max_lib_size
+//   std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
+//                  [&](int size) { return std::min(size, max_lib_size); });
+//
+//   // Ensure the minimum value in unique_lib_sizes is Ex + 2 (uncomment this section if required)
+//   // std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
+//   //                [&](int size) { return std::max(size, Ex + 2); });
+//
+//   // Remove duplicates
+//   std::sort(unique_lib_sizes.begin(), unique_lib_sizes.end());
+//   unique_lib_sizes.erase(std::unique(unique_lib_sizes.begin(), unique_lib_sizes.end()), unique_lib_sizes.end());
+//
+//   // Initialize the result container
+//   std::vector<std::pair<int, double>> x_xmap_y;
+//
+//   // Iterate over each library size
+//   if (progressbar) {
+//     RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
+//     RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
+//       int lib_size = unique_lib_sizes[i];
+//       auto results = GCCMSingle4GridOneDim(
+//         xEmbedings,
+//         yPred,
+//         lib_size,
+//         max_lib_size,
+//         possible_lib_indices,
+//         pred_indices,
+//         totalRow,
+//         totalCol,
+//         b,
+//         simplex,
+//         theta
+//       );
+//       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+//       bar++;
+//     }, threads_sizet);
+//   } else {
+//     RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
+//       int lib_size = unique_lib_sizes[i];
+//       auto results = GCCMSingle4GridOneDim(
+//         xEmbedings,
+//         yPred,
+//         lib_size,
+//         max_lib_size,
+//         possible_lib_indices,
+//         pred_indices,
+//         totalRow,
+//         totalCol,
+//         b,
+//         simplex,
+//         theta
+//       );
 //       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
 //     }, threads_sizet);
 //   }
