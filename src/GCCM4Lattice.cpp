@@ -228,3 +228,8 @@ std::vector<std::vector<double>> GCCM4Lattice(
 
   return final_results;
 }
+
+/* Previously executed in parallel at the lib_sizes level for each lib_size,
+ * retained for potential activation.
+ *     ----- Wenbo Lv; 2025.03.08
+ */
