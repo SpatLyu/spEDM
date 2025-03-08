@@ -119,4 +119,41 @@ std::vector<std::vector<double>> GCCM4Grid(
     bool progressbar
 );
 
+/**
+ * Perform Geographical Convergent Cross Mapping (GCCM) for spatial grid data.
+ *
+ * This function calculates the cross mapping between predictor variables (xMatrix) and response variables (yMatrix)
+ * over a 2D grid, using either Simplex Projection or S-Mapping. It supports parallel processing and progress tracking.
+ *
+ * @param xMatrix      A 2D matrix of the predictor variable's values (spatial cross-section data).
+ * @param yMatrix      A 2D matrix of the response variable's values (spatial cross-section data).
+ * @param lib_sizes    Number of consecutive spatial units to include in each library.
+ * @param lib          A vector of representing the indices of spatial units to be the library.
+ * @param pred         A vector of representing the indices of spatial units to be predicted.
+ * @param E            The number of dimensions for attractor reconstruction.
+ * @param tau          The step of spatial lags for prediction.
+ * @param b            The number of nearest neighbors to use for prediction.
+ * @param simplex      If true, use Simplex Projection; if false, use S-Mapping.
+ * @param theta        The distance weighting parameter for S-Mapping (ignored if simplex is true).
+ * @param threads      The number of threads to use for parallel processing.
+ * @param progressbar  If true, display a progress bar during computation.
+ *
+ * @return A 2D vector where each row contains the library size, mean cross mapping result,
+ *         significance, and confidence interval bounds.
+ */
+std::vector<std::vector<double>> GCCM4GridOneDim(
+    const std::vector<std::vector<double>>& xMatrix,
+    const std::vector<std::vector<double>>& yMatrix,
+    const std::vector<int>& lib_sizes,
+    const std::vector<int>& lib,
+    const std::vector<int>& pred,
+    int E,
+    int tau,
+    int b,
+    bool simplex,
+    double theta,
+    int threads,
+    bool progressbar
+);
+
 #endif // GCCM4Grid_H
