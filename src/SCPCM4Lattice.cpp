@@ -856,7 +856,6 @@ std::vector<std::vector<double>> SCPCM4Lattice(
 //
 //   // Sequential version of the for loop
 //   // for (int lib_size : unique_lib_sizes) {
-//   //   RcppThread::Rcout << "lib_size: " << lib_size << "\n";
 //   //   auto results = SCPCMSingle4Lattice(
 //   //     x_vectors,
 //   //     y,
