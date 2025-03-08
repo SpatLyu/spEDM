@@ -485,11 +485,47 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
     zMatrix_cpp[i] = Rcpp::as<std::vector<double>>(covvar);
   }
 
-  // Convert Rcpp::IntegerMatrix libsizes to std::vector<std::vector<int>> libsizes_cpp
-  std::vector<std::vector<int>> libsizes_cpp(2);
-  for (int i = 0; i < libsizes.nrow(); ++i) { // Fill all the sub-vector
-    libsizes_cpp[0].push_back(libsizes(i, 0));
-    libsizes_cpp[1].push_back(libsizes(i, 1));
+  // Convert libsizes to a fundamental C++ data type
+  int libsizes_dim = libsizes.ncol();
+  std::vector<int> libsizes_cpp1;
+  std::vector<std::vector<int>> libsizes_cpp2(2);
+  if (libsizes_dim == 1){
+    for (int i = 0; i < libsizes.nrow(); ++i) {
+      libsizes_cpp1.push_back(libsizes(i, 0));
+    }
+  } else {
+    for (int i = 0; i < libsizes.nrow(); ++i) { // Fill all the sub-vector
+      libsizes_cpp2[0].push_back(libsizes(i, 0));
+      libsizes_cpp2[1].push_back(libsizes(i, 1));
+    }
+  }
+
+  // Convert lib to a fundamental C++ data type
+  int lib_dim = lib.ncol();
+  std::vector<int> lib_cpp1;
+  std::vector<std::pair<int, int>> lib_cpp2(lib.nrow());
+  if (lib_dim == 1){
+    for (int i = 0; i < lib.nrow(); ++i) {
+      lib_cpp1.push_back(lib(i, 0));
+    }
+  } else {
+    for (int i = 0; i < lib.nrow(); ++i) {
+      lib_cpp2[i] = std::make_pair(lib(i, 0), lib(i, 1));
+    }
+  }
+
+  // Convert pred to a fundamental C++ data type
+  int pred_dim = pred.ncol();
+  std::vector<int> pred_cpp1;
+  std::vector<std::pair<int, int>> pred_cpp2(pred.nrow());
+  if (pred_dim == 1){
+    for (int i = 0; i < pred.nrow(); ++i) {
+      pred_cpp1.push_back(pred(i, 0));
+    }
+  } else {
+    for (int i = 0; i < pred.nrow(); ++i) {
+      pred_cpp2[i] = std::make_pair(pred(i, 0), pred(i, 1));
+    }
   }
 
   // Convert Rcpp::IntegerVector to std::vector<int>
@@ -497,33 +533,44 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
   std::vector<int> tau_cpp = Rcpp::as<std::vector<int>>(tau);
   std::vector<int> b_cpp = Rcpp::as<std::vector<int>>(b);
 
-  // Convert Rcpp IntegerMatrix to std::vector<std::pair<int, int>>
-  std::vector<std::pair<int, int>> lib_cpp(lib.nrow());
-  for (int i = 0; i < lib.nrow(); ++i) {
-    lib_cpp[i] = std::make_pair(lib(i, 0), lib(i, 1));
-  }
-  std::vector<std::pair<int, int>> pred_cpp(pred.nrow());
-  for (int i = 0; i < pred.nrow(); ++i) {
-    pred_cpp[i] = std::make_pair(pred(i, 0), pred(i, 1));
-  }
 
-  // Call the C++ function SCPCM4Grid
-  std::vector<std::vector<double>> result = SCPCM4Grid(
-    xMatrix_cpp,
-    yMatrix_cpp,
-    zMatrix_cpp,
-    libsizes_cpp,
-    lib_cpp,
-    pred_cpp,
-    E_cpp,
-    tau_cpp,
-    b_cpp,
-    simplex,
-    theta,
-    threads,
-    cumulate,
-    progressbar
-  );
+  // Call the C++ function SCPCM4Grid or SCPCM4GridOneDim
+  std::vector<std::vector<double>> result;
+  if (libsizes_dim == 1){
+    result = SCPCM4GridOneDim(
+      xMatrix_cpp,
+      yMatrix_cpp,
+      zMatrix_cpp,
+      libsizes_cpp1,
+      lib_cpp1,
+      pred_cpp1,
+      E_cpp,
+      tau_cpp,
+      b_cpp,
+      simplex,
+      theta,
+      threads,
+      cumulate,
+      progressbar
+    );
+  } else{
+    result = SCPCM4Grid(
+      xMatrix_cpp,
+      yMatrix_cpp,
+      zMatrix_cpp,
+      libsizes_cpp2,
+      lib_cpp2,
+      pred_cpp2,
+      E_cpp,
+      tau_cpp,
+      b_cpp,
+      simplex,
+      theta,
+      threads,
+      cumulate,
+      progressbar
+    );
+  }
 
   // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
   Rcpp::NumericMatrix resultMatrix(result.size(), 9);
