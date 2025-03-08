@@ -18,7 +18,7 @@ methods::setGeneric("smap", function(data, ...) standardGeneric("smap"))
                             threads = detectThreads(), trend.rm = TRUE){
   mat = .uni_grid(data,target,trend.rm)
   if (is.null(lib)) lib = .internal_samplemat(mat)
-  if (is.null(pred)) pred = .internal_samplemat(mat,floor(sqrt(length(mat))))
+  if (is.null(pred)) pred = lib
   res = RcppSMap4Grid(mat,lib,pred,theta,E,tau,k,threads)
   return(.bind_xmapself(res,target))
 }
