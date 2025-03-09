@@ -246,7 +246,7 @@ std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
     }
     x_xmap_y.emplace_back(lib_size, rho);
     return x_xmap_y;
-  } else {
+  } else if (parallel_level == 0){
 
     // Precompute valid indices for the library
     std::vector<std::vector<int>> valid_lib_indices;
@@ -301,6 +301,62 @@ std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
       std::pair<int, double> result(lib_size, rho); // Store the product of row and column library sizes
       x_xmap_y[i] = result;
     }, threads);
+
+    return x_xmap_y;
+  } else {
+    // Precompute valid indices for the library
+    std::vector<std::vector<int>> valid_lib_indices;
+    for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
+      std::vector<int> local_lib_indices;
+      // Loop around to beginning of lib indices
+      if (start_lib + lib_size > max_lib_size) {
+        for (int i = start_lib; i < max_lib_size; ++i) {
+          local_lib_indices.emplace_back(i);
+        }
+        int num_vectors_remaining = lib_size - (max_lib_size - start_lib);
+        for (int i = 0; i < num_vectors_remaining; ++i) {
+          local_lib_indices.emplace_back(i);
+        }
+      } else {
+        for (int i = start_lib; i < start_lib + lib_size; ++i) {
+          local_lib_indices.emplace_back(i);
+        }
+      }
+      valid_lib_indices.emplace_back(local_lib_indices);
+    }
+
+    // Preallocate the result vector to avoid out-of-bounds access
+    std::vector<std::pair<int, double>> x_xmap_y(valid_lib_indices.size());
+
+    // Iterate through precomputed valid_lib_indices
+    for (size_t i = 0; i < valid_lib_indices.size(); ++i){
+      std::vector<bool> lib_indices(n, false);
+      std::vector<int> local_lib_indices = valid_lib_indices[i];
+      for(int& li : local_lib_indices){
+        lib_indices[possible_lib_indices[li]] = true;
+      }
+
+      // Check if more than half of the library is NA
+      int na_count = 0;
+      for (size_t i = 0; i < lib_indices.size(); ++i) {
+        if (lib_indices[i] && std::isnan(yPred[i])) {
+          ++na_count;
+        }
+      }
+
+      double rho = std::numeric_limits<double>::quiet_NaN();
+      if (na_count <= max_lib_size / 2.0) {
+        // Run cross map and store results
+        if (simplex) {
+          rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
+        } else {
+          rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
+        }
+      }
+
+      std::pair<int, double> result(lib_size, rho); // Store the product of row and column library sizes
+      x_xmap_y[i] = result;
+    }
 
     return x_xmap_y;
   }

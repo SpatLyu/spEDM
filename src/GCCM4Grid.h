@@ -49,7 +49,8 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
     double theta,
     size_t threads,
     int parallel_level,
-    bool row_size_mark);
+    bool row_size_mark
+);
 
 /**
  * Perform Grid-based Geographical Convergent Cross Mapping (GCCM) for a single library size.
@@ -69,6 +70,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
  * @param simplex              Use simplex projection if true, S-mapping if false
  * @param theta                Distance weighting parameter for S-mapping
  * @param threads              The number of threads to use for parallel processing
+ * @param parallel_level       Level of parallel computing: 0 for `lower`, 1 for `higher`
  *
  * @return A vector of pairs, where each pair contains the library size and the corresponding cross mapping result.
  */
@@ -84,7 +86,9 @@ std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
     int b,
     bool simplex,
     double theta,
-    size_t threads);
+    size_t threads,
+    int parallel_level
+);
 
 /**
  * Perform Geographical Convergent Cross Mapping (GCCM) for spatial grid data.
