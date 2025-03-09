@@ -6,6 +6,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   E = .check_inputelementnum(E,2)
   k = .check_inputelementnum(k,2)
   tau = .check_inputelementnum(tau,2)
+  pl = .check_parallellevel(parallel.level)
   .varname = .internal_varname()
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   if (nrow(data) != length(nb)) stop("Incompatible Data Dimensions!")
@@ -26,9 +27,9 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
   x_xmap_y = NULL
   if (bidirectional){
-    x_xmap_y = RcppGCCM4Lattice(cause,effect,nb,libsizes,lib,pred,E[1],tau[1],k[1],simplex,theta,threads,0,progressbar)
+    x_xmap_y = RcppGCCM4Lattice(cause,effect,nb,libsizes,lib,pred,E[1],tau[1],k[1],simplex,theta,threads,pl,progressbar)
   }
-  y_xmap_x = RcppGCCM4Lattice(effect,cause,nb,libsizes,lib,pred,E[2],tau[2],k[2],simplex,theta,threads,0,progressbar)
+  y_xmap_x = RcppGCCM4Lattice(effect,cause,nb,libsizes,lib,pred,E[2],tau[2],k[2],simplex,theta,threads,pl,progressbar)
 
   return(.bind_xmapdf(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
@@ -39,6 +40,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   E = .check_inputelementnum(E,2)
   k = .check_inputelementnum(k,2)
   tau = .check_inputelementnum(tau,2)
+  pl = .check_parallellevel(parallel.level)
   libsizes = as.matrix(libsizes)
   .varname = .internal_varname()
   data = data[[varname]]
@@ -57,9 +59,9 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
   x_xmap_y = NULL
   if (bidirectional){
-    x_xmap_y = RcppGCCM4Grid(causemat,effectmat,libsizes,lib,pred,E[1],tau[1],k[1],simplex,theta,threads,progressbar)
+    x_xmap_y = RcppGCCM4Grid(causemat,effectmat,libsizes,lib,pred,E[1],tau[1],k[1],simplex,theta,threads,pl,progressbar)
   }
-  y_xmap_x = RcppGCCM4Grid(effectmat,causemat,libsizes,lib,pred,E[2],tau[2],k[2],simplex,theta,threads,progressbar)
+  y_xmap_x = RcppGCCM4Grid(effectmat,causemat,libsizes,lib,pred,E[2],tau[2],k[2],simplex,theta,threads,pl,progressbar)
 
   return(.bind_xmapdf(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
