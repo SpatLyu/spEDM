@@ -72,108 +72,110 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
   // Preallocate the result vector to avoid out-of-bounds access
   std::vector<std::pair<int, double>> x_xmap_y(valid_indices.size());
 
-  // // Iterate through precomputed (r, c) pairs
-  // for (size_t i = 0; i < valid_indices.size(); ++i) {
-  //   int r = valid_indices[i].first;
-  //   int c = valid_indices[i].second;
-  //
-  //   // Initialize library indices
-  //   std::vector<bool> lib_indices(totalRow * totalCol, false);
-  //
-  //   // Set library indices only if possible_lib_indices is true
-  //   for (int i = r; i < r + lib_size_row; ++i) {
-  //     for (int j = c; j < c + lib_size_col; ++j) {
-  //       int index = LocateGridIndices(i, j, totalRow, totalCol);
-  //       if (possible_lib_indices[index]) {
-  //         lib_indices[index] = true;
-  //       }
-  //     }
-  //   }
-  //
-  //   // Check if more than half of the library is NA
-  //   int na_count = 0;
-  //   for (size_t i = 0; i < lib_indices.size(); ++i) {
-  //     if (lib_indices[i] && std::isnan(yPred[i])) {
-  //       ++na_count;
-  //     }
-  //   }
-  //
-  //   double rho = std::numeric_limits<double>::quiet_NaN();
-  //
-  //   // if (na_count > (lib_size_row * lib_size_col) / 2) {
-  //   //   rho = std::numeric_limits<double>::quiet_NaN();
-  //   // } else {
-  //   //   // Run cross map and store results
-  //   //   if (simplex) {
-  //   //     rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
-  //   //   } else {
-  //   //     rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
-  //   //   }
-  //   // }
-  //
-  //   if (na_count <= (lib_size_row * lib_size_col) / 2) {
-  //     // Run cross map and store results
-  //     if (simplex) {
-  //       rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
-  //     } else {
-  //       rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
-  //     }
-  //   }
-  //
-  //   std::pair<int, double> result(libsize, rho); // Store the product of row and column library sizes
-  //   x_xmap_y[i] = result;
-  // }
+  if (parallel_level == 0) {
+    // Perform the operations using RcppThread
+    RcppThread::parallelFor(0, valid_indices.size(), [&](size_t i) {
+      int r = valid_indices[i].first;
+      int c = valid_indices[i].second;
 
-  // Perform the operations using RcppThread
-  RcppThread::parallelFor(0, valid_indices.size(), [&](size_t i) {
-    int r = valid_indices[i].first;
-    int c = valid_indices[i].second;
+      // Initialize library indices
+      std::vector<bool> lib_indices(totalRow * totalCol, false);
 
-    // Initialize library indices
-    std::vector<bool> lib_indices(totalRow * totalCol, false);
-
-    // Set library indices only if possible_lib_indices is true
-    for (int i = r; i < r + lib_size_row; ++i) {
-      for (int j = c; j < c + lib_size_col; ++j) {
-        int index = LocateGridIndices(i, j, totalRow, totalCol);
-        if (possible_lib_indices[index]) {
-          lib_indices[index] = true;
+      // Set library indices only if possible_lib_indices is true
+      for (int i = r; i < r + lib_size_row; ++i) {
+        for (int j = c; j < c + lib_size_col; ++j) {
+          int index = LocateGridIndices(i, j, totalRow, totalCol);
+          if (possible_lib_indices[index]) {
+            lib_indices[index] = true;
+          }
         }
       }
-    }
-    // Check if more than half of the library is NA
-    int na_count = 0;
-    for (size_t i = 0; i < lib_indices.size(); ++i) {
-      if (lib_indices[i] && std::isnan(yPred[i])) {
-        ++na_count;
+      // Check if more than half of the library is NA
+      int na_count = 0;
+      for (size_t i = 0; i < lib_indices.size(); ++i) {
+        if (lib_indices[i] && std::isnan(yPred[i])) {
+          ++na_count;
+        }
       }
-    }
 
-    double rho = std::numeric_limits<double>::quiet_NaN();
+      double rho = std::numeric_limits<double>::quiet_NaN();
 
-    // if (na_count > (lib_size_row * lib_size_col) / 2) {
-    //   rho = std::numeric_limits<double>::quiet_NaN();
-    // } else {
-    //   // Run cross map and store results
-    //   if (simplex) {
-    //     rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
-    //   } else {
-    //     rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
-    //   }
-    // }
+      // if (na_count > (lib_size_row * lib_size_col) / 2) {
+      //   rho = std::numeric_limits<double>::quiet_NaN();
+      // } else {
+      //   // Run cross map and store results
+      //   if (simplex) {
+      //     rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
+      //   } else {
+      //     rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
+      //   }
+      // }
 
-    if (na_count <= (lib_size_row * lib_size_col) / 2) {
-      // Run cross map and store results
-      if (simplex) {
-        rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
-      } else {
-        rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
+      if (na_count <= (lib_size_row * lib_size_col) / 2) {
+        // Run cross map and store results
+        if (simplex) {
+          rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
+        } else {
+          rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
+        }
       }
-    }
 
-    std::pair<int, double> result(libsize, rho); // Store the product of row and column library sizes
-    x_xmap_y[i] = result;
-  }, threads);
+      std::pair<int, double> result(libsize, rho); // Store the product of row and column library sizes
+      x_xmap_y[i] = result;
+    }, threads);
+  } else {
+    // Iterate through precomputed (r, c) pairs
+    for (size_t i = 0; i < valid_indices.size(); ++i) {
+      int r = valid_indices[i].first;
+      int c = valid_indices[i].second;
+
+      // Initialize library indices
+      std::vector<bool> lib_indices(totalRow * totalCol, false);
+
+      // Set library indices only if possible_lib_indices is true
+      for (int i = r; i < r + lib_size_row; ++i) {
+        for (int j = c; j < c + lib_size_col; ++j) {
+          int index = LocateGridIndices(i, j, totalRow, totalCol);
+          if (possible_lib_indices[index]) {
+            lib_indices[index] = true;
+          }
+        }
+      }
+
+      // Check if more than half of the library is NA
+      int na_count = 0;
+      for (size_t i = 0; i < lib_indices.size(); ++i) {
+        if (lib_indices[i] && std::isnan(yPred[i])) {
+          ++na_count;
+        }
+      }
+
+      double rho = std::numeric_limits<double>::quiet_NaN();
+
+      // if (na_count > (lib_size_row * lib_size_col) / 2) {
+      //   rho = std::numeric_limits<double>::quiet_NaN();
+      // } else {
+      //   // Run cross map and store results
+      //   if (simplex) {
+      //     rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
+      //   } else {
+      //     rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
+      //   }
+      // }
+
+      if (na_count <= (lib_size_row * lib_size_col) / 2) {
+        // Run cross map and store results
+        if (simplex) {
+          rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
+        } else {
+          rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
+        }
+      }
+
+      std::pair<int, double> result(libsize, rho); // Store the product of row and column library sizes
+      x_xmap_y[i] = result;
+    }
+  }
 
   return x_xmap_y;
 }

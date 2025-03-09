@@ -31,6 +31,7 @@
  * @param simplex              If true, use Simplex Projection; if false, use S-Mapping.
  * @param theta                The distance weighting parameter for S-Mapping (ignored if simplex is true).
  * @param threads              The number of threads to use for parallel processing.
+ * @param parallel_level       Level of parallel computing: 0 for `lower`, 1 for `higher`.
  * @param row_size_mark        If true, use the row-wise libsize to mark the libsize; if false, use col-wise libsize.
  *
  * @return  A vector of pairs, where each pair contains the library size and the corresponding cross mapping result.
@@ -47,6 +48,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
     bool simplex,
     double theta,
     size_t threads,
+    int parallel_level,
     bool row_size_mark);
 
 /**
