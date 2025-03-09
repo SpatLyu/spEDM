@@ -126,7 +126,7 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
     bool simplex,                                       // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
     double theta,                                       // Distance weighting parameter for the local neighbours in the manifold
     size_t threads,                                     // Number of threads to use for parallel processing
-    int parallel_level                                  // Level of parallel computing: 0 for `lower`, 1 for `higher`
+    int parallel_level,                                  // Level of parallel computing: 0 for `lower`, 1 for `higher`
     bool cumulate                                       // Whether to cumulate the partial correlations
 );
 
@@ -177,7 +177,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
     bool simplex,                                       // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
     double theta,                                       // Distance weighting parameter for the local neighbours in the manifold
     int threads,                                        // Number of threads used from the global pool
-    int parallel_level                                  // Level of parallel computing: 0 for `lower`, 1 for `higher`
+    int parallel_level,                                 // Level of parallel computing: 0 for `lower`, 1 for `higher`
     bool cumulate,                                      // Whether to cumulate the partial correlations
     bool progressbar                                    // Whether to print the progress bar
 );
