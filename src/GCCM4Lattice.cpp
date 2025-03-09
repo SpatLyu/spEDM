@@ -28,6 +28,7 @@
  *   - simplex: If true, uses simplex projection for prediction; otherwise, uses s-mapping.
  *   - theta: Distance weighting parameter for local neighbors in the manifold (used in s-mapping).
  *   - threads: The number of threads to use for parallel processing.
+ *   - parallel_level: Level of parallel computing: 0 for `lower`, 1 for `higher`.
  *
  * Returns:
  *   A vector of pairs, where each pair consists of:
@@ -44,7 +45,8 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
     int b,
     bool simplex,
     double theta,
-    size_t threads
+    size_t threads,
+    int parallel_level
 ) {
   int n = x_vectors.size();
 
@@ -66,7 +68,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
     }
     x_xmap_y.emplace_back(lib_size, rho);
     return x_xmap_y;
-  } else {
+  } else if (parallel_level == 1){
 
     // Precompute valid indices for the library
     std::vector<std::vector<int>> valid_lib_indices;
@@ -113,6 +115,38 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
     }, threads);
 
     return x_xmap_y;
+  } else {
+
+    std::vector<std::pair<int, double>> x_xmap_y;
+
+    for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
+      std::vector<bool> lib_indices(n, false);
+      // Setup changing library
+      if (start_lib + lib_size > max_lib_size) { // Loop around to beginning of lib indices
+        for (int i = start_lib; i < max_lib_size; ++i) {
+          lib_indices[possible_lib_indices[i]] = true;
+        }
+        int num_vectors_remaining = lib_size - (max_lib_size - start_lib);
+        for (int i = 0; i < num_vectors_remaining; ++i) {
+          lib_indices[possible_lib_indices[i]] = true;
+        }
+      } else {
+        for (int i = start_lib; i < start_lib + lib_size; ++i) {
+          lib_indices[possible_lib_indices[i]] = true;
+        }
+      }
+
+      // Run cross map and store results
+      double rho = std::numeric_limits<double>::quiet_NaN();
+      if (simplex) {
+        rho = SimplexProjection(x_vectors, y, lib_indices, pred_indices, b);
+      } else {
+        rho = SMap(x_vectors, y, lib_indices, pred_indices, b, theta);
+      }
+      x_xmap_y.emplace_back(lib_size, rho);
+    }
+
+    return x_xmap_y;
   }
 }
 
@@ -155,6 +189,7 @@ std::vector<std::vector<double>> GCCM4Lattice(
     bool simplex,
     double theta,
     int threads,
+    int parallel_level,
     bool progressbar
 ) {
   // If b is not provided correctly, default it to E + 2
@@ -262,132 +297,6 @@ std::vector<std::vector<double>> GCCM4Lattice(
   return final_results;
 }
 
-/* Previously executed in parallel at the lib_sizes level for each lib_size,
- * retained for potential activation.
- *     ----- Wenbo Lv; 2025.03.08
- */
-
-// #include <vector>
-// #include <cmath>
-// #include <algorithm> // Include for std::partial_sort
-// #include <numeric>
-// #include <utility>
-// #include <limits>
-// #include <map>
-// #include "CppStats.h"
-// #include "CppLatticeUtils.h"
-// #include "SimplexProjection.h"
-// #include "SMap.h"
-// #include <RcppThread.h>
-//
-// // [[Rcpp::plugins(cpp11)]]
-// // [[Rcpp::depends(RcppThread)]]
-//
-// /*
-//  * Perform GCCM on a single lib and pred for lattice data.
-//  *
-//  * Parameters:
-//  *   - x_vectors: Reconstructed state-space (each row represents a separate vector/state).
-//  *   - y: Spatial cross-section series used as the target (should align with x_vectors).
-//  *   - lib_size: Size of the library used for cross mapping.
-//  *   - max_lib_size: Maximum size of the library.
-//  *   - possible_lib_indices: Indices of possible library states.
-//  *   - pred_indices: A boolean vector indicating which states to use for prediction.
-//  *   - b: Number of neighbors to use for simplex projection.
-//  *   - simplex: If true, uses simplex projection for prediction; otherwise, uses s-mapping.
-//  *   - theta: Distance weighting parameter for local neighbors in the manifold (used in s-mapping).
-//  *
-//  * Returns:
-//  *   A vector of pairs, where each pair consists of:
-//  *   - An integer representing the library size.
-//  *   - A double representing the Pearson correlation coefficient (rho) between predicted and actual values.
-//  */
-// std::vector<std::pair<int, double>> GCCMSingle4Lattice(
-//     const std::vector<std::vector<double>>& x_vectors,
-//     const std::vector<double>& y,
-//     int lib_size,
-//     int max_lib_size,
-//     const std::vector<int>& possible_lib_indices,
-//     const std::vector<bool>& pred_indices,
-//     int b,
-//     bool simplex,
-//     double theta
-// ) {
-//   int n = x_vectors.size();
-//   std::vector<std::pair<int, double>> x_xmap_y;
-//
-//   if (lib_size == max_lib_size) { // No possible library variation if using all vectors
-//     std::vector<bool> lib_indices(n, false);
-//     for (int idx : possible_lib_indices) {
-//       lib_indices[idx] = true;
-//     }
-//
-//     // Run cross map and store results
-//     double rho = std::numeric_limits<double>::quiet_NaN();
-//     if (simplex) {
-//       rho = SimplexProjection(x_vectors, y, lib_indices, pred_indices, b);
-//     } else {
-//       rho = SMap(x_vectors, y, lib_indices, pred_indices, b, theta);
-//     }
-//     x_xmap_y.emplace_back(lib_size, rho);
-//   } else {
-//     for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
-//       std::vector<bool> lib_indices(n, false);
-//       // Setup changing library
-//       if (start_lib + lib_size > max_lib_size) { // Loop around to beginning of lib indices
-//         for (int i = start_lib; i < max_lib_size; ++i) {
-//           lib_indices[possible_lib_indices[i]] = true;
-//         }
-//         int num_vectors_remaining = lib_size - (max_lib_size - start_lib);
-//         for (int i = 0; i < num_vectors_remaining; ++i) {
-//           lib_indices[possible_lib_indices[i]] = true;
-//         }
-//       } else {
-//         for (int i = start_lib; i < start_lib + lib_size; ++i) {
-//           lib_indices[possible_lib_indices[i]] = true;
-//         }
-//       }
-//
-//       // Run cross map and store results
-//       double rho = std::numeric_limits<double>::quiet_NaN();
-//       if (simplex) {
-//         rho = SimplexProjection(x_vectors, y, lib_indices, pred_indices, b);
-//       } else {
-//         rho = SMap(x_vectors, y, lib_indices, pred_indices, b, theta);
-//       }
-//       x_xmap_y.emplace_back(lib_size, rho);
-//     }
-//   }
-//
-//   return x_xmap_y;
-// }
-//
-// /**
-//  * Performs GCCM on a spatial lattice data.
-//  *
-//  * Parameters:
-//  * - x: Spatial cross-section series used as the predict variable (**cross mapping from**).
-//  * - y: Spatial cross-section series used as the target variable (**cross mapping to**).
-//  * - nb_vec: A nested vector containing neighborhood information for lattice data.
-//  * - lib_sizes: A vector specifying different library sizes for GCCM analysis.
-//  * - lib: A vector specifying the library indices (1-based in R, converted to 0-based in C++).
-//  * - pred: A vector specifying the prediction indices (1-based in R, converted to 0-based in C++).
-//  * - E: Embedding dimension for attractor reconstruction.
-//  * - tau: the step of spatial lags for prediction.
-//  * - b: Number of nearest neighbors used for prediction.
-//  * - simplex: Boolean flag indicating whether to use simplex projection (true) or S-mapping (false) for prediction.
-//  * - theta: Distance weighting parameter used for weighting neighbors in the S-mapping prediction.
-//  * - threads: Number of threads to use for parallel computation.
-//  * - progressbar: Boolean flag to indicate whether to display a progress bar during computation.
-//  *
-//  * Returns:
-//  *    A 2D vector of results, where each row contains:
-//  *      - The library size.
-//  *      - The mean cross-mapping correlation.
-//  *      - The statistical significance of the correlation.
-//  *      - The lower bound of the confidence interval.
-//  *      - The upper bound of the confidence interval.
-//  */
 // std::vector<std::vector<double>> GCCM4Lattice(
 //     const std::vector<double>& x,
 //     const std::vector<double>& y,
