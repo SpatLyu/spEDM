@@ -17,6 +17,8 @@ bool checkIntNA(int value);
 
 bool checkOneDimVectorHasNaN(const std::vector<double>& vec);
 
+int checkOneDimVectorNotNanNum(const std::vector<double>& vec);
+
 unsigned long long CppFactorial(unsigned int n);
 
 unsigned long long CppCombine(unsigned int n, unsigned int k);

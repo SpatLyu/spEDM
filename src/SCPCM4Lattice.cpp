@@ -47,7 +47,7 @@ std::vector<double> PartialSimplex4Lattice(
     bool cumulate
 ){
   int n_controls = controls.size();
-  std::vector<double> rho(2);
+  std::vector<double> rho(2, std::numeric_limits<double>::quiet_NaN());
 
   if (cumulate) {
     std::vector<double> temp_pred;
@@ -65,8 +65,11 @@ std::vector<double> PartialSimplex4Lattice(
     std::vector<double> con_pred = SimplexProjectionPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors[n_controls]);
     std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors[0]);
 
-    rho[0] = PearsonCor(target,target_pred,true);
-    rho[1] = PartialCorTrivar(target,target_pred,con_pred,true,false);
+    if (checkOneDimVectorNotNanNum(target_pred) >= 3){
+      rho[0] = PearsonCor(target,target_pred,true);
+      rho[1] = PartialCorTrivar(target,target_pred,con_pred,true,false);
+    }
+
   } else {
     std::vector<std::vector<double>> con_pred(n_controls);
     std::vector<double> temp_pred;
@@ -80,8 +83,11 @@ std::vector<double> PartialSimplex4Lattice(
     }
     std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors[0]);
 
-    rho[0] = PearsonCor(target,target_pred,true);
-    rho[1] = PartialCor(target,target_pred,con_pred,true,false);
+    if (checkOneDimVectorNotNanNum(target_pred) >= 3){
+      rho[0] = PearsonCor(target,target_pred,true);
+      rho[1] = PartialCor(target,target_pred,con_pred,true,false);
+    }
+
   }
   return rho;
 }
@@ -123,7 +129,7 @@ std::vector<double> PartialSMap4Lattice(
     bool cumulate
 ){
   int n_controls = controls.size();
-  std::vector<double> rho(2);
+  std::vector<double> rho(2, std::numeric_limits<double>::quiet_NaN());
 
   if (cumulate){
     std::vector<double> temp_pred;
@@ -141,8 +147,11 @@ std::vector<double> PartialSMap4Lattice(
     std::vector<double> con_pred = SMapPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors[n_controls], theta);
     std::vector<double> target_pred = SMapPrediction(vectors, target, lib_indices, pred_indices, num_neighbors[0], theta);
 
-    rho[0] = PearsonCor(target,target_pred,true);
-    rho[1] = PartialCorTrivar(target,target_pred,con_pred,true,false);
+    if (checkOneDimVectorNotNanNum(target_pred) >= 3){
+      rho[0] = PearsonCor(target,target_pred,true);
+      rho[1] = PartialCorTrivar(target,target_pred,con_pred,true,false);
+    }
+
   } else {
     std::vector<std::vector<double>> con_pred(n_controls);
     std::vector<double> temp_pred;
@@ -156,8 +165,11 @@ std::vector<double> PartialSMap4Lattice(
     }
     std::vector<double> target_pred = SMapPrediction(vectors, target, lib_indices, pred_indices, num_neighbors[0], theta);
 
-    rho[0] = PearsonCor(target,target_pred,true);
-    rho[1] = PartialCor(target,target_pred,con_pred,true,false);
+    if (checkOneDimVectorNotNanNum(target_pred) >= 3){
+      rho[0] = PearsonCor(target,target_pred,true);
+      rho[1] = PartialCor(target,target_pred,con_pred,true,false);
+    }
+
   }
 
   return rho;
