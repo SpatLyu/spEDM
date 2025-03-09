@@ -47,7 +47,7 @@ std::vector<double> PartialSimplex4Lattice(
     bool cumulate
 ){
   int n_controls = controls.size();
-  std::vector<double> rho(2);
+  std::vector<double> rho(2, std::numeric_limits<double>::quiet_NaN());
 
   if (cumulate) {
     std::vector<double> temp_pred;
@@ -123,7 +123,7 @@ std::vector<double> PartialSMap4Lattice(
     bool cumulate
 ){
   int n_controls = controls.size();
-  std::vector<double> rho(2);
+  std::vector<double> rho(2, std::numeric_limits<double>::quiet_NaN());
 
   if (cumulate){
     std::vector<double> temp_pred;
