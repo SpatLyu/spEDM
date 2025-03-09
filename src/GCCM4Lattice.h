@@ -65,6 +65,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
  * - simplex: Boolean flag indicating whether to use simplex projection (true) or S-mapping (false) for prediction.
  * - theta: Distance weighting parameter used for weighting neighbors in the S-mapping prediction.
  * - threads: Number of threads to use for parallel computation.
+ * - parallel_level: Level of parallel computing: 0 for `lower`, 1 for `higher`.
  * - progressbar: Boolean flag to indicate whether to display a progress bar during computation.
  *
  * Returns:
@@ -88,6 +89,7 @@ std::vector<std::vector<double>> GCCM4Lattice(
     bool simplex,
     double theta,
     int threads,
+    int parallel_level,
     bool progressbar
 );
 
