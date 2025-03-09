@@ -68,7 +68,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
     }
     x_xmap_y.emplace_back(lib_size, rho);
     return x_xmap_y;
-  } else if (parallel_level == 1){
+  } else if (parallel_level == 0){
 
     // Precompute valid indices for the library
     std::vector<std::vector<int>> valid_lib_indices;
