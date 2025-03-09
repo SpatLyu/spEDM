@@ -192,8 +192,15 @@ double SMap(
     int num_neighbors,
     double theta
 ) {
+  double rho = std::numeric_limits<double>::quiet_NaN();
+
+  // Call SMapPrediction to get the prediction results
   std::vector<double> target_pred = SMapPrediction(vectors, target, lib_indices, pred_indices, num_neighbors, theta);
-  return PearsonCor(target_pred, target, true);
+
+  if (checkOneDimVectorNotNanNum(target_pred) >= 3) {
+    rho = PearsonCor(target_pred, target, true);
+  }
+  return rho;
 }
 
 /*
@@ -217,13 +224,20 @@ std::vector<double> SMapBehavior(
     int num_neighbors,
     double theta
 ) {
+  // Initialize PearsonCor, MAE, and RMSE
+  double pearson = std::numeric_limits<double>::quiet_NaN();
+  double mae = std::numeric_limits<double>::quiet_NaN();
+  double rmse = std::numeric_limits<double>::quiet_NaN();
+
   // Call SMapPrediction to get the prediction results
   std::vector<double> target_pred = SMapPrediction(vectors, target, lib_indices, pred_indices, num_neighbors, theta);
 
-  // Compute PearsonCor, MAE, and RMSE
-  double pearson = PearsonCor(target_pred, target, true);
-  double mae = CppMAE(target_pred, target, true);
-  double rmse = CppRMSE(target_pred, target, true);
+  if (checkOneDimVectorNotNanNum(target_pred) >= 3) {
+    // Compute PearsonCor, MAE, and RMSE
+    pearson = PearsonCor(target_pred, target, true);
+    mae = CppMAE(target_pred, target, true);
+    rmse = CppRMSE(target_pred, target, true);
+  }
 
   // Return the three metrics as a vector
   return {pearson, mae, rmse};
