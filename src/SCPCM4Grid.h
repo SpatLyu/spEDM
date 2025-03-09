@@ -130,7 +130,8 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
     size_t threads,
     int parallel_level,
     bool cumulate,
-    bool row_size_mark);
+    bool row_size_mark
+);
 
 /**
  * Perform Grid-based Spatially Convergent Partial Cross Mapping (SCPCM) for a single library size.
@@ -175,7 +176,8 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
     double theta,
     size_t threads,
     int parallel_level,
-    bool cumulate);
+    bool cumulate
+);
 
 /**
  * Perform Grid-based Spatially Convergent Partial Cross Mapping (SCPCM) for multiple library sizes.
@@ -278,6 +280,7 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
     int threads,
     int parallel_level,
     bool cumulate,
-    bool progressbar);
+    bool progressbar
+);
 
 #endif // SCPCM4Grid_H
