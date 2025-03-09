@@ -28,6 +28,7 @@
  *   - simplex: If true, uses simplex projection for prediction; otherwise, uses s-mapping.
  *   - theta: Distance weighting parameter for local neighbors in the manifold (used in s-mapping).
  *   - threads: The number of threads to use for parallel processing.
+ *   - parallel_level: Level of parallel computing: 0 for `lower`, 1 for `higher`.
  *
  * Returns:
  *   A vector of pairs, where each pair consists of:
@@ -44,7 +45,8 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
     int b,
     bool simplex,
     double theta,
-    size_t threads
+    size_t threads,
+    int parallel_level
 );
 
 /**
@@ -63,6 +65,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
  * - simplex: Boolean flag indicating whether to use simplex projection (true) or S-mapping (false) for prediction.
  * - theta: Distance weighting parameter used for weighting neighbors in the S-mapping prediction.
  * - threads: Number of threads to use for parallel computation.
+ * - parallel_level: Level of parallel computing: 0 for `lower`, 1 for `higher`.
  * - progressbar: Boolean flag to indicate whether to display a progress bar during computation.
  *
  * Returns:
@@ -86,6 +89,7 @@ std::vector<std::vector<double>> GCCM4Lattice(
     bool simplex,
     double theta,
     int threads,
+    int parallel_level,
     bool progressbar
 );
 
