@@ -14,7 +14,7 @@
 
 .check_parallellevel = \(parallel.level){
   pl = 0
-  if (parallel.level != "lower"){
+  if (parallel.level != "low"){
     pl = 1
   }
   return(pl)

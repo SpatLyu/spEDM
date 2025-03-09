@@ -1,7 +1,7 @@
 methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 
-.gccm_sf_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = E+2, theta = 1, algorithm = "simplex", lib = NULL, pred = NULL, nb = NULL,
-                    threads = detectThreads(), parallel.level = "lower", bidirectional = TRUE, trend.rm = TRUE, progressbar = TRUE){
+.gccm_sf_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = E+2, theta = 1, algorithm = "simplex", lib = NULL, pred = NULL,
+                    nb = NULL,threads = detectThreads(),parallel.level = "low",bidirectional = TRUE,trend.rm = TRUE,progressbar = TRUE){
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
   tau = .check_inputelementnum(tau,2)
@@ -35,7 +35,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 }
 
 .gccm_spatraster_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = E+2, theta = 1, algorithm = "simplex", lib = NULL, pred = NULL,
-                            threads = detectThreads(), parallel.level = "lower", bidirectional = TRUE, trend.rm = TRUE, progressbar = TRUE){
+                            threads = detectThreads(), parallel.level = "low", bidirectional = TRUE, trend.rm = TRUE, progressbar = TRUE){
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
   tau = .check_inputelementnum(tau,2)
@@ -81,7 +81,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 #' @param pred (optional) Predictions indices.
 #' @param nb (optional) The neighbours list.
 #' @param threads (optional) Number of threads.
-#' @param parallel.level (optional) Level of parallelism, `lower` or `higher`.
+#' @param parallel.level (optional) Level of parallelism, `low` or `high`.
 #' @param bidirectional (optional) whether to identify bidirectional causal associations.
 #' @param trend.rm (optional) Whether to remove the linear trend.
 #' @param progressbar (optional) whether to print the progress bar.

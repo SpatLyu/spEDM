@@ -20,7 +20,7 @@
   pred = NULL,
   nb = NULL,
   threads = detectThreads(),
-  parallel.level = "lower",
+  parallel.level = "low",
   bidirectional = TRUE,
   trend.rm = TRUE,
   progressbar = TRUE
@@ -39,7 +39,7 @@
   lib = NULL,
   pred = NULL,
   threads = detectThreads(),
-  parallel.level = "lower",
+  parallel.level = "low",
   bidirectional = TRUE,
   trend.rm = TRUE,
   progressbar = TRUE
@@ -72,7 +72,7 @@
 
 \item{threads}{(optional) Number of threads.}
 
-\item{parallel.level}{(optional) Level of parallelism, \code{lower} or \code{higher}.}
+\item{parallel.level}{(optional) Level of parallelism, \code{low} or \code{high}.}
 
 \item{bidirectional}{(optional) whether to identify bidirectional causal associations.}
 
