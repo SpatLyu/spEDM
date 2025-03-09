@@ -168,8 +168,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppGCCM4Grid
-Rcpp::NumericMatrix RcppGCCM4Grid(const Rcpp::NumericMatrix& xMatrix, const Rcpp::NumericMatrix& yMatrix, const Rcpp::IntegerMatrix& libsizes, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, int E, int tau, int b, bool simplex, double theta, int threads, bool progressbar);
-RcppExport SEXP _spEDM_RcppGCCM4Grid(SEXP xMatrixSEXP, SEXP yMatrixSEXP, SEXP libsizesSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP simplexSEXP, SEXP thetaSEXP, SEXP threadsSEXP, SEXP progressbarSEXP) {
+Rcpp::NumericMatrix RcppGCCM4Grid(const Rcpp::NumericMatrix& xMatrix, const Rcpp::NumericMatrix& yMatrix, const Rcpp::IntegerMatrix& libsizes, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, int E, int tau, int b, bool simplex, double theta, int threads, int parallel_level, bool progressbar);
+RcppExport SEXP _spEDM_RcppGCCM4Grid(SEXP xMatrixSEXP, SEXP yMatrixSEXP, SEXP libsizesSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP simplexSEXP, SEXP thetaSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -184,8 +184,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type simplex(simplexSEXP);
     Rcpp::traits::input_parameter< double >::type theta(thetaSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< int >::type parallel_level(parallel_levelSEXP);
     Rcpp::traits::input_parameter< bool >::type progressbar(progressbarSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppGCCM4Grid(xMatrix, yMatrix, libsizes, lib, pred, E, tau, b, simplex, theta, threads, progressbar));
+    rcpp_result_gen = Rcpp::wrap(RcppGCCM4Grid(xMatrix, yMatrix, libsizes, lib, pred, E, tau, b, simplex, theta, threads, parallel_level, progressbar));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -793,7 +794,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppSimplex4Grid", (DL_FUNC) &_spEDM_RcppSimplex4Grid, 7},
     {"_spEDM_RcppSMap4Grid", (DL_FUNC) &_spEDM_RcppSMap4Grid, 8},
     {"_spEDM_RcppMultiView4Grid", (DL_FUNC) &_spEDM_RcppMultiView4Grid, 10},
-    {"_spEDM_RcppGCCM4Grid", (DL_FUNC) &_spEDM_RcppGCCM4Grid, 12},
+    {"_spEDM_RcppGCCM4Grid", (DL_FUNC) &_spEDM_RcppGCCM4Grid, 13},
     {"_spEDM_RcppSCPCM4Grid", (DL_FUNC) &_spEDM_RcppSCPCM4Grid, 15},
     {"_spEDM_RcppGCMC4Grid", (DL_FUNC) &_spEDM_RcppGCMC4Grid, 10},
     {"_spEDM_DetectMaxNumThreads", (DL_FUNC) &_spEDM_DetectMaxNumThreads, 0},
