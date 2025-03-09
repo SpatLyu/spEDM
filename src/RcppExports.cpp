@@ -398,8 +398,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppSCPCM4Lattice
-Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::NumericMatrix& z, const Rcpp::List& nb, const Rcpp::IntegerVector& libsizes, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& tau, const Rcpp::IntegerVector& b, bool simplex, double theta, int threads, bool cumulate, bool progressbar);
-RcppExport SEXP _spEDM_RcppSCPCM4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP zSEXP, SEXP nbSEXP, SEXP libsizesSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP simplexSEXP, SEXP thetaSEXP, SEXP threadsSEXP, SEXP cumulateSEXP, SEXP progressbarSEXP) {
+Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::NumericMatrix& z, const Rcpp::List& nb, const Rcpp::IntegerVector& libsizes, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& tau, const Rcpp::IntegerVector& b, bool simplex, double theta, int threads, int parallel_level, bool cumulate, bool progressbar);
+RcppExport SEXP _spEDM_RcppSCPCM4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP zSEXP, SEXP nbSEXP, SEXP libsizesSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP simplexSEXP, SEXP thetaSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP, SEXP cumulateSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -416,9 +416,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type simplex(simplexSEXP);
     Rcpp::traits::input_parameter< double >::type theta(thetaSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< int >::type parallel_level(parallel_levelSEXP);
     Rcpp::traits::input_parameter< bool >::type cumulate(cumulateSEXP);
     Rcpp::traits::input_parameter< bool >::type progressbar(progressbarSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppSCPCM4Lattice(x, y, z, nb, libsizes, lib, pred, E, tau, b, simplex, theta, threads, cumulate, progressbar));
+    rcpp_result_gen = Rcpp::wrap(RcppSCPCM4Lattice(x, y, z, nb, libsizes, lib, pred, E, tau, b, simplex, theta, threads, parallel_level, cumulate, progressbar));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -804,7 +805,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppSMap4Lattice", (DL_FUNC) &_spEDM_RcppSMap4Lattice, 9},
     {"_spEDM_RcppMultiView4Lattice", (DL_FUNC) &_spEDM_RcppMultiView4Lattice, 11},
     {"_spEDM_RcppGCCM4Lattice", (DL_FUNC) &_spEDM_RcppGCCM4Lattice, 13},
-    {"_spEDM_RcppSCPCM4Lattice", (DL_FUNC) &_spEDM_RcppSCPCM4Lattice, 15},
+    {"_spEDM_RcppSCPCM4Lattice", (DL_FUNC) &_spEDM_RcppSCPCM4Lattice, 16},
     {"_spEDM_RcppGCMC4Lattice", (DL_FUNC) &_spEDM_RcppGCMC4Lattice, 11},
     {"_spEDM_RcppFactorial", (DL_FUNC) &_spEDM_RcppFactorial, 1},
     {"_spEDM_RcppCombine", (DL_FUNC) &_spEDM_RcppCombine, 2},
