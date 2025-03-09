@@ -422,282 +422,106 @@ std::vector<std::vector<double>> SCPCM4Lattice(
   // Initialize the result container
   std::vector<PartialCorRes> x_xmap_y;
 
-  // Iterate over each library size
-  if (progressbar) {
-    RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
-    for (int lib_size : unique_lib_sizes) {
-      auto results = SCPCMSingle4Lattice(
-        x_vectors,
-        y,
-        controls,
-        nb_vec,
-        lib_size,
-        max_lib_size,
-        possible_lib_indices,
-        pred_indices,
-        conEs,
-        contaus,
-        bs,
-        simplex,
-        theta,
-        threads_sizet,
-        cumulate
-      );
-      x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
-      bar++;
+  if (parallel_level == 0){
+    // Iterate over each library size
+    if (progressbar) {
+      RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
+      for (int lib_size : unique_lib_sizes) {
+        auto results = SCPCMSingle4Lattice(
+          x_vectors,
+          y,
+          controls,
+          nb_vec,
+          lib_size,
+          max_lib_size,
+          possible_lib_indices,
+          pred_indices,
+          conEs,
+          contaus,
+          bs,
+          simplex,
+          theta,
+          threads_sizet,
+          parallel_level,
+          cumulate
+        );
+        x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+        bar++;
+      }
+    } else {
+      for (int lib_size : unique_lib_sizes) {
+        auto results = SCPCMSingle4Lattice(
+          x_vectors,
+          y,
+          controls,
+          nb_vec,
+          lib_size,
+          max_lib_size,
+          possible_lib_indices,
+          pred_indices,
+          conEs,
+          contaus,
+          bs,
+          simplex,
+          theta,
+          threads_sizet,
+          parallel_level,
+          cumulate
+        );
+        x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+      }
     }
   } else {
-    for (int lib_size : unique_lib_sizes) {
-      auto results = SCPCMSingle4Lattice(
-        x_vectors,
-        y,
-        controls,
-        nb_vec,
-        lib_size,
-        max_lib_size,
-        possible_lib_indices,
-        pred_indices,
-        conEs,
-        contaus,
-        bs,
-        simplex,
-        theta,
-        threads_sizet,
-        cumulate
-      );
-      x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+    // Perform the operations using RcppThread
+    if (progressbar) {
+      RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
+      RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
+        int lib_size = unique_lib_sizes[i];
+        auto results = SCPCMSingle4Lattice(
+          x_vectors,
+          y,
+          controls,
+          nb_vec,
+          lib_size,
+          max_lib_size,
+          possible_lib_indices,
+          pred_indices,
+          conEs,
+          contaus,
+          bs,
+          simplex,
+          theta,
+          threads_sizet,
+          parallel_level,
+          cumulate
+        );
+        x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+        bar++;
+      }, threads_sizet);
+    } else {
+      RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
+        int lib_size = unique_lib_sizes[i];
+        auto results = SCPCMSingle4Lattice(
+          x_vectors,
+          y,
+          controls,
+          nb_vec,
+          lib_size,
+          max_lib_size,
+          possible_lib_indices,
+          pred_indices,
+          conEs,
+          contaus,
+          bs,
+          simplex,
+          theta,
+          threads_sizet,
+          parallel_level,
+          cumulate
+        );
+        x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+      }, threads_sizet);
     }
-  }
-
-  // Group by the first int and store second and third values as pairs
-  std::map<int, std::vector<std::pair<double, double>>> grouped_results;
-
-  for (const auto& result : x_xmap_y) {
-    grouped_results[result.first].emplace_back(result.second, result.third);
-  }
-
-  std::vector<std::vector<double>> final_results;
-
-  // Compute the mean of second and third values for each group
-  for (const auto& group : grouped_results) {
-    std::vector<double> second_values, third_values;
-
-    for (const auto& val : group.second) {
-      second_values.push_back(val.first);
-      third_values.push_back(val.second);
-    }
-
-    double mean_second = CppMean(second_values, true);
-    double mean_third = CppMean(third_values, true);
-
-    final_results.push_back({static_cast<double>(group.first), mean_second, mean_third});
-  }
-
-  // Compute significance and confidence intervals for each result
-  for (size_t i = 0; i < final_results.size(); ++i) {
-    double rho_second = final_results[i][1];
-    double rho_third = final_results[i][2];
-
-    // Compute significance and confidence interval for second value
-    double significance_second = CppCorSignificance(rho_second, n);
-    std::vector<double> confidence_interval_second = CppCorConfidence(rho_second, n);
-
-    // Compute significance and confidence interval for third value
-    double significance_third = CppCorSignificance(rho_third, n, n_confounds);
-    std::vector<double> confidence_interval_third = CppCorConfidence(rho_third, n, n_confounds);
-
-    // Append computed statistical values to the result
-    final_results[i].push_back(significance_second);
-    final_results[i].push_back(confidence_interval_second[0]);
-    final_results[i].push_back(confidence_interval_second[1]);
-
-    final_results[i].push_back(significance_third);
-    final_results[i].push_back(confidence_interval_third[0]);
-    final_results[i].push_back(confidence_interval_third[1]);
-  }
-
-  return final_results;
-}
-
-
-
-/**
- * Performs SCPCM on a spatial lattice dataset.
- *
- * Parameters:
- * - x: Spatial cross-section series used as the predictor variable (**cross mapping from**).
- * - y: Spatial cross-section series used as the target variable (**cross mapping to**).
- * - controls: Cross-sectional data of control variables (**stored by row**).
- * - nb_vec: A nested vector containing neighborhood information for lattice data.
- * - lib_sizes: A vector specifying different library sizes for SCPCM analysis.
- * - lib: A vector specifying the library indices (1-based in R, converted to 0-based in C++).
- * - pred: A vector specifying the prediction indices (1-based in R, converted to 0-based in C++).
- * - Es: A vector specifying the embedding dimensions for attractor reconstruction using x and control variables.
- * - taus: A vector specifying the spatial lag steps for constructing lagged state-space vectors using x and control variables.
- * - b: A vector specifying the numbers of nearest neighbors used for prediction.
- * - simplex: Boolean flag indicating whether to use simplex projection (true) or S-mapping (false) for prediction.
- * - theta: Distance weighting parameter used for weighting neighbors in the S-mapping prediction.
- * - threads: Number of threads to use for parallel computation.
- * - cumulate: Boolean flag indicating whether to cumulate partial correlations.
- * - progressbar: Boolean flag indicating whether to display a progress bar during computation.
- *
- * Returns:
- *    A 2D vector of results, where each row contains:
- *      - The library size.
- *      - The mean pearson cross-mapping correlation.
- *      - The statistical significance of the pearson correlation.
- *      - The lower bound of the pearson correlation confidence interval.
- *      - The upper bound of the pearson correlation confidence interval.
- *      - The mean partial cross-mapping partial correlation.
- *      - The statistical significance of the partial correlation.
- *      - The lower bound of the partial correlation confidence interval.
- *      - The upper bound of the partial correlation confidence interval.
- */
-std::vector<std::vector<double>> SCPCM4Lattice(
-    const std::vector<double>& x,                       // Spatial cross-section series to cross map from
-    const std::vector<double>& y,                       // Spatial cross-section series to cross map to
-    const std::vector<std::vector<double>>& controls,   // Cross-sectional data of control variables (**stored by row**)
-    const std::vector<std::vector<int>>& nb_vec,        // Neighbor indices vector of the spatial units
-    const std::vector<int>& lib_sizes,                  // Vector of library sizes to use
-    const std::vector<int>& lib,                        // Vector specifying the library indices
-    const std::vector<int>& pred,                       // Vector specifying the prediction indices
-    const std::vector<int>& Es,                         // Number of dimensions for the attractor reconstruction with the x and control variables
-    const std::vector<int>& taus,                       // Spatial lag step for constructing lagged state-space vectors with the x and control variables
-    const std::vector<int>& b,                          // Numbers of nearest neighbors to use for prediction
-    bool simplex,                                       // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
-    double theta,                                       // Distance weighting parameter for the local neighbours in the manifold
-    int threads,                                        // Number of threads used from the global pool
-    bool cumulate,                                      // Whether to cumulate the partial correlations
-    bool progressbar                                    // Whether to print the progress bar
-) {
-  // If b is not provided correctly, default it to E + 2
-  std::vector<int> bs = b;
-  for (size_t i = 0; i < bs.size(); ++i){
-    if (bs[i] <= 0) {
-      bs[i] = Es[i] + 2;
-    }
-  }
-
-  int Ex = Es[0];
-  std::vector<int> conEs = Es;
-  conEs.erase(conEs.begin());
-
-  int taux = taus[0];
-  std::vector<int> contaus = taus;
-  contaus.erase(contaus.begin());
-
-  // Configure threads
-  size_t threads_sizet = static_cast<size_t>(std::abs(threads));
-  threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
-
-  std::vector<std::vector<double>> x_vectors = GenLatticeEmbeddings(x,nb_vec,Ex,taux);
-  int n = x_vectors.size();
-
-  int n_confounds;
-  if (cumulate){
-    n_confounds = 1;
-  } else {
-    n_confounds = controls.size();
-  }
-
-  std::vector<int> possible_lib_indices;
-  for (size_t i = 0; i < lib.size(); ++i) {
-    possible_lib_indices.push_back(lib[i]-1);
-  }
-  int max_lib_size = static_cast<int>(possible_lib_indices.size()); // Maximum lib size
-
-  std::vector<bool> pred_indices(n, false);
-  for (size_t i = 0; i < pred.size(); ++i) {
-    // // Do not strictly exclude spatial units with embedded state-space vectors containing NaN values from participating in cross mapping.
-    // if (!checkOneDimVectorHasNaN(x_vectors[pred[i] - 1])){
-    //   pred_indices[pred[i] - 1] = true;
-    // }
-    pred_indices[pred[i] - 1] = true; // Convert to 0-based index
-  }
-
-  std::vector<int> unique_lib_sizes(lib_sizes.begin(), lib_sizes.end());
-
-  // Transform to ensure no size exceeds max_lib_size
-  std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
-                 [&](int size) { return std::min(size, max_lib_size); });
-
-  // Ensure the minimum value in unique_lib_sizes is Ex + 2 (uncomment this section if required)
-  // std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
-  //                [&](int size) { return std::max(size, Ex + 2); });
-
-  // Remove duplicates
-  std::sort(unique_lib_sizes.begin(), unique_lib_sizes.end());
-  unique_lib_sizes.erase(std::unique(unique_lib_sizes.begin(), unique_lib_sizes.end()), unique_lib_sizes.end());
-
-  // Initialize the result container
-  std::vector<PartialCorRes> x_xmap_y;
-
-  // Sequential version of the for loop
-  // for (int lib_size : unique_lib_sizes) {
-  //   auto results = SCPCMSingle4Lattice(
-  //     x_vectors,
-  //     y,
-  //     controls,
-  //     nb_vec,
-  //     lib_size,
-  //     max_lib_size,
-  //     possible_lib_indices,
-  //     pred_indices,
-  //     conEs,
-  //     contaus,
-  //     bs,
-  //     simplex,
-  //     theta,
-  //     cumulate
-  //   );
-  //   x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
-  // }
-
-  // Perform the operations using RcppThread
-  if (progressbar) {
-    RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
-    RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
-      int lib_size = unique_lib_sizes[i];
-      auto results = SCPCMSingle4Lattice(
-        x_vectors,
-        y,
-        controls,
-        nb_vec,
-        lib_size,
-        max_lib_size,
-        possible_lib_indices,
-        pred_indices,
-        conEs,
-        contaus,
-        bs,
-        simplex,
-        theta,
-        cumulate
-      );
-      x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
-      bar++;
-    }, threads_sizet);
-  } else {
-    RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
-      int lib_size = unique_lib_sizes[i];
-      auto results = SCPCMSingle4Lattice(
-        x_vectors,
-        y,
-        controls,
-        nb_vec,
-        lib_size,
-        max_lib_size,
-        possible_lib_indices,
-        pred_indices,
-        conEs,
-        contaus,
-        bs,
-        simplex,
-        theta,
-        cumulate
-      );
-      x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
-    }, threads_sizet);
   }
 
   // Group by the first int and store second and third values as pairs
