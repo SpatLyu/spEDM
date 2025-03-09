@@ -197,6 +197,7 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
  * - simplex: Boolean flag indicating whether to use Simplex Projection (true) or S-Mapping (false) for prediction.
  * - theta: Distance weighting parameter used for weighting neighbors in the S-Mapping prediction.
  * - threads: Number of threads to use for parallel computation.
+ * - parallel_level: Level of parallel computing: 0 for `lower`, 1 for `higher`.
  * - cumulate: Boolean flag indicating whether to cumulate partial correlations.
  * - progressbar: Boolean flag indicating whether to display a progress bar during computation.
  *
@@ -225,6 +226,7 @@ std::vector<std::vector<double>> SCPCM4Grid(
     bool simplex,                                        // Algorithm used for prediction; Use simplex projection if true, and s-mapping if false
     double theta,                                        // Distance weighting parameter for the local neighbours in the manifold
     int threads,                                         // Number of threads used from the global pool
+    int parallel_level,                                  // Level of parallel computing: 0 for `lower`, 1 for `higher`
     bool cumulate,                                       // Whether to cumulate the partial correlations
     bool progressbar                                     // Whether to print the progress bar
 );
@@ -245,6 +247,7 @@ std::vector<std::vector<double>> SCPCM4Grid(
  * - simplex: Use simplex projection (true) or S-mapping (false)
  * - theta: Distance weighting parameter for S-mapping
  * - threads: Number of parallel computation threads
+ * - parallel_level: Level of parallel computing: 0 for `lower`, 1 for `higher`.
  * - cumulate: Enable cumulative partial correlations
  * - progressbar: Display progress bar during computation
  *
@@ -273,8 +276,8 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
     bool simplex,
     double theta,
     int threads,
+    int parallel_level,
     bool cumulate,
-    bool progressbar
-);
+    bool progressbar);
 
 #endif // SCPCM4Grid_H

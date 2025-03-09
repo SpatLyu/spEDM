@@ -699,55 +699,61 @@ std::vector<std::vector<double>> SCPCM4Grid(
   // Initialize the result container
   std::vector<PartialCorRes> x_xmap_y;
 
-  // Iterate over each library size
-  if (progressbar) {
-    RcppThread::ProgressBar bar(unique_lib_size_pairs.size(), 1);
-    for (size_t i = 0; i < unique_lib_size_pairs.size(); ++i) {
-      int lib_size_row = unique_lib_size_pairs[i].first;
-      int lib_size_col = unique_lib_size_pairs[i].second;
-      auto results = SCPCMSingle4Grid(
-        xEmbedings,
-        yPred,
-        zMatrixs,
-        {lib_size_row, lib_size_col},
-        lib_indices,
-        pred_indices,
-        conEs,
-        contaus,
-        bs,
-        totalRow,
-        totalCol,
-        simplex,
-        theta,
-        threads_sizet,
-        cumulate,
-        row_size_mark);
-      x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
-      bar++;
+  if (parallel_level == 0){
+    // Iterate over each library size
+    if (progressbar) {
+      RcppThread::ProgressBar bar(unique_lib_size_pairs.size(), 1);
+      for (size_t i = 0; i < unique_lib_size_pairs.size(); ++i) {
+        int lib_size_row = unique_lib_size_pairs[i].first;
+        int lib_size_col = unique_lib_size_pairs[i].second;
+        auto results = SCPCMSingle4Grid(
+          xEmbedings,
+          yPred,
+          zMatrixs,
+          {lib_size_row, lib_size_col},
+          lib_indices,
+          pred_indices,
+          conEs,
+          contaus,
+          bs,
+          totalRow,
+          totalCol,
+          simplex,
+          theta,
+          threads_sizet,
+          parallel_level,
+          cumulate,
+          row_size_mark);
+        x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+        bar++;
+      }
+    } else {
+      for (size_t i = 0; i < unique_lib_size_pairs.size(); ++i) {
+        int lib_size_row = unique_lib_size_pairs[i].first;
+        int lib_size_col = unique_lib_size_pairs[i].second;
+        auto results = SCPCMSingle4Grid(
+          xEmbedings,
+          yPred,
+          zMatrixs,
+          {lib_size_row, lib_size_col},
+          lib_indices,
+          pred_indices,
+          conEs,
+          contaus,
+          bs,
+          totalRow,
+          totalCol,
+          simplex,
+          theta,
+          threads_sizet,
+          parallel_level,
+          cumulate,
+          row_size_mark);
+        x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+      }
     }
   } else {
-    for (size_t i = 0; i < unique_lib_size_pairs.size(); ++i) {
-      int lib_size_row = unique_lib_size_pairs[i].first;
-      int lib_size_col = unique_lib_size_pairs[i].second;
-      auto results = SCPCMSingle4Grid(
-        xEmbedings,
-        yPred,
-        zMatrixs,
-        {lib_size_row, lib_size_col},
-        lib_indices,
-        pred_indices,
-        conEs,
-        contaus,
-        bs,
-        totalRow,
-        totalCol,
-        simplex,
-        theta,
-        threads_sizet,
-        cumulate,
-        row_size_mark);
-      x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
-    }
+
   }
 
   // Group by the first int and store second and third values as pairs
