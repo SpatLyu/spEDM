@@ -2,13 +2,13 @@
 
 ### new
 
-* Enable `parallel.option` parameter to specify parallel granularity.
+* Enable `parallel.level` parameter to specify parallel granularity in `gccm` R API (#310).
 
 * Implement the `multiview` function for multiview embedding forecasting (MVE) method (#221).
 
 ### enhancements
 
-* Integrate `lib` parameter in `gccm` R side API for library units selection (#278).
+* Integrate `lib` parameter in `gccm` R API for library units selection (#278).
 
 * Set the default `k` to `E+2` in the `gccm` R API (#261).
 
