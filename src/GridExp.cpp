@@ -593,6 +593,7 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
     bool simplex,
     double theta,
     int threads,
+    int parallel_level,
     bool cumulate,
     bool progressbar) {
   int numRows = yMatrix.nrow();
@@ -721,6 +722,7 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
       simplex,
       theta,
       threads,
+      parallel_level,
       cumulate,
       progressbar
     );
@@ -738,6 +740,7 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
       simplex,
       theta,
       threads,
+      parallel_level,
       cumulate,
       progressbar
     );
