@@ -33,6 +33,24 @@ std::vector<double> SMapPrediction(
   // Setup output
   std::vector<double> pred(target.size(), std::numeric_limits<double>::quiet_NaN());
 
+  // no neighbor to use, return all nan
+  if (num_neighbors <= 0){
+    return pred;
+  }
+
+  // Count the number of true values in lib_indices
+  size_t lib_count = std::count(lib_indices.begin(), lib_indices.end(), true);
+
+  // no library to use, return all nan
+  if (lib_count == 0){
+    return pred;
+  }
+
+  // // If the number of true values is less than num_neighbors, return NaN vector
+  // if (lib_count < num_neighbors_sizet) {
+  //   return pred;
+  // }
+
   // Make predictions
   for (size_t p = 0; p < pred_indices.size(); ++p) {
     if (!pred_indices[p]) continue;
@@ -44,6 +62,17 @@ std::vector<double> SMapPrediction(
     std::vector<size_t> libs;
     for (size_t i = 0; i < local_lib_indices.size(); ++i) {
       if (local_lib_indices[i]) libs.push_back(i);
+    }
+
+    // Handle the case where libs is empty
+    if (libs.empty()) {
+      pred[p] = std::numeric_limits<double>::quiet_NaN();
+      continue;
+    }
+
+    // Adjust num_neighbors_sizet if it exceeds libs.size()
+    if (num_neighbors_sizet > libs.size()) {
+      num_neighbors_sizet = libs.size();
     }
 
     // Compute distances
@@ -81,11 +110,6 @@ std::vector<double> SMapPrediction(
     // Find nearest neighbors
     std::vector<size_t> neighbors(distances.size());
     std::iota(neighbors.begin(), neighbors.end(), 0);
-    // Check if num_neighbors_sizet exceeds the size of neighbors
-    // If so, adjust num_neighbors_sizet to the maximum allowed value (neighbors.size())
-    if (num_neighbors_sizet > neighbors.size()) {
-      num_neighbors_sizet = neighbors.size();
-    }
     std::partial_sort(neighbors.begin(), neighbors.begin() + num_neighbors_sizet, neighbors.end(),
                       [&](size_t a, size_t b) {
                         return (distances[a] < distances[b]) ||
