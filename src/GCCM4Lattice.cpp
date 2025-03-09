@@ -166,6 +166,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
  * - simplex: Boolean flag indicating whether to use simplex projection (true) or S-mapping (false) for prediction.
  * - theta: Distance weighting parameter used for weighting neighbors in the S-mapping prediction.
  * - threads: Number of threads to use for parallel computation.
+ * - parallel_level: Level of parallel computing: 0 for `lower`, 1 for `higher`.
  * - progressbar: Boolean flag to indicate whether to display a progress bar during computation.
  *
  * Returns:
@@ -238,36 +239,77 @@ std::vector<std::vector<double>> GCCM4Lattice(
   // Initialize the result container
   std::vector<std::pair<int, double>> x_xmap_y;
 
-  // Iterate over each library size
-  if (progressbar) {
-    RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
-    for (int lib_size : unique_lib_sizes) {
-      auto results = GCCMSingle4Lattice(x_vectors,
-                                        y,
-                                        lib_size,
-                                        max_lib_size,
-                                        possible_lib_indices,
-                                        pred_indices,
-                                        b,
-                                        simplex,
-                                        theta,
-                                        threads_sizet);
-      x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
-      bar++;
+  if (parallel_level == 0){
+    // Iterate over each library size
+    if (progressbar) {
+      RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
+      for (int lib_size : unique_lib_sizes) {
+        auto results = GCCMSingle4Lattice(x_vectors,
+                                          y,
+                                          lib_size,
+                                          max_lib_size,
+                                          possible_lib_indices,
+                                          pred_indices,
+                                          b,
+                                          simplex,
+                                          theta,
+                                          threads_sizet,
+                                          parallel_level);
+        x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+        bar++;
+      }
+    } else {
+      for (int lib_size : unique_lib_sizes) {
+        auto results = GCCMSingle4Lattice(x_vectors,
+                                          y,
+                                          lib_size,
+                                          max_lib_size,
+                                          possible_lib_indices,
+                                          pred_indices,
+                                          b,
+                                          simplex,
+                                          theta,
+                                          threads_sizet,
+                                          parallel_level);
+        x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+      }
     }
   } else {
-    for (int lib_size : unique_lib_sizes) {
-      auto results = GCCMSingle4Lattice(x_vectors,
-                                        y,
-                                        lib_size,
-                                        max_lib_size,
-                                        possible_lib_indices,
-                                        pred_indices,
-                                        b,
-                                        simplex,
-                                        theta,
-                                        threads_sizet);
-      x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+    // Perform the operations using RcppThread
+    if (progressbar) {
+      RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
+      RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
+        int lib_size = unique_lib_sizes[i];
+        auto results = GCCMSingle4Lattice(x_vectors,
+                                          y,
+                                          lib_size,
+                                          max_lib_size,
+                                          possible_lib_indices,
+                                          pred_indices,
+                                          b,
+                                          simplex,
+                                          theta,
+                                          threads_sizet,
+                                          parallel_level);
+        x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+        bar++;
+      }, threads_sizet);
+    } else {
+      RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
+        int lib_size = unique_lib_sizes[i];
+        auto results = GCCMSingle4Lattice(x_vectors,
+                                          y,
+                                          lib_size,
+                                          max_lib_size,
+                                          possible_lib_indices,
+                                          pred_indices,
+                                          b,
+                                          simplex,
+                                          theta,
+                                          threads_sizet,
+                                          parallel_level);
+        x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+      }, threads_sizet);
     }
   }
 
@@ -296,113 +338,3 @@ std::vector<std::vector<double>> GCCM4Lattice(
 
   return final_results;
 }
-
-// std::vector<std::vector<double>> GCCM4Lattice(
-//     const std::vector<double>& x,
-//     const std::vector<double>& y,
-//     const std::vector<std::vector<int>>& nb_vec,
-//     const std::vector<int>& lib_sizes,
-//     const std::vector<int>& lib,
-//     const std::vector<int>& pred,
-//     int E,
-//     int tau,
-//     int b,
-//     bool simplex,
-//     double theta,
-//     int threads,
-//     bool progressbar
-// ) {
-//   // If b is not provided correctly, default it to E + 2
-//   if (b <= 0) {
-//     b = E + 2;
-//   }
-//
-//   // Configure threads
-//   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
-//   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
-//
-//   // Generate embeddings
-//   std::vector<std::vector<double>> x_vectors = GenLatticeEmbeddings(x, nb_vec, E, tau);
-//
-//   int n = x_vectors.size();
-//
-//   std::vector<int> possible_lib_indices;
-//   for (size_t i = 0; i < lib.size(); ++i) {
-//     possible_lib_indices.push_back(lib[i]-1);
-//   }
-//   int max_lib_size = static_cast<int>(possible_lib_indices.size()); // Maximum lib size
-//
-//   std::vector<bool> pred_indices(n, false);
-//   for (size_t i = 0; i < pred.size(); ++i) {
-//     // // Do not strictly exclude spatial units with embedded state-space vectors containing NaN values from participating in cross mapping.
-//     // if (!checkOneDimVectorHasNaN(x_vectors[pred[i] - 1])){
-//     //   pred_indices[pred[i] - 1] = true;
-//     // }
-//     pred_indices[pred[i] - 1] = true; // Convert to 0-based index
-//   }
-//
-//   std::vector<int> unique_lib_sizes(lib_sizes.begin(), lib_sizes.end());
-//
-//   // Transform to ensure no size exceeds max_lib_size
-//   std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
-//                  [&](int size) { return std::min(size, max_lib_size); });
-//
-//   // Ensure the minimum value in unique_lib_sizes is E + 2 (uncomment this section if required)
-//   // std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
-//   //                [&](int size) { return std::max(size, E + 2); });
-//
-//   // Remove duplicates
-//   std::sort(unique_lib_sizes.begin(), unique_lib_sizes.end());
-//   unique_lib_sizes.erase(std::unique(unique_lib_sizes.begin(), unique_lib_sizes.end()), unique_lib_sizes.end());
-//
-//   // Initialize the result container
-//   std::vector<std::pair<int, double>> x_xmap_y;
-//
-//   // // Sequential version of the for loop
-//   // for (int lib_size : unique_lib_sizes) {
-//   //   auto results = GCCMSingle4Lattice(x_vectors, y, lib_size, max_lib_size, possible_lib_indices, pred_indices, b, simplex, theta);
-//   //   x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
-//   // }
-//
-//   // Perform the operations using RcppThread
-//   if (progressbar) {
-//     RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
-//     RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
-//       int lib_size = unique_lib_sizes[i];
-//       auto results = GCCMSingle4Lattice(x_vectors, y, lib_size, max_lib_size, possible_lib_indices, pred_indices, b, simplex, theta);
-//       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
-//       bar++;
-//     }, threads_sizet);
-//   } else {
-//     RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
-//       int lib_size = unique_lib_sizes[i];
-//       auto results = GCCMSingle4Lattice(x_vectors, y, lib_size, max_lib_size, possible_lib_indices, pred_indices, b, simplex, theta);
-//       x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
-//     }, threads_sizet);
-//   }
-//
-//   // Group by the first int and compute the mean
-//   std::map<int, std::vector<double>> grouped_results;
-//   for (const auto& result : x_xmap_y) {
-//     grouped_results[result.first].push_back(result.second);
-//   }
-//
-//   std::vector<std::vector<double>> final_results;
-//   for (const auto& group : grouped_results) {
-//     double mean_value = CppMean(group.second, true);
-//     final_results.push_back({static_cast<double>(group.first), mean_value});
-//   }
-//
-//   // Calculate significance and confidence interval for each result
-//   for (size_t i = 0; i < final_results.size(); ++i) {
-//     double rho = final_results[i][1];
-//     double significance = CppCorSignificance(rho, n);
-//     std::vector<double> confidence_interval = CppCorConfidence(rho, n);
-//
-//     final_results[i].push_back(significance);
-//     final_results[i].push_back(confidence_interval[0]);
-//     final_results[i].push_back(confidence_interval[1]);
-//   }
-//
-//   return final_results;
-// }
