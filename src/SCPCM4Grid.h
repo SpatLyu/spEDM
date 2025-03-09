@@ -208,12 +208,12 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
  *      - The library size.
  *      - The mean pearson cross-mapping correlation.
  *      - The statistical significance of the pearson correlation.
- *      - The lower bound of the pearson correlation confidence interval.
  *      - The upper bound of the pearson correlation confidence interval.
+ *      - The lower bound of the pearson correlation confidence interval.
  *      - The mean partial cross-mapping partial correlation.
  *      - The statistical significance of the partial correlation.
- *      - The lower bound of the partial correlation confidence interval.
  *      - The upper bound of the partial correlation confidence interval.
+ *      - The lower bound of the partial correlation confidence interval.
  */
 std::vector<std::vector<double>> SCPCM4Grid(
     const std::vector<std::vector<double>>& xMatrix,     // Two dimension matrix of X variable
@@ -258,12 +258,12 @@ std::vector<std::vector<double>> SCPCM4Grid(
  *     - Library size
  *     - Mean cross-map correlation (rho)
  *     - Rho significance
- *     - Rho lower CI
  *     - Rho upper CI
+ *     - Rho lower CI
  *     - Mean partial correlation
  *     - Partial correlation significance
- *     - Partial lower CI
  *     - Partial upper CI
+ *     - Partial lower CI
  */
 std::vector<std::vector<double>> SCPCM4GridOneDim(
     const std::vector<std::vector<double>>& xMatrix,

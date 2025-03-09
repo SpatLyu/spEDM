@@ -174,8 +174,8 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
  *      - The library size.
  *      - The mean cross-mapping correlation.
  *      - The statistical significance of the correlation.
- *      - The lower bound of the confidence interval.
  *      - The upper bound of the confidence interval.
+ *      - The lower bound of the confidence interval.
  */
 std::vector<std::vector<double>> GCCM4Lattice(
     const std::vector<double>& x,
@@ -313,7 +313,7 @@ std::vector<std::vector<double>> GCCM4Lattice(
     }
   }
 
-  // Group by the first int and compute the mean
+  // Group by the first int(lib_size) and compute the mean (rho)
   std::map<int, std::vector<double>> grouped_results;
   for (const auto& result : x_xmap_y) {
     grouped_results[result.first].push_back(result.second);
