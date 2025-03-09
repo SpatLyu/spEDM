@@ -37,14 +37,14 @@ std::vector<double> SimplexProjectionPrediction(
     return pred;
   }
 
-  // Count the number of true values in lib_indices
-  size_t lib_count = std::count(lib_indices.begin(), lib_indices.end(), true);
-
-  // no library to use, return all nan
-  if (lib_count == 0){
-    return pred;
-  }
-
+  // // Count the number of true values in lib_indices
+  // size_t lib_count = std::count(lib_indices.begin(), lib_indices.end(), true);
+  //
+  // // no library to use, return all nan
+  // if (lib_count == 0){
+  //   return pred;
+  // }
+  //
   // // If the number of true values is less than num_neighbors, return NaN vector
   // if (lib_count < num_neighbors_sizet) {
   //   return pred;
