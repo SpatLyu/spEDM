@@ -2,11 +2,11 @@
 
 ### new
 
+* Enable `parallel.option` parameter to specify parallel granularity.
+
 * Implement the `multiview` function for multiview embedding forecasting (MVE) method (#221).
 
 ### enhancements
-
-* Parallelize within each `libsize` operation for spatial lattice ([#301](https://github.com/stscl/spEDM/pull/301)) and grid data ([#303](https://github.com/stscl/spEDM/pull/303)).
 
 * Integrate `lib` parameter in `gccm` R side API for library units selection (#278).
 
