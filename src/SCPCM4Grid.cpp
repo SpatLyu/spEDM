@@ -486,6 +486,7 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
  * - simplex: Boolean flag indicating whether to use Simplex Projection (true) or S-Mapping (false) for prediction.
  * - theta: Distance weighting parameter used for weighting neighbors in the S-Mapping prediction.
  * - threads: Number of threads to use for parallel computation.
+ * - parallel_level: Level of parallel computing: 0 for `lower`, 1 for `higher`.
  * - cumulate: Boolean flag indicating whether to cumulate partial correlations.
  * - progressbar: Boolean flag indicating whether to display a progress bar during computation.
  *
