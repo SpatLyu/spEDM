@@ -20,6 +20,7 @@
   pred = NULL,
   nb = NULL,
   threads = detectThreads(),
+  parallel.level = "lower",
   bidirectional = TRUE,
   trend.rm = TRUE,
   progressbar = TRUE
@@ -38,6 +39,7 @@
   lib = NULL,
   pred = NULL,
   threads = detectThreads(),
+  parallel.level = "lower",
   bidirectional = TRUE,
   trend.rm = TRUE,
   progressbar = TRUE
@@ -69,6 +71,8 @@
 \item{nb}{(optional) The neighbours list.}
 
 \item{threads}{(optional) Number of threads.}
+
+\item{parallel.level}{(optional) Level of parallelism, \code{lower} or \code{higher}.}
 
 \item{bidirectional}{(optional) whether to identify bidirectional causal associations.}
 

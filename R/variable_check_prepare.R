@@ -12,6 +12,14 @@
   return(abs(rep(x,length.out = n)))
 }
 
+.check_parallellevel = \(parallel.level){
+  pl = 0
+  if (parallel.level != "lower"){
+    pl = 1
+  }
+  return(pl)
+}
+
 .internal_varname = \(mediator = NULL){
   .varname = c("cause","effect")
   if (!is.null(mediator)){
