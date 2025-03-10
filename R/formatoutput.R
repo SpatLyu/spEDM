@@ -107,7 +107,7 @@ plot.ccm_res = \(x, family = "serif", xbreaks = NULL, xlimits = NULL,
                    axis.title = ggplot2::element_text(family = family),
                    panel.grid = ggplot2::element_blank(),
                    legend.position = "inside",
-                   legend.justification = c('right','top'),
+                   legend.justification = c(0.05,1),
                    legend.background = ggplot2::element_rect(fill = 'transparent'),
                    legend.text = ggplot2::element_text(family = family))
   return(fig1)
