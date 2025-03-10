@@ -89,7 +89,8 @@ pd_res
 Visualize the result:
 
 ```{r fig1,fig.width=5.5,fig.height=4.45,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. The cross-mapping prediction outputs between population density and county-level Precipitation.")}
-plot(pd_res,xlimits = c(0, 2800))
+plot(pd_res,xlimits = c(0, 2800)) +
+  ggplot2::theme(legend.justification = c(0.85,1))
 ```
 
 ## 1.3 An example of spatial grid data
@@ -167,5 +168,5 @@ Visualize the result:
 
 ```{r fig3,fig.width=4.5,fig.height=3.5,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 3**. The cross-mapping prediction outputs between farmland NPP and precipitation.")}
 plot(npp_res,xlimits = c(9, 161),ylimits = c(0.05,1)) +
-  ggplot2::theme(legend.justification = c(0.05,1))
+  ggplot2::theme(legend.justification = c(0.25,1))
 ```
