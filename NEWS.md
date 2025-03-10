@@ -22,6 +22,8 @@
 
 ### breaking changes
 
+* Default plotting method places the legend in the top-left corner of the plot now (#325).
+
 * Refine `simplex` & `smap` output on the R side (#263).
 
 ### bug fixes
