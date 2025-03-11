@@ -84,12 +84,9 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
       // Set library indices only if possible_lib_indices is true
       for (int i = r; i < r + lib_size_row; ++i) {
         for (int j = c; j < c + lib_size_col; ++j) {
-          // Ensure i and j are within bounds
-          if (i <= totalRow && j <= totalCol) {
-            int index = LocateGridIndices(i, j, totalRow, totalCol);
-            if (possible_lib_indices[index]) {
-              lib_indices[index] = true;
-            }
+          int index = LocateGridIndices(i, j, totalRow, totalCol);
+          if (possible_lib_indices[index]) {
+            lib_indices[index] = true;
           }
         }
       }
@@ -139,12 +136,9 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
       // Set library indices only if possible_lib_indices is true
       for (int i = r; i < r + lib_size_row; ++i) {
         for (int j = c; j < c + lib_size_col; ++j) {
-          // Ensure i and j are within bounds
-          if (i <= totalRow && j <= totalCol) {
-            int index = LocateGridIndices(i, j, totalRow, totalCol);
-            if (possible_lib_indices[index]) {
-              lib_indices[index] = true;
-            }
+          int index = LocateGridIndices(i, j, totalRow, totalCol);
+          if (possible_lib_indices[index]) {
+            lib_indices[index] = true;
           }
         }
       }
