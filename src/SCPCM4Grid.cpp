@@ -415,8 +415,8 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
 
       // Check if more than half of the library is NA
       int na_count = 0;
-      for (size_t i = 0; i < lib_indices.size(); ++i) {
-        if (lib_indices[i] && std::isnan(yPred[i])) {
+      for (size_t ii = 0; ii < lib_indices.size(); ++ii) {
+        if (lib_indices[ii] && std::isnan(yPred[ii])) {
           ++na_count;
         }
       }
