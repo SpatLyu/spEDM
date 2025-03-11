@@ -232,14 +232,16 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
     bool row_size_mark)
 {
   // Extract row-wise and column-wise library sizes
-  int lib_size_row = lib_sizes[0];
-  int lib_size_col = lib_sizes[1];
+  const int lib_size_row = lib_sizes[0];
+  const int lib_size_col = lib_sizes[1];
 
   // Determine the marked libsize
-  int libsize = (row_size_mark) ? lib_size_row : lib_size_col;
+  const int libsize = row_size_mark ? lib_size_row : lib_size_col;
+  const int half_lib_size = (lib_size_row * lib_size_col) / 2;
 
   // Precompute valid (r, c) pairs
   std::vector<std::pair<int, int>> valid_indices;
+  // valid_indices.reserve((totalRow - lib_size_row + 1) * (totalCol - lib_size_col + 1));
   for (int r = 1; r <= totalRow - lib_size_row + 1; ++r) {
     for (int c = 1; c <= totalCol - lib_size_col + 1; ++c) {
       valid_indices.emplace_back(r, c);
@@ -254,91 +256,49 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
   // and optionally set default values using the constructor of PartialCorRes
   std::vector<PartialCorRes> x_xmap_y(valid_indices.size());
 
-  if (parallel_level == 0){
-    // Perform the operations using RcppThread
-    RcppThread::parallelFor(0, valid_indices.size(), [&](size_t i) {
-      int r = valid_indices[i].first;
-      int c = valid_indices[i].second;
+  // Unified processing logic
+  auto process = [&](size_t idx) {
+    const int r = valid_indices[idx].first;
+    const int c = valid_indices[idx].second;
 
-      // Initialize library indices
-      std::vector<bool> lib_indices(totalRow * totalCol, false);
+    // Initialize library indices and count the number of the nan value together
+    std::vector<bool> lib_indices(totalRow * totalCol, false);
+    int na_count = 0;
 
-      // Set library indices only if possible_lib_indices is true
-      for (int i = r; i < r + lib_size_row; ++i) {
-        for (int j = c; j < c + lib_size_col; ++j) {
-          int index = LocateGridIndices(i, j, totalRow, totalCol);
-          if (possible_lib_indices[index]) {
-            lib_indices[index] = true;
+    for (int ii = r; ii < r + lib_size_row; ++ii) {
+      for (int jj = c; jj < c + lib_size_col; ++jj) {
+        const int index = (ii - 1) * totalCol + (jj - 1);
+        if (possible_lib_indices[index]) {
+          lib_indices[index] = true;
+          if (std::isnan(yPred[index])) {
+            ++na_count;
           }
         }
       }
+    }
 
-      // Check if more than half of the library is NA
-      int na_count = 0;
-      for (size_t i = 0; i < lib_indices.size(); ++i) {
-        if (lib_indices[i] && std::isnan(yPred[i])) {
-          ++na_count;
-        }
+    // Directly initialize std::vector<double> with two NaN values
+    std::vector<double> rho(2, std::numeric_limits<double>::quiet_NaN());
+
+    if (na_count <= half_lib_size) {
+      // Run partial cross map and store results
+      if (simplex) {
+        rho = PartialSimplex4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, cumulate);
+      } else {
+        rho = PartialSMap4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, theta, cumulate);
       }
+    }
 
-      // Directly initialize std::vector<double> with two NaN values
-      std::vector<double> rho(2, std::numeric_limits<double>::quiet_NaN());
+    // Directly assign a PartialCorRes struct with the three values
+    x_xmap_y[idx] = PartialCorRes(libsize, rho[0], rho[1]);
+  };
 
-      if (na_count <= (lib_size_row * lib_size_col) / 2.0) {
-        // Run partial cross map and store results
-        if (simplex) {
-          rho = PartialSimplex4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, cumulate);
-        } else {
-          rho = PartialSMap4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, theta, cumulate);
-        }
-      }
-
-      // Directly initialize a PartialCorRes struct with the three values
-      PartialCorRes result(libsize, rho[0], rho[1]);
-      x_xmap_y[i] = result;
-    }, threads);
+  // Parallel coordination
+  if (parallel_level == 0) {
+    RcppThread::parallelFor(0, valid_indices.size(), process, threads);
   } else {
-    // Iterate through precomputed (r, c) pairs
     for (size_t i = 0; i < valid_indices.size(); ++i) {
-      int r = valid_indices[i].first;
-      int c = valid_indices[i].second;
-
-      // Initialize library indices
-      std::vector<bool> lib_indices(totalRow * totalCol, false);
-
-      // Set library indices only if possible_lib_indices is true
-      for (int i = r; i < r + lib_size_row; ++i) {
-        for (int j = c; j < c + lib_size_col; ++j) {
-          int index = LocateGridIndices(i, j, totalRow, totalCol);
-          if (possible_lib_indices[index]) {
-            lib_indices[index] = true;
-          }
-        }
-      }
-
-      // Check if more than half of the library is NA
-      int na_count = 0;
-      for (size_t i = 0; i < lib_indices.size(); ++i) {
-        if (lib_indices[i] && std::isnan(yPred[i])) {
-          ++na_count;
-        }
-      }
-
-      // Directly initialize std::vector<double> with two NaN values
-      std::vector<double> rho(2, std::numeric_limits<double>::quiet_NaN());
-
-      if (na_count <= (lib_size_row * lib_size_col) / 2.0) {
-        // Run partial cross map and store results
-        if (simplex) {
-          rho = PartialSimplex4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, cumulate);
-        } else {
-          rho = PartialSMap4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, theta, cumulate);
-        }
-      }
-
-      // Directly initialize a PartialCorRes struct with the three values
-      PartialCorRes result(libsize, rho[0], rho[1]);
-      x_xmap_y[i] = result;
+      process(i);
     }
   }
 
