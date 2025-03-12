@@ -776,16 +776,18 @@ std::vector<std::vector<double>> CppMatDistance(
 }
 
 // Function to find k-nearest neighbors of a given index in the embedding space
-std::vector<std::size_t> CppKNNIndice(
-    const std::vector<std::vector<double>>& embedding_space,
-    std::size_t target_idx,
-    std::size_t k)
+// The `lib` parameter specifies the indices from which the k-nearest neighbors should be selected
+std::vector<size_t> CppKNNIndice(
+    const std::vector<std::vector<double>>& embedding_space,  // Embedding space containing vectors
+    size_t target_idx,                                        // Target index for which to find neighbors
+    size_t k,                                                 // Number of nearest neighbors to find
+    const std::vector<int>& lib)                              // Indices from which to select neighbors
 {
-  std::size_t n = embedding_space.size();
-  std::vector<std::pair<double, std::size_t>> distances;
+  std::vector<std::pair<double, size_t>> distances;
 
-  for (std::size_t i = 0; i < n; ++i) {
-    if (i == target_idx) continue;
+  // Iterate through the specified library indices to collect valid distances
+  for (std::size_t i : lib) {
+    if (i == target_idx) continue;  // Skip the target index itself
 
     // Check if the entire embedding_space[i] is NaN
     if (std::all_of(embedding_space[i].begin(), embedding_space[i].end(),
@@ -793,6 +795,7 @@ std::vector<std::size_t> CppKNNIndice(
       continue;
     }
 
+    // Compute the distance between the target and the current index
     double dist = CppDistance(embedding_space[target_idx], embedding_space[i], false, true);
 
     // Skip NaN distances
@@ -804,6 +807,7 @@ std::vector<std::size_t> CppKNNIndice(
   // Partial sort to get k-nearest neighbors, excluding NaN distances
   std::partial_sort(distances.begin(), distances.begin() + std::min(k, distances.size()), distances.end());
 
+  // Extract the indices of the k-nearest neighbors
   std::vector<std::size_t> neighbors;
   for (std::size_t i = 0; i < k && i < distances.size(); ++i) {
     neighbors.push_back(distances[i].second);
@@ -813,16 +817,17 @@ std::vector<std::size_t> CppKNNIndice(
 }
 
 // Function to find k-nearest neighbors of a given index using a precomputed distance matrix
-std::vector<std::size_t> CppDistKNNIndice(
+// The `lib` parameter specifies the indices from which the k-nearest neighbors should be selected
+std::vector<size_t> CppDistKNNIndice(
     const std::vector<std::vector<double>>& dist_mat,  // Precomputed n * n distance matrix
-    std::size_t target_idx,                            // Target index for which to find neighbors
-    std::size_t k)                                     // Number of nearest neighbors to find
+    size_t target_idx,                                 // Target index for which to find neighbors
+    size_t k,                                          // Number of nearest neighbors to find
+    const std::vector<int>& lib)                       // Indices from which to select neighbors
 {
-  std::size_t n = dist_mat.size();
-  std::vector<std::pair<double, std::size_t>> distances;
+  std::vector<std::pair<double, size_t>> distances;
 
-  // Iterate through the distance matrix to collect valid distances
-  for (std::size_t i = 0; i < n; ++i) {
+  // Iterate through the specified library indices to collect valid distances
+  for (size_t i : lib) {
     if (i == target_idx) continue;  // Skip the target index itself
 
     double dist = dist_mat[target_idx][i];

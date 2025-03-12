@@ -99,15 +99,17 @@ std::vector<std::vector<double>> CppMatDistance(
     bool L1norm = false,
     bool NA_rm = false);
 
-std::vector<std::size_t> CppKNNIndice(
+std::vector<size_t> CppKNNIndice(
     const std::vector<std::vector<double>>& embedding_space,
-    std::size_t target_idx,
-    std::size_t k);
+    size_t target_idx,
+    size_t k,
+    const std::vector<int>& lib);
 
-std::vector<std::size_t> CppDistKNNIndice(
+std::vector<size_t> CppDistKNNIndice(
     const std::vector<std::vector<double>>& dist_mat,
-    std::size_t target_idx,
-    std::size_t k);
+    size_t target_idx,
+    size_t k,
+    const std::vector<int>& lib);
 
 std::vector<std::vector<std::vector<double>>> CppSVD(const std::vector<std::vector<double>>& X);
 
