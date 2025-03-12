@@ -813,16 +813,18 @@ std::vector<std::size_t> CppKNNIndice(
 }
 
 // Function to find k-nearest neighbors of a given index using a precomputed distance matrix
-std::vector<std::size_t> CppDistKNNIndice(
+// The `library` parameter specifies the indices from which the k-nearest neighbors should be selected
+std::vector<size_t> CppDistKNNIndice(
     const std::vector<std::vector<double>>& dist_mat,  // Precomputed n * n distance matrix
-    std::size_t target_idx,                            // Target index for which to find neighbors
-    std::size_t k)                                     // Number of nearest neighbors to find
+    size_t target_idx,                            // Target index for which to find neighbors
+    size_t k,                                     // Number of nearest neighbors to find
+    const std::vector<int>& library)                   // Indices from which to select neighbors
 {
-  std::size_t n = dist_mat.size();
-  std::vector<std::pair<double, std::size_t>> distances;
+  size_t n = dist_mat.size();
+  std::vector<std::pair<double, size_t>> distances;
 
-  // Iterate through the distance matrix to collect valid distances
-  for (std::size_t i = 0; i < n; ++i) {
+  // Iterate through the specified library indices to collect valid distances
+  for (size_t i : library) {
     if (i == target_idx) continue;  // Skip the target index itself
 
     double dist = dist_mat[target_idx][i];
