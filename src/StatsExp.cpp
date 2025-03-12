@@ -283,8 +283,8 @@ Rcpp::IntegerVector RcppKNNIndice(const Rcpp::NumericMatrix& embedding_space,
                                   int k,
                                   const Rcpp::IntegerVector& lib) {
   // Get the number of rows and columns
-  std::size_t n_rows = embedding_space.nrow();
-  std::size_t n_cols = embedding_space.ncol();
+  size_t n_rows = embedding_space.nrow();
+  size_t n_cols = embedding_space.ncol();
 
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   std::vector<std::vector<double>> embedding_vec(n_rows, std::vector<double>(n_cols));
@@ -312,14 +312,14 @@ Rcpp::IntegerVector RcppKNNIndice(const Rcpp::NumericMatrix& embedding_space,
   }
 
   // Call the C++ function
-  std::vector<std::size_t> knn_indices = CppKNNIndice(embedding_vec,
-                                                      static_cast<size_t>(target_idx - 1),
-                                                      static_cast<size_t>(k),
-                                                      lib_std);
+  std::vector<size_t> knn_indices = CppKNNIndice(embedding_vec,
+                                                 static_cast<size_t>(target_idx - 1),
+                                                 static_cast<size_t>(k),
+                                                 lib_std);
 
   // Convert result to Rcpp::IntegerVector (R uses 1-based indexing)
   Rcpp::IntegerVector result(knn_indices.size());
-  for (std::size_t i = 0; i < knn_indices.size(); ++i) {
+  for (size_t i = 0; i < knn_indices.size(); ++i) {
     result[i] = static_cast<int>(knn_indices[i]) + 1;  // Convert to 1-based index
   }
 
@@ -333,13 +333,13 @@ Rcpp::IntegerVector RcppDistKNNIndice(const Rcpp::NumericMatrix& dist_mat,
                                       int k,
                                       const Rcpp::IntegerVector& lib) {
   // Get the number of rows and columns
-  std::size_t n_rows = dist_mat.nrow();
-  std::size_t n_cols = dist_mat.ncol();
+  size_t n_rows = dist_mat.nrow();
+  size_t n_cols = dist_mat.ncol();
 
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   std::vector<std::vector<double>> distmat(n_rows, std::vector<double>(n_cols));
-  for (std::size_t i = 0; i < n_rows; ++i) {
-    for (std::size_t j = 0; j < n_cols; ++j) {
+  for (size_t i = 0; i < n_rows; ++i) {
+    for (size_t j = 0; j < n_cols; ++j) {
       distmat[i][j] = dist_mat(i, j);
     }
   }
@@ -362,14 +362,14 @@ Rcpp::IntegerVector RcppDistKNNIndice(const Rcpp::NumericMatrix& dist_mat,
   }
 
   // Call the C++ function
-  std::vector<std::size_t> knn_indices = CppDistKNNIndice(distmat,
-                                                          static_cast<std::size_t>(target_idx - 1),
-                                                          static_cast<std::size_t>(k),
-                                                          lib_std);
+  std::vector<size_t> knn_indices = CppDistKNNIndice(distmat,
+                                                     static_cast<size_t>(target_idx - 1),
+                                                     static_cast<size_t>(k),
+                                                     lib_std);
 
   // Convert result to Rcpp::IntegerVector (R uses 1-based indexing)
   Rcpp::IntegerVector result(knn_indices.size());
-  for (std::size_t i = 0; i < knn_indices.size(); ++i) {
+  for (size_t i = 0; i < knn_indices.size(); ++i) {
     result[i] = static_cast<int>(knn_indices[i]) + 1;  // Convert to 1-based index
   }
 
