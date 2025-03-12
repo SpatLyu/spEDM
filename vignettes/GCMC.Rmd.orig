@@ -1,0 +1,85 @@
+---
+title: "Geographical Cross Mapping Cardinality (GCMC)"
+author: "Wenbo Lv"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{GCCM}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "##",
+  fig.path = "man/figures/gcmc/"
+)
+```
+
+## 1.1 Install the `spEDM` package
+
+Install the stable version from [CRAN](https://CRAN.R-project.org/package=spEDM) with:
+
+```r
+install.packages("spEDM", dep = TRUE)
+```
+
+Alternatively, you can install the development version from [R-universe](https://stscl.r-universe.dev/spEDM) with:
+
+``` r
+install.packages("spEDM",
+                 repos = c("https://stscl.r-universe.dev",
+                           "https://cloud.r-project.org"),
+                 dep = TRUE)
+```
+
+## 1.2 An example of spatial lattice data
+
+Load the `spEDM` package:
+
+```{r load_pkg}
+library(spEDM)
+```
+
+Load the county-level population density data from the `spEDM` package:
+
+```{r load_lattice_data}
+popd_nb = spdep::read.gal(system.file("extdata/popdensity_nb.gal",
+                                      package = "spEDM"))
+
+popdensity = readr::read_csv(system.file("extdata/popdensity.csv",
+                                         package = "spEDM"))
+
+popd_sf = sf::st_as_sf(popdensity, coords = c("x","y"), crs = 4326)
+```
+
+## 1.3 An example of spatial grid data
+
+Load the `spEDM` package:
+
+```r
+library(spEDM)
+```
+
+Load the farmland NPP data from the `spEDM` package:
+
+```{r}
+npp = terra::rast(system.file("extdata/npp.tif", package = "spEDM"))
+
+# To save the computation time, we will aggregate the data by 3 times and select 1500 non-NA pixels to predict:
+npp = terra::aggregate(npp, fact = 3, na.rm = TRUE)
+terra::global(npp,"isNA")
+terra::ncell(npp)
+
+nnamat = terra::as.matrix(npp[[1]], wide = TRUE)
+nnaindice = which(!is.na(nnamat), arr.ind = TRUE)
+dim(nnaindice)
+
+set.seed(2025)
+indices = sample(nrow(nnaindice), size = 1500, replace = FALSE)
+libindice = nnaindice[-indices,]
+predindice = nnaindice[indices,]
+```
+
+
