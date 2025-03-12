@@ -719,28 +719,30 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppKNNIndice
-Rcpp::IntegerVector RcppKNNIndice(const Rcpp::NumericMatrix& embedding_space, int target_idx, int k);
-RcppExport SEXP _spEDM_RcppKNNIndice(SEXP embedding_spaceSEXP, SEXP target_idxSEXP, SEXP kSEXP) {
+Rcpp::IntegerVector RcppKNNIndice(const Rcpp::NumericMatrix& embedding_space, int target_idx, int k, const Rcpp::IntegerVector& lib);
+RcppExport SEXP _spEDM_RcppKNNIndice(SEXP embedding_spaceSEXP, SEXP target_idxSEXP, SEXP kSEXP, SEXP libSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type embedding_space(embedding_spaceSEXP);
     Rcpp::traits::input_parameter< int >::type target_idx(target_idxSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppKNNIndice(embedding_space, target_idx, k));
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type lib(libSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppKNNIndice(embedding_space, target_idx, k, lib));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppDistKNNIndice
-Rcpp::IntegerVector RcppDistKNNIndice(const Rcpp::NumericMatrix& dist_mat, int target_idx, int k);
-RcppExport SEXP _spEDM_RcppDistKNNIndice(SEXP dist_matSEXP, SEXP target_idxSEXP, SEXP kSEXP) {
+Rcpp::IntegerVector RcppDistKNNIndice(const Rcpp::NumericMatrix& dist_mat, int target_idx, int k, const Rcpp::IntegerVector& lib);
+RcppExport SEXP _spEDM_RcppDistKNNIndice(SEXP dist_matSEXP, SEXP target_idxSEXP, SEXP kSEXP, SEXP libSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type dist_mat(dist_matSEXP);
     Rcpp::traits::input_parameter< int >::type target_idx(target_idxSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppDistKNNIndice(dist_mat, target_idx, k));
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type lib(libSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppDistKNNIndice(dist_mat, target_idx, k, lib));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -831,8 +833,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppDeLongAUCConfidence", (DL_FUNC) &_spEDM_RcppDeLongAUCConfidence, 4},
     {"_spEDM_RcppCMCTest", (DL_FUNC) &_spEDM_RcppCMCTest, 4},
     {"_spEDM_RcppMatDistance", (DL_FUNC) &_spEDM_RcppMatDistance, 3},
-    {"_spEDM_RcppKNNIndice", (DL_FUNC) &_spEDM_RcppKNNIndice, 3},
-    {"_spEDM_RcppDistKNNIndice", (DL_FUNC) &_spEDM_RcppDistKNNIndice, 3},
+    {"_spEDM_RcppKNNIndice", (DL_FUNC) &_spEDM_RcppKNNIndice, 4},
+    {"_spEDM_RcppDistKNNIndice", (DL_FUNC) &_spEDM_RcppDistKNNIndice, 4},
     {"_spEDM_RcppLinearTrendRM", (DL_FUNC) &_spEDM_RcppLinearTrendRM, 4},
     {"_spEDM_RcppSVD", (DL_FUNC) &_spEDM_RcppSVD, 1},
     {"_spEDM_RcppDeLongPlacements", (DL_FUNC) &_spEDM_RcppDeLongPlacements, 3},

@@ -189,12 +189,12 @@ RcppMatDistance <- function(mat, L1norm = FALSE, NA_rm = FALSE) {
     .Call(`_spEDM_RcppMatDistance`, mat, L1norm, NA_rm)
 }
 
-RcppKNNIndice <- function(embedding_space, target_idx, k) {
-    .Call(`_spEDM_RcppKNNIndice`, embedding_space, target_idx, k)
+RcppKNNIndice <- function(embedding_space, target_idx, k, lib) {
+    .Call(`_spEDM_RcppKNNIndice`, embedding_space, target_idx, k, lib)
 }
 
-RcppDistKNNIndice <- function(dist_mat, target_idx, k) {
-    .Call(`_spEDM_RcppDistKNNIndice`, dist_mat, target_idx, k)
+RcppDistKNNIndice <- function(dist_mat, target_idx, k, lib) {
+    .Call(`_spEDM_RcppDistKNNIndice`, dist_mat, target_idx, k, lib)
 }
 
 RcppLinearTrendRM <- function(vec, xcoord, ycoord, NA_rm = FALSE) {
