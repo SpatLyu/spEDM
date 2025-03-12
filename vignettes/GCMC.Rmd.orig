@@ -4,7 +4,7 @@ author: "Wenbo Lv"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{GCCM}
+  %\VignetteIndexEntry{GCMC}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
