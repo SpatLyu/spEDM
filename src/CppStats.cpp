@@ -776,7 +776,7 @@ std::vector<std::vector<double>> CppMatDistance(
 }
 
 // Function to find k-nearest neighbors of a given index in the embedding space
-// The `library` parameter specifies the indices from which the k-nearest neighbors should be selected
+// The `lib` parameter specifies the indices from which the k-nearest neighbors should be selected
 std::vector<size_t> CppKNNIndice(
     const std::vector<std::vector<double>>& embedding_space,  // Embedding space containing vectors
     size_t target_idx,                                        // Target index for which to find neighbors
@@ -817,7 +817,7 @@ std::vector<size_t> CppKNNIndice(
 }
 
 // Function to find k-nearest neighbors of a given index using a precomputed distance matrix
-// The `library` parameter specifies the indices from which the k-nearest neighbors should be selected
+// The `lib` parameter specifies the indices from which the k-nearest neighbors should be selected
 std::vector<size_t> CppDistKNNIndice(
     const std::vector<std::vector<double>>& dist_mat,  // Precomputed n * n distance matrix
     size_t target_idx,                                 // Target index for which to find neighbors
