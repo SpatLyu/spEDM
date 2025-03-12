@@ -103,13 +103,13 @@ std::vector<size_t> CppKNNIndice(
     const std::vector<std::vector<double>>& embedding_space,
     size_t target_idx,
     size_t k,
-    const std::vector<int>& library);
+    const std::vector<int>& lib);
 
 std::vector<size_t> CppDistKNNIndice(
     const std::vector<std::vector<double>>& dist_mat,
     size_t target_idx,
     size_t k,
-    const std::vector<int>& library);
+    const std::vector<int>& lib);
 
 std::vector<std::vector<std::vector<double>>> CppSVD(const std::vector<std::vector<double>>& X);
 

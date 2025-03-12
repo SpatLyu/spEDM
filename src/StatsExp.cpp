@@ -247,7 +247,8 @@ Rcpp::NumericVector RcppCMCTest(const Rcpp::NumericVector& cases,
 // Wrapper function to compute the distance matrix of a given matrix 'mat'
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppMatDistance(const Rcpp::NumericMatrix& mat,
-                                    bool L1norm = false, bool NA_rm = false) {
+                                    bool L1norm = false,
+                                    bool NA_rm = false) {
 
   // Convert the Rcpp::NumericMatrix to a C++ vector of vectors (std::vector)
   size_t rownum = mat.nrow();
@@ -278,7 +279,9 @@ Rcpp::NumericMatrix RcppMatDistance(const Rcpp::NumericMatrix& mat,
 // Wrapper function to find k-nearest neighbors of a given index in the embedding space
 // [[Rcpp::export]]
 Rcpp::IntegerVector RcppKNNIndice(const Rcpp::NumericMatrix& embedding_space,
-                                  int target_idx, int k) {
+                                  int target_idx,
+                                  int k,
+                                  const Rcpp::IntegerVector& lib) {
   // Get the number of rows and columns
   std::size_t n_rows = embedding_space.nrow();
   std::size_t n_cols = embedding_space.ncol();
@@ -292,7 +295,7 @@ Rcpp::IntegerVector RcppKNNIndice(const Rcpp::NumericMatrix& embedding_space,
   }
 
   // Ensure target index is within valid range
-  if (target_idx < 0 || static_cast<std::size_t>(target_idx) >= n_rows) {
+  if (target_idx < 0 || static_cast<size_t>(target_idx) >= n_rows) {
     Rcpp::stop("target_idx is out of range.");
   }
 
@@ -301,10 +304,18 @@ Rcpp::IntegerVector RcppKNNIndice(const Rcpp::NumericMatrix& embedding_space,
     Rcpp::stop("k must be greater than 0.");
   }
 
+  // Convert lib(1-based R index) to lib_std (0-based C++ index)
+  std::vector<int> lib_std;
+  size_t n_libsize = lib.size();
+  for (size_t i = 0; i < n_libsize; ++i) {
+    lib_std.push_back(lib[i] - 1); // Convert to 0-based index
+  }
+
   // Call the C++ function
   std::vector<std::size_t> knn_indices = CppKNNIndice(embedding_vec,
-                                                      static_cast<std::size_t>(target_idx - 1),
-                                                      static_cast<std::size_t>(k));
+                                                      static_cast<size_t>(target_idx - 1),
+                                                      static_cast<size_t>(k),
+                                                      lib_std);
 
   // Convert result to Rcpp::IntegerVector (R uses 1-based indexing)
   Rcpp::IntegerVector result(knn_indices.size());
@@ -318,7 +329,9 @@ Rcpp::IntegerVector RcppKNNIndice(const Rcpp::NumericMatrix& embedding_space,
 // Wrapper function to find k-nearest neighbors of a given index using a precomputed distance matrix
 // [[Rcpp::export]]
 Rcpp::IntegerVector RcppDistKNNIndice(const Rcpp::NumericMatrix& dist_mat,
-                                      int target_idx, int k) {
+                                      int target_idx,
+                                      int k,
+                                      const Rcpp::IntegerVector& lib) {
   // Get the number of rows and columns
   std::size_t n_rows = dist_mat.nrow();
   std::size_t n_cols = dist_mat.ncol();
@@ -332,7 +345,7 @@ Rcpp::IntegerVector RcppDistKNNIndice(const Rcpp::NumericMatrix& dist_mat,
   }
 
   // Ensure target index is within valid range
-  if (target_idx < 0 || static_cast<std::size_t>(target_idx) >= n_rows) {
+  if (target_idx < 0 || static_cast<size_t>(target_idx) >= n_rows) {
     Rcpp::stop("target_idx is out of range.");
   }
 
@@ -341,10 +354,18 @@ Rcpp::IntegerVector RcppDistKNNIndice(const Rcpp::NumericMatrix& dist_mat,
     Rcpp::stop("k must be greater than 0.");
   }
 
+  // Convert lib(1-based R index) to lib_std (0-based C++ index)
+  std::vector<int> lib_std;
+  size_t n_libsize = lib.size();
+  for (size_t i = 0; i < n_libsize; ++i) {
+    lib_std.push_back(lib[i] - 1); // Convert to 0-based index
+  }
+
   // Call the C++ function
   std::vector<std::size_t> knn_indices = CppDistKNNIndice(distmat,
                                                           static_cast<std::size_t>(target_idx - 1),
-                                                          static_cast<std::size_t>(k));
+                                                          static_cast<std::size_t>(k),
+                                                          lib_std);
 
   // Convert result to Rcpp::IntegerVector (R uses 1-based indexing)
   Rcpp::IntegerVector result(knn_indices.size());
