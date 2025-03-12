@@ -783,7 +783,6 @@ std::vector<size_t> CppKNNIndice(
     size_t k,                                                 // Number of nearest neighbors to find
     const std::vector<int>& lib)                              // Indices from which to select neighbors
 {
-  size_t n = embedding_space.size();
   std::vector<std::pair<double, size_t>> distances;
 
   // Iterate through the specified library indices to collect valid distances
@@ -825,7 +824,6 @@ std::vector<size_t> CppDistKNNIndice(
     size_t k,                                          // Number of nearest neighbors to find
     const std::vector<int>& lib)                       // Indices from which to select neighbors
 {
-  size_t n = dist_mat.size();
   std::vector<std::pair<double, size_t>> distances;
 
   // Iterate through the specified library indices to collect valid distances
