@@ -1,0 +1,35 @@
+---
+title: "Geographical Cross Mapping Cardinality (GCMC)"
+author: "Wenbo Lv"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{GCCM}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "##",
+  fig.path = "man/figures/gcmc/"
+)
+```
+
+## 1.1 Install the `spEDM` package
+
+Install the stable version from [CRAN](https://CRAN.R-project.org/package=spEDM) with:
+
+```r
+install.packages("spEDM", dep = TRUE)
+```
+
+Alternatively, you can install the development version from [R-universe](https://stscl.r-universe.dev/spEDM) with:
+
+``` r
+install.packages("spEDM",
+                 repos = c("https://stscl.r-universe.dev",
+                           "https://cloud.r-project.org"),
+                 dep = TRUE)
+```
