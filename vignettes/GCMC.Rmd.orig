@@ -42,7 +42,7 @@ Load the `spEDM` package:
 library(spEDM)
 ```
 
-Load the county-level population density data from the `spData` package:
+Load the county-level population density data from the `spEDM` package:
 
 ```{r load_lattice_data}
 popd_nb = spdep::read.gal(system.file("extdata/popdensity_nb.gal",
