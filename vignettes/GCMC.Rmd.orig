@@ -54,6 +54,15 @@ popdensity = readr::read_csv(system.file("extdata/popdensity.csv",
 popd_sf = sf::st_as_sf(popdensity, coords = c("x","y"), crs = 4326)
 ```
 
+```{r case_lattice}
+set.seed(333)
+predindice = sample(1:nrow(popd_sf),500)
+# precipitation and population density
+g1 = gcmc(data = popd_sf,cause = "Pre",effect = "popDensity",
+          E = c(2,5), k = 600, nb = popd_nb,
+          lib = 1:nrow(popd_sf),pred = predindice,progressbar = FALSE)
+```
+
 ## 1.3 An example of spatial grid data
 
 Load the `spEDM` package:
