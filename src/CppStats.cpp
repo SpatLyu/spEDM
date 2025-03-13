@@ -763,7 +763,7 @@ std::vector<std::vector<double>> CppMatDistance(
     bool L1norm = false,
     bool NA_rm = false){
   size_t n = mat.size();
-  std::vector<std::vector<double>> distance_matrix(n, std::vector<double>(n, 0.0));
+  std::vector<std::vector<double>> distance_matrix(n, std::vector<double>(n, std::numeric_limits<double>::quiet_NaN()));
 
   // Compute distance between every pair of rows
   for (size_t i = 0; i < n; ++i) {
