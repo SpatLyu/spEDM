@@ -1,7 +1,7 @@
 #include <vector>
 #include "SimplexProjection.h"
 #include "SMap.h"
-#include "CrossMappingCardinality.h"
+#include "IntersectionCardinality.h"
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
 #include <RcppArmadillo.h>
