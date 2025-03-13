@@ -586,15 +586,11 @@ Rcpp::NumericMatrix RcppGCMC4Lattice(
   std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
   std::vector<int> maxr_std = Rcpp::as<std::vector<int>>(max_r);
 
-  // Process b_std to handle <= 0 values
-  for (size_t i = 0; i < b_std.size(); ++i) {
-    if (b_std[i] <= 0) {
-      // use 1/3 of sample number to search
-      b_std[i] = static_cast<int>(std::floor(static_cast<double>(x_std.size()) / 3.0));
-    } else if (b_std[i] > static_cast<int>(x_std.size()) - maxr_std[i]){
-      b_std[i] = static_cast<int>(x_std.size()) - maxr_std[i];
-    }
-  }
+  // Remove values in b_std that are greater than validSampleNum or less than or equal to 3
+  int validSampleNum = x_std.size();
+  b_std.erase(std::remove_if(b_std.begin(), b_std.end(),
+                             [validSampleNum](int x) { return x > validSampleNum || x <= 3; }),
+                             b_std.end());
 
   // Remove duplicates for b_std
   std::sort(b_std.begin(), b_std.end());
