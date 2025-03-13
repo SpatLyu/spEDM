@@ -702,7 +702,9 @@ std::vector<double> CppCMCTest(const std::vector<double>& cases,
   double p_value = 2 * R::pnorm(-std::abs(z), 0.0, 1.0, true, false);
 
   // // Compute the one-sided test (right-tailed) p-value (AUC > 0.5)
-  // double p_value = R::pnorm(z, 0.0, 1.0, true, false);
+  // // double p_value = R::pnorm(z, 0.0, 1.0, true, false);
+  // // Set theta to negative when sample size is small to mitigate sample size effect`
+  // double p_value = R::pnorm(-std::abs(z), 0.0, 1.0, true, false);
 
   // Compute the confidence interval using R::qnorm
   double ci_lower = R::qnorm(level / 2, theta, std::sqrt(S), true, false);
