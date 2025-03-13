@@ -62,11 +62,14 @@ g1 = gcmc(data = popd_sf,cause = "Pre",effect = "popDensity",
           E = c(1,6), k = 150, nb = popd_nb, trend.rm = FALSE,
           lib = 1:nrow(popd_sf),pred = predindice,progressbar = FALSE)
 g2 = gcmc(data = popd_sf,cause = "Pre",effect = "popDensity",
-          E = c(1,6), k = 150, nb = popd_nb, trend.rm = FALSE,
+          E = c(1,6), k = 350, nb = popd_nb, trend.rm = FALSE,
           lib = 1:1000,pred = predindice,progressbar = FALSE)
-g4 = gcmc(data = popd_sf,cause = "Pre",effect = "popDensity",
+g3 = gcmc(data = popd_sf,cause = "Pre",effect = "popDensity",
           E = c(1,6), k = 150, nb = popd_nb, trend.rm = FALSE,
           lib = 1:200,pred = predindice,progressbar = FALSE)
+g4 = gcmc(data = popd_sf,cause = "Pre",effect = "popDensity",
+          E = c(1,6), k = 220, nb = popd_nb, trend.rm = FALSE,
+          lib = 1:500,pred = predindice,progressbar = FALSE)
 ```
 
 ## 1.3 An example of spatial grid data
