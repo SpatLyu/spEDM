@@ -72,12 +72,11 @@ std::vector<std::vector<double>> CrossMappingCardinality(
     const size_t max_r = k + n_excluded_sizet; // Total number of neighbors = actual used + excluded ones
 
     // Store mapping ratio curves for each prediction point (corresponding to ratios_x2y in python package crossmapy)
-    std::vector<std::vector<double>> ratio_curves(valid_pred.size(), std::vector<double>(k, 0.0));
+    std::vector<std::vector<double>> ratio_curves(valid_pred.size(), std::vector<double>(k, std::numeric_limits<double>::quiet_NaN()));
 
     // Perform the operations using RcppThread
     RcppThread::parallelFor(0, valid_pred.size(), [&](size_t i) {
-      // const int idx = valid_pred[i]; // this was used when all of embedding_x and embedding_y were used previously.
-      const int idx = i;
+      const int idx = valid_pred[i];
 
       // Get the k-nearest neighbors of x (excluding the first n_excluded ones)
       auto neighbors_x = CppDistKNNIndice(dist_x, idx, max_r, lib);
@@ -97,7 +96,7 @@ std::vector<std::vector<double>> CrossMappingCardinality(
       std::unordered_set<size_t> y_neighbors_set(neighbors_y.begin(), neighbors_y.end());
 
       // Retrieve y's neighbor indices by mapping x-neighbors through x->y mapping
-      std::vector<std::vector<size_t>> mapped_neighbors(lib.size());
+      std::vector<std::vector<size_t>> mapped_neighbors(embedding_x.size());
       for (size_t nx : neighbors_x) {
         mapped_neighbors[nx] = CppDistKNNIndice(dist_y, nx, k, lib);
       }
@@ -117,7 +116,9 @@ std::vector<std::vector<double>> CrossMappingCardinality(
             }
           }
         }
-        ratio_curves[i][ki] = static_cast<double>(count) / neighbors_x.size();
+        if (!neighbors_x.empty()) {
+         ratio_curves[i][ki] = static_cast<double>(count) / neighbors_x.size();
+        }
       }
     }, threads_sizet);
 
@@ -217,12 +218,11 @@ std::vector<std::vector<double>> CrossMappingCardinality2(
   const size_t max_r = k + n_excluded_sizet; // Total number of neighbors = actual used + excluded ones
 
   // Store mapping ratio curves for each prediction point (corresponding to ratios_x2y in python package crossmapy)
-  std::vector<std::vector<double>> ratio_curves(valid_pred.size(), std::vector<double>(k, 0.0));
+  std::vector<std::vector<double>> ratio_curves(valid_pred.size(), std::vector<double>(k, std::numeric_limits<double>::quiet_NaN()));
 
   // Perform the operations using RcppThread
   RcppThread::parallelFor(0, valid_pred.size(), [&](size_t i) {
-    // const int idx = valid_pred[i]; // this was used when all of embedding_x and embedding_y were used previously.
-    const int idx = i;
+    const int idx = valid_pred[i];
 
     // Get the k-nearest neighbors of x (excluding the first n_excluded ones)
     auto neighbors_x = CppDistKNNIndice(dist_x, idx, max_r, lib);
@@ -242,7 +242,7 @@ std::vector<std::vector<double>> CrossMappingCardinality2(
     std::unordered_set<size_t> y_neighbors_set(neighbors_y.begin(), neighbors_y.end());
 
     // Retrieve y's neighbor indices by mapping x-neighbors through x->y mapping
-    std::vector<std::vector<size_t>> mapped_neighbors(lib.size());
+    std::vector<std::vector<size_t>> mapped_neighbors(embedding_x.size());
     for (size_t nx : neighbors_x) {
       mapped_neighbors[nx] = CppDistKNNIndice(dist_y, nx, k, lib);
     }
@@ -262,7 +262,9 @@ std::vector<std::vector<double>> CrossMappingCardinality2(
           }
         }
       }
-      ratio_curves[i][ki] = static_cast<double>(count) / neighbors_x.size();
+      if (!neighbors_x.empty()) {
+        ratio_curves[i][ki] = static_cast<double>(count) / neighbors_x.size();
+      }
     }
   }, threads_sizet);
 
