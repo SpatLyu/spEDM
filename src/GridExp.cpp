@@ -1,5 +1,6 @@
 #include <vector>
 #include <cmath>
+#include <algorithm>
 #include "CppStats.h"
 #include "CppGridUtils.h"
 #include "Forecast4Grid.h"
@@ -810,15 +811,10 @@ Rcpp::NumericMatrix RcppGCMC4Grid(
   std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
   std::vector<int> maxr_std = Rcpp::as<std::vector<int>>(max_r);
 
-  // Process b_std to handle <= 0 values
-  for (size_t i = 0; i < b_std.size(); ++i) {
-    if (b_std[i] <= 0) {
-      // use sqrt of sample number to search
-      b_std[i] = static_cast<int>(std::floor(std::sqrt(validCellNum)));
-    } else if (b_std[i] > validCellNum - maxr_std[i]){
-      b_std[i] = validCellNum - maxr_std[i];
-    }
-  }
+  // Remove values in b_std that are greater than validCellNum or less than or equal to 3
+  b_std.erase(std::remove_if(b_std.begin(), b_std.end(),
+                             [validCellNum](int x) { return x > validCellNum || x <= 3; }),
+                             b_std.end());
 
   // Remove duplicates for b_std
   std::sort(b_std.begin(), b_std.end());
