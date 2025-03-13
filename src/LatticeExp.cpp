@@ -1,5 +1,6 @@
 #include <vector>
 #include <cmath>
+#include <algorithm>
 #include "CppStats.h"
 #include "CppLatticeUtils.h"
 #include "Forecast4Lattice.h"
