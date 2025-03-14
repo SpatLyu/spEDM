@@ -1,5 +1,9 @@
 # spEDM 1.6
 
+### breaking changes
+
+* Refine internal case data (#349).
+
 # spEDM 1.5
 
 ### new
