@@ -71,7 +71,7 @@ A vector (when input is sf object) or matrix
 multiview embedding forecast
 }
 \examples{
-columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData"))
+columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 \donttest{
 multiview(columbus,
           columns = c("INC","CRIME","OPEN","PLUMB","DISCBD"),

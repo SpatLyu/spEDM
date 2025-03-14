@@ -40,7 +40,7 @@ methods::setGeneric("smap", function(data, ...) standardGeneric("smap"))
 #' @aliases smap,sf-method
 #'
 #' @examples
-#' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData"))
+#' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 #' \donttest{
 #' smap(columbus,target = "INC")
 #' }
