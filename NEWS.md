@@ -2,7 +2,7 @@
 
 ### breaking changes
 
-* Refine internal case data (#349).
+* Refine internal case data (#348).
 
 # spEDM 1.5
 
