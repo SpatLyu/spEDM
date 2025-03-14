@@ -31,5 +31,6 @@ Suggests:
     Rcpp,
     RcppThread,
     RcppArmadillo,
-    rmarkdown
+    rmarkdown,
+    readr
 VignetteBuilder: knitr
