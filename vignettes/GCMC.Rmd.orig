@@ -41,30 +41,31 @@ Load the `spEDM` package and its county-level population density data:
 ```{r load_lattice_data}
 library(spEDM)
 
-popd_nb = spdep::read.gal(system.file("extdata/popdensity_nb.gal",
-                                      package = "spEDM"))
+popd_nb = spdep::read.gal(system.file("case/popdensity_nb.gal",package = "spEDM"))
+popd_nb
 
-popdensity = readr::read_csv(system.file("extdata/popdensity.csv",
-                                         package = "spEDM"))
+popdensity = readr::read_csv(system.file("case/popdensity.csv",package = "spEDM"))
+popdensity
 
 popd_sf = sf::st_as_sf(popdensity, coords = c("x","y"), crs = 4326)
+popd_sf
 ```
 
 Run GCMC:
 
 ```{r case_lattice}
 # precipitation and population density
-g1 = gcmc(data = popd_sf,cause = "Pre",effect = "popDensity",
+g1 = gcmc(data = popd_sf,cause = "pre",effect = "popdensity",
           E = c(1,6),k = 150,nb = popd_nb,progressbar = FALSE)
 g1
 
 # temperature and population density
-g2 = gcmc(data = popd_sf,cause = "Tem",effect = "popDensity",
+g2 = gcmc(data = popd_sf,cause = "tem",effect = "popdensity",
           E = c(1,6),k = 150,nb = popd_nb,progressbar = FALSE)
 g2
 
 # elevation and population density
-g3 = gcmc(data = popd_sf,cause = "DEM",effect = "popDensity",
+g3 = gcmc(data = popd_sf,cause = "elev",effect = "popdensity",
           E = c(1,6),k = 150, nb = popd_nb,progressbar = FALSE)
 g3
 ```
@@ -76,7 +77,7 @@ Load the `spEDM` package and its farmland NPP data:
 ```{r load_grid_data}
 library(spEDM)
 
-npp = terra::rast(system.file("extdata/npp.tif", package = "spEDM"))
+npp = terra::rast(system.file("case/npp.tif", package = "spEDM"))
 
 # To save the computation time, we will aggregate the data by 3 times and select 1500 non-NA pixels to predict:
 npp = terra::aggregate(npp, fact = 3, na.rm = TRUE)
