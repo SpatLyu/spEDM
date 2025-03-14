@@ -38,7 +38,7 @@ methods::setGeneric("multiview", function(data, ...) standardGeneric("multiview"
 #' @aliases multiview,sf-method
 #'
 #' @examples
-#' columbus = sf::read_sf(system.file("shapes/columbus.gpkg", package="spData"))
+#' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 #' \donttest{
 #' multiview(columbus,
 #'           columns = c("INC","CRIME","OPEN","PLUMB","DISCBD"),
