@@ -11,6 +11,7 @@ experimental](https://img.shields.io/badge/lifecycle-stable-20b2aa.svg)](https:/
 [![DownloadsAll](https://badgen.net/cran/dt/spEDM?color=orange)](https://CRAN.R-project.org/package=spEDM)
 [![DownloadsMonth](https://cranlogs.r-pkg.org/badges/spEDM)](https://CRAN.R-project.org/package=spEDM)
 [![R-universe](https://stscl.r-universe.dev/badges/spEDM?color=cyan)](https://stscl.r-universe.dev/spEDM)
+[![R-CMD-check](https://github.com/stscl/spEDM/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/stscl/spEDM/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 ***Sp**atial **E**mpirical **D**ynamic **M**odeling*
