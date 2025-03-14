@@ -31,6 +31,6 @@ embedding spatial cross sectional data
 }
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
-embedded(columbus,target = "CRIME", E = 3)
+embedded(columbus,target = "crime", E = 3)
 
 }

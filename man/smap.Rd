@@ -71,6 +71,6 @@ smap forecast
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 \donttest{
-smap(columbus,target = "INC")
+smap(columbus,target = "inc")
 }
 }

@@ -29,7 +29,7 @@ methods::setGeneric("embedded", function(data, ...) standardGeneric("embedded"))
 #'
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
-#' embedded(columbus,target = "CRIME", E = 3)
+#' embedded(columbus,target = "crime", E = 3)
 #'
 methods::setMethod("embedded", "sf", .embedded_sf_method)
 
