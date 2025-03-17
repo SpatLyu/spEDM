@@ -70,7 +70,7 @@ g3 = gcmc(data = popd_sf, cause = "elev", effect = "tem",
 g3
 ```
 
-Here we define two functions to process the results and plotting the causal association matrix.
+Here we define two functions to process the results and plot the causal association matrix.
 
 ```{r camat_fun}
 .process_xmap_result = \(g){
