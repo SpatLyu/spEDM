@@ -11,7 +11,6 @@
 #include "SMap.h"
 #include <RcppThread.h>
 
-// [[Rcpp::plugins(cpp11)]]
 // [[Rcpp::depends(RcppThread)]]
 
 /**
