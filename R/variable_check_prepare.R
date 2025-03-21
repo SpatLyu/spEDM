@@ -8,8 +8,15 @@
   return(xstrs)
 }
 
-.check_inputelementnum = \(x,n){
-  return(abs(rep(x,length.out = n)))
+.check_inputelementnum = \(x,n,med.num = NULL){
+  if (is.null(med.num) || length(x) == 1){
+    res = rep(x,length.out = n)
+  } else if (length(x) == 2) {
+    res = c(rep(x[1],2),rep(x[2],med.num))
+  } else {
+    res = c(x[1:2],rep(x[c(-1,-2)],length.out = med.num))
+  }
+  return(abs(res))
 }
 
 .check_parallellevel = \(parallel.level){
