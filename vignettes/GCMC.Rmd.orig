@@ -41,13 +41,13 @@ Load the `spEDM` package and its county-level population density data:
 ```{r load_lattice_data}
 library(spEDM)
 
-popd_nb = spdep::read.gal(system.file("case/popdensity_nb.gal",package = "spEDM"))
+popd_nb = spdep::read.gal(system.file("case/popd_nb.gal",package = "spEDM"))
 popd_nb
 
-popdensity = readr::read_csv(system.file("case/popdensity.csv",package = "spEDM"))
-popdensity
+popd = readr::read_csv(system.file("case/popd.csv",package = "spEDM"))
+popd
 
-popd_sf = sf::st_as_sf(popdensity, coords = c("x","y"), crs = 4326)
+popd_sf = sf::st_as_sf(popd, coords = c("x","y"), crs = 4326)
 popd_sf
 ```
 
@@ -55,12 +55,12 @@ Run GCMC:
 
 ```{r case_lattice}
 # temperature and population density
-g1 = gcmc(data = popd_sf, cause = "tem", effect = "popdensity",
+g1 = gcmc(data = popd_sf, cause = "tem", effect = "popd",
           E = c(2,5), k = 160, nb = popd_nb, trend.rm = TRUE)
 g1
 
 # elevation and population density
-g2 = gcmc(data = popd_sf, cause = "elev", effect = "popdensity",
+g2 = gcmc(data = popd_sf, cause = "elev", effect = "popd",
           E = c(1,5), k = 150, nb = popd_nb, trend.rm = TRUE)
 g2
 
@@ -92,7 +92,7 @@ Here we define two functions to process the results and plot the causal associat
   return(rbind(g1,g2))
 }
 
-plot_ca_matrix = \(.tbf,legend_title = "Causal Association"){
+plot_ca_matrix = \(.tbf,legend_title = "Association"){
   .tbf = .tbf |>
     dplyr::mutate(sig_marker = dplyr::case_when(
       sig < 0.001 ~ "***",
@@ -157,16 +157,20 @@ Load the `spEDM` package and its farmland NPP data:
 library(spEDM)
 
 npp = terra::rast(system.file("case/npp.tif", package = "spEDM"))
+npp
 
-# To save the computation time, we will aggregate the data by 3 times and select 1500 non-NA pixels to predict:
+# To save the computation time, we will aggregate the data by 3 times
 npp = terra::aggregate(npp, fact = 3, na.rm = TRUE)
+npp
+
+# Inspect NA values
 terra::global(npp,"isNA")
 terra::ncell(npp)
-
 nnamat = terra::as.matrix(npp[[1]], wide = TRUE)
 nnaindice = which(!is.na(nnamat), arr.ind = TRUE)
 dim(nnaindice)
 
+# Select 1500 non-NA pixels to predict:
 set.seed(2025)
 indices = sample(nrow(nnaindice), size = 1500, replace = FALSE)
 libindice = nnaindice[-indices,]
