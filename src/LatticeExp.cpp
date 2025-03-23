@@ -593,6 +593,10 @@ Rcpp::NumericMatrix RcppGCMC4Lattice(
                              [validSampleNum](int x) { return x > validSampleNum || x <= 3; }),
                              b_std.end());
 
+  if (b_std.empty()) {
+    Rcpp::stop("k cannot be less than or equal to 3 or greater than the number of non-NA values.");
+  }
+
   // Remove duplicates for b_std
   std::sort(b_std.begin(), b_std.end());
   b_std.erase(std::unique(b_std.begin(), b_std.end()), b_std.end());
