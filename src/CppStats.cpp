@@ -140,6 +140,11 @@ double CppMean(const std::vector<double>& vec, bool NA_rm = false) {
   return count > 0 ? sum / count : std::numeric_limits<double>::quiet_NaN();
 }
 
+// Function to calculate the logarithm of x with the specified base
+double CppLog(double x, double base) {
+  return std::log(x) / std::log(base);
+}
+
 // Function to calculate the sum of a vector, ignoring NA values if NA_rm is true
 double CppSum(const std::vector<double>& vec,
               bool NA_rm = false) {

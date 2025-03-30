@@ -23,6 +23,11 @@ double RcppDigamma(double x){
 };
 
 // [[Rcpp::export]]
+double RcppLog(double x, double base){
+  return(CppLog(x, base));
+};
+
+// [[Rcpp::export]]
 double RcppMean(const Rcpp::NumericVector& vec,
                 bool NA_rm = false) {
   // Convert Rcpp::NumericVector to std::vector<double>
