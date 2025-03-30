@@ -18,6 +18,11 @@ double RcppCombine(int n,int k){
 };
 
 // [[Rcpp::export]]
+double RcppDigamma(double x){
+  return(CppDigamma(x));
+};
+
+// [[Rcpp::export]]
 double RcppMean(const Rcpp::NumericVector& vec,
                 bool NA_rm = false) {
   // Convert Rcpp::NumericVector to std::vector<double>
