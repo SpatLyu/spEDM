@@ -1,5 +1,9 @@
 # spEDM 1.6
 
+### new
+
+* Add references for algorithms in `spEDM` (#367).
+
 ### breaking changes
 
 * Refine internal case data (#348).
