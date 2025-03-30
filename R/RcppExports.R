@@ -161,10 +161,6 @@ RcppArithmeticSeq <- function(from, to, length_out) {
     .Call(`_spEDM_RcppArithmeticSeq`, from, to, length_out)
 }
 
-RcppDistance <- function(vec1, vec2, L1norm = FALSE, NA_rm = FALSE) {
-    .Call(`_spEDM_RcppDistance`, vec1, vec2, L1norm, NA_rm)
-}
-
 RcppPearsonCor <- function(y, y_hat, NA_rm = FALSE) {
     .Call(`_spEDM_RcppPearsonCor`, y, y_hat, NA_rm)
 }
@@ -191,6 +187,14 @@ RcppDeLongAUCConfidence <- function(cases, controls, direction, level = 0.05) {
 
 RcppCMCTest <- function(cases, direction, level = 0.05, num_samples = 0L) {
     .Call(`_spEDM_RcppCMCTest`, cases, direction, level, num_samples)
+}
+
+RcppDistance <- function(vec1, vec2, L1norm = FALSE, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppDistance`, vec1, vec2, L1norm, NA_rm)
+}
+
+RcppKNearestDistance <- function(vec1, k, L1norm = FALSE, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppKNearestDistance`, vec1, k, L1norm, NA_rm)
 }
 
 RcppMatDistance <- function(mat, L1norm = FALSE, NA_rm = FALSE) {
