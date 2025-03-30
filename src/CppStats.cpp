@@ -799,6 +799,55 @@ double CppDistance(const std::vector<double>& vec1,
   return dist_res;
 }
 
+// Function to compute the k-th nearest distance for a vector.
+std::vector<double> CppKNearestDistance(const std::vector<double>& vec, int k,
+                                        bool L1norm = false, bool NA_rm = false) {
+  size_t n = vec.size();
+  std::vector<double> result(n);  // Vector to store the k-th nearest distances
+
+  for (size_t i = 0; i < n; ++i) {
+    if (std::isnan(vec[i]) && !NA_rm) {
+      result[i] = std::numeric_limits<double>::quiet_NaN();
+      continue;  // Skip if NA is encountered and NA_rm is false
+    }
+
+    std::vector<double> distances;
+    distances.reserve(n);  // Reserve space to avoid repeated allocations
+
+    for (size_t j = 0; j < n; ++j) {
+      if (std::isnan(vec[j]) && !NA_rm) {
+        distances.push_back(std::numeric_limits<double>::quiet_NaN());
+        continue;  // Skip if NA is encountered and NA_rm is false
+      }
+
+      double dist_res;
+      if (L1norm) {
+        dist_res = std::abs(vec[i] - vec[j]);  // Manhattan distance (L1)
+      } else {
+        double diff = vec[i] - vec[j];
+        dist_res = diff * diff;  // Squared Euclidean distance (L2 squared)
+      }
+      distances.push_back(dist_res);
+    }
+
+    // Use nth_element to partially sort the distances up to the k-th element
+    // This is more efficient than fully sorting the entire vector.
+    if (k < distances.size()) {
+      std::nth_element(distances.begin(), distances.begin() + k, distances.end());
+      result[i] = distances[k];  // `k` is 0-indexed, so this is the (k+1)-th smallest distance
+    } else {
+      result[i] = *std::max_element(distances.begin(), distances.end());  // Handle case where k is out of bounds
+    }
+
+    // If using Euclidean distance, take the square root of the k-th nearest squared distance
+    if (!L1norm) {
+      result[i] = std::sqrt(result[i]);
+    }
+  }
+
+  return result;
+}
+
 // Function to compute distance for a matrix:
 std::vector<std::vector<double>> CppMatDistance(
     const std::vector<std::vector<double>>& mat,

@@ -140,19 +140,6 @@ Rcpp::NumericVector RcppArithmeticSeq(double from, double to, int length_out) {
 }
 
 // [[Rcpp::export]]
-double RcppDistance(const Rcpp::NumericVector& vec1,
-                    const Rcpp::NumericVector& vec2,
-                    bool L1norm = false,
-                    bool NA_rm = false){
-  // Convert Rcpp::NumericVector to std::vector<double>
-  std::vector<double> v1 = Rcpp::as<std::vector<double>>(vec1);
-  std::vector<double> v2 = Rcpp::as<std::vector<double>>(vec2);
-
-  // Call the CppDistance function
-  return CppDistance(v1, v2, L1norm ,NA_rm);
-}
-
-// [[Rcpp::export]]
 double RcppPearsonCor(const Rcpp::NumericVector& y,
                       const Rcpp::NumericVector& y_hat,
                       bool NA_rm = false) {
@@ -252,6 +239,36 @@ Rcpp::NumericVector RcppCMCTest(const Rcpp::NumericVector& cases,
 
   // Convert std::vector<double> to Rcpp::NumericVector
   return Rcpp::wrap(result);
+}
+
+// Wrapper function to compute distance between two vectors
+// [[Rcpp::export]]
+double RcppDistance(const Rcpp::NumericVector& vec1,
+                    const Rcpp::NumericVector& vec2,
+                    bool L1norm = false,
+                    bool NA_rm = false){
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> v1 = Rcpp::as<std::vector<double>>(vec1);
+  std::vector<double> v2 = Rcpp::as<std::vector<double>>(vec2);
+
+  // Call the CppDistance function
+  return CppDistance(v1, v2, L1norm ,NA_rm);
+}
+
+// Wrapper function to compute the k-th nearest distance for a vector.
+// [[Rcpp::export]]
+Rcpp::NumericVector RcppKNearestDistance(const Rcpp::NumericVector& vec1,
+                                         int k,
+                                         bool L1norm = false,
+                                         bool NA_rm = false){
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> v1 = Rcpp::as<std::vector<double>>(vec1);
+
+  // Call the CppKNearestDistance function
+  std::vector<double> res = CppKNearestDistance(v1, k, L1norm ,NA_rm);
+
+  // Convert std::vector<double> to Rcpp::NumericVector
+  return Rcpp::wrap(res);
 }
 
 // Wrapper function to compute the distance matrix of a given matrix 'mat'
