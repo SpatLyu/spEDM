@@ -78,3 +78,6 @@ multiview(columbus,
           target = "hoval", nvar = 3)
 }
 }
+\references{
+\insertRef{multiview}{spEDM}
+}
