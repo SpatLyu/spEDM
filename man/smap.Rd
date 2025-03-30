@@ -74,3 +74,6 @@ columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 smap(columbus,target = "inc")
 }
 }
+\references{
+\insertRef{smap}{spEDM}
+}

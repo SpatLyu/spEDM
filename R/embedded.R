@@ -26,6 +26,9 @@ methods::setGeneric("embedded", function(data, ...) standardGeneric("embedded"))
 #' @name embedded
 #' @rdname embedded
 #' @aliases embedded,sf-method
+#' @references
+#'  \insertRef{Takens}{spEDM}
+#'  \insertRef{Mane}{spEDM}
 #'
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))

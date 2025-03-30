@@ -99,3 +99,6 @@ g
 plot(g, ylimits = c(0,0.85))
 }
 }
+\references{
+\insertRef{gccm}{spEDM}
+}

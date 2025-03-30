@@ -38,6 +38,7 @@ methods::setGeneric("smap", function(data, ...) standardGeneric("smap"))
 #' @name smap
 #' @rdname smap
 #' @aliases smap,sf-method
+#' @references \insertRef{smap}{spEDM}
 #'
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))

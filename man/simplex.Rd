@@ -68,3 +68,6 @@ columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 simplex(columbus,target = "crime")
 }
 }
+\references{
+\insertRef{simplex}{spEDM}
+}
