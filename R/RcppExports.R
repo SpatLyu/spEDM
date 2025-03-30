@@ -113,6 +113,14 @@ RcppCombine <- function(n, k) {
     .Call(`_spEDM_RcppCombine`, n, k)
 }
 
+RcppDigamma <- function(x) {
+    .Call(`_spEDM_RcppDigamma`, x)
+}
+
+RcppLog <- function(x, base) {
+    .Call(`_spEDM_RcppLog`, x, base)
+}
+
 RcppMean <- function(vec, NA_rm = FALSE) {
     .Call(`_spEDM_RcppMean`, vec, NA_rm)
 }
