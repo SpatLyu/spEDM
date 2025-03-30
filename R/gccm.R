@@ -99,6 +99,10 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 #' @rdname gccm
 #' @aliases gccm,sf-method
 #'
+#' @references{
+#'    \insertRef{gccm}{spEDM}
+#' }
+#'
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 #' \donttest{
