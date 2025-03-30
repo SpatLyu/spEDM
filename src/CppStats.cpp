@@ -127,6 +127,11 @@ double CppDigamma(double x) {
   return (a + std::log(x) - 0.5 / x + c);
 }
 
+// Function to calculate the logarithm of x with the specified base
+double CppLog(double x, double base = 10) {
+  return std::log(x) / std::log(base);
+}
+
 // Function to calculate the mean of a vector, ignoring NA values
 double CppMean(const std::vector<double>& vec, bool NA_rm = false) {
   double sum = 0.0;
@@ -138,11 +143,6 @@ double CppMean(const std::vector<double>& vec, bool NA_rm = false) {
     }
   }
   return count > 0 ? sum / count : std::numeric_limits<double>::quiet_NaN();
-}
-
-// Function to calculate the logarithm of x with the specified base
-double CppLog(double x, double base) {
-  return std::log(x) / std::log(base);
 }
 
 // Function to calculate the sum of a vector, ignoring NA values if NA_rm is true

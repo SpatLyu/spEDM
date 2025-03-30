@@ -25,7 +25,7 @@ unsigned long long CppCombine(unsigned int n, unsigned int k);
 
 double CppDigamma(double x);
 
-double CppLog(double x, double base);
+double CppLog(double x, double base = 10);
 
 double CppMean(const std::vector<double>& vec,
                bool NA_rm = false);

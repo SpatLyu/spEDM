@@ -23,7 +23,7 @@ double RcppDigamma(double x){
 };
 
 // [[Rcpp::export]]
-double RcppLog(double x, double base){
+double RcppLog(double x, double base = 10){
   return(CppLog(x, base));
 };
 

@@ -117,7 +117,7 @@ RcppDigamma <- function(x) {
     .Call(`_spEDM_RcppDigamma`, x)
 }
 
-RcppLog <- function(x, base) {
+RcppLog <- function(x, base = 10) {
     .Call(`_spEDM_RcppLog`, x, base)
 }
 
