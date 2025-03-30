@@ -27,7 +27,7 @@ methods::setGeneric("embedded", function(data, ...) standardGeneric("embedded"))
 #' @rdname embedded
 #' @aliases embedded,sf-method
 #' @references
-#'  \insertRef{Tokens}{spEDM}
+#'  \insertRef{Takens}{spEDM}
 #'  \insertRef{Mane}{spEDM}
 #'
 #' @examples

@@ -35,6 +35,6 @@ embedded(columbus,target = "crime", E = 3)
 
 }
 \references{
-\insertRef{Tokens}{spEDM}
+\insertRef{Takens}{spEDM}
 \insertRef{Mane}{spEDM}
 }
