@@ -36,6 +36,7 @@ methods::setGeneric("multiview", function(data, ...) standardGeneric("multiview"
 #' @name multiview
 #' @rdname multiview
 #' @aliases multiview,sf-method
+#' @references \insertRef{multiview}{spEDM}
 #'
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))

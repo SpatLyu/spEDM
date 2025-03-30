@@ -37,6 +37,7 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
 #' @name simplex
 #' @rdname simplex
 #' @aliases simplex,sf-method
+#' @references \insertRef{simplex}{spEDM}
 #'
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
