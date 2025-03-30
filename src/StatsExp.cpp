@@ -1,3 +1,4 @@
+#include <cmath>
 #include <vector>
 #include <string>
 #include "CppStats.h"
@@ -265,7 +266,7 @@ Rcpp::NumericVector RcppKNearestDistance(const Rcpp::NumericVector& vec1,
   std::vector<double> v1 = Rcpp::as<std::vector<double>>(vec1);
 
   // Call the CppKNearestDistance function
-  std::vector<double> res = CppKNearestDistance(v1, k, L1norm ,NA_rm);
+  std::vector<double> res = CppKNearestDistance(v1, static_cast<size_t>(std::abs(k)), L1norm ,NA_rm);
 
   // Convert std::vector<double> to Rcpp::NumericVector
   return Rcpp::wrap(res);

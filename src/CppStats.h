@@ -98,7 +98,7 @@ double CppDistance(const std::vector<double>& vec1,
                    bool L1norm = false,
                    bool NA_rm = false);
 
-std::vector<double> CppKNearestDistance(const std::vector<double>& vec, int k,
+std::vector<double> CppKNearestDistance(const std::vector<double>& vec, size_t k,
                                         bool L1norm = false, bool NA_rm = false);
 
 std::vector<std::vector<double>> CppMatDistance(

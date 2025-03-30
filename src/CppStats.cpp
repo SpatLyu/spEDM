@@ -800,7 +800,7 @@ double CppDistance(const std::vector<double>& vec1,
 }
 
 // Function to compute the k-th nearest distance for a vector.
-std::vector<double> CppKNearestDistance(const std::vector<double>& vec, int k,
+std::vector<double> CppKNearestDistance(const std::vector<double>& vec, size_t k,
                                         bool L1norm = false, bool NA_rm = false) {
   size_t n = vec.size();
   std::vector<double> result(n);  // Vector to store the k-th nearest distances

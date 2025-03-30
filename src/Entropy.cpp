@@ -3,7 +3,7 @@
 #include "CppStats.h"
 
 double CppEntropy(const std::vector<double>& vec,
-                  int k, double base = 10,
+                  size_t k, double base = 10,
                   bool L1norm = false, bool NA_rm = false) {
   std::vector<double> distances = CppKNearestDistance(vec, k, L1norm, NA_rm);
   size_t n = vec.size();
@@ -20,7 +20,7 @@ double CppEntropy(const std::vector<double>& vec,
 }
 
 double CppJoinEntropy(const std::vector<std::vector<double>>& mat,
-                      int k, double base = 10,
+                      size_t k, double base = 10,
                       bool L1norm = false, bool NA_rm = false) {
   size_t nrow = mat.size();
   size_t ncol = mat[0].size();
