@@ -79,5 +79,5 @@ multiview(columbus,
 }
 }
 \references{
-\insertRef{multiview}{spEDM}
+Ye H., and G. Sugihara, 2016. Information leverage in interconnected ecosystems: Overcoming the curse of dimensionality. Science 353:922-925.
 }

@@ -75,5 +75,5 @@ smap(columbus,target = "inc")
 }
 }
 \references{
-\insertRef{smap}{spEDM}
+Sugihara G. 1994. Nonlinear forecasting for the classification of natural time series. Philosophical Transactions: Physical Sciences and Engineering, 348 (1688):477-495.
 }
