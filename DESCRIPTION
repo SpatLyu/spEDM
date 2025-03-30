@@ -23,6 +23,7 @@ Imports:
     dplyr,
     ggplot2,
     methods,
+    Rdpack,
     sdsfun (>= 0.7.0),
     sf,
     terra
