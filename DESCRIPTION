@@ -15,7 +15,6 @@ URL: https://stscl.github.io/spEDM/, https://github.com/stscl/spEDM
 BugReports: https://github.com/stscl/spEDM/issues
 Depends: 
     R (>= 4.1.0)
-RdMacros: Rdpack
 LinkingTo: 
     Rcpp,
     RcppThread,
@@ -24,7 +23,6 @@ Imports:
     dplyr,
     ggplot2,
     methods,
-    Rdpack,
     sdsfun (>= 0.7.0),
     sf,
     terra
