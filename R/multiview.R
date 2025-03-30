@@ -36,7 +36,8 @@ methods::setGeneric("multiview", function(data, ...) standardGeneric("multiview"
 #' @name multiview
 #' @rdname multiview
 #' @aliases multiview,sf-method
-#' @references \insertRef{multiview}{spEDM}
+#' @references
+#' Ye H., and G. Sugihara, 2016. Information leverage in interconnected ecosystems: Overcoming the curse of dimensionality. Science 353:922-925.
 #'
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))

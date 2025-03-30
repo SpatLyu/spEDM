@@ -34,7 +34,3 @@ columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 embedded(columbus,target = "crime", E = 3)
 
 }
-\references{
-\insertRef{Takens}{spEDM}
-\insertRef{Mane}{spEDM}
-}

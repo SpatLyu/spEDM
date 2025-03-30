@@ -38,7 +38,8 @@ methods::setGeneric("smap", function(data, ...) standardGeneric("smap"))
 #' @name smap
 #' @rdname smap
 #' @aliases smap,sf-method
-#' @references \insertRef{smap}{spEDM}
+#' @references
+#' Sugihara G. 1994. Nonlinear forecasting for the classification of natural time series. Philosophical Transactions: Physical Sciences and Engineering, 348 (1688):477-495.
 #'
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))

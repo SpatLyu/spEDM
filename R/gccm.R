@@ -95,11 +95,11 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 #' @export
 #' @importFrom methods setGeneric
 #' @importFrom methods setMethod
-#' @importFrom Rdpack reprompt
 #' @name gccm
 #' @rdname gccm
 #' @aliases gccm,sf-method
-#' @references \insertRef{gccm}{spEDM}
+#' @references
+#' Gao, B., Yang, J., Chen, Z. et al. Causal inference from cross-sectional earth system data with geographical convergent cross mapping. Nat Commun 14, 5875 (2023).
 #'
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))

@@ -100,5 +100,5 @@ plot(g, ylimits = c(0,0.85))
 }
 }
 \references{
-\insertRef{gccm}{spEDM}
+Gao, B., Yang, J., Chen, Z. et al. Causal inference from cross-sectional earth system data with geographical convergent cross mapping. Nat Commun 14, 5875 (2023).
 }

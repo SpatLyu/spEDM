@@ -69,5 +69,5 @@ simplex(columbus,target = "crime")
 }
 }
 \references{
-\insertRef{simplex}{spEDM}
+Sugihara G. and May R. 1990. Nonlinear forecasting as a way of distinguishing chaos from measurement error in time series. Nature, 344:734-741.
 }
