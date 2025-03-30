@@ -90,6 +90,48 @@ unsigned long long CppCombine(unsigned int n, unsigned int k) {
   return result;
 }
 
+/**
+ * @brief Computes the digamma (ψ) function approximation for a given input x.
+ *
+ * This function provides an approximation of the digamma function, which is
+ * the first derivative of the logarithm of the gamma function. The implementation
+ * follows an asymptotic expansion for large values of x and applies a recurrence
+ * relation to shift smaller values upward.
+ *
+ * The approach consists of:
+ * - A loop to increase x if it is less than or equal to 5, adjusting the result accordingly.
+ * - An asymptotic series expansion for the digamma function when x is sufficiently large.
+ * - The final result is computed as a sum of the logarithm term, correction terms,
+ *   and accumulated adjustments from the recurrence relation.
+ *
+ * @param x The input value for which the digamma function is evaluated.
+ * @return The approximate digamma function value ψ(x).
+ */
+double CppDigamma(double x) {
+  double a = 0;
+  while (x <= 5) {
+    a -= 1 / x;
+    x += 1;
+  }
+
+  double b = 1 / (x * x);
+  double c = b * (-1/12.0 +
+             b * (1/120.0 +
+             b * (-1/252.0 +
+             b * (1/240.0 +
+             b * (-1/132.0 +
+             b * (691/32760.0 +
+             b * (-1/12.0 +
+             b * 3617/8160.0)))))));
+
+  return (a + std::log(x) - 0.5 / x + c);
+}
+
+// Function to calculate the logarithm of x with the specified base
+double CppLog(double x, double base = 10) {
+  return std::log(x) / std::log(base);
+}
+
 // Function to calculate the mean of a vector, ignoring NA values
 double CppMean(const std::vector<double>& vec, bool NA_rm = false) {
   double sum = 0.0;
