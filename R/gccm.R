@@ -95,7 +95,6 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 #' @export
 #' @importFrom methods setGeneric
 #' @importFrom methods setMethod
-#' @importFrom Rdpack reprompt
 #' @name gccm
 #' @rdname gccm
 #' @aliases gccm,sf-method
