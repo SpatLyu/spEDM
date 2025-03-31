@@ -24,7 +24,7 @@ double CppJoinEntropy(const std::vector<std::vector<double>>& mat, size_t k,
   size_t ncol = mat[0].size();
 
   std::vector<double> distances(nrow);
-  std::vector<std::vector<double>> mat_dist = CppMatDistance(mat, true, NA_rm);
+  std::vector<std::vector<double>> mat_dist = CppMatChebyshevDistance(mat, NA_rm);
 
   for (size_t i = 0; i < nrow; ++i) {
     // Create a vector to store the distances for the current row, filtering out NaN values if NA_rm is true
@@ -74,7 +74,7 @@ double CppMutualInformation(const std::vector<std::vector<double>>& mat, size_t 
   }
 
   std::vector<double> distances(nrow);
-  std::vector<std::vector<double>> mat_dist = CppMatDistance(mat, true, NA_rm);
+  std::vector<std::vector<double>> mat_dist = CppMatChebyshevDistance(mat, NA_rm);
 
   for (size_t i = 0; i < nrow; ++i) {
     // Create a vector to store the distances for the current row, filtering out NaN values if NA_rm is true

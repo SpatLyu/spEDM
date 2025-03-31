@@ -9,7 +9,7 @@ RcppJoinEntropy <- function(mat, k = 3L, base = 10, NA_rm = FALSE) {
     .Call(`_spEDM_RcppJoinEntropy`, mat, k, base, NA_rm)
 }
 
-RcppMutualInformation <- function(mat, k = 3L, alg = 1L, normalize = TRUE, NA_rm = FALSE) {
+RcppMutualInformation <- function(mat, k = 3L, alg = 1L, normalize = FALSE, NA_rm = FALSE) {
     .Call(`_spEDM_RcppMutualInformation`, mat, k, alg, normalize, NA_rm)
 }
 

@@ -33,7 +33,7 @@ double RcppJoinEntropy(const Rcpp::NumericMatrix& mat, int k = 3,
 // [[Rcpp::export]]
 double RcppMutualInformation(const Rcpp::NumericMatrix& mat,
                              int k = 3, int alg = 1,
-                             bool normalize = true,
+                             bool normalize = false,
                              bool NA_rm = false){
   // Convert the Rcpp::NumericMatrix to a C++ vector of vectors (std::vector)
   size_t rownum = mat.nrow();
