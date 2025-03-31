@@ -46,7 +46,7 @@ double CppJoinEntropy(const std::vector<std::vector<double>>& mat,
     // This is more efficient than fully sorting the entire vector.
     if (k < dist_n.size()) {
       std::nth_element(dist_n.begin(), dist_n.begin() + k, dist_n.end());
-      distances[i] = dist_n[k];  // `k` is 0-indexed, so this is the (k+1)-th smallest distance
+      distances[i] = dist_n[k];  // (k+1)-th smallest distance (exclude itself)
     } else {
       distances[i] = *std::max_element(dist_n.begin(), dist_n.end());  // Handle case where k is out of bounds
     }
@@ -67,7 +67,7 @@ double CppMutualInformation(const std::vector<std::vector<double>>& mat,
                             size_t k, int alg = 1, bool normalize = true,
                             bool L1norm = true, bool NA_rm = false){
   size_t nrow = mat.size();
-  size_t ncol = mat[0].size();
+  // size_t ncol = mat[0].size();
 
   std::vector<double> X(nrow);
   std::vector<double> Y(nrow);
@@ -97,7 +97,7 @@ double CppMutualInformation(const std::vector<std::vector<double>>& mat,
     // This is more efficient than fully sorting the entire vector.
     if (k < dist_n.size()) {
       std::nth_element(dist_n.begin(), dist_n.begin() + k, dist_n.end());
-      distances[i] = dist_n[k];  // `k` is 0-indexed, so this is the (k+1)-th smallest distance
+      distances[i] = dist_n[k];  // (k+1)-th smallest distance (exclude itself)
     } else {
       distances[i] = *std::max_element(dist_n.begin(), dist_n.end());  // Handle case where k is out of bounds
     }
