@@ -803,21 +803,24 @@ double CppDistance(const std::vector<double>& vec1,
 std::vector<double> CppKNearestDistance(const std::vector<double>& vec, size_t k,
                                         bool L1norm = false, bool NA_rm = false) {
   size_t n = vec.size();
-  std::vector<double> result(n);  // Vector to store the k-th nearest distances
+  std::vector<double> result(n,std::numeric_limits<double>::quiet_NaN());  // Vector to store the k-th nearest distances
 
   for (size_t i = 0; i < n; ++i) {
-    if (std::isnan(vec[i]) && !NA_rm) {
-      result[i] = std::numeric_limits<double>::quiet_NaN();
-      continue;  // Skip if NA is encountered and NA_rm is false
+    if (std::isnan(vec[i])) {
+      continue;  // Skip if NA is encountered
     }
 
     std::vector<double> distances;
     distances.reserve(n);  // Reserve space to avoid repeated allocations
 
     for (size_t j = 0; j < n; ++j) {
-      if (std::isnan(vec[j]) && !NA_rm) {
-        distances.push_back(std::numeric_limits<double>::quiet_NaN());
-        continue;  // Skip if NA is encountered and NA_rm is false
+      if (std::isnan(vec[j])) {
+        if (!NA_rm) {
+          distances.push_back(std::numeric_limits<double>::quiet_NaN());
+          continue;  // Skip if NA is encountered and NA_rm is false
+        } else {
+          continue;  // Skip if NA is encountered and NA_rm is true
+        }
       }
 
       double dist_res;
@@ -866,6 +869,50 @@ std::vector<std::vector<double>> CppMatDistance(
     }
   }
   return distance_matrix;
+}
+
+// Function to compute the number of neighbors for each point within a given radius.
+std::vector<int> CppNeighborsNum(
+    const std::vector<double>& vec,     // A vector of 1D points.
+    const std::vector<double>& radius,  // A vector where radius[i] specifies the search radius for the i-th point.
+    bool equal = false,                 // Flag to include points at exactly the radius distance (default: false).
+    bool L1norm = false,                // Flag to use Manhattan distance or Euclidean distance
+    bool NA_rm = false                  // Whether to remove the nan value in cpp
+) {
+  size_t N = vec.size();
+  std::vector<int> NAx(N, 0); // Initialize neighbor counts to 0
+
+  // Iterate over all pairs of points (i, j)
+  for (size_t i = 0; i < N; ++i) {
+    if (std::isnan(vec[i])) {
+      continue;  // Skip if NA is encountered
+    }
+
+    for (size_t j = 0; j < N; ++j) {
+      if (i != j) { // Skip self-comparison
+        if (std::isnan(vec[j])) {
+          continue;  // Skip if NA is encountered
+        }
+
+        double distance;
+        if (L1norm) {
+          distance = std::abs(vec[i] - vec[j]);  // Manhattan distance (L1)
+        } else {
+          double diff = vec[i] - vec[j];
+          distance = std::sqrt(diff * diff);  // Euclidean distance (L2)
+        }
+
+        // Check neighbor condition based on the 'equal' flag
+        if (!equal && distance < radius[i]) {
+          NAx[i]++;
+        } else if (equal && distance <= radius[i]) {
+          NAx[i]++;
+        }
+      }
+    }
+  }
+
+  return NAx;
 }
 
 // Function to find k-nearest neighbors of a given index in the embedding space

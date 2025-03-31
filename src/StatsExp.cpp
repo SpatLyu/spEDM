@@ -304,6 +304,25 @@ Rcpp::NumericMatrix RcppMatDistance(const Rcpp::NumericMatrix& mat,
   return result;
 }
 
+// Wrapper function to compute the number of neighbors for each point within a given radius.
+// [[Rcpp::export]]
+Rcpp::IntegerVector RcppNeighborsNum(
+    const Rcpp::NumericVector& vec,
+    const Rcpp::NumericVector& radius,
+    bool equal = false,
+    bool L1norm = false,
+    bool NA_rm = false){
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> v = Rcpp::as<std::vector<double>>(vec);
+  std::vector<double> r = Rcpp::as<std::vector<double>>(radius);
+
+  // Call the CppKNearestDistance function
+  std::vector<int> res = CppNeighborsNum(v,r,equal,L1norm,NA_rm);
+
+  // Convert std::vector<int> to Rcpp::IntegerVector
+  return Rcpp::wrap(res);
+}
+
 // Wrapper function to find k-nearest neighbors of a given index in the embedding space
 // [[Rcpp::export]]
 Rcpp::IntegerVector RcppKNNIndice(const Rcpp::NumericMatrix& embedding_space,

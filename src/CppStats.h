@@ -106,6 +106,13 @@ std::vector<std::vector<double>> CppMatDistance(
     bool L1norm = false,
     bool NA_rm = false);
 
+std::vector<int> CppNeighborsNum(
+    const std::vector<double>& vec,
+    const std::vector<double>& radius,
+    bool equal = false,
+    bool L1norm = false,
+    bool NA_rm = false);
+
 std::vector<size_t> CppKNNIndice(
     const std::vector<std::vector<double>>& embedding_space,
     size_t target_idx,
