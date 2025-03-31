@@ -7,10 +7,14 @@
 
 double CppEntropy(const std::vector<double>& vec,
                   size_t k, double base = 10,
-                  bool L1norm = false, bool NA_rm = false);
+                  bool L1norm = true, bool NA_rm = false);
 
 double CppJoinEntropy(const std::vector<std::vector<double>>& mat,
                       size_t k, double base = 10,
-                      bool L1norm = false, bool NA_rm = false);
+                      bool L1norm = true, bool NA_rm = false);
+
+double CppMutualInformation(const std::vector<std::vector<double>>& mat,
+                            size_t k, int alg = 1, bool normalize = true,
+                            bool L1norm = true, bool NA_rm = false);
 
 #endif // Entropy_H
