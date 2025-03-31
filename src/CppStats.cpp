@@ -837,7 +837,7 @@ std::vector<double> CppKNearestDistance(const std::vector<double>& vec, size_t k
     // This is more efficient than fully sorting the entire vector.
     if (k < distances.size()) {
       std::nth_element(distances.begin(), distances.begin() + k, distances.end());
-      result[i] = distances[k];  // `k` is 0-indexed, so this is the (k+1)-th smallest distance
+      result[i] = distances[k];  // (k+1)-th smallest distance (exclude itself)
     } else {
       result[i] = *std::max_element(distances.begin(), distances.end());  // Handle case where k is out of bounds
     }
@@ -857,7 +857,8 @@ std::vector<std::vector<double>> CppMatDistance(
     bool L1norm = false,
     bool NA_rm = false){
   size_t n = mat.size();
-  std::vector<std::vector<double>> distance_matrix(n, std::vector<double>(n, std::numeric_limits<double>::quiet_NaN()));
+  // std::vector<std::vector<double>> distance_matrix(n, std::vector<double>(n, std::numeric_limits<double>::quiet_NaN()));
+  std::vector<std::vector<double>> distance_matrix(n, std::vector<double>(n, 0));
 
   // Compute distance between every pair of rows
   for (size_t i = 0; i < n; ++i) {
