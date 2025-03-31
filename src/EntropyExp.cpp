@@ -7,10 +7,10 @@
 
 // [[Rcpp::export]]
 double RcppEntropy(const Rcpp::NumericVector& vec,
-                int k = 3, double base = 10,
-                bool L1norm = false, bool NA_rm = false){
+                   int k = 3, double base = 10,
+                   bool L1norm = false, bool NA_rm = false){
   std::vector<double> v1 = Rcpp::as<std::vector<double>>(vec);
-  return CppEntropy(v1,k,base,L1norm,NA_rm);
+  return CppEntropy(v1,static_cast<size_t>(std::abs(k)),base,L1norm,NA_rm);
 };
 
 // [[Rcpp::export]]
@@ -29,5 +29,5 @@ double RcppJoinEntropy(const Rcpp::NumericMatrix& mat,
     }
   }
 
-  return CppJoinEntropy(cppMat,k,base,L1norm,NA_rm);
+  return CppJoinEntropy(cppMat,static_cast<size_t>(std::abs(k)),base,L1norm,NA_rm);
 };
