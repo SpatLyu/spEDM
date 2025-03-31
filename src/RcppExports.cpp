@@ -13,38 +13,36 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // RcppEntropy
-double RcppEntropy(const Rcpp::NumericVector& vec, int k, double base, bool L1norm, bool NA_rm);
-RcppExport SEXP _spEDM_RcppEntropy(SEXP vecSEXP, SEXP kSEXP, SEXP baseSEXP, SEXP L1normSEXP, SEXP NA_rmSEXP) {
+double RcppEntropy(const Rcpp::NumericVector& vec, int k, double base, bool NA_rm);
+RcppExport SEXP _spEDM_RcppEntropy(SEXP vecSEXP, SEXP kSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
-    Rcpp::traits::input_parameter< bool >::type L1norm(L1normSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppEntropy(vec, k, base, L1norm, NA_rm));
+    rcpp_result_gen = Rcpp::wrap(RcppEntropy(vec, k, base, NA_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppJoinEntropy
-double RcppJoinEntropy(const Rcpp::NumericMatrix& mat, int k, double base, bool L1norm, bool NA_rm);
-RcppExport SEXP _spEDM_RcppJoinEntropy(SEXP matSEXP, SEXP kSEXP, SEXP baseSEXP, SEXP L1normSEXP, SEXP NA_rmSEXP) {
+double RcppJoinEntropy(const Rcpp::NumericMatrix& mat, int k, double base, bool NA_rm);
+RcppExport SEXP _spEDM_RcppJoinEntropy(SEXP matSEXP, SEXP kSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
-    Rcpp::traits::input_parameter< bool >::type L1norm(L1normSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppJoinEntropy(mat, k, base, L1norm, NA_rm));
+    rcpp_result_gen = Rcpp::wrap(RcppJoinEntropy(mat, k, base, NA_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppMutualInformation
-double RcppMutualInformation(const Rcpp::NumericMatrix& mat, int k, int alg, bool normalize, bool L1norm, bool NA_rm);
-RcppExport SEXP _spEDM_RcppMutualInformation(SEXP matSEXP, SEXP kSEXP, SEXP algSEXP, SEXP normalizeSEXP, SEXP L1normSEXP, SEXP NA_rmSEXP) {
+double RcppMutualInformation(const Rcpp::NumericMatrix& mat, int k, int alg, bool normalize, bool NA_rm);
+RcppExport SEXP _spEDM_RcppMutualInformation(SEXP matSEXP, SEXP kSEXP, SEXP algSEXP, SEXP normalizeSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -52,9 +50,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< int >::type alg(algSEXP);
     Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
-    Rcpp::traits::input_parameter< bool >::type L1norm(L1normSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppMutualInformation(mat, k, alg, normalize, L1norm, NA_rm));
+    rcpp_result_gen = Rcpp::wrap(RcppMutualInformation(mat, k, alg, normalize, NA_rm));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -884,9 +881,9 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_spEDM_RcppEntropy", (DL_FUNC) &_spEDM_RcppEntropy, 5},
-    {"_spEDM_RcppJoinEntropy", (DL_FUNC) &_spEDM_RcppJoinEntropy, 5},
-    {"_spEDM_RcppMutualInformation", (DL_FUNC) &_spEDM_RcppMutualInformation, 6},
+    {"_spEDM_RcppEntropy", (DL_FUNC) &_spEDM_RcppEntropy, 4},
+    {"_spEDM_RcppJoinEntropy", (DL_FUNC) &_spEDM_RcppJoinEntropy, 4},
+    {"_spEDM_RcppMutualInformation", (DL_FUNC) &_spEDM_RcppMutualInformation, 5},
     {"_spEDM_RcppSimplexForecast", (DL_FUNC) &_spEDM_RcppSimplexForecast, 5},
     {"_spEDM_RcppSMapForecast", (DL_FUNC) &_spEDM_RcppSMapForecast, 6},
     {"_spEDM_RcppIntersectionCardinality", (DL_FUNC) &_spEDM_RcppIntersectionCardinality, 8},
