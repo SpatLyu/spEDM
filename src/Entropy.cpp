@@ -2,6 +2,15 @@
 #include <vector>
 #include "CppStats.h"
 
+/**
+ * @brief Computes the entropy of a given vector using Kraskov estimation.
+ *
+ * @param vec A vector of double values representing the dataset.
+ * @param k The number of nearest neighbors to consider in the estimation.
+ * @param base The logarithm base used for entropy calculation (default: 10).
+ * @param NA_rm A boolean flag indicating whether to remove missing values (default: false).
+ * @return The estimated entropy of the vector.
+ */
 double CppEntropy(const std::vector<double>& vec, size_t k,
                   double base = 10, bool NA_rm = false) {
   std::vector<double> distances = CppKNearestDistance(vec, k, true, NA_rm);
@@ -18,6 +27,16 @@ double CppEntropy(const std::vector<double>& vec, size_t k,
   return E;
 }
 
+/**
+ * @brief Computes the joint entropy of a multivariate matrix using Kraskov estimation.
+ *
+ *
+ * @param mat A 2D vector of double values where each row represents a data point.
+ * @param k The number of nearest neighbors to consider in the estimation.
+ * @param base The logarithm base used for entropy calculation (default: 10).
+ * @param NA_rm A boolean flag indicating whether to remove missing values (NaN) before computation (default: false).
+ * @return The estimated joint entropy of the multivariate matrix.
+ */
 double CppJoinEntropy(const std::vector<std::vector<double>>& mat, size_t k,
                       double base = 10, bool NA_rm = false) {
   size_t nrow = mat.size();
@@ -61,6 +80,18 @@ double CppJoinEntropy(const std::vector<std::vector<double>>& mat, size_t k,
   return E;
 }
 
+/**
+ * @brief Computes the mutual information(MI) between two variables using Kraskov estimation.
+ *
+ * @reference https://github.com/cran/NlinTS/blob/master/src/nsEntropy.cpp
+ *
+ * @param mat A 2D vector of double values where each row represents a data point with two variables.
+ * @param k The number of nearest neighbors to consider in the estimation.
+ * @param alg The algorithm choice for MI estimation (1: Kraskov Algorithm I, 2: Kraskov Algorithm II).
+ * @param normalize A boolean flag indicating whether to normalize the MI by the joint entropy (default: false).
+ * @param NA_rm A boolean flag indicating whether to remove missing values (NaN) before computation (default: false).
+ * @return The estimated mutual information between the two variables.
+ */
 double CppMutualInformation(const std::vector<std::vector<double>>& mat, size_t k,
                             int alg = 1, bool normalize = false, bool NA_rm = false){
   size_t nrow = mat.size();
