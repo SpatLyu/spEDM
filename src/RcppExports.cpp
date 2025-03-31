@@ -12,6 +12,36 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// RcppEntropy
+double RcppEntropy(const Rcpp::NumericVector& vec, int k, double base, bool L1norm, bool NA_rm);
+RcppExport SEXP _spEDM_RcppEntropy(SEXP vecSEXP, SEXP kSEXP, SEXP baseSEXP, SEXP L1normSEXP, SEXP NA_rmSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< double >::type base(baseSEXP);
+    Rcpp::traits::input_parameter< bool >::type L1norm(L1normSEXP);
+    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppEntropy(vec, k, base, L1norm, NA_rm));
+    return rcpp_result_gen;
+END_RCPP
+}
+// RcppJoinEntropy
+double RcppJoinEntropy(const Rcpp::NumericMatrix& mat, int k, double base, bool L1norm, bool NA_rm);
+RcppExport SEXP _spEDM_RcppJoinEntropy(SEXP matSEXP, SEXP kSEXP, SEXP baseSEXP, SEXP L1normSEXP, SEXP NA_rmSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< double >::type base(baseSEXP);
+    Rcpp::traits::input_parameter< bool >::type L1norm(L1normSEXP);
+    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppJoinEntropy(mat, k, base, L1norm, NA_rm));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppSimplexForecast
 Rcpp::NumericVector RcppSimplexForecast(const Rcpp::NumericMatrix& embedding, const Rcpp::NumericVector& target, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const int& num_neighbors);
 RcppExport SEXP _spEDM_RcppSimplexForecast(SEXP embeddingSEXP, SEXP targetSEXP, SEXP libSEXP, SEXP predSEXP, SEXP num_neighborsSEXP) {
@@ -823,6 +853,8 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_spEDM_RcppEntropy", (DL_FUNC) &_spEDM_RcppEntropy, 5},
+    {"_spEDM_RcppJoinEntropy", (DL_FUNC) &_spEDM_RcppJoinEntropy, 5},
     {"_spEDM_RcppSimplexForecast", (DL_FUNC) &_spEDM_RcppSimplexForecast, 5},
     {"_spEDM_RcppSMapForecast", (DL_FUNC) &_spEDM_RcppSMapForecast, 6},
     {"_spEDM_RcppIntersectionCardinality", (DL_FUNC) &_spEDM_RcppIntersectionCardinality, 8},
