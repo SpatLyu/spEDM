@@ -64,7 +64,7 @@ double CppJoinEntropy(const std::vector<std::vector<double>>& mat,
 }
 
 double CppMutualInformation(const std::vector<std::vector<double>>& mat,
-                            size_t k, int alg = 1, bool normalize = true,
+                            size_t k, int alg = 1, bool normalize = false,
                             bool L1norm = true, bool NA_rm = false){
   size_t nrow = mat.size();
   // size_t ncol = mat[0].size();
@@ -119,7 +119,7 @@ double CppMutualInformation(const std::vector<std::vector<double>>& mat,
     std::vector<int> NX = CppNeighborsNum(X, distances_x, true, L1norm, NA_rm);
     std::vector<int> NY = CppNeighborsNum(Y, distances_y, true, L1norm, NA_rm);
     for (size_t i = 0; i < nrow; i++){
-      sum += CppDigamma(NX[i]) +CppDigamma(NY[i]);
+      sum += CppDigamma(NX[i]) + CppDigamma(NY[i]);
     }
     sum /= nrow;
     mi = CppDigamma(k) - (1.0 / k) + CppDigamma(nrow) - sum;
