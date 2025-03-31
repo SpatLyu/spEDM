@@ -6,17 +6,15 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 
 // [[Rcpp::export]]
-double RcppEntropy(const Rcpp::NumericVector& vec,
-                   int k = 3, double base = 10,
-                   bool L1norm = true, bool NA_rm = false){
+double RcppEntropy(const Rcpp::NumericVector& vec, int k = 3,
+                   double base = 10, bool NA_rm = false){
   std::vector<double> v1 = Rcpp::as<std::vector<double>>(vec);
-  return CppEntropy(v1,static_cast<size_t>(std::abs(k)),base,L1norm,NA_rm);
+  return CppEntropy(v1,static_cast<size_t>(std::abs(k)),base,NA_rm);
 };
 
 // [[Rcpp::export]]
-double RcppJoinEntropy(const Rcpp::NumericMatrix& mat,
-                       int k = 3, double base = 10,
-                       bool L1norm = true, bool NA_rm = false){
+double RcppJoinEntropy(const Rcpp::NumericMatrix& mat, int k = 3,
+                       double base = 10, bool NA_rm = false){
   // Convert the Rcpp::NumericMatrix to a C++ vector of vectors (std::vector)
   size_t rownum = mat.nrow();
   size_t colnum = mat.ncol();
@@ -29,14 +27,13 @@ double RcppJoinEntropy(const Rcpp::NumericMatrix& mat,
     }
   }
 
-  return CppJoinEntropy(cppMat,static_cast<size_t>(std::abs(k)),base,L1norm,NA_rm);
+  return CppJoinEntropy(cppMat,static_cast<size_t>(std::abs(k)),base,NA_rm);
 };
 
 // [[Rcpp::export]]
 double RcppMutualInformation(const Rcpp::NumericMatrix& mat,
                              int k = 3, int alg = 1,
                              bool normalize = true,
-                             bool L1norm = true,
                              bool NA_rm = false){
   // Convert the Rcpp::NumericMatrix to a C++ vector of vectors (std::vector)
   size_t rownum = mat.nrow();
@@ -50,5 +47,5 @@ double RcppMutualInformation(const Rcpp::NumericMatrix& mat,
     }
   }
 
-  return CppMutualInformation(cppMat,static_cast<size_t>(std::abs(k)),alg,normalize,L1norm,NA_rm);
+  return CppMutualInformation(cppMat,static_cast<size_t>(std::abs(k)),alg,normalize,NA_rm);
 }

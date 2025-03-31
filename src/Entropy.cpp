@@ -2,10 +2,9 @@
 #include <vector>
 #include "CppStats.h"
 
-double CppEntropy(const std::vector<double>& vec,
-                  size_t k, double base = 10,
-                  bool L1norm = true, bool NA_rm = false) {
-  std::vector<double> distances = CppKNearestDistance(vec, k, L1norm, NA_rm);
+double CppEntropy(const std::vector<double>& vec, size_t k,
+                  double base = 10, bool NA_rm = false) {
+  std::vector<double> distances = CppKNearestDistance(vec, k, true, NA_rm);
   size_t n = vec.size();
 
   double sum = 0.0;
@@ -19,14 +18,13 @@ double CppEntropy(const std::vector<double>& vec,
   return E;
 }
 
-double CppJoinEntropy(const std::vector<std::vector<double>>& mat,
-                      size_t k, double base = 10,
-                      bool L1norm = true, bool NA_rm = false) {
+double CppJoinEntropy(const std::vector<std::vector<double>>& mat, size_t k,
+                      double base = 10, bool NA_rm = false) {
   size_t nrow = mat.size();
   size_t ncol = mat[0].size();
 
   std::vector<double> distances(nrow);
-  std::vector<std::vector<double>> mat_dist = CppMatDistance(mat, L1norm, NA_rm);
+  std::vector<std::vector<double>> mat_dist = CppMatDistance(mat, true, NA_rm);
 
   for (size_t i = 0; i < nrow; ++i) {
     // Create a vector to store the distances for the current row, filtering out NaN values if NA_rm is true
@@ -63,9 +61,8 @@ double CppJoinEntropy(const std::vector<std::vector<double>>& mat,
   return E;
 }
 
-double CppMutualInformation(const std::vector<std::vector<double>>& mat,
-                            size_t k, int alg = 1, bool normalize = true,
-                            bool L1norm = true, bool NA_rm = false){
+double CppMutualInformation(const std::vector<std::vector<double>>& mat, size_t k,
+                            int alg = 1, bool normalize = false, bool NA_rm = false){
   size_t nrow = mat.size();
   // size_t ncol = mat[0].size();
 
@@ -77,7 +74,7 @@ double CppMutualInformation(const std::vector<std::vector<double>>& mat,
   }
 
   std::vector<double> distances(nrow);
-  std::vector<std::vector<double>> mat_dist = CppMatDistance(mat, L1norm, NA_rm);
+  std::vector<std::vector<double>> mat_dist = CppMatDistance(mat, true, NA_rm);
 
   for (size_t i = 0; i < nrow; ++i) {
     // Create a vector to store the distances for the current row, filtering out NaN values if NA_rm is true
@@ -106,20 +103,20 @@ double CppMutualInformation(const std::vector<std::vector<double>>& mat,
   double sum = 0;
   double mi = 0;
   if (alg == 1){
-    std::vector<int> NX = CppNeighborsNum(X, distances, false, L1norm, NA_rm);
-    std::vector<int> NY = CppNeighborsNum(Y, distances, false, L1norm, NA_rm);
+    std::vector<int> NX = CppNeighborsNum(X, distances, false, true, NA_rm);
+    std::vector<int> NY = CppNeighborsNum(Y, distances, false, true, NA_rm);
     for (size_t i = 0; i < nrow; i ++){
       sum += CppDigamma(NX[i] + 1) + CppDigamma(NY[i] + 1);
     }
     sum /= nrow;
     mi = CppDigamma(k) + CppDigamma(nrow) - sum;
   } else {
-    std::vector<double> distances_x = CppKNearestDistance(X, k, L1norm, NA_rm);
-    std::vector<double> distances_y = CppKNearestDistance(Y, k, L1norm, NA_rm);
-    std::vector<int> NX = CppNeighborsNum(X, distances_x, true, L1norm, NA_rm);
-    std::vector<int> NY = CppNeighborsNum(Y, distances_y, true, L1norm, NA_rm);
+    std::vector<double> distances_x = CppKNearestDistance(X, k, true, NA_rm);
+    std::vector<double> distances_y = CppKNearestDistance(Y, k, true, NA_rm);
+    std::vector<int> NX = CppNeighborsNum(X, distances_x, true, true, NA_rm);
+    std::vector<int> NY = CppNeighborsNum(Y, distances_y, true, true, NA_rm);
     for (size_t i = 0; i < nrow; i++){
-      sum += CppDigamma(NX[i]) +CppDigamma(NY[i]);
+      sum += CppDigamma(NX[i]) + CppDigamma(NY[i]);
     }
     sum /= nrow;
     mi = CppDigamma(k) - (1.0 / k) + CppDigamma(nrow) - sum;
