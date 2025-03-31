@@ -14,8 +14,8 @@ double CppEntropy(const std::vector<double>& vec,
   }
   sum /= n;
 
-  // Compute entropy using digamma function
-  double E = std::tgamma(n) - std::tgamma(k) + sum + CppLog(1.0, base);
+  // Compute entropy using CppDigamma function
+  double E = CppDigamma(n) - CppDigamma(k) + sum + CppLog(1.0, base);
   return E;
 }
 
@@ -58,7 +58,7 @@ double CppJoinEntropy(const std::vector<std::vector<double>>& mat,
   }
   sum = sum * ncol / nrow;
 
-  // Compute joint entropy using digamma function
-  double E = std::tgamma(nrow) - std::tgamma(k) + sum;
+  // Compute joint entropy using CppDigamma function
+  double E = CppDigamma(nrow) - CppDigamma(k) + sum;
   return E;
 }
