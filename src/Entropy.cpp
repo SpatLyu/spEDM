@@ -3,12 +3,13 @@
 #include "CppStats.h"
 
 /**
- * @brief Computes the entropy of a given vector using Kraskov estimation.
+ * @brief Computes the entropy of a given vector using k-nearest neighbors estimation.
  *
  * @param vec A vector of double values representing the dataset.
  * @param k The number of nearest neighbors to consider in the estimation.
  * @param base The logarithm base used for entropy calculation (default: 10).
  * @param NA_rm A boolean flag indicating whether to remove missing values (default: false).
+ *
  * @return The estimated entropy of the vector.
  */
 double CppEntropy(const std::vector<double>& vec, size_t k,
@@ -28,13 +29,14 @@ double CppEntropy(const std::vector<double>& vec, size_t k,
 }
 
 /**
- * @brief Computes the joint entropy of a multivariate matrix using Kraskov estimation.
+ * @brief Computes the joint entropy of a multivariate matrix using k-nearest neighbors estimation.
  *
  *
  * @param mat A 2D vector of double values where each row represents a data point.
  * @param k The number of nearest neighbors to consider in the estimation.
  * @param base The logarithm base used for entropy calculation (default: 10).
  * @param NA_rm A boolean flag indicating whether to remove missing values (NaN) before computation (default: false).
+ *
  * @return The estimated joint entropy of the multivariate matrix.
  */
 double CppJoinEntropy(const std::vector<std::vector<double>>& mat, size_t k,
@@ -81,15 +83,24 @@ double CppJoinEntropy(const std::vector<std::vector<double>>& mat, size_t k,
 }
 
 /**
- * @brief Computes the mutual information(MI) between two variables using Kraskov estimation.
+ * @brief Computes the mutual information(MI) between two variables using k-nearest neighbors estimation.
  *
- * @reference https://github.com/cran/NlinTS/blob/master/src/nsEntropy.cpp
+ * @note
+ * True mutual information can't be negative. If its estimate by a numerical
+ * method is negative, it means (providing the method is adequate) that the
+ * mutual information is close to 0 and replacing it by 0 is a reasonable
+ * strategy.
+ *
+ * @reference
+ *  https://github.com/cran/NlinTS/blob/master/src/nsEntropy.cpp
+ *  https://github.com/PengTao-HUST/crossmapy/blob/master/crossmapy/mi.py
  *
  * @param mat A 2D vector of double values where each row represents a data point with two variables.
  * @param k The number of nearest neighbors to consider in the estimation.
  * @param alg The algorithm choice for MI estimation (1: Kraskov Algorithm I, 2: Kraskov Algorithm II).
  * @param normalize A boolean flag indicating whether to normalize the MI by the joint entropy (default: false).
  * @param NA_rm A boolean flag indicating whether to remove missing values (NaN) before computation (default: false).
+ *
  * @return The estimated mutual information between the two variables.
  */
 double CppMutualInformation(const std::vector<std::vector<double>>& mat, size_t k,
@@ -163,5 +174,8 @@ double CppMutualInformation(const std::vector<std::vector<double>>& mat, size_t 
     jointEn +=  CppDigamma(nrow) - CppDigamma(k);
     mi = mi / jointEn;
   }
+
+  // Mutual information is forced to 0 when it is negative
+  mi = std::max(0.0, mi);
   return mi;
 }
