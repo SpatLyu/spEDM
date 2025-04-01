@@ -9,8 +9,8 @@ RcppJoinEntropy <- function(mat, k = 3L, base = 10, NA_rm = FALSE) {
     .Call(`_spEDM_RcppJoinEntropy`, mat, k, base, NA_rm)
 }
 
-RcppMutualInformation <- function(mat, k = 3L, alg = 1L, normalize = FALSE, NA_rm = FALSE) {
-    .Call(`_spEDM_RcppMutualInformation`, mat, k, alg, normalize, NA_rm)
+RcppMutualInformation <- function(vec1, vec2, k = 3L, alg = 1L, normalize = FALSE, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppMutualInformation`, vec1, vec2, k, alg, normalize, NA_rm)
 }
 
 RcppSimplexForecast <- function(embedding, target, lib, pred, num_neighbors) {
