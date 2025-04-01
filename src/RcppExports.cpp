@@ -57,6 +57,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppConditionalEntropy
+double RcppConditionalEntropy(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, int k, double base, bool NA_rm);
+RcppExport SEXP _spEDM_RcppConditionalEntropy(SEXP vec1SEXP, SEXP vec2SEXP, SEXP kSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec1(vec1SEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec2(vec2SEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< double >::type base(baseSEXP);
+    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppConditionalEntropy(vec1, vec2, k, base, NA_rm));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppSimplexForecast
 Rcpp::NumericVector RcppSimplexForecast(const Rcpp::NumericMatrix& embedding, const Rcpp::NumericVector& target, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const int& num_neighbors);
 RcppExport SEXP _spEDM_RcppSimplexForecast(SEXP embeddingSEXP, SEXP targetSEXP, SEXP libSEXP, SEXP predSEXP, SEXP num_neighborsSEXP) {
@@ -886,6 +901,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppEntropy", (DL_FUNC) &_spEDM_RcppEntropy, 4},
     {"_spEDM_RcppJoinEntropy", (DL_FUNC) &_spEDM_RcppJoinEntropy, 5},
     {"_spEDM_RcppMutualInformation", (DL_FUNC) &_spEDM_RcppMutualInformation, 6},
+    {"_spEDM_RcppConditionalEntropy", (DL_FUNC) &_spEDM_RcppConditionalEntropy, 5},
     {"_spEDM_RcppSimplexForecast", (DL_FUNC) &_spEDM_RcppSimplexForecast, 5},
     {"_spEDM_RcppSMapForecast", (DL_FUNC) &_spEDM_RcppSMapForecast, 6},
     {"_spEDM_RcppIntersectionCardinality", (DL_FUNC) &_spEDM_RcppIntersectionCardinality, 8},

@@ -13,6 +13,10 @@ RcppMutualInformation <- function(vec1, vec2, k = 3L, alg = 1L, normalize = FALS
     .Call(`_spEDM_RcppMutualInformation`, vec1, vec2, k, alg, normalize, NA_rm)
 }
 
+RcppConditionalEntropy <- function(vec1, vec2, k = 3L, base = 10, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppConditionalEntropy`, vec1, vec2, k, base, NA_rm)
+}
+
 RcppSimplexForecast <- function(embedding, target, lib, pred, num_neighbors) {
     .Call(`_spEDM_RcppSimplexForecast`, embedding, target, lib, pred, num_neighbors)
 }
