@@ -14,4 +14,9 @@ double CppJoinEntropy(const std::vector<std::vector<double>>& mat, size_t k,
 double CppMutualInformation(const std::vector<std::vector<double>>& mat, size_t k, int alg = 1,
                             bool normalize = true, bool NA_rm = false);
 
+double CppConditionalEntropy(const std::vector<double>& vecx,
+                             const std::vector<double>& vecy,
+                             size_t k, double base = 10,
+                             bool NA_rm = false);
+
 #endif // Entropy_H

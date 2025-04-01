@@ -180,3 +180,42 @@ double CppMutualInformation(const std::vector<std::vector<double>>& mat, size_t 
 
   return mi;
 }
+
+#include <vector>
+#include <cmath>
+
+// Assuming CppJoinEntropy and CppEntropy are already defined as provided in your code
+
+/**
+ * @brief Computes the conditional entropy of x given y using k-nearest neighbors estimation.
+ *
+ * @param vecx A vector of double values representing the first variable.
+ * @param vecy A vector of double values representing the second variable.
+ * @param k The number of nearest neighbors to consider in the estimation.
+ * @param base The logarithm base used for entropy calculation (default: 10).
+ * @param NA_rm A boolean flag indicating whether to remove missing values (NaN) before computation (default: false).
+ *
+ * @return The estimated conditional entropy of x given y.
+ */
+double CppConditionalEntropy(const std::vector<double>& vecx,
+                             const std::vector<double>& vecy,
+                             size_t k, double base = 10,
+                             bool NA_rm = false) {
+  // Create a 2D vector for the joint of x and y
+  std::vector<std::vector<double>> joint_vec(vecx.size(), std::vector<double>(2));
+  for (size_t i = 0; i < vecx.size(); ++i) {
+    joint_vec[i][0] = vecx[i];
+    joint_vec[i][1] = vecy[i];
+  }
+
+  // Compute the joint entropy H(X, Y)
+  double joint_entropy = CppJoinEntropy(joint_vec, k, base, NA_rm);
+
+  // Compute the entropy of y, H(Y)
+  double entropy_y = CppEntropy(vecy, k, base, NA_rm);
+
+  // Compute the conditional entropy H(X|Y) = H(X, Y) - H(Y)
+  double ce = joint_entropy - entropy_y;
+
+  return ce;
+}
