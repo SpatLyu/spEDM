@@ -970,7 +970,7 @@ std::vector<int> CppNeighborsNum(
 }
 
 // Function to compute the number of neighbors for each point (in a matrix) within a given radius.
-// use the ch distance
+// use the chebyshev distance
 std::vector<int> CppMatNeighborsNum(
     const std::vector<std::vector<double>>& mat,     // A vector of 2D points.
     const std::vector<double>& radius,               // A vector where radius[i] specifies the search radius for the i-th point.
