@@ -44,3 +44,13 @@ double RcppMutualInformation(const Rcpp::NumericVector& vec1,
 
   return CppMutualInformation(cppMat,static_cast<size_t>(std::abs(k)),alg,normalize,NA_rm);
 }
+
+// [[Rcpp::export]]
+double RcppConditionalEntropy(const Rcpp::NumericVector& vec1,
+                              const Rcpp::NumericVector& vec2,
+                              int k = 3, double base = 10,
+                              bool NA_rm = false){
+  std::vector<double> v1 = Rcpp::as<std::vector<double>>(vec1);
+  std::vector<double> v2 = Rcpp::as<std::vector<double>>(vec2);
+  return CppConditionalEntropy(v1,v2,static_cast<size_t>(std::abs(k)),base,NA_rm);
+}
