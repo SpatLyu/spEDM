@@ -5,8 +5,8 @@ RcppEntropy <- function(vec, k = 3L, base = 10, NA_rm = FALSE) {
     .Call(`_spEDM_RcppEntropy`, vec, k, base, NA_rm)
 }
 
-RcppJoinEntropy <- function(mat, k = 3L, base = 10, NA_rm = FALSE) {
-    .Call(`_spEDM_RcppJoinEntropy`, mat, k, base, NA_rm)
+RcppJoinEntropy <- function(vec1, vec2, k = 3L, base = 10, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppJoinEntropy`, vec1, vec2, k, base, NA_rm)
 }
 
 RcppMutualInformation <- function(vec1, vec2, k = 3L, alg = 1L, normalize = FALSE, NA_rm = FALSE) {
