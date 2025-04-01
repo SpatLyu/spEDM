@@ -23,7 +23,7 @@
  *   threads: Number of parallel threads.
  *   progressbar: Whether to display a progress bar.
  *
- * * Returns:
+ * Returns:
  *   - A vector representing the intersection cardinality (IC) scores, normalized between [0, 1].
  */
 std::vector<double> IntersectionCardinality(

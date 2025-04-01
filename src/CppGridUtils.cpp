@@ -192,8 +192,7 @@ std::vector<std::vector<double>> GenGridEmbeddings(
   int numCols = mat[0].size();
   int total_elements = numRows * numCols;
 
-  // Initialize the result matrix with total_elements rows and E columns
-  // Initially fill with NaN values
+  // Initialize the result matrix with total_elements rows and E columns and fill with NaN values
   std::vector<std::vector<double>> result(total_elements, std::vector<double>(E, std::numeric_limits<double>::quiet_NaN()));
 
   if (tau == 0) {
