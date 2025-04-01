@@ -181,11 +181,6 @@ double CppMutualInformation(const std::vector<std::vector<double>>& mat, size_t 
   return mi;
 }
 
-#include <vector>
-#include <cmath>
-
-// Assuming CppJoinEntropy and CppEntropy are already defined as provided in your code
-
 /**
  * @brief Computes the conditional entropy of x given y using k-nearest neighbors estimation.
  *
