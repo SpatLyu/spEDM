@@ -26,9 +26,9 @@
  * @param direction A string indicating the comparison direction. If set to ">", values are inverted.
  *
  * @return A structure containing:
- *   - `theta`: The estimated AUC value.
- *   - `X`: A vector of normalized placement values for cases.
- *   - `Y`: A vector of normalized placement values for controls.
+ *   - theta: The estimated AUC value.
+ *   - X: A vector of normalized placement values for cases.
+ *   - Y: A vector of normalized placement values for controls.
  */
 DeLongPlacementsRes CppDeLongPlacements(const std::vector<double>& cases,
                                         const std::vector<double>& controls,
