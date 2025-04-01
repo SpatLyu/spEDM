@@ -121,6 +121,12 @@ std::vector<int> CppNeighborsNum(
     bool L1norm = false,
     bool NA_rm = false);
 
+std::vector<int> CppMatNeighborsNum(
+    const std::vector<std::vector<double>>& mat,
+    const std::vector<double>& radius,
+    bool equal = false,
+    bool NA_rm = false);
+
 std::vector<size_t> CppKNNIndice(
     const std::vector<std::vector<double>>& embedding_space,
     size_t target_idx,

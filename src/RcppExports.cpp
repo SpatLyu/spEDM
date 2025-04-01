@@ -41,17 +41,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppMutualInformation
-double RcppMutualInformation(const Rcpp::NumericMatrix& mat, int k, int alg, bool normalize, bool NA_rm);
-RcppExport SEXP _spEDM_RcppMutualInformation(SEXP matSEXP, SEXP kSEXP, SEXP algSEXP, SEXP normalizeSEXP, SEXP NA_rmSEXP) {
+double RcppMutualInformation(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, int k, int alg, bool normalize, bool NA_rm);
+RcppExport SEXP _spEDM_RcppMutualInformation(SEXP vec1SEXP, SEXP vec2SEXP, SEXP kSEXP, SEXP algSEXP, SEXP normalizeSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec1(vec1SEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec2(vec2SEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< int >::type alg(algSEXP);
     Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppMutualInformation(mat, k, alg, normalize, NA_rm));
+    rcpp_result_gen = Rcpp::wrap(RcppMutualInformation(vec1, vec2, k, alg, normalize, NA_rm));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -883,7 +884,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppEntropy", (DL_FUNC) &_spEDM_RcppEntropy, 4},
     {"_spEDM_RcppJoinEntropy", (DL_FUNC) &_spEDM_RcppJoinEntropy, 4},
-    {"_spEDM_RcppMutualInformation", (DL_FUNC) &_spEDM_RcppMutualInformation, 5},
+    {"_spEDM_RcppMutualInformation", (DL_FUNC) &_spEDM_RcppMutualInformation, 6},
     {"_spEDM_RcppSimplexForecast", (DL_FUNC) &_spEDM_RcppSimplexForecast, 5},
     {"_spEDM_RcppSMapForecast", (DL_FUNC) &_spEDM_RcppSMapForecast, 6},
     {"_spEDM_RcppIntersectionCardinality", (DL_FUNC) &_spEDM_RcppIntersectionCardinality, 8},

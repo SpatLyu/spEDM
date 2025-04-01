@@ -164,6 +164,9 @@ double CppMutualInformation(const std::vector<std::vector<double>>& mat, size_t 
     mi = CppDigamma(k) - (1.0 / k) + CppDigamma(nrow) - sum;
   }
 
+  // Mutual information is forced to 0 when it is negative
+  mi = std::max(0.0, mi);
+
   // Normalizing mutual information by divide it by the joint entropy
   if (normalize) {
     double jointEn = 0;
@@ -175,7 +178,5 @@ double CppMutualInformation(const std::vector<std::vector<double>>& mat, size_t 
     mi = mi / jointEn;
   }
 
-  // Mutual information is forced to 0 when it is negative
-  mi = std::max(0.0, mi);
   return mi;
 }

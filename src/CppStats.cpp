@@ -925,7 +925,7 @@ std::vector<std::vector<double>> CppMatChebyshevDistance(
   return distance_matrix;
 }
 
-// Function to compute the number of neighbors for each point within a given radius.
+// Function to compute the number of neighbors for each point (in a vector) within a given radius.
 std::vector<int> CppNeighborsNum(
     const std::vector<double>& vec,     // A vector of 1D points.
     const std::vector<double>& radius,  // A vector where radius[i] specifies the search radius for the i-th point.
@@ -956,6 +956,37 @@ std::vector<int> CppNeighborsNum(
           distance = std::sqrt(diff * diff);  // Euclidean distance (L2)
         }
 
+        // Check neighbor condition based on the 'equal' flag
+        if (!equal && distance < radius[i]) {
+          NAx[i]++;
+        } else if (equal && distance <= radius[i]) {
+          NAx[i]++;
+        }
+      }
+    }
+  }
+
+  return NAx;
+}
+
+// Function to compute the number of neighbors for each point (in a matrix) within a given radius.
+// use the ch distance
+std::vector<int> CppMatNeighborsNum(
+    const std::vector<std::vector<double>>& mat,     // A vector of 2D points.
+    const std::vector<double>& radius,               // A vector where radius[i] specifies the search radius for the i-th point.
+    bool equal = false,                              // Flag to include points at exactly the radius distance (default: false).
+    bool NA_rm = false                               // Whether to remove the nan value in cpp
+) {
+  size_t N = mat.size();
+  std::vector<int> NAx(N, 0); // Initialize neighbor counts to 0
+
+  std::vector<std::vector<double>> dist = CppMatChebyshevDistance(mat,NA_rm);
+
+  // Iterate over all pairs of points (i, j)
+  for (size_t i = 0; i < N; ++i) {
+    for (size_t j = 0; j < N; ++j) {
+      if (i != j) { // Skip self-comparison
+        double distance = dist[i][j];
         // Check neighbor condition based on the 'equal' flag
         if (!equal && distance < radius[i]) {
           NAx[i]++;
