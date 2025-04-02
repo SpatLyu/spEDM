@@ -29,7 +29,12 @@ methods::setGeneric("embedded", function(data, ...) standardGeneric("embedded"))
 #'
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
-#' embedded(columbus,target = "crime", E = 3)
+#' v = embedded(columbus,"crime")
+#' v[1:5,]
+#'
+#' cu = terra::rast(system.file("case/cu.tif", package="spEDM"))
+#' r = embedded(cu,"cu")
+#' r[1:5,]
 #'
 methods::setMethod("embedded", "sf", .embedded_sf_method)
 

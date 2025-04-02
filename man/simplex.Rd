@@ -65,7 +65,7 @@ simplex forecast
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 \donttest{
-simplex(columbus,target = "crime")
+simplex(columbus,"crime")
 }
 }
 \references{
