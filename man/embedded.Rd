@@ -31,6 +31,11 @@ embedding spatial cross sectional data
 }
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
-embedded(columbus,target = "crime", E = 3)
+v = embedded(columbus,"crime")
+v[1:5,]
+
+cu = terra::rast(system.file("case/cu.tif", package="spEDM"))
+r = embedd(cu,"cu")
+r[1:5,]
 
 }
