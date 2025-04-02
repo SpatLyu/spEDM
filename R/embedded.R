@@ -33,7 +33,7 @@ methods::setGeneric("embedded", function(data, ...) standardGeneric("embedded"))
 #' v[1:5,]
 #'
 #' cu = terra::rast(system.file("case/cu.tif", package="spEDM"))
-#' r = embedd(cu,"cu")
+#' r = embedded(cu,"cu")
 #' r[1:5,]
 #'
 methods::setMethod("embedded", "sf", .embedded_sf_method)
