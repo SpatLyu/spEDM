@@ -27,7 +27,7 @@ install.packages("spEDM", dep = TRUE)
 
 Alternatively, you can install the development version from [R-universe](https://stscl.r-universe.dev/spEDM) with:
 
-``` r
+```r
 install.packages("spEDM",
                  repos = c("https://stscl.r-universe.dev",
                            "https://cloud.r-project.org"),
