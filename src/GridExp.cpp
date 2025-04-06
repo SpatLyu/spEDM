@@ -89,8 +89,8 @@ Rcpp::NumericMatrix RcppGenGridEmbeddings(const Rcpp::NumericMatrix& mat,
 }
 
 // [[Rcpp::export]]
-Rcpp::NumericVector GenGridSymbolization(const Rcpp::NumericMatrix& mat,
-                                         int k) {
+Rcpp::NumericVector RcppGenGridSymbolization(const Rcpp::NumericMatrix& mat,
+                                             int k) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = mat.nrow();
   int numCols = mat.ncol();
