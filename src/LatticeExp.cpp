@@ -142,11 +142,29 @@ Rcpp::IntegerMatrix RcppGenLatticeNeighbors(const Rcpp::NumericVector& vec,
   Rcpp::IntegerMatrix result(rows, cols);
   for (int i = 0; i < rows; ++i) {
     for (int j = 0; j < cols; ++j) {
-      result(i, j) = neighbors[i][j];
+      result(i, j) = neighbors[i][j] + 1;
     }
   }
 
   return result;
+}
+
+// Wrapper function to mplements a symbolic transformation of a univariate spatial process
+// [[Rcpp::export]]
+Rcpp::NumericVector RcppGenLatticeSymbolization(const Rcpp::NumericVector& vec,
+                                                const Rcpp::List& nb,
+                                                int k) {
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
+
+  // Convert Rcpp::List to std::vector<std::vector<int>>
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
+
+  //  Generate symbolization map
+  std::vector<double> symbomap = GenLatticeSymbolization(vec_std, nb_vec, static_cast<size_t>(std::abs(k)));
+
+  // Convert the result back to Rcpp::NumericVector
+  return Rcpp::wrap(symbomap);
 }
 
 /**
