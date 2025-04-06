@@ -7,6 +7,8 @@
 #include <limits>
 #include <numeric>
 #include <algorithm>
+#include <utility>
+#include "CppStats.h"
 
 /**
  * Converts a 2D grid position (row, column) to a 1D index in row-major order.
@@ -110,5 +112,37 @@ std::vector<std::vector<double>> GenGridEmbeddings(
     int E,
     int tau
 );
+
+/**
+ * @brief Perform grid-based symbolization on a 2D numeric matrix using local neighborhood statistics.
+ *
+ * This function calculates a symbolic representation (`fs`) for each non-NaN grid cell based on its
+ * k most similar neighbors in terms of value difference. The process expands radially (Queen's case)
+ * around each cell until at least k valid neighbors are collected. The final symbol for each cell
+ * reflects its local homogeneity pattern relative to the global median.
+ *
+ * The steps include:
+ * 1. Flatten the matrix to compute the global median `s_me` using all valid values.
+ * 2. For each grid cell:
+ *    - Find up to k nearest neighbors by increasing the neighborhood lag until k valid neighbors are found.
+ *    - Sort neighbors by absolute difference in value from the center cell.
+ *    - Select the top k values and compute a first indicator vector (`tau_s`) by comparing to global median.
+ *    - Compute a second indicator vector (`l_s`) by comparing `tau_s[i]` to the center cell’s own indicator (`taus`).
+ *    - Sum `l_s` to get a symbolic value `fs` representing the symbolic spatial consistency.
+ *
+ * @param mat A 2D grid (matrix) of values to be symbolized. `NaN` values are treated as missing.
+ * @param k The number of neighbors to consider for the symbolization of each cell.
+ *
+ * @return A flattened 1D vector representing the symbolic values of each grid cell (row-major order).
+ *         Cells with no valid value or insufficient neighbors remain as `NaN`.
+ *
+ * Note:
+ * - Uses Queen's neighborhood definition for expanding neighborhoods (8 directions per layer).
+ * - Grid edges and missing values are handled robustly during expansion.
+ * - Useful for symbolic dynamics, pattern analysis, or spatial entropy estimation.
+ */
+std::vector<double> GenGridSymbolization(
+    const std::vector<std::vector<double>>& mat,
+    size_t k);
 
 #endif // CppGridUtils_H

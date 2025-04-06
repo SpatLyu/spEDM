@@ -4,6 +4,8 @@
 #include <limits>
 #include <numeric>
 #include <algorithm>
+#include <utility>
+#include "CppStats.h"
 
 /**
  * Converts a 2D grid position (row, column) to a 1D index in row-major order.
@@ -328,4 +330,132 @@ std::vector<std::vector<double>> GenGridEmbeddings(
     // Return the filtered embeddings matrix
     return filteredEmbeddings;
   }
+}
+
+/**
+ * @brief Perform grid-based symbolization on a 2D numeric matrix using local neighborhood statistics.
+ *
+ * This function calculates a symbolic representation (`fs`) for each non-NaN grid cell based on its
+ * k most similar neighbors in terms of value difference. The process expands radially (Queen's case)
+ * around each cell until at least k valid neighbors are collected. The final symbol for each cell
+ * reflects its local homogeneity pattern relative to the global median.
+ *
+ * The steps include:
+ * 1. Flatten the matrix to compute the global median `s_me` using all valid values.
+ * 2. For each grid cell:
+ *    - Find up to k nearest neighbors by increasing the neighborhood lag until k valid neighbors are found.
+ *    - Sort neighbors by absolute difference in value from the center cell.
+ *    - Select the top k values and compute a first indicator vector (`tau_s`) by comparing to global median.
+ *    - Compute a second indicator vector (`l_s`) by comparing `tau_s[i]` to the center cell’s own indicator (`taus`).
+ *    - Sum `l_s` to get a symbolic value `fs` representing the symbolic spatial consistency.
+ *
+ * @param mat A 2D grid (matrix) of values to be symbolized. `NaN` values are treated as missing.
+ * @param k The number of neighbors to consider for the symbolization of each cell.
+ *
+ * @return A flattened 1D vector representing the symbolic values of each grid cell (row-major order).
+ *         Cells with no valid value or insufficient neighbors remain as `NaN`.
+ *
+ * Note:
+ * - Uses Queen's neighborhood definition for expanding neighborhoods (8 directions per layer).
+ * - Grid edges and missing values are handled robustly during expansion.
+ * - Useful for symbolic dynamics, pattern analysis, or spatial entropy estimation.
+ */
+std::vector<double> GenGridSymbolization(
+    const std::vector<std::vector<double>>& mat,
+    size_t k){
+  const size_t rows = mat.size();
+  const size_t cols = mat[0].size();
+  std::vector<double> result(rows * cols, std::numeric_limits<double>::quiet_NaN());
+
+  std::vector<double> me(rows * cols, std::numeric_limits<double>::quiet_NaN());
+  for (size_t i = 0; i < rows; ++i) {
+    for (size_t j = 0; j < cols; ++j) {
+      me.push_back(mat[i][j]);
+    }
+  }
+  // The median of series me
+  double s_me = CppMedian(me, true);
+
+  for (size_t i = 0; i < rows; ++i) {
+    for (size_t j = 0; j < cols; ++j) {
+      const double center = mat[i][j];
+      if (std::isnan(center)) continue;
+
+      // Collect valid neighbors with absolute differences
+      std::vector<std::pair<double, double>> neighbors; // <abs_diff, value>
+
+      int max_lag = std::max({
+        static_cast<int>(i),
+        static_cast<int>(rows-1 - i),
+        static_cast<int>(j),
+        static_cast<int>(cols-1 - j)
+      });
+
+      // Expand lag until enough neighbors or reach max possible lag
+      for (int lag = 1; lag <= max_lag; ++lag) {
+        // Generate queen's case offsets for current lag
+        std::vector<std::pair<int, int>> offsets;
+        for (int dx = -lag; dx <= lag; ++dx) {
+          for (int dy = -lag; dy <= lag; ++dy) {
+            if (std::max(std::abs(dx), std::abs(dy)) == lag) {
+              int ni = i + dx;
+              int nj = j + dy;
+              if (ni >= 0 && ni < static_cast<int>(rows) && nj >= 0 && nj < static_cast<int>(cols)) {
+                double val = mat[ni][nj];
+                if (!std::isnan(val)) {
+                  neighbors.emplace_back(std::abs(val - center), val);
+                }
+              }
+            }
+          }
+        }
+        if (neighbors.size() >= k) break;
+      }
+
+      // Select top-k smallest differences
+      if (neighbors.size() >= k) {
+        // Sort by absolute difference then value
+        std::sort(neighbors.begin(), neighbors.end(),
+             [](const auto& a, const auto& b) {
+               return a.first != b.first ? a.first < b.first : a.second < b.second;
+             });
+
+        // Symbolization
+        std::vector<double> selected;
+        for (size_t idx = 0; idx < k; ++idx){
+          selected.push_back(neighbors[idx].second);
+        }
+
+        // The first indicator function
+        std::vector<double> tau_s(selected.size());
+        for(size_t i = 0; i < selected.size(); ++i){
+          double tau = 0;
+          if (selected[i] >= s_me){
+            tau = 1;
+          }
+          tau_s[i] = tau;
+        }
+
+        // The second indicator function and the symbolization map
+        std::vector<double> l_s(k);
+        double taus = center >= s_me ? 1 : 0;
+        for(size_t i = 0; i < k; ++i){
+          double l = 0;
+          if (tau_s[i] == taus){
+            l = 1;
+          }
+          l_s[i] = l;
+        }
+
+        double fs = 0.0;
+        for (size_t i = 0; i < l_s.size(); ++i) {
+          fs += l_s[i];
+        }
+
+        result[i * cols + j] = fs;
+      }
+    }
+  }
+
+  return result;
 }
