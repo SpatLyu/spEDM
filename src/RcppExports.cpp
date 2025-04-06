@@ -1001,6 +1001,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppSpatialBlockBootstrap
+Rcpp::IntegerVector RcppSpatialBlockBootstrap(const Rcpp::IntegerVector& block, unsigned int seed);
+RcppExport SEXP _spEDM_RcppSpatialBlockBootstrap(SEXP blockSEXP, SEXP seedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type block(blockSEXP);
+    Rcpp::traits::input_parameter< unsigned int >::type seed(seedSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSpatialBlockBootstrap(block, seed));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppEntropy_Cont", (DL_FUNC) &_spEDM_RcppEntropy_Cont, 4},
@@ -1071,6 +1083,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppLinearTrendRM", (DL_FUNC) &_spEDM_RcppLinearTrendRM, 4},
     {"_spEDM_RcppSVD", (DL_FUNC) &_spEDM_RcppSVD, 1},
     {"_spEDM_RcppDeLongPlacements", (DL_FUNC) &_spEDM_RcppDeLongPlacements, 3},
+    {"_spEDM_RcppSpatialBlockBootstrap", (DL_FUNC) &_spEDM_RcppSpatialBlockBootstrap, 2},
     {NULL, NULL, 0}
 };
 

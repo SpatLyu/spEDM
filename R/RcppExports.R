@@ -273,3 +273,7 @@ RcppDeLongPlacements <- function(cases, controls, direction) {
     .Call(`_spEDM_RcppDeLongPlacements`, cases, controls, direction)
 }
 
+RcppSpatialBlockBootstrap <- function(block, seed = 42L) {
+    .Call(`_spEDM_RcppSpatialBlockBootstrap`, block, seed)
+}
+
