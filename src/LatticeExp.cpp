@@ -122,6 +122,33 @@ Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec,
   return result;
 }
 
+// Wrapper function to generate neighbors and return a NumericMatrix
+// [[Rcpp::export]]
+Rcpp::IntegerMatrix RcppGenLatticeNeighbors(const Rcpp::NumericVector& vec,
+                                            const Rcpp::List& nb,
+                                            int k) {
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
+
+  // Convert Rcpp::List to std::vector<std::vector<int>>
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
+
+  // Generate neighbors
+  std::vector<std::vector<int>> neighbors = GenLatticeNeighbors(vec_std, nb_vec, static_cast<size_t>(std::abs(k)));
+
+  // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
+  int rows = neighbors.size();
+  int cols = neighbors[0].size();
+  Rcpp::IntegerMatrix result(rows, cols);
+  for (int i = 0; i < rows; ++i) {
+    for (int j = 0; j < cols; ++j) {
+      result(i, j) = neighbors[i][j];
+    }
+  }
+
+  return result;
+}
+
 /**
  * Description:
  *   Computes Simplex projection for lattice data and returns a matrix containing

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <queue> // for std::queue
 #include <numeric>   // for std::accumulate
 #include <algorithm> // for std::sort, std::unique, std::accumulate
 #include <unordered_set> // for std::unordered_set
@@ -391,4 +392,77 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
     // Return the filtered embeddings matrix
     return filteredEmbeddings;
   }
+}
+
+/**
+ * Generates k-nearest neighbors for each spatial unit from one spatial lattice vector.
+ *
+ * @param vec: A vector of double values for which neighbors are to be found.
+ * @param nb: A nested vector where each sub-vector contains the indices of neighbors for the corresponding element in `vec`.
+ * @param k: The number of nearest neighbors to find for each element in `vec`.
+ *
+ * @return: A nested vector where each sub-vector contains the indices of the k-nearest neighbors for the corresponding element in `vec`.
+ *
+ * The function works by iterating through each element in `vec`, expanding its neighborhood by considering 1st, 2nd, ..., nth order neighbors from `nb`,
+ * removing duplicates, and then selecting the k neighbors with the smallest absolute differences in value from the original element.
+ */
+std::vector<std::vector<int>> GenLatticeNeighbors(
+    const std::vector<double>& vec,
+    const std::vector<std::vector<int>>& nb,
+    size_t k) {
+
+  // Initialize the result vector with empty vectors
+  std::vector<std::vector<int>> result(vec.size());
+
+  // Iterate through each element in the input vector
+  for (size_t i = 0; i < vec.size(); ++i) {
+    // Use a set to store unique neighbor indices
+    std::unordered_set<int> uniqueNeighbors;
+
+    // Start with the direct neighbors from nb[i]
+    for (int neighborIdx : nb[i]) {
+      uniqueNeighbors.insert(neighborIdx);
+    }
+
+    // If the number of unique neighbors is less than k, expand the neighborhood
+    if (uniqueNeighbors.size() < k) {
+      // Use a queue to manage the current level of neighbors
+      std::queue<int> neighborQueue;
+      for (int neighborIdx : nb[i]) {
+        neighborQueue.push(neighborIdx);
+      }
+
+      // Continue expanding until we have at least k unique neighbors
+      while (!neighborQueue.empty() && uniqueNeighbors.size() < k) {
+        int currentIdx = neighborQueue.front();
+        neighborQueue.pop();
+
+        // Add the neighbors of the current index to the queue and uniqueNeighbors set
+        for (int nextNeighborIdx : nb[currentIdx]) {
+          if (uniqueNeighbors.find(nextNeighborIdx) == uniqueNeighbors.end()) {
+            uniqueNeighbors.insert(nextNeighborIdx);
+            neighborQueue.push(nextNeighborIdx);
+          }
+        }
+      }
+    }
+
+    // Convert the set to a vector for sorting
+    std::vector<int> neighbors(uniqueNeighbors.begin(), uniqueNeighbors.end());
+
+    // Sort the neighbors based on the absolute difference in value from the original element
+    std::sort(neighbors.begin(), neighbors.end(), [&](int a, int b) {
+      return std::abs(vec[a] - vec[i]) < std::abs(vec[b] - vec[i]);
+    });
+
+    // Select the top k neighbors
+    if (neighbors.size() > k) {
+      neighbors.resize(k);
+    }
+
+    // Store the result for the current element
+    result[i] = neighbors;
+  }
+
+  return result;
 }
