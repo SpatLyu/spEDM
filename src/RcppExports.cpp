@@ -72,6 +72,61 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppEntropy_Disc
+double RcppEntropy_Disc(const Rcpp::NumericVector& vec, double base, bool NA_rm);
+RcppExport SEXP _spEDM_RcppEntropy_Disc(SEXP vecSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
+    Rcpp::traits::input_parameter< double >::type base(baseSEXP);
+    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppEntropy_Disc(vec, base, NA_rm));
+    return rcpp_result_gen;
+END_RCPP
+}
+// RcppJoinEntropy_Disc
+double RcppJoinEntropy_Disc(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, double base, bool NA_rm);
+RcppExport SEXP _spEDM_RcppJoinEntropy_Disc(SEXP vec1SEXP, SEXP vec2SEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec1(vec1SEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec2(vec2SEXP);
+    Rcpp::traits::input_parameter< double >::type base(baseSEXP);
+    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppJoinEntropy_Disc(vec1, vec2, base, NA_rm));
+    return rcpp_result_gen;
+END_RCPP
+}
+// RcppMutualInformation_Disc
+double RcppMutualInformation_Disc(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, double base, bool NA_rm);
+RcppExport SEXP _spEDM_RcppMutualInformation_Disc(SEXP vec1SEXP, SEXP vec2SEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec1(vec1SEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec2(vec2SEXP);
+    Rcpp::traits::input_parameter< double >::type base(baseSEXP);
+    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppMutualInformation_Disc(vec1, vec2, base, NA_rm));
+    return rcpp_result_gen;
+END_RCPP
+}
+// RcppConditionalEntropy_Disc
+double RcppConditionalEntropy_Disc(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, double base, bool NA_rm);
+RcppExport SEXP _spEDM_RcppConditionalEntropy_Disc(SEXP vec1SEXP, SEXP vec2SEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec1(vec1SEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec2(vec2SEXP);
+    Rcpp::traits::input_parameter< double >::type base(baseSEXP);
+    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppConditionalEntropy_Disc(vec1, vec2, base, NA_rm));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppSimplexForecast
 Rcpp::NumericVector RcppSimplexForecast(const Rcpp::NumericMatrix& embedding, const Rcpp::NumericVector& target, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const int& num_neighbors);
 RcppExport SEXP _spEDM_RcppSimplexForecast(SEXP embeddingSEXP, SEXP targetSEXP, SEXP libSEXP, SEXP predSEXP, SEXP num_neighborsSEXP) {
@@ -902,6 +957,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppJoinEntropy_Cont", (DL_FUNC) &_spEDM_RcppJoinEntropy_Cont, 5},
     {"_spEDM_RcppMutualInformation_Cont", (DL_FUNC) &_spEDM_RcppMutualInformation_Cont, 6},
     {"_spEDM_RcppConditionalEntropy_Cont", (DL_FUNC) &_spEDM_RcppConditionalEntropy_Cont, 5},
+    {"_spEDM_RcppEntropy_Disc", (DL_FUNC) &_spEDM_RcppEntropy_Disc, 3},
+    {"_spEDM_RcppJoinEntropy_Disc", (DL_FUNC) &_spEDM_RcppJoinEntropy_Disc, 4},
+    {"_spEDM_RcppMutualInformation_Disc", (DL_FUNC) &_spEDM_RcppMutualInformation_Disc, 4},
+    {"_spEDM_RcppConditionalEntropy_Disc", (DL_FUNC) &_spEDM_RcppConditionalEntropy_Disc, 4},
     {"_spEDM_RcppSimplexForecast", (DL_FUNC) &_spEDM_RcppSimplexForecast, 5},
     {"_spEDM_RcppSMapForecast", (DL_FUNC) &_spEDM_RcppSMapForecast, 6},
     {"_spEDM_RcppIntersectionCardinality", (DL_FUNC) &_spEDM_RcppIntersectionCardinality, 8},

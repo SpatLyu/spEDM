@@ -17,6 +17,22 @@ RcppConditionalEntropy_Cont <- function(vec1, vec2, k = 3L, base = 10, NA_rm = F
     .Call(`_spEDM_RcppConditionalEntropy_Cont`, vec1, vec2, k, base, NA_rm)
 }
 
+RcppEntropy_Disc <- function(vec, base = 10, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppEntropy_Disc`, vec, base, NA_rm)
+}
+
+RcppJoinEntropy_Disc <- function(vec1, vec2, base = 10, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppJoinEntropy_Disc`, vec1, vec2, base, NA_rm)
+}
+
+RcppMutualInformation_Disc <- function(vec1, vec2, base = 10, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppMutualInformation_Disc`, vec1, vec2, base, NA_rm)
+}
+
+RcppConditionalEntropy_Disc <- function(vec1, vec2, base = 10, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppConditionalEntropy_Disc`, vec1, vec2, base, NA_rm)
+}
+
 RcppSimplexForecast <- function(embedding, target, lib, pred, num_neighbors) {
     .Call(`_spEDM_RcppSimplexForecast`, embedding, target, lib, pred, num_neighbors)
 }
