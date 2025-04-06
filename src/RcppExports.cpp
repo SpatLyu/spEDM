@@ -12,9 +12,9 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// RcppEntropy
-double RcppEntropy(const Rcpp::NumericVector& vec, int k, double base, bool NA_rm);
-RcppExport SEXP _spEDM_RcppEntropy(SEXP vecSEXP, SEXP kSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
+// RcppEntropy_Cont
+double RcppEntropy_Cont(const Rcpp::NumericVector& vec, int k, double base, bool NA_rm);
+RcppExport SEXP _spEDM_RcppEntropy_Cont(SEXP vecSEXP, SEXP kSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -22,13 +22,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppEntropy(vec, k, base, NA_rm));
+    rcpp_result_gen = Rcpp::wrap(RcppEntropy_Cont(vec, k, base, NA_rm));
     return rcpp_result_gen;
 END_RCPP
 }
-// RcppJoinEntropy
-double RcppJoinEntropy(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, int k, double base, bool NA_rm);
-RcppExport SEXP _spEDM_RcppJoinEntropy(SEXP vec1SEXP, SEXP vec2SEXP, SEXP kSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
+// RcppJoinEntropy_Cont
+double RcppJoinEntropy_Cont(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, int k, double base, bool NA_rm);
+RcppExport SEXP _spEDM_RcppJoinEntropy_Cont(SEXP vec1SEXP, SEXP vec2SEXP, SEXP kSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -37,13 +37,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppJoinEntropy(vec1, vec2, k, base, NA_rm));
+    rcpp_result_gen = Rcpp::wrap(RcppJoinEntropy_Cont(vec1, vec2, k, base, NA_rm));
     return rcpp_result_gen;
 END_RCPP
 }
-// RcppMutualInformation
-double RcppMutualInformation(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, int k, int alg, bool normalize, bool NA_rm);
-RcppExport SEXP _spEDM_RcppMutualInformation(SEXP vec1SEXP, SEXP vec2SEXP, SEXP kSEXP, SEXP algSEXP, SEXP normalizeSEXP, SEXP NA_rmSEXP) {
+// RcppMutualInformation_Cont
+double RcppMutualInformation_Cont(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, int k, int alg, bool normalize, bool NA_rm);
+RcppExport SEXP _spEDM_RcppMutualInformation_Cont(SEXP vec1SEXP, SEXP vec2SEXP, SEXP kSEXP, SEXP algSEXP, SEXP normalizeSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -53,13 +53,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type alg(algSEXP);
     Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppMutualInformation(vec1, vec2, k, alg, normalize, NA_rm));
+    rcpp_result_gen = Rcpp::wrap(RcppMutualInformation_Cont(vec1, vec2, k, alg, normalize, NA_rm));
     return rcpp_result_gen;
 END_RCPP
 }
-// RcppConditionalEntropy
-double RcppConditionalEntropy(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, int k, double base, bool NA_rm);
-RcppExport SEXP _spEDM_RcppConditionalEntropy(SEXP vec1SEXP, SEXP vec2SEXP, SEXP kSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
+// RcppConditionalEntropy_Cont
+double RcppConditionalEntropy_Cont(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, int k, double base, bool NA_rm);
+RcppExport SEXP _spEDM_RcppConditionalEntropy_Cont(SEXP vec1SEXP, SEXP vec2SEXP, SEXP kSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -68,7 +68,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppConditionalEntropy(vec1, vec2, k, base, NA_rm));
+    rcpp_result_gen = Rcpp::wrap(RcppConditionalEntropy_Cont(vec1, vec2, k, base, NA_rm));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -898,10 +898,10 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_spEDM_RcppEntropy", (DL_FUNC) &_spEDM_RcppEntropy, 4},
-    {"_spEDM_RcppJoinEntropy", (DL_FUNC) &_spEDM_RcppJoinEntropy, 5},
-    {"_spEDM_RcppMutualInformation", (DL_FUNC) &_spEDM_RcppMutualInformation, 6},
-    {"_spEDM_RcppConditionalEntropy", (DL_FUNC) &_spEDM_RcppConditionalEntropy, 5},
+    {"_spEDM_RcppEntropy_Cont", (DL_FUNC) &_spEDM_RcppEntropy_Cont, 4},
+    {"_spEDM_RcppJoinEntropy_Cont", (DL_FUNC) &_spEDM_RcppJoinEntropy_Cont, 5},
+    {"_spEDM_RcppMutualInformation_Cont", (DL_FUNC) &_spEDM_RcppMutualInformation_Cont, 6},
+    {"_spEDM_RcppConditionalEntropy_Cont", (DL_FUNC) &_spEDM_RcppConditionalEntropy_Cont, 5},
     {"_spEDM_RcppSimplexForecast", (DL_FUNC) &_spEDM_RcppSimplexForecast, 5},
     {"_spEDM_RcppSMapForecast", (DL_FUNC) &_spEDM_RcppSMapForecast, 6},
     {"_spEDM_RcppIntersectionCardinality", (DL_FUNC) &_spEDM_RcppIntersectionCardinality, 8},

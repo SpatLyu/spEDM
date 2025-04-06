@@ -6,17 +6,17 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 
 // [[Rcpp::export]]
-double RcppEntropy(const Rcpp::NumericVector& vec, int k = 3,
+double RcppEntropy_Cont(const Rcpp::NumericVector& vec, int k = 3,
                    double base = 10, bool NA_rm = false){
   std::vector<double> v1 = Rcpp::as<std::vector<double>>(vec);
-  return CppEntropy(v1,static_cast<size_t>(std::abs(k)),base,NA_rm);
+  return CppEntropy_Cont(v1,static_cast<size_t>(std::abs(k)),base,NA_rm);
 };
 
 // [[Rcpp::export]]
-double RcppJoinEntropy(const Rcpp::NumericVector& vec1,
-                       const Rcpp::NumericVector& vec2,
-                       int k = 3, double base = 10,
-                       bool NA_rm = false){
+double RcppJoinEntropy_Cont(const Rcpp::NumericVector& vec1,
+                            const Rcpp::NumericVector& vec2,
+                            int k = 3, double base = 10,
+                            bool NA_rm = false){
   std::vector<double> v1 = Rcpp::as<std::vector<double>>(vec1);
   std::vector<double> v2 = Rcpp::as<std::vector<double>>(vec2);
   std::vector<std::vector<double>> cppMat(v1.size(), std::vector<double>(2));
@@ -25,15 +25,15 @@ double RcppJoinEntropy(const Rcpp::NumericVector& vec1,
     cppMat[i][1] = v2[i];
   }
 
-  return CppJoinEntropy(cppMat,static_cast<size_t>(std::abs(k)),base,NA_rm);
+  return CppJoinEntropy_Cont(cppMat,static_cast<size_t>(std::abs(k)),base,NA_rm);
 };
 
 // [[Rcpp::export]]
-double RcppMutualInformation(const Rcpp::NumericVector& vec1,
-                             const Rcpp::NumericVector& vec2,
-                             int k = 3, int alg = 1,
-                             bool normalize = false,
-                             bool NA_rm = false){
+double RcppMutualInformation_Cont(const Rcpp::NumericVector& vec1,
+                                  const Rcpp::NumericVector& vec2,
+                                  int k = 3, int alg = 1,
+                                  bool normalize = false,
+                                  bool NA_rm = false){
   std::vector<double> v1 = Rcpp::as<std::vector<double>>(vec1);
   std::vector<double> v2 = Rcpp::as<std::vector<double>>(vec2);
   std::vector<std::vector<double>> cppMat(v1.size(), std::vector<double>(2));
@@ -42,15 +42,15 @@ double RcppMutualInformation(const Rcpp::NumericVector& vec1,
     cppMat[i][1] = v2[i];
   }
 
-  return CppMutualInformation(cppMat,static_cast<size_t>(std::abs(k)),alg,normalize,NA_rm);
+  return CppMutualInformation_Cont(cppMat,static_cast<size_t>(std::abs(k)),alg,normalize,NA_rm);
 }
 
 // [[Rcpp::export]]
-double RcppConditionalEntropy(const Rcpp::NumericVector& vec1,
-                              const Rcpp::NumericVector& vec2,
-                              int k = 3, double base = 10,
-                              bool NA_rm = false){
+double RcppConditionalEntropy_Cont(const Rcpp::NumericVector& vec1,
+                                   const Rcpp::NumericVector& vec2,
+                                   int k = 3, double base = 10,
+                                   bool NA_rm = false){
   std::vector<double> v1 = Rcpp::as<std::vector<double>>(vec1);
   std::vector<double> v2 = Rcpp::as<std::vector<double>>(vec2);
-  return CppConditionalEntropy(v1,v2,static_cast<size_t>(std::abs(k)),base,NA_rm);
+  return CppConditionalEntropy_Cont(v1,v2,static_cast<size_t>(std::abs(k)),base,NA_rm);
 }
