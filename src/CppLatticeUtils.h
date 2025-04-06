@@ -10,6 +10,7 @@
 #include <unordered_map> // for std::unordered_map
 #include <limits> // for std::numeric_limits
 #include <cmath> // For std::isnan
+#include "CppStats.h"
 
 /**
  * Computes the lagged neighbors for a lattice structure up to a specified lag number.
@@ -74,18 +75,59 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
     int tau);
 
 /**
- * Generates k-nearest neighbors for each spatial unit from one spatial lattice vector.
+ * @brief Generate a list of k nearest neighbors for each spatial location based on lattice connectivity.
  *
- * @param vec: A vector of double values for which neighbors are to be found.
- * @param nb: A nested vector where each sub-vector contains the indices of neighbors for the corresponding element in `vec`.
- * @param k: The number of nearest neighbors to find for each element in `vec`.
+ * This function constructs neighborhood information for each element in a spatial process
+ * using both direct connectivity and value similarity. It ensures that each location has
+ * at least k unique neighbors by expanding through its neighbors' neighbors recursively,
+ * if necessary.
  *
- * @return: A nested vector where each sub-vector contains the indices of the k-nearest neighbors for the corresponding element in `vec`.
+ * The procedure consists of:
+ * 1. Starting with directly connected neighbors from `nb`.
+ * 2. If fewer than k unique neighbors are found, iteratively expand the neighborhood using
+ *    a breadth-first search (BFS) on the adjacency list until at least k neighbors are collected.
+ * 3. Among all collected neighbors, the function selects the k most similar ones in terms of
+ *    absolute value difference from the center location.
  *
- * The function works by iterating through each element in `vec`, expanding its neighborhood by considering 1st, 2nd, ..., nth order neighbors from `nb`,
- * removing duplicates, and then selecting the k neighbors with the smallest absolute differences in value from the original element.
+ * @param vec A vector of values representing the spatial process, used for sorting by similarity.
+ * @param nb A list of adjacency lists where `nb[i]` gives the direct neighbors of location i.
+ * @param k The desired number of neighbors for each location.
+ *
+ * @return A vector of vectors, where each subvector contains the indices of the k nearest neighbors
+ *         for each location, based on lattice structure and value similarity.
+ *
+ * Note: If there are not enough connected neighbors to meet the required `k`, the function expands
+ * the neighborhood breadth-first to reach the required size, and sorts candidates by absolute value
+ * difference from the center location in `vec`.
  */
 std::vector<std::vector<int>> GenLatticeNeighbors(
+    const std::vector<double>& vec,
+    const std::vector<std::vector<int>>& nb,
+    size_t k);
+
+/**
+ * @brief Generate symbolization values for a spatial cross-sectional series using a lattice-based
+ *        neighborhood approach, based on the method described by Herrera et al. (2016).
+ *
+ * This function implements a symbolic transformation of a univariate spatial process,
+ * where each spatial location is associated with a value from the original series and
+ * its surrounding neighborhood. The symbolization is based on comparing local median-based
+ * indicators within a defined spatial neighborhood.
+ *
+ * The procedure follows three main steps:
+ * 1. Compute the global median of the input series `vec`.
+ * 2. For each location, define a binary indicator (`tau_s`) which is 1 if the value
+ *    at that location is greater than or equal to the median, and 0 otherwise.
+ * 3. For each location, compare its indicator with those of its k nearest neighbors.
+ *    The final symbolic value is the count of neighbors that share the same indicator value.
+ *
+ * @param vec A vector of double values representing the spatial process.
+ * @param nb A nested vector containing neighborhood information (e.g., lattice connectivity).
+ * @param k The number of nearest neighbors to consider for each location.
+ *
+ * @return A vector of symbolic values (as double) for each spatial location.
+ */
+std::vector<double> GenLatticeSymbolization(
     const std::vector<double>& vec,
     const std::vector<std::vector<int>>& nb,
     size_t k);
