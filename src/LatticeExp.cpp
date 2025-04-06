@@ -122,7 +122,7 @@ Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec,
   return result;
 }
 
-// Wrapper function to generate neighbors and return a NumericMatrix
+// Wrapper function to generate neighbors and return a IntegerMatrix
 // [[Rcpp::export]]
 Rcpp::IntegerMatrix RcppGenLatticeNeighbors(const Rcpp::NumericVector& vec,
                                             const Rcpp::List& nb,

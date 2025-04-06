@@ -113,6 +113,10 @@ RcppGenLatticeEmbeddings <- function(vec, nb, E, tau) {
     .Call(`_spEDM_RcppGenLatticeEmbeddings`, vec, nb, E, tau)
 }
 
+RcppGenLatticeNeighbors <- function(vec, nb, k) {
+    .Call(`_spEDM_RcppGenLatticeNeighbors`, vec, nb, k)
+}
+
 RcppSimplex4Lattice <- function(x, nb, lib, pred, E, b, tau, threads) {
     .Call(`_spEDM_RcppSimplex4Lattice`, x, nb, lib, pred, E, b, tau, threads)
 }
