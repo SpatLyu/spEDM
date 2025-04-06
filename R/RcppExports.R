@@ -153,6 +153,10 @@ RcppLog <- function(x, base = 10) {
     .Call(`_spEDM_RcppLog`, x, base)
 }
 
+RcppMedian <- function(vec, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppMedian`, vec, NA_rm)
+}
+
 RcppMean <- function(vec, NA_rm = FALSE) {
     .Call(`_spEDM_RcppMean`, vec, NA_rm)
 }
