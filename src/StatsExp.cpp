@@ -29,32 +29,30 @@ double RcppLog(double x, double base = 10){
 };
 
 // [[Rcpp::export]]
+double RcppMedian(const Rcpp::NumericVector& vec,
+                 bool NA_rm = false) {
+  std::vector<double> y = Rcpp::as<std::vector<double>>(vec);
+  return CppMedian(y, NA_rm);
+}
+
+// [[Rcpp::export]]
 double RcppMean(const Rcpp::NumericVector& vec,
                 bool NA_rm = false) {
-  // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> y = Rcpp::as<std::vector<double>>(vec);
-
-  // Call the ArmaPearsonCor function
   return CppMean(y, NA_rm);
 }
 
 // [[Rcpp::export]]
 double RcppSum(const Rcpp::NumericVector& vec,
                bool NA_rm = false) {
-  // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> y = Rcpp::as<std::vector<double>>(vec);
-
-  // Call the ArmaPearsonCor function
   return CppSum(y, NA_rm);
 }
 
 // [[Rcpp::export]]
 double RcppVariance(const Rcpp::NumericVector& vec,
                     bool NA_rm = false) {
-  // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> y = Rcpp::as<std::vector<double>>(vec);
-
-  // Call the ArmaPearsonCor function
   return CppVariance(y, NA_rm);
 }
 
@@ -66,7 +64,7 @@ double RcppCovariance(const Rcpp::NumericVector& vec1,
   std::vector<double> x1_vec = Rcpp::as<std::vector<double>>(vec1);
   std::vector<double> x2_vec = Rcpp::as<std::vector<double>>(vec2);
 
-  // Call the CppMAE function
+  // Call the CppCovariance function
   return CppCovariance(x1_vec, x2_vec, NA_rm);
 }
 

@@ -608,6 +608,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppMedian
+double RcppMedian(const Rcpp::NumericVector& vec, bool NA_rm);
+RcppExport SEXP _spEDM_RcppMedian(SEXP vecSEXP, SEXP NA_rmSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
+    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppMedian(vec, NA_rm));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppMean
 double RcppMean(const Rcpp::NumericVector& vec, bool NA_rm);
 RcppExport SEXP _spEDM_RcppMean(SEXP vecSEXP, SEXP NA_rmSEXP) {
@@ -991,6 +1003,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppCombine", (DL_FUNC) &_spEDM_RcppCombine, 2},
     {"_spEDM_RcppDigamma", (DL_FUNC) &_spEDM_RcppDigamma, 1},
     {"_spEDM_RcppLog", (DL_FUNC) &_spEDM_RcppLog, 2},
+    {"_spEDM_RcppMedian", (DL_FUNC) &_spEDM_RcppMedian, 2},
     {"_spEDM_RcppMean", (DL_FUNC) &_spEDM_RcppMean, 2},
     {"_spEDM_RcppSum", (DL_FUNC) &_spEDM_RcppSum, 2},
     {"_spEDM_RcppVariance", (DL_FUNC) &_spEDM_RcppVariance, 2},
