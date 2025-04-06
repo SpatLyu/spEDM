@@ -161,10 +161,10 @@ Rcpp::NumericVector RcppGenLatticeSymbolization(const Rcpp::NumericVector& vec,
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
   //  Generate symbolization map
-  std::vector<double> symbomap = GenLatticeSymbolization(vec_std, nb_vec, static_cast<size_t>(std::abs(k)));
+  std::vector<double> symbolmap = GenLatticeSymbolization(vec_std, nb_vec, static_cast<size_t>(std::abs(k)));
 
   // Convert the result back to Rcpp::NumericVector
-  return Rcpp::wrap(symbomap);
+  return Rcpp::wrap(symbolmap);
 }
 
 /**
