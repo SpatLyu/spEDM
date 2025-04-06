@@ -117,6 +117,10 @@ RcppGenLatticeNeighbors <- function(vec, nb, k) {
     .Call(`_spEDM_RcppGenLatticeNeighbors`, vec, nb, k)
 }
 
+RcppGenLatticeSymbolization <- function(vec, nb, k) {
+    .Call(`_spEDM_RcppGenLatticeSymbolization`, vec, nb, k)
+}
+
 RcppSimplex4Lattice <- function(x, nb, lib, pred, E, b, tau, threads) {
     .Call(`_spEDM_RcppSimplex4Lattice`, x, nb, lib, pred, E, b, tau, threads)
 }
