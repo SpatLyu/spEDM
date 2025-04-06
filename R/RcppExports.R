@@ -61,6 +61,10 @@ RcppGenGridEmbeddings <- function(mat, E, tau) {
     .Call(`_spEDM_RcppGenGridEmbeddings`, mat, E, tau)
 }
 
+GenGridSymbolization <- function(mat, k) {
+    .Call(`_spEDM_GenGridSymbolization`, mat, k)
+}
+
 RcppSimplex4Grid <- function(mat, lib, pred, E, b, tau, threads) {
     .Call(`_spEDM_RcppSimplex4Grid`, mat, lib, pred, E, b, tau, threads)
 }
