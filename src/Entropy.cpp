@@ -310,45 +310,19 @@ double CppJoinEntropy_Disc(const std::vector<std::vector<double>>& mat,
  */
 double CppMutualInformation_Disc(const std::vector<std::vector<double>>& mat,
                                  double base = 10, bool NA_rm = false) {
-  if (mat.empty()) return std::numeric_limits<double>::quiet_NaN();
-  for (const auto& sample : mat) {
-    if (sample.size() != 2) return std::numeric_limits<double>::quiet_NaN();
+  size_t nrow = mat.size();
+  // size_t ncol = mat[0].size();
+
+  std::vector<double> x_vec(nrow);
+  std::vector<double> y_vec(nrow);
+  for (size_t i = 0; i < nrow; ++i) {
+    x_vec[i] = mat[i][0];
+    y_vec[i] = mat[i][1];
   }
 
-  // Filter valid samples (rows without NaN)
-  std::vector<std::vector<double>> valid_samples;
-  if (NA_rm) {
-    for (const auto& sample : mat) {
-      bool valid = true;
-      for (double val : sample) {
-        if (std::isnan(val)) {
-          valid = false;
-          break;
-        }
-      }
-      if (valid) valid_samples.push_back(sample);
-    }
-  } else {
-    for (const auto& sample : mat) {
-      for (double val : sample) {
-        if (std::isnan(val)) return std::numeric_limits<double>::quiet_NaN();
-      }
-    }
-    valid_samples = mat;
-  }
-  if (valid_samples.empty()) return std::numeric_limits<double>::quiet_NaN();
-
-  // Extract variables from valid samples
-  std::vector<double> x_vec, y_vec;
-  for (const auto& sample : valid_samples) {
-    x_vec.push_back(sample[0]);
-    y_vec.push_back(sample[1]);
-  }
-
-  // Calculate entropies using filtered data (NA_rm=false as NaNs already handled)
-  double h_x = CppEntropy_Disc(x_vec, base, false);
-  double h_y = CppEntropy_Disc(y_vec, base, false);
-  double h_xy = CppJoinEntropy_Disc(valid_samples, base, false);
+  double h_x = CppEntropy_Disc(x_vec, base, NA_rm);
+  double h_y = CppEntropy_Disc(y_vec, base, NA_rm);
+  double h_xy = CppJoinEntropy_Disc(mat, base, NA_rm);
 
   if (std::isnan(h_x) || std::isnan(h_y) || std::isnan(h_xy)) {
     return std::numeric_limits<double>::quiet_NaN();
@@ -368,37 +342,16 @@ double CppConditionalEntropy_Disc(const std::vector<double>& vecx,
                                   const std::vector<double>& vecy,
                                   double base = 10,
                                   bool NA_rm = false) {
-  // Validate input dimensions
-  if (vecx.size() != vecy.size()) return std::numeric_limits<double>::quiet_NaN();
-
-  // Build joint samples and handle NaNs
-  std::vector<std::vector<double>> mat;
-  if (NA_rm) {
-    for (size_t i = 0; i < vecx.size(); ++i) {
-      if (std::isnan(vecx[i]) || std::isnan(vecy[i])) continue;
-      mat.push_back({vecx[i], vecy[i]});
-    }
-  } else {
-    for (size_t i = 0; i < vecx.size(); ++i) {
-      if (std::isnan(vecx[i]) || std::isnan(vecy[i])) {
-        return std::numeric_limits<double>::quiet_NaN();
-      }
-    }
-    for (size_t i = 0; i < vecx.size(); ++i) {
-      mat.push_back({vecx[i], vecy[i]});
-    }
-  }
-  if (mat.empty()) return std::numeric_limits<double>::quiet_NaN();
-
-  // Extract valid Y values (already NaN-filtered)
-  std::vector<double> y_filtered;
-  for (const auto& sample : mat) {
-    y_filtered.push_back(sample[1]);
+  // Create a 2D vector for the joint of x and y
+  std::vector<std::vector<double>> joint_vec(vecx.size(), std::vector<double>(2));
+  for (size_t i = 0; i < vecx.size(); ++i) {
+    joint_vec[i][0] = vecx[i];
+    joint_vec[i][1] = vecy[i];
   }
 
   // Compute required entropies
-  double H_xy = CppJoinEntropy_Disc(mat, base, false);  // Joint entropy
-  double H_y = CppEntropy_Disc(y_filtered, base, false); // Marginal entropy of Y
+  double H_xy = CppJoinEntropy_Disc(joint_vec, base, NA_rm);  // Joint entropy
+  double H_y = CppEntropy_Disc(vecy, base, NA_rm); // Marginal entropy of Y
 
   if (std::isnan(H_xy) || std::isnan(H_y)) {
     return std::numeric_limits<double>::quiet_NaN();

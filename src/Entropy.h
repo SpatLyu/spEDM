@@ -29,7 +29,7 @@ double CppJoinEntropy_Disc(const std::vector<std::vector<double>>& mat,
                            double base = 10, bool NA_rm = false);
 
 double CppMutualInformation_Disc(const std::vector<std::vector<double>>& mat,
-                                 bool NA_rm = false);
+                                 double base = 10, bool NA_rm = false);
 
 double CppConditionalEntropy_Disc(const std::vector<double>& vecx,
                                   const std::vector<double>& vecy,
