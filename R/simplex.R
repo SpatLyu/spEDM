@@ -3,7 +3,7 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
 .simplex_sf_method = \(data,target,lib = NULL,pred = NULL,E = 1:10,tau = 1,k = E+2,
                        nb = NULL, threads = detectThreads(), trend.rm = TRUE){
   vec = .uni_lattice(data,target,trend.rm)
-  if (is.null(lib)) lib = 1:nrow(data)
+  if (is.null(lib)) lib = seq_len(nrow(data))
   if (is.null(pred)) pred = lib
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   res = RcppSimplex4Lattice(vec,nb,lib,pred,E,k,tau,threads)
