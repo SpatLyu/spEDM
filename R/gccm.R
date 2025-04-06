@@ -21,7 +21,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   cause = data[,"cause",drop = TRUE]
   effect = data[,"effect",drop = TRUE]
 
-  if (is.null(lib)) lib = 1:nrow(data)
+  if (is.null(lib)) lib = seq_len(nrow(data))
   if (is.null(pred)) pred = lib
 
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
