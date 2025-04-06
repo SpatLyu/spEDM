@@ -132,6 +132,38 @@ double CppLog(double x, double base = 10) {
   return std::log(x) / std::log(base);
 }
 
+// Function to calculate the median of a vector.
+double CppMedian(const std::vector<double>& vec, bool NA_rm = false) {
+  std::vector<double> filtered_vec;
+  for (const double& value : vec) {
+    if (std::isnan(value)) {
+      if (!NA_rm) {
+        // Return NaN immediately if not removing NaNs
+        return std::numeric_limits<double>::quiet_NaN();
+      }
+      // else skip the NaN
+    } else {
+      filtered_vec.push_back(value);
+    }
+  }
+
+  // If no valid values remain, return NaN
+  if (filtered_vec.empty()) return std::numeric_limits<double>::quiet_NaN();
+
+  // Sort the filtered vector
+  std::sort(filtered_vec.begin(), filtered_vec.end());
+
+  // Compute the median
+  size_t n = filtered_vec.size();
+  if (n % 2 == 0) {
+    // If even, return the average of the two middle values
+    return (filtered_vec[n / 2 - 1] + filtered_vec[n / 2]) / 2.0;
+  } else {
+    // If odd, return the middle value
+    return filtered_vec[n / 2];
+  }
+}
+
 // Function to calculate the mean of a vector, ignoring NA values
 double CppMean(const std::vector<double>& vec, bool NA_rm = false) {
   double sum = 0.0;

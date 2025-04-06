@@ -27,6 +27,9 @@ double CppDigamma(double x);
 
 double CppLog(double x, double base = 10);
 
+double CppMedian(const std::vector<double>& vec,
+                 bool NA_rm = false);
+
 double CppMean(const std::vector<double>& vec,
                bool NA_rm = false);
 
