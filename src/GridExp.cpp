@@ -89,6 +89,27 @@ Rcpp::NumericMatrix RcppGenGridEmbeddings(const Rcpp::NumericMatrix& mat,
 }
 
 // [[Rcpp::export]]
+Rcpp::NumericVector GenGridSymbolization(const Rcpp::NumericMatrix& mat,
+                                         int k) {
+  // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
+  int numRows = mat.nrow();
+  int numCols = mat.ncol();
+  std::vector<std::vector<double>> cppMat(numRows, std::vector<double>(numCols));
+
+  for (int r = 0; r < numRows; ++r) {
+    for (int c = 0; c < numCols; ++c) {
+      cppMat[r][c] = mat(r, c);
+    }
+  }
+
+  // Call the GenGridSymbolization function
+  std::vector<double> symbolmap = GenGridSymbolization(cppMat, static_cast<size_t>(std::abs(k)));
+
+  // Convert the result back to Rcpp::NumericVector
+  return Rcpp::wrap(symbolmap);
+}
+
+// [[Rcpp::export]]
 Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
                                      const Rcpp::IntegerMatrix& lib,
                                      const Rcpp::IntegerMatrix& pred,
