@@ -12,8 +12,8 @@
  *
  * @return The estimated entropy of the vector.
  */
-double CppEntropy(const std::vector<double>& vec, size_t k,
-                  double base = 10, bool NA_rm = false) {
+double CppEntropy_Cont(const std::vector<double>& vec, size_t k,
+                       double base = 10, bool NA_rm = false) {
   std::vector<double> distances = CppKNearestDistance(vec, k, true, NA_rm);
   size_t n = vec.size();
 
@@ -39,8 +39,8 @@ double CppEntropy(const std::vector<double>& vec, size_t k,
  *
  * @return The estimated joint entropy of the multivariate matrix.
  */
-double CppJoinEntropy(const std::vector<std::vector<double>>& mat, size_t k,
-                      double base = 10, bool NA_rm = false) {
+double CppJoinEntropy_Cont(const std::vector<std::vector<double>>& mat, size_t k,
+                           double base = 10, bool NA_rm = false) {
   size_t nrow = mat.size();
   size_t ncol = mat[0].size();
 
@@ -103,8 +103,8 @@ double CppJoinEntropy(const std::vector<std::vector<double>>& mat, size_t k,
  *
  * @return The estimated mutual information between the two variables.
  */
-double CppMutualInformation(const std::vector<std::vector<double>>& mat, size_t k,
-                            int alg = 1, bool normalize = false, bool NA_rm = false){
+double CppMutualInformation_Cont(const std::vector<std::vector<double>>& mat, size_t k,
+                                 int alg = 1, bool normalize = false, bool NA_rm = false){
   size_t nrow = mat.size();
   // size_t ncol = mat[0].size();
 
@@ -192,10 +192,10 @@ double CppMutualInformation(const std::vector<std::vector<double>>& mat, size_t 
  *
  * @return The estimated conditional entropy of x given y.
  */
-double CppConditionalEntropy(const std::vector<double>& vecx,
-                             const std::vector<double>& vecy,
-                             size_t k, double base = 10,
-                             bool NA_rm = false) {
+double CppConditionalEntropy_Cont(const std::vector<double>& vecx,
+                                  const std::vector<double>& vecy,
+                                  size_t k, double base = 10,
+                                  bool NA_rm = false) {
   // Create a 2D vector for the joint of x and y
   std::vector<std::vector<double>> joint_vec(vecx.size(), std::vector<double>(2));
   for (size_t i = 0; i < vecx.size(); ++i) {
@@ -204,10 +204,10 @@ double CppConditionalEntropy(const std::vector<double>& vecx,
   }
 
   // Compute the joint entropy H(X, Y)
-  double joint_entropy = CppJoinEntropy(joint_vec, k, base, NA_rm);
+  double joint_entropy = CppJoinEntropy_Cont(joint_vec, k, base, NA_rm);
 
   // Compute the entropy of y, H(Y)
-  double entropy_y = CppEntropy(vecy, k, base, NA_rm);
+  double entropy_y = CppEntropy_Cont(vecy, k, base, NA_rm);
 
   // Compute the conditional entropy H(X|Y) = H(X, Y) - H(Y)
   double ce = joint_entropy - entropy_y;
