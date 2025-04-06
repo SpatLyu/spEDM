@@ -261,12 +261,6 @@ double CppEntropy_Disc(const std::vector<double>& vec,
  */
 double CppJoinEntropy_Disc(const std::vector<std::vector<double>>& mat,
                            double base = 10, bool NA_rm = false) {
-  if (mat.empty()) return std::numeric_limits<double>::quiet_NaN();
-  size_t num_vars = mat[0].size();
-  for (const auto& sample : mat) {
-    if (sample.size() != num_vars) return std::numeric_limits<double>::quiet_NaN();
-  }
-
   std::vector<std::vector<double>> valid_samples;
   if (NA_rm) {
     for (const auto& sample : mat) {
