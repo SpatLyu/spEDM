@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <queue> // for std::queue
 #include <numeric>   // for std::accumulate
 #include <algorithm> // for std::sort, std::unique, std::accumulate
 #include <unordered_set> // for std::unordered_set
@@ -71,5 +72,22 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
     const std::vector<std::vector<int>>& nb,
     int E,
     int tau);
+
+/**
+ * Generates k-nearest neighbors for each spatial unit from one spatial lattice vector.
+ *
+ * @param vec: A vector of double values for which neighbors are to be found.
+ * @param nb: A nested vector where each sub-vector contains the indices of neighbors for the corresponding element in `vec`.
+ * @param k: The number of nearest neighbors to find for each element in `vec`.
+ *
+ * @return: A nested vector where each sub-vector contains the indices of the k-nearest neighbors for the corresponding element in `vec`.
+ *
+ * The function works by iterating through each element in `vec`, expanding its neighborhood by considering 1st, 2nd, ..., nth order neighbors from `nb`,
+ * removing duplicates, and then selecting the k neighbors with the smallest absolute differences in value from the original element.
+ */
+std::vector<std::vector<int>> GenLatticeNeighbors(
+    const std::vector<double>& vec,
+    const std::vector<std::vector<int>>& nb,
+    size_t k);
 
 #endif // CppLatticeUtils_H
