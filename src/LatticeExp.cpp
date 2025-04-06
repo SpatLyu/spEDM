@@ -8,6 +8,7 @@
 #include "GCCM4Lattice.h"
 #include "SCPCM4Lattice.h"
 #include "CrossMappingCardinality.h"
+#include "SpatialBlockBootstrap.h"
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
 
@@ -521,7 +522,7 @@ Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,
   return resultMatrix;
 }
 
-// Wrapper function to perform SCPCM Lattice and return a NumericMatrix
+// Wrapper function to perform SCPCM for spatial lattice data
 // predict y based on x ====> x xmap y ====> y causes x (account for controls)
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x,
@@ -603,7 +604,7 @@ Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x,
   return resultMatrix;
 }
 
-// Wrapper function to perform GCMC Lattice and return a NumericVector
+// Wrapper function to perform GCMC for spatial lattice data
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppGCMC4Lattice(
     const Rcpp::NumericVector& x,
@@ -674,3 +675,17 @@ Rcpp::NumericMatrix RcppGCMC4Lattice(
                  "x_xmap_y_upper","x_xmap_y_lower");
   return resultMatrix;
 }
+
+// Wrapper function to perform SCT for spatial lattice data
+// [[Rcpp::export]]
+Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
+                                          const Rcpp::NumericVector& y,
+                                          const Rcpp::List& nb,
+                                          const Rcpp::IntegerVector& lib,
+                                          const Rcpp::IntegerVector& pred,
+                                          int E,
+                                          int tau,
+                                          int b,
+                                          int top,
+                                          int nvar,
+                                          int threads)
