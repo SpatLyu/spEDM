@@ -370,7 +370,7 @@ std::vector<double> GenGridSymbolization(
   std::vector<double> me(rows * cols, std::numeric_limits<double>::quiet_NaN());
   for (size_t i = 0; i < rows; ++i) {
     for (size_t j = 0; j < cols; ++j) {
-      me.push_back(mat[i][j]);
+      me[i * cols + j] = mat[i][j];
     }
   }
   // The median of series me
