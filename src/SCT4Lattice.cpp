@@ -54,3 +54,15 @@ std::vector<double> SCTSingle4Lattice(
   double sc_y_to_x = Hx - Hxy;
   return {sc_x_to_y,sc_y_to_x};
 }
+
+// std::vector<double> SCT4Lattice(
+//     const std::vector<double>& x,
+//     const std::vector<double>& y,
+//     const std::vector<std::vector<int>>& nb,
+//     const std::vector<int>& block,
+//     size_t k,
+//     int boot = 399,
+//     double base = 2
+// ){
+//
+// }
