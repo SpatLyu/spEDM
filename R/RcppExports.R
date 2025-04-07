@@ -129,6 +129,10 @@ RcppGenLatticeSymbolization <- function(vec, nb, k) {
     .Call(`_spEDM_RcppGenLatticeSymbolization`, vec, nb, k)
 }
 
+RcppDivideLattice <- function(nb, b) {
+    .Call(`_spEDM_RcppDivideLattice`, nb, b)
+}
+
 RcppSimplex4Lattice <- function(x, nb, lib, pred, E, b, tau, threads) {
     .Call(`_spEDM_RcppSimplex4Lattice`, x, nb, lib, pred, E, b, tau, threads)
 }
