@@ -8,7 +8,7 @@ methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
   block = RcppDivideLattice(nb,block)
   cause = .uni_lattice(data,cause,FALSE)
   effect = .uni_lattice(data,effect,FALSE)
-  return(.bind_sct(RcppSCT4Lattice(cause,effect,nb,block,k,threads,base,seed,symbolize,progressbar),varname))
+  return(.bind_sct(RcppSCT4Lattice(cause,effect,nb,block,k,threads,boot,base,seed,symbolize,progressbar),varname))
 }
 
 .sct_spatraster_method = \(data,cause,effect,k = 6,block = 3,boot = 399,seed = 42,base = 2,
@@ -16,7 +16,8 @@ methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
   varname = .check_character(cause, effect)
   cause = .uni_grid(data,cause,FALSE)
   effect = .uni_grid(data,effect,FALSE)
-  return(.bind_sct(RcppSCT4Grid(cause,effect,block,k,threads,base,seed,symbolize,progressbar),varname))
+  block = RcppDivideGrid(effect,block)
+  return(.bind_sct(RcppSCT4Grid(cause,effect,block,k,threads,boot,base,seed,symbolize,progressbar),varname))
 }
 
 #' spatial causality test
