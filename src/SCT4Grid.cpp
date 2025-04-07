@@ -50,10 +50,10 @@ std::vector<double> SCTSingle4Grid(
     sy = GridMat2Vec(y);
   }
 
-  double Hx = CppEntropy_Disc(sx, base, false); // H(x)
-  double Hy = CppEntropy_Disc(sy, base, false); // H(y)
-  double Hxy = CppConditionalEntropy_Disc(sx, sy, base, false); // H(x | y)
-  double Hyx = CppConditionalEntropy_Disc(sy, sx, base, false); // H(y | x)
+  double Hx = CppEntropy_Disc(sx, base, true); // H(x)
+  double Hy = CppEntropy_Disc(sy, base, true); // H(y)
+  double Hxy = CppConditionalEntropy_Disc(sx, sy, base, true); // H(x | y)
+  double Hyx = CppConditionalEntropy_Disc(sy, sx, base, true); // H(y | x)
 
   double sc_x_to_y = Hy - Hyx;
   double sc_y_to_x = Hx - Hxy;

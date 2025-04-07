@@ -5,7 +5,8 @@
 #include <vector>
 #include <numeric>
 #include <limits>
-#include <map>
+#include <string>
+#include <unordered_map>
 #include "CppStats.h"
 
 double CppEntropy_Cont(const std::vector<double>& vec, size_t k,
@@ -26,6 +27,7 @@ double CppEntropy_Disc(const std::vector<double>& vec,
                        double base = 10, bool NA_rm = false);
 
 double CppJoinEntropy_Disc(const std::vector<std::vector<double>>& mat,
+                           const std::vector<int>& columns,
                            double base = 10, bool NA_rm = false);
 
 double CppMutualInformation_Disc(const std::vector<std::vector<double>>& mat,

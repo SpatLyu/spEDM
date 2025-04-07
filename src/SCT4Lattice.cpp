@@ -42,10 +42,24 @@ std::vector<double> SCTSingle4Lattice(
     double base = 2,
     bool symbolize = true
 ){
-  double Hx, Hy, Hxy, Hyx;
+  std::vector<double> wx(x.size());
+  std::vector<std::vector<double>> Ex = GenLatticeEmbeddings(x,nb,1,1);
+  for (const auto& row : Ex) {
+    wx.insert(wx.end(), row.begin(), row.end());
+  }
+
+  std::vector<double> wy(y.size());
+  std::vector<std::vector<double>> Ey = GenLatticeEmbeddings(y,nb,1,1);
+  for (const auto& row : Ey) {
+    wy.insert(wy.end(), row.begin(), row.end());
+  }
+
+  double Hywy, Hwy, Hwxwyy, Hwywx, Hxwx, Hwx, Hwxwyx;
   if (symbolize){
     std::vector<double> sx = GenLatticeSymbolization(x,nb,k);
     std::vector<double> sy = GenLatticeSymbolization(y,nb,k);
+    std::vector<double> swx = GenLatticeSymbolization(wx,nb,k);
+    std::vector<double> swy = GenLatticeSymbolization(wy,nb,k);
     Hx = CppEntropy_Disc(sx,base,false); // H(x)
     Hy = CppEntropy_Disc(sy,base,false); // H(y)
     Hxy = CppConditionalEntropy_Disc(sx, sy, base, false); // H(x | y)
