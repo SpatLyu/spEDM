@@ -2,7 +2,7 @@
 
 ### new
 
-* Provide an R-level API for spatial causality test (#403).
+* Provide an R-level API for spatial (granger) causality test (#403).
 
 * Add references for algorithms in `spEDM` (#367).
 
