@@ -461,14 +461,20 @@ std::vector<double> GenGridSymbolization(
 }
 
 /**
- * @brief Divide a 2D grid (matrix) into approximately square blocks.
+ * @brief Divide a 2D grid (matrix) into approximately square or shaped blocks.
  *
  * This function partitions a 2D matrix into `b` blocks of roughly equal size.
  * The matrix is represented as a vector of row vectors and assumed to be
  * row-major (i.e., each inner vector represents a row of the matrix).
  *
+ * The grid can be divided in different ways based on the `shape` parameter:
+ * - 1: Horizontal cuts (blocks are divided row-wise).
+ * - 2: Vertical cuts (blocks are divided column-wise).
+ * - 3: Radial cuts (blocks are divided in a radial pattern from the center).
+ *
  * The grid is divided by first estimating a grid layout of `br` rows and `bc` columns
- * such that br * bc >= b and the blocks are as square as possible.
+ * such that br * bc >= b and the blocks are as square as possible for shapes 1 and 2.
+ * For radial cuts, the grid is divided into concentric rings and sectors.
  *
  * Each cell in the matrix is assigned a block ID ranging from 0 to b-1, stored in
  * a 1D vector corresponding to the flattened row-major order of the matrix.
@@ -477,10 +483,12 @@ std::vector<double> GenGridSymbolization(
  *
  * @param mat A 2D grid represented as a vector of vectors (row-major).
  * @param b   Number of blocks to divide the grid into.
+ * @param shape The shape of the cuts (1: horizontal, 2: vertical, 3: radial).
  * @return A vector of size rows * cols where each element is the block label
  *         assigned to the corresponding cell.
  */
-std::vector<int> CppDivideGrid(const std::vector<std::vector<double>>& mat, int b) {
+std::vector<int> CppDivideGrid(const std::vector<std::vector<double>>& mat,
+                               int b, int shape = 3) {
   int rows = static_cast<int>(mat.size());
   if (rows == 0 || b <= 0) return {};
 
@@ -489,41 +497,101 @@ std::vector<int> CppDivideGrid(const std::vector<std::vector<double>>& mat, int 
 
   std::vector<int> labels(total_cells, -1);
 
-  // Estimate block grid layout: br * bc >= b and aspect ratio ~ 1
-  int br = static_cast<int>(std::sqrt(b));
-  int bc = (b + br - 1) / br; // ceiling(b / br)
-  while (br * bc < b) ++bc;
+  if (shape == 1) {
+    // Horizontal cuts: divide the grid row-wise
+    int block_h = rows / b;
+    int remaining_h = rows % b;
 
-  // Compute the height and width of each block
-  int block_h = rows / br;
-  int block_w = cols / bc;
-  int remaining_h = rows % br;
-  int remaining_w = cols % bc;
-
-  int block_id = 0;
-
-  int row_start = 0;
-  for (int i = 0; i < br; ++i) {
-    int row_end = row_start + block_h + (i < remaining_h ? 1 : 0);
-
-    int col_start = 0;
-    for (int j = 0; j < bc; ++j) {
-      int col_end = col_start + block_w + (j < remaining_w ? 1 : 0);
+    int row_start = 0;
+    for (int i = 0; i < b; ++i) {
+      int row_end = row_start + block_h + (i < remaining_h ? 1 : 0);
 
       for (int r = row_start; r < row_end; ++r) {
-        for (int c = col_start; c < col_end; ++c) {
-          if (r < rows && c < cols) {
-            int index = r * cols + c;
-            labels[index] = (block_id < b) ? block_id : (b - 1); // fill extras into last block
-          }
+        for (int c = 0; c < cols; ++c) {
+          int index = r * cols + c;
+          labels[index] = i;
         }
       }
 
-      ++block_id;
+      row_start = row_end;
+    }
+  } else if (shape == 2) {
+    // Vertical cuts: divide the grid column-wise
+    int block_w = cols / b;
+    int remaining_w = cols % b;
+
+    int col_start = 0;
+    for (int i = 0; i < b; ++i) {
+      int col_end = col_start + block_w + (i < remaining_w ? 1 : 0);
+
+      for (int r = 0; r < rows; ++r) {
+        for (int c = col_start; c < col_end; ++c) {
+          int index = r * cols + c;
+          labels[index] = i;
+        }
+      }
+
       col_start = col_end;
     }
+  } else if (shape == 3) {
+    // Radial cuts: divide the grid into concentric rings and sectors
+    double center_x = (cols - 1) / 2.0;
+    double center_y = (rows - 1) / 2.0;
+    // double max_radius = std::sqrt(center_x * center_x + center_y * center_y);
 
-    row_start = row_end;
+    int sectors = b;
+    double sector_angle = 2 * M_PI / sectors;
+
+    for (int r = 0; r < rows; ++r) {
+      for (int c = 0; c < cols; ++c) {
+        double dx = c - center_x;
+        double dy = r - center_y;
+        // double radius = std::sqrt(dx * dx + dy * dy);
+        double angle = std::atan2(dy, dx);
+
+        if (angle < 0) angle += 2 * M_PI;
+
+        int sector = static_cast<int>(angle / sector_angle);
+        int index = r * cols + c;
+        labels[index] = sector % b;
+      }
+    }
+  } else {
+    // Default to square blocks
+    int br = static_cast<int>(std::sqrt(b));
+    int bc = (b + br - 1) / br; // ceiling(b / br)
+    while (br * bc < b) ++bc;
+
+    int block_h = rows / br;
+    int block_w = cols / bc;
+    int remaining_h = rows % br;
+    int remaining_w = cols % bc;
+
+    int block_id = 0;
+
+    int row_start = 0;
+    for (int i = 0; i < br; ++i) {
+      int row_end = row_start + block_h + (i < remaining_h ? 1 : 0);
+
+      int col_start = 0;
+      for (int j = 0; j < bc; ++j) {
+        int col_end = col_start + block_w + (j < remaining_w ? 1 : 0);
+
+        for (int r = row_start; r < row_end; ++r) {
+          for (int c = col_start; c < col_end; ++c) {
+            if (r < rows && c < cols) {
+              int index = r * cols + c;
+              labels[index] = (block_id < b) ? block_id : (b - 1); // fill extras into last block
+            }
+          }
+        }
+
+        ++block_id;
+        col_start = col_end;
+      }
+
+      row_start = row_end;
+    }
   }
 
   return labels;

@@ -112,7 +112,7 @@ Rcpp::NumericVector RcppGenGridSymbolization(const Rcpp::NumericMatrix& mat,
 
 // [[Rcpp::export]]
 Rcpp::IntegerVector RcppDivideGrid(const Rcpp::NumericMatrix& mat,
-                                   int b) {
+                                   int b, int shape = 3) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = mat.nrow();
   int numCols = mat.ncol();
@@ -125,7 +125,7 @@ Rcpp::IntegerVector RcppDivideGrid(const Rcpp::NumericMatrix& mat,
   }
 
   // Call the CppDivideGrid function
-  std::vector<int> blocks = CppDivideGrid(cppMat, b);
+  std::vector<int> blocks = CppDivideGrid(cppMat, b, shape);
 
   // Convert the result back to Rcpp::IntegerVector
   return Rcpp::wrap(blocks);

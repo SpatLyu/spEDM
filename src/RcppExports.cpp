@@ -240,14 +240,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppDivideGrid
-Rcpp::IntegerVector RcppDivideGrid(const Rcpp::NumericMatrix& mat, int b);
-RcppExport SEXP _spEDM_RcppDivideGrid(SEXP matSEXP, SEXP bSEXP) {
+Rcpp::IntegerVector RcppDivideGrid(const Rcpp::NumericMatrix& mat, int b, int shape);
+RcppExport SEXP _spEDM_RcppDivideGrid(SEXP matSEXP, SEXP bSEXP, SEXP shapeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< int >::type b(bSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppDivideGrid(mat, b));
+    Rcpp::traits::input_parameter< int >::type shape(shapeSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppDivideGrid(mat, b, shape));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1094,7 +1095,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppLaggedVar4Grid", (DL_FUNC) &_spEDM_RcppLaggedVar4Grid, 2},
     {"_spEDM_RcppGenGridEmbeddings", (DL_FUNC) &_spEDM_RcppGenGridEmbeddings, 3},
     {"_spEDM_RcppGenGridSymbolization", (DL_FUNC) &_spEDM_RcppGenGridSymbolization, 2},
-    {"_spEDM_RcppDivideGrid", (DL_FUNC) &_spEDM_RcppDivideGrid, 2},
+    {"_spEDM_RcppDivideGrid", (DL_FUNC) &_spEDM_RcppDivideGrid, 3},
     {"_spEDM_RcppSimplex4Grid", (DL_FUNC) &_spEDM_RcppSimplex4Grid, 7},
     {"_spEDM_RcppSMap4Grid", (DL_FUNC) &_spEDM_RcppSMap4Grid, 8},
     {"_spEDM_RcppMultiView4Grid", (DL_FUNC) &_spEDM_RcppMultiView4Grid, 10},

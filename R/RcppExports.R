@@ -65,8 +65,8 @@ RcppGenGridSymbolization <- function(mat, k) {
     .Call(`_spEDM_RcppGenGridSymbolization`, mat, k)
 }
 
-RcppDivideGrid <- function(mat, b) {
-    .Call(`_spEDM_RcppDivideGrid`, mat, b)
+RcppDivideGrid <- function(mat, b, shape = 3L) {
+    .Call(`_spEDM_RcppDivideGrid`, mat, b, shape)
 }
 
 RcppSimplex4Grid <- function(mat, lib, pred, E, b, tau, threads) {
