@@ -700,7 +700,6 @@ Rcpp::NumericVector RcppSCT4Lattice(const Rcpp::NumericVector& x,
                                     int boot = 399,
                                     double base = 2,
                                     unsigned int seed = 42,
-                                    bool symbolize = true,
                                     bool progressbar = true){
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
@@ -723,7 +722,6 @@ Rcpp::NumericVector RcppSCT4Lattice(const Rcpp::NumericVector& x,
     boot,
     base,
     seed,
-    symbolize,
     progressbar
   );
 

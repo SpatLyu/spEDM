@@ -41,6 +41,19 @@ std::vector<double> SCTSingle4Grid(
     double base = 2,
     bool symbolize = true
 ) {
+  size_t rows = x.size();
+  size_t cols = x[0].size();
+  std::vector<double> wx(x.size());
+  std::vector<std::vector<double>> Ex = GenGridEmbeddings(x,1,1);
+  for (const auto& row : Ex) {
+    wx.insert(wx.end(), row.begin(), row.end());
+  }
+
+  std::vector<double> wy(y.size());
+  std::vector<std::vector<double>> Ey = GenGridEmbeddings(y,1,1);
+  for (const auto& row : Ey) {
+    wy.insert(wy.end(), row.begin(), row.end());
+  }
   std::vector<double> sx, sy;
   if (symbolize) {
     sx = GenGridSymbolization(x, k);
