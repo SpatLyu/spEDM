@@ -459,3 +459,72 @@ std::vector<double> GenGridSymbolization(
 
   return result;
 }
+
+/**
+ * @brief Divide a 2D grid (matrix) into approximately square blocks.
+ *
+ * This function partitions a 2D matrix into `b` blocks of roughly equal size.
+ * The matrix is represented as a vector of row vectors and assumed to be
+ * row-major (i.e., each inner vector represents a row of the matrix).
+ *
+ * The grid is divided by first estimating a grid layout of `br` rows and `bc` columns
+ * such that br * bc >= b and the blocks are as square as possible.
+ *
+ * Each cell in the matrix is assigned a block ID ranging from 0 to b-1, stored in
+ * a 1D vector corresponding to the flattened row-major order of the matrix.
+ *
+ * Any leftover blocks are merged into the last block.
+ *
+ * @param mat A 2D grid represented as a vector of vectors (row-major).
+ * @param b   Number of blocks to divide the grid into.
+ * @return A vector of size rows * cols where each element is the block label
+ *         assigned to the corresponding cell.
+ */
+std::vector<int> CppDivideGrid(const std::vector<std::vector<double>>& mat, int b) {
+  int rows = static_cast<int>(mat.size());
+  if (rows == 0 || b <= 0) return {};
+
+  int cols = static_cast<int>(mat[0].size());
+  int total_cells = rows * cols;
+
+  std::vector<int> labels(total_cells, -1);
+
+  // Estimate block grid layout: br * bc >= b and aspect ratio ~ 1
+  int br = static_cast<int>(std::sqrt(b));
+  int bc = (b + br - 1) / br; // ceiling(b / br)
+  while (br * bc < b) ++bc;
+
+  // Compute the height and width of each block
+  int block_h = rows / br;
+  int block_w = cols / bc;
+  int remaining_h = rows % br;
+  int remaining_w = cols % bc;
+
+  int block_id = 0;
+
+  int row_start = 0;
+  for (int i = 0; i < br; ++i) {
+    int row_end = row_start + block_h + (i < remaining_h ? 1 : 0);
+
+    int col_start = 0;
+    for (int j = 0; j < bc; ++j) {
+      int col_end = col_start + block_w + (j < remaining_w ? 1 : 0);
+
+      for (int r = row_start; r < row_end; ++r) {
+        for (int c = col_start; c < col_end; ++c) {
+          if (r < rows && c < cols) {
+            int index = r * cols + c;
+            labels[index] = (block_id < b) ? block_id : (b - 1); // fill extras into last block
+          }
+        }
+      }
+
+      ++block_id;
+      col_start = col_end;
+    }
+
+    row_start = row_end;
+  }
+
+  return labels;
+}

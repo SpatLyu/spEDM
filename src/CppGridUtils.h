@@ -145,4 +145,28 @@ std::vector<double> GenGridSymbolization(
     const std::vector<std::vector<double>>& mat,
     size_t k);
 
+/**
+ * @brief Divide a 2D grid (matrix) into approximately square blocks.
+ *
+ * This function partitions a 2D matrix into `b` blocks of roughly equal size.
+ * The matrix is represented as a vector of row vectors and assumed to be
+ * row-major (i.e., each inner vector represents a row of the matrix).
+ *
+ * The grid is divided by first estimating a grid layout of `br` rows and `bc` columns
+ * such that br * bc >= b and the blocks are as square as possible.
+ *
+ * Each cell in the matrix is assigned a block ID ranging from 0 to b-1, stored in
+ * a 1D vector corresponding to the flattened row-major order of the matrix.
+ *
+ * Any leftover blocks are merged into the last block.
+ *
+ * @param mat A 2D grid represented as a vector of vectors (row-major).
+ * @param b   Number of blocks to divide the grid into.
+ * @return A vector of size rows * cols where each element is the block label
+ *         assigned to the corresponding cell.
+ */
+std::vector<int> CppDivideGrid(
+    const std::vector<std::vector<double>>& mat,
+    int b);
+
 #endif // CppGridUtils_H
