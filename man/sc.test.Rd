@@ -42,13 +42,13 @@
 
 \item{effect}{Name of effect variable.}
 
-\item{k}{(optional) Number of nearest neighbors to use for prediction.}
+\item{k}{(optional) Number of nearest neighbors used for symbolization.}
 
 \item{block}{(optional) Number of blocks used for spatial block bootstrap.}
 
-\item{boot}{(optional) Number of bootstrap replicates to perform.}
+\item{boot}{(optional) Number of bootstraps to perform.}
 
-\item{seed}{(optional) Random seed.}
+\item{seed}{(optional) The random seed.}
 
 \item{base}{(optional) Base of the logarithm.}
 
@@ -73,8 +73,7 @@ spatial causality test
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 \donttest{
-g = sct(columbus,"hoval","crime")
-g
+sc.test(columbus,"hoval","crime")
 }
 }
 \references{

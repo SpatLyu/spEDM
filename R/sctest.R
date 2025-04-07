@@ -24,10 +24,10 @@ methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
 #' @param data The observation data.
 #' @param cause Name of causal variable.
 #' @param effect Name of effect variable.
-#' @param k (optional) Number of nearest neighbors to use for prediction.
+#' @param k (optional) Number of nearest neighbors used for symbolization.
 #' @param block (optional) Number of blocks used for spatial block bootstrap.
-#' @param boot (optional) Number of bootstrap replicates to perform.
-#' @param seed (optional) Random seed.
+#' @param boot (optional) Number of bootstraps to perform.
+#' @param seed (optional) The random seed.
 #' @param base (optional) Base of the logarithm.
 #' @param nb (optional) The neighbours list.
 #' @param threads (optional) Number of threads.
@@ -49,8 +49,7 @@ methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 #' \donttest{
-#' g = sct(columbus,"hoval","crime")
-#' g
+#' sc.test(columbus,"hoval","crime")
 #' }
 methods::setMethod("sc.test", "sf", .sct_sf_method)
 
