@@ -10,7 +10,7 @@
   data,
   cause,
   effect,
-  k = 6,
+  k,
   block = 3,
   boot = 399,
   seed = 42,
@@ -25,7 +25,7 @@
   data,
   cause,
   effect,
-  k = 6,
+  k,
   block = 3,
   boot = 399,
   seed = 42,
@@ -73,7 +73,7 @@ spatial causality test
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 \donttest{
-sc.test(columbus,"hoval","crime")
+sc.test(columbus,"hoval","crime", k = 15)
 }
 }
 \references{

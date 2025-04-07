@@ -1,6 +1,6 @@
 methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
 
-.sct_sf_method = \(data,cause,effect,k = 6,block = 3,boot = 399,seed = 42,base = 2,nb = NULL,
+.sct_sf_method = \(data,cause,effect,k,block = 3,boot = 399,seed = 42,base = 2,nb = NULL,
                    threads = detectThreads(), symbolize = TRUE, progressbar = FALSE){
   varname = .check_character(cause, effect)
   if (is.null(nb)) nb = .internal_lattice_nb(data)
@@ -11,7 +11,7 @@ methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
   return(.bind_sct(RcppSCT4Lattice(cause,effect,nb,block,k,threads,boot,base,seed,symbolize,progressbar),varname))
 }
 
-.sct_spatraster_method = \(data,cause,effect,k = 6,block = 3,boot = 399,seed = 42,base = 2,
+.sct_spatraster_method = \(data,cause,effect,k,block = 3,boot = 399,seed = 42,base = 2,
                            threads = detectThreads(), symbolize = TRUE, progressbar = FALSE){
   varname = .check_character(cause, effect)
   cause = .uni_grid(data,cause,FALSE)
@@ -50,7 +50,7 @@ methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 #' \donttest{
-#' sc.test(columbus,"hoval","crime")
+#' sc.test(columbus,"hoval","crime", k = 15)
 #' }
 methods::setMethod("sc.test", "sf", .sct_sf_method)
 
