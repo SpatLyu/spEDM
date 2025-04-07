@@ -94,8 +94,8 @@ std::vector<double> SCT4Lattice(
     const std::vector<double>& y,
     const std::vector<std::vector<int>>& nb,
     const std::vector<int>& block,
-    size_t k,
-    size_t threads,
+    int k,
+    int threads,
     int boot = 399,
     double base = 2,
     unsigned int seed = 42,
@@ -117,8 +117,12 @@ std::vector<double> SCT4Lattice(
       y_boot[i] = y[boot_indice[i]];
     }
     // Estimate the bootstrapped realization of the spatial granger causality statistic
-    sc_bootstraps[n] = SCTSingle4Lattice(x_boot,y_boot,nb,k,base);
+    sc_bootstraps[n] = SCTSingle4Lattice(x_boot,y_boot,nb,static_cast<size_t>(std::abs(k)),base);
   };
+
+  // Configure threads
+  size_t threads_sizet = static_cast<size_t>(std::abs(threads));
+  threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   // Parallel computation with or without a progress bar
   if (progressbar) {
@@ -126,15 +130,15 @@ std::vector<double> SCT4Lattice(
     RcppThread::parallelFor(0, boot, [&](int i) {
       monte_boots(i);
       bar++;
-    }, threads);
+    }, threads_sizet);
   } else {
     RcppThread::parallelFor(0, boot, [&](int i) {
       monte_boots(i);
-    }, threads);
+    }, threads_sizet);
   }
 
   // The "true" spatial granger causality statistic
-  std::vector<double> sc = SCTSingle4Lattice(x,y,nb,k,base);
+  std::vector<double> sc = SCTSingle4Lattice(x,y,nb,static_cast<size_t>(std::abs(k)),base);
   double scx = sc[0];
   double scy = sc[1];
   // Compute the estimated bootstrap p–value
