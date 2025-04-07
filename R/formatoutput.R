@@ -76,8 +76,8 @@ print.sct = \(x,...){
   sc = round(x$sc,3)
   varname = x$varname
   cat(c("spatial (granger) causality test",
-        paste0(paste0(x$varname[1], "->", x$varname[2],": statistic = "), sc[1], ", p value = ", sc[2]),
-        paste0(paste0(x$varname[2], "->", x$varname[1],": statistic = "), sc[3], ", p value = ", sc[4])),
+        paste0(paste0(x$varname[1], " -> ", x$varname[2],": statistic = "), sc[1], ", p value = ", sc[2]),
+        paste0(paste0(x$varname[2], " -> ", x$varname[1],": statistic = "), sc[3], ", p value = ", sc[4])),
       sep = "\n")
 }
 
