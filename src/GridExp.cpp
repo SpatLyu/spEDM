@@ -8,6 +8,7 @@
 #include "GCCM4Grid.h"
 #include "SCPCM4Grid.h"
 #include "CrossMappingCardinality.h"
+#include "SCT4Grid.h"
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
 
@@ -793,7 +794,7 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
   return resultMatrix;
 }
 
-// Wrapper function to perform GCMC Grid and return a NumericVector
+// Wrapper function to perform GCMC for spatial grid data
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppGCMC4Grid(
     const Rcpp::NumericMatrix& xMatrix,
@@ -885,7 +886,7 @@ Rcpp::NumericMatrix RcppGCMC4Grid(
   std::vector<std::vector<double>> e1 = GenGridEmbeddings(xMatrix_cpp, E[0], tau_std[0]);
   std::vector<std::vector<double>> e2 = GenGridEmbeddings(yMatrix_cpp, E[1], tau_std[1]);
 
-  // Perform GCMC For Grid
+  // Perform GCMC for spatial grid data
   std::vector<std::vector<double>> cs1 = CrossMappingCardinality(e1,e2,lib_std,pred_std,b_std,maxr_std,threads,progressbar);
 
   Rcpp::NumericMatrix resultMatrix(b_std.size(), 5);
@@ -900,4 +901,73 @@ Rcpp::NumericMatrix RcppGCMC4Grid(
                  "x_xmap_y_mean","x_xmap_y_sig",
                  "x_xmap_y_upper","x_xmap_y_lower");
   return resultMatrix;
+}
+
+// Wrapper function to perform SCT for spatial grid data
+// [[Rcpp::export]]
+Rcpp::NumericVector RcppSCT4Grid(const Rcpp::NumericMatrix& x,
+                                 const Rcpp::NumericMatrix& y,
+                                 const Rcpp::IntegerMatrix& block,
+                                 int k,
+                                 int threads,
+                                 int boot = 399,
+                                 double base = 2,
+                                 unsigned int seed = 42,
+                                 bool progressbar = true){
+  int numRows = y.nrow();
+  int numCols = y.ncol();
+
+  // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
+  std::vector<std::vector<double>> xmat(x.nrow(), std::vector<double>(x.ncol()));
+  for (int i = 0; i < numRows; ++i) {
+    for (int j = 0; j < numCols; ++j) {
+      xmat[i][j] = x(i, j);
+    }
+  }
+  std::vector<std::vector<double>> ymat(y.nrow(), std::vector<double>(y.ncol()));
+  for (int i = 0; i < numRows; ++i) {
+    for (int j = 0; j < numCols; ++j) {
+      ymat[i][j] = y(i, j);
+    }
+  }
+
+  // Convert block to a fundamental C++ data type
+  int b_dim = block.ncol();
+  std::vector<int> b_std;
+  if (b_dim == 1){
+    for (int i = 0; i < block.nrow(); ++i) {
+      b_std.push_back(block(i, 0));
+    }
+  } else {
+    for (int i = 0; i < block.nrow(); ++i) {
+        // Convert to 0-based index
+        int currow = block(i,0);
+        int curcol = block(i,1);
+        b_std.push_back(LocateGridIndices(currow, curcol, numRows, numCols));
+      }
+  }
+
+  // Perform SCT for spatial grid data
+  std::vector<double> sc = SCT4Grid(
+    xmat,
+    ymat,
+    b_std,
+    k,
+    threads,
+    boot,
+    base,
+    seed,
+    progressbar
+  );
+
+  // Convert the result back to Rcpp::NumericVector
+  Rcpp::NumericVector sc_res = Rcpp::wrap(sc);
+  sc_res.names() = Rcpp::CharacterVector::create(
+    "statistic for x → y causality",
+    "significance for x → y causality",
+    "statistic for y → x causality",
+    "significance for y → x causality"
+  );
+
+  return sc_res;
 }
