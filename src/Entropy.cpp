@@ -2,7 +2,8 @@
 #include <vector>
 #include <numeric>
 #include <limits>
-#include <map>
+#include <string>
+#include <unordered_map>
 #include "CppStats.h"
 
 /**
@@ -227,72 +228,80 @@ double CppConditionalEntropy_Cont(const std::vector<double>& vecx,
  */
 double CppEntropy_Disc(const std::vector<double>& vec,
                        double base = 10, bool NA_rm = false) {
-  std::vector<double> filtered;
-  if (NA_rm) {
-    for (double x : vec) {
-      if (!std::isnan(x)) filtered.push_back(x);
+  std::unordered_map<double, int> counts;
+  int valid_n = 0;
+
+  for (double x : vec) {
+    if (std::isnan(x)) {
+      if (!NA_rm) return std::numeric_limits<double>::quiet_NaN();
+      continue;
     }
-  } else {
-    for (double x : vec) {
-      if (std::isnan(x)) return std::numeric_limits<double>::quiet_NaN();
-    }
-    filtered = vec;
+    counts[x]++;
+    valid_n++;
   }
-  if (filtered.empty()) return std::numeric_limits<double>::quiet_NaN();
 
-  std::map<double, int> counts;
-  for (double x : filtered) counts[x]++;
+  if (valid_n == 0) return std::numeric_limits<double>::quiet_NaN();
 
+  const double log_base = std::log(base);
   double entropy = 0.0;
-  int n = filtered.size();
-  for (auto const& pair : counts) {
-    double p = static_cast<double>(pair.second) / n;
-    if (p > 0.0) entropy += p * std::log(p) / std::log(base);
+
+  for (const auto& pair : counts) {
+    double p = static_cast<double>(pair.second) / valid_n;
+    entropy += p * std::log(p);
   }
-  return -entropy;
+
+  return -entropy / log_base;
 }
 
 /**
  * Computes the joint entropy of a multivariate discrete sequence.
  * @param mat Input matrix where each row represents a sample containing multiple variables.
+ * @param columns The columns which used in joint entropy estimation.
  * @param base Logarithm base (default: 10).
  * @param NA_rm If true, removes samples with any NaN; otherwise returns NaN if any NaN exists.
  * @return Joint entropy value or NaN if invalid conditions occur.
  */
 double CppJoinEntropy_Disc(const std::vector<std::vector<double>>& mat,
-                           double base = 10, bool NA_rm = false) {
-  std::vector<std::vector<double>> valid_samples;
-  if (NA_rm) {
-    for (const auto& sample : mat) {
-      bool valid = true;
-      for (double val : sample) {
-        if (std::isnan(val)) {
-          valid = false;
-          break;
-        }
-      }
-      if (valid) valid_samples.push_back(sample);
-    }
-  } else {
-    for (const auto& sample : mat) {
-      for (double val : sample) {
-        if (std::isnan(val)) return std::numeric_limits<double>::quiet_NaN();
-      }
-    }
-    valid_samples = mat;
-  }
-  if (valid_samples.empty()) return std::numeric_limits<double>::quiet_NaN();
+                           const std::vector<int>& columns,
+                           double base = 10, bool NA_rm = false){
+  const double log_base = std::log(base);
 
-  std::map<std::vector<double>, int> counts;
-  for (const auto& sample : valid_samples) counts[sample]++;
+  // Flattened and valid samples, stored as string key or unique encoding
+  std::unordered_map<std::string, int> counts;
+  int valid_count = 0;
+
+  for (const auto& sample : mat) {
+    bool has_nan = false;
+    std::string key;
+
+    for (size_t i = 0; i < columns.size(); ++i) {
+      double val = sample[columns[i]];
+      if (std::isnan(val)) {
+        has_nan = true;
+        break;
+      }
+      // simple separator-based encoding
+      key += std::to_string(val) + "_";
+    }
+
+    if (has_nan) {
+      if (!NA_rm) return std::numeric_limits<double>::quiet_NaN();
+      continue;
+    }
+
+    counts[key]++;
+    valid_count++;
+  }
+
+  if (valid_count == 0) return std::numeric_limits<double>::quiet_NaN();
 
   double entropy = 0.0;
-  int m = valid_samples.size();
   for (const auto& pair : counts) {
-    double p = static_cast<double>(pair.second) / m;
-    if (p > 0.0) entropy += p * std::log(p) / std::log(base);
+    double p = static_cast<double>(pair.second) / valid_count;
+    entropy += p * std::log(p);
   }
-  return -entropy;
+
+  return -entropy / log_base;
 }
 
 /**
@@ -316,7 +325,7 @@ double CppMutualInformation_Disc(const std::vector<std::vector<double>>& mat,
 
   double h_x = CppEntropy_Disc(x_vec, base, NA_rm);
   double h_y = CppEntropy_Disc(y_vec, base, NA_rm);
-  double h_xy = CppJoinEntropy_Disc(mat, base, NA_rm);
+  double h_xy = CppJoinEntropy_Disc(mat, {0,1}, base, NA_rm);
 
   if (std::isnan(h_x) || std::isnan(h_y) || std::isnan(h_xy)) {
     return std::numeric_limits<double>::quiet_NaN();
@@ -344,7 +353,7 @@ double CppConditionalEntropy_Disc(const std::vector<double>& vecx,
   }
 
   // Compute required entropies
-  double H_xy = CppJoinEntropy_Disc(joint_vec, base, NA_rm);  // Joint entropy
+  double H_xy = CppJoinEntropy_Disc(joint_vec, {0,1}, base, NA_rm);  // Joint entropy
   double H_y = CppEntropy_Disc(vecy, base, NA_rm); // Marginal entropy of Y
 
   if (std::isnan(H_xy) || std::isnan(H_y)) {

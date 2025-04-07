@@ -75,7 +75,7 @@ double RcppJoinEntropy_Disc(const Rcpp::NumericVector& vec1,
     cppMat[i][1] = v2[i];
   }
 
-  return CppJoinEntropy_Disc(cppMat,base,NA_rm);
+  return CppJoinEntropy_Disc(cppMat,{0,1},base,NA_rm);
 };
 
 // [[Rcpp::export]]
