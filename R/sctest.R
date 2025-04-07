@@ -1,7 +1,7 @@
 methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
 
-.sct_sf_method = \(data,cause,effect,k,block = 3,boot = 399,seed = 42,base = 2,nb = NULL,
-                   threads = detectThreads(), symbolize = TRUE, progressbar = FALSE){
+.sct_sf_method = \(data,cause,effect,k,block = 3,boot = 399,seed = 42,base = 2,
+                   nb = NULL, threads = detectThreads(), progressbar = FALSE){
   varname = .check_character(cause, effect)
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   if (nrow(data) != length(nb)) stop("Incompatible Data Dimensions!")
@@ -12,7 +12,7 @@ methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
 }
 
 .sct_spatraster_method = \(data,cause,effect,k,block = 3,boot = 399,seed = 42,base = 2,
-                           threads = detectThreads(), symbolize = TRUE, progressbar = FALSE){
+                           threads = detectThreads(), progressbar = FALSE){
   varname = .check_character(cause, effect)
   cause = .uni_grid(data,cause,FALSE)
   effect = .uni_grid(data,effect,FALSE)
@@ -32,7 +32,6 @@ methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
 #' @param base (optional) Base of the logarithm.
 #' @param nb (optional) The neighbours list.
 #' @param threads (optional) Number of threads.
-#' @param symbolize (optional) whether to use the symbolization map.
 #' @param progressbar (optional) Whether to print the progress bar.
 #'
 #' @return A list
