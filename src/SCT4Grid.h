@@ -8,32 +8,33 @@
 #include <RcppThread.h>
 
 /**
- * @brief Compute the spatial Granger causality statistic between two 2D grid-structured variables.
+ * @brief Compute directional spatial Granger causality on 2D grid data using symbolized entropy measures.
  *
- * This function estimates the directional influence between two spatial variables `x` and `y` defined
- * on a 2D grid (matrix form), using symbolization-based entropy and conditional entropy measures.
- * The approach is based on symbolic transfer entropy, where symbolization is applied locally to
- * encode neighborhood patterns, followed by computation of information-theoretic quantities.
+ * This function estimates the directional spatial Granger causality between two variables `x` and `y`,
+ * each defined on a 2D grid (i.e., spatial lattice), based on symbolic transfer entropy principles.
+ * It computes causality in both directions (X → Y and Y → X) by comparing changes in entropy and
+ * conditional entropy across spatially-embedded versions of the input grids.
  *
- * Specifically, it calculates:
- * - H(X), H(Y): Entropy of the symbolized versions of x and y.
- * - H(Y|X), H(X|Y): Conditional entropy between x and y.
- * - SC_{x→y} = H(Y) - H(Y|X): Directional causality from x to y.
- * - SC_{y→x} = H(X) - H(X|Y): Directional causality from y to x.
+ * The method includes:
+ * - Symbolizing the original and embedded grids using local neighborhoods (controlled by `k`).
+ * - Computing joint and marginal entropies involving the original grids and their local embeddings.
+ * - Deriving directional causality using entropy difference formulas:
+ *   - SC_{x→y} = [H(y, wy) − H(wy)] − [H(y, wy, wx) − H(wy, wx)]
+ *   - SC_{y→x} = [H(x, wx) − H(wx)] − [H(x, wx, wy) − H(wx, wy)]
+ *     where `wx` and `wy` are spatial embeddings (local lag structures) of `x` and `y`.
  *
- * The function allows for the option of symbolization of the input grids, which transforms the grid values
- * into symbolic representations for better capturing spatial neighborhood patterns.
- * The function returns the directional Granger causality values, one for each direction (from x to y and from y to x).
+ * Symbolization helps convert continuous grid values into discrete symbolic patterns, enabling
+ * robust estimation of information-theoretic metrics under spatial autocorrelation.
  *
- * @param x     2D grid of variable X (represented as a vector of rows).
- * @param y     2D grid of variable Y (same size as x).
- * @param k     Neighborhood window size for local symbolization (default is 1).
- * @param base  Logarithm base used in entropy computation (default is 2 for bits).
- * @param symbolize Flag indicating whether symbolization of the input grids is applied (default is true).
+ * @param x         2D grid of variable X, represented as a vector of rows.
+ * @param y         2D grid of variable Y, same size as x.
+ * @param k         Neighborhood size for symbolization (e.g., k = 1 implies 3×3 window).
+ * @param base      Logarithm base used for entropy calculation (default is 2 for bits).
+ * @param symbolize Whether to apply symbolization (currently assumed true by default).
  *
- * @return A vector with two values:
- *         - sc_x_to_y: Spatial Granger causality from X to Y.
- *         - sc_y_to_x: Spatial Granger causality from Y to X.
+ * @return A std::vector<double> of two values:
+ *         - sc_x_to_y: Directional spatial Granger causality from X to Y.
+ *         - sc_y_to_x: Directional spatial Granger causality from Y to X.
  */
 std::vector<double> SCTSingle4Grid(
     const std::vector<std::vector<double>>& x,
@@ -77,7 +78,6 @@ std::vector<double> SCTSingle4Grid(
  * @param boot        Number of bootstrap iterations (default: 399).
  * @param base        Base of the logarithm used in entropy computation (default: 2 for bits).
  * @param seed        Seed for the random number generator to ensure reproducibility (default: 42).
- * @param symbolize   Flag indicating whether symbolization of the input grids is applied (default: true).
  * @param progressbar Whether to show a progress bar during bootstrap computation (default: true).
  *
  * @return A vector of four values:
@@ -95,7 +95,6 @@ std::vector<double> SCT4Grid(
     int boot = 399,
     double base = 2,
     unsigned int seed = 42,
-    bool symbolize = true,
     bool progressbar = true
 );
 
