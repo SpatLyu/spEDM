@@ -149,6 +149,10 @@ RcppGCMC4Lattice <- function(x, y, nb, lib, pred, E, tau, b, max_r, threads, pro
     .Call(`_spEDM_RcppGCMC4Lattice`, x, y, nb, lib, pred, E, tau, b, max_r, threads, progressbar)
 }
 
+RcppSCT4Lattice <- function(x, y, nb, block, k, threads, boot = 399L, base = 2, seed = 42L, progressbar = TRUE) {
+    .Call(`_spEDM_RcppSCT4Lattice`, x, y, nb, block, k, threads, boot, base, seed, progressbar)
+}
+
 RcppFactorial <- function(n) {
     .Call(`_spEDM_RcppFactorial`, n)
 }

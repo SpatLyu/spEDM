@@ -8,10 +8,12 @@
 #include "GCCM4Lattice.h"
 #include "SCPCM4Lattice.h"
 #include "CrossMappingCardinality.h"
+#include "SpatialBlockBootstrap.h"
+#include "SCT4Lattice.h"
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
 
-// Function to convert Rcpp::List to std::vector<std::vector<int>>
+// Function to convert Rcpp::List to std::vector<std::vector<int>> (the `nb` object)
 std::vector<std::vector<int>> nb2vec(const Rcpp::List& nb) {
   // Get the number of elements in the nb object
   int n = nb.size();
@@ -40,7 +42,7 @@ std::vector<std::vector<int>> nb2vec(const Rcpp::List& nb) {
   return result;
 }
 
-// Wrapper function to calculate accumulated lagged neighbor indices and return a List
+// Wrapper function to calculate accumulated lagged neighbor indices for spatial lattice data
 // [[Rcpp::export]]
 Rcpp::List RcppLaggedNeighbor4Lattice(const Rcpp::List& nb, int lagNum) {
   int n = nb.size();
@@ -70,7 +72,7 @@ Rcpp::List RcppLaggedNeighbor4Lattice(const Rcpp::List& nb, int lagNum) {
   return result;
 }
 
-// Wrapper function to calculate lagged values and return a List
+// Wrapper function to calculate lagged values for spatial lattice data
 // [[Rcpp::export]]
 Rcpp::List RcppLaggedVar4Lattice(const Rcpp::NumericVector& vec,
                                  const Rcpp::List& nb, int lagNum) {
@@ -94,7 +96,7 @@ Rcpp::List RcppLaggedVar4Lattice(const Rcpp::NumericVector& vec,
   return result;
 }
 
-// Wrapper function to generate embeddings and return a NumericMatrix
+// Wrapper function to generate embeddings for spatial lattice data
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec,
                                              const Rcpp::List& nb,
@@ -122,7 +124,7 @@ Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec,
   return result;
 }
 
-// Wrapper function to generate neighbors and return a IntegerMatrix
+// Wrapper function to generate neighbors for spatial lattice data
 // [[Rcpp::export]]
 Rcpp::IntegerMatrix RcppGenLatticeNeighbors(const Rcpp::NumericVector& vec,
                                             const Rcpp::List& nb,
@@ -149,7 +151,7 @@ Rcpp::IntegerMatrix RcppGenLatticeNeighbors(const Rcpp::NumericVector& vec,
   return result;
 }
 
-// Wrapper function to mplements a symbolic transformation of a univariate spatial process
+// Wrapper function to mplements a symbolic transformation of a univariate spatial lattice data
 // [[Rcpp::export]]
 Rcpp::NumericVector RcppGenLatticeSymbolization(const Rcpp::NumericVector& vec,
                                                 const Rcpp::List& nb,
@@ -458,7 +460,7 @@ Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
   return Rcpp::wrap(res);
 }
 
-// Wrapper function to perform GCCM Lattice and return a NumericMatrix
+// Wrapper function to perform GCCM for spatial lattice data
 // predict y based on x ====> x xmap y ====> y causes x
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,
@@ -521,7 +523,7 @@ Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,
   return resultMatrix;
 }
 
-// Wrapper function to perform SCPCM Lattice and return a NumericMatrix
+// Wrapper function to perform SCPCM for spatial lattice data
 // predict y based on x ====> x xmap y ====> y causes x (account for controls)
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x,
@@ -603,7 +605,7 @@ Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x,
   return resultMatrix;
 }
 
-// Wrapper function to perform GCMC Lattice and return a NumericVector
+// Wrapper function to perform GCMC for spatial lattice data
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppGCMC4Lattice(
     const Rcpp::NumericVector& x,
@@ -658,7 +660,7 @@ Rcpp::NumericMatrix RcppGCMC4Lattice(
   std::vector<std::vector<double>> e1 = GenLatticeEmbeddings(x_std, nb_vec, E[0], tau_std[0]);
   std::vector<std::vector<double>> e2 = GenLatticeEmbeddings(y_std, nb_vec, E[1], tau_std[1]);
 
-  // Perform GCMC For Lattice
+  // Perform GCMC for spatial lattice data
   std::vector<std::vector<double>> cs1 = CrossMappingCardinality(e1,e2,lib_std,pred_std,b_std,maxr_std,threads,progressbar);
 
   Rcpp::NumericMatrix resultMatrix(b_std.size(), 5);
@@ -673,4 +675,52 @@ Rcpp::NumericMatrix RcppGCMC4Lattice(
                  "x_xmap_y_mean","x_xmap_y_sig",
                  "x_xmap_y_upper","x_xmap_y_lower");
   return resultMatrix;
+}
+
+// Wrapper function to perform SCT for spatial lattice data
+// [[Rcpp::export]]
+Rcpp::NumericVector RcppSCT4Lattice(const Rcpp::NumericVector& x,
+                                    const Rcpp::NumericVector& y,
+                                    const Rcpp::List& nb,
+                                    const Rcpp::IntegerVector& block,
+                                    int k,
+                                    int threads,
+                                    int boot = 399,
+                                    double base = 2,
+                                    unsigned int seed = 42,
+                                    bool progressbar = true){
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
+  std::vector<double> y_std = Rcpp::as<std::vector<double>>(y);
+
+  // Convert Rcpp::List to std::vector<std::vector<int>>
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
+
+  // Convert Rcpp IntegerVector to std::vector<int>
+  std::vector<int> b_std = Rcpp::as<std::vector<int>>(block);
+
+  // Perform SCT for spatial lattice data
+  std::vector<double> sc = SCT4Lattice(
+    x_std,
+    y_std,
+    nb_vec,
+    b_std,
+    k,
+    threads,
+    boot,
+    base,
+    seed,
+    progressbar
+  );
+
+  // Convert the result back to Rcpp::NumericVector
+  Rcpp::NumericVector sc_res = Rcpp::wrap(sc);
+  sc_res.names() = Rcpp::CharacterVector::create(
+    "statistic for x → y causality",
+    "significance for x → y causality",
+    "statistic for y → x causality",
+    "significance for y → x causality"
+   );
+
+  return sc_res;
 }
