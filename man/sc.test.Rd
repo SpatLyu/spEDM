@@ -4,7 +4,7 @@
 \alias{sc.test}
 \alias{sc.test,sf-method}
 \alias{sc.test,SpatRaster-method}
-\title{spatial causality test}
+\title{spatial (granger) causality test}
 \usage{
 \S4method{sc.test}{sf}(
   data,
@@ -68,7 +68,7 @@ A list
 }
 }
 \description{
-spatial causality test
+spatial (granger) causality test
 }
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
