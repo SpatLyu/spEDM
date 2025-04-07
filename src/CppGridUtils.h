@@ -145,4 +145,35 @@ std::vector<double> GenGridSymbolization(
     const std::vector<std::vector<double>>& mat,
     size_t k);
 
+/**
+ * @brief Divide a 2D grid (matrix) into approximately square or shaped blocks.
+ *
+ * This function partitions a 2D matrix into `b` blocks of roughly equal size.
+ * The matrix is represented as a vector of row vectors and assumed to be
+ * row-major (i.e., each inner vector represents a row of the matrix).
+ *
+ * The grid can be divided in different ways based on the `shape` parameter:
+ * - 1: Horizontal cuts (blocks are divided row-wise).
+ * - 2: Vertical cuts (blocks are divided column-wise).
+ * - 3: Radial cuts (blocks are divided in a radial pattern from the center).
+ *
+ * The grid is divided by first estimating a grid layout of `br` rows and `bc` columns
+ * such that br * bc >= b and the blocks are as square as possible for shapes 1 and 2.
+ * For radial cuts, the grid is divided into concentric rings and sectors.
+ *
+ * Each cell in the matrix is assigned a block ID ranging from 0 to b-1, stored in
+ * a 1D vector corresponding to the flattened row-major order of the matrix.
+ *
+ * Any leftover blocks are merged into the last block.
+ *
+ * @param mat A 2D grid represented as a vector of vectors (row-major).
+ * @param b   Number of blocks to divide the grid into.
+ * @param shape The shape of the cuts (1: horizontal, 2: vertical, 3: radial).
+ * @return A vector of size rows * cols where each element is the block label
+ *         assigned to the corresponding cell.
+ */
+std::vector<int> CppDivideGrid(
+    const std::vector<std::vector<double>>& mat,
+    int b, int shape = 3);
+
 #endif // CppGridUtils_H
