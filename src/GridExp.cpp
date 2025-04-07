@@ -934,6 +934,7 @@ Rcpp::NumericVector RcppSCT4Grid(const Rcpp::NumericMatrix& x,
                                  int boot = 399,
                                  double base = 2,
                                  unsigned int seed = 42,
+                                 bool symbolize = true,
                                  bool progressbar = true){
   int numRows = y.nrow();
   int numCols = y.ncol();
@@ -978,6 +979,7 @@ Rcpp::NumericVector RcppSCT4Grid(const Rcpp::NumericMatrix& x,
     boot,
     base,
     seed,
+    symbolize,
     progressbar
   );
 

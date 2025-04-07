@@ -8,7 +8,7 @@
 #include <RcppThread.h>
 
 /**
- * @brief Compute the spatial Granger causality statistic between two grid-structured variables.
+ * @brief Compute the spatial Granger causality statistic between two 2D grid-structured variables.
  *
  * This function estimates the directional influence between two spatial variables `x` and `y` defined
  * on a 2D grid (matrix form), using symbolization-based entropy and conditional entropy measures.
@@ -21,10 +21,15 @@
  * - SC_{x→y} = H(Y) - H(Y|X): Directional causality from x to y.
  * - SC_{y→x} = H(X) - H(X|Y): Directional causality from y to x.
  *
- * @param x     2D grid of variable X (as a vector of rows).
+ * The function allows for the option of symbolization of the input grids, which transforms the grid values
+ * into symbolic representations for better capturing spatial neighborhood patterns.
+ * The function returns the directional Granger causality values, one for each direction (from x to y and from y to x).
+ *
+ * @param x     2D grid of variable X (represented as a vector of rows).
  * @param y     2D grid of variable Y (same size as x).
- * @param k     Neighborhood window size for local symbolization.
+ * @param k     Neighborhood window size for local symbolization (default is 1).
  * @param base  Logarithm base used in entropy computation (default is 2 for bits).
+ * @param symbolize Flag indicating whether symbolization of the input grids is applied (default is true).
  *
  * @return A vector with two values:
  *         - sc_x_to_y: Spatial Granger causality from X to Y.
@@ -34,7 +39,8 @@ std::vector<double> SCTSingle4Grid(
     const std::vector<std::vector<double>>& x,
     const std::vector<std::vector<double>>& y,
     size_t k,
-    double base = 2
+    double base = 2,
+    bool symbolize = true
 );
 
 /**
@@ -54,6 +60,15 @@ std::vector<double> SCTSingle4Grid(
  * The spatial bootstrap preserves local spatial structure using a provided spatial block assignment vector.
  * Grid values are flattened, shuffled in blocks, and reshaped to their original grid layout for computation.
  *
+ * The function returns the estimated spatial Granger causality statistics and their bootstrap p-values:
+ * - `sc_x_to_y`: Estimated causality from X to Y.
+ * - `p_x_to_y`: Bootstrap p-value for X → Y.
+ * - `sc_y_to_x`: Estimated causality from Y to X.
+ * - `p_y_to_x`: Bootstrap p-value for Y → X.
+ *
+ * This implementation allows parallel computation for the bootstrap estimation and can display a progress bar
+ * to track the process.
+ *
  * @param x           2D grid (matrix) of variable X.
  * @param y           2D grid (matrix) of variable Y, same size as x.
  * @param block       Vector assigning each grid cell to a spatial block for bootstrapping.
@@ -62,6 +77,7 @@ std::vector<double> SCTSingle4Grid(
  * @param boot        Number of bootstrap iterations (default: 399).
  * @param base        Base of the logarithm used in entropy computation (default: 2 for bits).
  * @param seed        Seed for the random number generator to ensure reproducibility (default: 42).
+ * @param symbolize   Flag indicating whether symbolization of the input grids is applied (default: true).
  * @param progressbar Whether to show a progress bar during bootstrap computation (default: true).
  *
  * @return A vector of four values:
@@ -79,6 +95,7 @@ std::vector<double> SCT4Grid(
     int boot = 399,
     double base = 2,
     unsigned int seed = 42,
+    bool symbolize = true,
     bool progressbar = true
 );
 

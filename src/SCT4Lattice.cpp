@@ -8,49 +8,54 @@
 
 /**
  * @brief Computes the directional symbolic causality strength between two spatial variables
- *        based on lattice neighborhood structure and symbolization.
+ *        based on lattice neighborhood structure and optional symbolization.
  *
- * This function implements a symbolic causality test statistic for spatial data over lattice structures.
- * It follows a non-parametric entropy-based approach to evaluate whether variable x Granger-causes y,
- * as defined in the referenced paper using symbolized spatial neighbors.
+ * This function implements a symbolic causality test for spatial data over lattice structures.
+ * It evaluates whether variable x symbolically Granger-causes variable y using entropy-based
+ * measures on either the raw or symbolized values of x and y, depending on the `symbolize` flag.
  *
  * Specifically, the function calculates:
- *   - H(y): the entropy of the symbolized y values.
- *   - H(y | x): the conditional entropy of y given x.
- *   - H(x): the entropy of the symbolized x values.
- *   - H(x | y): the conditional entropy of x given y.
+ *   - H(y): the entropy of y (or symbolized y if `symbolize` is true).
+ *   - H(y | x): the conditional entropy of y given x (or symbolized x if `symbolize` is true).
+ *   - H(x): the entropy of x (or symbolized x).
+ *   - H(x | y): the conditional entropy of x given y (or symbolized y).
  * Then it computes:
  *   - sc_x_to_y = H(y) - H(y | x): symbolic causality strength from x to y.
  *   - sc_y_to_x = H(x) - H(x | y): symbolic causality strength from y to x.
  *
- * These correspond to the delta entropy test statistic described in Equation (24)
- * of the attached reference, where a significant positive value of sc_x_to_y indicates
- * that x contains additional information about y not present in y’s own spatial lags.
+ * @param x         Input vector of variable x, aligned with a lattice/grid.
+ * @param y         Input vector of variable y, aligned with the same lattice/grid.
+ * @param nb        Neighborhood list for each lattice location (e.g., rook or queen neighbors).
+ * @param k         Number of neighbors used in lattice symbolization.
+ * @param base      Logarithm base for entropy calculation (default is 2).
+ * @param symbolize Whether to perform lattice-based symbolization on x and y before entropy computation.
  *
- * @param x    Input vector of variable x, assumed to be on a lattice/grid.
- * @param y    Input vector of variable y, assumed to be on the same lattice/grid as x.
- * @param nb   Neighborhood list for each lattice point (e.g., rook or queen adjacency).
- * @param k    The number of neighbors considered in the lattice symbolization.
- * @param base The logarithm base used in entropy calculation (default is 2).
- *
- * @return A std::vector<double> containing two values:
+ * @return A std::vector<double> of length 2:
  *         [0] sc_x_to_y — symbolic causality strength from x to y;
  *         [1] sc_y_to_x — symbolic causality strength from y to x.
- *
  */
 std::vector<double> SCTSingle4Lattice(
     const std::vector<double>& x,
     const std::vector<double>& y,
     const std::vector<std::vector<int>>& nb,
     size_t k,
-    double base = 2
+    double base = 2,
+    bool symbolize = true
 ){
-  std::vector<double> sx = GenLatticeSymbolization(x,nb,k);
-  std::vector<double> sy = GenLatticeSymbolization(y,nb,k);
-  double Hx = CppEntropy_Disc(sx,base,false); // H(x)
-  double Hy = CppEntropy_Disc(sy,base,false); // H(y)
-  double Hxy = CppConditionalEntropy_Disc(sx, sy, base, false); // H(x | y)
-  double Hyx = CppConditionalEntropy_Disc(sy, sx, base, false); // H(y | x)
+  double Hx, Hy, Hxy, Hyx;
+  if (symbolize){
+    std::vector<double> sx = GenLatticeSymbolization(x,nb,k);
+    std::vector<double> sy = GenLatticeSymbolization(y,nb,k);
+    Hx = CppEntropy_Disc(sx,base,false); // H(x)
+    Hy = CppEntropy_Disc(sy,base,false); // H(y)
+    Hxy = CppConditionalEntropy_Disc(sx, sy, base, false); // H(x | y)
+    Hyx = CppConditionalEntropy_Disc(sy, sx, base, false); // H(y | x)
+  } else {
+    Hx = CppEntropy_Disc(x,base,false); // H(x)
+    Hy = CppEntropy_Disc(y,base,false); // H(y)
+    Hxy = CppConditionalEntropy_Disc(x, y, base, false); // H(x | y)
+    Hyx = CppConditionalEntropy_Disc(y, x, base, false); // H(y | x)
+  }
   double sc_x_to_y = Hy - Hyx;
   double sc_y_to_x = Hx - Hxy;
 
@@ -60,34 +65,35 @@ std::vector<double> SCTSingle4Lattice(
 /**
  * @brief Perform spatial Granger causality testing on lattice data with bootstrap-based significance evaluation.
  *
- * This function computes the spatial Granger causality statistic between two variables `x` and `y`
- * over a lattice structure defined by neighborhood relationships. To evaluate the statistical
- * significance, it applies a spatial block bootstrap procedure to generate empirical p-values
- * under the null hypothesis of no causality.
+ * This function computes the spatial Granger causality statistic between two variables, `x` and `y`,
+ * over a lattice structure defined by neighborhood relationships. The statistical significance of the causality
+ * is evaluated through a spatial block bootstrap procedure, generating empirical p-values under the null hypothesis
+ * of no causality.
  *
- * The bootstrap procedure respects the spatial contiguity structure provided by the `block` vector,
- * where each unique block ID defines a spatially contiguous subregion.
- * For each bootstrap iteration, a new realization is generated using spatial block bootstrap,
- * and the test statistic is recalculated.
+ * The spatial block bootstrap preserves the neighborhood relationships defined by the `block` vector, where each
+ * unique block ID corresponds to a spatially contiguous subregion. For each bootstrap iteration, a new realization
+ * is generated using this procedure, and the test statistic is recalculated to assess the significance of causality.
  *
- * The final output includes the original causality statistics and their associated bootstrap p-values.
+ * The final output includes the observed causality statistics for both directions (X → Y and Y → X) and their associated
+ * bootstrap p-values, which indicate the likelihood of observing such causality by random chance.
  *
  * @param x           Input variable X (time series or spatial measurements).
  * @param y           Input variable Y (potentially Granger-caused by X).
- * @param nb          Neighborhood structure (adjacency list) of the lattice.
- * @param block       Block IDs for spatial block bootstrap (same length as x/y).
- * @param k           The number of neighbors considered in the lattice symbolization.
- * @param threads     Number of threads to use for parallel computation.
+ * @param nb          Neighborhood structure (adjacency list) of the lattice, defining the relationships between grid cells.
+ * @param block       Block IDs for spatial block bootstrap (same length as x/y), indicating spatially contiguous subregions.
+ * @param k           The number of neighbors to consider for symbolization (typically 3 or 5).
+ * @param threads     Number of threads to use for parallel computation to speed up the bootstrap iterations.
  * @param boot        Number of bootstrap replicates to perform (default is 399).
- * @param base        Base for temporal lag scaling (default is 2).
- * @param seed        Random seed for reproducibility (default is 42).
- * @param progressbar Whether to display a progress bar (default is true).
+ * @param base        Base of the logarithm for temporal lag scaling (default is 2, which corresponds to bits).
+ * @param seed        Random seed for reproducibility of the results (default is 42).
+ * @param symbolize   Flag indicating whether symbolization of the input grids is applied (default: true).
+ * @param progressbar Whether to display a progress bar during the computation (default is true).
  *
- * @return A vector of 4 values:
- *         - scx: Observed statistic for X → Y causality.
- *         - p_xy: Empirical p-value for X → Y based on bootstrap.
- *         - scy: Observed statistic for Y → X causality.
- *         - p_yx: Empirical p-value for Y → X based on bootstrap.
+ * @return A vector of four values:
+ *         - scx: Observed statistic for causality from X → Y.
+ *         - p_xy: Bootstrap-based p-value for X → Y.
+ *         - scy: Observed statistic for causality from Y → X.
+ *         - p_yx: Bootstrap-based p-value for Y → X.
  */
 std::vector<double> SCT4Lattice(
     const std::vector<double>& x,
@@ -99,6 +105,7 @@ std::vector<double> SCT4Lattice(
     int boot = 399,
     double base = 2,
     unsigned int seed = 42,
+    bool symbolize = true,
     bool progressbar = true
 ){
   // Initialize the bootstrapped realizations of the spatial granger causality statistic
@@ -117,7 +124,7 @@ std::vector<double> SCT4Lattice(
       y_boot[i] = y[boot_indice[i]];
     }
     // Estimate the bootstrapped realization of the spatial granger causality statistic
-    sc_bootstraps[n] = SCTSingle4Lattice(x_boot,y_boot,nb,static_cast<size_t>(std::abs(k)),base);
+    sc_bootstraps[n] = SCTSingle4Lattice(x_boot,y_boot,nb,static_cast<size_t>(std::abs(k)),base,symbolize);
   };
 
   // Configure threads
@@ -138,7 +145,7 @@ std::vector<double> SCT4Lattice(
   }
 
   // The "true" spatial granger causality statistic
-  std::vector<double> sc = SCTSingle4Lattice(x,y,nb,static_cast<size_t>(std::abs(k)),base);
+  std::vector<double> sc = SCTSingle4Lattice(x,y,nb,static_cast<size_t>(std::abs(k)),base,symbolize);
   double scx = sc[0];
   double scy = sc[1];
   // Compute the estimated bootstrap p–value
