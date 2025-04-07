@@ -89,6 +89,10 @@ RcppGCMC4Grid <- function(xMatrix, yMatrix, lib, pred, E, tau, b, max_r, threads
     .Call(`_spEDM_RcppGCMC4Grid`, xMatrix, yMatrix, lib, pred, E, tau, b, max_r, threads, progressbar)
 }
 
+RcppSCT4Grid <- function(x, y, block, k, threads, boot = 399L, base = 2, seed = 42L, progressbar = TRUE) {
+    .Call(`_spEDM_RcppSCT4Grid`, x, y, block, k, threads, boot, base, seed, progressbar)
+}
+
 DetectMaxNumThreads <- function() {
     .Call(`_spEDM_DetectMaxNumThreads`)
 }
