@@ -8,7 +8,6 @@
 #include "GCCM4Lattice.h"
 #include "SCPCM4Lattice.h"
 #include "CrossMappingCardinality.h"
-#include "SpatialBlockBootstrap.h"
 #include "SCT4Lattice.h"
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
