@@ -2,6 +2,8 @@
 
 ### new
 
+* Provide an R-level API for spatial causality test (#403).
+
 * Add references for algorithms in `spEDM` (#367).
 
 ### breaking changes

@@ -57,3 +57,9 @@
   class(res) = "xmap_self"
   return(res)
 }
+
+.bind_sct = \(sc,varname,...){
+  res = list("sc" = sc,"varname" = varname)
+  class(res) = "sct"
+  return(res)
+}

@@ -69,6 +69,17 @@ print.xmap_self = \(x,...){
   }
 }
 
+#' print sct result
+#' @noRd
+#' @export
+print.sct = \(x,...){
+  sc = x$sc
+  varname = x$varname
+  cat(c(paste0(paste0(x$varname[1], "->", x$varname[2],": statistic = "), sc[1], ", p value = ", sc[2]),
+        paste0(paste0(x$varname[2], "->", x$varname[1],": statistic = "), sc[3], ", p value = ", sc[4])),
+      sep = "\n")
+}
+
 #' plot ccm result
 #' @noRd
 #' @export
