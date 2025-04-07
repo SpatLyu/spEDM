@@ -45,14 +45,14 @@ std::vector<double> SCTSingle4Grid(
   size_t rows = x.size();
   size_t cols = x[0].size();
 
-  std::vector<double> wx(rows*cols);
+  std::vector<double> wx;
   std::vector<std::vector<double>> Ex = GenGridEmbeddings(x,1,1);
   for (const auto& row : Ex) {
     wx.insert(wx.end(), row.begin(), row.end());
   }
   std::vector<std::vector<double>> xw = GridVec2Mat(wx,rows);
 
-  std::vector<double> wy(rows*cols);
+  std::vector<double> wy;
   std::vector<std::vector<double>> Ey = GenGridEmbeddings(y,1,1);
   for (const auto& row : Ey) {
     wy.insert(wy.end(), row.begin(), row.end());
@@ -70,13 +70,13 @@ std::vector<double> SCTSingle4Grid(
   }
 
   double Hwx, Hwy, Hxwx, Hywy, Hwxwy, Hwxwyx, Hwxwyy;
-  Hxwx = CppJoinEntropy_Disc(sp_series, {0,2}, base, false); // H(x,wx)
-  Hywy = CppJoinEntropy_Disc(sp_series, {1,3}, base, false); // H(y,wy)
-  Hwx = CppEntropy_Disc(swx, base, false); // H(wx)
-  Hwy = CppEntropy_Disc(swy, base, false); // H(wy)
-  Hwxwy = CppJoinEntropy_Disc(sp_series,{2,3}, base, false); // H(wx,wy)
-  Hwxwyx = CppJoinEntropy_Disc(sp_series,{0,2,3}, base, false); // H(wx,wy,x)
-  Hwxwyy = CppJoinEntropy_Disc(sp_series,{1,2,3}, base, false); // H(wx,wy,y)
+  Hxwx = CppJoinEntropy_Disc(sp_series, {0,2}, base, true); // H(x,wx)
+  Hywy = CppJoinEntropy_Disc(sp_series, {1,3}, base, true); // H(y,wy)
+  Hwx = CppEntropy_Disc(swx, base, true); // H(wx)
+  Hwy = CppEntropy_Disc(swy, base, true); // H(wy)
+  Hwxwy = CppJoinEntropy_Disc(sp_series,{2,3}, base, true); // H(wx,wy)
+  Hwxwyx = CppJoinEntropy_Disc(sp_series,{0,2,3}, base, true); // H(wx,wy,x)
+  Hwxwyy = CppJoinEntropy_Disc(sp_series,{1,2,3}, base, true); // H(wx,wy,y)
 
   double sc_x_to_y = (Hywy - Hwy) - (Hwxwyy - Hwxwy);
   double sc_y_to_x = (Hxwx - Hwx) - (Hwxwyx - Hwxwy);

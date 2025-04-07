@@ -57,13 +57,13 @@ std::vector<double> SCTSingle4Lattice(
     size_t k,
     double base = 2
 ){
-  std::vector<double> wx(x.size());
+  std::vector<double> wx;
   std::vector<std::vector<double>> Ex = GenLatticeEmbeddings(x,nb,1,1);
   for (const auto& row : Ex) {
     wx.insert(wx.end(), row.begin(), row.end());
   }
 
-  std::vector<double> wy(y.size());
+  std::vector<double> wy;
   std::vector<std::vector<double>> Ey = GenLatticeEmbeddings(y,nb,1,1);
   for (const auto& row : Ey) {
     wy.insert(wy.end(), row.begin(), row.end());
