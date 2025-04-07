@@ -33,6 +33,7 @@ reference:
 
 - title: Spatial Empirical Dynamic Modeling
   contents:
+  - sc.test
   - gccm
 
 - title: Utils Functions
