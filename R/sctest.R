@@ -20,7 +20,7 @@ methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
   return(.bind_sct(RcppSCT4Grid(cause,effect,block,k,threads,boot,base,seed,symbolize,progressbar),varname))
 }
 
-#' spatial causality test
+#' spatial (granger) causality test
 #'
 #' @param data The observation data.
 #' @param cause Name of causal variable.
