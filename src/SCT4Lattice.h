@@ -87,6 +87,7 @@ std::vector<double> SCT4Lattice(
     int boot = 399,
     double base = 2,
     unsigned int seed = 42,
+    bool symbolize = true,
     bool progressbar = true
 );
 
