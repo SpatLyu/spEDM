@@ -136,16 +136,8 @@ std::vector<double> GenLatticeSymbolization(
  * @brief Divide a spatial lattice into connected blocks of approximately equal size.
  *
  * This function partitions a spatial domain represented by an adjacency list (neighbor structure)
- * into `b` spatially contiguous blocks. It is designed for regular lattice-based spatial units
- * (e.g., raster pixels, grid cells), where each unit has a list of neighboring units.
- *
- * The function aims to assign each unit (node) to a block such that:
- * - Each block contains roughly `N / b` units, where `N` is the total number of units.
- * - Any remaining units (`N % b`) are added to the last block.
- * - Units in each block are spatially connected (as much as possible) using breadth-first search (BFS).
- * - The starting unit of each block is chosen as the highest-degree unvisited node to encourage expansion.
- * - If BFS cannot find enough connected neighbors to fill a block, the algorithm adds unvisited nodes
- *   that are connected to existing block members, ensuring block size constraints are met.
+ * into `b` spatially contiguous blocks. It ensures that each block is connected and handles isolated
+ * units by merging them into the smallest neighboring block.
  *
  * @param nb A vector of vectors representing the adjacency list (i.e., neighboring indices)
  *           for each spatial unit; `nb[i]` contains the indices of neighbors of unit `i`.

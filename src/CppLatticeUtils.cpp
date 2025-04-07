@@ -555,16 +555,8 @@ std::vector<double> GenLatticeSymbolization(
  * @brief Divide a spatial lattice into connected blocks of approximately equal size.
  *
  * This function partitions a spatial domain represented by an adjacency list (neighbor structure)
- * into `b` spatially contiguous blocks. It is designed for regular lattice-based spatial units
- * (e.g., raster pixels, grid cells), where each unit has a list of neighboring units.
- *
- * The function aims to assign each unit (node) to a block such that:
- * - Each block contains roughly `N / b` units, where `N` is the total number of units.
- * - Any remaining units (`N % b`) are added to the last block.
- * - Units in each block are spatially connected (as much as possible) using breadth-first search (BFS).
- * - The starting unit of each block is chosen as the highest-degree unvisited node to encourage expansion.
- * - If BFS cannot find enough connected neighbors to fill a block, the algorithm adds unvisited nodes
- *   that are connected to existing block members, ensuring block size constraints are met.
+ * into `b` spatially contiguous blocks. It ensures that each block is connected and handles isolated
+ * units by merging them into the smallest neighboring block.
  *
  * @param nb A vector of vectors representing the adjacency list (i.e., neighboring indices)
  *           for each spatial unit; `nb[i]` contains the indices of neighbors of unit `i`.
@@ -582,6 +574,7 @@ std::vector<int> CppDivideLattice(const std::vector<std::vector<int>>& nb, int b
   std::vector<int> labels(N, -1);
   int current_block = 0;
 
+  // Step 1: Divide the lattice into `b` blocks using BFS
   while (current_block < b) {
     int target_size = (current_block == b - 1) ? (base_size + surplus) : base_size;
 
@@ -602,6 +595,7 @@ std::vector<int> CppDivideLattice(const std::vector<std::vector<int>>& nb, int b
     q.push(start);
     visited[start] = true;
 
+    // Perform BFS to collect connected nodes for the current block
     while (!q.empty() && static_cast<int>(block_members.size()) < target_size) {
       int current = q.front();
       q.pop();
@@ -634,12 +628,35 @@ std::vector<int> CppDivideLattice(const std::vector<std::vector<int>>& nb, int b
       }
     }
 
-    // Assign label
+    // Assign label to all members of the current block
     for (int idx : block_members) {
       labels[idx] = current_block;
     }
 
     ++current_block;
+  }
+
+  // Step 2: Check for isolated units and merge them into the smallest neighboring block
+  for (int i = 0; i < N; ++i) {
+    bool is_isolated = true;
+    for (int neighbor : nb[i]) {
+      if (labels[neighbor] == labels[i]) {
+        is_isolated = false;
+        break;
+      }
+    }
+    if (is_isolated) {
+      // Find the smallest block among neighbors
+      int smallest_block = b; // Initialize with an invalid value
+      for (int neighbor : nb[i]) {
+        if (labels[neighbor] != -1 && labels[neighbor] < smallest_block) {
+          smallest_block = labels[neighbor];
+        }
+      }
+      if (smallest_block != b) {
+        labels[i] = smallest_block; // Merge into the smallest neighboring block
+      }
+    }
   }
 
   return labels;
