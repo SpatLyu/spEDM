@@ -150,7 +150,7 @@ Rcpp::IntegerMatrix RcppGenLatticeNeighbors(const Rcpp::NumericVector& vec,
   return result;
 }
 
-// Wrapper function to mplements a symbolic transformation of a univariate spatial lattice data
+// Wrapper function to implement a symbolic transformation of a univariate spatial lattice data
 // [[Rcpp::export]]
 Rcpp::NumericVector RcppGenLatticeSymbolization(const Rcpp::NumericVector& vec,
                                                 const Rcpp::List& nb,
@@ -166,6 +166,19 @@ Rcpp::NumericVector RcppGenLatticeSymbolization(const Rcpp::NumericVector& vec,
 
   // Convert the result back to Rcpp::NumericVector
   return Rcpp::wrap(symbolmap);
+}
+
+// Wrapper function to implement a symbolic transformation of a univariate spatial lattice data
+// [[Rcpp::export]]
+Rcpp::IntegerVector RcppDivideLattice(const Rcpp::List& nb,int b) {
+  // Convert Rcpp::List to std::vector<std::vector<int>>
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
+
+  //  Divide a spatial lattice into connected blocks
+  std::vector<int> blocks = CppDivideLattice(nb_vec, b);
+
+  // Convert the result back to Rcpp::IntegerVector
+  return Rcpp::wrap(blocks);
 }
 
 /**
