@@ -9,31 +9,37 @@
 
 /**
  * @brief Computes the directional symbolic causality strength between two spatial variables
- *        based on lattice neighborhood structure and optional symbolization.
+ *        over a lattice structure using lattice-based embedding and optional symbolization.
  *
- * This function implements a symbolic causality test for spatial data over lattice structures.
- * It evaluates whether variable x symbolically Granger-causes variable y using entropy-based
- * measures on either the raw or symbolized values of x and y, depending on the `symbolize` flag.
+ * This function implements a symbolic causality analysis between two spatial variables `x` and `y`,
+ * aligned on a regular lattice (e.g., grid). It is designed for spatial processes and uses
+ * lattice-based neighbor embedding and symbolization to quantify directional influence.
  *
- * Specifically, the function calculates:
- *   - H(y): the entropy of y (or symbolized y if `symbolize` is true).
- *   - H(y | x): the conditional entropy of y given x (or symbolized x if `symbolize` is true).
- *   - H(x): the entropy of x (or symbolized x).
- *   - H(x | y): the conditional entropy of x given y (or symbolized y).
- * Then it computes:
- *   - sc_x_to_y = H(y) - H(y | x): symbolic causality strength from x to y.
- *   - sc_y_to_x = H(x) - H(x | y): symbolic causality strength from y to x.
+ * The method proceeds as follows:
+ * 1. **Embedding**: For each location, the function embeds `x` and `y` into a new series `wx` and `wy`,
+ *    which incorporate spatial lagged information using a neighborhood structure (`nb`).
+ * 2. **Symbolization (optional)**: If `symbolize = true`, both the original (`x`, `y`) and embedded (`wx`, `wy`)
+ *    vectors are symbolized using lattice-based quantization with `k` symbols (bins).
+ * 3. **Entropy & Joint Entropy Calculation**:
+ *    - \( H(wx), H(wy), H(wx, wy) \)
+ *    - \( H(x, wx), H(y, wy) \)
+ *    - \( H(wx, wy, x), H(wx, wy, y) \)
+ * 4. **Symbolic Causality Strength Computation**:
+ *    - \( sc_{x \rightarrow y} = [H(y, wy) - H(wy)] - [H(wx, wy, y) - H(wx, wy)] \)
+ *    - \( sc_{y \rightarrow x} = [H(x, wx) - H(wx)] - [H(wx, wy, x) - H(wx, wy)] \)
+ *    These represent the reduction in uncertainty (entropy) of `y` (or `x`) due to knowledge of `x` (or `y`)
+ *    in the context of spatial lags.
  *
- * @param x         Input vector of variable x, aligned with a lattice/grid.
- * @param y         Input vector of variable y, aligned with the same lattice/grid.
+ * @param x         Input vector of spatial variable x, aligned with a lattice/grid.
+ * @param y         Input vector of spatial variable y, aligned with the same lattice/grid.
  * @param nb        Neighborhood list for each lattice location (e.g., rook or queen neighbors).
- * @param k         Number of neighbors used in lattice symbolization.
- * @param base      Logarithm base for entropy calculation (default is 2).
- * @param symbolize Whether to perform lattice-based symbolization on x and y before entropy computation.
+ * @param k         Number of discrete symbols used in lattice symbolization.
+ * @param base      Base of logarithm used in entropy computation (default is 2).
+ * @param symbolize If true, apply lattice-based symbolization before entropy calculation.
  *
- * @return A std::vector<double> of length 2:
- *         [0] sc_x_to_y — symbolic causality strength from x to y;
- *         [1] sc_y_to_x — symbolic causality strength from y to x.
+ * @return A std::vector<double> of size 2:
+ *         - [0] Symbolic causality strength from x to y (sc_x_to_y)
+ *         - [1] Symbolic causality strength from y to x (sc_y_to_x)
  */
 std::vector<double> SCTSingle4Lattice(
     const std::vector<double>& x,
