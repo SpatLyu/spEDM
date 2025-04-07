@@ -132,4 +132,22 @@ std::vector<double> GenLatticeSymbolization(
     const std::vector<std::vector<int>>& nb,
     size_t k);
 
+/**
+ * @brief Divide a spatial lattice into connected blocks of approximately equal size.
+ *
+ * This function partitions a spatial domain represented by an adjacency list (neighbor structure)
+ * into `b` spatially contiguous blocks. It ensures that each block is connected and handles isolated
+ * units by merging them into the smallest neighboring block.
+ *
+ * @param nb A vector of vectors representing the adjacency list (i.e., neighboring indices)
+ *           for each spatial unit; `nb[i]` contains the indices of neighbors of unit `i`.
+ * @param b  The number of blocks to divide the lattice into.
+ *
+ * @return A vector of integers of length `N` where each entry corresponds to the assigned block label
+ *         (ranging from 0 to b-1) of the spatial unit at that index.
+ */
+std::vector<int> CppDivideLattice(
+    const std::vector<std::vector<int>>& nb,
+    int b);
+
 #endif // CppLatticeUtils_H

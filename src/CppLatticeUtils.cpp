@@ -550,3 +550,114 @@ std::vector<double> GenLatticeSymbolization(
 
   return result;
 }
+
+/**
+ * @brief Divide a spatial lattice into connected blocks of approximately equal size.
+ *
+ * This function partitions a spatial domain represented by an adjacency list (neighbor structure)
+ * into `b` spatially contiguous blocks. It ensures that each block is connected and handles isolated
+ * units by merging them into the smallest neighboring block.
+ *
+ * @param nb A vector of vectors representing the adjacency list (i.e., neighboring indices)
+ *           for each spatial unit; `nb[i]` contains the indices of neighbors of unit `i`.
+ * @param b  The number of blocks to divide the lattice into.
+ *
+ * @return A vector of integers of length `N` where each entry corresponds to the assigned block label
+ *         (ranging from 0 to b-1) of the spatial unit at that index.
+ */
+std::vector<int> CppDivideLattice(const std::vector<std::vector<int>>& nb, int b) {
+  int N = static_cast<int>(nb.size());
+  int base_size = N / b;
+  int surplus = N % b;
+
+  std::vector<bool> visited(N, false);
+  std::vector<int> labels(N, -1);
+  int current_block = 0;
+
+  // Step 1: Divide the lattice into `b` blocks using BFS
+  while (current_block < b) {
+    int target_size = (current_block == b - 1) ? (base_size + surplus) : base_size;
+
+    // Find the next unvisited starting point with the highest degree
+    int start = -1;
+    int max_degree = -1;
+    for (int i = 0; i < N; ++i) {
+      if (!visited[i] && static_cast<int>(nb[i].size()) > max_degree) {
+        start = i;
+        max_degree = nb[i].size();
+      }
+    }
+    if (start == -1) break; // no more unvisited nodes
+
+    std::queue<int> q;
+    std::vector<int> block_members;
+
+    q.push(start);
+    visited[start] = true;
+
+    // Perform BFS to collect connected nodes for the current block
+    while (!q.empty() && static_cast<int>(block_members.size()) < target_size) {
+      int current = q.front();
+      q.pop();
+
+      block_members.push_back(current);
+
+      for (int neighbor : nb[current]) {
+        if (!visited[neighbor]) {
+          visited[neighbor] = true;
+          q.push(neighbor);
+        }
+      }
+    }
+
+    // If not enough neighbors collected, prioritize connected unvisited nodes
+    for (int i = 0; static_cast<int>(block_members.size()) < target_size && i < N; ++i) {
+      if (!visited[i]) {
+        // Check if the node is connected to any block member
+        bool is_connected = false;
+        for (int member : block_members) {
+          if (std::find(nb[member].begin(), nb[member].end(), i) != nb[member].end()) {
+            is_connected = true;
+            break;
+          }
+        }
+        if (is_connected) {
+          visited[i] = true;
+          block_members.push_back(i);
+        }
+      }
+    }
+
+    // Assign label to all members of the current block
+    for (int idx : block_members) {
+      labels[idx] = current_block;
+    }
+
+    ++current_block;
+  }
+
+  // Step 2: Check for isolated units and merge them into the smallest neighboring block
+  for (int i = 0; i < N; ++i) {
+    bool is_isolated = true;
+    for (int neighbor : nb[i]) {
+      if (labels[neighbor] == labels[i]) {
+        is_isolated = false;
+        break;
+      }
+    }
+    if (is_isolated) {
+      // Find the smallest block among neighbors
+      int smallest_block = b; // Initialize with an invalid value
+      for (int neighbor : nb[i]) {
+        if (labels[neighbor] != -1 && labels[neighbor] < smallest_block) {
+          smallest_block = labels[neighbor];
+        }
+      }
+      if (smallest_block != b) {
+        labels[i] = smallest_block; // Merge into the smallest neighboring block
+      }
+    }
+  }
+
+  return labels;
+}
