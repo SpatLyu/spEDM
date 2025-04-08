@@ -17,6 +17,8 @@ navbar:
         href: articles/spEDM.html
       - text: State Space Reconstruction (SSR)
         href: articles/SSR.html
+      - text: Spatial (Granger) Causality Test (SCT)
+        href: articles/SCT.html
       - text: Geographical Convergent Cross Mapping (GCCM)
         href: articles/GCCM.html
 
