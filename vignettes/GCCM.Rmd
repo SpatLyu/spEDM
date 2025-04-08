@@ -1,7 +1,7 @@
 ---
 title: "Geographical Convergent Cross Mapping (GCCM)"
 author: "Wenbo Lv"
-date: "2025-03-21"
+date: "2025-03-31"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{GCCM}
@@ -11,24 +11,76 @@ vignette: >
 
 
 
-## 1.1 Install the `spEDM` package
+## Model principles
 
-Install the stable version from [CRAN](https://CRAN.R-project.org/package=spEDM) with:
+Let $Y = \{y_i\}$ and $X = \{x_i\}$ be the two spatial cross sectional variable, where $i = 1, 2, \dots, n$ denotes spatial units (e.g., regions or grid cells), the shadow manifolds of $X$ can be constructed using the different spatial lag values of all spatial units:
 
-```r
-install.packages("spEDM", dep = TRUE)
-```
+$$
+M_{x} = \begin{bmatrix}
+S_{(1)}(x_1) & S_{(1 + \tau)}(x_1) & \cdots & S_{(1+(E-1)\tau)}(x_1) \\
+S_{(1)}(x_2) & S_{(1 + \tau)}(x_2) & \cdots & S_{(1+(E-1)\tau)}(x_2) \\
+\vdots & \vdots & \ddots & \vdots \\
+S_{(1)}(x_n) & S_{(1 + \tau)}(x_n) & \cdots & S_{(1+(E-1)\tau)}(x_n)
+\end{bmatrix}
+$$
 
-Alternatively, you can install the development version from [R-universe](https://stscl.r-universe.dev/spEDM) with:
+Here, $S_{(j)}(x_i)$ denotes the $j$ th-order spatial lag value of spatial unit $i$, $\tau $ is the step size for the spatial lag order, and $E$ is the embedding dimension and $M_{x}$ corresponds to the shadow manifolds of $X$.
 
-``` r
-install.packages("spEDM",
-                 repos = c("https://stscl.r-universe.dev",
-                           "https://cloud.r-project.org"),
-                 dep = TRUE)
-```
+With the reconstructed shadow manifolds $M_{x}$, the state of Y can be predicted with the state of X through
 
-## 1.2 An example of spatial lattice data
+$$
+\hat{Y}_s \mid M_x = \sum\limits_{i=1}^k \left(\omega_{si}Y_{si} \mid M_x \right)
+$$
+
+where $s$ represents a spatial unit at which the value of $Y$ needs to be predicted, $\hat{Y}_s$ is the prediction result, $k$ is the number of nearest neighbors used for prediction, $si$ is the spatial unit used in the prediction, $Y_{si}$ is the observation value of $Y$ at $si$. $\omega_{si}$ is the corresponding weight defined as:
+
+$$
+\omega_{si} \mid M_x = \frac{weight \left(\psi\left(M_x,s_i\right),\psi\left(M_x,s\right)\right)}{\sum_{i=1}^{L+1}weight \left(\psi\left(M_x,s_i\right),\psi\left(M_x,s\right)\right)}
+$$
+
+where $\psi(M_x, s_i)$ is the state vector of spatial unit $s_i$ in the shadow manifold $ M_x$, and $weight (\ast, \ast)$ is the weight function between two states in the shadow manifold, defined as:
+
+$$
+weight \left(\psi\left(M_x,s_i\right),\psi\left(M_x,s\right)\right) =
+\exp \left(- \frac{dis \left(\psi\left(M_x,s_i\right),\psi\left(M_x,s\right)\right)}{dis \left(\psi\left(M_x,s_1\right),\psi\left(M_x,s\right)\right)} \right)
+$$
+
+where $\exp$ is the exponential function and $dis \left(\ast,\ast\right)$ represents the distance function between two states in the shadow manifold defined as:
+
+
+$$
+dis \left( \psi(M_x, s_i), \psi(M_x, s) \right) = \frac{1}{E} \sum_{m=1}^{E} \left| \psi_m(M_x, s_i) - \psi_m(M_x, s) \right|
+$$
+
+where $dis \left( \psi(M_x, s_i), \psi(M_x, s) \right)$ denotes the average absolute difference between corresponding elements of the two state vectors in the shadow manifold $M_x$, $E$ is the embedding dimension, and $\psi_m(M_x, s_i)$ is the $m$-th element of the state vector $\psi(M_x, s_i)$.
+
+The skill of cross-mapping prediction $\rho$ is measured by the Pearson correlation coefficient between the true observations and corresponding predictions, and the confidence interval of $\rho$ can be estimated based the $z$-statistics with the normal distribution:
+
+$$
+\rho = \frac{Cov\left(Y,\hat{Y}\mid M_x\right)}{\sqrt{Var\left(Y\right) Var\left(\hat{Y}\mid M_x\right)}}
+$$
+
+$$
+t = \rho \sqrt{\frac{n-2}{1-\rho^2}}
+$$
+
+where $n$ is the number of observations to be predicted, and
+
+$$
+z = \frac{1}{2} \ln \left(\frac{1+\rho}{1-\rho}\right)
+$$
+
+The prediction skill $\rho$ varies by setting different sizes of libraries, which means the quantity of observations used in reconstruction of the shadow manifold. We can use the convergence of $\rho$ to infer the causal associations. For GCCM, the convergence means that $\rho$ increases with the size of libraries and is statistically significant when the library becomes largest.
+
+$$
+\rho_{x \to y} = \lim_{L \to \infty} cor \left( Y,\hat{Y}\mid M_x \right)
+$$
+
+where $\rho_{x \to y}$ is the correlation after convergence, used to measure the causation effect from $Y$ to $X$, despite the notation suggesting the reverse direction.
+
+## Usage examples
+
+### An example of spatial lattice data
 
 Load the `spEDM` package and its county-level population density data:
 
@@ -39,14 +91,6 @@ library(spEDM)
 popd_nb = spdep::read.gal(system.file("case/popd_nb.gal",package = "spEDM"))
 ## Warning in spdep::read.gal(system.file("case/popd_nb.gal", package = "spEDM")):
 ## neighbour object has 4 sub-graphs
-popd_nb
-## Neighbour list object:
-## Number of regions: 2806 
-## Number of nonzero links: 15942 
-## Percentage nonzero weights: 0.2024732 
-## Average number of links: 5.681397 
-## 4 disjoint connected subgraphs
-
 popd = readr::read_csv(system.file("case/popd.csv",package = "spEDM"))
 ## Rows: 2806 Columns: 7
 ## ── Column specification ────────────────────────────────────────────────────────────────────────────
@@ -55,22 +99,6 @@ popd = readr::read_csv(system.file("case/popd.csv",package = "spEDM"))
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-popd
-## # A tibble: 2,806 × 7
-##        x     y  popd  elev   tem   pre slope
-##    <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
-##  1  117.  30.5  780.     8  17.4 1528. 0.452
-##  2  117.  30.6  395.    48  17.2 1487. 0.842
-##  3  117.  30.8  261.    49  16.0 1456. 3.56 
-##  4  116.  30.1  258.    23  17.4 1555. 0.932
-##  5  116.  30.5  211.   101  16.3 1494. 3.34 
-##  6  117.  31.0  386.    10  16.6 1382. 1.65 
-##  7  117.  30.2  350.    23  17.5 1569. 0.346
-##  8  117.  30.7  470.    22  17.1 1493. 1.88 
-##  9  117.  30.6 1226.    11  17.4 1526. 0.208
-## 10  116.  30.9  137.   598  13.9 1458. 5.92 
-## # ℹ 2,796 more rows
-
 popd_sf = sf::st_as_sf(popd, coords = c("x","y"), crs = 4326)
 popd_sf
 ## Simple feature collection with 2806 features and 5 fields
@@ -125,7 +153,7 @@ pd_res = gccm(data = popd_sf,
               progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 5.75923 mins
+## Time difference of 5.85621 mins
 pd_res
 ##    libsizes  pre->popd  popd->pre
 ## 1        10 0.05589905 0.01004636
@@ -168,13 +196,14 @@ plot(pd_res,xlimits = c(0, 2800)) +
 
 ![**Figure 1**. The cross-mapping prediction outputs between population density and county-level precipitation.](../man/figures/gccm/fig1-1.png)
 
-## 1.3 An example of spatial grid data
+### An example of spatial grid data
 
 Load the `spEDM` package and its farmland NPP data:
 
 
 ``` r
 library(spEDM)
+
 npp = terra::rast(system.file("case/npp.tif", package = "spEDM"))
 npp
 ## class       : SpatRaster 
@@ -187,20 +216,7 @@ npp
 ## min values  :   164.00,   384.3409, -47.8194, -122.2004 
 ## max values  : 16606.33, 23878.3555, 263.6938, 5350.4902
 
-# configure the default colormap in terra
-options(terra.pal = grDevices::terrain.colors(100,rev = T))
-# visualize raster data
-terra::plot(npp, nc = 2,
-            axes = FALSE,
-            legend = FALSE)
-```
-
-![**Figure 2**. Maps of farmland NPP and climate factors.](../man/figures/gccm/fig2-1.png)
-
-*To save the computation time, we will aggregate the data by 3 times and select 1500 non-NA pixels to predict:*
-
-
-``` r
+# To save the computation time, we will aggregate the data by 3 times
 npp = terra::aggregate(npp, fact = 3, na.rm = TRUE)
 npp
 ## class       : SpatRaster 
@@ -212,6 +228,8 @@ npp
 ## names       :      npp,        pre,      tem,      elev 
 ## min values  :   187.50,   390.3351, -47.8194, -110.1494 
 ## max values  : 15381.89, 23734.5330, 262.8576, 5217.6431
+
+# Inspect NA values
 terra::global(npp,"isNA")
 ##       isNA
 ## npp  14815
@@ -220,12 +238,12 @@ terra::global(npp,"isNA")
 ## elev 14760
 terra::ncell(npp)
 ## [1] 21735
-
 nnamat = terra::as.matrix(npp[[1]], wide = TRUE)
 nnaindice = which(!is.na(nnamat), arr.ind = TRUE)
 dim(nnaindice)
 ## [1] 6920    2
 
+# Select 1500 non-NA pixels to predict:
 set.seed(2025)
 indices = sample(nrow(nnaindice), size = 1500, replace = FALSE)
 libindice = nnaindice[-indices,]
@@ -264,7 +282,7 @@ npp_res = gccm(data = npp,
                progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 9.433306 mins
+## Time difference of 9.490029 mins
 npp_res
 ##    libsizes  pre->npp  npp->pre
 ## 1        10 0.1295281 0.1013898
@@ -293,4 +311,4 @@ plot(npp_res,xlimits = c(9, 161),ylimits = c(0.05,1)) +
   ggplot2::theme(legend.justification = c(0.25,1))
 ```
 
-![**Figure 3**. The cross-mapping prediction outputs between farmland NPP and precipitation.](../man/figures/gccm/fig3-1.png)
+![**Figure 2**. The cross-mapping prediction outputs between farmland NPP and precipitation.](../man/figures/gccm/fig2-1.png)
