@@ -6,7 +6,7 @@
 
 ### enhancements
 
-* Add references for algorithms in `spEDM` (#367).
+* Include references for algorithms in `spEDM` (#367).
 
 ### breaking changes
 
@@ -31,8 +31,6 @@
 * Add `trend.rm` option in the R API for `embedded`, `simplex`, and `smap` methods to align with `gccm` behavior (#191).
 
 * Refactor indexing of lag values and embedding vector generation for spatial lattice ([#186](https://github.com/stscl/spEDM/pull/186),[#184](https://github.com/stscl/spEDM/pull/184)) and grid data ([#183](https://github.com/stscl/spEDM/pull/183),[#181](https://github.com/stscl/spEDM/pull/181)).
-
-* Centered around example cases in the `gccm` vignette (#170).
 
 ### breaking changes
 
