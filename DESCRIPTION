@@ -32,5 +32,6 @@ Suggests:
     RcppThread,
     RcppArmadillo,
     rmarkdown,
-    readr
+    readr,
+    plot3D
 VignetteBuilder: knitr
