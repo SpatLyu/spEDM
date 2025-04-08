@@ -46,7 +46,7 @@ The *spEDM* package provides four representative datasets with well-known causat
 
 1. The **Columbus OH** dataset: a classic spatial analysis dataset frequently used in spatial econometrics (store relevant information in the `columbus.gpkg` file).  
 2. A county-level dataset of **population density and its potential drivers** in mainland China (store relevant information in the `popd.csv` and `popd_nb.gal` files).  
-3. A **soil Cu heavy metal contamination dataset: Cu content in the soil and variables of nighttime lights and industrial density (store relevant information in the `cu.tif` files).
+3. A **soil Cu heavy metal contamination** dataset: Cu content in the soil and variables of nighttime lights and industrial density (store relevant information in the `cu.tif` files).
 4. A **farmland NPP and climate** dataset for mainland China, capturing spatial dynamics between agricultural productivity and climatic variables (store relevant information in the `npp.tif` files).
 
 ### Columbus OH spatial analysis dataset
@@ -58,34 +58,45 @@ columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 columbus
 ```
 
-### Columbus OH spatial analysis dataset
+### County-level population density in mainland China
 
-```{r columbus}
+```{r popd}
 library(spEDM)
 
-columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
-columbus
+popd_nb = spdep::read.gal(system.file("case/popd_nb.gal",package = "spEDM"))
+popd_nb
+
+popd = readr::read_csv(system.file("case/popd.csv",package = "spEDM"))
+popd
+
+popd_sf = sf::st_as_sf(popd, coords = c("x","y"), crs = 4326)
+popd_sf
 ```
 
-### Columbus OH spatial analysis dataset
+### Soil Cu heavy metal contamination
 
-```{r columbus}
+```{r cu,fig.width=6.55,fig.height=2.60,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. Maps of soil Cu contamination, the density of industrial pollutants and nightlight."}
 library(spEDM)
 
-columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
-columbus
+cu = terra::rast(system.file("case/cu.tif", package="spEDM"))
+cu
+
+options(terra.pal = grDevices::terrain.colors(100,rev = T))
+terra::plot(cu, nc = 3,
+            mar = rep(0.1,4),
+            oma = rep(0.1,4),
+            axes = FALSE,
+            legend = FALSE)
 ```
 
-Farmland NPP and climatic variables in mainland China
+### Farmland NPP and climatic variables in mainland China
 
 ```{r npp,fig.width=4.75,fig.height=4.5,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. Maps of farmland NPP and climate factors.")}
 library(spEDM)
 npp = terra::rast(system.file("case/npp.tif", package = "spEDM"))
 npp
 
-# configure the default colormap in terra
 options(terra.pal = grDevices::terrain.colors(100,rev = T))
-# visualize raster data
 terra::plot(npp, nc = 2,
             axes = FALSE,
             legend = FALSE)
