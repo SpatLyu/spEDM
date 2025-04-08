@@ -17,23 +17,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-## 1.1 Install the `spEDM` package
-
-Install the stable version from [CRAN](https://CRAN.R-project.org/package=spEDM) with:
-
-```r
-install.packages("spEDM", dep = TRUE)
-```
-
-Alternatively, you can install the development version from [R-universe](https://stscl.r-universe.dev/spEDM) with:
-
-```r
-install.packages("spEDM",
-                 repos = c("https://stscl.r-universe.dev",
-                           "https://cloud.r-project.org"),
-                 dep = TRUE)
-```
-
 ## 1.2 Spatial State Space Reconstruction (S-SSR)
 
 Takens’ theory proves that, for a dynamic system $\phi$, if its trajectory converges to an attractor manifold $M$, which are consisted by a bounded and invariant set of states, then the mapping between $\phi$ and M can be built and time series observations of $\phi$ can be used to construct $M$. According to the generalized embedding theorem, for a compact $d$-dimensional manifold $M$ and a set of observation functions $\left<h_1,h_2,\ldots,h_L\right>$, the map $\psi_{\phi,h} = \left<h_1\left(x\right),h_2\left(x\right),\ldots,h_L\left(x\right)\right>$ is an embedding of $M$ with $L = 2d + 1$. Here embedding means a one-to-one map resolving all singularities of the original manifold. The elements $h_i$ can be lags of observations from single time series observations, lags of observations from multiple time series, or multiple observation functions. The first two constructions are only special cases of the third one. This framework also applies to spatial cross-sectional data.

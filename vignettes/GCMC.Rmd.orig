@@ -17,23 +17,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-## 1.1 Install the `spEDM` package
-
-Install the stable version from [CRAN](https://CRAN.R-project.org/package=spEDM) with:
-
-```r
-install.packages("spEDM", dep = TRUE)
-```
-
-Alternatively, you can install the development version from [R-universe](https://stscl.r-universe.dev/spEDM) with:
-
-```r
-install.packages("spEDM",
-                 repos = c("https://stscl.r-universe.dev",
-                           "https://cloud.r-project.org"),
-                 dep = TRUE)
-```
-
 ## 1.2 An example of spatial lattice data
 
 Load the `spEDM` package and its county-level population density data:
