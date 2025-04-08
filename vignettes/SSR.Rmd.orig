@@ -19,12 +19,6 @@ knitr::opts_chunk$set(
 
 ## Spatial State Space Reconstruction (S-SSR)
 
-当然！以下是将你提供的“原理陈述”和“实际操作”内容有机整合后的英文版本，适合放入 R 包 vignette 的 *Model Principle*（模型原理）章节中。整体逻辑清晰，术语规范，并具有一定的教程风格：
-
----
-
-## Model Principle
-
 Takens’ theory proves that for a dynamical system $\phi$, if its trajectory converges to an attractor manifold $M$—a bounded and invariant set of states—then there exists a smooth mapping between the system $\phi$ and its attractor $M$. Consequently, the time series observations of $\phi$ can be used to reconstruct the structure of $M$ through delay embedding.
 
 According to the generalized embedding theorem, for a compact $d$-dimensional manifold $M$ and a set of observation functions $\langle h_1, h_2, \ldots, h_L \rangle$, the mapping $\psi_{\phi,h}(x) = \langle h_1(x), h_2(x), \ldots, h_L(x) \rangle$ is an embedding of $M$ when $L \geq 2d + 1$. Here, *embedding* refers to a one-to-one map that resolves all singularities of the original manifold. The observation functions $h_i$ can take the form of time-lagged values from a single time series, lags from multiple time series, or even completely distinct measurements. The former two are simply special cases of the third.
