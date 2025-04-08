@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-The *spEDM* package is an open-source, computationally efficient toolkit designed to provide a unified API for **Spatial Empirical Dynamic Modeling**. It supports a suite of prediction-based causal inference algorithms, including *spatial granger causality test*, *spatial state-space reconstruction*, and *geographically convergent cross mapping*.  
+The *spEDM* package is an open-source, computationally efficient toolkit designed to provide a unified API for **Spatial Empirical Dynamic Modeling**. It supports a suite of prediction-based causal inference algorithms, including *spatial granger causality test*, *spatial state-space reconstruction*, and *geographically convergent cross mapping*.
 
 To facilitate learning and application, *spEDM* includes four typical spatial cross-sectional datasets along with illustrative use cases for each of the core algorithms.
 
@@ -44,8 +44,8 @@ install.packages("spEDM",
 
 The *spEDM* package provides four representative datasets with well-known causation to demonstrate its functionality:
 
-1. The **Columbus OH** dataset: a classic spatial analysis dataset frequently used in spatial econometrics (store relevant information in the `columbus.gpkg` file).  
-2. A county-level dataset of **population density and its potential drivers** in mainland China (store relevant information in the `popd.csv` and `popd_nb.gal` files).  
+1. The **Columbus OH** dataset: a classic spatial analysis dataset frequently used in spatial econometrics (store relevant information in the `columbus.gpkg` file).
+2. A county-level dataset of **population density and its potential drivers** in mainland China (store relevant information in the `popd.csv` and `popd_nb.gal` files).
 3. A **soil Cu heavy metal contamination** dataset: Cu content in the soil and variables of nighttime lights and industrial density (store relevant information in the `cu.tif` files).
 4. A **farmland NPP and climate** dataset for mainland China, capturing spatial dynamics between agricultural productivity and climatic variables (store relevant information in the `npp.tif` files).
 
@@ -75,7 +75,7 @@ popd_sf
 
 ### Soil Cu heavy metal contamination
 
-```{r cu,fig.width=6.55,fig.height=2.60,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. Maps of soil Cu contamination, the density of industrial pollutants and nightlight."}
+```{r cu,fig.width=6.55,fig.height=2.60,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. Maps of soil Cu contamination, the density of industrial pollutants and nightlight.")}
 library(spEDM)
 
 cu = terra::rast(system.file("case/cu.tif", package="spEDM"))
