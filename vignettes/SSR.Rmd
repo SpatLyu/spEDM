@@ -36,8 +36,8 @@ Load the `spEDM` package and its county-level population density data:
 library(spEDM)
 
 popd_nb = spdep::read.gal(system.file("case/popd_nb.gal",package = "spEDM"))
-## Warning in spdep::read.gal(system.file("case/popd_nb.gal", package = "spEDM")): neighbour
-## object has 4 sub-graphs
+## Warning in spdep::read.gal(system.file("case/popd_nb.gal", package =
+## "spEDM")): neighbour object has 4 sub-graphs
 popd_nb
 ## Neighbour list object:
 ## Number of regions: 2806 
@@ -48,7 +48,7 @@ popd_nb
 
 popd = readr::read_csv(system.file("case/popd.csv",package = "spEDM"))
 ## Rows: 2806 Columns: 7
-## ── Column specification ───────────────────────────────────────────────────────────────────────
+## ── Column specification ─────────────────────────────────────────────────────
 ## Delimiter: ","
 ## dbl (7): x, y, popd, elev, tem, pre, slope
 ## 
@@ -114,7 +114,10 @@ plot3D::scatter3D(v[,2], v[,5], v[,6], colvar = NULL, pch = 19,
                   bty = "f", clab = NA, tickmarks = FALSE)
 ```
 
-![**Figure 1**. The reconstructed shadow manifolds for `popd`.](../man/figures/ssr/fig1-1.png)
+<div class="figure" style="text-align: center">
+<img src="../man/figures/ssr/fig1-1.png" alt="**Figure 1**. The reconstructed shadow manifolds for `popd`."  />
+<p class="caption">**Figure 1**. The reconstructed shadow manifolds for `popd`.</p>
+</div>
 
 ### An example of spatial grid data
 
@@ -158,6 +161,9 @@ plot3D::scatter3D(r[,1], r[,5], r[,9], colvar = NULL, pch = 19,
                   bty = "f", clab = NA, tickmarks = FALSE)
 ```
 
-![**Figure 2**. The reconstructed shadow manifolds for `cu`.](../man/figures/ssr/fig2-1.png)
+<div class="figure" style="text-align: center">
+<img src="../man/figures/ssr/fig2-1.png" alt="**Figure 2**. The reconstructed shadow manifolds for `cu`."  />
+<p class="caption">**Figure 2**. The reconstructed shadow manifolds for `cu`.</p>
+</div>
 
 ## Determination of Embedding Dimension $E$ and Spatial Lag Step $\tau$
