@@ -2,9 +2,11 @@
 
 ### new
 
-* Provide an R-level API for spatial (granger) causality test (#403).
+* Provide R-level API and vignette for spatial (granger) causality test (#403).
 
 ### enhancements
+
+* Introduce `SSR` vignette for spatial cross-sectional data state-space reconstruction (#412).
 
 * Include references for algorithms in `spEDM` (#367).
 
