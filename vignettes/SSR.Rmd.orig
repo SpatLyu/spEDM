@@ -35,25 +35,32 @@ where $h_{s(i)}(x)$ denotes the observation function of the $i$-th order spatial
 
 ### An example of spatial lattice data
 
-Load the `spEDM` package and its columbus OH spatial analysis dataset:
+Load the `spEDM` package and its county-level population density data:
 
 ```{r load_lattice_data}
 library(spEDM)
 
-columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
-columbus
+popd_nb = spdep::read.gal(system.file("case/popd_nb.gal",package = "spEDM"))
+popd_nb
+
+popd = readr::read_csv(system.file("case/popd.csv",package = "spEDM"))
+popd
+
+popd_sf = sf::st_as_sf(popd, coords = c("x","y"), crs = 4326)
+popd_sf
 ```
 
-Embedding the variable `crime` from columbus OH spatial analysis dataset:
+Embedding the variable `popd` from county-level population density:
 
 ```{r embed_lattice_data}
-v = embedded(columbus,"crime",E = 9,tau = 0,trend.rm = FALSE)
+v = embedded(popd_sf,"popd",E = 9,tau = 0,trend.rm = FALSE)
 v[1:5,c(1,5,9)]
 ```
 
-```{r fig1,fig.width=5.5,fig.height=4.45,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. The cross-mapping prediction outputs between population density and county-level precipitation.")}
-plot(pd_res,xlimits = c(0, 2800)) +
-  ggplot2::theme(legend.justification = c(0.85,1))
+```{r fig1,fig.width=4.5,fig.height=4.5,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. The reconstructed shadow manifolds for `popd`.")}
+plot3D::scatter3D(v[,2], v[,5], v[,6], colvar = NULL, pch = 19,
+                  col = "red", theta = 45, phi = 10, cex = 0.45,
+                  bty = "f", clab = NA, tickmarks = FALSE)
 ```
 
 ### An example of spatial grid data
@@ -72,6 +79,12 @@ Embedding the variable `cu` from soil pollution data:
 ```{r embed_grid_data}
 r = spEDM::embedded(cu,"cu",E = 9,tau = 0,trend.rm = FALSE)
 r[1:5,c(1,5,9)]
+```
+
+```{r fig2,fig.width=4.5,fig.height=4.5,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. The reconstructed shadow manifolds for `cu`.")}
+plot3D::scatter3D(r[,1], r[,5], r[,9], colvar = NULL, pch = 19,
+                  col = "#e77854", theta = 45, phi = 10, cex = 0.45,
+                  bty = "f", clab = NA, tickmarks = FALSE)
 ```
 
 ## Determination of Embedding Dimension $E$ and Spatial Lag Step $\tau$
