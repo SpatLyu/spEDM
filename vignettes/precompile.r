@@ -4,7 +4,8 @@
   knitr::knit(inp,out)
 }
 
-.precompile_vignettes("SSR")
-.precompile_vignettes("SCT")
-.precompile_vignettes("GCCM")
-.precompile_vignettes("GCMC")
+vig = c("spEDM", "SSR", "SCT", "GCCM")
+
+for (v in vig) {
+  .precompile_vignettes(v)
+}

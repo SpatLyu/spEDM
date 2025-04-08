@@ -139,31 +139,24 @@ plot(pd_res,xlimits = c(0, 2800)) +
 
 Load the `spEDM` package and its farmland NPP data:
 
-```{r fig2,fig.width=4.75,fig.height=4.5,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. Maps of farmland NPP and climate factors.")}
+```{r load_grid_data}
 library(spEDM)
+
 npp = terra::rast(system.file("case/npp.tif", package = "spEDM"))
 npp
 
-# configure the default colormap in terra
-options(terra.pal = grDevices::terrain.colors(100,rev = T))
-# visualize raster data
-terra::plot(npp, nc = 2,
-            axes = FALSE,
-            legend = FALSE)
-```
-
-*To save the computation time, we will aggregate the data by 3 times and select 1500 non-NA pixels to predict:*
-
-```{r sample_grid}
+# To save the computation time, we will aggregate the data by 3 times
 npp = terra::aggregate(npp, fact = 3, na.rm = TRUE)
 npp
+
+# Inspect NA values
 terra::global(npp,"isNA")
 terra::ncell(npp)
-
 nnamat = terra::as.matrix(npp[[1]], wide = TRUE)
 nnaindice = which(!is.na(nnamat), arr.ind = TRUE)
 dim(nnaindice)
 
+# Select 1500 non-NA pixels to predict:
 set.seed(2025)
 indices = sample(nrow(nnaindice), size = 1500, replace = FALSE)
 libindice = nnaindice[-indices,]
@@ -202,7 +195,7 @@ npp_res
 
 Visualize the result:
 
-```{r fig3,fig.width=4.5,fig.height=3.5,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 3**. The cross-mapping prediction outputs between farmland NPP and precipitation.")}
+```{r fig2,fig.width=4.5,fig.height=3.5,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. The cross-mapping prediction outputs between farmland NPP and precipitation.")}
 plot(npp_res,xlimits = c(9, 161),ylimits = c(0.05,1)) +
   ggplot2::theme(legend.justification = c(0.25,1))
 ```

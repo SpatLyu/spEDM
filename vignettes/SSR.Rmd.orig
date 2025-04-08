@@ -41,11 +41,7 @@ Load the `spEDM` package and its county-level population density data:
 library(spEDM)
 
 popd_nb = spdep::read.gal(system.file("case/popd_nb.gal",package = "spEDM"))
-popd_nb
-
 popd = readr::read_csv(system.file("case/popd.csv",package = "spEDM"))
-popd
-
 popd_sf = sf::st_as_sf(popd, coords = c("x","y"), crs = 4326)
 popd_sf
 ```
