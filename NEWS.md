@@ -4,6 +4,8 @@
 
 * Provide an R-level API for spatial (granger) causality test (#403).
 
+### enhancements
+
 * Add references for algorithms in `spEDM` (#367).
 
 ### breaking changes
