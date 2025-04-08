@@ -13,6 +13,8 @@ navbar:
     articles:
       text: Vignettes
       menu:
+      - text: State Space Reconstruction (SSR)
+        href: articles/SSR.html
       - text: Geographical Convergent Cross Mapping (GCCM)
         href: articles/GCCM.html
 

@@ -1,5 +1,10 @@
-knitr::knit("vignettes/GCCM.Rmd.orig",
-            "vignettes/GCCM.Rmd")
+.precompile_vignettes = \(name){
+  out = paste0("vignettes/",name,".Rmd")
+  inp = paste0(out,".orig")
+  knitr::knit(inp,out)
+}
 
-# knitr::knit("vignettes/GCMC.Rmd.orig",
-#             "vignettes/GCMC.Rmd")
+.precompile_vignettes("SSR")
+.precompile_vignettes("SCT")
+.precompile_vignettes("GCCM")
+.precompile_vignettes("GCMC")
