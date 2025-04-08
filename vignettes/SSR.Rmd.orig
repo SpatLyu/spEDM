@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 ## Spatial State Space Reconstruction (S-SSR)
 
-Takens’ theory proves that for a dynamical system $\phi$, if its trajectory converges to an attractor manifold $M$—a bounded and invariant set of states—then there exists a smooth mapping between the system $\phi$ and its attractor $M$. Consequently, the time series observations of $\phi$ can be used to reconstruct the structure of $M$ through delay embedding.
+Takens theory proves that for a dynamical system $\phi$, if its trajectory converges to an attractor manifold $M$—a bounded and invariant set of states—then there exists a smooth mapping between the system $\phi$ and its attractor $M$. Consequently, the time series observations of $\phi$ can be used to reconstruct the structure of $M$ through delay embedding.
 
 According to the generalized embedding theorem, for a compact $d$-dimensional manifold $M$ and a set of observation functions $\langle h_1, h_2, \ldots, h_L \rangle$, the mapping $\psi_{\phi,h}(x) = \langle h_1(x), h_2(x), \ldots, h_L(x) \rangle$ is an embedding of $M$ when $L \geq 2d + 1$. Here, *embedding* refers to a one-to-one map that resolves all singularities of the original manifold. The observation functions $h_i$ can take the form of time-lagged values from a single time series, lags from multiple time series, or even completely distinct measurements. The former two are simply special cases of the third.
 
@@ -48,6 +48,12 @@ Embedding the variable `crime` from columbus OH spatial analysis dataset:
 
 ```{r embed_lattice_data}
 v = embedded(columbus,"crime",E = 9,tau = 0,trend.rm = FALSE)
+v[1:5,c(1,5,9)]
+```
+
+```{r fig1,fig.width=5.5,fig.height=4.45,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. The cross-mapping prediction outputs between population density and county-level precipitation.")}
+plot(pd_res,xlimits = c(0, 2800)) +
+  ggplot2::theme(legend.justification = c(0.85,1))
 ```
 
 ### An example of spatial grid data
@@ -65,6 +71,7 @@ Embedding the variable `cu` from soil pollution data:
 
 ```{r embed_grid_data}
 r = spEDM::embedded(cu,"cu",E = 9,tau = 0,trend.rm = FALSE)
+r[1:5,c(1,5,9)]
 ```
 
 ## Determination of Embedding Dimension $E$ and Spatial Lag Step $\tau$
