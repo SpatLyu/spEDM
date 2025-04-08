@@ -57,7 +57,7 @@ v = embedded(popd_sf,"popd",E = 9,tau = 0,trend.rm = FALSE)
 v[1:5,c(2,5,6)]
 ```
 
-```{r fig1,fig.width=4.25,fig.height=4.5,fig.dpi=100,fig.align='center',fig.cap=knitr::asis_output("**Figure 1**. The reconstructed shadow manifolds for `popd`.")}
+```{r fig1,fig.width=4.25,fig.height=4.5,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. The reconstructed shadow manifolds for `popd`.")}
 plot3D::scatter3D(v[,2], v[,5], v[,6], colvar = NULL, pch = 19,
                   col = "red", theta = 45, phi = 10, cex = 0.45,
                   bty = "f", clab = NA, tickmarks = FALSE)
@@ -81,7 +81,7 @@ r = spEDM::embedded(cu,"cu",E = 9,tau = 0,trend.rm = FALSE)
 r[1:5,c(1,5,9)]
 ```
 
-```{r fig2,fig.width=4.25,fig.height=4.5,fig.dpi=100,fig.align='center',fig.cap=knitr::asis_output("**Figure 2**. The reconstructed shadow manifolds for `cu`.")}
+```{r fig2,fig.width=4.25,fig.height=4.5,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. The reconstructed shadow manifolds for `cu`.")}
 plot3D::scatter3D(r[,1], r[,5], r[,9], colvar = NULL, pch = 19,
                   col = "#e77854", theta = 45, phi = 10, cex = 0.45,
                   bty = "f", clab = NA, tickmarks = FALSE)

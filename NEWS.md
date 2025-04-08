@@ -6,6 +6,8 @@
 
 ### enhancements
 
+* Document overall structure and usage of spEDM in a dedicated vignette (#415).
+
 * Introduce `SSR` vignette for spatial cross-sectional data state-space reconstruction (#412).
 
 * Include references for algorithms in `spEDM` (#367).
