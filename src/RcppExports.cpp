@@ -478,7 +478,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppGenLatticeNeighbors
-Rcpp::IntegerMatrix RcppGenLatticeNeighbors(const Rcpp::NumericVector& vec, const Rcpp::List& nb, int k);
+Rcpp::List RcppGenLatticeNeighbors(const Rcpp::NumericVector& vec, const Rcpp::List& nb, int k);
 RcppExport SEXP _spEDM_RcppGenLatticeNeighbors(SEXP vecSEXP, SEXP nbSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
