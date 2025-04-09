@@ -29,7 +29,6 @@
  * @param y         2D grid of variable Y, same size as x.
  * @param k         Neighborhood size for symbolization (e.g., k = 1 implies 3×3 window).
  * @param base      Logarithm base used for entropy calculation (default is 2 for bits).
- * @param symbolize Whether to apply symbolization (currently assumed true by default).
  *
  * @return A std::vector<double> of two values:
  *         - sc_x_to_y: Directional spatial Granger causality from X to Y.
@@ -39,8 +38,7 @@ std::vector<double> SCTSingle4Grid(
     const std::vector<std::vector<double>>& x,
     const std::vector<std::vector<double>>& y,
     size_t k,
-    double base = 2,
-    bool symbolize = true
+    double base = 2
 ) {
   size_t rows = x.size();
   size_t cols = x[0].size();
