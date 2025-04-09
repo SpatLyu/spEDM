@@ -17,7 +17,7 @@ std::vector<std::vector<int>> nb2vec(const Rcpp::List& nb) {
   // Get the number of elements in the nb object
   int n = nb.size();
 
-  // Create a vector<vector<int>> to store the result
+  // Create a std::vector<std::vector<int>> to store the result
   std::vector<std::vector<int>> result(n);
 
   // Iterate over each element in the nb object
