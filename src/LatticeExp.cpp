@@ -125,9 +125,9 @@ Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec,
 
 // Wrapper function to generate neighbors for spatial lattice data
 // [[Rcpp::export]]
-Rcpp::IntegerMatrix RcppGenLatticeNeighbors(const Rcpp::NumericVector& vec,
-                                            const Rcpp::List& nb,
-                                            int k) {
+Rcpp::List RcppGenLatticeNeighbors(const Rcpp::NumericVector& vec,
+                                   const Rcpp::List& nb,
+                                   int k) {
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
 
@@ -137,14 +137,15 @@ Rcpp::IntegerMatrix RcppGenLatticeNeighbors(const Rcpp::NumericVector& vec,
   // Generate neighbors
   std::vector<std::vector<int>> neighbors = GenLatticeNeighbors(vec_std, nb_vec, static_cast<size_t>(std::abs(k)));
 
-  // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
-  int rows = neighbors.size();
-  int cols = neighbors[0].size();
-  Rcpp::IntegerMatrix result(rows, cols);
-  for (int i = 0; i < rows; ++i) {
-    for (int j = 0; j < cols; ++j) {
-      result(i, j) = neighbors[i][j] + 1;
+  // Convert neighbors to Rcpp::List with 1-based indexing
+  int n = neighbors.size();
+  Rcpp::List result(n);
+  for (int i = 0; i < n; ++i) {
+    std::vector<int> neighbor_i = neighbors[i];
+    for (auto& idx : neighbor_i) {
+      idx += 1; // convert to 1-based index
     }
+    result[i] = Rcpp::IntegerVector(neighbor_i.begin(), neighbor_i.end());
   }
 
   return result;

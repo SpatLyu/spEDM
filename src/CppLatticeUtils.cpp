@@ -425,6 +425,7 @@ std::vector<std::vector<int>> GenLatticeNeighbors(
     const std::vector<double>& vec,
     const std::vector<std::vector<int>>& nb,
     size_t k) {
+
   // Initialize the result vector with empty vectors
   std::vector<std::vector<int>> result(vec.size());
 
@@ -435,9 +436,7 @@ std::vector<std::vector<int>> GenLatticeNeighbors(
 
     // Start with the direct neighbors from nb[i]
     for (int neighborIdx : nb[i]) {
-      if (neighborIdx >= 0 && neighborIdx < vec.size()) { // Check for valid index
-        uniqueNeighbors.insert(neighborIdx);
-      }
+      uniqueNeighbors.insert(neighborIdx);
     }
 
     // If the number of unique neighbors is less than k, expand the neighborhood
@@ -445,9 +444,7 @@ std::vector<std::vector<int>> GenLatticeNeighbors(
       // Use a queue to manage the current level of neighbors
       std::queue<int> neighborQueue;
       for (int neighborIdx : nb[i]) {
-        if (neighborIdx >= 0 && neighborIdx < vec.size()) { // Check for valid index
-          neighborQueue.push(neighborIdx);
-        }
+        neighborQueue.push(neighborIdx);
       }
 
       // Continue expanding until we have at least k unique neighbors
@@ -457,8 +454,7 @@ std::vector<std::vector<int>> GenLatticeNeighbors(
 
         // Add the neighbors of the current index to the queue and uniqueNeighbors set
         for (int nextNeighborIdx : nb[currentIdx]) {
-          if (nextNeighborIdx >= 0 && nextNeighborIdx < vec.size() && // Check for valid index
-              uniqueNeighbors.find(nextNeighborIdx) == uniqueNeighbors.end()) {
+          if (uniqueNeighbors.find(nextNeighborIdx) == uniqueNeighbors.end()) {
             uniqueNeighbors.insert(nextNeighborIdx);
             neighborQueue.push(nextNeighborIdx);
           }
