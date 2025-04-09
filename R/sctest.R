@@ -16,7 +16,7 @@ methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
   varname = .check_character(cause, effect)
   cause = .uni_grid(data,cause,FALSE)
   effect = .uni_grid(data,effect,FALSE)
-  block = RcppDivideGrid(effect,block)
+  block = matrix(RcppDivideGrid(effect,block),ncol = 1)
   return(.bind_sct(RcppSCT4Grid(cause,effect,block,k,threads,boot,base,seed,progressbar),varname))
 }
 
