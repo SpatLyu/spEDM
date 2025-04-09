@@ -70,7 +70,7 @@ columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 columbus
 ```
 
-Use SCT to detect spatial causality among the variables *inc*, *crime*, and *hoval*:
+Use SCT to detect spatial causality among the variables *inc*, *crime*, and *hoval* :
 
 ```{r case_lattice}
 # house value and crime
@@ -94,9 +94,9 @@ cu = terra::rast(system.file("case/cu.tif", package="spEDM"))
 cu
 ```
 
-Use SCT to detect spatial causality among the variables *cu*, *ntl*, and *industry*:
+Use SCT to detect spatial causality among the variables *cu*, *ntl*, and *industry* :
 
-```{r case_grid, eval=FALSE, echo=FALSE}
+```{r case_grid}
 # nightlight and soil Cu concentration
 sc.test(cu, "ntl", "cu", k = 30)
 
