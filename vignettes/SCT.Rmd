@@ -21,4 +21,40 @@ knitr::opts_chunk$set(
 
 Let us begin by defining two spatial cross-sectional series $\{x_s\}_{s \in S}$ and $\{y_s\}_{s \in S}$, where $S$ represents the study area.
 
+We use:
+
+$$
+\mathcal{X}_W = \{ W_i x \mid W_i \in \mathcal{W}(x, y) \}
+$$
+
+$$
+\mathcal{Y}_W = \{ W_i y \mid W_i \in \mathcal{W}(x, y) \}
+$$
+
+to denote the sets of spatial lags of $x$ and $y$ given by all the weighting matrices in $\mathcal{W}(x, y)$(that is the set of spatial
+dependence structures between $x$ and $y$).
+ 
+
+We say that $\{x_s\}_{s \in S}$ does not cause $\{y_s\}_{s \in S}$ **under the spatial structures** $\mathcal{X}_W$ and $\mathcal{Y}_W$ if
+
+$$
+h_{y |\mathcal{Y}_W}(m) = h_{y | \mathcal{Y}_W,\mathcal{X}_W}(m)
+$$
+A unilateral non-parametric test can be applied to assess the spatial causality via the following null hypothesis:
+
+$$
+H_0 : \{x_s\}_{s \in S} \text{ does not cause } \{y_s\}_{s \in S} \text{ under the spatial structures } \mathcal{X}_W \text{ and } \mathcal{Y}_W, $$
+
+with the following statistic:
+
+$$
+\hat{\delta}(\mathcal{Y}_W, \mathcal{X}_W) = \hat{h}_{y |\mathcal{Y}_W}(m) - \hat{h}_{y | \mathcal{Y}_W,\mathcal{X}_W}(m)
+$$
+
+where $\hat{h}_*(m)$ is the estimated conditional symbolic entropy using Shannon’s entropy with $m-1$ nearest neighbors. The alternative is that the null hypothesis of is not true.
+
+If $\mathcal{X}_W$ does not contain extra information about $y$ then $\hat{\delta}(\mathcal{Y}_W, \mathcal{X}_W) = 0$, otherwise, $ \hat{\delta}(\mathcal{Y}_W, \mathcal{X}_W) > 0$. 
+
+$h_{y |\mathcal{Y}_W}(m)$ measures the uncertainty of the distribution of symbols of $y$, conditional to the symbols of its spatial lag, $ \mathcal{Y}_W$. Moreover, $h_{y | \mathcal{Y}_W,\mathcal{X}_W}(m)$ measures the uncertainty of the distribution of symbols of $y$, conditional to the symbols of the spatial lags of $y$, $\mathcal{Y}_W$, and of $x$, $ \mathcal{X}_W$. If the second variable, $x$, indeed causes the first one then there should be a significant decrease in the entropy, and the statistic $\hat{\delta}(\mathcal{Y}_W, \mathcal{X}_W)$ will take on high positive values. If there is only a spatial correlation, but not causation, the difference between both entropies will be small. The statistical significance of $\hat{\delta}(\mathcal{Y}_W, \mathcal{X}_W)$ is assessed using spatial block bootstrap.
+
 ## Usage examples
