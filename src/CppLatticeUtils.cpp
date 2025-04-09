@@ -528,8 +528,8 @@ std::vector<double> GenLatticeSymbolization(
   }
 
   // The second indicator function and the symbolization map
-  size_t num_neighbors = neighbors[0].size();
   for(size_t s = 0; s < vec.size(); ++s){
+    size_t num_neighbors = neighbors[s].size();
     std::vector<double> l_s(num_neighbors);
     std::vector<int> local_neighbors = neighbors[s];
     double taus = tau_s[s];
