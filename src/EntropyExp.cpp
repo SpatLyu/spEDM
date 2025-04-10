@@ -13,19 +13,27 @@ double RcppEntropy_Cont(const Rcpp::NumericVector& vec, int k = 3,
 };
 
 // [[Rcpp::export]]
-double RcppJoinEntropy_Cont(const Rcpp::NumericVector& vec1,
-                            const Rcpp::NumericVector& vec2,
+double RcppJoinEntropy_Cont(const Rcpp::NumericMatrix& mat,
+                            const Rcpp::IntegerVector& columns,
                             int k = 3, double base = 10,
                             bool NA_rm = false){
-  std::vector<double> v1 = Rcpp::as<std::vector<double>>(vec1);
-  std::vector<double> v2 = Rcpp::as<std::vector<double>>(vec2);
-  std::vector<std::vector<double>> cppMat(v1.size(), std::vector<double>(2));
-  for (size_t i = 0; i < v1.size(); ++i) {
-    cppMat[i][0] = v1[i];
-    cppMat[i][1] = v2[i];
+  int numRows = mat.nrow();
+  int numCols = mat.ncol();
+  // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
+  std::vector<std::vector<double>> cppMat(numRows, std::vector<double>(numCols));
+  for (int i = 0; i < numRows; ++i) {
+    for (int j = 0; j < numCols; ++j) {
+      cppMat[i][j] = mat(i, j);
+    }
   }
 
-  return CppJoinEntropy_Cont(cppMat,static_cast<size_t>(std::abs(k)),base,NA_rm);
+  // Convert Rcpp IntegerVector to std::vector<int>
+  std::vector<int> col_std = Rcpp::as<std::vector<int>>(columns);
+  for (std::size_t i = 0; i < col_std.size(); ++i) {
+    col_std[i] -= 1;
+  }
+
+  return CppJoinEntropy_Cont(cppMat,col_std,static_cast<size_t>(std::abs(k)),base,NA_rm);
 };
 
 // [[Rcpp::export]]
@@ -63,19 +71,27 @@ double RcppEntropy_Disc(const Rcpp::NumericVector& vec,
 };
 
 // [[Rcpp::export]]
-double RcppJoinEntropy_Disc(const Rcpp::NumericVector& vec1,
-                            const Rcpp::NumericVector& vec2,
+double RcppJoinEntropy_Disc(const Rcpp::NumericMatrix& mat,
+                            const Rcpp::IntegerVector& columns,
                             double base = 10,
                             bool NA_rm = false){
-  std::vector<double> v1 = Rcpp::as<std::vector<double>>(vec1);
-  std::vector<double> v2 = Rcpp::as<std::vector<double>>(vec2);
-  std::vector<std::vector<double>> cppMat(v1.size(), std::vector<double>(2));
-  for (size_t i = 0; i < v1.size(); ++i) {
-    cppMat[i][0] = v1[i];
-    cppMat[i][1] = v2[i];
+  int numRows = mat.nrow();
+  int numCols = mat.ncol();
+  // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
+  std::vector<std::vector<double>> cppMat(numRows, std::vector<double>(numCols));
+  for (int i = 0; i < numRows; ++i) {
+    for (int j = 0; j < numCols; ++j) {
+      cppMat[i][j] = mat(i, j);
+    }
   }
 
-  return CppJoinEntropy_Disc(cppMat,{0,1},base,NA_rm);
+  // Convert Rcpp IntegerVector to std::vector<int>
+  std::vector<int> col_std = Rcpp::as<std::vector<int>>(columns);
+  for (std::size_t i = 0; i < col_std.size(); ++i) {
+    col_std[i] -= 1;
+  }
+
+  return CppJoinEntropy_Disc(cppMat,col_std,base,NA_rm);
 };
 
 // [[Rcpp::export]]

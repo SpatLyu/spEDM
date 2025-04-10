@@ -12,7 +12,8 @@
 double CppEntropy_Cont(const std::vector<double>& vec, size_t k,
                        double base = 10, bool NA_rm = false);
 
-double CppJoinEntropy_Cont(const std::vector<std::vector<double>>& mat, size_t k,
+double CppJoinEntropy_Cont(const std::vector<std::vector<double>>& mat,
+                           const std::vector<int>& columns, size_t k,
                            double base = 10, bool NA_rm = false);
 
 double CppMutualInformation_Cont(const std::vector<std::vector<double>>& mat, size_t k, int alg = 1,

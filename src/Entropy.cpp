@@ -35,53 +35,76 @@ double CppEntropy_Cont(const std::vector<double>& vec, size_t k,
 /**
  * @brief Computes the joint entropy of a multivariate matrix using k-nearest neighbors estimation.
  *
- *
  * @param mat A 2D vector of double values where each row represents a data point.
+ * @param columns The indices of columns to select for joint entropy calculation.
  * @param k The number of nearest neighbors to consider in the estimation.
  * @param base The logarithm base used for entropy calculation (default: 10).
  * @param NA_rm A boolean flag indicating whether to remove missing values (NaN) before computation (default: false).
  *
  * @return The estimated joint entropy of the multivariate matrix.
  */
-double CppJoinEntropy_Cont(const std::vector<std::vector<double>>& mat, size_t k,
+double CppJoinEntropy_Cont(const std::vector<std::vector<double>>& mat,
+                           const std::vector<int>& columns, size_t k,
                            double base = 10, bool NA_rm = false) {
-  size_t nrow = mat.size();
-  size_t ncol = mat[0].size();
+  // Step 1: Construct new_mat based on selected columns
+  std::vector<std::vector<double>> new_mat;
+  size_t original_ncol = mat.empty() ? 0 : mat[0].size();
 
+  // Check if columns match original matrix column count
+  if (columns.size() == original_ncol) {
+    new_mat = mat;  // Use original matrix directly if columns are identical
+  } else {
+    // Build new_mat by selecting specified columns
+    new_mat.reserve(mat.size());
+    for (const auto& row : mat) {
+      std::vector<double> new_row;
+      new_row.reserve(columns.size());
+      for (int col : columns) {
+        new_row.push_back(row[col]);
+      }
+      new_mat.push_back(std::move(new_row));
+    }
+  }
+
+  // Step 2: Compute parameters based on new_mat
+  size_t nrow = new_mat.size();
+  size_t ncol = new_mat.empty() ? 0 : new_mat[0].size();
+
+  // Step 3: Compute Chebyshev distance matrix for new_mat
   std::vector<double> distances(nrow);
-  std::vector<std::vector<double>> mat_dist = CppMatChebyshevDistance(mat, NA_rm);
+  std::vector<std::vector<double>> mat_dist = CppMatChebyshevDistance(new_mat, NA_rm);
 
+  // Step 4: Calculate k-th nearest neighbor distances
   for (size_t i = 0; i < nrow; ++i) {
-    // Create a vector to store the distances for the current row, filtering out NaN values if NA_rm is true
     std::vector<double> dist_n;
 
     if (NA_rm) {
       for (double val : mat_dist[i]) {
         if (!std::isnan(val)) {
-          dist_n.push_back(val);  // Only include non-NaN values
+          dist_n.push_back(val);
         }
       }
     } else {
-      dist_n = mat_dist[i];  // Include all values if NA_rm is false
+      dist_n = mat_dist[i];
     }
 
-    // Use nth_element to partially sort the distances up to the k-th element
-    // This is more efficient than fully sorting the entire vector.
+    // Handle k-th nearest neighbor selection
     if (k < dist_n.size()) {
       std::nth_element(dist_n.begin(), dist_n.begin() + k, dist_n.end());
-      distances[i] = dist_n[k];  // (k+1)-th smallest distance (exclude itself)
+      distances[i] = dist_n[k];
     } else {
-      distances[i] = *std::max_element(dist_n.begin(), dist_n.end());  // Handle case where k is out of bounds
+      distances[i] = *std::max_element(dist_n.begin(), dist_n.end());
     }
   }
 
+  // Step 5: Compute entropy components
   double sum = 0.0;
   for (size_t i = 0; i < nrow; i++) {
-    sum += CppLog(2 * distances[i], base);  // Apply logarithm transformation
+    sum += CppLog(2 * distances[i], base);
   }
-  sum = sum * ncol / nrow;
+  sum = sum * static_cast<double>(ncol) / nrow;
 
-  // Compute joint entropy using CppDigamma function
+  // Final entropy calculation
   double E = CppDigamma(nrow) - CppDigamma(k) + sum;
   return E;
 }
@@ -208,7 +231,7 @@ double CppConditionalEntropy_Cont(const std::vector<double>& vecx,
   }
 
   // Compute the joint entropy H(X, Y)
-  double joint_entropy = CppJoinEntropy_Cont(joint_vec, k, base, NA_rm);
+  double joint_entropy = CppJoinEntropy_Cont(joint_vec, {0,1}, k, base, NA_rm);
 
   // Compute the entropy of y, H(Y)
   double entropy_y = CppEntropy_Cont(vecy, k, base, NA_rm);

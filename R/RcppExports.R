@@ -5,8 +5,8 @@ RcppEntropy_Cont <- function(vec, k = 3L, base = 10, NA_rm = FALSE) {
     .Call(`_spEDM_RcppEntropy_Cont`, vec, k, base, NA_rm)
 }
 
-RcppJoinEntropy_Cont <- function(vec1, vec2, k = 3L, base = 10, NA_rm = FALSE) {
-    .Call(`_spEDM_RcppJoinEntropy_Cont`, vec1, vec2, k, base, NA_rm)
+RcppJoinEntropy_Cont <- function(mat, columns, k = 3L, base = 10, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppJoinEntropy_Cont`, mat, columns, k, base, NA_rm)
 }
 
 RcppMutualInformation_Cont <- function(vec1, vec2, k = 3L, alg = 1L, normalize = FALSE, NA_rm = FALSE) {
@@ -21,8 +21,8 @@ RcppEntropy_Disc <- function(vec, base = 10, NA_rm = FALSE) {
     .Call(`_spEDM_RcppEntropy_Disc`, vec, base, NA_rm)
 }
 
-RcppJoinEntropy_Disc <- function(vec1, vec2, base = 10, NA_rm = FALSE) {
-    .Call(`_spEDM_RcppJoinEntropy_Disc`, vec1, vec2, base, NA_rm)
+RcppJoinEntropy_Disc <- function(mat, columns, base = 10, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppJoinEntropy_Disc`, mat, columns, base, NA_rm)
 }
 
 RcppMutualInformation_Disc <- function(vec1, vec2, base = 10, NA_rm = FALSE) {

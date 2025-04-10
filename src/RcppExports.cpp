@@ -27,17 +27,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppJoinEntropy_Cont
-double RcppJoinEntropy_Cont(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, int k, double base, bool NA_rm);
-RcppExport SEXP _spEDM_RcppJoinEntropy_Cont(SEXP vec1SEXP, SEXP vec2SEXP, SEXP kSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
+double RcppJoinEntropy_Cont(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& columns, int k, double base, bool NA_rm);
+RcppExport SEXP _spEDM_RcppJoinEntropy_Cont(SEXP matSEXP, SEXP columnsSEXP, SEXP kSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec1(vec1SEXP);
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec2(vec2SEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type columns(columnsSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppJoinEntropy_Cont(vec1, vec2, k, base, NA_rm));
+    rcpp_result_gen = Rcpp::wrap(RcppJoinEntropy_Cont(mat, columns, k, base, NA_rm));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -86,16 +86,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppJoinEntropy_Disc
-double RcppJoinEntropy_Disc(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, double base, bool NA_rm);
-RcppExport SEXP _spEDM_RcppJoinEntropy_Disc(SEXP vec1SEXP, SEXP vec2SEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
+double RcppJoinEntropy_Disc(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& columns, double base, bool NA_rm);
+RcppExport SEXP _spEDM_RcppJoinEntropy_Disc(SEXP matSEXP, SEXP columnsSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec1(vec1SEXP);
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec2(vec2SEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type columns(columnsSEXP);
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppJoinEntropy_Disc(vec1, vec2, base, NA_rm));
+    rcpp_result_gen = Rcpp::wrap(RcppJoinEntropy_Disc(mat, columns, base, NA_rm));
     return rcpp_result_gen;
 END_RCPP
 }
