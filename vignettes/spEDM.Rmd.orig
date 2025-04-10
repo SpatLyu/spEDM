@@ -98,14 +98,14 @@ library(spEDM)
 npp = terra::rast(system.file("case/npp.tif", package = "spEDM"))
 npp
 
-# Directly visualize the raster layer
+# directly visualize the raster layer
 options(terra.pal = grDevices::terrain.colors(100,rev = T))
 terra::plot(npp, nc = 2,
             axes = FALSE,
             legend = FALSE)
 ```
 
-```{r npp2,fig.width=4.75,fig.height=4.5,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 3**. Maps of farmland NPP and climate factors.")}
+```{r npp2,fig.width=4.75,fig.height=5.65,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 3**. Maps of farmland NPP and climate factors.")}
 # add China's land borders and the ten-dash line in the South China Sea
 
 # install.packages("geocn",
@@ -119,11 +119,10 @@ cn_border = geocn::load_cn_border() |>
 
 par(mfrow = c(2, 2))
 for (i in 1:terra::nlyr(npp)) {
-  terra::plot(npp[[i]],
-              axes = FALSE,
-              legend = FALSE,
-              main = names(npp)[i])
-  terra::plot(cn_border, add = TRUE, lwd = 1.5, col = "grey40")
+  terra::plot(cn_border, lwd = 1.5, main = names(npp)[i],
+              col = "grey40", axes = FALSE)
+  terra::plot(npp[[i]], axes = FALSE,
+              legend = FALSE, add = TRUE)
 }
 ```
 
