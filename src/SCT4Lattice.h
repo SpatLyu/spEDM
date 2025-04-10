@@ -8,94 +8,113 @@
 #include <RcppThread.h>
 
 /**
- * @brief Computes directional symbolic causality strength between two spatial variables
- *        over a lattice using neighbor-based embedding and mandatory symbolization.
+ * @brief Computes symbolic directional causality between two spatial variables
+ *        on a regular lattice using spatial neighbor embeddings and quantized entropy measures.
  *
- * This function evaluates the symbolic directional influence (causality) between two spatial variables
- * `x` and `y` that are aligned on a regular lattice or grid. It uses a symbolic information-theoretic
- * approach, incorporating both spatial embedding and discrete symbolization based on neighborhood
- * structure.
+ * This function quantifies the asymmetric symbolic causality strength between two spatial variables
+ * `x` and `y`, both defined over a regular lattice or grid. It applies a symbolic information-theoretic
+ * framework, incorporating spatial embedding via neighbor structures and optional symbolization into
+ * discrete categories.
  *
  * ## Method Overview:
- * 1. **Lattice Embedding**:
- *    - For each location, generate embedded (lagged) spatial vectors `wx` and `wy` using the neighborhood list `nb`.
- *    - The embeddings are based on a window of size 1 in space (i.e., 1-level neighbors).
+ * 1. **Lattice-based Embedding**:
+ *    - For each spatial unit, embedded vectors `wx` and `wy` are constructed using 1-level neighbors
+ *      based on the provided neighborhood list `nb`.
  *
- * 2. **Lattice Symbolization**:
- *    - Symbolize the original variables `x`, `y` and their embeddings `wx`, `wy` using lattice-based quantization
- *      into `k` discrete categories.
+ * 2. **Symbolization (Optional)**:
+ *    - If `symbolize = true`, the input vectors `x`, `y`, `wx`, and `wy` are discretized into `k` categories
+ *      using lattice-based symbolization before entropy computation. Otherwise, continuous-valued entropy
+ *      estimators are used.
  *
- * 3. **Entropy Computation**:
- *    - Calculate marginal and joint entropies using the symbolized variables:
+ * 3. **Entropy Calculations**:
+ *    - The function computes marginal and joint entropies of various combinations of variables to evaluate
+ *      symbolic causality. Specifically:
  *      - \( H(x, wx), H(y, wy), H(wx), H(wy), H(wx, wy), H(wx, wy, x), H(wx, wy, y) \)
  *
- * 4. **Symbolic Causality Strength**:
+ * 4. **Directional Causality Strengths**:
  *    - From x to y:
  *      \[
- *      sc_{x \rightarrow y} = [H(y, wy) - H(wy)] - [H(wx, wy, y) - H(wx, wy)]
+ *      sc_{x \rightarrow y} = \big(H(y, wy) - H(wy)\big) - \big(H(wx, wy, y) - H(wx, wy)\big)
  *      \]
  *    - From y to x:
  *      \[
- *      sc_{y \rightarrow x} = [H(x, wx) - H(wx)] - [H(wx, wy, x) - H(wx, wy)]
+ *      sc_{y \rightarrow x} = \big(H(x, wx) - H(wx)\big) - \big(H(wx, wy, x) - H(wx, wy)\big)
  *      \]
- *    These quantities represent the reduction in uncertainty of `y` (or `x`) due to `x` (or `y`)
- *    in a symbolic and spatial context.
+ *    These values reflect the reduction in uncertainty in `y` (or `x`) when considering `x` (or `y`) and its spatial context.
  *
- * @param x     Input vector of spatial variable x (must match the lattice structure).
- * @param y     Input vector of spatial variable y (same size as x).
- * @param nb    Neighborhood structure for each location (e.g., rook or queen adjacency).
- * @param k     Number of discrete bins used in symbolization of each variable.
- * @param base  Base of the logarithm used for entropy computation (default is 2, i.e., bits).
+ * @param x         Input spatial variable x (vector of doubles).
+ * @param y         Input spatial variable y (same size as x).
+ * @param nb        Neighborhood list defining spatial adjacency (e.g., rook or queen contiguity).
+ * @param k         Number of discrete bins used for symbolization or KDE estimation.
+ * @param base      Base of the logarithm for entropy (default = 2, for bits).
+ * @param symbolize Whether to apply discretization for symbolic entropy (default = true).
  *
  * @return A std::vector<double> of size 2:
- *         - [0] Symbolic causality strength from x to y (sc_x_to_y)
- *         - [1] Symbolic causality strength from y to x (sc_y_to_x)
+ *         - [0] Symbolic causality strength from x to y
+ *         - [1] Symbolic causality strength from y to x
  */
 std::vector<double> SCTSingle4Lattice(
     const std::vector<double>& x,
     const std::vector<double>& y,
     const std::vector<std::vector<int>>& nb,
     size_t k,
-    double base = 2
+    double base = 2,
+    bool symbolize = true
 );
 
 /**
- * @brief Computes symbolic causality strength on a spatial lattice using bootstrap for significance testing.
+ * @brief Estimates symbolic directional spatial causality between two variables on a lattice using block bootstrap inference.
  *
- * This function evaluates the directional symbolic causality strength between two spatial variables `x` and `y`,
- * organized on a regular lattice structure with known neighborhood relations (`nb`). It uses symbolic entropy-based
- * causality measures, extended to the spatial domain using lattice embedding and neighborhood-driven symbolization.
+ * This function computes symbolic causality strength in both directions (x→y and y→x) over a regular lattice
+ * using neighborhood-based symbolic embedding and quantization. It then evaluates the significance of these
+ * causality measures using a spatial block bootstrap approach.
  *
- * To assess the statistical significance of the observed causality, a spatial block bootstrap approach is employed.
- * This method resamples spatial blocks (as specified in `block`) to preserve spatial dependence structures in the
- * data, and computes bootstrap replicates of the causality statistic. Empirical p-values are derived by comparing
- * observed statistics against this bootstrap distribution.
+ * ## Method Overview:
+ * 1. **Causality Measurement**:
+ *    - Computes symbolic spatial causality strength using a symbolic transfer entropy–like formulation
+ *      (see `SCTSingle4Lattice()` for details).
+ *    - Embeds each variable over its neighbors and quantizes both original and embedded values into `k` discrete symbols.
+ *    - Calculates joint and marginal entropies to estimate symbolic causal influence.
  *
- * Core steps:
- * 1. **Causality Computation**: The directional symbolic causality strength from `x` to `y` and from `y` to `x` is
- *    computed using the `SCTSingle4Lattice()` function, which applies lattice embedding, (optional) symbolization,
- *    and entropy-based measures to evaluate uncertainty reduction.
- * 2. **Spatial Block Bootstrap**: For each of `boot` replicates, spatially contiguous block indices (based on `block`)
- *    are resampled to create bootstrap versions of `x` and `y`. Causality statistics are recomputed for each.
- * 3. **Significance Evaluation**: p-values are computed by counting how often the bootstrapped statistics exceed
- *    the observed statistic in each direction.
+ * 2. **Spatial Block Bootstrap**:
+ *    - Performs `boot` bootstrap replications using spatial block resampling based on the `block` vector.
+ *    - For each bootstrap replicate, resampled series are used to recompute the symbolic causality measures.
+ *    - Bootstrap distributions of the statistics are used to derive empirical p-values.
  *
- * @param x           Input spatial variable `x`, aligned with lattice cells.
- * @param y           Input spatial variable `y`, aligned with lattice cells.
- * @param nb          Neighborhood list, specifying for each cell its adjacent cells.
- * @param block       Vector of block IDs for spatial bootstrap (one per cell), indicating spatial clusters.
- * @param k           Number of bins used for symbolization (typically 3 to 5).
- * @param threads     Number of threads to use for parallel bootstrap computation.
- * @param boot        Number of bootstrap replicates (default: 399).
- * @param base        Logarithmic base used in entropy calculation (default: 2).
- * @param seed        Random seed to ensure reproducibility (default: 42).
- * @param progressbar Whether to display a progress bar for bootstrap iterations (default: true).
+ * 3. **Parallel Execution**:
+ *    - Bootstrap replications are parallelized across multiple threads (default: all available cores).
+ *    - Optionally displays a progress bar if `progressbar = true`.
  *
- * @return A std::vector<double> of size 4:
- *         - [0] Observed causality strength from `x` to `y`.
- *         - [1] Bootstrap-based p-value for `x` → `y`.
- *         - [2] Observed causality strength from `y` to `x`.
- *         - [3] Bootstrap-based p-value for `y` → `x`.
+ * ## Symbolic Causality Strength Formulas:
+ * Let `wx`, `wy` be the embedded spatial vectors of `x`, `y` respectively. Then:
+ * - From x to y:
+ *   \[
+ *   sc_{x \rightarrow y} = [H(y, wy) - H(wy)] - [H(wx, wy, y) - H(wx, wy)]
+ *   \]
+ * - From y to x:
+ *   \[
+ *   sc_{y \rightarrow x} = [H(x, wx) - H(wx)] - [H(wx, wy, x) - H(wx, wy)]
+ *   \]
+ *
+ * ## Parameters:
+ * @param x           Input vector for spatial variable x.
+ * @param y           Input vector for spatial variable y (same length as x).
+ * @param nb          Neighborhood list (e.g., queen or rook adjacency), used for embedding.
+ * @param block       Vector indicating block assignments for spatial block bootstrapping.
+ * @param k           Number of discrete symbols used in quantization.
+ * @param threads     Number of threads to use for parallel bootstrapping.
+ * @param boot        Number of bootstrap iterations (default: 399).
+ * @param base        Logarithmic base for entropy (default: 2, i.e., bits).
+ * @param seed        Random seed for reproducibility (default: 42).
+ * @param symbolize   Whether to apply symbolization before entropy computation (default: true).
+ * @param progressbar Whether to display a progress bar during bootstrapping (default: true).
+ *
+ * ## Returns:
+ * A std::vector<double> of length 4:
+ * - [0] Observed symbolic causality from x to y (sc_x_to_y).
+ * - [1] Empirical p-value for x → y based on bootstrap distribution.
+ * - [2] Observed symbolic causality from y to x (sc_y_to_x).
+ * - [3] Empirical p-value for y → x based on bootstrap distribution.
  */
 std::vector<double> SCT4Lattice(
     const std::vector<double>& x,
@@ -107,6 +126,7 @@ std::vector<double> SCT4Lattice(
     int boot = 399,
     double base = 2,
     unsigned int seed = 42,
+    bool symbolize = true,
     bool progressbar = true
 );
 
