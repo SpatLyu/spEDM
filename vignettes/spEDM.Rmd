@@ -167,6 +167,8 @@ terra::plot(cu, nc = 3,
 ### Farmland NPP and climatic variables in mainland China
 
 
+
+
 ``` r
 library(spEDM)
 npp = terra::rast(system.file("case/npp.tif", package = "spEDM"))
@@ -181,6 +183,7 @@ npp
 ## min values  :   164.00,   384.3409, -47.8194, -122.2004 
 ## max values  : 16606.33, 23878.3555, 263.6938, 5350.4902
 
+# directly visualize the raster layer
 options(terra.pal = grDevices::terrain.colors(100,rev = T))
 terra::plot(npp, nc = 2,
             axes = FALSE,
@@ -188,6 +191,30 @@ terra::plot(npp, nc = 2,
 ```
 
 ![**Figure 2**. Maps of farmland NPP and climate factors.](../man/figures/pkgintro/npp-1.png)
+
+
+``` r
+# add China's land borders and the ten-dash line in the South China Sea
+
+# install.packages("geocn",
+#                  repos = c("https://stscl.r-universe.dev",
+#                            "https://cloud.r-project.org"),
+#                  dep = TRUE)
+
+cn_border = geocn::load_cn_border() |>
+  terra::vect() |>
+  terra::project(terra::crs(npp))
+
+par(mfrow = c(2, 2))
+for (i in 1:terra::nlyr(npp)) {
+  terra::plot(cn_border, lwd = 1.5, main = names(npp)[i],
+              col = "grey40", axes = FALSE)
+  terra::plot(npp[[i]], axes = FALSE,
+              legend = FALSE, add = TRUE)
+}
+```
+
+![**Figure 3**. Maps of farmland NPP and climate factors.](../man/figures/pkgintro/npp2-1.png)
 
 ## Usage
 
