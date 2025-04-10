@@ -7,51 +7,50 @@
 #include "SpatialBlockBootstrap.h"
 #include <RcppThread.h>
 
-/**
- * @brief Computes symbolic directional causality between two spatial variables
- *        on a regular lattice using spatial neighbor embeddings and quantized entropy measures.
+/*
+ * @brief Computes directional spatial Granger causality between two spatial variables
+ * on a spatial lattice data using spatial neighbor embeddings and quantized entropy measures.
  *
- * This function quantifies the asymmetric symbolic causality strength between two spatial variables
- * `x` and `y`, both defined over a regular lattice or grid. It applies a symbolic information-theoretic
- * framework, incorporating spatial embedding via neighbor structures and optional symbolization into
- * discrete categories.
+ * This function quantifies the asymmetric spatial Granger causality strength between two
+ * spatial variables `x` and `y`, both defined over a spatial lattice data. It applies
+ * a symbolic information-theoretic framework, incorporating spatial embedding via neighbor
+ * structures and optional symbolization into discrete categories.
  *
- * ## Method Overview:
- * 1. **Lattice-based Embedding**:
- *    - For each spatial unit, embedded vectors `wx` and `wy` are constructed using 1-level neighbors
- *      based on the provided neighborhood list `nb`.
+ * Method Overview:
+ * 1. Lattice-based Embedding:
+ *    - For each spatial unit, embedded vectors `wx` and `wy` are constructed using 1-level
+ *      neighbors based on the provided neighborhood list `nb`.
  *
- * 2. **Symbolization (Optional)**:
- *    - If `symbolize = true`, the input vectors `x`, `y`, `wx`, and `wy` are discretized into `k` categories
- *      using lattice-based symbolization before entropy computation. Otherwise, continuous-valued entropy
- *      estimators are used.
+ * 2. Symbolization (Optional):
+ *    - If `symbolize = true`, the input vectors `x`, `y`, `wx`, and `wy` are discretized
+ *      into `k` categories using lattice-based symbolization before entropy computation.
+ *      Otherwise, continuous-valued entropy estimators are used.
  *
- * 3. **Entropy Calculations**:
- *    - The function computes marginal and joint entropies of various combinations of variables to evaluate
- *      symbolic causality. Specifically:
- *      - \( H(x, wx), H(y, wy), H(wx), H(wy), H(wx, wy), H(wx, wy, x), H(wx, wy, y) \)
+ * 3. Entropy Calculations:
+ *    - The function computes marginal and joint entropies of various combinations of variables
+ *      to evaluate symbolic causality. Specifically:
+ *      - H(x, wx), H(y, wy), H(wx), H(wy), H(wx, wy), H(wx, wy, x), H(wx, wy, y)
  *
- * 4. **Directional Causality Strengths**:
+ * 4. Directional Causality Strengths:
  *    - From x to y:
- *      \[
- *      sc_{x \rightarrow y} = \big(H(y, wy) - H(wy)\big) - \big(H(wx, wy, y) - H(wx, wy)\big)
- *      \]
+ *      sc_x_to_y = (H(y, wy) - H(wy)) - (H(wx, wy, y) - H(wx, wy))
  *    - From y to x:
- *      \[
- *      sc_{y \rightarrow x} = \big(H(x, wx) - H(wx)\big) - \big(H(wx, wy, x) - H(wx, wy)\big)
- *      \]
- *    These values reflect the reduction in uncertainty in `y` (or `x`) when considering `x` (or `y`) and its spatial context.
+ *      sc_y_to_x = (H(x, wx) - H(wx)) - (H(wx, wy, x) - H(wx, wy))
+ *    These values reflect the reduction in uncertainty in `y` (or `x`) when considering `x`
+ *    (or `y`) and its spatial context.
  *
- * @param x         Input spatial variable x (vector of doubles).
- * @param y         Input spatial variable y (same size as x).
- * @param nb        Neighborhood list defining spatial adjacency (e.g., rook or queen contiguity).
- * @param k         Number of discrete bins used for symbolization or KDE estimation.
- * @param base      Base of the logarithm for entropy (default = 2, for bits).
- * @param symbolize Whether to apply discretization for symbolic entropy (default = true).
+ * Parameters:
+ * - x: Input spatial variable `x` (vector of doubles).
+ * - y: Input spatial variable `y` (same size as `x`).
+ * - nb: Neighborhood list defining spatial adjacency (e.g., rook or queen contiguity).
+ * - k: Number of discrete bins used for symbolization or KDE estimation.
+ * - base: Base of the logarithm for entropy (default = 2, for bits).
+ * - symbolize: Whether to apply discretization for symbolic entropy (default = true).
  *
- * @return A std::vector<double> of size 2:
- *         - [0] Symbolic causality strength from x to y
- *         - [1] Symbolic causality strength from y to x
+ * Returns:
+ *    A `std::vector<double>` of size 2:
+ *        - [0] Spatial Granger causality from `X` to `Y`.
+ *        - [1] Spatial Granger causality from `Y` to `X`.
  */
 std::vector<double> SCTSingle4Lattice(
     const std::vector<double>& x,
@@ -63,45 +62,33 @@ std::vector<double> SCTSingle4Lattice(
 );
 
 /**
- * @brief Estimates symbolic directional spatial causality between two variables on a lattice using block bootstrap inference.
+ * @brief Compute spatial Granger causality for lattice data using spatial block bootstrap.
  *
- * This function computes symbolic causality strength in both directions (x→y and y→x) over a regular lattice
- * using neighborhood-based symbolic embedding and quantization. It then evaluates the significance of these
- * causality measures using a spatial block bootstrap approach.
+ * This function estimates the directional spatial Granger causality between two lattice variables `x` and `y`,
+ * by applying a symbolic entropy-based method, and assesses the statistical significance of the causality using
+ * spatial block bootstrap techniques. It calculates the causality in both directions: X → Y and Y → X.
+ * Additionally, the function evaluates the significance of the estimated causality statistics by comparing them
+ * to bootstrap realizations of the causality.
  *
- * ## Method Overview:
- * 1. **Causality Measurement**:
- *    - Computes symbolic spatial causality strength using a symbolic transfer entropy–like formulation
- *      (see `SCTSingle4Lattice()` for details).
- *    - Embeds each variable over its neighbors and quantizes both original and embedded values into `k` discrete symbols.
- *    - Calculates joint and marginal entropies to estimate symbolic causal influence.
+ * The method involves the following steps:
+ * - **Computation of true causality**: The function first calculates the spatial Granger causality statistic
+ *   using the original lattice data `x` and `y`.
+ * - **Spatial block bootstrap resampling**: The lattice values are resampled with spatial block bootstrapping.
+ *   Each resample preserves local spatial structure and generates new bootstrap realizations of the causality statistic.
+ * - **Estimation of causality for bootstrapped samples**: The causality statistic is estimated for each of the
+ *   bootstrapped realizations, which involves calculating the symbolic entropy measures and their differences.
+ * - **Empirical p-values**: The final p-values for both directional causality estimates (X → Y and Y → X) are
+ *   derived by comparing the bootstrapped statistics with the true causality statistics.
  *
- * 2. **Spatial Block Bootstrap**:
- *    - Performs `boot` bootstrap replications using spatial block resampling based on the `block` vector.
- *    - For each bootstrap replicate, resampled series are used to recompute the symbolic causality measures.
- *    - Bootstrap distributions of the statistics are used to derive empirical p-values.
+ * This approach accounts for spatial autocorrelation and allows the use of parallel processing for faster
+ * bootstrap estimation. The spatial bootstrap method involves reshuffling lattice cells into spatial blocks,
+ * preserving local dependencies, and calculating causality for each realization.
  *
- * 3. **Parallel Execution**:
- *    - Bootstrap replications are parallelized across multiple threads (default: all available cores).
- *    - Optionally displays a progress bar if `progressbar = true`.
- *
- * ## Symbolic Causality Strength Formulas:
- * Let `wx`, `wy` be the embedded spatial vectors of `x`, `y` respectively. Then:
- * - From x to y:
- *   \[
- *   sc_{x \rightarrow y} = [H(y, wy) - H(wy)] - [H(wx, wy, y) - H(wx, wy)]
- *   \]
- * - From y to x:
- *   \[
- *   sc_{y \rightarrow x} = [H(x, wx) - H(wx)] - [H(wx, wy, x) - H(wx, wy)]
- *   \]
- *
- * ## Parameters:
  * @param x           Input vector for spatial variable x.
  * @param y           Input vector for spatial variable y (same length as x).
  * @param nb          Neighborhood list (e.g., queen or rook adjacency), used for embedding.
  * @param block       Vector indicating block assignments for spatial block bootstrapping.
- * @param k           Number of discrete symbols used in quantization.
+ * @param k           Number of discrete bins used for symbolization or KDE estimation.
  * @param threads     Number of threads to use for parallel bootstrapping.
  * @param boot        Number of bootstrap iterations (default: 399).
  * @param base        Logarithmic base for entropy (default: 2, i.e., bits).
