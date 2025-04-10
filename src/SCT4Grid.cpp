@@ -7,38 +7,43 @@
 // [[Rcpp::depends(RcppThread)]]
 
 /**
- * @brief Compute directional spatial Granger causality on 2D grid data using symbolized entropy measures.
+ * @brief Compute directional spatial Granger causality for 2D grid data using symbolic entropy measures.
  *
- * This function estimates the directional spatial Granger causality between two variables `x` and `y`,
- * each defined on a 2D grid (i.e., spatial lattice), based on symbolic transfer entropy principles.
- * It computes causality in both directions (X → Y and Y → X) by comparing changes in entropy and
- * conditional entropy across spatially-embedded versions of the input grids.
+ * This function estimates the bidirectional spatial Granger causality between two spatial variables
+ * `x` and `y` observed on a 2D lattice/grid. It does so via a symbolic approximation of transfer entropy,
+ * which evaluates whether the spatial neighborhood of one variable improves the prediction of the other.
  *
- * The method includes:
- * - Symbolizing the original and embedded grids using local neighborhoods (controlled by `k`).
- * - Computing joint and marginal entropies involving the original grids and their local embeddings.
- * - Deriving directional causality using entropy difference formulas:
- *   - SC_{x→y} = [H(y, wy) − H(wy)] − [H(y, wy, wx) − H(wy, wx)]
- *   - SC_{y→x} = [H(x, wx) − H(wx)] − [H(x, wx, wy) − H(wx, wy)]
- *     where `wx` and `wy` are spatial embeddings (local lag structures) of `x` and `y`.
+ * The core procedure includes:
+ * - Constructing spatial embeddings (`wx`, `wy`) of `x` and `y` using a local neighborhood structure.
+ * - Optionally symbolizing all grids to enhance robustness under spatial autocorrelation.
+ * - Computing marginal and joint (conditional) entropies using the symbolized or raw values.
+ * - Calculating directional Granger causality based on information gain:
  *
- * Symbolization helps convert continuous grid values into discrete symbolic patterns, enabling
- * robust estimation of information-theoretic metrics under spatial autocorrelation.
+ *   Causality from X to Y:
+ *     SC_{x→y} = [H(y, wy) − H(wy)] − [H(y, wy, wx) − H(wy, wx)]
  *
- * @param x         2D grid of variable X, represented as a vector of rows.
- * @param y         2D grid of variable Y, same size as x.
- * @param k         Neighborhood size for symbolization (e.g., k = 1 implies 3×3 window).
- * @param base      Logarithm base used for entropy calculation (default is 2 for bits).
+ *   Causality from Y to X:
+ *     SC_{y→x} = [H(x, wx) − H(wx)] − [H(x, wx, wy) − H(wx, wy)]
+ *
+ * where `wx` and `wy` are spatial embeddings (i.e., local neighborhood vectors) of `x` and `y`.
+ * These terms quantify how much the inclusion of one variable’s spatial context helps predict the other.
+ *
+ * @param x         2D grid (matrix) representing variable X.
+ * @param y         2D grid (matrix) representing variable Y.
+ * @param k         Embedding neighborhood radius (e.g., k = 1 means 3×3 window).
+ * @param base      Logarithm base for entropy (default is 2, for units in bits).
+ * @param symbolize If true, discretize values using symbolic transformation before entropy computation.
  *
  * @return A std::vector<double> of two values:
- *         - sc_x_to_y: Directional spatial Granger causality from X to Y.
- *         - sc_y_to_x: Directional spatial Granger causality from Y to X.
+ *         - sc_x_to_y: spatial Granger causality from X to Y.
+ *         - sc_y_to_x: spatial Granger causality from Y to X.
  */
 std::vector<double> SCTSingle4Grid(
     const std::vector<std::vector<double>>& x,
     const std::vector<std::vector<double>>& y,
     size_t k,
-    double base = 2
+    double base = 2,
+    bool symbolize = true
 ) {
   size_t rows = x.size();
   size_t cols = x[0].size();
@@ -57,24 +62,42 @@ std::vector<double> SCTSingle4Grid(
   }
   std::vector<std::vector<double>> yw = GridVec2Mat(wy,rows);
 
-  std::vector<double> sx = GenGridSymbolization(x, k);
-  std::vector<double> sy = GenGridSymbolization(y, k);
-  std::vector<double> swx = GenGridSymbolization(xw, k);
-  std::vector<double> swy = GenGridSymbolization(yw, k);
-
-  std::vector<std::vector<double>> sp_series(rows*cols,std::vector<double>(4));
-  for (size_t i = 0; i < x.size(); ++i){
-    sp_series[i] = {sx[i],sy[i],swx[i],swy[i]}; // 0:x 1:y 2:wx 3:wy
-  }
-
   double Hwx, Hwy, Hxwx, Hywy, Hwxwy, Hwxwyx, Hwxwyy;
-  Hxwx = CppJoinEntropy_Disc(sp_series, {0,2}, base, true); // H(x,wx)
-  Hywy = CppJoinEntropy_Disc(sp_series, {1,3}, base, true); // H(y,wy)
-  Hwx = CppEntropy_Disc(swx, base, true); // H(wx)
-  Hwy = CppEntropy_Disc(swy, base, true); // H(wy)
-  Hwxwy = CppJoinEntropy_Disc(sp_series,{2,3}, base, true); // H(wx,wy)
-  Hwxwyx = CppJoinEntropy_Disc(sp_series,{0,2,3}, base, true); // H(wx,wy,x)
-  Hwxwyy = CppJoinEntropy_Disc(sp_series,{1,2,3}, base, true); // H(wx,wy,y)
+
+  if (symbolize){
+    std::vector<double> sx = GenGridSymbolization(x, k);
+    std::vector<double> sy = GenGridSymbolization(y, k);
+    std::vector<double> swx = GenGridSymbolization(xw, k);
+    std::vector<double> swy = GenGridSymbolization(yw, k);
+
+    std::vector<std::vector<double>> sp_series(rows*cols,std::vector<double>(4));
+    for (size_t i = 0; i < x.size(); ++i){
+      sp_series[i] = {sx[i],sy[i],swx[i],swy[i]}; // 0:x 1:y 2:wx 3:wy
+    }
+
+    Hxwx = CppJoinEntropy_Disc(sp_series, {0,2}, base, true); // H(x,wx)
+    Hywy = CppJoinEntropy_Disc(sp_series, {1,3}, base, true); // H(y,wy)
+    Hwx = CppEntropy_Disc(swx, base, true); // H(wx)
+    Hwy = CppEntropy_Disc(swy, base, true); // H(wy)
+    Hwxwy = CppJoinEntropy_Disc(sp_series,{2,3}, base, true); // H(wx,wy)
+    Hwxwyx = CppJoinEntropy_Disc(sp_series,{0,2,3}, base, true); // H(wx,wy,x)
+    Hwxwyy = CppJoinEntropy_Disc(sp_series,{1,2,3}, base, true); // H(wx,wy,y)
+  } else {
+    std::vector<std::vector<double>> sp_series(rows*cols,std::vector<double>(4));
+    for (size_t i = 0; i < x.size(); ++i){
+      int ri = i / cols;
+      int ci = i % cols;
+      sp_series[i] = {x[ri][ci],y[ri][ci],wx[i],wy[i]}; // 0:x 1:y 2:wx 3:wy
+    }
+
+    Hxwx = CppJoinEntropy_Cont(sp_series, {0,2}, k, base, true); // H(x,wx)
+    Hywy = CppJoinEntropy_Cont(sp_series, {1,3}, k, base, true); // H(y,wy)
+    Hwx = CppEntropy_Cont(wx, k, base, true); // H(wx)
+    Hwy = CppEntropy_Cont(wy, k, base, true); // H(wy)
+    Hwxwy = CppJoinEntropy_Cont(sp_series,{2,3}, k, base, true); // H(wx,wy)
+    Hwxwyx = CppJoinEntropy_Cont(sp_series,{0,2,3}, k, base, true); // H(wx,wy,x)
+    Hwxwyy = CppJoinEntropy_Cont(sp_series,{1,2,3}, k, base, true); // H(wx,wy,y)
+  }
 
   double sc_x_to_y = (Hywy - Hwy) - (Hwxwyy - Hwxwy);
   double sc_y_to_x = (Hxwx - Hwx) - (Hwxwyx - Hwxwy);
@@ -85,28 +108,25 @@ std::vector<double> SCTSingle4Grid(
 /**
  * @brief Compute spatial Granger causality for gridded data using spatial block bootstrap.
  *
- * This function performs statistical inference on spatial Granger causality between two gridded
- * variables `x` and `y`, using a symbolic entropy-based method. It estimates the causality measures
- * from x to y and from y to x, and evaluates their statistical significance via block-based
- * spatial bootstrap.
+ * This function estimates the directional spatial Granger causality between two gridded variables `x` and `y`,
+ * by applying a symbolic entropy-based method, and assesses the statistical significance of the causality using
+ * spatial block bootstrap techniques. It calculates the causality in both directions: X → Y and Y → X.
+ * Additionally, the function evaluates the significance of the estimated causality statistics by comparing them
+ * to bootstrap realizations of the causality.
  *
- * The method includes:
- * - Computing the true causality statistic from the original gridded data.
- * - Performing block-wise spatial bootstrap to generate bootstrapped versions of the data.
- * - Estimating the causality statistic for each bootstrap sample.
- * - Computing the empirical p-values by comparing the bootstrapped statistics with the true statistic.
+ * The method involves the following steps:
+ * - **Computation of true causality**: The function first calculates the spatial Granger causality statistic
+ *   using the original data grids `x` and `y`.
+ * - **Spatial block bootstrap resampling**: The grid values are resampled with spatial block bootstrapping.
+ *   Each resample preserves local spatial structure and generates new bootstrap realizations of the causality statistic.
+ * - **Estimation of causality for bootstrapped samples**: The causality statistic is estimated for each of the
+ *   bootstrapped realizations, which involves calculating the symbolic entropy measures and their differences.
+ * - **Empirical p-values**: The final p-values for both directional causality estimates (X → Y and Y → X) are
+ *   derived by comparing the bootstrapped statistics with the true causality statistics.
  *
- * The spatial bootstrap preserves local spatial structure using a provided spatial block assignment vector.
- * Grid values are flattened, shuffled in blocks, and reshaped to their original grid layout for computation.
- *
- * The function returns the estimated spatial Granger causality statistics and their bootstrap p-values:
- * - `sc_x_to_y`: Estimated causality from X to Y.
- * - `p_x_to_y`: Bootstrap p-value for X → Y.
- * - `sc_y_to_x`: Estimated causality from Y to X.
- * - `p_y_to_x`: Bootstrap p-value for Y → X.
- *
- * This implementation allows parallel computation for the bootstrap estimation and can display a progress bar
- * to track the process.
+ * This approach takes into account spatial autocorrelation and allows the use of parallel processing for faster
+ * bootstrap estimation. The spatial bootstrap method involves reshuffling grid cells into spatial blocks,
+ * preserving local dependencies, and calculating causality for each realization.
  *
  * @param x           2D grid (matrix) of variable X.
  * @param y           2D grid (matrix) of variable Y, same size as x.
@@ -116,6 +136,7 @@ std::vector<double> SCTSingle4Grid(
  * @param boot        Number of bootstrap iterations (default: 399).
  * @param base        Base of the logarithm used in entropy computation (default: 2 for bits).
  * @param seed        Seed for the random number generator to ensure reproducibility (default: 42).
+ * @param symbolize   Whether to use symbolic transformation for the grids (default: true).
  * @param progressbar Whether to show a progress bar during bootstrap computation (default: true).
  *
  * @return A vector of four values:
@@ -133,6 +154,7 @@ std::vector<double> SCT4Grid(
     int boot = 399,
     double base = 2,
     unsigned int seed = 42,
+    bool symbolize = true,
     bool progressbar = true
 ){
   // Initialize the bootstrapped realizations of the spatial granger causality statistic
@@ -156,7 +178,7 @@ std::vector<double> SCT4Grid(
     std::vector<std::vector<double>> x_boot = GridVec2Mat(x_bs,static_cast<int>(rows));
     std::vector<std::vector<double>> y_boot = GridVec2Mat(y_bs,static_cast<int>(rows));
     // Estimate the bootstrapped realization of the spatial granger causality statistic
-    sc_bootstraps[n] = SCTSingle4Grid(x_boot,y_boot,static_cast<size_t>(std::abs(k)),base);
+    sc_bootstraps[n] = SCTSingle4Grid(x_boot,y_boot,static_cast<size_t>(std::abs(k)),base,symbolize);
   };
 
   // Configure threads
@@ -177,7 +199,7 @@ std::vector<double> SCT4Grid(
   }
 
   // The "true" spatial granger causality statistic
-  std::vector<double> sc = SCTSingle4Grid(x,y,static_cast<size_t>(std::abs(k)),base);
+  std::vector<double> sc = SCTSingle4Grid(x,y,static_cast<size_t>(std::abs(k)),base,symbolize);
   double scx = sc[0];
   double scy = sc[1];
   // Compute the estimated bootstrap p–value
