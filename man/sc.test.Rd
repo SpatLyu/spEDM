@@ -17,6 +17,7 @@
   base = 2,
   nb = NULL,
   threads = detectThreads(),
+  symbolize = TRUE,
   progressbar = FALSE
 )
 
@@ -30,6 +31,7 @@
   seed = 42,
   base = 2,
   threads = detectThreads(),
+  symbolize = TRUE,
   progressbar = FALSE
 )
 }
@@ -53,6 +55,8 @@
 \item{nb}{(optional) The neighbours list.}
 
 \item{threads}{(optional) Number of threads.}
+
+\item{symbolize}{(optional) Whether to apply the symbolic map process.}
 
 \item{progressbar}{(optional) Whether to print the progress bar.}
 }
