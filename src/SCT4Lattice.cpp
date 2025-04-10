@@ -7,10 +7,10 @@
 // [[Rcpp::depends(RcppThread)]]
 
 /**
- * @brief Computes symbolic directional causality between two spatial variables
+ * @brief Computes directional spatial Granger causality between two spatial variables
  *        on a regular lattice using spatial neighbor embeddings and quantized entropy measures.
  *
- * This function quantifies the asymmetric symbolic causality strength between two spatial variables
+ * This function quantifies the asymmetric spatial Granger causality strength between two spatial variables
  * `x` and `y`, both defined over a regular lattice or grid. It applies a symbolic information-theoretic
  * framework, incorporating spatial embedding via neighbor structures and optional symbolization into
  * discrete categories.
@@ -49,8 +49,8 @@
  * @param symbolize Whether to apply discretization for symbolic entropy (default = true).
  *
  * @return A std::vector<double> of size 2:
- *         - [0] Symbolic causality strength from x to y
- *         - [1] Symbolic causality strength from y to x
+ *         - [0] spatial Granger causality from X to Y.
+ *         - [1] spatial Granger causality from Y to X.
  */
 std::vector<double> SCTSingle4Lattice(
     const std::vector<double>& x,
