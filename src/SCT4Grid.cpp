@@ -25,8 +25,9 @@
  *   Causality from Y to X:
  *     SC_{y→x} = [H(x, wx) − H(wx)] − [H(x, wx, wy) − H(wx, wy)]
  *
- * where `wx` and `wy` are spatial embeddings (i.e., local neighborhood vectors) of `x` and `y`.
- * These terms quantify how much the inclusion of one variable’s spatial context helps predict the other.
+ * Finally, each causality score is normalized by dividing by the respective baseline entropy gain,
+ * ensuring both values fall within the range [-1, 1]. This normalization facilitates comparability
+ * and interpretability across different variables and spatial settings.
  *
  * @param x         2D grid (matrix) representing variable X.
  * @param y         2D grid (matrix) representing variable Y.
@@ -35,8 +36,8 @@
  * @param symbolize If true, discretize values using symbolic transformation before entropy computation.
  *
  * @return A std::vector<double> of two values:
- *         - sc_x_to_y: spatial Granger causality from X to Y.
- *         - sc_y_to_x: spatial Granger causality from Y to X.
+ *         - sc_x_to_y: normalized spatial Granger causality from X to Y.
+ *         - sc_y_to_x: normalized spatial Granger causality from Y to X.
  */
 std::vector<double> SCTSingle4Grid(
     const std::vector<std::vector<double>>& x,
@@ -99,8 +100,11 @@ std::vector<double> SCTSingle4Grid(
     Hwxwyy = CppJoinEntropy_Cont(sp_series,{1,2,3}, k, base, true); // H(wx,wy,y)
   }
 
-  double sc_x_to_y = (Hywy - Hwy) - (Hwxwyy - Hwxwy);
-  double sc_y_to_x = (Hxwx - Hwx) - (Hwxwyx - Hwxwy);
+  // transformed to fall within [-1, 1]
+  double sc_x_to_y = ((Hywy - Hwy) - (Hwxwyy - Hwxwy)) / (Hywy - Hwy);
+  double sc_y_to_x = ((Hxwx - Hwx) - (Hwxwyx - Hwxwy)) / ((Hxwx - Hwx));
+  // double sc_x_to_y = (Hywy - Hwy) - (Hwxwyy - Hwxwy);
+  // double sc_y_to_x = (Hxwx - Hwx) - (Hwxwyx - Hwxwy);
 
   return {sc_x_to_y,sc_y_to_x};
 }
