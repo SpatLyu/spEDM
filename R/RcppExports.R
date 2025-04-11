@@ -93,8 +93,8 @@ RcppGCMC4Grid <- function(xMatrix, yMatrix, lib, pred, E, tau, b, max_r, threads
     .Call(`_spEDM_RcppGCMC4Grid`, xMatrix, yMatrix, lib, pred, E, tau, b, max_r, threads, progressbar)
 }
 
-RcppSCT4Grid <- function(x, y, block, k, threads, boot = 399L, base = 2, seed = 42L, symbolize = TRUE, progressbar = TRUE) {
-    .Call(`_spEDM_RcppSCT4Grid`, x, y, block, k, threads, boot, base, seed, symbolize, progressbar)
+RcppSCT4Grid <- function(x, y, block, k, threads, boot = 399L, base = 2, seed = 42L, symbolize = TRUE, normalize = FALSE, progressbar = TRUE) {
+    .Call(`_spEDM_RcppSCT4Grid`, x, y, block, k, threads, boot, base, seed, symbolize, normalize, progressbar)
 }
 
 DetectMaxNumThreads <- function() {
@@ -161,8 +161,8 @@ RcppGCMC4Lattice <- function(x, y, nb, lib, pred, E, tau, b, max_r, threads, pro
     .Call(`_spEDM_RcppGCMC4Lattice`, x, y, nb, lib, pred, E, tau, b, max_r, threads, progressbar)
 }
 
-RcppSCT4Lattice <- function(x, y, nb, block, k, threads, boot = 399L, base = 2, seed = 42L, symbolize = TRUE, progressbar = TRUE) {
-    .Call(`_spEDM_RcppSCT4Lattice`, x, y, nb, block, k, threads, boot, base, seed, symbolize, progressbar)
+RcppSCT4Lattice <- function(x, y, nb, block, k, threads, boot = 399L, base = 2, seed = 42L, symbolize = TRUE, normalize = FALSE, progressbar = TRUE) {
+    .Call(`_spEDM_RcppSCT4Lattice`, x, y, nb, block, k, threads, boot, base, seed, symbolize, normalize, progressbar)
 }
 
 RcppFactorial <- function(n) {
