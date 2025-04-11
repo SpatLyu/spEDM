@@ -10,41 +10,47 @@
  * @brief Compute directional spatial Granger causality for 2D grid data using symbolic entropy measures.
  *
  * This function estimates the bidirectional spatial Granger causality between two spatial variables
- * `x` and `y` observed on a 2D lattice/grid. It does so via a symbolic approximation of transfer entropy,
- * which evaluates whether the spatial neighborhood of one variable improves the prediction of the other.
+ * `x` and `y` observed on a 2D lattice/grid. It is based on a symbolic approximation of spatial transfer entropy,
+ * which evaluates whether the spatial neighborhood of one variable improves the predictive information of the other.
  *
- * The core procedure includes:
- * - Constructing spatial embeddings (`wx`, `wy`) of `x` and `y` using a local neighborhood structure.
- * - Optionally symbolizing all grids to enhance robustness under spatial autocorrelation.
- * - Computing marginal and joint (conditional) entropies using the symbolized or raw values.
- * - Calculating directional Granger causality based on information gain:
+ * The procedure includes the following key steps:
  *
- *   Causality from X to Y:
+ * - **Spatial embedding construction**: Generate spatial lag vectors (`wx` and `wy`) for both variables using a neighborhood window.
+ * - **Optional symbolization**: Convert raw values into discrete symbols to enhance robustness in the presence of spatial autocorrelation.
+ * - **Entropy computation**: Estimate joint and marginal entropies of the original variables and their spatial embeddings.
+ * - **Directional causality estimation**: Compute Granger-like causal influence based on the information gain from adding the other variable's lag:
+ *
+ *   - Causality from X to Y:
+ *     \f[
  *     SC_{x→y} = [H(y, wy) − H(wy)] − [H(y, wy, wx) − H(wy, wx)]
+ *     \f]
  *
- *   Causality from Y to X:
+ *   - Causality from Y to X:
+ *     \f[
  *     SC_{y→x} = [H(x, wx) − H(wx)] − [H(x, wx, wy) − H(wx, wy)]
+ *     \f]
  *
- * Finally, each causality score is normalized by dividing by the respective baseline entropy gain,
- * ensuring both values fall within the range [-1, 1]. This normalization facilitates comparability
- * and interpretability across different variables and spatial settings.
+ * - **Optional normalization**: If `normalize = true`, each causality score is scaled by its baseline information gain
+ *   (i.e., the first term in each direction). This yields values bounded between -1 and 1, making them comparable across variables and scales.
  *
  * @param x         2D grid (matrix) representing variable X.
  * @param y         2D grid (matrix) representing variable Y.
  * @param k         Embedding neighborhood radius (e.g., k = 1 means 3×3 window).
- * @param base      Logarithm base for entropy (default is 2, for units in bits).
- * @param symbolize If true, discretize values using symbolic transformation before entropy computation.
+ * @param base      Logarithm base used in entropy computation (default is 2, for bits).
+ * @param symbolize Whether to discretize the data via symbolic transformation before entropy computation.
+ * @param normalize Whether to normalize the causality scores to lie within [-1, 1] (default is false).
  *
  * @return A std::vector<double> of two values:
- *         - sc_x_to_y: normalized spatial Granger causality from X to Y.
- *         - sc_y_to_x: normalized spatial Granger causality from Y to X.
+ *         - sc_x_to_y: spatial Granger causality from X to Y (normalized if specified).
+ *         - sc_y_to_x: spatial Granger causality from Y to X (normalized if specified).
  */
 std::vector<double> SCTSingle4Grid(
     const std::vector<std::vector<double>>& x,
     const std::vector<std::vector<double>>& y,
     size_t k,
     double base = 2,
-    bool symbolize = true
+    bool symbolize = true,
+    bool normalize = false
 ) {
   size_t rows = x.size();
   size_t cols = x[0].size();
@@ -100,11 +106,15 @@ std::vector<double> SCTSingle4Grid(
     Hwxwyy = CppJoinEntropy_Cont(sp_series,{1,2,3}, k, base, true); // H(wx,wy,y)
   }
 
-  // transformed to fall within [-1, 1]
-  double sc_x_to_y = ((Hywy - Hwy) - (Hwxwyy - Hwxwy)) / (Hywy - Hwy);
-  double sc_y_to_x = ((Hxwx - Hwx) - (Hwxwyx - Hwxwy)) / ((Hxwx - Hwx));
-  // double sc_x_to_y = (Hywy - Hwy) - (Hwxwyy - Hwxwy);
-  // double sc_y_to_x = (Hxwx - Hwx) - (Hwxwyx - Hwxwy);
+  double sc_x_to_y,sc_y_to_x;
+  if (normalize){
+    // transformed to fall within [-1, 1]
+    sc_x_to_y = ((Hywy - Hwy) - (Hwxwyy - Hwxwy)) / (Hywy - Hwy);
+    sc_y_to_x = ((Hxwx - Hwx) - (Hwxwyx - Hwxwy)) / ((Hxwx - Hwx));
+  } else {
+    sc_x_to_y = (Hywy - Hwy) - (Hwxwyy - Hwxwy);
+    sc_y_to_x = (Hxwx - Hwx) - (Hwxwyx - Hwxwy);
+  }
 
   return {sc_x_to_y,sc_y_to_x};
 }
@@ -141,6 +151,7 @@ std::vector<double> SCTSingle4Grid(
  * @param base        Base of the logarithm used in entropy computation (default: 2 for bits).
  * @param seed        Seed for the random number generator to ensure reproducibility (default: 42).
  * @param symbolize   Whether to use symbolic transformation for the grids (default: true).
+ * @param normalize   Whether to normalize entropy values (optional, default: false).
  * @param progressbar Whether to show a progress bar during bootstrap computation (default: true).
  *
  * @return A vector of four values:
@@ -159,6 +170,7 @@ std::vector<double> SCT4Grid(
     double base = 2,
     unsigned int seed = 42,
     bool symbolize = true,
+    bool normalize = false,
     bool progressbar = true
 ){
   // Initialize the bootstrapped realizations of the spatial granger causality statistic
@@ -182,7 +194,7 @@ std::vector<double> SCT4Grid(
     std::vector<std::vector<double>> x_boot = GridVec2Mat(x_bs,static_cast<int>(rows));
     std::vector<std::vector<double>> y_boot = GridVec2Mat(y_bs,static_cast<int>(rows));
     // Estimate the bootstrapped realization of the spatial granger causality statistic
-    sc_bootstraps[n] = SCTSingle4Grid(x_boot,y_boot,static_cast<size_t>(std::abs(k)),base,symbolize);
+    sc_bootstraps[n] = SCTSingle4Grid(x_boot,y_boot,static_cast<size_t>(std::abs(k)),base,symbolize,normalize);
   };
 
   // Configure threads
@@ -203,7 +215,7 @@ std::vector<double> SCT4Grid(
   }
 
   // The "true" spatial granger causality statistic
-  std::vector<double> sc = SCTSingle4Grid(x,y,static_cast<size_t>(std::abs(k)),base,symbolize);
+  std::vector<double> sc = SCTSingle4Grid(x,y,static_cast<size_t>(std::abs(k)),base,symbolize,normalize);
   double scx = sc[0];
   double scy = sc[1];
   // Compute the estimated bootstrap p–value
