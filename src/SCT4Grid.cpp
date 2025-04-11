@@ -99,8 +99,11 @@ std::vector<double> SCTSingle4Grid(
     Hwxwyy = CppJoinEntropy_Cont(sp_series,{1,2,3}, k, base, true); // H(wx,wy,y)
   }
 
-  double sc_x_to_y = (Hywy - Hwy) - (Hwxwyy - Hwxwy);
-  double sc_y_to_x = (Hxwx - Hwx) - (Hwxwyx - Hwxwy);
+  // transformed to fall within [-1, 1]
+  double sc_x_to_y = ((Hywy - Hwy) - (Hwxwyy - Hwxwy)) / (Hywy - Hwy);
+  double sc_y_to_x = ((Hxwx - Hwx) - (Hwxwyx - Hwxwy)) / ((Hxwx - Hwx));
+  // double sc_x_to_y = (Hywy - Hwy) - (Hwxwyy - Hwxwy);
+  // double sc_y_to_x = (Hxwx - Hwx) - (Hwxwyx - Hwxwy);
 
   return {sc_x_to_y,sc_y_to_x};
 }
