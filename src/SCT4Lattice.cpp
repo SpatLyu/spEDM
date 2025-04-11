@@ -32,11 +32,13 @@
  *
  * 4. Directional Causality Strengths:
  *    - From x to y:
- *      sc_x_to_y = (H(y, wy) - H(wy)) - (H(wx, wy, y) - H(wx, wy))
+ *      sc_x_to_y = ((H(y, wy) - H(wy)) - (H(wx, wy, y) - H(wx, wy))) / (H(y, wy) - H(wy))
  *    - From y to x:
- *      sc_y_to_x = (H(x, wx) - H(wx)) - (H(wx, wy, x) - H(wx, wy))
- *    These values reflect the reduction in uncertainty in `y` (or `x`) when considering `x`
- *    (or `y`) and its spatial context.
+ *      sc_y_to_x = ((H(x, wx) - H(wx)) - (H(wx, wy, x) - H(wx, wy))) / (H(x, wx) - H(wx))
+ *    These values reflect the normalized reduction in uncertainty in `y` (or `x`) when
+ *    considering `x` (or `y`) and its spatial context. The causality strengths are
+ *    **transformed to fall within the range [-1, 1]**, enabling comparative interpretation
+ *    across different variable pairs or datasets.
  *
  * Parameters:
  * - x: Input spatial variable `x` (vector of doubles).
@@ -48,8 +50,8 @@
  *
  * Returns:
  *    A `std::vector<double>` of size 2:
- *        - [0] Spatial Granger causality from `X` to `Y`.
- *        - [1] Spatial Granger causality from `Y` to `X`.
+ *        - [0] Normalized spatial Granger causality from `X` to `Y` (in [-1, 1]).
+ *        - [1] Normalized spatial Granger causality from `Y` to `X` (in [-1, 1]).
  */
 std::vector<double> SCTSingle4Lattice(
     const std::vector<double>& x,
