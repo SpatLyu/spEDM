@@ -1,7 +1,7 @@
 ---
 title: "Introduction to the spEDM package"
 author: "Wenbo Lv"
-date: "2025-05-01"
+date: "2025-04-13"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{spEDM}
@@ -36,12 +36,21 @@ install.packages("spEDM",
 
 ## Data
 
-The *spEDM* package provides four representative datasets with well-known causation to demonstrate its functionality:
+The *spEDM* package includes four illustrative datasets with well-known causation to demonstrate key functionalities:
 
-1. The **Columbus OH** dataset: a classic spatial analysis dataset frequently used in spatial econometrics (store relevant information in the `columbus.gpkg` file).
-2. A county-level dataset of **population density and its potential drivers** in mainland China (store relevant information in the `popd.csv` and `popd_nb.gal` files).
-3. A **soil Cu heavy metal contamination** dataset: Cu content in the soil and variables of nighttime lights and industrial density (store relevant information in the `cu.tif` files).
-4. A **farmland NPP and climate** dataset for mainland China, capturing spatial dynamics between agricultural productivity and climatic variables (store relevant information in the `npp.tif` files).
+1. **Columbus, OH** dataset — A classic spatial dataset widely used in spatial econometrics, included here for benchmarking and demonstration purposes.
+   *Data files*: `columbus.gpkg`
+
+2. **Population density and its potential drivers in mainland China** — A county-level dataset capturing population density alongside relevant socio-environmental drivers.
+   *Data files*: `popd.csv`, `popd_nb.gal`
+
+3. **Soil copper (Cu) contamination** — A raster-based dataset representing soil Cu concentrations, with associated layers on nighttime light intensity and industrial density, useful for exploring spatial interactions in environmental pollution.
+   *Data files*: `cu.tif`
+
+4. **Farmland NPP and climate variables** — A raster dataset capturing net primary productivity (NPP) and key climatic variables across mainland China, suitable for examining the spatial coupling between agricultural productivity and climate.
+   *Data files*: `npp.tif`
+
+These datasets can be loaded as shown below, including basic visualization for raster data:
 
 ### Columbus OH spatial analysis dataset
 
@@ -165,8 +174,6 @@ terra::plot(cu, nc = 3,
 ![**Figure 1**. Maps of soil Cu contamination, the density of industrial pollutants and nightlight.](../man/figures/pkgintro/cu-1.png)
 
 ### Farmland NPP and climatic variables in mainland China
-
-
 
 
 ``` r
