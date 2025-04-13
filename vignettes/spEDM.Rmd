@@ -1,7 +1,7 @@
 ---
 title: "Introduction to the spEDM package"
 author: "Wenbo Lv"
-date: "2025-04-13"
+date: "2025-05-01"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{spEDM}
@@ -234,6 +234,10 @@ Users can refer to several additional vignettes for more detailed examples of us
 | Geographical Convergent Cross Mapping |[GCCM](https://stscl.github.io/spEDM/articles/GCCM.html)|
 
 ## References
+
+Takens, F. (1981). Detecting strange attractors in turbulence. Dynamical Systems and Turbulence, Warwick 1980, 366–381. https://doi.org/10.1007/bfb0091924
+
+Mañé, R. (1981). On the dimension of the compact invariant sets of certain non-linear maps. Dynamical Systems and Turbulence, Warwick 1980, 230–242. https://doi.org/10.1007/bfb0091916
 
 Herrera, M., Mur, J., & Ruiz, M. (2016). Detecting causal relationships between spatial processes. Papers in Regional Science, 95(3), 577–595. https://doi.org/10.1111/pirs.12144
 

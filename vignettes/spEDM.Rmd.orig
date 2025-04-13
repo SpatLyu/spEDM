@@ -145,6 +145,10 @@ Users can refer to several additional vignettes for more detailed examples of us
 
 ## References
 
+Takens, F. (1981). Detecting strange attractors in turbulence. Dynamical Systems and Turbulence, Warwick 1980, 366–381. https://doi.org/10.1007/bfb0091924
+
+Mañé, R. (1981). On the dimension of the compact invariant sets of certain non-linear maps. Dynamical Systems and Turbulence, Warwick 1980, 230–242. https://doi.org/10.1007/bfb0091916
+
 Herrera, M., Mur, J., & Ruiz, M. (2016). Detecting causal relationships between spatial processes. Papers in Regional Science, 95(3), 577–595. https://doi.org/10.1111/pirs.12144
 
 Gao, B., Yang, J., Chen, Z., Sugihara, G., Li, M., Stein, A., Kwan, M.-P., & Wang, J. (2023). Causal inference from cross-sectional earth system data with geographical convergent cross mapping. Nature Communications, 14(1). https://doi.org/10.1038/s41467-023-41619-6
