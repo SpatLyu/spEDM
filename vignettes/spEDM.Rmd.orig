@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 
 The *spEDM* package is an open-source, computationally efficient toolkit designed to provide a unified API for **Spatial Empirical Dynamic Modeling**. It supports a suite of prediction-based causal inference algorithms, including *spatial granger causality test*, *spatial state-space reconstruction*, and *geographically convergent cross mapping*.
 
-To facilitate learning and application, *spEDM* includes four typical spatial cross-sectional datasets along with illustrative use cases for each of the core algorithms.
+To support both learning and practical application, *spEDM* offers four carefully curated spatial cross-sectional datasets, each paired with a detailed example showcasing the use of key algorithms in the package.
 
 ## Installation
 
@@ -144,6 +144,10 @@ Users can refer to several additional vignettes for more detailed examples of us
 | Geographical Convergent Cross Mapping |[GCCM](https://stscl.github.io/spEDM/articles/GCCM.html)|
 
 ## References
+
+Takens, F. (1981). Detecting strange attractors in turbulence. Dynamical Systems and Turbulence, Warwick 1980, 366–381. https://doi.org/10.1007/bfb0091924
+
+Mañé, R. (1981). On the dimension of the compact invariant sets of certain non-linear maps. Dynamical Systems and Turbulence, Warwick 1980, 230–242. https://doi.org/10.1007/bfb0091916
 
 Herrera, M., Mur, J., & Ruiz, M. (2016). Detecting causal relationships between spatial processes. Papers in Regional Science, 95(3), 577–595. https://doi.org/10.1111/pirs.12144
 
