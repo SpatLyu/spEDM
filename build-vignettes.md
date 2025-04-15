@@ -1,5 +1,8 @@
+Due to the time-consuming computations involved in the vignettes of the *spEDM* package, 
+it is necessary to pre-build the vignettes prior to package submission.
+
 ``` r
-.precompile_vignettes = \(name){
+.prebuild_vignettes = \(name){
   out = paste0("vignettes/",name,".Rmd")
   inp = paste0(out,".orig")
   knitr::knit(inp,out)
@@ -10,17 +13,17 @@
 
 ``` r
 for (v in c("spEDM", "SSR", "SCT", "GCCM", "GCMC", "SCPCM")) {
-  .precompile_vignettes(v)
+  .prebuild_vignettes(v)
 }
 ```
 
 -   Build vignettes separately
 
 ``` r
-.precompile_vignettes("spEDM")
-.precompile_vignettes("SSR")
-.precompile_vignettes("SCT")
-.precompile_vignettes("GCCM")
-.precompile_vignettes("GCMC")
-.precompile_vignettes("SCPCM")
+.prebuild_vignettes("spEDM")
+.prebuild_vignettes("SSR")
+.prebuild_vignettes("SCT")
+.prebuild_vignettes("GCCM")
+.prebuild_vignettes("GCMC")
+.prebuild_vignettes("SCPCM")
 ```
