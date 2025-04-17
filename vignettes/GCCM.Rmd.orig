@@ -130,7 +130,7 @@ pd_res
 
 Visualize the result:
 
-```{r fig1,fig.width=5.5,fig.height=4.45,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. The cross-mapping prediction outputs between population density and county-level precipitation.")}
+```{r fig1,fig.width=4.5,fig.height=3.65,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. The cross-mapping prediction outputs between population density and county-level precipitation.")}
 plot(pd_res,xlimits = c(0, 2800)) +
   ggplot2::theme(legend.justification = c(0.85,1))
 ```
