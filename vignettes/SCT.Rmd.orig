@@ -33,7 +33,7 @@ $$
 
 to denote the sets of spatial lags of $x$ and $y$ given by all the weighting matrices in $\mathcal{W}(x, y)$(that is the set of spatial
 dependence structures between $x$ and $y$).
- 
+
 
 We say that $\{x_s\}_{s \in S}$ does not cause $\{y_s\}_{s \in S}$ **under the spatial structures** $\mathcal{X}_W$ and $\mathcal{Y}_W$ if
 
@@ -53,9 +53,11 @@ $$
 
 where $\hat{h}_*(m)$ is the estimated conditional symbolic entropy using Shannon’s entropy with $m-1$ nearest neighbors. The alternative is that the null hypothesis of is not true.
 
-If $\mathcal{X}_W$ does not contain extra information about $y$ then $\hat{\delta}(\mathcal{Y}_W, \mathcal{X}_W) = 0$, otherwise, $ \hat{\delta}(\mathcal{Y}_W, \mathcal{X}_W) > 0$. 
+If $\mathcal{X}_W$ does not contain extra information about $y$ then $\hat{\delta}(\mathcal{Y}_W, \mathcal{X}_W) = 0$, otherwise, $ \hat{\delta}(\mathcal{Y}_W, \mathcal{X}_W) > 0$.
 
 $h_{y |\mathcal{Y}_W}(m)$ measures the uncertainty of the distribution of symbols of $y$, conditional to the symbols of its spatial lag, $ \mathcal{Y}_W$. Moreover, $h_{y | \mathcal{Y}_W,\mathcal{X}_W}(m)$ measures the uncertainty of the distribution of symbols of $y$, conditional to the symbols of the spatial lags of $y$, $\mathcal{Y}_W$, and of $x$, $ \mathcal{X}_W$. If the second variable, $x$, indeed causes the first one then there should be a significant decrease in the entropy, and the statistic $\hat{\delta}(\mathcal{Y}_W, \mathcal{X}_W)$ will take on high positive values. If there is only a spatial correlation, but not causation, the difference between both entropies will be small. The statistical significance of $\hat{\delta}(\mathcal{Y}_W, \mathcal{X}_W)$ is assessed using spatial block bootstrap.
+
+The Spatial (Granger) Causality Test (SCT) is not well-suited for spatial field data; instead, it is more appropriate for spatial areal data, where observations are aggregated over distinct spatial units. As illustrated in the following example, spatial areal data yielded a reasonable spatial causality statistic, whereas raster-based data produced a negative value—indicating no causality—despite the fact that a causal association should exist.
 
 ## Usage examples
 
@@ -85,24 +87,26 @@ sc.test(columbus, "inc", "hoval", k = 15)
 
 ### An example of spatial grid data
 
-Load the `spEDM` package and its soil pollution data:
+Load the `spEDM` package and its farmland NPP data:
 
 ```{r load_grid_data}
 library(spEDM)
 
-cu = terra::rast(system.file("case/cu.tif", package="spEDM"))
-cu
+npp = terra::rast(system.file("case/npp.tif", package = "spEDM"))
+# To save the computation time, we will aggregate the data by 3 times
+npp = terra::aggregate(npp, fact = 3, na.rm = TRUE)
+npp
 ```
 
-Use SCT to detect spatial causality among the variables *cu*, *ntl*, and *industry* :
+Use SCT to detect spatial causality among the variables *pre*, *tem*, and *npp* :
 
 ```{r case_grid}
-# nightlight and soil Cu concentration
-sc.test(cu, "ntl", "cu", k = 30)
+# precipitation and npp
+sc.test(npp,"pre","npp",k = 270)
 
-# the density of industrial pollutants and soil Cu concentration
-sc.test(cu, "industry", "cu", k = 30)
+# temperature and npp
+sc.test(npp,"tem","npp",k = 270)
 
-# nightlight and the density of industrial pollutants
-sc.test(cu, "ntl", "industry", k = 30)
+# precipitation and temperature
+sc.test(npp,"pre","tem",k = 270)
 ```
