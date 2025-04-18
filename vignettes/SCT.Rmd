@@ -150,3 +150,5 @@ sc.test(cu, "ntl", "industry", k = 30)
 ## ntl -> industry: statistic = -1.327, p value = 0
 ## industry -> ntl: statistic = -3.105, p value = 0
 ```
+
+The Spatial (Granger) Causality Test (SCT) is not well-suited for spatial field data; instead, it is more appropriate for spatial areal data, where observations are aggregated over distinct spatial units.
