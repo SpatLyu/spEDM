@@ -13,8 +13,8 @@ RcppMutualInformation_Cont <- function(vec1, vec2, k = 3L, alg = 1L, normalize =
     .Call(`_spEDM_RcppMutualInformation_Cont`, vec1, vec2, k, alg, normalize, NA_rm)
 }
 
-RcppConditionalEntropy_Cont <- function(vec1, vec2, k = 3L, base = 10, NA_rm = FALSE) {
-    .Call(`_spEDM_RcppConditionalEntropy_Cont`, vec1, vec2, k, base, NA_rm)
+RcppConditionalEntropy_Cont <- function(mat, target_columns, conditional_columns, k = 3L, base = 10, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppConditionalEntropy_Cont`, mat, target_columns, conditional_columns, k, base, NA_rm)
 }
 
 RcppEntropy_Disc <- function(vec, base = 10, NA_rm = FALSE) {
@@ -29,8 +29,8 @@ RcppMutualInformation_Disc <- function(mat, columns1, columns2, base = 10, NA_rm
     .Call(`_spEDM_RcppMutualInformation_Disc`, mat, columns1, columns2, base, NA_rm)
 }
 
-RcppConditionalEntropy_Disc <- function(mat, columns1, columns2, base = 10, NA_rm = FALSE) {
-    .Call(`_spEDM_RcppConditionalEntropy_Disc`, mat, columns1, columns2, base, NA_rm)
+RcppConditionalEntropy_Disc <- function(mat, target_columns, conditional_columns, base = 10, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppConditionalEntropy_Disc`, mat, target_columns, conditional_columns, base, NA_rm)
 }
 
 RcppSimplexForecast <- function(embedding, target, lib, pred, num_neighbors) {

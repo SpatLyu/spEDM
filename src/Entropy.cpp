@@ -210,36 +210,32 @@ double CppMutualInformation_Cont(const std::vector<std::vector<double>>& mat, si
 }
 
 /**
- * @brief Computes the conditional entropy of x given y using k-nearest neighbors estimation.
- *
- * @param vecx A vector of double values representing the first variable.
- * @param vecy A vector of double values representing the second variable.
- * @param k The number of nearest neighbors to consider in the estimation.
- * @param base The logarithm base used for entropy calculation (default: 10).
- * @param NA_rm A boolean flag indicating whether to remove missing values (NaN) before computation (default: false).
- *
- * @return The estimated conditional entropy of x given y.
+ * Computes the conditional entropy H(X | Y) between two sets of continuous variables using a k-nearest neighbor estimator.
+ * @param mat Input matrix where each row is a sample and each column is a continuous variable.
+ * @param target_columns Indices of columns representing the target variable(s) X.
+ * @param conditional_columns Indices of columns representing the conditioning variable(s) Y.
+ * @param k Number of nearest neighbors used for entropy estimation.
+ * @param base Logarithm base used in entropy calculations (default: 10).
+ * @param NA_rm If true, removes samples with any NaN values; otherwise returns NaN if any NaN is encountered.
+ * @return Estimated conditional entropy H(X | Y) = H(X,Y) - H(Y), or NaN if invalid conditions occur.
  */
-double CppConditionalEntropy_Cont(const std::vector<double>& vecx,
-                                  const std::vector<double>& vecy,
-                                  size_t k, double base = 10,
-                                  bool NA_rm = false) {
-  // Create a 2D vector for the joint of x and y
-  std::vector<std::vector<double>> joint_vec(vecx.size(), std::vector<double>(2));
-  for (size_t i = 0; i < vecx.size(); ++i) {
-    joint_vec[i][0] = vecx[i];
-    joint_vec[i][1] = vecy[i];
-  }
+double CppConditionalEntropy_Cont(const std::vector<std::vector<double>>& mat,
+                                  const std::vector<int>& target_columns,
+                                  const std::vector<int>& conditional_columns,
+                                  size_t k, double base = 10, bool NA_rm = false) {
+  std::unordered_set<int> unique_set;
+  unique_set.insert(target_columns.begin(), target_columns.end());
+  unique_set.insert(conditional_columns.begin(), conditional_columns.end());
+  std::vector<int> columns(unique_set.begin(), unique_set.end());
 
   // Compute the joint entropy H(X, Y)
-  double joint_entropy = CppJoinEntropy_Cont(joint_vec, {0,1}, k, base, NA_rm);
+  double joint_entropy = CppJoinEntropy_Cont(mat, columns, k, base, NA_rm);
 
   // Compute the entropy of y, H(Y)
-  double entropy_y = CppEntropy_Cont(vecy, k, base, NA_rm);
+  double entropy_y = CppJoinEntropy_Cont(mat, conditional_columns, k, base, NA_rm);
 
   // Compute the conditional entropy H(X|Y) = H(X, Y) - H(Y)
   double ce = joint_entropy - entropy_y;
-
   return ce;
 }
 
@@ -353,6 +349,7 @@ double CppMutualInformation_Disc(const std::vector<std::vector<double>>& mat,
   if (std::isnan(h_x) || std::isnan(h_y) || std::isnan(h_xy)) {
     return std::numeric_limits<double>::quiet_NaN();
   }
+
   return h_x + h_y - h_xy;
 }
 
