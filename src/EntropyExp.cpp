@@ -37,20 +37,33 @@ double RcppJoinEntropy_Cont(const Rcpp::NumericMatrix& mat,
 };
 
 // [[Rcpp::export]]
-double RcppMutualInformation_Cont(const Rcpp::NumericVector& vec1,
-                                  const Rcpp::NumericVector& vec2,
+double RcppMutualInformation_Cont(const Rcpp::NumericMatrix& mat,
+                                  const Rcpp::IntegerVector& columns1,
+                                  const Rcpp::IntegerVector& columns2,
                                   int k = 3, int alg = 1,
                                   bool normalize = false,
                                   bool NA_rm = false){
-  std::vector<double> v1 = Rcpp::as<std::vector<double>>(vec1);
-  std::vector<double> v2 = Rcpp::as<std::vector<double>>(vec2);
-  std::vector<std::vector<double>> cppMat(v1.size(), std::vector<double>(2));
-  for (size_t i = 0; i < v1.size(); ++i) {
-    cppMat[i][0] = v1[i];
-    cppMat[i][1] = v2[i];
+  int numRows = mat.nrow();
+  int numCols = mat.ncol();
+  // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
+  std::vector<std::vector<double>> cppMat(numRows, std::vector<double>(numCols));
+  for (int i = 0; i < numRows; ++i) {
+    for (int j = 0; j < numCols; ++j) {
+      cppMat[i][j] = mat(i, j);
+    }
   }
 
-  return CppMutualInformation_Cont(cppMat,static_cast<size_t>(std::abs(k)),alg,normalize,NA_rm);
+  // Convert Rcpp IntegerVector to std::vector<int>
+  std::vector<int> col1 = Rcpp::as<std::vector<int>>(columns1);
+  for (size_t i = 0; i < col1.size(); ++i) {
+    col1[i] -= 1;
+  }
+  std::vector<int> col2 = Rcpp::as<std::vector<int>>(columns2);
+  for (size_t i = 0; i < col2.size(); ++i) {
+    col2[i] -= 1;
+  }
+
+  return CppMutualInformation_Cont(cppMat,col1,col2,static_cast<size_t>(std::abs(k)),alg,normalize,NA_rm);
 }
 
 // [[Rcpp::export]]
