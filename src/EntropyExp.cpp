@@ -87,7 +87,7 @@ double RcppJoinEntropy_Disc(const Rcpp::NumericMatrix& mat,
 
   // Convert Rcpp IntegerVector to std::vector<int>
   std::vector<int> col_std = Rcpp::as<std::vector<int>>(columns);
-  for (std::size_t i = 0; i < col_std.size(); ++i) {
+  for (size_t i = 0; i < col_std.size(); ++i) {
     col_std[i] -= 1;
   }
 
@@ -95,27 +95,59 @@ double RcppJoinEntropy_Disc(const Rcpp::NumericMatrix& mat,
 };
 
 // [[Rcpp::export]]
-double RcppMutualInformation_Disc(const Rcpp::NumericVector& vec1,
-                                  const Rcpp::NumericVector& vec2,
+double RcppMutualInformation_Disc(const Rcpp::NumericMatrix& mat,
+                                  const Rcpp::IntegerVector& columns1,
+                                  const Rcpp::IntegerVector& columns2,
                                   double base = 10,
                                   bool NA_rm = false){
-  std::vector<double> v1 = Rcpp::as<std::vector<double>>(vec1);
-  std::vector<double> v2 = Rcpp::as<std::vector<double>>(vec2);
-  std::vector<std::vector<double>> cppMat(v1.size(), std::vector<double>(2));
-  for (size_t i = 0; i < v1.size(); ++i) {
-    cppMat[i][0] = v1[i];
-    cppMat[i][1] = v2[i];
+  int numRows = mat.nrow();
+  int numCols = mat.ncol();
+  // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
+  std::vector<std::vector<double>> cppMat(numRows, std::vector<double>(numCols));
+  for (int i = 0; i < numRows; ++i) {
+    for (int j = 0; j < numCols; ++j) {
+      cppMat[i][j] = mat(i, j);
+    }
   }
 
-  return CppMutualInformation_Disc(cppMat,base,NA_rm);
+  // Convert Rcpp IntegerVector to std::vector<int>
+  std::vector<int> col1 = Rcpp::as<std::vector<int>>(columns1);
+  for (size_t i = 0; i < col1.size(); ++i) {
+    col1[i] -= 1;
+  }
+  std::vector<int> col2 = Rcpp::as<std::vector<int>>(columns2);
+  for (size_t i = 0; i < col2.size(); ++i) {
+    col2[i] -= 1;
+  }
+
+  return CppMutualInformation_Disc(cppMat,col1,col2,base,NA_rm);
 }
 
 // [[Rcpp::export]]
-double RcppConditionalEntropy_Disc(const Rcpp::NumericVector& vec1,
-                                   const Rcpp::NumericVector& vec2,
+double RcppConditionalEntropy_Disc(const Rcpp::NumericMatrix& mat,
+                                   const Rcpp::IntegerVector& columns1,
+                                   const Rcpp::IntegerVector& columns2,
                                    double base = 10,
                                    bool NA_rm = false){
-  std::vector<double> v1 = Rcpp::as<std::vector<double>>(vec1);
-  std::vector<double> v2 = Rcpp::as<std::vector<double>>(vec2);
-  return CppConditionalEntropy_Disc(v1,v2,base,NA_rm);
+  int numRows = mat.nrow();
+  int numCols = mat.ncol();
+  // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
+  std::vector<std::vector<double>> cppMat(numRows, std::vector<double>(numCols));
+  for (int i = 0; i < numRows; ++i) {
+    for (int j = 0; j < numCols; ++j) {
+      cppMat[i][j] = mat(i, j);
+    }
+  }
+
+  // Convert Rcpp IntegerVector to std::vector<int>
+  std::vector<int> col1 = Rcpp::as<std::vector<int>>(columns1);
+  for (size_t i = 0; i < col1.size(); ++i) {
+    col1[i] -= 1;
+  }
+  std::vector<int> col2 = Rcpp::as<std::vector<int>>(columns2);
+  for (size_t i = 0; i < col2.size(); ++i) {
+    col2[i] -= 1;
+  }
+
+  return CppConditionalEntropy_Disc(cppMat,col1,col2,base,NA_rm);
 }

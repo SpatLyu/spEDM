@@ -4,6 +4,7 @@
 #include <limits>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include "CppStats.h"
 
 /**
@@ -328,27 +329,26 @@ double CppJoinEntropy_Disc(const std::vector<std::vector<double>>& mat,
 }
 
 /**
- * Computes the mutual information between two discrete sequences.
- * @param mat Input matrix where each row represents a sample containing two variables.
- * @param base Logarithm base (default: 10).
- * @param NA_rm If true, removes samples with any NaN; otherwise returns NaN if any NaN exists.
- * @return Mutual information value or NaN if invalid conditions occur.
+ * Computes the mutual information between two sets of discrete variables (columns).
+ * @param mat Input matrix where each row represents a sample and each column a discrete variable.
+ * @param columns1 Indices of columns representing the first set of variables (X).
+ * @param columns2 Indices of columns representing the second set of variables (Y).
+ * @param base Logarithm base used in entropy calculations (default: 10).
+ * @param NA_rm If true, removes samples with any NaN values; otherwise returns NaN if any NaN is encountered.
+ * @return Mutual information value I(X; Y) = H(X) + H(Y) - H(X,Y), or NaN if invalid conditions occur.
  */
 double CppMutualInformation_Disc(const std::vector<std::vector<double>>& mat,
+                                 const std::vector<int>& columns1,
+                                 const std::vector<int>& columns2,
                                  double base = 10, bool NA_rm = false) {
-  size_t nrow = mat.size();
-  // size_t ncol = mat[0].size();
+  std::unordered_set<int> unique_set;
+  unique_set.insert(columns1.begin(), columns1.end());
+  unique_set.insert(columns2.begin(), columns2.end());
+  std::vector<int> columns(unique_set.begin(), unique_set.end());
 
-  std::vector<double> x_vec(nrow);
-  std::vector<double> y_vec(nrow);
-  for (size_t i = 0; i < nrow; ++i) {
-    x_vec[i] = mat[i][0];
-    y_vec[i] = mat[i][1];
-  }
-
-  double h_x = CppEntropy_Disc(x_vec, base, NA_rm);
-  double h_y = CppEntropy_Disc(y_vec, base, NA_rm);
-  double h_xy = CppJoinEntropy_Disc(mat, {0,1}, base, NA_rm);
+  double h_x = CppJoinEntropy_Disc(mat, columns1, base, NA_rm);
+  double h_y = CppJoinEntropy_Disc(mat, columns2, base, NA_rm);
+  double h_xy = CppJoinEntropy_Disc(mat, columns, base, NA_rm);
 
   if (std::isnan(h_x) || std::isnan(h_y) || std::isnan(h_xy)) {
     return std::numeric_limits<double>::quiet_NaN();
@@ -357,27 +357,25 @@ double CppMutualInformation_Disc(const std::vector<std::vector<double>>& mat,
 }
 
 /**
- * Computes the conditional entropy of X given Y for discrete sequences.
- * @param vecx Observations of variable X.
- * @param vecy Observations of variable Y.
- * @param base Logarithm base (default: 10).
- * @param NA_rm If true, removes samples with NaN in X or Y; otherwise returns NaN if any NaN exists.
- * @return Conditional entropy H(X|Y) or NaN if invalid conditions occur.
+ * Computes the conditional entropy H(X | Y) between two sets of discrete variables.
+ * @param mat Input matrix where each row is a sample and each column is a discrete variable.
+ * @param target_columns Indices of columns representing the target variable(s) X.
+ * @param conditional_columns Indices of columns representing the conditioning variable(s) Y.
+ * @param base Logarithm base used in entropy calculations (default: 10).
+ * @param NA_rm If true, removes samples with any NaN values; otherwise returns NaN if any NaN is encountered.
+ * @return Conditional entropy value H(X | Y) = H(X,Y) - H(Y), or NaN if invalid conditions occur.
  */
-double CppConditionalEntropy_Disc(const std::vector<double>& vecx,
-                                  const std::vector<double>& vecy,
-                                  double base = 10,
-                                  bool NA_rm = false) {
-  // Create a 2D vector for the joint of x and y
-  std::vector<std::vector<double>> joint_vec(vecx.size(), std::vector<double>(2));
-  for (size_t i = 0; i < vecx.size(); ++i) {
-    joint_vec[i][0] = vecx[i];
-    joint_vec[i][1] = vecy[i];
-  }
+double CppConditionalEntropy_Disc(const std::vector<std::vector<double>>& mat,
+                                  const std::vector<int>& target_columns,
+                                  const std::vector<int>& conditional_columns,
+                                  double base = 10, bool NA_rm = false) {
+  std::unordered_set<int> unique_set;
+  unique_set.insert(target_columns.begin(), target_columns.end());
+  unique_set.insert(conditional_columns.begin(), conditional_columns.end());
+  std::vector<int> columns(unique_set.begin(), unique_set.end());
 
-  // Compute required entropies
-  double H_xy = CppJoinEntropy_Disc(joint_vec, {0,1}, base, NA_rm);  // Joint entropy
-  double H_y = CppEntropy_Disc(vecy, base, NA_rm); // Marginal entropy of Y
+  double H_xy = CppJoinEntropy_Disc(mat, columns, base, NA_rm);
+  double H_y = CppJoinEntropy_Disc(mat, conditional_columns, base, NA_rm);
 
   if (std::isnan(H_xy) || std::isnan(H_y)) {
     return std::numeric_limits<double>::quiet_NaN();
@@ -385,4 +383,3 @@ double CppConditionalEntropy_Disc(const std::vector<double>& vecx,
 
   return H_xy - H_y; // H(X|Y) = H(X,Y) - H(Y)
 }
-
