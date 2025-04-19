@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <vector>
 #include <cmath>
+#include <algorithm>
 #include <numeric> // for std::accumulate
 #include <limits>  // for std::numeric_limits
 #include "DeLongPlacements.h"
@@ -952,6 +953,51 @@ std::vector<double> CppKNearestDistance(const std::vector<double>& vec, size_t k
     // If using Euclidean distance, take the square root of the k-th nearest squared distance
     if (!L1norm) {
       result[i] = std::sqrt(result[i]);
+    }
+  }
+
+  return result;
+}
+
+// Function to compute the k-th nearest Chebyshev distance for each sample in a matrix
+std::vector<double> CppMatKNearestDistance(const std::vector<std::vector<double>>& mat,
+                                           size_t k, bool NA_rm = false) {
+  size_t n = mat.size();
+  std::vector<double> result(n, std::numeric_limits<double>::quiet_NaN());
+
+  for (size_t i = 0; i < n; ++i) {
+    const auto& vec_i = mat[i];
+
+    if (std::any_of(vec_i.begin(), vec_i.end(), [](double val) { return std::isnan(val); }) && !NA_rm) {
+      continue;  // Skip if NA and NA_rm is false
+    }
+
+    std::vector<double> distances;
+    distances.reserve(n - 1);
+
+    for (size_t j = 0; j < n; ++j) {
+      if (i == j) continue;
+
+      double dist = CppChebyshevDistance(vec_i, mat[j], NA_rm);
+      if (std::isnan(dist)) {
+        if (!NA_rm) {
+          distances.clear();
+          break;
+        } else {
+          continue;
+        }
+      }
+
+      distances.push_back(dist);
+    }
+
+    if (distances.empty()) continue;
+
+    if (k < distances.size()) {
+      std::nth_element(distances.begin(), distances.begin() + k, distances.end());
+      result[i] = distances[k];
+    } else {
+      result[i] = *std::max_element(distances.begin(), distances.end());  // fallback if not enough neighbors
     }
   }
 
