@@ -100,30 +100,32 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppMutualInformation_Disc
-double RcppMutualInformation_Disc(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, double base, bool NA_rm);
-RcppExport SEXP _spEDM_RcppMutualInformation_Disc(SEXP vec1SEXP, SEXP vec2SEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
+double RcppMutualInformation_Disc(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& columns1, const Rcpp::IntegerVector& columns2, double base, bool NA_rm);
+RcppExport SEXP _spEDM_RcppMutualInformation_Disc(SEXP matSEXP, SEXP columns1SEXP, SEXP columns2SEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec1(vec1SEXP);
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec2(vec2SEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type columns1(columns1SEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type columns2(columns2SEXP);
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppMutualInformation_Disc(vec1, vec2, base, NA_rm));
+    rcpp_result_gen = Rcpp::wrap(RcppMutualInformation_Disc(mat, columns1, columns2, base, NA_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppConditionalEntropy_Disc
-double RcppConditionalEntropy_Disc(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, double base, bool NA_rm);
-RcppExport SEXP _spEDM_RcppConditionalEntropy_Disc(SEXP vec1SEXP, SEXP vec2SEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
+double RcppConditionalEntropy_Disc(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& columns1, const Rcpp::IntegerVector& columns2, double base, bool NA_rm);
+RcppExport SEXP _spEDM_RcppConditionalEntropy_Disc(SEXP matSEXP, SEXP columns1SEXP, SEXP columns2SEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec1(vec1SEXP);
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec2(vec2SEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type columns1(columns1SEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type columns2(columns2SEXP);
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppConditionalEntropy_Disc(vec1, vec2, base, NA_rm));
+    rcpp_result_gen = Rcpp::wrap(RcppConditionalEntropy_Disc(mat, columns1, columns2, base, NA_rm));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1089,8 +1091,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppConditionalEntropy_Cont", (DL_FUNC) &_spEDM_RcppConditionalEntropy_Cont, 5},
     {"_spEDM_RcppEntropy_Disc", (DL_FUNC) &_spEDM_RcppEntropy_Disc, 3},
     {"_spEDM_RcppJoinEntropy_Disc", (DL_FUNC) &_spEDM_RcppJoinEntropy_Disc, 4},
-    {"_spEDM_RcppMutualInformation_Disc", (DL_FUNC) &_spEDM_RcppMutualInformation_Disc, 4},
-    {"_spEDM_RcppConditionalEntropy_Disc", (DL_FUNC) &_spEDM_RcppConditionalEntropy_Disc, 4},
+    {"_spEDM_RcppMutualInformation_Disc", (DL_FUNC) &_spEDM_RcppMutualInformation_Disc, 5},
+    {"_spEDM_RcppConditionalEntropy_Disc", (DL_FUNC) &_spEDM_RcppConditionalEntropy_Disc, 5},
     {"_spEDM_RcppSimplexForecast", (DL_FUNC) &_spEDM_RcppSimplexForecast, 5},
     {"_spEDM_RcppSMapForecast", (DL_FUNC) &_spEDM_RcppSMapForecast, 6},
     {"_spEDM_RcppIntersectionCardinality", (DL_FUNC) &_spEDM_RcppIntersectionCardinality, 8},

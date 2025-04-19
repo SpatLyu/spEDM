@@ -7,6 +7,7 @@
 #include <limits>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include "CppStats.h"
 
 double CppEntropy_Cont(const std::vector<double>& vec, size_t k,
