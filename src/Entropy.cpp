@@ -111,40 +111,84 @@ double CppJoinEntropy_Cont(const std::vector<std::vector<double>>& mat,
 }
 
 /**
- * @brief Computes the mutual information(MI) between two variables using k-nearest neighbors estimation.
+ * @brief Estimates the mutual information (MI) between two multivariate variables using a k-nearest neighbors approach.
+ *
+ * This function computes the mutual information between two sets of variables represented by selected column indices,
+ * based on the method proposed by Kraskov et al. It supports both Kraskov Algorithm I and II, and optionally normalizes
+ * the MI estimate by the joint entropy.
+ *
+ * @details
+ * The algorithm uses Chebyshev distance to find the distance to the k-th nearest neighbor in the joint space, then
+ * estimates local neighbor counts within that distance in the marginal spaces. The MI is computed using digamma functions
+ * as described in the Kraskov framework. If the MI estimate is negative (which may occur due to numerical imprecision),
+ * it is clipped to 0.
  *
  * @note
- * True mutual information can't be negative. If its estimate by a numerical
- * method is negative, it means (providing the method is adequate) that the
- * mutual information is close to 0 and replacing it by 0 is a reasonable
- * strategy.
+ * - MI is always non-negative. Negative estimates are set to 0.
+ * - Missing values (NaNs) can be excluded from the computation using `NA_rm = true`.
+ * - Normalization can be applied to return MI as a fraction of joint entropy.
  *
- * @reference
- *  https://github.com/cran/NlinTS/blob/master/src/nsEntropy.cpp
- *  https://github.com/PengTao-HUST/crossmapy/blob/master/crossmapy/mi.py
+ * @references
+ * - https://github.com/cran/NlinTS/blob/master/src/nsEntropy.cpp
+ * - https://github.com/PengTao-HUST/crossmapy/blob/master/crossmapy/mi.py
  *
- * @param mat A 2D vector of double values where each row represents a data point with two variables.
- * @param k The number of nearest neighbors to consider in the estimation.
- * @param alg The algorithm choice for MI estimation (1: Kraskov Algorithm I, 2: Kraskov Algorithm II).
- * @param normalize A boolean flag indicating whether to normalize the MI by the joint entropy (default: false).
- * @param NA_rm A boolean flag indicating whether to remove missing values (NaN) before computation (default: false).
+ * @param mat A 2D data matrix where each row is a data point and each column is a variable.
+ * @param columns1 A vector of column indices corresponding to the first variable (can be multivariate).
+ * @param columns2 A vector of column indices corresponding to the second variable (can be multivariate).
+ * @param k The number of nearest neighbors used in MI estimation.
+ * @param alg Algorithm type: 1 for Kraskov Algorithm I, 2 for Kraskov Algorithm II.
+ * @param normalize Whether to normalize the MI estimate by the joint entropy.
+ * @param NA_rm Whether to remove missing values (NaNs) from the computation.
  *
- * @return The estimated mutual information between the two variables.
+ * @return A non-negative double representing the estimated mutual information.
  */
-double CppMutualInformation_Cont(const std::vector<std::vector<double>>& mat, size_t k,
-                                 int alg = 1, bool normalize = false, bool NA_rm = false){
-  size_t nrow = mat.size();
-  // size_t ncol = mat[0].size();
+double CppMutualInformation_Cont(const std::vector<std::vector<double>>& mat,
+                                 const std::vector<int>& columns1,
+                                 const std::vector<int>& columns2,
+                                 size_t k, int alg = 1,
+                                 bool normalize = false, bool NA_rm = false){
+  std::unordered_set<int> unique_set;
+  unique_set.insert(columns1.begin(), columns1.end());
+  unique_set.insert(columns2.begin(), columns2.end());
+  std::vector<int> columns(unique_set.begin(), unique_set.end());
 
-  std::vector<double> X(nrow);
-  std::vector<double> Y(nrow);
+  // Construct new_mat based on selected columns
+  std::vector<std::vector<double>> new_mat;
+  size_t original_ncol = mat.empty() ? 0 : mat[0].size();
+
+  // Check if columns match original matrix column count
+  if (columns.size() == original_ncol) {
+    new_mat = mat;  // Use original matrix directly if columns are identical
+  } else {
+    // Build new_mat by selecting specified columns
+    new_mat.reserve(mat.size());
+    for (const auto& row : mat) {
+      std::vector<double> new_row;
+      new_row.reserve(columns.size());
+      for (int col : columns) {
+        new_row.push_back(row[col]);
+      }
+      new_mat.push_back(std::move(new_row));
+    }
+  }
+
+  // Compute parameters based on new_mat
+  size_t nrow = new_mat.size();
+  // size_t ncol = new_mat.empty() ? 0 : new_mat[0].size();
+
+  std::vector<std::vector<double>> X(nrow);
+  std::vector<std::vector<double>> Y(nrow);
   for (size_t i = 0; i < nrow; ++i) {
-    X[i] = mat[i][0];
-    Y[i] = mat[i][1];
+    for (size_t jx = 0; i < columns1.size(); ++jx) {
+      X[i][jx] = mat[i][columns1[jx]];
+    }
+    for (size_t jy = 0; i < columns2.size(); ++jy) {
+      Y[i][jy] = mat[i][columns2[jy]];
+    }
   }
 
   std::vector<double> distances(nrow);
-  std::vector<std::vector<double>> mat_dist = CppMatChebyshevDistance(mat, NA_rm);
+  std::vector<std::vector<double>> mat_dist = CppMatChebyshevDistance(new_mat, NA_rm);
 
   for (size_t i = 0; i < nrow; ++i) {
     // Create a vector to store the distances for the current row, filtering out NaN values if NA_rm is true
@@ -173,18 +217,18 @@ double CppMutualInformation_Cont(const std::vector<std::vector<double>>& mat, si
   double sum = 0;
   double mi = 0;
   if (alg == 1){
-    std::vector<int> NX = CppNeighborsNum(X, distances, false, true, NA_rm);
-    std::vector<int> NY = CppNeighborsNum(Y, distances, false, true, NA_rm);
+    std::vector<int> NX = CppMatNeighborsNum(X, distances, false, NA_rm);
+    std::vector<int> NY = CppMatNeighborsNum(Y, distances, false, NA_rm);
     for (size_t i = 0; i < nrow; i ++){
       sum += CppDigamma(NX[i] + 1) + CppDigamma(NY[i] + 1);
     }
     sum /= nrow;
     mi = CppDigamma(k) + CppDigamma(nrow) - sum;
   } else {
-    std::vector<double> distances_x = CppKNearestDistance(X, k, true, NA_rm);
-    std::vector<double> distances_y = CppKNearestDistance(Y, k, true, NA_rm);
-    std::vector<int> NX = CppNeighborsNum(X, distances_x, true, true, NA_rm);
-    std::vector<int> NY = CppNeighborsNum(Y, distances_y, true, true, NA_rm);
+    std::vector<double> distances_x = CppMatKNearestDistance(X, k, NA_rm);
+    std::vector<double> distances_y = CppMatKNearestDistance(Y, k, NA_rm);
+    std::vector<int> NX = CppMatNeighborsNum(X, distances_x, true, NA_rm);
+    std::vector<int> NY = CppMatNeighborsNum(Y, distances_y, true, NA_rm);
     for (size_t i = 0; i < nrow; i++){
       sum += CppDigamma(NX[i]) + CppDigamma(NY[i]);
     }
