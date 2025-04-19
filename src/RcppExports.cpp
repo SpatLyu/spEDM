@@ -42,18 +42,19 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppMutualInformation_Cont
-double RcppMutualInformation_Cont(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, int k, int alg, bool normalize, bool NA_rm);
-RcppExport SEXP _spEDM_RcppMutualInformation_Cont(SEXP vec1SEXP, SEXP vec2SEXP, SEXP kSEXP, SEXP algSEXP, SEXP normalizeSEXP, SEXP NA_rmSEXP) {
+double RcppMutualInformation_Cont(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& columns1, const Rcpp::IntegerVector& columns2, int k, int alg, bool normalize, bool NA_rm);
+RcppExport SEXP _spEDM_RcppMutualInformation_Cont(SEXP matSEXP, SEXP columns1SEXP, SEXP columns2SEXP, SEXP kSEXP, SEXP algSEXP, SEXP normalizeSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec1(vec1SEXP);
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec2(vec2SEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type columns1(columns1SEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type columns2(columns2SEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< int >::type alg(algSEXP);
     Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppMutualInformation_Cont(vec1, vec2, k, alg, normalize, NA_rm));
+    rcpp_result_gen = Rcpp::wrap(RcppMutualInformation_Cont(mat, columns1, columns2, k, alg, normalize, NA_rm));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1088,7 +1089,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppEntropy_Cont", (DL_FUNC) &_spEDM_RcppEntropy_Cont, 4},
     {"_spEDM_RcppJoinEntropy_Cont", (DL_FUNC) &_spEDM_RcppJoinEntropy_Cont, 5},
-    {"_spEDM_RcppMutualInformation_Cont", (DL_FUNC) &_spEDM_RcppMutualInformation_Cont, 6},
+    {"_spEDM_RcppMutualInformation_Cont", (DL_FUNC) &_spEDM_RcppMutualInformation_Cont, 7},
     {"_spEDM_RcppConditionalEntropy_Cont", (DL_FUNC) &_spEDM_RcppConditionalEntropy_Cont, 6},
     {"_spEDM_RcppEntropy_Disc", (DL_FUNC) &_spEDM_RcppEntropy_Disc, 3},
     {"_spEDM_RcppJoinEntropy_Disc", (DL_FUNC) &_spEDM_RcppJoinEntropy_Disc, 4},

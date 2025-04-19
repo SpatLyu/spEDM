@@ -9,8 +9,8 @@ RcppJoinEntropy_Cont <- function(mat, columns, k = 3L, base = 10, NA_rm = FALSE)
     .Call(`_spEDM_RcppJoinEntropy_Cont`, mat, columns, k, base, NA_rm)
 }
 
-RcppMutualInformation_Cont <- function(vec1, vec2, k = 3L, alg = 1L, normalize = FALSE, NA_rm = FALSE) {
-    .Call(`_spEDM_RcppMutualInformation_Cont`, vec1, vec2, k, alg, normalize, NA_rm)
+RcppMutualInformation_Cont <- function(mat, columns1, columns2, k = 3L, alg = 1L, normalize = FALSE, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppMutualInformation_Cont`, mat, columns1, columns2, k, alg, normalize, NA_rm)
 }
 
 RcppConditionalEntropy_Cont <- function(mat, target_columns, conditional_columns, k = 3L, base = 10, NA_rm = FALSE) {

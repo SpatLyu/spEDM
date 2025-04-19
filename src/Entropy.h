@@ -17,8 +17,11 @@ double CppJoinEntropy_Cont(const std::vector<std::vector<double>>& mat,
                            const std::vector<int>& columns, size_t k,
                            double base = 10, bool NA_rm = false);
 
-double CppMutualInformation_Cont(const std::vector<std::vector<double>>& mat, size_t k, int alg = 1,
-                                 bool normalize = true, bool NA_rm = false);
+double CppMutualInformation_Cont(const std::vector<std::vector<double>>& mat,
+                                 const std::vector<int>& columns1,
+                                 const std::vector<int>& columns2,
+                                 size_t k, int alg = 1,
+                                 bool normalize = false, bool NA_rm = false);
 
 double CppConditionalEntropy_Cont(const std::vector<std::vector<double>>& mat,
                                   const std::vector<int>& target_columns,
