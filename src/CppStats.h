@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <vector>
 #include <cmath>
+#include <algorithm>
 #include <numeric> // for std::accumulate
 #include <limits>  // for std::numeric_limits
 #include "DeLongPlacements.h"
@@ -107,6 +108,9 @@ double CppChebyshevDistance(const std::vector<double>& vec1,
 
 std::vector<double> CppKNearestDistance(const std::vector<double>& vec, size_t k,
                                         bool L1norm = false, bool NA_rm = false);
+
+std::vector<double> CppMatKNearestDistance(const std::vector<std::vector<double>>& mat,
+                                           size_t k, bool NA_rm = false);
 
 std::vector<std::vector<double>> CppMatDistance(
     const std::vector<std::vector<double>>& mat,
