@@ -176,13 +176,13 @@ double CppMutualInformation_Cont(const std::vector<std::vector<double>>& mat,
   size_t nrow = new_mat.size();
   // size_t ncol = new_mat.empty() ? 0 : new_mat[0].size();
 
-  std::vector<std::vector<double>> X(nrow);
-  std::vector<std::vector<double>> Y(nrow);
+  std::vector<std::vector<double>> X(nrow,std::vector<double>(columns1.size()));
+  std::vector<std::vector<double>> Y(nrow,std::vector<double>(columns2.size()));
   for (size_t i = 0; i < nrow; ++i) {
-    for (size_t jx = 0; i < columns1.size(); ++jx) {
+    for (size_t jx = 0; jx < columns1.size(); ++jx) {
       X[i][jx] = mat[i][columns1[jx]];
     }
-    for (size_t jy = 0; i < columns2.size(); ++jy) {
+    for (size_t jy = 0; jy < columns2.size(); ++jy) {
       Y[i][jy] = mat[i][columns2[jy]];
     }
   }
