@@ -30,19 +30,28 @@ authors:
     href: https://spatlyu.github.io/
 
 reference:
-- title: State Space Reconstructions
+
+- title: Spatial Empirical Dynamic Modeling
+
+- subtitle: State Space Reconstructions
   contents:
   - embedded
+
+- subtitle: Nonlinear forecasting
+  contents:
   - simplex
   - smap
   - multiview
 
-- title: Spatial Empirical Dynamic Modeling
+- subtitle: Mutual Cross Mapping
   contents:
-  - sc.test
   - gccm
 
-- title: Utils Functions
+- title: Causality in Information Flux (for Comparison)
+  contents:
+  - sc.test
+
+- title: Miscellaneous Utility Functions
   contents:
   - detectThreads
 
