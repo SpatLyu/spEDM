@@ -18,12 +18,15 @@ std::vector<std::vector<T>> CppCombn(const std::vector<T>& vec, int m) {
   std::vector<std::vector<T>> result;
   std::vector<T> current;
 
+  int vec_size = static_cast<int>(vec.size());
+
   std::function<void(int)> combnHelper = [&](int start) {
     if (static_cast<int>(current.size()) == m) {
       result.push_back(current);
       return;
     }
-    for (int i = start; i <= static_cast<int>(vec.size()) - (m - current.size()); ++i) {
+    int remaining = m - static_cast<int>(current.size());
+    for (int i = start; i <= vec_size - remaining; ++i) {
       current.push_back(vec[i]);
       combnHelper(i + 1);
       current.pop_back();
