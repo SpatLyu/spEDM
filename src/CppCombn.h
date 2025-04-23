@@ -37,4 +37,24 @@ std::vector<std::vector<T>> CppCombn(const std::vector<T>& vec, int m) {
   return result;
 }
 
+/**
+ * @brief Generate all non-empty subsets of a given vector.
+ *
+ * This function generates all subsets of the input vector with sizes from 1 to vec.size().
+ * Internally it calls CppCombn repeatedly for all sizes.
+ *
+ * @tparam T The type of elements in the vector.
+ * @param set The input vector to generate subsets from.
+ * @return std::vector<std::vector<T>> A vector containing all non-empty subsets.
+ */
+template <typename T>
+std::vector<std::vector<T>> CppGenSubsets(const std::vector<T>& set) {
+  std::vector<std::vector<T>> allSubsets;
+  for (int m = 1; m <= static_cast<int>(set.size()); ++m) {
+    std::vector<std::vector<T>> combs = CppCombn(set, m);
+    allSubsets.insert(allSubsets.end(), combs.begin(), combs.end());
+  }
+  return allSubsets;
+}
+
 #endif // CPP_COMBN_H
