@@ -173,6 +173,10 @@ RcppCombine <- function(n, k) {
     .Call(`_spEDM_RcppCombine`, n, k)
 }
 
+RcppCombn <- function(vec, m) {
+    .Call(`_spEDM_RcppCombn`, vec, m)
+}
+
 RcppDigamma <- function(x) {
     .Call(`_spEDM_RcppDigamma`, x)
 }

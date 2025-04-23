@@ -695,6 +695,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppCombn
+Rcpp::List RcppCombn(Rcpp::RObject vec, int m);
+RcppExport SEXP _spEDM_RcppCombn(SEXP vecSEXP, SEXP mSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type vec(vecSEXP);
+    Rcpp::traits::input_parameter< int >::type m(mSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppCombn(vec, m));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppDigamma
 double RcppDigamma(double x);
 RcppExport SEXP _spEDM_RcppDigamma(SEXP xSEXP) {
@@ -1130,6 +1142,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppSCT4Lattice", (DL_FUNC) &_spEDM_RcppSCT4Lattice, 12},
     {"_spEDM_RcppFactorial", (DL_FUNC) &_spEDM_RcppFactorial, 1},
     {"_spEDM_RcppCombine", (DL_FUNC) &_spEDM_RcppCombine, 2},
+    {"_spEDM_RcppCombn", (DL_FUNC) &_spEDM_RcppCombn, 2},
     {"_spEDM_RcppDigamma", (DL_FUNC) &_spEDM_RcppDigamma, 1},
     {"_spEDM_RcppLog", (DL_FUNC) &_spEDM_RcppLog, 2},
     {"_spEDM_RcppMedian", (DL_FUNC) &_spEDM_RcppMedian, 2},
