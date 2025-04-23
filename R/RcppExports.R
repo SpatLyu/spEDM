@@ -177,6 +177,10 @@ RcppCombn <- function(vec, m) {
     .Call(`_spEDM_RcppCombn`, vec, m)
 }
 
+RcppGenSubsets <- function(vec) {
+    .Call(`_spEDM_RcppGenSubsets`, vec)
+}
+
 RcppDigamma <- function(x) {
     .Call(`_spEDM_RcppDigamma`, x)
 }

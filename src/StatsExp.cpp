@@ -37,6 +37,22 @@ Rcpp::List RcppCombn(Rcpp::RObject vec, int m) {
 }
 
 // [[Rcpp::export]]
+Rcpp::List RcppGenSubsets(Rcpp::RObject vec) {
+  if (TYPEOF(vec) == REALSXP) {
+    std::vector<double> input = Rcpp::as<std::vector<double>>(vec);
+    return Rcpp::wrap(CppGenSubsets(input));  // Calls the double version of the template
+  } else if (TYPEOF(vec) == INTSXP) {
+    std::vector<int> input = Rcpp::as<std::vector<int>>(vec);
+    return Rcpp::wrap(CppGenSubsets(input));  // Calls the int version of the template
+  } else if (TYPEOF(vec) == STRSXP) {
+    std::vector<std::string> input = Rcpp::as<std::vector<std::string>>(vec);
+    return Rcpp::wrap(CppGenSubsets(input));  // Calls the string version of the template
+  } else {
+    Rcpp::stop("Unsupported vector type. Must be numeric, integer, or character.");
+  }
+}
+
+// [[Rcpp::export]]
 double RcppDigamma(double x){
   return(CppDigamma(x));
 };
