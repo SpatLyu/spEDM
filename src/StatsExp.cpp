@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include "CppStats.h"
+#include "CppCombn.h"
 #include "DeLongPlacements.h"
 #include "SpatialBlockBootstrap.h"
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.

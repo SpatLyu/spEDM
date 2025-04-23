@@ -24,9 +24,6 @@ unsigned long long CppFactorial(unsigned int n);
 
 unsigned long long CppCombine(unsigned int n, unsigned int k);
 
-template <typename T>
-std::vector<std::vector<T>> CppCombn(const std::vector<T>& vec, int m);
-
 double CppDigamma(double x);
 
 double CppLog(double x, double base = 10);
