@@ -644,8 +644,15 @@ double PartialCorTrivar(const std::vector<double>& y,
  * @return The two-sided p-value.
  */
 double CppCorSignificance(double r, int n, int k = 0) {
-  double t = r * std::sqrt((n - k - 2) / (1 - r * r));
-  return (1 - R::pt(t, n - 2, true, false)) * 2;
+  double df = n - k - 2;
+  double t = r * std::sqrt(df / (1 - r * r));
+
+  double pvalue = (1 - R::pt(t, df, true, false)) * 2;
+  // Ensure p value is within valid range [-1, 1]
+  if (pvalue < 0) pvalue = 0;
+  if (pvalue > 1.0) pvalue = 1.0;
+
+  return pvalue;
 }
 
 /**
