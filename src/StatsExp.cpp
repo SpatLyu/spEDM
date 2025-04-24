@@ -21,7 +21,7 @@ double RcppCombine(int n,int k){
 };
 
 // [[Rcpp::export]]
-Rcpp::List RcppCombn(Rcpp::RObject vec, int m) {
+Rcpp::List RcppCombn(const Rcpp::RObject& vec, int m) {
   if (TYPEOF(vec) == REALSXP) {
     std::vector<double> input = Rcpp::as<std::vector<double>>(vec);
     return Rcpp::wrap(CppCombn(input, m));  // Calls the double version of the template
@@ -37,7 +37,7 @@ Rcpp::List RcppCombn(Rcpp::RObject vec, int m) {
 }
 
 // [[Rcpp::export]]
-Rcpp::List RcppGenSubsets(Rcpp::RObject vec) {
+Rcpp::List RcppGenSubsets(const Rcpp::RObject& vec) {
   if (TYPEOF(vec) == REALSXP) {
     std::vector<double> input = Rcpp::as<std::vector<double>>(vec);
     return Rcpp::wrap(CppGenSubsets(input));  // Calls the double version of the template
@@ -64,7 +64,7 @@ double RcppLog(double x, double base = 10){
 
 // [[Rcpp::export]]
 double RcppMedian(const Rcpp::NumericVector& vec,
-                 bool NA_rm = false) {
+                  bool NA_rm = false) {
   std::vector<double> y = Rcpp::as<std::vector<double>>(vec);
   return CppMedian(y, NA_rm);
 }
@@ -153,7 +153,8 @@ Rcpp::NumericVector RcppAbsDiff(const Rcpp::NumericVector& vec1,
 }
 
 // [[Rcpp::export]]
-Rcpp::NumericVector RcppSumNormalize(const Rcpp::NumericVector& vec, bool NA_rm = false) {
+Rcpp::NumericVector RcppSumNormalize(const Rcpp::NumericVector& vec,
+                                     bool NA_rm = false) {
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> vec_cpp = Rcpp::as<std::vector<double>>(vec);
 
@@ -231,7 +232,8 @@ double RcppCorSignificance(double r, int n, int k = 0){
 
 // Wrapper function to calculate the confidence interval for a (partial) correlation coefficient and return a NumericVector
 // [[Rcpp::export]]
-Rcpp::NumericVector RcppCorConfidence(double r, int n, int k = 0, double level = 0.05) {
+Rcpp::NumericVector RcppCorConfidence(double r, int n, int k = 0,
+                                      double level = 0.05) {
   // Calculate the confidence interval
   std::vector<double> result = CppCorConfidence(r, n, k, level);
 
