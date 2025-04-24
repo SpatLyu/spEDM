@@ -696,24 +696,24 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppCombn
-Rcpp::List RcppCombn(Rcpp::RObject vec, int m);
+Rcpp::List RcppCombn(const Rcpp::RObject& vec, int m);
 RcppExport SEXP _spEDM_RcppCombn(SEXP vecSEXP, SEXP mSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type vec(vecSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::RObject& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< int >::type m(mSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppCombn(vec, m));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppGenSubsets
-Rcpp::List RcppGenSubsets(Rcpp::RObject vec);
+Rcpp::List RcppGenSubsets(const Rcpp::RObject& vec);
 RcppExport SEXP _spEDM_RcppGenSubsets(SEXP vecSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject >::type vec(vecSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::RObject& >::type vec(vecSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppGenSubsets(vec));
     return rcpp_result_gen;
 END_RCPP
