@@ -19,6 +19,8 @@ navbar:
         href: articles/SSR.html
       - text: Geographical Convergent Cross Mapping (GCCM)
         href: articles/GCCM.html
+      - text: Geographical Cross Mapping Cardinality (GCMC)
+        href: articles/GCMC.html
       - text: Spatial (Granger) Causality Test (SCT)
         href: articles/SCT.html
 
@@ -45,8 +47,8 @@ reference:
 
 - subtitle: Mutual Cross Mapping
   contents:
-  - gcmc
   - gccm
+  - gcmc
 
 - title: Causality in Information Flux (for Comparison)
   contents:
