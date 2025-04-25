@@ -1,0 +1,324 @@
+---
+title: "Geographical Cross Mapping Cardinality (GCMC)"
+author: "Wenbo Lv"
+date: "2025-05-01"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{GCMC}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## 📌 Research Notice: GCMC Algorithm
+
+The `GCMC` algorithm provided in this package is a research method currently **under peer review in the *International Journal of Geographical Information Science (IJGIS)* **. We provide early access to its implementation and a detailed vignette for reproducibility. Users should note that **methodological details may evolve** before final publication.
+
+## Model principles
+
+To measure causal associations in spatial cross-sectional data, GCMC (Geographical Convergent Cross Mapping) employs a three-stage procedure:
+
+**Stage one** involves reconstructing the state space. Given two spatial variables, $x$ and $y$, this step requires determining a suitable embedding dimension $E$ and a spatial lag interval $\tau$. For each spatial location (unit) $i$, the attribute values from its spatial neighbors at lag orders $1, 1+\tau, \dots, 1+(E-1)\tau$ are collected. These values are then summarized—commonly using the mean—to construct an embedding vector for each unit. Aggregating these vectors across all spatial units results in the reconstructed state spaces, denoted as $E_x$ and $E_y$.
+
+**Stage two** constructs the Intersectional Cardinality (IC) curve, which serves to evaluate causal strength. To measure whether $y$ causally affects $x$, one computes, for each $k$, the overlap between the $k$ nearest neighbors of $E_y$ and the corresponding "projected" neighbors traced through $E_x$. Specifically, for each point in $E_x$, its $k$ nearest neighbors are identified, and their mapped neighbors in $E_y$ are compared with the direct neighbors of $E_y$. The IC curve is formed by recording the number of shared neighbors across a range of $k = 1, 2, \dots, n$. This process can also be reversed to test for causality from $x$ to $y$.
+
+**Stage three** involves quantifying and validating the strength of causal associations. The area under the IC curve (AUC) provides a numerical measure of causal strength. To determine whether the observed causal strength is statistically significant, a hypothesis test is performed: the null assumes no causality, while the alternative assumes its presence. The DeLong palcements method is applied to evaluate the difference in AUCs under these hypotheses. It also yields confidence intervals, supporting robust causal inference.
+
+## Usage examples
+
+### An example of spatial lattice data
+
+Load the `spEDM` package and its county-level population density data:
+
+
+``` r
+library(spEDM)
+
+popd_nb = spdep::read.gal(system.file("case/popd_nb.gal",package = "spEDM"))
+## Warning in spdep::read.gal(system.file("case/popd_nb.gal", package = "spEDM")):
+## neighbour object has 4 sub-graphs
+popd = readr::read_csv(system.file("case/popd.csv",package = "spEDM"))
+## Rows: 2806 Columns: 7
+## ── Column specification ────────────────────────────────────────────────────────────────────────────
+## Delimiter: ","
+## dbl (7): x, y, popd, elev, tem, pre, slope
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+popd_sf = sf::st_as_sf(popd, coords = c("x","y"), crs = 4326)
+popd_sf
+## Simple feature collection with 2806 features and 5 fields
+## Geometry type: POINT
+## Dimension:     XY
+## Bounding box:  xmin: 74.9055 ymin: 18.2698 xmax: 134.269 ymax: 52.9346
+## Geodetic CRS:  WGS 84
+## # A tibble: 2,806 × 6
+##     popd  elev   tem   pre slope          geometry
+##  * <dbl> <dbl> <dbl> <dbl> <dbl>       <POINT [°]>
+##  1  780.     8  17.4 1528. 0.452 (116.912 30.4879)
+##  2  395.    48  17.2 1487. 0.842 (116.755 30.5877)
+##  3  261.    49  16.0 1456. 3.56  (116.541 30.7548)
+##  4  258.    23  17.4 1555. 0.932  (116.241 30.104)
+##  5  211.   101  16.3 1494. 3.34   (116.173 30.495)
+##  6  386.    10  16.6 1382. 1.65  (116.935 30.9839)
+##  7  350.    23  17.5 1569. 0.346 (116.677 30.2412)
+##  8  470.    22  17.1 1493. 1.88  (117.066 30.6514)
+##  9 1226.    11  17.4 1526. 0.208 (117.171 30.5558)
+## 10  137.   598  13.9 1458. 5.92  (116.208 30.8983)
+## # ℹ 2,796 more rows
+```
+
+Run GCMC:
+
+
+``` r
+# temperature and population density
+g1 = gcmc(data = popd_sf, cause = "tem", effect = "popd",
+          E = c(2,5), k = 210, nb = popd_nb, trend.rm = TRUE)
+## 
+Computing: [========================================] 100% (done)                         
+## 
+Computing: [========================================] 100% (done)
+g1
+##   neighbors tem->popd popd->tem
+## 1       210 0.7538776  0.197619
+
+# elevation and population density
+g2 = gcmc(data = popd_sf, cause = "elev", effect = "popd",
+          E = c(1,5), k = 210, nb = popd_nb, trend.rm = TRUE)
+## 
+Computing: [========================================] 100% (done)                         
+## 
+Computing: [========================================] 100% (done)
+g2
+##   neighbors elev->popd popd->elev
+## 1       210  0.8355329  0.2065986
+
+# elevation and temperature
+g3 = gcmc(data = popd_sf, cause = "elev", effect = "tem",
+          E = c(1,2), k = 210, nb = popd_nb, trend.rm = TRUE)
+## 
+Computing: [========================================] 100% (done)                         
+## 
+Computing: [========================================] 100% (done)
+g3 # When there are insignificant results, we set spEDM to suppress output. This is not a bug.
+## [1] neighbors elev->tem tem->elev
+## <0 rows> (or 0-length row.names)
+g3$xmap
+##   neighbors x_xmap_y_mean x_xmap_y_sig x_xmap_y_upper x_xmap_y_lower
+## 1       210     0.5094785    0.7677155      0.5723751      0.4465818
+##   y_xmap_x_mean y_xmap_x_sig y_xmap_x_upper y_xmap_x_lower
+## 1     0.6279365 4.342088e-05      0.6892676      0.5666054
+```
+
+Here we define two functions to process the results and plot the causal association matrix.
+
+
+``` r
+.process_xmap_result = \(g){
+  tempdf = g$xmap
+  tempdf$x = g$varname[1]
+  tempdf$y = g$varname[2]
+  tempdf = dplyr::select(tempdf, 1, x, y,
+                         x_xmap_y_mean,x_xmap_y_sig,
+                         y_xmap_x_mean,y_xmap_x_sig,
+                         dplyr::everything())
+
+  g1 = tempdf |>
+    dplyr::select(x,y,y_xmap_x_mean,y_xmap_x_sig)|>
+    purrr::set_names(c("cause","effect","ca","sig"))
+  g2 = tempdf |>
+    dplyr::select(y,x,x_xmap_y_mean,x_xmap_y_sig) |>
+    purrr::set_names(c("cause","effect","ca","sig"))
+
+  return(rbind(g1,g2))
+}
+
+plot_ca_matrix = \(.tbf,legend_title = "Causal Association"){
+  .tbf = .tbf |>
+    dplyr::mutate(sig_marker = dplyr::case_when(
+      sig < 0.001 ~ "***",
+      sig < 0.01  ~ "**",
+      sig < 0.05  ~ "*",
+      .default =  ""
+    )) |>
+    dplyr::mutate(sig_marker = paste0(round(ca,3),sig_marker))
+
+  fig = ggplot2::ggplot(data = .tbf,
+                        ggplot2::aes(x = effect, y = cause)) +
+    ggplot2::geom_tile(color = "black", ggplot2::aes(fill = ca)) +
+    ggplot2::geom_abline(slope = 1, intercept = 0, color = "black", linewidth = 0.25) +
+    ggplot2::geom_text(ggplot2::aes(label = sig_marker), color = "black", family = "serif") +
+    ggplot2::labs(x = "Effect", y = "Cause", fill = legend_title) +
+    ggplot2::scale_x_discrete(expand = c(0, 0)) +
+    ggplot2::scale_y_discrete(expand = c(0, 0)) +
+    ggplot2::scale_fill_gradient(low = "#9bbbb8", high = "#256c68") +
+    ggplot2::coord_equal() +
+    ggplot2::theme_void() +
+    ggplot2::theme(
+      axis.text.x = ggplot2::element_text(angle = 0, family = "serif"),
+      axis.text.y = ggplot2::element_text(color = "black", family = "serif"),
+      axis.title.y = ggplot2::element_text(angle = 90, family = "serif"),
+      axis.title.x = ggplot2::element_text(color = "black", family = "serif",
+                                           margin = ggplot2::margin(t = 5.5, unit = "pt")),
+      legend.text = ggplot2::element_text(family = "serif"),
+      legend.title = ggplot2::element_text(family = "serif"),
+      legend.background = ggplot2::element_rect(fill = NA, color = NA),
+      legend.direction = "horizontal",
+      legend.position = "bottom",
+      legend.margin = ggplot2::margin(t = 1, r = 0, b = 0, l = 0, unit = "pt"),
+      legend.key.width = ggplot2::unit(20, "pt"),
+      panel.grid = ggplot2::element_blank(),
+      panel.border = ggplot2::element_rect(color = "black", fill = NA)
+    )
+  return(fig)
+}
+```
+
+Organize the results into a long table:
+
+
+``` r
+res1 = list(g1,g2,g3) |>
+  purrr::map(.process_xmap_result) |>
+  purrr::list_rbind()
+res1
+##   cause effect        ca          sig
+## 1   tem   popd 0.7538776 1.110975e-19
+## 2  popd    tem 0.1976190 4.543832e-35
+## 3  elev   popd 0.8355329 9.586182e-44
+## 4  popd   elev 0.2065986 6.101271e-32
+## 5  elev    tem 0.6279365 4.342088e-05
+## 6   tem   elev 0.5094785 7.677155e-01
+```
+
+Visualize the result:
+
+
+``` r
+plot_ca_matrix(res1)
+```
+
+![**Figure 1**. **Causal associations among elevation, temperature, and population density.**](../man/figures/gcmc/fig1-1.png)
+
+### An example of spatial grid data
+
+Load the `spEDM` package and its farmland NPP data:
+
+
+``` r
+library(spEDM)
+
+npp = terra::rast(system.file("case/npp.tif", package = "spEDM"))
+npp
+## class       : SpatRaster 
+## dimensions  : 404, 483, 4  (nrow, ncol, nlyr)
+## resolution  : 10000, 10000  (x, y)
+## extent      : -2625763, 2204237, 1877078, 5917078  (xmin, xmax, ymin, ymax)
+## coord. ref. : CGCS2000_Albers 
+## source      : npp.tif 
+## names       :      npp,        pre,      tem,      elev 
+## min values  :   164.00,   384.3409, -47.8194, -122.2004 
+## max values  : 16606.33, 23878.3555, 263.6938, 5350.4902
+
+# To save the computation time, we will aggregate the data by 3 times
+npp = terra::aggregate(npp, fact = 3, na.rm = TRUE)
+npp
+## class       : SpatRaster 
+## dimensions  : 135, 161, 4  (nrow, ncol, nlyr)
+## resolution  : 30000, 30000  (x, y)
+## extent      : -2625763, 2204237, 1867078, 5917078  (xmin, xmax, ymin, ymax)
+## coord. ref. : CGCS2000_Albers 
+## source(s)   : memory
+## names       :      npp,        pre,      tem,      elev 
+## min values  :   187.50,   390.3351, -47.8194, -110.1494 
+## max values  : 15381.89, 23734.5330, 262.8576, 5217.6431
+
+# Inspect NA values
+terra::global(npp,"isNA")
+##       isNA
+## npp  14815
+## pre  14766
+## tem  14766
+## elev 14760
+terra::ncell(npp)
+## [1] 21735
+nnamat = terra::as.matrix(npp[[1]], wide = TRUE)
+nnaindice = which(!is.na(nnamat), arr.ind = TRUE)
+dim(nnaindice)
+## [1] 6920    2
+
+# Select 1500 non-NA pixels to predict:
+set.seed(2025)
+indices = sample(nrow(nnaindice), size = 1500, replace = FALSE)
+libindice = nnaindice[-indices,]
+predindice = nnaindice[indices,]
+```
+
+Run GCMC:
+
+
+``` r
+# precipitation and npp
+g1 = gcmc(data = npp,cause = "pre",effect = "npp",E = 2,k = 270,
+          lib = predindice, pred = predindice, trend.rm = TRUE)
+## 
+Computing: [========================================] 100% (done)                         
+## 
+Computing: [========================================] 100% (done)
+g1
+## [1] neighbors pre->npp  npp->pre 
+## <0 rows> (or 0-length row.names)
+g1$xmap
+##   neighbors x_xmap_y_mean x_xmap_y_sig x_xmap_y_upper x_xmap_y_lower
+## 1       270     0.5383539    0.1686404      0.5929617      0.4837461
+##   y_xmap_x_mean y_xmap_x_sig y_xmap_x_upper y_xmap_x_lower
+## 1     0.6088477 8.929335e-05      0.6632986      0.5543968
+
+# temperature and npp
+g2 = gcmc(data = npp,cause = "tem",effect = "npp",E = 2,k = 270,
+          lib = predindice, pred = predindice, trend.rm = TRUE)
+## 
+Computing: [========================================] 100% (done)                         
+## 
+Computing: [========================================] 100% (done)
+g2
+##   neighbors  tem->npp  npp->tem
+## 1       270 0.6401509 0.6113992
+
+# precipitation and temperature
+g3 = gcmc(data = npp,cause = "pre",effect = "tem",E = 2,k = 270,
+          lib = predindice, pred = predindice, trend.rm = TRUE)
+## 
+Computing: [========================================] 100% (done)                         
+## 
+Computing: [========================================] 100% (done)
+g3
+##   neighbors  pre->tem  tem->pre
+## 1       270 0.6800274 0.6381344
+```
+
+Organize the results into a long table:
+
+
+``` r
+res2 = list(g1,g2,g3) |>
+  purrr::map(.process_xmap_result) |>
+  purrr::list_rbind()
+res2
+##   cause effect        ca          sig
+## 1   pre    npp 0.6088477 8.929335e-05
+## 2   npp    pre 0.5383539 1.686404e-01
+## 3   tem    npp 0.6401509 2.548677e-07
+## 4   npp    tem 0.6113992 4.810113e-05
+## 5   pre    tem 0.6800274 1.305997e-11
+## 6   tem    pre 0.6381344 3.699711e-07
+```
+
+Visualize the result:
+
+
+``` r
+plot_ca_matrix(res2)
+```
+
+![**Figure 2**. **Causal associations among precipitation, temperature, and NPP.**](../man/figures/gcmc/fig2-1.png)

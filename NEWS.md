@@ -2,6 +2,8 @@
 
 ### new
 
+* Integrate R API and vignette for geographical cross mapping cardinality (#455).
+
 * Provide R-level API and vignette for spatial (granger) causality test (#403).
 
 ### enhancements
