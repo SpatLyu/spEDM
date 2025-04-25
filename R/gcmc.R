@@ -1,0 +1,102 @@
+
+methods::setGeneric("gcmc", function(data, ...) standardGeneric("gcmc"))
+
+.gcmc_sf_method = \(data, cause, effect, E = 3, tau = 1, k = NULL, r = 0, lib = NULL, pred = NULL, nb = NULL,
+                    threads = detectThreads(), bidirectional = TRUE, trend.rm = TRUE, progressbar = TRUE){
+  varname = .check_character(cause, effect)
+  E = .check_inputelementnum(E,2)
+  tau = .check_inputelementnum(tau,2)
+  .varname = .internal_varname()
+  if (is.null(nb)) nb = .internal_lattice_nb(data)
+  if (nrow(data) != length(nb)) stop("Incompatible Data Dimensions!")
+  coords = as.data.frame(sdsfun::sf_coordinates(data))
+  data = sf::st_drop_geometry(data)
+  data = data[,varname]
+  names(data) = .varname
+
+  if (trend.rm){
+    data = .internal_trend_rm(data,.varname,coords)
+  }
+  cause = data[,"cause",drop = TRUE]
+  effect = data[,"effect",drop = TRUE]
+
+  if (is.null(k)) k = ceiling(nrow(data) / 3)
+  r = .check_inputelementnum(r,length(k))
+  if (is.null(lib)) lib = seq_len(nrow(data))
+  if (is.null(pred)) pred = lib
+
+  x_xmap_y = NULL
+  if (bidirectional){
+    x_xmap_y = RcppGCMC4Lattice(cause,effect,nb,lib,pred,E,tau,k,r,threads,progressbar)
+  }
+  y_xmap_x = RcppGCMC4Lattice(effect,cause,nb,lib,pred,rev(E),rev(tau),k,r,threads,progressbar)
+
+  return(.bind_intersectdf(varname,x_xmap_y,y_xmap_x,bidirectional))
+}
+
+.gcmc_spatraster_method = \(data, cause, effect, E = 3, tau = 1, k = NULL, r = 0, lib = NULL, pred = NULL,
+                            threads = detectThreads(),bidirectional = TRUE,trend.rm = TRUE,progressbar = TRUE){
+  varname = .check_character(cause, effect)
+  E = .check_inputelementnum(E,2)
+  tau = .check_inputelementnum(tau,2)
+  .varname = .internal_varname()
+  data = data[[varname]]
+  names(data) = .varname
+
+  dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
+  if (trend.rm){
+    dtf = .internal_trend_rm(dtf,.varname)
+  }
+  causemat = matrix(dtf[,"cause"],nrow = terra::nrow(data),byrow = TRUE)
+  effectmat = matrix(dtf[,"effect"],nrow = terra::nrow(data),byrow = TRUE)
+
+  if (is.null(k)) k = min(dim(effectmat))
+  r = .check_inputelementnum(r,length(k))
+  if (is.null(lib)) lib = .internal_samplemat(effectmat)
+  if (is.null(pred)) pred = lib
+
+  x_xmap_y = NULL
+  if (bidirectional){
+    x_xmap_y = RcppGCMC4Grid(causemat,effectmat,lib,pred,E,tau,k,r,threads,progressbar)
+  }
+  y_xmap_x = RcppGCMC4Grid(effectmat,causemat,lib,pred,rev(E),rev(tau),k,r,threads,progressbar)
+
+  return(.bind_intersectdf(varname,x_xmap_y,y_xmap_x,bidirectional))
+}
+
+#' geographical cross mapping cardinality
+#'
+#' @param data The observation data.
+#' @param cause Name of causal variable.
+#' @param effect Name of effect variable.
+#' @param E (optional) Dimensions of the embedding.
+#' @param tau (optional) Step of spatial lags.
+#' @param k (optional) Number of nearest neighbors used for intersection.
+#' @param r (optional) Number of excluded neighbors for intersection.
+#' @param lib (optional) Libraries indices.
+#' @param pred (optional) Predictions indices.
+#' @param nb (optional) The neighbours list.
+#' @param threads (optional) Number of threads.
+#' @param bidirectional (optional) whether to identify bidirectional causal associations.
+#' @param trend.rm (optional) Whether to remove the linear trend.
+#' @param progressbar (optional) whether to print the progress bar.
+#'
+#' @return A list
+#'
+#' @export
+#' @importFrom methods setGeneric
+#' @importFrom methods setMethod
+#' @name gcmc
+#' @rdname gcmc
+#' @aliases gcmc,sf-method
+#'
+#' @examples
+#' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
+#' \donttest{
+#' g = gcmc(columbus,"hoval","crime",E = 5)
+#' g
+#' }
+methods::setMethod("gcmc", "sf", .gcmc_sf_method)
+
+#' @rdname gcmc
+methods::setMethod("gcmc", "SpatRaster", .gcmc_spatraster_method)

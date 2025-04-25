@@ -45,6 +45,7 @@ reference:
 
 - subtitle: Mutual Cross Mapping
   contents:
+  - gcmc
   - gccm
 
 - title: Causality in Information Flux (for Comparison)
