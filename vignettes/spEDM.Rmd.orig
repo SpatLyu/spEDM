@@ -138,10 +138,11 @@ for (i in 1:terra::nlyr(npp)) {
 Users can refer to several additional vignettes for more detailed examples of using *spEDM*, namely:
 
 | *Model* | *Vignette* |
-|---------------------|--------------------|
-| State Space Reconstruction |[SSR](https://stscl.github.io/spEDM/articles/SSR.html)|
-| Spatial (Granger) Causality Test |[SCT](https://stscl.github.io/spEDM/articles/SCT.html)|
-| Geographical Convergent Cross Mapping |[GCCM](https://stscl.github.io/spEDM/articles/GCCM.html)|
+|---------------------|---------------------|
+| State Space Reconstruction | [SSR](https://stscl.github.io/spEDM/articles/SSR.html) |
+| Geographical Convergent Cross Mapping | [GCCM](https://stscl.github.io/spEDM/articles/GCCM.html) |
+| Geographical Cross Mapping Cardinality | [GCMC](https://stscl.github.io/spEDM/articles/GCMC.html) |
+| Spatial (Granger) Causality Test |[SCT](https://stscl.github.io/spEDM/articles/SCT.html) |
 
 ## References
 
