@@ -9,7 +9,9 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+## 📌 Research Notice: GCMC Algorithm
 
+The `GCMC` algorithm provided in this package is a research method currently **under peer review in the *International Journal of Geographical Information Science (IJGIS)* **. We provide early access to its implementation and a detailed vignette for reproducibility. Users should note that **methodological details may evolve** before final publication.
 
 ## Model principles
 
