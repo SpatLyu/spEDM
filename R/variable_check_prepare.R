@@ -8,13 +8,13 @@
   return(xstrs)
 }
 
-.check_inputelementnum = \(x,n,med.num = NULL){
-  if (is.null(med.num) || length(x) == 1){
+.check_inputelementnum = \(x,n,condsnum = NULL){
+  if (is.null(condsnum) || length(x) == 1){
     res = rep(x,length.out = n)
   } else if (length(x) == 2) {
-    res = c(rep(x[1],2),rep(x[2],med.num))
+    res = c(rep(x[1],2),rep(x[2],condsnum))
   } else {
-    res = c(x[1:2],rep(x[c(-1,-2)],length.out = med.num))
+    res = c(x[1:2],rep(x[c(-1,-2)],length.out = condsnum))
   }
   return(abs(res))
 }
@@ -27,10 +27,10 @@
   return(pl)
 }
 
-.internal_varname = \(mediator = NULL){
+.internal_varname = \(conds = NULL){
   .varname = c("cause","effect")
-  if (!is.null(mediator)){
-    .varname = c(.varname,paste0("z",seq_along(mediator)))
+  if (!is.null(conds)){
+    .varname = c(.varname,paste0("z",seq_along(conds)))
   }
   return(.varname)
 }
