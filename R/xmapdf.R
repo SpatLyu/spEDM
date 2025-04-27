@@ -26,13 +26,13 @@
 
 .bind_xmapdf2 = \(varname,x_xmap_y,y_xmap_x,bidirectional){
 
-  tyxmapx = y_xmap_x[,c(1,2,4:6)]
-  dyxmapx = y_xmap_x[,c(1,3,7:9)]
+  tyxmapx = y_xmap_x[,c(1,2,4:6),drop = FALSE]
+  dyxmapx = y_xmap_x[,c(1,3,7:9),drop = FALSE]
   txxmapy = NULL
   dxxmapy = NULL
   if(bidirectional){
-    txxmapy = x_xmap_y[,c(1,2,4:6)]
-    dxxmapy = x_xmap_y[,c(1,3,7:9)]
+    txxmapy = x_xmap_y[,c(1,2,4:6),drop = FALSE]
+    dxxmapy = x_xmap_y[,c(1,3,7:9),drop = FALSE]
   }
 
   txmap = .internal_xmapdf_binding(varname[1:2],txxmapy,tyxmapx,bidirectional)
