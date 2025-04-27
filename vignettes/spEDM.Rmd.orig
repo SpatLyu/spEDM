@@ -100,7 +100,7 @@ terra::plot(cu, nc = 3,
 
 ### Farmland NPP and climatic variables in mainland China
 
-```{r npp,fig.width=4.75,fig.height=4.5,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. Maps of farmland NPP and climate factors.")}
+```{r npp,fig.width=4.75,fig.height=5.55,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. Maps of farmland NPP and climate factors.")}
 library(spEDM)
 npp = terra::rast(system.file("case/npp.tif", package = "spEDM"))
 npp
@@ -112,7 +112,7 @@ terra::plot(npp, nc = 2,
             legend = FALSE)
 ```
 
-```{r npp2,fig.width=4.75,fig.height=5.65,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 3**. Maps of farmland NPP and climate factors.")}
+```{r npp2,fig.width=4.75,fig.height=7.25,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 3**. Maps of farmland NPP and climate factors.")}
 # add China's land borders and the ten-dash line in the South China Sea
 
 # install.packages("geocn",
@@ -124,7 +124,7 @@ cn_border = geocn::load_cn_border() |>
   terra::vect() |>
   terra::project(terra::crs(npp))
 
-par(mfrow = c(2, 2))
+par(mfrow = c(3, 2))
 for (i in 1:terra::nlyr(npp)) {
   terra::plot(cn_border, lwd = 1.5, main = names(npp)[i],
               col = "grey40", axes = FALSE)
