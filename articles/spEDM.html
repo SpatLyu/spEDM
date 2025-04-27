@@ -122,13 +122,14 @@ alongside relevant socio-environmental drivers. <em>Data files</em>:
 <li><p><strong>Soil copper (Cu) contamination</strong> — A raster-based
 dataset representing soil Cu concentrations, with associated layers on
 nighttime light intensity and industrial density, useful for exploring
-spatial interactions in environmental pollution. <em>Data files</em>:
-<code>cu.tif</code></p></li>
-<li><p><strong>Farmland NPP and climate variables</strong> — A raster
-dataset capturing net primary productivity (NPP) and key climatic
-variables across mainland China, suitable for examining the spatial
-coupling between agricultural productivity and climate. <em>Data
-files</em>: <code>npp.tif</code></p></li>
+the influence of human activities on environmental pollution. <em>Data
+files</em>: <code>cu.tif</code></p></li>
+<li><p><strong>Farmland NPP and related variables</strong> — A raster
+dataset capturing net primary productivity (NPP) of farmland, key
+climatic variables, elevation, and human activity footprints across
+mainland China, suitable for analyzing the interactions between
+agricultural productivity, environmental conditions, and human
+activities. <em>Data files</em>: <code>npp.tif</code></p></li>
 </ol>
 <p>These datasets can be loaded as shown below, including basic
 visualization for raster data:</p>
@@ -255,21 +256,21 @@ nightlight.</div>
 </div>
 </div>
 <div class="section level3">
-<h3 id="farmland-npp-and-climatic-variables-in-mainland-china">Farmland NPP and climatic variables in mainland China<a class="anchor" aria-label="anchor" href="#farmland-npp-and-climatic-variables-in-mainland-china"></a>
+<h3 id="farmland-npp-and-related-variables-in-mainland-china">Farmland NPP and related variables in mainland China<a class="anchor" aria-label="anchor" href="#farmland-npp-and-related-variables-in-mainland-china"></a>
 </h3>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stscl.github.io/spEDM/">spEDM</a></span><span class="op">)</span></span>
 <span><span class="va">npp</span> <span class="op">=</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"case/npp.tif"</span>, package <span class="op">=</span> <span class="st">"spEDM"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">npp</span></span>
 <span><span class="co">## class       : SpatRaster </span></span>
-<span><span class="co">## dimensions  : 404, 483, 4  (nrow, ncol, nlyr)</span></span>
+<span><span class="co">## dimensions  : 404, 483, 5  (nrow, ncol, nlyr)</span></span>
 <span><span class="co">## resolution  : 10000, 10000  (x, y)</span></span>
 <span><span class="co">## extent      : -2625763, 2204237, 1877078, 5917078  (xmin, xmax, ymin, ymax)</span></span>
 <span><span class="co">## coord. ref. : CGCS2000_Albers </span></span>
 <span><span class="co">## source      : npp.tif </span></span>
-<span><span class="co">## names       :      npp,        pre,      tem,      elev </span></span>
-<span><span class="co">## min values  :   164.00,   384.3409, -47.8194, -122.2004 </span></span>
-<span><span class="co">## max values  : 16606.33, 23878.3555, 263.6938, 5350.4902</span></span>
+<span><span class="co">## names       :      npp,        pre,      tem,      elev,         hfp </span></span>
+<span><span class="co">## min values  :   164.00,   384.3409, -47.8194, -122.2004,  0.03390418 </span></span>
+<span><span class="co">## max values  : 16606.33, 23878.3555, 263.6938, 5350.4902, 44.90312195</span></span>
 <span></span>
 <span><span class="co"># directly visualize the raster layer</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>terra.pal <span class="op">=</span> <span class="fu">grDevices</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">terrain.colors</a></span><span class="op">(</span><span class="fl">100</span>,rev <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">)</span></span>
@@ -293,7 +294,7 @@ and climate factors.</div>
 <span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/vect.html" class="external-link">vect</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/project.html" class="external-link">project</a></span><span class="op">(</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/crs.html" class="external-link">crs</a></span><span class="op">(</span><span class="va">npp</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nlyr</a></span><span class="op">(</span><span class="va">npp</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cn_border</span>, lwd <span class="op">=</span> <span class="fl">1.5</span>, main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">npp</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>,</span>
 <span>              col <span class="op">=</span> <span class="st">"grey40"</span>, axes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
