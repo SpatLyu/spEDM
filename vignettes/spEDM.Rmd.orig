@@ -50,10 +50,10 @@ The *spEDM* package includes four illustrative datasets with well-known causatio
 2. **Population density and its potential drivers in mainland China** — A county-level dataset capturing population density alongside relevant socio-environmental drivers.
    *Data files*: `popd.csv`, `popd_nb.gal`
 
-3. **Soil copper (Cu) contamination** — A raster-based dataset representing soil Cu concentrations, with associated layers on nighttime light intensity and industrial density, useful for exploring spatial interactions in environmental pollution.
+3. **Soil copper (Cu) contamination** — A raster-based dataset representing soil Cu concentrations, with associated layers on nighttime light intensity and industrial density, useful for exploring the influence of human activities on environmental pollution.
    *Data files*: `cu.tif`
 
-4. **Farmland NPP and climate variables** — A raster dataset capturing net primary productivity (NPP) and key climatic variables across mainland China, suitable for examining the spatial coupling between agricultural productivity and climate.
+4. **Farmland NPP and related variables** — A raster dataset capturing net primary productivity (NPP) of farmland, key climatic variables, elevation, and human activity footprints across mainland China, suitable for analyzing the interactions between agricultural productivity, environmental conditions, and human activities.
    *Data files*: `npp.tif`
 
 These datasets can be loaded as shown below, including basic visualization for raster data:
@@ -98,7 +98,7 @@ terra::plot(cu, nc = 3,
             legend = FALSE)
 ```
 
-### Farmland NPP and climatic variables in mainland China
+### Farmland NPP and related variables in mainland China
 
 ```{r npp,fig.width=4.75,fig.height=5.55,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. Maps of farmland NPP and climate factors.")}
 library(spEDM)
