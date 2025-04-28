@@ -73,7 +73,6 @@ std::vector<double> PartialSimplex4Grid(
       rho[0] = PearsonCor(target,target_pred,true);
       rho[1] = PartialCorTrivar(target,target_pred,con_pred,true,false);
     }
-
   } else {
     std::vector<std::vector<double>> con_pred(n_controls);
     std::vector<double> temp_pred;
@@ -93,8 +92,8 @@ std::vector<double> PartialSimplex4Grid(
       rho[0] = PearsonCor(target,target_pred,true);
       rho[1] = PartialCor(target,target_pred,con_pred,true,false);
     }
-
   }
+
   return rho;
 }
 
@@ -159,7 +158,6 @@ std::vector<double> PartialSMap4Grid(
       rho[0] = PearsonCor(target,target_pred,true);
       rho[1] = PartialCorTrivar(target,target_pred,con_pred,true,false);
     }
-
   } else {
     std::vector<std::vector<double>> con_pred(n_controls);
     std::vector<double> temp_pred;
@@ -179,7 +177,6 @@ std::vector<double> PartialSMap4Grid(
       rho[0] = PearsonCor(target,target_pred,true);
       rho[1] = PartialCor(target,target_pred,con_pred,true,false);
     }
-
   }
 
   return rho;
@@ -379,7 +376,6 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
     x_xmap_y.emplace_back(lib_size, rho[0], rho[1]);
     return x_xmap_y;
   } else if (parallel_level == 0) {
-
     // Precompute valid indices for the library
     std::vector<std::vector<int>> valid_lib_indices;
     for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
@@ -437,7 +433,6 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
 
     return x_xmap_y;
   } else {
-
     // Precompute valid indices for the library
     std::vector<std::vector<int>> valid_lib_indices;
     for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {

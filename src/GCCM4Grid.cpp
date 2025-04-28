@@ -184,7 +184,6 @@ std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
     x_xmap_y.emplace_back(lib_size, rho);
     return x_xmap_y;
   } else if (parallel_level == 0){
-
     // Precompute valid indices for the library
     std::vector<std::vector<int>> valid_lib_indices;
     for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
