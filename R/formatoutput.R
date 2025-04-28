@@ -128,9 +128,10 @@ plot.ccm_res = \(x, family = "serif", xbreaks = NULL, xlimits = NULL,
 #' plot pcm result
 #' @noRd
 #' @export
-plot.pcm_res = \(x, ...){
-  pxmap = x[-2]
-  class(pxmap) = "ccm"
-  fig1 = plot.ccm_res(pxmap,...)
+plot.pcm_res = \(x, partial = TRUE, ...){
+  indice = ifelse(partial,-2,-1)
+  xmap = x[indice]
+  class(xmap) = "ccm"
+  fig1 = plot.ccm_res(xmap,...)
   return(fig1)
 }
