@@ -82,10 +82,12 @@ methods::setGeneric("gcmc", function(data, ...) standardGeneric("gcmc"))
 #' @param progressbar (optional) whether to print the progress bar.
 #'
 #' @return A list
-#'
+#' \describe{
+#' \item{\code{xmap}}{cross mapping results}
+#' \item{\code{varname}}{names of causal and effect variable}
+#' \item{\code{bidirectional}}{whether to examine bidirectional causality}
+#' }
 #' @export
-#' @importFrom methods setGeneric
-#' @importFrom methods setMethod
 #' @name gcmc
 #' @rdname gcmc
 #' @aliases gcmc,sf-method
