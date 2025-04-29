@@ -36,6 +36,8 @@
  *
  * @param x         2D grid (matrix) representing variable X.
  * @param y         2D grid (matrix) representing variable Y.
+ * @param lib            A vector of pairs representing the indices (row, column) of spatial units to be the library.
+ * @param pred           A vector of pairs representing the indices (row, column) of spatial units to be predicted.
  * @param k         Embedding neighborhood radius (e.g., k = 1 means 3×3 window).
  * @param base      Logarithm base used in entropy computation (default is 2, for bits).
  * @param symbolize Whether to discretize the data via symbolic transformation before entropy computation.
@@ -48,6 +50,8 @@
 std::vector<double> SCTSingle4Grid(
     const std::vector<std::vector<double>>& x,
     const std::vector<std::vector<double>>& y,
+    const std::vector<std::pair<int, int>>& lib,
+    const std::vector<std::pair<int, int>>& pred,
     size_t k,
     double base = 2,
     bool symbolize = true,
@@ -79,6 +83,8 @@ std::vector<double> SCTSingle4Grid(
  *
  * @param x           2D grid (matrix) of variable X.
  * @param y           2D grid (matrix) of variable Y, same size as x.
+ * @param lib            A vector of pairs representing the indices (row, column) of spatial units to be the library.
+ * @param pred           A vector of pairs representing the indices (row, column) of spatial units to be predicted.
  * @param block       Vector assigning each grid cell to a spatial block for bootstrapping.
  * @param k           Neighborhood window size used for symbolization (typically 3 or 5).
  * @param threads     Number of threads to use for parallel bootstrap estimation.
@@ -98,6 +104,8 @@ std::vector<double> SCTSingle4Grid(
 std::vector<double> SCT4Grid(
     const std::vector<std::vector<double>>& x,
     const std::vector<std::vector<double>>& y,
+    const std::vector<std::pair<int, int>>& lib,
+    const std::vector<std::pair<int, int>>& pred,
     const std::vector<int>& block,
     int k,
     int threads,
