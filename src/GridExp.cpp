@@ -903,7 +903,7 @@ Rcpp::NumericMatrix RcppGCMC4Grid(
 
   // Convert Rcpp IntegerMatrix to std::vector<int>
   int n_libcol = lib.ncol();
-  int n_predcol = lib.ncol();
+  int n_predcol = pred.ncol();
   int numRows = yMatrix.nrow();
   int numCols = yMatrix.ncol();
 
