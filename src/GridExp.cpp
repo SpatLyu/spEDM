@@ -91,6 +91,8 @@ Rcpp::NumericMatrix RcppGenGridEmbeddings(const Rcpp::NumericMatrix& mat,
 
 // [[Rcpp::export]]
 Rcpp::NumericVector RcppGenGridSymbolization(const Rcpp::NumericMatrix& mat,
+                                             const Rcpp::IntegerMatrix& lib,
+                                             const Rcpp::IntegerMatrix& pred,
                                              int k) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = mat.nrow();
@@ -103,8 +105,40 @@ Rcpp::NumericVector RcppGenGridSymbolization(const Rcpp::NumericMatrix& mat,
     }
   }
 
+  // Convert lib to a fundamental C++ data type
+  int lib_dim = lib.ncol();
+  std::vector<std::pair<int, int>> lib_std(lib.nrow());
+
+  if (lib_dim == 1){
+    for (int i = 0; i < lib.nrow(); ++i) {
+      std::vector<int> rowcolnum = RowColFromGrid(lib(i, 0) - 1, numCols);
+      lib_std[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+    }
+  } else {
+    for (int i = 0; i < lib.nrow(); ++i) {
+      lib_std[i] = std::make_pair(lib(i, 0), lib(i, 1));
+    }
+  }
+
+  // Convert pred to a fundamental C++ data type
+  int pred_dim = pred.ncol();
+  std::vector<std::pair<int, int>> pred_std(pred.nrow());
+
+  if (pred_dim == 1){
+    for (int i = 0; i < pred.nrow(); ++i) {
+      std::vector<int> rowcolnum = RowColFromGrid(pred(i, 0) - 1, numCols);
+      pred_std[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+    }
+  } else {
+    for (int i = 0; i < pred.nrow(); ++i) {
+      pred_std[i] = std::make_pair(pred(i, 0), pred(i, 1));
+    }
+  }
+
   // Call the GenGridSymbolization function
-  std::vector<double> symbolmap = GenGridSymbolization(cppMat, static_cast<size_t>(std::abs(k)));
+  std::vector<double> symbolmap = GenGridSymbolization(
+    cppMat, lib_std, pred_std, static_cast<size_t>(std::abs(k))
+  );
 
   // Convert the result back to Rcpp::NumericVector
   return Rcpp::wrap(symbolmap);
@@ -928,6 +962,8 @@ Rcpp::NumericMatrix RcppGCMC4Grid(
 // [[Rcpp::export]]
 Rcpp::NumericVector RcppSCT4Grid(const Rcpp::NumericMatrix& x,
                                  const Rcpp::NumericMatrix& y,
+                                 const Rcpp::IntegerMatrix& lib,
+                                 const Rcpp::IntegerMatrix& pred,
                                  const Rcpp::IntegerMatrix& block,
                                  int k,
                                  int threads,
@@ -954,6 +990,36 @@ Rcpp::NumericVector RcppSCT4Grid(const Rcpp::NumericMatrix& x,
     }
   }
 
+  // Convert lib to a fundamental C++ data type
+  int lib_dim = lib.ncol();
+  std::vector<std::pair<int, int>> lib_std(lib.nrow());
+
+  if (lib_dim == 1){
+    for (int i = 0; i < lib.nrow(); ++i) {
+      std::vector<int> rowcolnum = RowColFromGrid(lib(i, 0) - 1, numCols);
+      lib_std[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+    }
+  } else {
+    for (int i = 0; i < lib.nrow(); ++i) {
+      lib_std[i] = std::make_pair(lib(i, 0), lib(i, 1));
+    }
+  }
+
+  // Convert pred to a fundamental C++ data type
+  int pred_dim = pred.ncol();
+  std::vector<std::pair<int, int>> pred_std(pred.nrow());
+
+  if (pred_dim == 1){
+    for (int i = 0; i < pred.nrow(); ++i) {
+      std::vector<int> rowcolnum = RowColFromGrid(pred(i, 0) - 1, numCols);
+      pred_std[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+    }
+  } else {
+    for (int i = 0; i < pred.nrow(); ++i) {
+      pred_std[i] = std::make_pair(pred(i, 0), pred(i, 1));
+    }
+  }
+
   // Convert block to a fundamental C++ data type
   int b_dim = block.ncol();
   std::vector<int> b_std;
@@ -974,6 +1040,8 @@ Rcpp::NumericVector RcppSCT4Grid(const Rcpp::NumericMatrix& x,
   std::vector<double> sc = SCT4Grid(
     xmat,
     ymat,
+    lib_std,
+    pred_std,
     b_std,
     k,
     threads,
