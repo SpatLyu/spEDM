@@ -15,6 +15,8 @@
   boot = 399,
   seed = 42,
   base = 2,
+  lib = NULL,
+  pred = NULL,
   nb = NULL,
   threads = detectThreads(),
   symbolize = TRUE,
@@ -31,6 +33,8 @@
   boot = 399,
   seed = 42,
   base = 2,
+  lib = NULL,
+  pred = NULL,
   threads = detectThreads(),
   symbolize = TRUE,
   normalize = FALSE,
@@ -53,6 +57,10 @@
 \item{seed}{(optional) The random seed.}
 
 \item{base}{(optional) Base of the logarithm.}
+
+\item{lib}{(optional) Libraries indices.}
+
+\item{pred}{(optional) Predictions indices.}
 
 \item{nb}{(optional) The neighbours list.}
 
