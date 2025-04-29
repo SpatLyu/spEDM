@@ -116,7 +116,7 @@ Rcpp::NumericVector RcppGenGridSymbolization(const Rcpp::NumericMatrix& mat,
     }
   } else {
     for (int i = 0; i < lib.nrow(); ++i) {
-      lib_std[i] = std::make_pair(lib(i, 0), lib(i, 1));
+      lib_std[i] = std::make_pair(lib(i, 0) - 1, lib(i, 1) - 1);
     }
   }
 
@@ -131,7 +131,7 @@ Rcpp::NumericVector RcppGenGridSymbolization(const Rcpp::NumericMatrix& mat,
     }
   } else {
     for (int i = 0; i < pred.nrow(); ++i) {
-      pred_std[i] = std::make_pair(pred(i, 0), pred(i, 1));
+      pred_std[i] = std::make_pair(pred(i, 0) - 1, pred(i, 1) - 1);
     }
   }
 
@@ -996,7 +996,7 @@ Rcpp::NumericVector RcppSCTSingle4Grid(const Rcpp::NumericMatrix& x,
     }
   } else {
     for (int i = 0; i < lib.nrow(); ++i) {
-      lib_std[i] = std::make_pair(lib(i, 0), lib(i, 1));
+      lib_std[i] = std::make_pair(lib(i, 0) - 1, lib(i, 1) - 1);
     }
   }
 
@@ -1011,7 +1011,7 @@ Rcpp::NumericVector RcppSCTSingle4Grid(const Rcpp::NumericMatrix& x,
     }
   } else {
     for (int i = 0; i < pred.nrow(); ++i) {
-      pred_std[i] = std::make_pair(pred(i, 0), pred(i, 1));
+      pred_std[i] = std::make_pair(pred(i, 0) - 1, pred(i, 1) - 1);
     }
   }
 
@@ -1081,7 +1081,7 @@ Rcpp::NumericVector RcppSCT4Grid(const Rcpp::NumericMatrix& x,
     }
   } else {
     for (int i = 0; i < lib.nrow(); ++i) {
-      lib_std[i] = std::make_pair(lib(i, 0), lib(i, 1));
+      lib_std[i] = std::make_pair(lib(i, 0) - 1, lib(i, 1) - 1);
     }
   }
 
@@ -1096,7 +1096,7 @@ Rcpp::NumericVector RcppSCT4Grid(const Rcpp::NumericMatrix& x,
     }
   } else {
     for (int i = 0; i < pred.nrow(); ++i) {
-      pred_std[i] = std::make_pair(pred(i, 0), pred(i, 1));
+      pred_std[i] = std::make_pair(pred(i, 0) - 1, pred(i, 1) - 1);
     }
   }
 
