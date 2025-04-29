@@ -1,22 +1,26 @@
 methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
 
-.sct_sf_method = \(data, cause, effect, k, block = 3, boot = 399, seed = 42, base = 2, nb = NULL,
-                   threads = detectThreads(), symbolize = TRUE, normalize = FALSE, progressbar = FALSE){
+.sct_sf_method = \(data, cause, effect, k, block = 3, boot = 399, seed = 42, base = 2, lib = NULL, pred = NULL,
+                   nb = NULL, threads = detectThreads(), symbolize = TRUE, normalize = FALSE, progressbar = FALSE){
   varname = .check_character(cause, effect)
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   if (nrow(data) != length(nb)) stop("Incompatible Data Dimensions!")
+  if (is.null(lib)) lib = seq_len(nrow(data))
+  if (is.null(pred)) pred = lib
   block = RcppDivideLattice(nb,block)
   cause = .uni_lattice(data,cause,FALSE)
   effect = .uni_lattice(data,effect,FALSE)
-  return(.bind_sct(RcppSCT4Lattice(cause,effect,nb,block,k,threads,boot,base,seed,symbolize,normalize,progressbar),varname))
+  return(.bind_sct(RcppSCT4Lattice(cause,effect,nb,lib,pred,block,k,threads,boot,base,seed,symbolize,normalize,progressbar),varname))
 }
 
-.sct_spatraster_method = \(data, cause, effect, k, block = 3, boot = 399, seed = 42, base = 2,
+.sct_spatraster_method = \(data, cause, effect, k, block = 3, boot = 399, seed = 42, base = 2, lib = NULL, pred = NULL,
                            threads = detectThreads(),symbolize = TRUE,normalize = FALSE,progressbar = FALSE){
   varname = .check_character(cause, effect)
   cause = .uni_grid(data,cause,FALSE)
   effect = .uni_grid(data,effect,FALSE)
   block = matrix(RcppDivideGrid(effect,block),ncol = 1)
+  if (is.null(lib)) lib = .internal_samplemat(effect)
+  if (is.null(pred)) pred = .internal_samplemat(effect,floor(sqrt(length(effect))))
   return(.bind_sct(RcppSCT4Grid(cause,effect,block,k,threads,boot,base,seed,symbolize,normalize,progressbar),varname))
 }
 
@@ -30,6 +34,8 @@ methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
 #' @param boot (optional) Number of bootstraps to perform.
 #' @param seed (optional) The random seed.
 #' @param base (optional) Base of the logarithm.
+#' @param lib (optional) Libraries indices.
+#' @param pred (optional) Predictions indices.
 #' @param nb (optional) The neighbours list.
 #' @param threads (optional) Number of threads.
 #' @param symbolize (optional) Whether to apply the symbolic map process.
