@@ -2,6 +2,7 @@
 #define CppLatticeUtils_H
 
 #include <iostream>
+#include <stdexcept>
 #include <vector>
 #include <queue> // for std::queue
 #include <numeric>   // for std::accumulate
@@ -10,6 +11,7 @@
 #include <unordered_map> // for std::unordered_map
 #include <limits> // for std::numeric_limits
 #include <cmath> // For std::isnan
+#include <string>
 #include "CppStats.h"
 
 /**
@@ -80,29 +82,30 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
  * This function constructs neighborhood information for each element in a spatial process
  * using both direct connectivity and value similarity. It ensures that each location has
  * at least k unique neighbors by expanding through its neighbors' neighbors recursively,
- * if necessary.
+ * if necessary. All neighbors must be indices present in the provided `lib` vector.
  *
  * The procedure consists of:
- * 1. Starting with directly connected neighbors from `nb`.
+ * 1. Starting with directly connected neighbors from `nb` that are also in `lib`.
  * 2. If fewer than k unique neighbors are found, iteratively expand the neighborhood using
- *    a breadth-first search (BFS) on the adjacency list until at least k neighbors are collected.
+ *    a breadth-first search (BFS) on the adjacency list (only considering nodes in `lib`).
  * 3. Among all collected neighbors, the function selects the k most similar ones in terms of
  *    absolute value difference from the center location.
  *
- * @param vec A vector of values representing the spatial process, used for sorting by similarity.
+ * @param vec A vector of values representing the spatial process (used for sorting by similarity).
  * @param nb A list of adjacency lists where `nb[i]` gives the direct neighbors of location i.
+ * @param lib A vector of indices representing valid neighbors to consider for all locations.
  * @param k The desired number of neighbors for each location.
  *
  * @return A vector of vectors, where each subvector contains the indices of the k nearest neighbors
  *         for each location, based on lattice structure and value similarity.
  *
- * Note: If there are not enough connected neighbors to meet the required `k`, the function expands
- * the neighborhood breadth-first to reach the required size, and sorts candidates by absolute value
- * difference from the center location in `vec`.
+ * @throw std::runtime_error If any location cannot find enough valid neighbors from `lib` to meet the k requirement.
+ * @throw std::invalid_argument If `lib` contains invalid indices outside the range of `vec`.
  */
 std::vector<std::vector<int>> GenLatticeNeighbors(
     const std::vector<double>& vec,
     const std::vector<std::vector<int>>& nb,
+    const std::vector<int>& lib,
     size_t k);
 
 /**

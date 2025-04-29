@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdexcept>
 #include <vector>
 #include <queue> // for std::queue
 #include <numeric>   // for std::accumulate
@@ -7,6 +8,7 @@
 #include <unordered_map> // for std::unordered_map
 #include <limits> // for std::numeric_limits
 #include <cmath> // For std::isnan
+#include <string>
 #include "CppStats.h"
 
 /**
@@ -401,60 +403,74 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
  * This function constructs neighborhood information for each element in a spatial process
  * using both direct connectivity and value similarity. It ensures that each location has
  * at least k unique neighbors by expanding through its neighbors' neighbors recursively,
- * if necessary.
+ * if necessary. All neighbors must be indices present in the provided `lib` vector.
  *
  * The procedure consists of:
- * 1. Starting with directly connected neighbors from `nb`.
+ * 1. Starting with directly connected neighbors from `nb` that are also in `lib`.
  * 2. If fewer than k unique neighbors are found, iteratively expand the neighborhood using
- *    a breadth-first search (BFS) on the adjacency list until at least k neighbors are collected.
+ *    a breadth-first search (BFS) on the adjacency list (only considering nodes in `lib`).
  * 3. Among all collected neighbors, the function selects the k most similar ones in terms of
  *    absolute value difference from the center location.
  *
- * @param vec A vector of values representing the spatial process, used for sorting by similarity.
+ * @param vec A vector of values representing the spatial process (used for sorting by similarity).
  * @param nb A list of adjacency lists where `nb[i]` gives the direct neighbors of location i.
+ * @param lib A vector of indices representing valid neighbors to consider for all locations.
  * @param k The desired number of neighbors for each location.
  *
  * @return A vector of vectors, where each subvector contains the indices of the k nearest neighbors
  *         for each location, based on lattice structure and value similarity.
  *
- * Note: If there are not enough connected neighbors to meet the required `k`, the function expands
- * the neighborhood breadth-first to reach the required size, and sorts candidates by absolute value
- * difference from the center location in `vec`.
+ * @throw std::runtime_error If any location cannot find enough valid neighbors from `lib` to meet the k requirement.
+ * @throw std::invalid_argument If `lib` contains invalid indices outside the range of `vec`.
  */
 std::vector<std::vector<int>> GenLatticeNeighbors(
     const std::vector<double>& vec,
     const std::vector<std::vector<int>>& nb,
+    const std::vector<int>& lib,
     size_t k) {
 
-  // Initialize the result vector with empty vectors
+  // Preconvert lib into a set for fast lookup (optimization)
+  std::unordered_set<int> libSet(lib.begin(), lib.end());
+
+  // Check whether indices in lib are valid (recommended for robustness)
+  for (int idx : lib) {
+    if (idx < 0 || idx >= static_cast<int>(vec.size())) {
+      throw std::invalid_argument("Invalid index " + std::to_string(idx) + " found in 'lib'");
+    }
+  }
+
   std::vector<std::vector<int>> result(vec.size());
 
-  // Iterate through each element in the input vector
   for (size_t i = 0; i < vec.size(); ++i) {
-    // Use a set to store unique neighbor indices
     std::unordered_set<int> uniqueNeighbors;
 
-    // Start with the direct neighbors from nb[i]
+    // Initial stage: collect directly connected neighbors that exist in lib
     for (int neighborIdx : nb[i]) {
-      uniqueNeighbors.insert(neighborIdx);
+      if (libSet.count(neighborIdx)) {
+        uniqueNeighbors.insert(neighborIdx);
+      }
     }
 
-    // If the number of unique neighbors is less than k, expand the neighborhood
+    // If direct neighbors are not enough, expand using BFS (only nodes in lib)
     if (uniqueNeighbors.size() < k) {
-      // Use a queue to manage the current level of neighbors
       std::queue<int> neighborQueue;
+
+      // Initialize the queue with valid direct neighbors
       for (int neighborIdx : nb[i]) {
-        neighborQueue.push(neighborIdx);
+        if (libSet.count(neighborIdx)) {
+          neighborQueue.push(neighborIdx);
+        }
       }
 
-      // Continue expanding until we have at least k unique neighbors
+      // Expand neighbors using BFS until we reach k or cannot expand further
       while (!neighborQueue.empty() && uniqueNeighbors.size() < k) {
         int currentIdx = neighborQueue.front();
         neighborQueue.pop();
 
-        // Add the neighbors of the current index to the queue and uniqueNeighbors set
+        // Traverse neighbors of current node and add new valid ones
         for (int nextNeighborIdx : nb[currentIdx]) {
-          if (uniqueNeighbors.find(nextNeighborIdx) == uniqueNeighbors.end()) {
+          if (libSet.count(nextNeighborIdx) &&
+              uniqueNeighbors.find(nextNeighborIdx) == uniqueNeighbors.end()) {
             uniqueNeighbors.insert(nextNeighborIdx);
             neighborQueue.push(nextNeighborIdx);
           }
@@ -462,20 +478,24 @@ std::vector<std::vector<int>> GenLatticeNeighbors(
       }
     }
 
-    // Convert the set to a vector for sorting
-    std::vector<int> neighbors(uniqueNeighbors.begin(), uniqueNeighbors.end());
+    // // Check whether enough neighbors were found
+    // if (uniqueNeighbors.size() < k) {
+    //   throw std::runtime_error("Location " + std::to_string(i) +
+    //                            " cannot find enough (" + std::to_string(k) +
+    //                            ") valid neighbors from the provided 'lib' set");
+    // }
 
-    // Sort the neighbors based on the absolute difference in value from the original element
+    // Convert the set to a vector and sort by value similarity
+    std::vector<int> neighbors(uniqueNeighbors.begin(), uniqueNeighbors.end());
     std::sort(neighbors.begin(), neighbors.end(), [&](int a, int b) {
       return std::abs(vec[a] - vec[i]) < std::abs(vec[b] - vec[i]);
     });
 
-    // Select the top k neighbors
+    // Keep only the top-k most similar neighbors
     if (neighbors.size() > k) {
       neighbors.resize(k);
     }
 
-    // Store the result for the current element
     result[i] = neighbors;
   }
 
