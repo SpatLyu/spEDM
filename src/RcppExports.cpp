@@ -484,28 +484,31 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppGenLatticeNeighbors
-Rcpp::List RcppGenLatticeNeighbors(const Rcpp::NumericVector& vec, const Rcpp::List& nb, int k);
-RcppExport SEXP _spEDM_RcppGenLatticeNeighbors(SEXP vecSEXP, SEXP nbSEXP, SEXP kSEXP) {
+Rcpp::List RcppGenLatticeNeighbors(const Rcpp::NumericVector& vec, const Rcpp::List& nb, const Rcpp::IntegerVector& lib, int k);
+RcppExport SEXP _spEDM_RcppGenLatticeNeighbors(SEXP vecSEXP, SEXP nbSEXP, SEXP libSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type lib(libSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppGenLatticeNeighbors(vec, nb, k));
+    rcpp_result_gen = Rcpp::wrap(RcppGenLatticeNeighbors(vec, nb, lib, k));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppGenLatticeSymbolization
-Rcpp::NumericVector RcppGenLatticeSymbolization(const Rcpp::NumericVector& vec, const Rcpp::List& nb, int k);
-RcppExport SEXP _spEDM_RcppGenLatticeSymbolization(SEXP vecSEXP, SEXP nbSEXP, SEXP kSEXP) {
+Rcpp::NumericVector RcppGenLatticeSymbolization(const Rcpp::NumericVector& vec, const Rcpp::List& nb, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, int k);
+RcppExport SEXP _spEDM_RcppGenLatticeSymbolization(SEXP vecSEXP, SEXP nbSEXP, SEXP libSEXP, SEXP predSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type lib(libSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type pred(predSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppGenLatticeSymbolization(vec, nb, k));
+    rcpp_result_gen = Rcpp::wrap(RcppGenLatticeSymbolization(vec, nb, lib, pred, k));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -651,14 +654,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppSCT4Lattice
-Rcpp::NumericVector RcppSCT4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, const Rcpp::IntegerVector& block, int k, int threads, int boot, double base, unsigned int seed, bool symbolize, bool normalize, bool progressbar);
-RcppExport SEXP _spEDM_RcppSCT4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP blockSEXP, SEXP kSEXP, SEXP threadsSEXP, SEXP bootSEXP, SEXP baseSEXP, SEXP seedSEXP, SEXP symbolizeSEXP, SEXP normalizeSEXP, SEXP progressbarSEXP) {
+Rcpp::NumericVector RcppSCT4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& block, int k, int threads, int boot, double base, unsigned int seed, bool symbolize, bool normalize, bool progressbar);
+RcppExport SEXP _spEDM_RcppSCT4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP libSEXP, SEXP predSEXP, SEXP blockSEXP, SEXP kSEXP, SEXP threadsSEXP, SEXP bootSEXP, SEXP baseSEXP, SEXP seedSEXP, SEXP symbolizeSEXP, SEXP normalizeSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type lib(libSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type pred(predSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type block(blockSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
@@ -668,7 +673,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type symbolize(symbolizeSEXP);
     Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
     Rcpp::traits::input_parameter< bool >::type progressbar(progressbarSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppSCT4Lattice(x, y, nb, block, k, threads, boot, base, seed, symbolize, normalize, progressbar));
+    rcpp_result_gen = Rcpp::wrap(RcppSCT4Lattice(x, y, nb, lib, pred, block, k, threads, boot, base, seed, symbolize, normalize, progressbar));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1141,8 +1146,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppLaggedNeighbor4Lattice", (DL_FUNC) &_spEDM_RcppLaggedNeighbor4Lattice, 2},
     {"_spEDM_RcppLaggedVar4Lattice", (DL_FUNC) &_spEDM_RcppLaggedVar4Lattice, 3},
     {"_spEDM_RcppGenLatticeEmbeddings", (DL_FUNC) &_spEDM_RcppGenLatticeEmbeddings, 4},
-    {"_spEDM_RcppGenLatticeNeighbors", (DL_FUNC) &_spEDM_RcppGenLatticeNeighbors, 3},
-    {"_spEDM_RcppGenLatticeSymbolization", (DL_FUNC) &_spEDM_RcppGenLatticeSymbolization, 3},
+    {"_spEDM_RcppGenLatticeNeighbors", (DL_FUNC) &_spEDM_RcppGenLatticeNeighbors, 4},
+    {"_spEDM_RcppGenLatticeSymbolization", (DL_FUNC) &_spEDM_RcppGenLatticeSymbolization, 5},
     {"_spEDM_RcppDivideLattice", (DL_FUNC) &_spEDM_RcppDivideLattice, 2},
     {"_spEDM_RcppSimplex4Lattice", (DL_FUNC) &_spEDM_RcppSimplex4Lattice, 8},
     {"_spEDM_RcppSMap4Lattice", (DL_FUNC) &_spEDM_RcppSMap4Lattice, 9},
@@ -1150,7 +1155,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppGCCM4Lattice", (DL_FUNC) &_spEDM_RcppGCCM4Lattice, 14},
     {"_spEDM_RcppSCPCM4Lattice", (DL_FUNC) &_spEDM_RcppSCPCM4Lattice, 16},
     {"_spEDM_RcppGCMC4Lattice", (DL_FUNC) &_spEDM_RcppGCMC4Lattice, 11},
-    {"_spEDM_RcppSCT4Lattice", (DL_FUNC) &_spEDM_RcppSCT4Lattice, 12},
+    {"_spEDM_RcppSCT4Lattice", (DL_FUNC) &_spEDM_RcppSCT4Lattice, 14},
     {"_spEDM_RcppFactorial", (DL_FUNC) &_spEDM_RcppFactorial, 1},
     {"_spEDM_RcppCombine", (DL_FUNC) &_spEDM_RcppCombine, 2},
     {"_spEDM_RcppCombn", (DL_FUNC) &_spEDM_RcppCombn, 2},
