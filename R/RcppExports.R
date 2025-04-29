@@ -61,8 +61,8 @@ RcppGenGridEmbeddings <- function(mat, E, tau) {
     .Call(`_spEDM_RcppGenGridEmbeddings`, mat, E, tau)
 }
 
-RcppGenGridSymbolization <- function(mat, k) {
-    .Call(`_spEDM_RcppGenGridSymbolization`, mat, k)
+RcppGenGridSymbolization <- function(mat, lib, pred, k) {
+    .Call(`_spEDM_RcppGenGridSymbolization`, mat, lib, pred, k)
 }
 
 RcppDivideGrid <- function(mat, b, shape = 3L) {
@@ -93,8 +93,8 @@ RcppGCMC4Grid <- function(xMatrix, yMatrix, lib, pred, E, tau, b, max_r, threads
     .Call(`_spEDM_RcppGCMC4Grid`, xMatrix, yMatrix, lib, pred, E, tau, b, max_r, threads, progressbar)
 }
 
-RcppSCT4Grid <- function(x, y, block, k, threads, boot = 399L, base = 2, seed = 42L, symbolize = TRUE, normalize = FALSE, progressbar = TRUE) {
-    .Call(`_spEDM_RcppSCT4Grid`, x, y, block, k, threads, boot, base, seed, symbolize, normalize, progressbar)
+RcppSCT4Grid <- function(x, y, lib, pred, block, k, threads, boot = 399L, base = 2, seed = 42L, symbolize = TRUE, normalize = FALSE, progressbar = TRUE) {
+    .Call(`_spEDM_RcppSCT4Grid`, x, y, lib, pred, block, k, threads, boot, base, seed, symbolize, normalize, progressbar)
 }
 
 DetectMaxNumThreads <- function() {

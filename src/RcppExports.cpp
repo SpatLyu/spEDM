@@ -232,14 +232,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppGenGridSymbolization
-Rcpp::NumericVector RcppGenGridSymbolization(const Rcpp::NumericMatrix& mat, int k);
-RcppExport SEXP _spEDM_RcppGenGridSymbolization(SEXP matSEXP, SEXP kSEXP) {
+Rcpp::NumericVector RcppGenGridSymbolization(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, int k);
+RcppExport SEXP _spEDM_RcppGenGridSymbolization(SEXP matSEXP, SEXP libSEXP, SEXP predSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type lib(libSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type pred(predSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppGenGridSymbolization(mat, k));
+    rcpp_result_gen = Rcpp::wrap(RcppGenGridSymbolization(mat, lib, pred, k));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -380,13 +382,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppSCT4Grid
-Rcpp::NumericVector RcppSCT4Grid(const Rcpp::NumericMatrix& x, const Rcpp::NumericMatrix& y, const Rcpp::IntegerMatrix& block, int k, int threads, int boot, double base, unsigned int seed, bool symbolize, bool normalize, bool progressbar);
-RcppExport SEXP _spEDM_RcppSCT4Grid(SEXP xSEXP, SEXP ySEXP, SEXP blockSEXP, SEXP kSEXP, SEXP threadsSEXP, SEXP bootSEXP, SEXP baseSEXP, SEXP seedSEXP, SEXP symbolizeSEXP, SEXP normalizeSEXP, SEXP progressbarSEXP) {
+Rcpp::NumericVector RcppSCT4Grid(const Rcpp::NumericMatrix& x, const Rcpp::NumericMatrix& y, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, const Rcpp::IntegerMatrix& block, int k, int threads, int boot, double base, unsigned int seed, bool symbolize, bool normalize, bool progressbar);
+RcppExport SEXP _spEDM_RcppSCT4Grid(SEXP xSEXP, SEXP ySEXP, SEXP libSEXP, SEXP predSEXP, SEXP blockSEXP, SEXP kSEXP, SEXP threadsSEXP, SEXP bootSEXP, SEXP baseSEXP, SEXP seedSEXP, SEXP symbolizeSEXP, SEXP normalizeSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type x(xSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type lib(libSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type pred(predSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type block(blockSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
@@ -396,7 +400,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type symbolize(symbolizeSEXP);
     Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
     Rcpp::traits::input_parameter< bool >::type progressbar(progressbarSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppSCT4Grid(x, y, block, k, threads, boot, base, seed, symbolize, normalize, progressbar));
+    rcpp_result_gen = Rcpp::wrap(RcppSCT4Grid(x, y, lib, pred, block, k, threads, boot, base, seed, symbolize, normalize, progressbar));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1130,7 +1134,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppRowColFromGrid", (DL_FUNC) &_spEDM_RcppRowColFromGrid, 2},
     {"_spEDM_RcppLaggedVar4Grid", (DL_FUNC) &_spEDM_RcppLaggedVar4Grid, 2},
     {"_spEDM_RcppGenGridEmbeddings", (DL_FUNC) &_spEDM_RcppGenGridEmbeddings, 3},
-    {"_spEDM_RcppGenGridSymbolization", (DL_FUNC) &_spEDM_RcppGenGridSymbolization, 2},
+    {"_spEDM_RcppGenGridSymbolization", (DL_FUNC) &_spEDM_RcppGenGridSymbolization, 4},
     {"_spEDM_RcppDivideGrid", (DL_FUNC) &_spEDM_RcppDivideGrid, 3},
     {"_spEDM_RcppSimplex4Grid", (DL_FUNC) &_spEDM_RcppSimplex4Grid, 7},
     {"_spEDM_RcppSMap4Grid", (DL_FUNC) &_spEDM_RcppSMap4Grid, 8},
@@ -1138,7 +1142,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppGCCM4Grid", (DL_FUNC) &_spEDM_RcppGCCM4Grid, 13},
     {"_spEDM_RcppSCPCM4Grid", (DL_FUNC) &_spEDM_RcppSCPCM4Grid, 15},
     {"_spEDM_RcppGCMC4Grid", (DL_FUNC) &_spEDM_RcppGCMC4Grid, 10},
-    {"_spEDM_RcppSCT4Grid", (DL_FUNC) &_spEDM_RcppSCT4Grid, 11},
+    {"_spEDM_RcppSCT4Grid", (DL_FUNC) &_spEDM_RcppSCT4Grid, 13},
     {"_spEDM_DetectMaxNumThreads", (DL_FUNC) &_spEDM_DetectMaxNumThreads, 0},
     {"_spEDM_OptEmbedDim", (DL_FUNC) &_spEDM_OptEmbedDim, 1},
     {"_spEDM_OptThetaParm", (DL_FUNC) &_spEDM_OptThetaParm, 1},

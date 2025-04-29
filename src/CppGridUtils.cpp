@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdexcept>
 #include <vector>
 #include <cmath>
 #include <limits>
@@ -350,9 +351,11 @@ std::vector<std::vector<double>> GenGridEmbeddings(
  *    - Sum `l_s` to get a symbolic value `fs` representing the symbolic spatial consistency.
  *
  * @param mat A 2D grid (matrix) of values to be symbolized. `NaN` values are treated as missing.
+ * @param lib Valid library locations as (row,col) pairs
+ * @param pred Prediction locations to process as (row,col) pairs
  * @param k The number of neighbors to consider for the symbolization of each cell.
  *
- * @return A flattened 1D vector representing the symbolic values of each grid cell (row-major order).
+ * @return A flattened 1D vector representing the symbolic values of for prediction locations (row-major order).
  *         Cells with no valid value or insufficient neighbors remain as `NaN`.
  *
  * Note:
@@ -362,98 +365,103 @@ std::vector<std::vector<double>> GenGridEmbeddings(
  */
 std::vector<double> GenGridSymbolization(
     const std::vector<std::vector<double>>& mat,
-    size_t k){
+    const std::vector<std::pair<int, int>>& lib,
+    const std::vector<std::pair<int, int>>& pred,
+    size_t k) {
+
+  // // Validate matrix structure
+  // if (mat.empty() || mat[0].empty()) {
+  //   throw std::invalid_argument("Invalid matrix dimensions");
+  // }
   const size_t rows = mat.size();
   const size_t cols = mat[0].size();
-  std::vector<double> result(rows * cols, std::numeric_limits<double>::quiet_NaN());
 
-  std::vector<double> me(rows * cols, std::numeric_limits<double>::quiet_NaN());
-  for (size_t i = 0; i < rows; ++i) {
-    for (size_t j = 0; j < cols; ++j) {
-      me[i * cols + j] = mat[i][j];
+  // Validate and prepare library set
+  std::unordered_set<size_t> lib_indices;
+  for (const auto& [i,j] : lib) {
+    // if (i < 0 || i >= rows || j < 0 || j >= cols) {
+    //   throw std::invalid_argument("Library index out of bounds");
+    // }
+    lib_indices.insert(static_cast<size_t>(i * static_cast<int>(cols) + j));
+  }
+
+  // // Validate prediction indices
+  // for (const auto& [i,j] : pred) {
+  //   if (i < 0 || i >= rows || j < 0 || j >= cols) {
+  //     throw std::invalid_argument("Prediction index out of bounds");
+  //   }
+  // }
+
+  // Compute global median from all non-NaN values
+  std::vector<double> valid_values;
+  for (const auto& row : mat) {
+    for (double val : row) {
+      if (!std::isnan(val)) valid_values.push_back(val);
     }
   }
-  // The median of series me
-  double s_me = CppMedian(me, true);
+  // for (const auto& [i,j] : pred) {
+  //   double val = mat[i][j];
+  //   if (!std::isnan(val)) valid_values.push_back(val);
+  // }
+  const double s_me = CppMedian(valid_values, true);
 
-  for (size_t i = 0; i < rows; ++i) {
-    for (size_t j = 0; j < cols; ++j) {
-      const double center = mat[i][j];
-      if (std::isnan(center)) continue;
+  // Prepare result vector
+  std::vector<double> result(pred.size(), std::numeric_limits<double>::quiet_NaN());
 
-      // Collect valid neighbors with absolute differences
-      std::vector<std::pair<double, double>> neighbors; // <abs_diff, value>
+  // Process each prediction location
+  for (size_t idx = 0; idx < pred.size(); ++idx) {
+    const auto [i, j] = pred[idx];
+    const double center = mat[i][j];
+    if (std::isnan(center)) continue;
 
-      int max_lag = std::max({
-        static_cast<int>(i),
-        static_cast<int>(rows-1 - i),
-        static_cast<int>(j),
-        static_cast<int>(cols-1 - j)
-      });
+    // Collect valid neighbors from library
+    std::vector<std::pair<double, double>> neighbors;
+    const int max_lag = std::max({
+      static_cast<int>(i),
+      static_cast<int>(rows-1 - i),
+      static_cast<int>(j),
+      static_cast<int>(cols-1 - j)
+    });
 
-      // Expand lag until enough neighbors or reach max possible lag
-      for (int lag = 1; lag <= max_lag; ++lag) {
-        // Generate queen's case offsets for current lag
-        std::vector<std::pair<int, int>> offsets;
-        for (int dx = -lag; dx <= lag; ++dx) {
-          for (int dy = -lag; dy <= lag; ++dy) {
-            if (std::max(std::abs(dx), std::abs(dy)) == lag) {
-              int ni = i + dx;
-              int nj = j + dy;
-              if (ni >= 0 && ni < static_cast<int>(rows) && nj >= 0 && nj < static_cast<int>(cols)) {
-                double val = mat[ni][nj];
-                if (!std::isnan(val)) {
-                  neighbors.emplace_back(std::abs(val - center), val);
-                }
-              }
-            }
+    // Radial expansion with library constraints
+    for (int lag = 1; lag <= max_lag; ++lag) {
+      for (int dx = -lag; dx <= lag; ++dx) {
+        for (int dy = -lag; dy <= lag; ++dy) {
+          if (std::max(std::abs(dx), std::abs(dy)) != lag) continue;
+
+          const int ni = i + dx;
+          const int nj = j + dy;
+          if (ni < 0 || ni >= static_cast<int>(rows) ||
+              nj < 0 || nj >= static_cast<int>(cols)) continue;
+
+          // Check library membership
+          if (!lib_indices.count(static_cast<size_t>(ni * cols + nj))) continue;
+
+          const double val = mat[ni][nj];
+          if (!std::isnan(val)) {
+            neighbors.emplace_back(std::abs(val - center), val);
           }
         }
-        if (neighbors.size() >= k) break;
+      }
+      if (neighbors.size() >= k) break;
+    }
+
+    // Process if sufficient neighbors found
+    if (neighbors.size() >= k) {
+      std::sort(neighbors.begin(), neighbors.end(),
+                [](const auto& a, const auto& b) {
+                  return a.first != b.first ? a.first < b.first : a.second < b.second;
+                });
+
+      // Calculate symbolic value
+      const double taus = center >= s_me ? 1.0 : 0.0;
+      double fs = 0.0;
+      for (size_t n = 0; n < k; ++n) {
+        const double neighbor_val = neighbors[n].second;
+        fs += (neighbor_val >= s_me) == taus ? 1.0 : 0.0;
       }
 
-      // Select top-k smallest differences
-      if (neighbors.size() >= k) {
-        // Sort by absolute difference then value
-        std::sort(neighbors.begin(), neighbors.end(),
-             [](const auto& a, const auto& b) {
-               return a.first != b.first ? a.first < b.first : a.second < b.second;
-             });
-
-        // Symbolization
-        std::vector<double> selected;
-        for (size_t idx = 0; idx < k; ++idx){
-          selected.push_back(neighbors[idx].second);
-        }
-
-        // The first indicator function
-        std::vector<double> tau_s(selected.size());
-        for(size_t i = 0; i < selected.size(); ++i){
-          double tau = 0;
-          if (selected[i] >= s_me){
-            tau = 1;
-          }
-          tau_s[i] = tau;
-        }
-
-        // The second indicator function and the symbolization map
-        std::vector<double> l_s(k);
-        double taus = center >= s_me ? 1 : 0;
-        for(size_t i = 0; i < k; ++i){
-          double l = 0;
-          if (tau_s[i] == taus){
-            l = 1;
-          }
-          l_s[i] = l;
-        }
-
-        double fs = 0.0;
-        for (size_t i = 0; i < l_s.size(); ++i) {
-          fs += l_s[i];
-        }
-
-        result[i * cols + j] = fs;
-      }
+      result[idx] = fs;
     }
   }
 

@@ -35,6 +35,8 @@
  *
  * @param x         2D grid (matrix) representing variable X.
  * @param y         2D grid (matrix) representing variable Y.
+ * @param lib            A vector of pairs representing the indices (row, column) of spatial units to be the library.
+ * @param pred           A vector of pairs representing the indices (row, column) of spatial units to be predicted.
  * @param k         Embedding neighborhood radius (e.g., k = 1 means 3×3 window).
  * @param base      Logarithm base used in entropy computation (default is 2, for bits).
  * @param symbolize Whether to discretize the data via symbolic transformation before entropy computation.
@@ -47,6 +49,8 @@
 std::vector<double> SCTSingle4Grid(
     const std::vector<std::vector<double>>& x,
     const std::vector<std::vector<double>>& y,
+    const std::vector<std::pair<int, int>>& lib,
+    const std::vector<std::pair<int, int>>& pred,
     size_t k,
     double base = 2,
     bool symbolize = true,
@@ -72,10 +76,10 @@ std::vector<double> SCTSingle4Grid(
   double Hwx, Hwy, Hxwx, Hywy, Hwxwy, Hwxwyx, Hwxwyy;
 
   if (symbolize){
-    std::vector<double> sx = GenGridSymbolization(x, k);
-    std::vector<double> sy = GenGridSymbolization(y, k);
-    std::vector<double> swx = GenGridSymbolization(xw, k);
-    std::vector<double> swy = GenGridSymbolization(yw, k);
+    std::vector<double> sx = GenGridSymbolization(x, lib, pred, k);
+    std::vector<double> sy = GenGridSymbolization(y, lib, pred, k);
+    std::vector<double> swx = GenGridSymbolization(xw, lib, pred, k);
+    std::vector<double> swy = GenGridSymbolization(yw, lib, pred, k);
 
     std::vector<std::vector<double>> sp_series(rows*cols,std::vector<double>(4));
     for (size_t i = 0; i < x.size(); ++i){
@@ -144,6 +148,8 @@ std::vector<double> SCTSingle4Grid(
  *
  * @param x           2D grid (matrix) of variable X.
  * @param y           2D grid (matrix) of variable Y, same size as x.
+ * @param lib            A vector of pairs representing the indices (row, column) of spatial units to be the library.
+ * @param pred           A vector of pairs representing the indices (row, column) of spatial units to be predicted.
  * @param block       Vector assigning each grid cell to a spatial block for bootstrapping.
  * @param k           Neighborhood window size used for symbolization (typically 3 or 5).
  * @param threads     Number of threads to use for parallel bootstrap estimation.
@@ -163,6 +169,8 @@ std::vector<double> SCTSingle4Grid(
 std::vector<double> SCT4Grid(
     const std::vector<std::vector<double>>& x,
     const std::vector<std::vector<double>>& y,
+    const std::vector<std::pair<int, int>>& lib,
+    const std::vector<std::pair<int, int>>& pred,
     const std::vector<int>& block,
     int k,
     int threads,
@@ -194,7 +202,7 @@ std::vector<double> SCT4Grid(
     std::vector<std::vector<double>> x_boot = GridVec2Mat(x_bs,static_cast<int>(rows));
     std::vector<std::vector<double>> y_boot = GridVec2Mat(y_bs,static_cast<int>(rows));
     // Estimate the bootstrapped realization of the spatial granger causality statistic
-    sc_bootstraps[n] = SCTSingle4Grid(x_boot,y_boot,static_cast<size_t>(std::abs(k)),base,symbolize,normalize);
+    sc_bootstraps[n] = SCTSingle4Grid(x_boot,y_boot,lib,pred,static_cast<size_t>(std::abs(k)),base,symbolize,normalize);
   };
 
   // Configure threads
@@ -215,7 +223,7 @@ std::vector<double> SCT4Grid(
   }
 
   // The "true" spatial granger causality statistic
-  std::vector<double> sc = SCTSingle4Grid(x,y,static_cast<size_t>(std::abs(k)),base,symbolize,normalize);
+  std::vector<double> sc = SCTSingle4Grid(x,y,lib,pred,static_cast<size_t>(std::abs(k)),base,symbolize,normalize);
   double scx = sc[0];
   double scy = sc[1];
   // Compute the estimated bootstrap p–value
