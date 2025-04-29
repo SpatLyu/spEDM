@@ -2,6 +2,7 @@
 #define CppGridUtils_H
 
 #include <iostream>
+#include <stdexcept>
 #include <vector>
 #include <cmath>
 #include <limits>
