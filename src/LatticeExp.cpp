@@ -127,6 +127,7 @@ Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec,
 // [[Rcpp::export]]
 Rcpp::List RcppGenLatticeNeighbors(const Rcpp::NumericVector& vec,
                                    const Rcpp::List& nb,
+                                   const Rcpp::IntegerVector& lib,
                                    int k) {
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
@@ -134,8 +135,18 @@ Rcpp::List RcppGenLatticeNeighbors(const Rcpp::NumericVector& vec,
   // Convert Rcpp::List to std::vector<std::vector<int>>
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
+  // Convert Rcpp IntegerVector to std::vector<int>
+  std::vector<int> lib_std = Rcpp::as<std::vector<int>>(lib);
+
+  // convert R based 1 index to C++ based 0 index
+  for (size_t i = 0; i < lib_std.size(); ++i) {
+    lib_std[i] -= 1;
+  }
+
   // Generate neighbors
-  std::vector<std::vector<int>> neighbors = GenLatticeNeighbors(vec_std, nb_vec, static_cast<size_t>(std::abs(k)));
+  std::vector<std::vector<int>> neighbors = GenLatticeNeighbors(
+    vec_std, nb_vec, lib_std, static_cast<size_t>(std::abs(k))
+  );
 
   // Convert neighbors to Rcpp::List with 1-based indexing
   int n = neighbors.size();
@@ -155,6 +166,8 @@ Rcpp::List RcppGenLatticeNeighbors(const Rcpp::NumericVector& vec,
 // [[Rcpp::export]]
 Rcpp::NumericVector RcppGenLatticeSymbolization(const Rcpp::NumericVector& vec,
                                                 const Rcpp::List& nb,
+                                                const Rcpp::IntegerVector& lib,
+                                                const Rcpp::IntegerVector& pred,
                                                 int k) {
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
@@ -162,8 +175,22 @@ Rcpp::NumericVector RcppGenLatticeSymbolization(const Rcpp::NumericVector& vec,
   // Convert Rcpp::List to std::vector<std::vector<int>>
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
+  // Convert Rcpp IntegerVector to std::vector<int>
+  std::vector<int> lib_std = Rcpp::as<std::vector<int>>(lib);
+  std::vector<int> pred_std = Rcpp::as<std::vector<int>>(pred);
+
+  // convert R based 1 index to C++ based 0 index
+  for (size_t i = 0; i < lib_std.size(); ++i) {
+    lib_std[i] -= 1;
+  }
+  for (size_t i = 0; i < pred_std.size(); ++i) {
+    pred_std[i] -= 1;
+  }
+
   //  Generate symbolization map
-  std::vector<double> symbolmap = GenLatticeSymbolization(vec_std, nb_vec, static_cast<size_t>(std::abs(k)));
+  std::vector<double> symbolmap = GenLatticeSymbolization(
+    vec_std, nb_vec, lib_std, pred_std, static_cast<size_t>(std::abs(k))
+  );
 
   // Convert the result back to Rcpp::NumericVector
   return Rcpp::wrap(symbolmap);
@@ -695,6 +722,8 @@ Rcpp::NumericMatrix RcppGCMC4Lattice(
 Rcpp::NumericVector RcppSCT4Lattice(const Rcpp::NumericVector& x,
                                     const Rcpp::NumericVector& y,
                                     const Rcpp::List& nb,
+                                    const Rcpp::IntegerVector& lib,
+                                    const Rcpp::IntegerVector& pred,
                                     const Rcpp::IntegerVector& block,
                                     int k,
                                     int threads,
@@ -712,13 +741,25 @@ Rcpp::NumericVector RcppSCT4Lattice(const Rcpp::NumericVector& x,
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
   // Convert Rcpp IntegerVector to std::vector<int>
+  std::vector<int> lib_std = Rcpp::as<std::vector<int>>(lib);
+  std::vector<int> pred_std = Rcpp::as<std::vector<int>>(pred);
   std::vector<int> b_std = Rcpp::as<std::vector<int>>(block);
+
+  // convert R based 1 index to C++ based 0 index
+  for (size_t i = 0; i < lib_std.size(); ++i) {
+    lib_std[i] -= 1;
+  }
+  for (size_t i = 0; i < pred_std.size(); ++i) {
+    pred_std[i] -= 1;
+  }
 
   // Perform SCT for spatial lattice data
   std::vector<double> sc = SCT4Lattice(
     x_std,
     y_std,
     nb_vec,
+    lib_std,
+    pred_std,
     b_std,
     k,
     threads,
