@@ -51,8 +51,6 @@ If $\mathcal{X}_W$ does not contain extra information about $y$ then $\hat{\delt
 
 $h_{y |\mathcal{Y}_W}(m)$ measures the uncertainty of the distribution of symbols of $y$, conditional to the symbols of its spatial lag, $ \mathcal{Y}_W$. Moreover, $h_{y | \mathcal{Y}_W,\mathcal{X}_W}(m)$ measures the uncertainty of the distribution of symbols of $y$, conditional to the symbols of the spatial lags of $y$, $\mathcal{Y}_W$, and of $x$, $ \mathcal{X}_W$. If the second variable, $x$, indeed causes the first one then there should be a significant decrease in the entropy, and the statistic $\hat{\delta}(\mathcal{Y}_W, \mathcal{X}_W)$ will take on high positive values. If there is only a spatial correlation, but not causation, the difference between both entropies will be small. The statistical significance of $\hat{\delta}(\mathcal{Y}_W, \mathcal{X}_W)$ is assessed using spatial block bootstrap.
 
-The Spatial (Granger) Causality Test (SCT) is not well-suited for spatial field data; instead, it is more appropriate for spatial areal data, where observations are aggregated over distinct spatial units. As illustrated in the following example, spatial areal data yielded a reasonable spatial causality statistic, whereas raster-based data produced a negative value—indicating no causality—despite the fact that a causal association should exist.
-
 ## Usage examples
 
 ### An example of spatial lattice data
@@ -122,14 +120,14 @@ npp = terra::rast(system.file("case/npp.tif", package = "spEDM"))
 npp = terra::aggregate(npp, fact = 3, na.rm = TRUE)
 npp
 ## class       : SpatRaster 
-## dimensions  : 135, 161, 4  (nrow, ncol, nlyr)
+## dimensions  : 135, 161, 5  (nrow, ncol, nlyr)
 ## resolution  : 30000, 30000  (x, y)
 ## extent      : -2625763, 2204237, 1867078, 5917078  (xmin, xmax, ymin, ymax)
 ## coord. ref. : CGCS2000_Albers 
 ## source(s)   : memory
-## names       :      npp,        pre,      tem,      elev 
-## min values  :   187.50,   390.3351, -47.8194, -110.1494 
-## max values  : 15381.89, 23734.5330, 262.8576, 5217.6431
+## names       :      npp,        pre,      tem,      elev,         hfp 
+## min values  :   187.50,   390.3351, -47.8194, -110.1494,  0.04434316 
+## max values  : 15381.89, 23734.5330, 262.8576, 5217.6431, 42.68803711
 ```
 
 Use SCT to detect spatial causality among the variables *pre*, *tem*, and *npp* :
@@ -137,20 +135,20 @@ Use SCT to detect spatial causality among the variables *pre*, *tem*, and *npp* 
 
 ``` r
 # precipitation and npp
-sc.test(npp,"pre","npp",k = 270)
+sc.test(npp,"pre","npp",k = 30)
 ## spatial (granger) causality test
-## pre -> npp: statistic = -3.625, p value = 0
-## npp -> pre: statistic = -3.226, p value = 0
+## pre -> npp: statistic = 0.27, p value = 0
+## npp -> pre: statistic = 0.168, p value = 0
 
 # temperature and npp
-sc.test(npp,"tem","npp",k = 270)
+sc.test(npp,"tem","npp",k = 30)
 ## spatial (granger) causality test
-## tem -> npp: statistic = -3.625, p value = 0
-## npp -> tem: statistic = -3.752, p value = 0
+## tem -> npp: statistic = 0.064, p value = 0
+## npp -> tem: statistic = 0.099, p value = 0
 
 # precipitation and temperature
-sc.test(npp,"pre","tem",k = 270)
+sc.test(npp,"pre","tem",k = 30)
 ## spatial (granger) causality test
-## pre -> tem: statistic = -3.753, p value = 0
-## tem -> pre: statistic = -3.227, p value = 0
+## pre -> tem: statistic = 0.093, p value = 0
+## tem -> pre: statistic = 0.082, p value = 0
 ```
