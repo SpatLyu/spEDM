@@ -89,8 +89,8 @@ std::vector<double> SCTSingle4Lattice(
     std::vector<double> swx = GenLatticeSymbolization(wx,nb,lib,pred,k);
     std::vector<double> swy = GenLatticeSymbolization(wy,nb,lib,pred,k);
 
-    std::vector<std::vector<double>> sp_series(x.size(),std::vector<double>(4));
-    for (size_t i = 0; i < x.size(); ++i){
+    std::vector<std::vector<double>> sp_series(pred.size(),std::vector<double>(4));
+    for (size_t i = 0; i < pred.size(); ++i){
       sp_series[i] = {sx[i],sy[i],swx[i],swy[i]}; // 0:x 1:y 2:wx 3:wy
     }
 
@@ -102,15 +102,19 @@ std::vector<double> SCTSingle4Lattice(
     Hwxwyx = CppJoinEntropy_Disc(sp_series,{0,2,3}, base, false); // H(wx,wy,x)
     Hwxwyy = CppJoinEntropy_Disc(sp_series,{1,2,3}, base, false); // H(wx,wy,y)
   } else {
-    std::vector<std::vector<double>> sp_series(x.size(),std::vector<double>(4));
-    for (size_t i = 0; i < x.size(); ++i){
-      sp_series[i] = {x[i],y[i],wx[i],wy[i]}; // 0:x 1:y 2:wx 3:wy
+    std::vector<std::vector<double>> sp_series(pred.size(),std::vector<double>(4));
+    std::vector<double> wx_series(pred.size());
+    std::vector<double> wy_series(pred.size());
+    for (size_t i = 0; i < pred.size(); ++i){
+      sp_series[i] = {x[pred[i]],y[pred[i]],wx[pred[i]],wy[pred[i]]}; // 0:x 1:y 2:wx 3:wy
+      wx_series[i] = wx[pred[i]];
+      wy_series[i] = wy[pred[i]];
     }
 
     Hxwx = CppJoinEntropy_Cont(sp_series, {0,2}, k, base, false); // H(x,wx)
     Hywy = CppJoinEntropy_Cont(sp_series, {1,3}, k, base, false); // H(y,wy)
-    Hwx = CppEntropy_Cont(wx, k, base, false); // H(wx)
-    Hwy = CppEntropy_Cont(wy, k, base, false); // H(wy)
+    Hwx = CppEntropy_Cont(wx_series, k, base, false); // H(wx)
+    Hwy = CppEntropy_Cont(wy_series, k, base, false); // H(wy)
     Hwxwy = CppJoinEntropy_Cont(sp_series,{2,3}, k, base, false); // H(wx,wy)
     Hwxwyx = CppJoinEntropy_Cont(sp_series,{0,2,3}, k, base, false); // H(wx,wy,x)
     Hwxwyy = CppJoinEntropy_Cont(sp_series,{1,2,3}, k, base, false); // H(wx,wy,y)
