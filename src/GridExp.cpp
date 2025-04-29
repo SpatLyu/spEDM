@@ -958,6 +958,86 @@ Rcpp::NumericMatrix RcppGCMC4Grid(
   return resultMatrix;
 }
 
+// Wrapper function to perform SCT for spatial grid data without bootstrapped significance
+// [[Rcpp::export]]
+Rcpp::NumericVector RcppSCTSingle4Grid(const Rcpp::NumericMatrix& x,
+                                       const Rcpp::NumericMatrix& y,
+                                       const Rcpp::IntegerMatrix& lib,
+                                       const Rcpp::IntegerMatrix& pred,
+                                       int k,
+                                       double base = 2,
+                                       bool symbolize = true,
+                                       bool normalize = false){
+  int numRows = y.nrow();
+  int numCols = y.ncol();
+
+  // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
+  std::vector<std::vector<double>> xmat(x.nrow(), std::vector<double>(x.ncol()));
+  for (int i = 0; i < numRows; ++i) {
+    for (int j = 0; j < numCols; ++j) {
+      xmat[i][j] = x(i, j);
+    }
+  }
+  std::vector<std::vector<double>> ymat(y.nrow(), std::vector<double>(y.ncol()));
+  for (int i = 0; i < numRows; ++i) {
+    for (int j = 0; j < numCols; ++j) {
+      ymat[i][j] = y(i, j);
+    }
+  }
+
+  // Convert lib to a fundamental C++ data type
+  int lib_dim = lib.ncol();
+  std::vector<std::pair<int, int>> lib_std(lib.nrow());
+
+  if (lib_dim == 1){
+    for (int i = 0; i < lib.nrow(); ++i) {
+      std::vector<int> rowcolnum = RowColFromGrid(lib(i, 0) - 1, numCols);
+      lib_std[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+    }
+  } else {
+    for (int i = 0; i < lib.nrow(); ++i) {
+      lib_std[i] = std::make_pair(lib(i, 0), lib(i, 1));
+    }
+  }
+
+  // Convert pred to a fundamental C++ data type
+  int pred_dim = pred.ncol();
+  std::vector<std::pair<int, int>> pred_std(pred.nrow());
+
+  if (pred_dim == 1){
+    for (int i = 0; i < pred.nrow(); ++i) {
+      std::vector<int> rowcolnum = RowColFromGrid(pred(i, 0) - 1, numCols);
+      pred_std[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+    }
+  } else {
+    for (int i = 0; i < pred.nrow(); ++i) {
+      pred_std[i] = std::make_pair(pred(i, 0), pred(i, 1));
+    }
+  }
+
+  // Perform SCT for spatial grid data
+  std::vector<double> sc = SCTSingle4Grid(
+    xmat,
+    ymat,
+    lib_std,
+    pred_std,
+    k,
+    base,
+    symbolize,
+    normalize
+  );
+
+  // Convert the result back to Rcpp::NumericVector
+  Rcpp::NumericVector sc_res = Rcpp::wrap(sc);
+  sc_res.names() = Rcpp::CharacterVector::create(
+    "statistic for x → y causality",
+    "statistic for y → x causality"
+  );
+
+  return sc_res;
+}
+
+
 // Wrapper function to perform SCT for spatial grid data
 // [[Rcpp::export]]
 Rcpp::NumericVector RcppSCT4Grid(const Rcpp::NumericMatrix& x,
