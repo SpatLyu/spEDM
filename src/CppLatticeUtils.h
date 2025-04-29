@@ -119,20 +119,24 @@ std::vector<std::vector<int>> GenLatticeNeighbors(
  *
  * The procedure follows three main steps:
  * 1. Compute the global median of the input series `vec`.
- * 2. For each location, define a binary indicator (`tau_s`) which is 1 if the value
+ * 2. For each location in `pred`, define a binary indicator (`tau_s`) which is 1 if the value
  *    at that location is greater than or equal to the median, and 0 otherwise.
- * 3. For each location, compare its indicator with those of its k nearest neighbors.
+ * 3. For each location in `pred`, compare its indicator with those of its k nearest neighbors.
  *    The final symbolic value is the count of neighbors that share the same indicator value.
  *
  * @param vec A vector of double values representing the spatial process.
  * @param nb A nested vector containing neighborhood information (e.g., lattice connectivity).
+ * @param lib A vector of indices representing valid neighbors to consider for each location.
+ * @param pred A vector of indices specifying which elements to compute the symbolization for.
  * @param k The number of nearest neighbors to consider for each location.
  *
- * @return A vector of symbolic values (as double) for each spatial location.
+ * @return A vector of symbolic values (as double) for each spatial location specified in `pred`.
  */
 std::vector<double> GenLatticeSymbolization(
     const std::vector<double>& vec,
     const std::vector<std::vector<int>>& nb,
+    const std::vector<int>& lib,
+    const std::vector<int>& pred,
     size_t k);
 
 /**
