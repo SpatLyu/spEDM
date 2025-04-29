@@ -18,6 +18,10 @@
 
 * Refine internal case data (#348).
 
+### bug fixes
+
+* Fix error from non-matrix input in grid-type handling due to R matrix slicing (#474).
+
 # spEDM 1.5
 
 ### new

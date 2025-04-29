@@ -42,7 +42,7 @@
   } else {
     set.seed(seed)
     indices = sample(nrow(nnaindice), size = min(size,nrow(nnaindice)), replace = FALSE)
-    return(nnaindice[indices])
+    return(nnaindice[indices,])
   }
 }
 
