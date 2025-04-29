@@ -8,6 +8,8 @@
 
 ### enhancements
 
+* Reduce computational load in vignettes (#476).
+
 * Document overall structure and usage of spEDM in a dedicated vignette (#415).
 
 * Create `SSR` vignette for spatial cross-sectional data state-space reconstruction (#412).
