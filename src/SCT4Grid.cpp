@@ -57,7 +57,7 @@ std::vector<double> SCTSingle4Grid(
     bool normalize = false
 ) {
   size_t rows = x.size();
-  size_t cols = x[0].size();
+  // size_t cols = x[0].size();
 
   std::vector<double> wx;
   std::vector<std::vector<double>> Ex = GenGridEmbeddings(x,1,1);
@@ -81,8 +81,8 @@ std::vector<double> SCTSingle4Grid(
     std::vector<double> swx = GenGridSymbolization(xw, lib, pred, k);
     std::vector<double> swy = GenGridSymbolization(yw, lib, pred, k);
 
-    std::vector<std::vector<double>> sp_series(rows*cols,std::vector<double>(4));
-    for (size_t i = 0; i < x.size(); ++i){
+    std::vector<std::vector<double>> sp_series(pred.size(),std::vector<double>(4));
+    for (size_t i = 0; i < pred.size(); ++i){
       sp_series[i] = {sx[i],sy[i],swx[i],swy[i]}; // 0:x 1:y 2:wx 3:wy
     }
 
@@ -94,17 +94,21 @@ std::vector<double> SCTSingle4Grid(
     Hwxwyx = CppJoinEntropy_Disc(sp_series,{0,2,3}, base, true); // H(wx,wy,x)
     Hwxwyy = CppJoinEntropy_Disc(sp_series,{1,2,3}, base, true); // H(wx,wy,y)
   } else {
-    std::vector<std::vector<double>> sp_series(rows*cols,std::vector<double>(4));
-    for (size_t i = 0; i < x.size(); ++i){
-      int ri = i / cols;
-      int ci = i % cols;
-      sp_series[i] = {x[ri][ci],y[ri][ci],wx[i],wy[i]}; // 0:x 1:y 2:wx 3:wy
+    std::vector<std::vector<double>> sp_series(pred.size(),std::vector<double>(4));
+    std::vector<double> wx_series(pred.size());
+    std::vector<double> wy_series(pred.size());
+    for (size_t i = 0; i < pred.size(); ++i){
+      int ri = pred[i].first;
+      int ci = pred[i].second;
+      sp_series[i] = {x[ri][ci],y[ri][ci],xw[ri][ci],yw[ri][ci]}; // 0:x 1:y 2:wx 3:wy
+      wx_series[i] = xw[ri][ci];
+      wy_series[i] = yw[ri][ci];
     }
 
     Hxwx = CppJoinEntropy_Cont(sp_series, {0,2}, k, base, true); // H(x,wx)
     Hywy = CppJoinEntropy_Cont(sp_series, {1,3}, k, base, true); // H(y,wy)
-    Hwx = CppEntropy_Cont(wx, k, base, true); // H(wx)
-    Hwy = CppEntropy_Cont(wy, k, base, true); // H(wy)
+    Hwx = CppEntropy_Cont(wx_series, k, base, true); // H(wx)
+    Hwy = CppEntropy_Cont(wy_series, k, base, true); // H(wy)
     Hwxwy = CppJoinEntropy_Cont(sp_series,{2,3}, k, base, true); // H(wx,wy)
     Hwxwyx = CppJoinEntropy_Cont(sp_series,{0,2,3}, k, base, true); // H(wx,wy,x)
     Hwxwyy = CppJoinEntropy_Cont(sp_series,{1,2,3}, k, base, true); // H(wx,wy,y)
