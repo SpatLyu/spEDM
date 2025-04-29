@@ -21,7 +21,7 @@ methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
   block = matrix(RcppDivideGrid(effect,block),ncol = 1)
   if (is.null(lib)) lib = .internal_samplemat(effect)
   if (is.null(pred)) pred = .internal_samplemat(effect,floor(sqrt(length(effect))))
-  return(.bind_sct(RcppSCT4Grid(cause,effect,block,k,threads,boot,base,seed,symbolize,normalize,progressbar),varname))
+  return(.bind_sct(RcppSCT4Grid(cause,effect,lib,pred,block,k,threads,boot,base,seed,symbolize,normalize,progressbar),varname))
 }
 
 #' spatial (granger) causality test
