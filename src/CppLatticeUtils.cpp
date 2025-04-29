@@ -541,6 +541,8 @@ std::vector<double> GenLatticeSymbolization(
 
   // The median of the series vec
   double vec_me = CppMedian(vec, true);
+  // // Compute global median of the 'pred' series
+  // double vec_me = CppMedian(pred, true);
 
   // The first indicator function
   std::vector<double> tau_s(vec.size());
