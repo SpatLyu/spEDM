@@ -93,6 +93,10 @@ RcppGCMC4Grid <- function(xMatrix, yMatrix, lib, pred, E, tau, b, max_r, threads
     .Call(`_spEDM_RcppGCMC4Grid`, xMatrix, yMatrix, lib, pred, E, tau, b, max_r, threads, progressbar)
 }
 
+RcppSCTSingle4Grid <- function(x, y, lib, pred, k, base = 2, symbolize = TRUE, normalize = FALSE) {
+    .Call(`_spEDM_RcppSCTSingle4Grid`, x, y, lib, pred, k, base, symbolize, normalize)
+}
+
 RcppSCT4Grid <- function(x, y, lib, pred, block, k, threads, boot = 399L, base = 2, seed = 42L, symbolize = TRUE, normalize = FALSE, progressbar = TRUE) {
     .Call(`_spEDM_RcppSCT4Grid`, x, y, lib, pred, block, k, threads, boot, base, seed, symbolize, normalize, progressbar)
 }
@@ -159,6 +163,10 @@ RcppSCPCM4Lattice <- function(x, y, z, nb, libsizes, lib, pred, E, tau, b, simpl
 
 RcppGCMC4Lattice <- function(x, y, nb, lib, pred, E, tau, b, max_r, threads, progressbar) {
     .Call(`_spEDM_RcppGCMC4Lattice`, x, y, nb, lib, pred, E, tau, b, max_r, threads, progressbar)
+}
+
+RcppSCTSingle4Lattice <- function(x, y, nb, lib, pred, k, base = 2, symbolize = TRUE, normalize = FALSE) {
+    .Call(`_spEDM_RcppSCTSingle4Lattice`, x, y, nb, lib, pred, k, base, symbolize, normalize)
 }
 
 RcppSCT4Lattice <- function(x, y, nb, lib, pred, block, k, threads, boot = 399L, base = 2, seed = 42L, symbolize = TRUE, normalize = FALSE, progressbar = TRUE) {

@@ -734,6 +734,66 @@ Rcpp::NumericMatrix RcppGCMC4Lattice(
   return resultMatrix;
 }
 
+// Wrapper function to perform SCT for spatial lattice data without bootstrapped significance
+// [[Rcpp::export]]
+Rcpp::NumericVector RcppSCTSingle4Lattice(const Rcpp::NumericVector& x,
+                                          const Rcpp::NumericVector& y,
+                                          const Rcpp::List& nb,
+                                          const Rcpp::IntegerVector& lib,
+                                          const Rcpp::IntegerVector& pred,
+                                          int k,
+                                          double base = 2,
+                                          bool symbolize = true,
+                                          bool normalize = false){
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
+  std::vector<double> y_std = Rcpp::as<std::vector<double>>(y);
+
+  // Convert Rcpp::List to std::vector<std::vector<int>>
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
+
+  // Convert Rcpp IntegerVector to std::vector<int>
+  std::vector<int> lib_std = Rcpp::as<std::vector<int>>(lib);
+  std::vector<int> pred_std = Rcpp::as<std::vector<int>>(pred);
+
+  // Check that lib and pred indices are within bounds & convert R based 1 index to C++ based 0 index
+  int n = y_std.size();
+  for (size_t i = 0; i < lib_std.size(); ++i) {
+    if (lib_std[i] < 0 || lib_std[i] > n) {
+      Rcpp::stop("lib contains out-of-bounds index at position %d (value: %d)", i + 1, lib[i]);
+    }
+    lib_std[i] -= 1;
+  }
+  for (size_t i = 0; i < pred_std.size(); ++i) {
+    if (pred_std[i] < 0 || pred_std[i] > n) {
+      Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
+    }
+    pred_std[i] -= 1;
+  }
+
+  // Perform SCT for spatial lattice data
+  std::vector<double> sc = SCTSingle4Lattice(
+    x_std,
+    y_std,
+    nb_vec,
+    lib_std,
+    pred_std,
+    k,
+    base,
+    symbolize,
+    normalize
+  );
+
+  // Convert the result back to Rcpp::NumericVector
+  Rcpp::NumericVector sc_res = Rcpp::wrap(sc);
+  sc_res.names() = Rcpp::CharacterVector::create(
+    "statistic for x → y causality",
+    "statistic for y → x causality"
+  );
+
+  return sc_res;
+}
+
 // Wrapper function to perform SCT for spatial lattice data
 // [[Rcpp::export]]
 Rcpp::NumericVector RcppSCT4Lattice(const Rcpp::NumericVector& x,
