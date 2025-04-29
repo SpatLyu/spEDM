@@ -69,7 +69,7 @@
   return(data)
 }
 
-.uni_lattice = \(data,target,trend.rm){
+.uni_lattice = \(data,target,trend.rm = FALSE){
   target = .check_character(target)
   coords = as.data.frame(sdsfun::sf_coordinates(data))
   data = sf::st_drop_geometry(data)
@@ -82,7 +82,7 @@
   return(res)
 }
 
-.uni_grid = \(data,target,trend.rm){
+.uni_grid = \(data,target,trend.rm = FALSE){
   target = .check_character(target)
   data = data[[target]]
   names(data) = "target"
@@ -94,7 +94,7 @@
   return(res)
 }
 
-.multivar_lattice = \(data,columns,trend.rm){
+.multivar_lattice = \(data,columns,trend.rm = FALSE){
   columns = .check_character(columns)
   coords = as.data.frame(sdsfun::sf_coordinates(data))
   data = sf::st_drop_geometry(data)
@@ -108,7 +108,7 @@
   return(res)
 }
 
-.multivar_grid = \(data,columns,trend.rm){
+.multivar_grid = \(data,columns,trend.rm = FALSE){
   columns = .check_character(columns)
   data = data[[columns]]
   .varname = paste0("z",seq_along(columns))
