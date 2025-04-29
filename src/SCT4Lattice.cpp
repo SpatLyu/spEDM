@@ -45,6 +45,8 @@
  * - x: Input spatial variable `x` (vector of doubles).
  * - y: Input spatial variable `y` (same size as `x`).
  * - nb: Neighborhood list defining spatial adjacency (e.g., rook or queen contiguity).
+ * - lib: A vector of indices representing valid neighbors to consider for each spatial unit.
+ * - pred: A vector of indices specifying which elements to compute the spatial Granger causality.
  * - k: Number of discrete bins used for symbolization or KDE estimation.
  * - base: Logarithm base for entropy (default = 2, for bits).
  * - symbolize: Whether to apply discretization for symbolic entropy (default = true).
@@ -60,6 +62,8 @@ std::vector<double> SCTSingle4Lattice(
     const std::vector<double>& x,
     const std::vector<double>& y,
     const std::vector<std::vector<int>>& nb,
+    const std::vector<int>& lib,
+    const std::vector<int>& pred,
     size_t k,
     double base = 2,
     bool symbolize = true,
@@ -80,10 +84,10 @@ std::vector<double> SCTSingle4Lattice(
   double Hwx, Hwy, Hxwx, Hywy, Hwxwy, Hwxwyx, Hwxwyy;
 
   if (symbolize){
-    std::vector<double> sx = GenLatticeSymbolization(x,nb,k);
-    std::vector<double> sy = GenLatticeSymbolization(y,nb,k);
-    std::vector<double> swx = GenLatticeSymbolization(wx,nb,k);
-    std::vector<double> swy = GenLatticeSymbolization(wy,nb,k);
+    std::vector<double> sx = GenLatticeSymbolization(x,nb,lib,pred,k);
+    std::vector<double> sy = GenLatticeSymbolization(y,nb,lib,pred,k);
+    std::vector<double> swx = GenLatticeSymbolization(wx,nb,lib,pred,k);
+    std::vector<double> swy = GenLatticeSymbolization(wy,nb,lib,pred,k);
 
     std::vector<std::vector<double>> sp_series(x.size(),std::vector<double>(4));
     for (size_t i = 0; i < x.size(); ++i){
@@ -151,6 +155,8 @@ std::vector<double> SCTSingle4Lattice(
  * @param x           Input vector for spatial variable x.
  * @param y           Input vector for spatial variable y (same length as x).
  * @param nb          Neighborhood list (e.g., queen or rook adjacency), used for embedding.
+ * @param lib         A vector of indices representing valid neighbors to consider for each spatial unit.
+ * @param pred        A vector of indices specifying which elements to compute the spatial Granger causality.
  * @param block       Vector indicating block assignments for spatial block bootstrapping.
  * @param k           Number of discrete bins used for symbolization or KDE estimation.
  * @param threads     Number of threads to use for parallel bootstrapping.
@@ -172,6 +178,8 @@ std::vector<double> SCT4Lattice(
     const std::vector<double>& x,
     const std::vector<double>& y,
     const std::vector<std::vector<int>>& nb,
+    const std::vector<int>& lib,
+    const std::vector<int>& pred,
     const std::vector<int>& block,
     int k,
     int threads,
@@ -198,7 +206,7 @@ std::vector<double> SCT4Lattice(
       y_boot[i] = y[boot_indice[i]];
     }
     // Estimate the bootstrapped realization of the spatial granger causality statistic
-    sc_bootstraps[n] = SCTSingle4Lattice(x_boot,y_boot,nb,static_cast<size_t>(std::abs(k)),base,symbolize,normalize);
+    sc_bootstraps[n] = SCTSingle4Lattice(x_boot,y_boot,nb,lib,pred,static_cast<size_t>(std::abs(k)),base,symbolize,normalize);
   };
 
   // Configure threads
@@ -219,7 +227,7 @@ std::vector<double> SCT4Lattice(
   }
 
   // The "true" spatial granger causality statistic
-  std::vector<double> sc = SCTSingle4Lattice(x,y,nb,static_cast<size_t>(std::abs(k)),base,symbolize,normalize);
+  std::vector<double> sc = SCTSingle4Lattice(x,y,nb,lib,pred,static_cast<size_t>(std::abs(k)),base,symbolize,normalize);
   double scx = sc[0];
   double scy = sc[1];
   // Compute the estimated bootstrap p–value

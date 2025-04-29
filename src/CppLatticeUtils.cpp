@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdexcept>
 #include <vector>
 #include <queue> // for std::queue
 #include <numeric>   // for std::accumulate
@@ -7,6 +8,7 @@
 #include <unordered_map> // for std::unordered_map
 #include <limits> // for std::numeric_limits
 #include <cmath> // For std::isnan
+#include <string>
 #include "CppStats.h"
 
 /**
@@ -401,60 +403,74 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
  * This function constructs neighborhood information for each element in a spatial process
  * using both direct connectivity and value similarity. It ensures that each location has
  * at least k unique neighbors by expanding through its neighbors' neighbors recursively,
- * if necessary.
+ * if necessary. All neighbors must be indices present in the provided `lib` vector.
  *
  * The procedure consists of:
- * 1. Starting with directly connected neighbors from `nb`.
+ * 1. Starting with directly connected neighbors from `nb` that are also in `lib`.
  * 2. If fewer than k unique neighbors are found, iteratively expand the neighborhood using
- *    a breadth-first search (BFS) on the adjacency list until at least k neighbors are collected.
+ *    a breadth-first search (BFS) on the adjacency list (only considering nodes in `lib`).
  * 3. Among all collected neighbors, the function selects the k most similar ones in terms of
  *    absolute value difference from the center location.
  *
- * @param vec A vector of values representing the spatial process, used for sorting by similarity.
+ * @param vec A vector of values representing the spatial process (used for sorting by similarity).
  * @param nb A list of adjacency lists where `nb[i]` gives the direct neighbors of location i.
+ * @param lib A vector of indices representing valid neighbors to consider for all locations.
  * @param k The desired number of neighbors for each location.
  *
  * @return A vector of vectors, where each subvector contains the indices of the k nearest neighbors
  *         for each location, based on lattice structure and value similarity.
  *
- * Note: If there are not enough connected neighbors to meet the required `k`, the function expands
- * the neighborhood breadth-first to reach the required size, and sorts candidates by absolute value
- * difference from the center location in `vec`.
+ * @throw std::runtime_error If any location cannot find enough valid neighbors from `lib` to meet the k requirement.
+ * @throw std::invalid_argument If `lib` contains invalid indices outside the range of `vec`.
  */
 std::vector<std::vector<int>> GenLatticeNeighbors(
     const std::vector<double>& vec,
     const std::vector<std::vector<int>>& nb,
+    const std::vector<int>& lib,
     size_t k) {
 
-  // Initialize the result vector with empty vectors
+  // Preconvert lib into a set for fast lookup
+  std::unordered_set<int> libSet(lib.begin(), lib.end());
+
+  // // Check whether indices in lib are valid (recommended for robustness)
+  // for (int idx : lib) {
+  //   if (idx < 0 || idx >= static_cast<int>(vec.size())) {
+  //     throw std::invalid_argument("Invalid index " + std::to_string(idx) + " found in 'lib'");
+  //   }
+  // }
+
   std::vector<std::vector<int>> result(vec.size());
 
-  // Iterate through each element in the input vector
   for (size_t i = 0; i < vec.size(); ++i) {
-    // Use a set to store unique neighbor indices
     std::unordered_set<int> uniqueNeighbors;
 
-    // Start with the direct neighbors from nb[i]
+    // Initial stage: collect directly connected neighbors that exist in lib
     for (int neighborIdx : nb[i]) {
-      uniqueNeighbors.insert(neighborIdx);
+      if (libSet.count(neighborIdx)) {
+        uniqueNeighbors.insert(neighborIdx);
+      }
     }
 
-    // If the number of unique neighbors is less than k, expand the neighborhood
+    // If direct neighbors are not enough, expand using BFS (only nodes in lib)
     if (uniqueNeighbors.size() < k) {
-      // Use a queue to manage the current level of neighbors
       std::queue<int> neighborQueue;
+
+      // Initialize the queue with valid direct neighbors
       for (int neighborIdx : nb[i]) {
-        neighborQueue.push(neighborIdx);
+        if (libSet.count(neighborIdx)) {
+          neighborQueue.push(neighborIdx);
+        }
       }
 
-      // Continue expanding until we have at least k unique neighbors
+      // Expand neighbors using BFS until we reach k or cannot expand further
       while (!neighborQueue.empty() && uniqueNeighbors.size() < k) {
         int currentIdx = neighborQueue.front();
         neighborQueue.pop();
 
-        // Add the neighbors of the current index to the queue and uniqueNeighbors set
+        // Traverse neighbors of current node and add new valid ones
         for (int nextNeighborIdx : nb[currentIdx]) {
-          if (uniqueNeighbors.find(nextNeighborIdx) == uniqueNeighbors.end()) {
+          if (libSet.count(nextNeighborIdx) &&
+              uniqueNeighbors.find(nextNeighborIdx) == uniqueNeighbors.end()) {
             uniqueNeighbors.insert(nextNeighborIdx);
             neighborQueue.push(nextNeighborIdx);
           }
@@ -462,20 +478,24 @@ std::vector<std::vector<int>> GenLatticeNeighbors(
       }
     }
 
-    // Convert the set to a vector for sorting
-    std::vector<int> neighbors(uniqueNeighbors.begin(), uniqueNeighbors.end());
+    // // Check whether enough neighbors were found
+    // if (uniqueNeighbors.size() < k) {
+    //   throw std::runtime_error("Location " + std::to_string(i) +
+    //                            " cannot find enough (" + std::to_string(k) +
+    //                            ") valid neighbors from the provided 'lib' set");
+    // }
 
-    // Sort the neighbors based on the absolute difference in value from the original element
+    // Convert the set to a vector and sort by value similarity
+    std::vector<int> neighbors(uniqueNeighbors.begin(), uniqueNeighbors.end());
     std::sort(neighbors.begin(), neighbors.end(), [&](int a, int b) {
       return std::abs(vec[a] - vec[i]) < std::abs(vec[b] - vec[i]);
     });
 
-    // Select the top k neighbors
+    // Keep only the top-k most similar neighbors
     if (neighbors.size() > k) {
       neighbors.resize(k);
     }
 
-    // Store the result for the current element
     result[i] = neighbors;
   }
 
@@ -493,58 +513,57 @@ std::vector<std::vector<int>> GenLatticeNeighbors(
  *
  * The procedure follows three main steps:
  * 1. Compute the global median of the input series `vec`.
- * 2. For each location, define a binary indicator (`tau_s`) which is 1 if the value
+ * 2. For each location in `pred`, define a binary indicator (`tau_s`) which is 1 if the value
  *    at that location is greater than or equal to the median, and 0 otherwise.
- * 3. For each location, compare its indicator with those of its k nearest neighbors.
+ * 3. For each location in `pred`, compare its indicator with those of its k nearest neighbors.
  *    The final symbolic value is the count of neighbors that share the same indicator value.
  *
  * @param vec A vector of double values representing the spatial process.
  * @param nb A nested vector containing neighborhood information (e.g., lattice connectivity).
+ * @param lib A vector of indices representing valid neighbors to consider for each location.
+ * @param pred A vector of indices specifying which elements to compute the symbolization for.
  * @param k The number of nearest neighbors to consider for each location.
  *
- * @return A vector of symbolic values (as double) for each spatial location.
+ * @return A vector of symbolic values (as double) for each spatial location specified in `pred`.
  */
 std::vector<double> GenLatticeSymbolization(
     const std::vector<double>& vec,
     const std::vector<std::vector<int>>& nb,
-    size_t k){
-  // Initialize the result vector with empty vectors
-  std::vector<double> result(vec.size());
+    const std::vector<int>& lib,
+    const std::vector<int>& pred,
+    size_t k) {
 
-  // Generate neighbors
-  std::vector<std::vector<int>> neighbors = GenLatticeNeighbors(vec, nb, k);
+  // Initialize the result vector with the same size as pred
+  std::vector<double> result(pred.size());
 
-  // The median of series vec
+  // Generate neighbors for the elements in pred
+  std::vector<std::vector<int>> neighbors = GenLatticeNeighbors(vec, nb, lib, k);
+
+  // The median of the series vec
   double vec_me = CppMedian(vec, true);
+  // // Compute global median of the 'pred' series
+  // double vec_me = CppMedian(pred, true);
 
   // The first indicator function
   std::vector<double> tau_s(vec.size());
-  for(size_t i = 0; i < vec.size(); ++i){
-    double tau = 0;
-    if (vec[i] >= vec_me){
-      tau = 1;
-    }
-    tau_s[i] = tau;
+  for (size_t i = 0; i < vec.size(); ++i) {
+    tau_s[i] = (vec[i] >= vec_me) ? 1.0 : 0.0;
   }
 
   // The second indicator function and the symbolization map
-  for(size_t s = 0; s < vec.size(); ++s){
-    size_t num_neighbors = neighbors[s].size();
+  for (size_t s = 0; s < pred.size(); ++s) {
+    int currentIndex = pred[s];
+    size_t num_neighbors = neighbors[currentIndex].size();
     std::vector<double> l_s(num_neighbors);
-    std::vector<int> local_neighbors = neighbors[s];
-    double taus = tau_s[s];
-    for(size_t i = 0; i < num_neighbors; ++i){
-      double l = 0;
-      if (tau_s[local_neighbors[i]] == taus){
-        l = 1;
-      }
-      l_s[i] = l;
+    std::vector<int> local_neighbors = neighbors[currentIndex];
+    double taus = tau_s[currentIndex];
+
+    for (size_t i = 0; i < num_neighbors; ++i) {
+      l_s[i] = (tau_s[local_neighbors[i]] == taus) ? 1.0 : 0.0;
     }
 
-    double fs = 0.0;
-    for (size_t i = 0; i < l_s.size(); ++i) {
-      fs += l_s[i];
-    }
+    // Count the number of neighbors that share the same indicator value
+    double fs = std::accumulate(l_s.begin(), l_s.end(), 0.0);
     result[s] = fs;
   }
 

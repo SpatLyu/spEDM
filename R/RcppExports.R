@@ -125,12 +125,12 @@ RcppGenLatticeEmbeddings <- function(vec, nb, E, tau) {
     .Call(`_spEDM_RcppGenLatticeEmbeddings`, vec, nb, E, tau)
 }
 
-RcppGenLatticeNeighbors <- function(vec, nb, k) {
-    .Call(`_spEDM_RcppGenLatticeNeighbors`, vec, nb, k)
+RcppGenLatticeNeighbors <- function(vec, nb, lib, k) {
+    .Call(`_spEDM_RcppGenLatticeNeighbors`, vec, nb, lib, k)
 }
 
-RcppGenLatticeSymbolization <- function(vec, nb, k) {
-    .Call(`_spEDM_RcppGenLatticeSymbolization`, vec, nb, k)
+RcppGenLatticeSymbolization <- function(vec, nb, lib, pred, k) {
+    .Call(`_spEDM_RcppGenLatticeSymbolization`, vec, nb, lib, pred, k)
 }
 
 RcppDivideLattice <- function(nb, b) {
@@ -161,8 +161,8 @@ RcppGCMC4Lattice <- function(x, y, nb, lib, pred, E, tau, b, max_r, threads, pro
     .Call(`_spEDM_RcppGCMC4Lattice`, x, y, nb, lib, pred, E, tau, b, max_r, threads, progressbar)
 }
 
-RcppSCT4Lattice <- function(x, y, nb, block, k, threads, boot = 399L, base = 2, seed = 42L, symbolize = TRUE, normalize = FALSE, progressbar = TRUE) {
-    .Call(`_spEDM_RcppSCT4Lattice`, x, y, nb, block, k, threads, boot, base, seed, symbolize, normalize, progressbar)
+RcppSCT4Lattice <- function(x, y, nb, lib, pred, block, k, threads, boot = 399L, base = 2, seed = 42L, symbolize = TRUE, normalize = FALSE, progressbar = TRUE) {
+    .Call(`_spEDM_RcppSCT4Lattice`, x, y, nb, lib, pred, block, k, threads, boot, base, seed, symbolize, normalize, progressbar)
 }
 
 RcppFactorial <- function(n) {
