@@ -131,9 +131,11 @@ std::vector<std::vector<double>> GenGridEmbeddings(
  *    - Sum `l_s` to get a symbolic value `fs` representing the symbolic spatial consistency.
  *
  * @param mat A 2D grid (matrix) of values to be symbolized. `NaN` values are treated as missing.
+ * @param lib Valid library locations as (row,col) pairs
+ * @param pred Prediction locations to process as (row,col) pairs
  * @param k The number of neighbors to consider for the symbolization of each cell.
  *
- * @return A flattened 1D vector representing the symbolic values of each grid cell (row-major order).
+ * @return A flattened 1D vector representing the symbolic values of for prediction locations (row-major order).
  *         Cells with no valid value or insufficient neighbors remain as `NaN`.
  *
  * Note:
@@ -143,6 +145,8 @@ std::vector<std::vector<double>> GenGridEmbeddings(
  */
 std::vector<double> GenGridSymbolization(
     const std::vector<std::vector<double>>& mat,
+    const std::vector<std::pair<int, int>>& lib,
+    const std::vector<std::pair<int, int>>& pred,
     size_t k);
 
 /**
