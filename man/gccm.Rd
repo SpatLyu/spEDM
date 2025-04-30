@@ -52,17 +52,17 @@
 
 \item{effect}{Name of effect variable.}
 
-\item{libsizes}{A vector of library sizes to use.}
+\item{libsizes}{Number of spatial units used in prediction.}
 
 \item{E}{(optional) Dimensions of the embedding.}
 
 \item{tau}{(optional) Step of spatial lags.}
 
-\item{k}{(optional) Number of nearest neighbors to use for prediction.}
+\item{k}{(optional) Number of nearest neighbors used in prediction.}
 
 \item{theta}{(optional) Weighting parameter for distances, useful when \code{algorithm} is \code{smap}.}
 
-\item{algorithm}{(optional) Algorithm used for prediction.}
+\item{algorithm}{(optional) Algorithm used in prediction.}
 
 \item{lib}{(optional) Libraries indices.}
 
@@ -74,11 +74,11 @@
 
 \item{parallel.level}{(optional) Level of parallelism, \code{low} or \code{high}.}
 
-\item{bidirectional}{(optional) whether to identify bidirectional causal associations.}
+\item{bidirectional}{(optional) whether to examine bidirectional causality.}
 
 \item{trend.rm}{(optional) Whether to remove the linear trend.}
 
-\item{progressbar}{(optional) whether to print the progress bar.}
+\item{progressbar}{(optional) whether to show the progress bar.}
 }
 \value{
 A list

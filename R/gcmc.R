@@ -71,15 +71,15 @@ methods::setGeneric("gcmc", function(data, ...) standardGeneric("gcmc"))
 #' @param effect Name of effect variable.
 #' @param E (optional) Dimensions of the embedding.
 #' @param tau (optional) Step of spatial lags.
-#' @param k (optional) Number of nearest neighbors used for intersection.
-#' @param r (optional) Number of excluded neighbors for intersection.
+#' @param k (optional) Number of nearest neighbors used in intersection.
+#' @param r (optional) Number of excluded neighbors in intersection.
 #' @param lib (optional) Libraries indices.
 #' @param pred (optional) Predictions indices.
 #' @param nb (optional) The neighbours list.
 #' @param threads (optional) Number of threads.
-#' @param bidirectional (optional) whether to identify bidirectional causal associations.
+#' @param bidirectional (optional) whether to examine bidirectional causality.
 #' @param trend.rm (optional) Whether to remove the linear trend.
-#' @param progressbar (optional) whether to print the progress bar.
+#' @param progressbar (optional) whether to show the progress bar.
 #'
 #' @return A list
 #' \describe{
