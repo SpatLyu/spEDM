@@ -24,7 +24,7 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
 #' @inheritParams embedded
 #' @param lib (optional) Libraries indices.
 #' @param pred (optional) Predictions indices.
-#' @param k (optional) Number of nearest neighbors used for prediction.
+#' @param k (optional) Number of nearest neighbors used in prediction.
 #' @param threads (optional) Number of threads.
 #'
 #' @return A list

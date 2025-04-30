@@ -50,9 +50,9 @@
 
 \item{tau}{(optional) Step of spatial lags.}
 
-\item{k}{(optional) Number of nearest neighbors used for intersection.}
+\item{k}{(optional) Number of nearest neighbors used in intersection.}
 
-\item{r}{(optional) Number of excluded neighbors for intersection.}
+\item{r}{(optional) Number of excluded neighbors in intersection.}
 
 \item{lib}{(optional) Libraries indices.}
 
@@ -62,11 +62,11 @@
 
 \item{threads}{(optional) Number of threads.}
 
-\item{bidirectional}{(optional) whether to identify bidirectional causal associations.}
+\item{bidirectional}{(optional) whether to examine bidirectional causality.}
 
 \item{trend.rm}{(optional) Whether to remove the linear trend.}
 
-\item{progressbar}{(optional) whether to print the progress bar.}
+\item{progressbar}{(optional) whether to show the progress bar.}
 }
 \value{
 A list

@@ -29,8 +29,8 @@ methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
 #' @param data The observation data.
 #' @param cause Name of causal variable.
 #' @param effect Name of effect variable.
-#' @param k (optional) Number of nearest neighbors used for symbolization.
-#' @param block (optional) Number of blocks used for spatial block bootstrap.
+#' @param k (optional) Number of nearest neighbors used in symbolization.
+#' @param block (optional) Number of blocks used in spatial block bootstrap.
 #' @param boot (optional) Number of bootstraps to perform.
 #' @param seed (optional) The random seed.
 #' @param base (optional) Base of the logarithm.
@@ -40,7 +40,7 @@ methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
 #' @param threads (optional) Number of threads.
 #' @param symbolize (optional) Whether to apply the symbolic map process.
 #' @param normalize (optional) Whether to normalize the result to `[-1, 1]`.
-#' @param progressbar (optional) Whether to print the progress bar.
+#' @param progressbar (optional) Whether to show the progress bar.
 #'
 #' @return A list
 #' \describe{

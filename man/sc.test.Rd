@@ -48,9 +48,9 @@
 
 \item{effect}{Name of effect variable.}
 
-\item{k}{(optional) Number of nearest neighbors used for symbolization.}
+\item{k}{(optional) Number of nearest neighbors used in symbolization.}
 
-\item{block}{(optional) Number of blocks used for spatial block bootstrap.}
+\item{block}{(optional) Number of blocks used in spatial block bootstrap.}
 
 \item{boot}{(optional) Number of bootstraps to perform.}
 
@@ -70,7 +70,7 @@
 
 \item{normalize}{(optional) Whether to normalize the result to \verb{[-1, 1]}.}
 
-\item{progressbar}{(optional) Whether to print the progress bar.}
+\item{progressbar}{(optional) Whether to show the progress bar.}
 }
 \value{
 A list
