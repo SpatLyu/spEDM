@@ -418,13 +418,13 @@ std::vector<std::vector<double>> GCCM4Grid(
   // Set library indices
   std::vector<bool> lib_indices(totalRow * totalCol, false);
   for (const auto& l : lib) {
-    lib_indices[LocateGridIndices(l.first, l.second, totalRow, totalCol)] = true;
+    lib_indices[LocateGridIndices(l.first + 1, l.second + 1, totalRow, totalCol)] = true;
   }
 
   // Set prediction indices
   std::vector<bool> pred_indices(totalRow * totalCol, false);
   for (const auto& p : pred) {
-    pred_indices[LocateGridIndices(p.first, p.second, totalRow, totalCol)] = true;
+    pred_indices[LocateGridIndices(p.first + 1, p.second + 1, totalRow, totalCol)] = true;
   }
 
   // Exclude NA values in yPred from prediction indices
@@ -444,38 +444,40 @@ std::vector<std::vector<double>> GCCM4Grid(
       for (size_t i = 0; i < unique_lib_size_pairs.size(); ++i) {
         int lib_size_row = unique_lib_size_pairs[i].first;
         int lib_size_col = unique_lib_size_pairs[i].second;
-        local_results[i] = GCCMSingle4Grid(xEmbedings,
-                                           yPred,
-                                           {lib_size_row, lib_size_col},
-                                           lib_indices,
-                                           pred_indices,
-                                           totalRow,
-                                           totalCol,
-                                           b,
-                                           simplex,
-                                           theta,
-                                           threads_sizet,
-                                           parallel_level,
-                                           row_size_mark);
+        local_results[i] = GCCMSingle4Grid(
+          xEmbedings,
+          yPred,
+          {lib_size_row, lib_size_col},
+          lib_indices,
+          pred_indices,
+          totalRow,
+          totalCol,
+          b,
+          simplex,
+          theta,
+          threads_sizet,
+          parallel_level,
+          row_size_mark);
         bar++;
       }
     } else {
       for (size_t i = 0; i < unique_lib_size_pairs.size(); ++i) {
         int lib_size_row = unique_lib_size_pairs[i].first;
         int lib_size_col = unique_lib_size_pairs[i].second;
-        local_results[i] = GCCMSingle4Grid(xEmbedings,
-                                           yPred,
-                                           {lib_size_row, lib_size_col},
-                                           lib_indices,
-                                           pred_indices,
-                                           totalRow,
-                                           totalCol,
-                                           b,
-                                           simplex,
-                                           theta,
-                                           threads_sizet,
-                                           parallel_level,
-                                           row_size_mark);
+        local_results[i] = GCCMSingle4Grid(
+          xEmbedings,
+          yPred,
+          {lib_size_row, lib_size_col},
+          lib_indices,
+          pred_indices,
+          totalRow,
+          totalCol,
+          b,
+          simplex,
+          theta,
+          threads_sizet,
+          parallel_level,
+          row_size_mark);
       }
     }
   } else {
@@ -485,38 +487,40 @@ std::vector<std::vector<double>> GCCM4Grid(
       RcppThread::parallelFor(0, unique_lib_size_pairs.size(), [&](size_t i) {
         int lib_size_row = unique_lib_size_pairs[i].first;
         int lib_size_col = unique_lib_size_pairs[i].second;
-        local_results[i] = GCCMSingle4Grid(xEmbedings,
-                                           yPred,
-                                           {lib_size_row, lib_size_col},
-                                           lib_indices,
-                                           pred_indices,
-                                           totalRow,
-                                           totalCol,
-                                           b,
-                                           simplex,
-                                           theta,
-                                           threads_sizet,
-                                           parallel_level,
-                                           row_size_mark);
+        local_results[i] = GCCMSingle4Grid(
+          xEmbedings,
+          yPred,
+          {lib_size_row, lib_size_col},
+          lib_indices,
+          pred_indices,
+          totalRow,
+          totalCol,
+          b,
+          simplex,
+          theta,
+          threads_sizet,
+          parallel_level,
+          row_size_mark);
         bar++;
       }, threads_sizet);
     } else {
       RcppThread::parallelFor(0, unique_lib_size_pairs.size(), [&](size_t i) {
         int lib_size_row = unique_lib_size_pairs[i].first;
         int lib_size_col = unique_lib_size_pairs[i].second;
-        local_results[i] = GCCMSingle4Grid(xEmbedings,
-                                           yPred,
-                                           {lib_size_row, lib_size_col},
-                                           lib_indices,
-                                           pred_indices,
-                                           totalRow,
-                                           totalCol,
-                                           b,
-                                           simplex,
-                                           theta,
-                                           threads_sizet,
-                                           parallel_level,
-                                           row_size_mark);
+        local_results[i] = GCCMSingle4Grid(
+          xEmbedings,
+          yPred,
+          {lib_size_row, lib_size_col},
+          lib_indices,
+          pred_indices,
+          totalRow,
+          totalCol,
+          b,
+          simplex,
+          theta,
+          threads_sizet,
+          parallel_level,
+          row_size_mark);
       }, threads_sizet);
     }
   }
@@ -618,9 +622,8 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
 
   std::vector<int> possible_lib_indices;
   for (size_t i = 0; i < lib.size(); ++i) {
-    int LibIndice = lib[i] - 1;
-    if (!std::isnan(yPred[LibIndice])) {
-      possible_lib_indices.push_back(LibIndice);
+    if (!std::isnan(yPred[lib[i]])) {
+      possible_lib_indices.push_back(lib[i]);
     }
   }
   int max_lib_size = static_cast<int>(possible_lib_indices.size()); // Maximum lib size
@@ -629,9 +632,8 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
   std::vector<bool> pred_indices(totalRow*totalCol, false);
   // Convert pred (1-based in R) to 0-based indices, exclude yPred NA and set corresponding positions to true
   for (size_t i = 0; i < pred.size(); ++i) {
-    int PreIndice = pred[i] - 1;
-    if (!std::isnan(yPred[PreIndice])) {
-      pred_indices[PreIndice] = true;
+    if (!std::isnan(yPred[pred[i]])) {
+      pred_indices[pred[i]] = true;
     }
   }
 
