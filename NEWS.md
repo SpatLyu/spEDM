@@ -22,6 +22,8 @@
 
 ### bug fixes
 
+* Patch memory error caused by mismatch between C++ (0-based) and R (1-based) indexing (#480).
+
 * Fix error from non-matrix input in grid-type handling due to R matrix slicing (#474).
 
 # spEDM 1.5
