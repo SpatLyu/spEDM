@@ -45,13 +45,20 @@ Rcpp::NumericVector RcppSimplexForecast(
   std::vector<bool> lib_indices(target_std.size(), false);
   std::vector<bool> pred_indices(target_std.size(), false);
 
+  int target_len = target_std.size();
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
   size_t n_libsize = lib.size();   // convert R R_xlen_t to C++ size_t
   for (size_t i = 0; i < n_libsize; ++i) {
+    if (lib[i] < 0 || lib[i] > target_len) {
+      Rcpp::stop("lib contains out-of-bounds index at position %d (value: %d)", i + 1, lib[i]);
+    }
     lib_indices[lib[i] - 1] = true; // Convert to 0-based index
   }
   size_t n_predsize = pred.size();   // convert R R_xlen_t to C++ size_t
   for (size_t i = 0; i < n_predsize; ++i) {
+    if (pred[i] < 0 || pred[i] > target_len) {
+      Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
+    }
     pred_indices[pred[i] - 1] = true; // Convert to 0-based index
   }
 
@@ -108,13 +115,20 @@ Rcpp::NumericVector RcppSMapForecast(
   std::vector<bool> lib_indices(target_std.size(), false);
   std::vector<bool> pred_indices(target_std.size(), false);
 
+  int target_len = target_std.size();
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
   size_t n_libsize = lib.size();   // convert R R_xlen_t to C++ size_t
   for (size_t i = 0; i < n_libsize; ++i) {
+    if (lib[i] < 0 || lib[i] > target_len) {
+      Rcpp::stop("lib contains out-of-bounds index at position %d (value: %d)", i + 1, lib[i]);
+    }
     lib_indices[lib[i] - 1] = true; // Convert to 0-based index
   }
   size_t n_predsize = pred.size();   // convert R R_xlen_t to C++ size_t
   for (size_t i = 0; i < n_predsize; ++i) {
+    if (pred[i] < 0 || pred[i] > target_len) {
+      Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
+    }
     pred_indices[pred[i] - 1] = true; // Convert to 0-based index
   }
 
@@ -183,12 +197,19 @@ Rcpp::NumericVector RcppIntersectionCardinality(
   std::vector<int> lib_std = Rcpp::as<std::vector<int>>(lib);
   std::vector<int> pred_std = Rcpp::as<std::vector<int>>(pred);
 
-  // Convert lib_std and pred_std (1-based in R) to 0-based in C++
+  // Check that lib and pred indices are within bounds & convert R based 1 index to C++ based 0 index
+  int num_observation = embedding_y.nrow();
   for (size_t i = 0; i < lib_std.size(); ++i) {
-    lib_std[i] = lib_std[i] - 1; // Convert to 0-based index
+    if (lib_std[i] < 0 || lib_std[i] > num_observation) {
+      Rcpp::stop("lib contains out-of-bounds index at position %d (value: %d)", i + 1, lib[i]);
+    }
+    lib_std[i] -= 1;
   }
   for (size_t i = 0; i < pred_std.size(); ++i) {
-    pred_std[i] = pred_std[i] - 1; // Convert to 0-based index
+    if (pred_std[i] < 0 || pred_std[i] > num_observation) {
+      Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
+    }
+    pred_std[i] -= 1;
   }
 
   // Call the IntersectionCardinality function
