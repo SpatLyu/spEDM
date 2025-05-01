@@ -425,20 +425,20 @@ std::vector<std::vector<double>> SCPCM4Lattice(
   std::sort(unique_lib_sizes.begin(), unique_lib_sizes.end());
   unique_lib_sizes.erase(std::unique(unique_lib_sizes.begin(), unique_lib_sizes.end()), unique_lib_sizes.end());
 
-  // Initialize the result container
-  std::vector<PartialCorRes> x_xmap_y;
+  // Local results for each library
+  std::vector<std::vector<PartialCorRes>> local_results(unique_lib_sizes.size());
 
   if (parallel_level == 0){
     // Iterate over each library size
     if (progressbar) {
       RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
-      for (int lib_size : unique_lib_sizes) {
-        auto results = SCPCMSingle4Lattice(
+      for (size_t i = 0; i < unique_lib_sizes.size(); ++i) {
+        local_results[i] = SCPCMSingle4Lattice(
           x_vectors,
           y,
           controls,
           nb_vec,
-          lib_size,
+          unique_lib_sizes[i],
           max_lib_size,
           possible_lib_indices,
           pred_indices,
@@ -451,17 +451,16 @@ std::vector<std::vector<double>> SCPCM4Lattice(
           parallel_level,
           cumulate
         );
-        x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
         bar++;
       }
     } else {
-      for (int lib_size : unique_lib_sizes) {
-        auto results = SCPCMSingle4Lattice(
+      for (size_t i = 0; i < unique_lib_sizes.size(); ++i) {
+        local_results[i] = SCPCMSingle4Lattice(
           x_vectors,
           y,
           controls,
           nb_vec,
-          lib_size,
+          unique_lib_sizes[i],
           max_lib_size,
           possible_lib_indices,
           pred_indices,
@@ -474,7 +473,6 @@ std::vector<std::vector<double>> SCPCM4Lattice(
           parallel_level,
           cumulate
         );
-        x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
       }
     }
   } else {
@@ -483,7 +481,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
       RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
       RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
         int lib_size = unique_lib_sizes[i];
-        auto results = SCPCMSingle4Lattice(
+        local_results[i] = SCPCMSingle4Lattice(
           x_vectors,
           y,
           controls,
@@ -501,13 +499,12 @@ std::vector<std::vector<double>> SCPCM4Lattice(
           parallel_level,
           cumulate
         );
-        x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
         bar++;
       }, threads_sizet);
     } else {
       RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
         int lib_size = unique_lib_sizes[i];
-        auto results = SCPCMSingle4Lattice(
+        local_results[i] = SCPCMSingle4Lattice(
           x_vectors,
           y,
           controls,
@@ -525,9 +522,16 @@ std::vector<std::vector<double>> SCPCM4Lattice(
           parallel_level,
           cumulate
         );
-        x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
       }, threads_sizet);
     }
+  }
+
+  // Initialize the result container
+  std::vector<PartialCorRes> x_xmap_y;
+
+  // Merge all local results into the final result
+  for (const auto& local_result : local_results) {
+    x_xmap_y.insert(x_xmap_y.end(), local_result.begin(), local_result.end());
   }
 
   // Group by the first int and store second and third values as pairs
