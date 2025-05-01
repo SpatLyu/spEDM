@@ -57,8 +57,8 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
  * - y: Spatial cross-section series used as the target variable (**cross mapping to**).
  * - nb_vec: A nested vector containing neighborhood information for lattice data.
  * - lib_sizes: A vector specifying different library sizes for GCCM analysis.
- * - lib: A vector specifying the library indices (1-based in R, converted to 0-based in C++).
- * - pred: A vector specifying the prediction indices (1-based in R, converted to 0-based in C++).
+ * - lib: A vector of representing the indices of spatial units to be the library.
+ * - pred: A vector of representing the indices of spatial units to be predicted.
  * - E: Embedding dimension for attractor reconstruction.
  * - tau: the step of spatial lags for prediction.
  * - b: Number of nearest neighbors used for prediction.
