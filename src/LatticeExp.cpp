@@ -540,6 +540,21 @@ Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,
   std::vector<int> lib_std = Rcpp::as<std::vector<int>>(lib);
   std::vector<int> pred_std = Rcpp::as<std::vector<int>>(pred);
 
+  // Check that lib and pred indices are within bounds & convert R based 1 index to C++ based 0 index
+  int n = y_std.size();
+  for (size_t i = 0; i < lib_std.size(); ++i) {
+    if (lib_std[i] < 0 || lib_std[i] > n) {
+      Rcpp::stop("lib contains out-of-bounds index at position %d (value: %d)", i + 1, lib[i]);
+    }
+    lib_std[i] -= 1;
+  }
+  for (size_t i = 0; i < pred_std.size(); ++i) {
+    if (pred_std[i] < 0 || pred_std[i] > n) {
+      Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
+    }
+    pred_std[i] -= 1;
+  }
+
   // Perform GCCM Lattice
   std::vector<std::vector<double>> result = GCCM4Lattice(
     x_std,
