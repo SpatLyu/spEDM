@@ -645,13 +645,13 @@ std::vector<std::vector<double>> SCPCM4Grid(
   // Set library indices
   std::vector<bool> lib_indices(totalRow * totalCol, false);
   for (const auto& l : lib) {
-    lib_indices[LocateGridIndices(l.first, l.second, totalRow, totalCol)] = true;
+    lib_indices[LocateGridIndices(l.first + 1, l.second + 1, totalRow, totalCol)] = true;
   }
 
   // Set prediction indices
   std::vector<bool> pred_indices(totalRow * totalCol, false);
   for (const auto& p : pred) {
-    pred_indices[LocateGridIndices(p.first, p.second, totalRow, totalCol)] = true;
+    pred_indices[LocateGridIndices(p.first + 1, p.second + 1, totalRow, totalCol)] = true;
   }
 
   // Exclude NA values in yPred from the library and prediction indices

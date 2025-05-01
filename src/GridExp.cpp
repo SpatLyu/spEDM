@@ -551,7 +551,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
   if (libsizes_dim == 1){
     if (lib_dim == 1){
       for (int i = 0; i < lib.nrow(); ++i) {
-        lib_cpp1.push_back(lib(i, 0));
+        lib_cpp1.push_back(lib(i, 0) - 1);
       }
     } else {
       for (int i = 0; i < lib.nrow(); ++i) {
@@ -571,7 +571,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
       }
     } else {
       for (int i = 0; i < lib.nrow(); ++i) {
-        lib_cpp2[i] = std::make_pair(lib(i, 0), lib(i, 1));
+        lib_cpp2[i] = std::make_pair(lib(i, 0) - 1, lib(i, 1) - 1);
       }
     }
   }
@@ -583,7 +583,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
   if (libsizes_dim == 1){
     if (pred_dim == 1){
       for (int i = 0; i < pred.nrow(); ++i) {
-        pred_cpp1.push_back(pred(i, 0));
+        pred_cpp1.push_back(pred(i, 0) - 1);
       }
     } else {
       for (int i = 0; i < pred.nrow(); ++i) {
@@ -603,7 +603,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
       }
     } else {
       for (int i = 0; i < pred.nrow(); ++i) {
-        pred_cpp2[i] = std::make_pair(pred(i, 0), pred(i, 1));
+        pred_cpp2[i] = std::make_pair(pred(i, 0) - 1, pred(i, 1) - 1);
       }
     }
   }
@@ -725,7 +725,7 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
   if (libsizes_dim == 1){
     if (lib_dim == 1){
       for (int i = 0; i < lib.nrow(); ++i) {
-        lib_cpp1.push_back(lib(i, 0));
+        lib_cpp1.push_back(lib(i, 0) - 1);
       }
     } else {
       for (int i = 0; i < lib.nrow(); ++i) {
@@ -745,7 +745,7 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
       }
     } else {
       for (int i = 0; i < lib.nrow(); ++i) {
-        lib_cpp2[i] = std::make_pair(lib(i, 0), lib(i, 1));
+        lib_cpp2[i] = std::make_pair(lib(i, 0) - 1, lib(i, 1) - 1);
       }
     }
   }
@@ -757,7 +757,7 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
   if (libsizes_dim == 1){
     if (pred_dim == 1){
       for (int i = 0; i < pred.nrow(); ++i) {
-        pred_cpp1.push_back(pred(i, 0));
+        pred_cpp1.push_back(pred(i, 0) - 1);
       }
     } else {
       for (int i = 0; i < pred.nrow(); ++i) {
@@ -777,7 +777,7 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
       }
     } else {
       for (int i = 0; i < pred.nrow(); ++i) {
-        pred_cpp2[i] = std::make_pair(pred(i, 0), pred(i, 1));
+        pred_cpp2[i] = std::make_pair(pred(i, 0) - 1, pred(i, 1) - 1);
       }
     }
   }
