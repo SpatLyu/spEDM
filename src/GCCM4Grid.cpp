@@ -680,16 +680,16 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
           xEmbedings,
           yPred,
           unique_lib_sizes[i],
-                          max_lib_size,
-                          possible_lib_indices,
-                          pred_indices,
-                          totalRow,
-                          totalCol,
-                          b,
-                          simplex,
-                          theta,
-                          threads_sizet,
-                          parallel_level
+          max_lib_size,
+          possible_lib_indices,
+          pred_indices,
+          totalRow,
+          totalCol,
+          b,
+          simplex,
+          theta,
+          threads_sizet,
+          parallel_level
         );
       }
     }
