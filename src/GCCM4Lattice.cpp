@@ -233,42 +233,42 @@ std::vector<std::vector<double>> GCCM4Lattice(
   std::sort(unique_lib_sizes.begin(), unique_lib_sizes.end());
   unique_lib_sizes.erase(std::unique(unique_lib_sizes.begin(), unique_lib_sizes.end()), unique_lib_sizes.end());
 
-  // Initialize the result container
-  std::vector<std::pair<int, double>> x_xmap_y;
+  // Local results for each library
+  std::vector<std::vector<std::pair<int, double>>> local_results(unique_lib_sizes.size());
 
   if (parallel_level == 0){
     // Iterate over each library size
     if (progressbar) {
       RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
-      for (int lib_size : unique_lib_sizes) {
-        auto results = GCCMSingle4Lattice(x_vectors,
-                                          y,
-                                          lib_size,
-                                          max_lib_size,
-                                          possible_lib_indices,
-                                          pred_indices,
-                                          b,
-                                          simplex,
-                                          theta,
-                                          threads_sizet,
-                                          parallel_level);
-        x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+      for (size_t i = 0; i < unique_lib_sizes.size(); ++i) {
+        local_results[i] = GCCMSingle4Lattice(
+          x_vectors,
+          y,
+          unique_lib_sizes[i],
+          max_lib_size,
+          possible_lib_indices,
+          pred_indices,
+          b,
+          simplex,
+          theta,
+          threads_sizet,
+          parallel_level);
         bar++;
       }
     } else {
-      for (int lib_size : unique_lib_sizes) {
-        auto results = GCCMSingle4Lattice(x_vectors,
-                                          y,
-                                          lib_size,
-                                          max_lib_size,
-                                          possible_lib_indices,
-                                          pred_indices,
-                                          b,
-                                          simplex,
-                                          theta,
-                                          threads_sizet,
-                                          parallel_level);
-        x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+      for (size_t i = 0; i < unique_lib_sizes.size(); ++i) {
+        local_results[i] = GCCMSingle4Lattice(
+          x_vectors,
+          y,
+          unique_lib_sizes[i],
+          max_lib_size,
+          possible_lib_indices,
+          pred_indices,
+          b,
+          simplex,
+          theta,
+          threads_sizet,
+          parallel_level);
       }
     }
   } else {
@@ -277,37 +277,45 @@ std::vector<std::vector<double>> GCCM4Lattice(
       RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
       RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
         int lib_size = unique_lib_sizes[i];
-        auto results = GCCMSingle4Lattice(x_vectors,
-                                          y,
-                                          lib_size,
-                                          max_lib_size,
-                                          possible_lib_indices,
-                                          pred_indices,
-                                          b,
-                                          simplex,
-                                          theta,
-                                          threads_sizet,
-                                          parallel_level);
-        x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+        local_results[i] = GCCMSingle4Lattice(
+          x_vectors,
+          y,
+          lib_size,
+          max_lib_size,
+          possible_lib_indices,
+          pred_indices,
+          b,
+          simplex,
+          theta,
+          threads_sizet,
+          parallel_level);
         bar++;
       }, threads_sizet);
     } else {
       RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
         int lib_size = unique_lib_sizes[i];
-        auto results = GCCMSingle4Lattice(x_vectors,
-                                          y,
-                                          lib_size,
-                                          max_lib_size,
-                                          possible_lib_indices,
-                                          pred_indices,
-                                          b,
-                                          simplex,
-                                          theta,
-                                          threads_sizet,
-                                          parallel_level);
-        x_xmap_y.insert(x_xmap_y.end(), results.begin(), results.end());
+        local_results[i] = GCCMSingle4Lattice(
+          x_vectors,
+          y,
+          lib_size,
+          max_lib_size,
+          possible_lib_indices,
+          pred_indices,
+          b,
+          simplex,
+          theta,
+          threads_sizet,
+          parallel_level);
       }, threads_sizet);
     }
+  }
+
+  // Initialize the result container
+  std::vector<std::pair<int, double>> x_xmap_y;
+
+  // Merge all local results into the final result
+  for (const auto& local_result : local_results) {
+    x_xmap_y.insert(x_xmap_y.end(), local_result.begin(), local_result.end());
   }
 
   // Group by the first int(lib_size) and compute the mean (rho)
