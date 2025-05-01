@@ -139,8 +139,8 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
  * - controls: Cross-sectional data of control variables (**stored by row**).
  * - nb_vec: A nested vector containing neighborhood information for lattice data.
  * - lib_sizes: A vector specifying different library sizes for SCPCM analysis.
- * - lib: A vector specifying the library indices (1-based in R, converted to 0-based in C++).
- * - pred: A vector specifying the prediction indices (1-based in R, converted to 0-based in C++).
+ * - lib: A vector of representing the indices of spatial units to be the library.
+ * - pred: A vector of representing the indices of spatial units to be predicted.
  * - Es: A vector specifying the embedding dimensions for attractor reconstruction using x and control variables.
  * - taus: A vector specifying the spatial lag steps for constructing lagged state-space vectors using x and control variables.
  * - b: A vector specifying the numbers of nearest neighbors used for prediction.

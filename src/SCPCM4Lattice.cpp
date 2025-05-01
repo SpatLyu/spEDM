@@ -324,8 +324,8 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
  * - controls: Cross-sectional data of control variables (**stored by row**).
  * - nb_vec: A nested vector containing neighborhood information for lattice data.
  * - lib_sizes: A vector specifying different library sizes for SCPCM analysis.
- * - lib: A vector specifying the library indices (1-based in R, converted to 0-based in C++).
- * - pred: A vector specifying the prediction indices (1-based in R, converted to 0-based in C++).
+ * - lib: A vector of representing the indices of spatial units to be the library.
+ * - pred: A vector of representing the indices of spatial units to be predicted.
  * - Es: A vector specifying the embedding dimensions for attractor reconstruction using x and control variables.
  * - taus: A vector specifying the spatial lag steps for constructing lagged state-space vectors using x and control variables.
  * - b: A vector specifying the numbers of nearest neighbors used for prediction.
@@ -398,17 +398,17 @@ std::vector<std::vector<double>> SCPCM4Lattice(
 
   std::vector<int> possible_lib_indices;
   for (size_t i = 0; i < lib.size(); ++i) {
-    possible_lib_indices.push_back(lib[i]-1);
+    possible_lib_indices.push_back(lib[i]);
   }
   int max_lib_size = static_cast<int>(possible_lib_indices.size()); // Maximum lib size
 
   std::vector<bool> pred_indices(n, false);
   for (size_t i = 0; i < pred.size(); ++i) {
     // // Do not strictly exclude spatial units with embedded state-space vectors containing NaN values from participating in cross mapping.
-    // if (!checkOneDimVectorHasNaN(x_vectors[pred[i] - 1])){
-    //   pred_indices[pred[i] - 1] = true;
+    // if (!checkOneDimVectorHasNaN(x_vectors[pred[i]])){
+    //   pred_indices[pred[i]] = true;
     // }
-    pred_indices[pred[i] - 1] = true; // Convert to 0-based index
+    pred_indices[pred[i]] = true; // Convert to 0-based index
   }
 
   std::vector<int> unique_lib_sizes(lib_sizes.begin(), lib_sizes.end());
