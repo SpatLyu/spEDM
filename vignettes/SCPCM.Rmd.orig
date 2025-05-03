@@ -84,7 +84,7 @@ nnaindice = which(!is.na(nnamat), arr.ind = TRUE)
 dim(nnaindice)
 ```
 
-Investigating the causation between elevation and NPP, with precipitation and temperature as control variables:
+Investigate the causation between elevation and NPP, with precipitation and temperature as control variables:
 
 ```{r scpcm_grid}
 startTime = Sys.time()
@@ -105,10 +105,10 @@ npp_pretem
 
 Visualize the result:
 
-```{r fig2,fig.width=4.5,fig.height=3.5,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. The causation between elevation and NPP. **a** Elevation–NPP causality without accounting for covariates. **b** Elevation–NPP causality controlling for precipitation and temperature.")}
-fig2a = plot(npp_pretem,partial = FALSE,ylimits = c(0,0.65))
-fig2b = plot(npp_pretem,partial = TRUE,ylimits = c(0,0.65))
-fig2 = cowplot::plot_grid(fig1a,fig1b,ncol = 2,label_fontfamily = 'serif',
+```{r fig2,fig.width=5.55,fig.height=2.85,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. The causation between elevation and NPP. **a** Elevation–NPP causality without accounting for covariates. **b** Elevation–NPP causality controlling for precipitation and temperature.")}
+fig2a = plot(npp_pretem,partial = FALSE,ylimits = c(0,0.5))
+fig2b = plot(npp_pretem,partial = TRUE,ylimits = c(0,0.5))
+fig2 = cowplot::plot_grid(fig2a,fig2b,ncol = 2,label_fontfamily = 'serif',
                           labels = paste0('(',letters[1:2],')'))
 fig2
 ```
