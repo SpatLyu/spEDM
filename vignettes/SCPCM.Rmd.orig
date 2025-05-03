@@ -52,6 +52,16 @@ print(difftime(endTime,startTime, units ="mins"))
 popd_pretem
 ```
 
+Visualize the result:
+
+```{r fig1,fig.width=6.25,fig.height=3.15,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. The causation between elevation and population density. **a** Elevation–Population causality without accounting for covariates. **b** Elevation–Population causality controlling for precipitation and temperature.")}
+fig1a = plot(popd_pretem,partial = FALSE,ylimits = c(0,0.65))
+fig1b = plot(popd_pretem,partial = TRUE,ylimits = c(0,0.65))
+fig1 = cowplot::plot_grid(fig1a,fig1b,ncol = 2,label_fontfamily = 'serif',
+                          labels = paste0('(',letters[1:2],')'))
+fig1
+```
+
 ### An example of spatial grid data
 
 Load the `spEDM` package and its farmland NPP data:
@@ -91,4 +101,14 @@ npp_pretem = scpcm(data = npp,
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
 npp_pretem
+```
+
+Visualize the result:
+
+```{r fig2,fig.width=4.5,fig.height=3.5,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. The causation between elevation and NPP. **a** Elevation–NPP causality without accounting for covariates. **b** Elevation–NPP causality controlling for precipitation and temperature.")}
+fig2a = plot(npp_pretem,partial = FALSE,ylimits = c(0,0.65))
+fig2b = plot(npp_pretem,partial = TRUE,ylimits = c(0,0.65))
+fig2 = cowplot::plot_grid(fig1a,fig1b,ncol = 2,label_fontfamily = 'serif',
+                          labels = paste0('(',letters[1:2],')'))
+fig2
 ```
