@@ -182,7 +182,7 @@ startTime = Sys.time()
 npp_res = gccm(data = npp,
                cause = "pre",
                effect = "npp",
-               libsizes = as.matrix(expand.grid(seq(10,130,20),seq(10,160,20))),
+               libsizes = matrix(rep(seq(10,150,20),2),ncol = 2),
                E = c(2,10),
                k = 8,
                lib = nnaindice,

@@ -1,7 +1,7 @@
 ---
 title: "Geographical Convergent Cross Mapping (GCCM)"
 author: "Wenbo Lv"
-date: "2025-05-01"
+date: "2025-05-03"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{GCCM}
@@ -153,7 +153,7 @@ pd_res = gccm(data = popd_sf,
               progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 2.944179 mins
+## Time difference of 2.957207 mins
 pd_res
 ##    libsizes pre->popd  popd->pre
 ## 1       100 0.1712430 0.03310752
@@ -261,7 +261,7 @@ startTime = Sys.time()
 npp_res = gccm(data = npp,
                cause = "pre",
                effect = "npp",
-               libsizes = as.matrix(expand.grid(seq(10,130,20),seq(10,160,20))),
+               libsizes = matrix(rep(seq(10,150,20),2),ncol = 2),
                E = c(2,10),
                k = 8,
                lib = nnaindice,
@@ -269,7 +269,7 @@ npp_res = gccm(data = npp,
                progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 5.023172 mins
+## Time difference of 5.006358 mins
 npp_res
 ##   libsizes  pre->npp  npp->pre
 ## 1       10 0.1295281 0.1013898
@@ -279,7 +279,7 @@ npp_res
 ## 5       90 0.5972341 0.3376894
 ## 6      110 0.7358447 0.3412305
 ## 7      130 0.8386849 0.3663077
-## 8      150 0.8483344 0.3696080
+## 8      135 0.8534368 0.3758674
 ```
 
 Visualize the result:
