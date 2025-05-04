@@ -1,7 +1,7 @@
 ---
 title: "Spatial (Granger) Causality Test (SCT)"
 author: "Wenbo Lv"
-date: "2025-05-01"
+date: "2025-05-04"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{SCT}
