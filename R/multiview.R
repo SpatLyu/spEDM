@@ -16,7 +16,7 @@ methods::setGeneric("multiview", function(data, ...) standardGeneric("multiview"
                                  k = E+2,top = NULL,threads = detectThreads(),trend.rm = TRUE){
   xmat = .multivar_grid(data,columns,trend.rm)
   ymat = .multivar_grid(data,target,trend.rm)
-  if (is.null(lib)) lib = .internal_library(cbind(xmat,ymat))
+  if (is.null(lib)) lib = .internal_library(cbind(xmat,ymat),TRUE)
   if (is.null(pred)) pred = lib
   if (is.null(top)) top = 0
   res = RcppMultiView4Grid(xmat,ymat,lib,pred,E,tau,k,top,nvar,threads)
