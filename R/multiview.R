@@ -4,7 +4,7 @@ methods::setGeneric("multiview", function(data, ...) standardGeneric("multiview"
                          nb = NULL, top = NULL, threads = detectThreads(), trend.rm = TRUE){
   xmat = .multivar_lattice(data,columns,trend.rm)
   yvec = .uni_lattice(data,target,trend.rm)
-  if (is.null(lib)) lib = seq_len(nrow(data))
+  if (is.null(lib)) lib = .internal_library(data)
   if (is.null(pred)) pred = lib
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   if (is.null(top)) top = 0

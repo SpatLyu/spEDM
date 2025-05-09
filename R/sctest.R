@@ -5,7 +5,7 @@ methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
   varname = .check_character(cause, effect)
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   if (nrow(data) != length(nb)) stop("Incompatible Data Dimensions!")
-  if (is.null(lib)) lib = seq_len(nrow(data))
+  if (is.null(lib)) lib = .internal_library(data)
   if (is.null(pred)) pred = lib
   block = RcppDivideLattice(nb,block)
   cause = .uni_lattice(data,cause,FALSE)

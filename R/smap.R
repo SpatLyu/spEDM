@@ -5,7 +5,7 @@ methods::setGeneric("smap", function(data, ...) standardGeneric("smap"))
                               0.1, 0.3, 0.5, 0.75, 1, 1.5, 2, 3, 4, 6, 8),
                     nb = NULL, threads = detectThreads(), trend.rm = TRUE){
   vec = .uni_lattice(data,target,trend.rm)
-  if (is.null(lib)) lib = seq_len(nrow(data))
+  if (is.null(lib)) lib = .internal_library(data)
   if (is.null(pred)) pred = lib
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   res = RcppSMap4Lattice(vec,nb,lib,pred,theta,E,tau,k,threads)

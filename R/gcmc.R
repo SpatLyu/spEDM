@@ -22,7 +22,7 @@ methods::setGeneric("gcmc", function(data, ...) standardGeneric("gcmc"))
 
   if (is.null(k)) k = ceiling(nrow(data) / 3)
   r = .check_inputelementnum(r,length(k))
-  if (is.null(lib)) lib = seq_len(nrow(data))
+  if (is.null(lib)) lib = .internal_library(data)
   if (is.null(pred)) pred = lib
 
   x_xmap_y = NULL
@@ -52,7 +52,7 @@ methods::setGeneric("gcmc", function(data, ...) standardGeneric("gcmc"))
 
   if (is.null(k)) k = min(dim(effectmat))
   r = .check_inputelementnum(r,length(k))
-  if (is.null(lib)) lib = .internal_samplemat(effectmat)
+  if (is.null(lib)) lib = .internal_library(dtf)
   if (is.null(pred)) pred = lib
 
   x_xmap_y = NULL
