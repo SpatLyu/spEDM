@@ -7,6 +7,8 @@ methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
   block = RcppDivideLattice(nb,block)
   cause = .uni_lattice(data,cause,FALSE)
   effect = .uni_lattice(data,effect,FALSE)
+  if (is.null(lib)) lib = which(!(is.na(cause) | is.na(effect)))
+  if (is.null(pred)) pred = lib
   return(.bind_sct(RcppSCT4Lattice(cause,effect,nb,lib,pred,block,k,threads,boot,base,seed,symbolize,normalize,progressbar),varname))
 }
 
@@ -16,7 +18,7 @@ methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
   cause = .uni_grid(data,cause,FALSE)
   effect = .uni_grid(data,effect,FALSE)
   block = matrix(RcppDivideGrid(effect,block),ncol = 1)
-  if (is.null(lib)) lib = which(!is.na(mat), arr.ind = TRUE)
+  if (is.null(lib)) lib = which(!(is.na(cause) | is.na(effect)), arr.ind = TRUE)
   if (is.null(pred)) pred = lib
   return(.bind_sct(RcppSCT4Grid(cause,effect,lib,pred,block,k,threads,boot,base,seed,symbolize,normalize,progressbar),varname))
 }
