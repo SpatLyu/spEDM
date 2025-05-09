@@ -1,7 +1,7 @@
 ---
 title: "Spatial (Granger) Causality Test (SCT)"
 author: "Wenbo Lv"
-date: "2025-05-04"
+date: "2025-05-09"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{SCT}
@@ -137,18 +137,18 @@ Use SCT to detect spatial causality among the variables *pre*, *tem*, and *npp* 
 # precipitation and npp
 sc.test(npp,"pre","npp",k = 30)
 ## spatial (granger) causality test
-## pre -> npp: statistic = 0.27, p value = 0
-## npp -> pre: statistic = 0.168, p value = 0
+## pre -> npp: statistic = 0.189, p value = 0
+## npp -> pre: statistic = 0.111, p value = 0
 
 # temperature and npp
 sc.test(npp,"tem","npp",k = 30)
 ## spatial (granger) causality test
-## tem -> npp: statistic = 0.064, p value = 0
-## npp -> tem: statistic = 0.099, p value = 0
+## tem -> npp: statistic = 0.063, p value = 0
+## npp -> tem: statistic = 0.057, p value = 0
 
 # precipitation and temperature
 sc.test(npp,"pre","tem",k = 30)
 ## spatial (granger) causality test
-## pre -> tem: statistic = 0.093, p value = 0
-## tem -> pre: statistic = 0.082, p value = 0
+## pre -> tem: statistic = 0.077, p value = 0
+## tem -> pre: statistic = 0.052, p value = 0
 ```
