@@ -4,9 +4,6 @@ methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
                    nb = NULL, threads = detectThreads(), symbolize = TRUE, normalize = FALSE, progressbar = FALSE){
   varname = .check_character(cause, effect)
   if (is.null(nb)) nb = .internal_lattice_nb(data)
-  if (nrow(data) != length(nb)) stop("Incompatible Data Dimensions!")
-  if (is.null(lib)) lib = .internal_library(data)
-  if (is.null(pred)) pred = lib
   block = RcppDivideLattice(nb,block)
   cause = .uni_lattice(data,cause,FALSE)
   effect = .uni_lattice(data,effect,FALSE)
@@ -19,8 +16,8 @@ methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
   cause = .uni_grid(data,cause,FALSE)
   effect = .uni_grid(data,effect,FALSE)
   block = matrix(RcppDivideGrid(effect,block),ncol = 1)
-  if (is.null(lib)) lib = .internal_samplemat(effect)
-  if (is.null(pred)) pred = .internal_samplemat(effect,floor(sqrt(length(effect))))
+  if (is.null(lib)) lib = which(!is.na(mat), arr.ind = TRUE)
+  if (is.null(pred)) pred = lib
   return(.bind_sct(RcppSCT4Grid(cause,effect,lib,pred,block,k,threads,boot,base,seed,symbolize,normalize,progressbar),varname))
 }
 

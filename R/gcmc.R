@@ -8,7 +8,6 @@ methods::setGeneric("gcmc", function(data, ...) standardGeneric("gcmc"))
   tau = .check_inputelementnum(tau,2)
   .varname = .internal_varname()
   if (is.null(nb)) nb = .internal_lattice_nb(data)
-  if (nrow(data) != length(nb)) stop("Incompatible Data Dimensions!")
   coords = as.data.frame(sdsfun::sf_coordinates(data))
   data = sf::st_drop_geometry(data)
   data = data[,varname]
