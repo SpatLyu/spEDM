@@ -360,22 +360,29 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
   int numRows = yMatrix.nrow();
   int numCols = yMatrix.ncol();
 
-  // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
-  std::vector<std::vector<double>> yMatrix_cpp(yMatrix.nrow(), std::vector<double>(yMatrix.ncol()));
-  for (int i = 0; i < yMatrix.nrow(); ++i) {
-    for (int j = 0; j < yMatrix.ncol(); ++j) {
-      yMatrix_cpp[i][j] = yMatrix(i, j);
+  // Convert yMatrix to std::vector<double>
+  std::vector<double> target(numRows * numCols);
+
+  if (numCols == 1){
+    for (int i = 0; i < numRows; ++i) {
+      target[i] =  yMatrix(i,0);
     }
+  } else {
+    // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
+    std::vector<std::vector<double>> yMatrix_cpp(numRows, std::vector<double>(numCols));
+    for (int i = 0; i < numRows; ++i) {
+      for (int j = 0; j < numCols; ++j) {
+        yMatrix_cpp[i][j] = yMatrix(i, j);
+      }
+    }
+    target = GridMat2Vec(yMatrix_cpp);
   }
-  std::vector<double> target = GridMat2Vec(yMatrix_cpp);
 
   // Initialize lib_indices and pred_indices with all false
   std::vector<bool> pred_indices(numRows * numCols, false);
   std::vector<bool> lib_indices(numRows * numCols, false);
 
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
-  int currow;
-  int curcol;
   int lib_col = lib.ncol();
   int pred_col = pred.ncol();
 
@@ -386,10 +393,11 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
   } else {
     for (int i = 0; i < lib.nrow(); ++i) {
       // Convert to 0-based index
-      currow = lib(i,0);
-      curcol = lib(i,1);
-      if (!std::isnan(yMatrix_cpp[currow-1][curcol-1])){
-        lib_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+      int currow = lib(i,0);
+      int curcol = lib(i,1);
+      int cellindice = LocateGridIndices(currow, curcol, numRows, numCols);
+      if (!std::isnan(target[cellindice])){
+        lib_indices[cellindice] = true;
       }
     }
   }
@@ -401,10 +409,11 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
   } else {
     for (int i = 0; i < pred.nrow(); ++i) {
       // Convert to 0-based index
-      currow = pred(i,0);
-      curcol = pred(i,1);
-      if (!std::isnan(yMatrix_cpp[currow-1][curcol-1])){
-        pred_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+      int currow = pred(i,0);
+      int curcol = pred(i,1);
+      int cellindice = LocateGridIndices(currow, curcol, numRows, numCols);
+      if (!std::isnan(target[cellindice])){
+        pred_indices[cellindice] = true;
       }
     }
   }
