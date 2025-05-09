@@ -58,8 +58,9 @@
   return(data)
 }
 
-.internal_library = \(data){
+.internal_library = \(data,mat = FALSE){
   nnaindice = which(apply(is.na(data),1,\(.x) !any(.x)))
+  if (mat) nnaindice = matrix(nnaindice,ncol = 1)
   return(nnaindice)
 }
 
