@@ -18,6 +18,8 @@
 
 ### breaking changes
 
+* Use non-NA spatial units for `lib`/`pred` by default (#499).
+
 * Refine internal case data (#348).
 
 ### bug fixes
