@@ -35,17 +35,6 @@
   return(.varname)
 }
 
-.internal_samplemat = \(mat,size = NULL,seed = 123){
-  nnaindice = which(!is.na(mat), arr.ind = TRUE)
-  if (is.null(size)){
-    return(nnaindice)
-  } else {
-    set.seed(seed)
-    indices = sample(nrow(nnaindice), size = min(size,nrow(nnaindice)), replace = FALSE)
-    return(nnaindice[indices,])
-  }
-}
-
 .internal_lattice_nb = \(data){
   if (sdsfun::sf_geometry_type(data) %in% c('point','multipoint')){
     nb = sdsfun::spdep_nb(data,k = 8)
@@ -67,6 +56,11 @@
     }
   }
   return(data)
+}
+
+.internal_library = \(data){
+  nnaindice = which(apply(is.na(data),1,\(.x) !any(.x)))
+  return(nnaindice)
 }
 
 .uni_lattice = \(data,target,trend.rm = FALSE){

@@ -9,7 +9,6 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   pl = .check_parallellevel(parallel.level)
   .varname = .internal_varname()
   if (is.null(nb)) nb = .internal_lattice_nb(data)
-  if (nrow(data) != length(nb)) stop("Incompatible Data Dimensions!")
   coords = as.data.frame(sdsfun::sf_coordinates(data))
   data = sf::st_drop_geometry(data)
   data = data[,varname]
@@ -21,7 +20,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   cause = data[,"cause",drop = TRUE]
   effect = data[,"effect",drop = TRUE]
 
-  if (is.null(lib)) lib = seq_len(nrow(data))
+  if (is.null(lib)) lib = .internal_library(data)
   if (is.null(pred)) pred = lib
 
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
@@ -53,8 +52,8 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   causemat = matrix(dtf[,"cause"],nrow = terra::nrow(data),byrow = TRUE)
   effectmat = matrix(dtf[,"effect"],nrow = terra::nrow(data),byrow = TRUE)
 
-  if (is.null(lib)) lib = .internal_samplemat(effectmat)
-  if (is.null(pred)) pred = .internal_samplemat(effectmat,floor(sqrt(length(effectmat))))
+  if (is.null(lib)) lib = .internal_library(dtf)
+  if (is.null(pred)) pred = lib
 
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
   x_xmap_y = NULL
