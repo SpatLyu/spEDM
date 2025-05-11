@@ -8,6 +8,7 @@
 #include "GCCM4Grid.h"
 #include "SCPCM4Grid.h"
 #include "CrossMappingCardinality.h"
+#include "FalseNearestNeighbors.h"
 #include "SCT4Grid.h"
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
@@ -163,6 +164,81 @@ Rcpp::IntegerVector RcppDivideGrid(const Rcpp::NumericMatrix& mat,
 
   // Convert the result back to Rcpp::IntegerVector
   return Rcpp::wrap(blocks);
+}
+
+// [[Rcpp::export]]
+Rcpp::NumericVector RcppFNN4Grid(
+    const Rcpp::NumericMatrix& mat,
+    const Rcpp::NumericVector& rt,
+    const Rcpp::NumericVector& eps,
+    const Rcpp::IntegerMatrix& lib,
+    const Rcpp::IntegerMatrix& pred,
+    const Rcpp::IntegerVector& E,
+    int tau,
+    int threads){
+  // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
+  int numRows = mat.nrow();
+  int numCols = mat.ncol();
+  std::vector<std::vector<double>> cppMat(numRows, std::vector<double>(numCols));
+
+  double validCellNum = 0;
+  for (int r = 0; r < numRows; ++r) {
+    for (int c = 0; c < numCols; ++c) {
+      cppMat[r][c] = mat(r, c);
+      if (!std::isnan(mat(r, c))){
+        validCellNum += 1;
+      }
+    }
+  }
+
+  // Convert Rcpp NumericVector to std::vector<double>
+  std::vector<double> rt_std = Rcpp::as<std::vector<double>>(rt);
+  std::vector<double> eps_std = Rcpp::as<std::vector<double>>(eps);
+
+  // Convert Rcpp IntegerMatrix to std::vector<int>
+  int n_libcol = lib.ncol();
+  int n_predcol = pred.ncol();
+
+  std::vector<int> lib_std;
+  if (n_libcol == 1){
+    for (int i = 0; i < lib.nrow(); ++i) {
+      lib_std.push_back(lib(i,0) - 1);
+    }
+  } else {
+    for (int i = 0; i < lib.nrow(); ++i) {
+      int rowLibIndice = lib(i,0);
+      int colLibIndice = lib(i,1);
+      if (!std::isnan(cppMat[rowLibIndice-1][colLibIndice-1])){
+        lib_std.push_back(LocateGridIndices(rowLibIndice, colLibIndice, numRows, numCols));
+      }
+    }
+  }
+
+  std::vector<int> pred_std;
+  if (n_predcol == 1){
+    for (int i = 0; i < pred.nrow(); ++i) {
+      pred_std.push_back(pred(i,0) - 1);
+    }
+  } else {
+    for (int i = 0; i < pred.nrow(); ++i) {
+      int rowPredIndice = pred(i,0);
+      int colPredIndice = pred(i,1);
+      if (!std::isnan(cppMat[rowPredIndice-1][colPredIndice-1])){
+        pred_std.push_back(LocateGridIndices(rowPredIndice, colPredIndice, numRows, numCols));
+      }
+    }
+  }
+
+  // Generate embeddings
+  std::vector<double> E_std = Rcpp::as<std::vector<double>>(E);
+  int max_E = CppMax(E_std, true);
+  std::vector<std::vector<double>> embeddings = GenGridEmbeddings(cppMat, max_E, tau);
+
+  // Perform FNN for spatial grid data
+  std::vector<double> fnn = CppFNN(embeddings,lib_std,pred_std,rt_std,eps_std,true,threads);
+
+  // Convert the result back to Rcpp::NumericVector
+  return Rcpp::wrap(fnn);
 }
 
 // [[Rcpp::export]]
