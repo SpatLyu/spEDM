@@ -69,6 +69,10 @@ RcppDivideGrid <- function(mat, b, shape = 3L) {
     .Call(`_spEDM_RcppDivideGrid`, mat, b, shape)
 }
 
+RcppFNN4Grid <- function(mat, rt, eps, lib, pred, E, tau, threads) {
+    .Call(`_spEDM_RcppFNN4Grid`, mat, rt, eps, lib, pred, E, tau, threads)
+}
+
 RcppSimplex4Grid <- function(mat, lib, pred, E, b, tau, threads) {
     .Call(`_spEDM_RcppSimplex4Grid`, mat, lib, pred, E, b, tau, threads)
 }
@@ -139,6 +143,10 @@ RcppGenLatticeSymbolization <- function(vec, nb, lib, pred, k) {
 
 RcppDivideLattice <- function(nb, b) {
     .Call(`_spEDM_RcppDivideLattice`, nb, b)
+}
+
+RcppFNN4Lattice <- function(vec, nb, rt, eps, lib, pred, E, tau, threads) {
+    .Call(`_spEDM_RcppFNN4Lattice`, vec, nb, rt, eps, lib, pred, E, tau, threads)
 }
 
 RcppSimplex4Lattice <- function(x, nb, lib, pred, E, b, tau, threads) {

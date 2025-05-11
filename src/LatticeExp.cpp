@@ -8,6 +8,7 @@
 #include "GCCM4Lattice.h"
 #include "SCPCM4Lattice.h"
 #include "CrossMappingCardinality.h"
+#include "FalseNearestNeighbors.h"
 #include "SCT4Lattice.h"
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
@@ -218,6 +219,57 @@ Rcpp::IntegerVector RcppDivideLattice(const Rcpp::List& nb,int b) {
 
   // Convert the result back to Rcpp::IntegerVector
   return Rcpp::wrap(blocks);
+}
+
+// Wrapper function to perform FNN for spatial lattice data
+// [[Rcpp::export]]
+Rcpp::NumericVector RcppFNN4Lattice(
+    const Rcpp::NumericVector& vec,
+    const Rcpp::List& nb,
+    const Rcpp::NumericVector& rt,
+    const Rcpp::NumericVector& eps,
+    const Rcpp::IntegerVector& lib,
+    const Rcpp::IntegerVector& pred,
+    const Rcpp::IntegerVector& E,
+    int tau,
+    int threads){
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
+
+  // Convert Rcpp::List to std::vector<std::vector<int>>
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
+
+  // Convert Rcpp *Vector to std::vector<*>
+  std::vector<double> rt_std = Rcpp::as<std::vector<double>>(rt);
+  std::vector<double> eps_std = Rcpp::as<std::vector<double>>(eps);
+  std::vector<int> lib_std = Rcpp::as<std::vector<int>>(lib);
+  std::vector<int> pred_std = Rcpp::as<std::vector<int>>(pred);
+
+  int validSampleNum = vec_std.size();
+  // Check that lib and pred indices are within bounds & convert R based 1 index to C++ based 0 index
+  for (size_t i = 0; i < lib_std.size(); ++i) {
+    if (lib_std[i] < 0 || lib_std[i] > validSampleNum) {
+      Rcpp::stop("lib contains out-of-bounds index at position %d (value: %d)", i + 1, lib[i]);
+    }
+    lib_std[i] -= 1;
+  }
+  for (size_t i = 0; i < pred_std.size(); ++i) {
+    if (pred_std[i] < 0 || pred_std[i] > validSampleNum) {
+      Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
+    }
+    pred_std[i] -= 1;
+  }
+
+  // Generate embeddings
+  std::vector<double> E_std = Rcpp::as<std::vector<double>>(E);
+  int max_E = CppMax(E_std, true);
+  std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(vec_std, nb_vec, max_E, tau);
+
+  // Perform FNN for spatial lattice data
+  std::vector<double> fnn = CppFNN(embeddings,lib_std,pred_std,rt_std,eps_std,true,threads);
+
+  // Convert the result back to Rcpp::NumericVector
+  return Rcpp::wrap(fnn);
 }
 
 /**

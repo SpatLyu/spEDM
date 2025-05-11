@@ -258,6 +258,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppFNN4Grid
+Rcpp::NumericVector RcppFNN4Grid(const Rcpp::NumericMatrix& mat, const Rcpp::NumericVector& rt, const Rcpp::NumericVector& eps, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, const Rcpp::IntegerVector& E, int tau, int threads);
+RcppExport SEXP _spEDM_RcppFNN4Grid(SEXP matSEXP, SEXP rtSEXP, SEXP epsSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type rt(rtSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type eps(epsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type lib(libSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type pred(predSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type E(ESEXP);
+    Rcpp::traits::input_parameter< int >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppFNN4Grid(mat, rt, eps, lib, pred, E, tau, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppSimplex4Grid
 Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& b, int tau, int threads);
 RcppExport SEXP _spEDM_RcppSimplex4Grid(SEXP matSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP bSEXP, SEXP tauSEXP, SEXP threadsSEXP) {
@@ -543,6 +561,25 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
     Rcpp::traits::input_parameter< int >::type b(bSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppDivideLattice(nb, b));
+    return rcpp_result_gen;
+END_RCPP
+}
+// RcppFNN4Lattice
+Rcpp::NumericVector RcppFNN4Lattice(const Rcpp::NumericVector& vec, const Rcpp::List& nb, const Rcpp::NumericVector& rt, const Rcpp::NumericVector& eps, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, int tau, int threads);
+RcppExport SEXP _spEDM_RcppFNN4Lattice(SEXP vecSEXP, SEXP nbSEXP, SEXP rtSEXP, SEXP epsSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type rt(rtSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type eps(epsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type lib(libSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type pred(predSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type E(ESEXP);
+    Rcpp::traits::input_parameter< int >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppFNN4Lattice(vec, nb, rt, eps, lib, pred, E, tau, threads));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1173,6 +1210,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppGenGridEmbeddings", (DL_FUNC) &_spEDM_RcppGenGridEmbeddings, 3},
     {"_spEDM_RcppGenGridSymbolization", (DL_FUNC) &_spEDM_RcppGenGridSymbolization, 4},
     {"_spEDM_RcppDivideGrid", (DL_FUNC) &_spEDM_RcppDivideGrid, 3},
+    {"_spEDM_RcppFNN4Grid", (DL_FUNC) &_spEDM_RcppFNN4Grid, 8},
     {"_spEDM_RcppSimplex4Grid", (DL_FUNC) &_spEDM_RcppSimplex4Grid, 7},
     {"_spEDM_RcppSMap4Grid", (DL_FUNC) &_spEDM_RcppSMap4Grid, 8},
     {"_spEDM_RcppMultiView4Grid", (DL_FUNC) &_spEDM_RcppMultiView4Grid, 10},
@@ -1191,6 +1229,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppGenLatticeNeighbors", (DL_FUNC) &_spEDM_RcppGenLatticeNeighbors, 4},
     {"_spEDM_RcppGenLatticeSymbolization", (DL_FUNC) &_spEDM_RcppGenLatticeSymbolization, 5},
     {"_spEDM_RcppDivideLattice", (DL_FUNC) &_spEDM_RcppDivideLattice, 2},
+    {"_spEDM_RcppFNN4Lattice", (DL_FUNC) &_spEDM_RcppFNN4Lattice, 9},
     {"_spEDM_RcppSimplex4Lattice", (DL_FUNC) &_spEDM_RcppSimplex4Lattice, 8},
     {"_spEDM_RcppSMap4Lattice", (DL_FUNC) &_spEDM_RcppSMap4Lattice, 9},
     {"_spEDM_RcppMultiView4Lattice", (DL_FUNC) &_spEDM_RcppMultiView4Lattice, 11},
