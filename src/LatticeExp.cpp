@@ -226,10 +226,12 @@ Rcpp::IntegerVector RcppDivideLattice(const Rcpp::List& nb,int b) {
 Rcpp::NumericVector RcppFNN4Lattice(
     const Rcpp::NumericVector& vec,
     const Rcpp::List& nb,
+    const Rcpp::NumericVector& rt,
+    const Rcpp::NumericVector& eps,
     const Rcpp::IntegerVector& lib,
     const Rcpp::IntegerVector& pred,
     const Rcpp::IntegerVector& E,
-    const Rcpp::IntegerVector& tau,
+    int tau,
     int threads){
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
@@ -237,11 +239,11 @@ Rcpp::NumericVector RcppFNN4Lattice(
   // Convert Rcpp::List to std::vector<std::vector<int>>
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
-  // Convert Rcpp IntegerVector to std::vector<int>
+  // Convert Rcpp *Vector to std::vector<*>
+  std::vector<double> rt_std = Rcpp::as<std::vector<double>>(rt);
+  std::vector<double> eps_std = Rcpp::as<std::vector<double>>(eps);
   std::vector<int> lib_std = Rcpp::as<std::vector<int>>(lib);
   std::vector<int> pred_std = Rcpp::as<std::vector<int>>(pred);
-  std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
-  std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
 
   int validSampleNum = vec_std.size();
   // Check that lib and pred indices are within bounds & convert R based 1 index to C++ based 0 index
@@ -259,26 +261,16 @@ Rcpp::NumericVector RcppFNN4Lattice(
   }
 
   // Generate embeddings
-  std::vector<std::vector<double>> e1 = GenLatticeEmbeddings(x_std, nb_vec, E[0], tau_std[0]);
-  std::vector<std::vector<double>> e2 = GenLatticeEmbeddings(y_std, nb_vec, E[1], tau_std[1]);
+  std::vector<double> E_std = Rcpp::as<std::vector<double>>(E);
+  int max_E = CppMax(E_std, true);
+  std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(vec_std, nb_vec, max_E, tau);
 
-  // Perform GCMC for spatial lattice data
-  std::vector<std::vector<double>> cs1 = CrossMappingCardinality(e1,e2,lib_std,pred_std,b_std,maxr_std,threads,progressbar);
+  // Perform FNN for spatial lattice data
+  std::vector<double> fnn = CppFNN(embeddings,lib_std,pred_std,rt_std,eps_std,true,threads);
 
-  Rcpp::NumericMatrix resultMatrix(b_std.size(), 5);
-  for (size_t i = 0; i < b_std.size(); ++i) {
-    for (size_t j = 0; j < cs1[0].size(); ++j){
-      resultMatrix(i, j) = cs1[i][j];
-    }
-  }
-
-  // Set column names for the result matrix
-  Rcpp::colnames(resultMatrix) = Rcpp::CharacterVector::create("neighbors",
-                 "x_xmap_y_mean","x_xmap_y_sig",
-                 "x_xmap_y_upper","x_xmap_y_lower");
-  return resultMatrix;
+  // Convert the result back to Rcpp::NumericVector
+  return Rcpp::wrap(fnn);
 }
-
 
 /**
  * Description:
