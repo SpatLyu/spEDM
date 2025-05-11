@@ -77,17 +77,17 @@ double RcppMean(const Rcpp::NumericVector& vec,
 }
 
 // [[Rcpp::export]]
-double RcppMax(const Rcpp::NumericVector& vec,
-               bool NA_rm = false) {
-  std::vector<double> y = Rcpp::as<std::vector<double>>(vec);
-  return CppMax(y, NA_rm);
-}
-
-// [[Rcpp::export]]
 double RcppMin(const Rcpp::NumericVector& vec,
                bool NA_rm = false) {
   std::vector<double> y = Rcpp::as<std::vector<double>>(vec);
   return CppMin(y, NA_rm);
+}
+
+// [[Rcpp::export]]
+double RcppMax(const Rcpp::NumericVector& vec,
+               bool NA_rm = false) {
+  std::vector<double> y = Rcpp::as<std::vector<double>>(vec);
+  return CppMax(y, NA_rm);
 }
 
 // [[Rcpp::export]]

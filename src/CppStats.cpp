@@ -179,17 +179,22 @@ double CppMean(const std::vector<double>& vec, bool NA_rm = false) {
 }
 
 // Function to calculate the minimum of a vector, ignoring NA values if NA_rm is true
-double CppMin(const std::vector<double>& vec,
-              bool NA_rm = false) {
+double CppMin(const std::vector<double>& vec, bool NA_rm = false) {
   double min_val = std::numeric_limits<double>::infinity();
   bool found_valid = false;
 
   for (const auto& value : vec) {
-    if (!NA_rm || !isNA(value)) {
-      if (!found_valid || value < min_val) {
-        min_val = value;
-        found_valid = true;
+    if (isNA(value)) {
+      if (!NA_rm) {
+        // Return NaN immediately if NA_rm is false and we hit a NaN
+        return std::numeric_limits<double>::quiet_NaN();
       }
+      continue;  // skip if NA_rm is true
+    }
+
+    if (!found_valid || value < min_val) {
+      min_val = value;
+      found_valid = true;
     }
   }
 
@@ -197,18 +202,21 @@ double CppMin(const std::vector<double>& vec,
   return found_valid ? min_val : std::numeric_limits<double>::quiet_NaN();
 }
 
+
 // Function to calculate the maximum of a vector, ignoring NA values if NA_rm is true
-double CppMax(const std::vector<double>& vec,
-              bool NA_rm = false) {
+double CppMax(const std::vector<double>& vec, bool NA_rm = false) {
   double max_val = -std::numeric_limits<double>::infinity();
   bool found_valid = false;
 
   for (const auto& value : vec) {
-    if (!NA_rm || !isNA(value)) {
-      if (!found_valid || value > max_val) {
-        max_val = value;
-        found_valid = true;
-      }
+    if (isNA(value)) {
+      if (!NA_rm) return std::numeric_limits<double>::quiet_NaN();
+      continue;
+    }
+
+    if (!found_valid || value > max_val) {
+      max_val = value;
+      found_valid = true;
     }
   }
 
