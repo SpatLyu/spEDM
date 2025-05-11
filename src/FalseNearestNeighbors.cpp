@@ -49,34 +49,34 @@ double CppSingleFNN(const std::vector<std::vector<double>>& embedding,
     return std::numeric_limits<double>::quiet_NaN();  // Invalid dimensions
   }
 
-  for (size_t i = 0; i < N; ++i) {
-    if (checkOneDimVectorNotNanNum(embedding[i]) == 0) {
+  for (size_t i = 0; i < pred.size(); ++i) {
+    if (checkOneDimVectorNotNanNum(embedding[pred[i]]) == 0) {
       continue;  // Skip rows with all NaNs
     }
 
-    // Extract E1-dimensional embedding for unit i
-    std::vector<double> xi_E1(embedding[i].begin(), embedding[i].begin() + E1);
+    // Extract E1-dimensional embedding for unit pred[i]
+    std::vector<double> xi_E1(embedding[pred[i]].begin(), embedding[pred[i]].begin() + E1);
 
     double min_dist = std::numeric_limits<double>::max();
     size_t nn_idx = N;  // invalid index placeholder
 
     // Find nearest neighbor of i in E1-dimensional space
-    for (size_t j = 0; j < N; ++j) {
-      if (i == j || checkOneDimVectorNotNanNum(embedding[j]) == 0) continue;
+    for (size_t j = 0; j < lib.size(); ++j) {
+      if (pred[i] == lib[j] || checkOneDimVectorNotNanNum(embedding[lib[j]]) == 0) continue;
 
-      std::vector<double> xj_E1(embedding[j].begin(), embedding[j].begin() + E1);
+      std::vector<double> xj_E1(embedding[lib[j]].begin(), embedding[lib[j]].begin() + E1);
       double dist = CppDistance(xi_E1, xj_E1, L1norm, true);  // true: skip NaNs
 
       if (dist < min_dist) {
         min_dist = dist;
-        nn_idx = j;
+        nn_idx = lib[j];
       }
     }
 
     if (nn_idx == N || min_dist == 0.0) continue;  // skip degenerate cases
 
     // Compare E2-th coordinate difference (new dimension)
-    double diff = std::abs(embedding[i][E2 - 1] - embedding[nn_idx][E2 - 1]);
+    double diff = std::abs(embedding[pred[i]][E2 - 1] - embedding[nn_idx][E2 - 1]);
     double ratio = diff / min_dist;
 
     if (ratio > Rtol || diff > Atol) {
