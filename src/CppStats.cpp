@@ -178,6 +178,44 @@ double CppMean(const std::vector<double>& vec, bool NA_rm = false) {
   return count > 0 ? sum / count : std::numeric_limits<double>::quiet_NaN();
 }
 
+// Function to calculate the minimum of a vector, ignoring NA values if NA_rm is true
+double CppMin(const std::vector<double>& vec,
+              bool NA_rm = false) {
+  double min_val = std::numeric_limits<double>::infinity();
+  bool found_valid = false;
+
+  for (const auto& value : vec) {
+    if (!NA_rm || !isNA(value)) {
+      if (!found_valid || value < min_val) {
+        min_val = value;
+        found_valid = true;
+      }
+    }
+  }
+
+  // Return NaN if no valid value was found
+  return found_valid ? min_val : std::numeric_limits<double>::quiet_NaN();
+}
+
+// Function to calculate the maximum of a vector, ignoring NA values if NA_rm is true
+double CppMax(const std::vector<double>& vec,
+              bool NA_rm = false) {
+  double max_val = -std::numeric_limits<double>::infinity();
+  bool found_valid = false;
+
+  for (const auto& value : vec) {
+    if (!NA_rm || !isNA(value)) {
+      if (!found_valid || value > max_val) {
+        max_val = value;
+        found_valid = true;
+      }
+    }
+  }
+
+  // Return NaN if no valid value was found
+  return found_valid ? max_val : std::numeric_limits<double>::quiet_NaN();
+}
+
 // Function to calculate the sum of a vector, ignoring NA values if NA_rm is true
 double CppSum(const std::vector<double>& vec,
               bool NA_rm = false) {
