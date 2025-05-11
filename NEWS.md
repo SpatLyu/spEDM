@@ -2,6 +2,8 @@
 
 ### new
 
+* Enact `fnn` R API support for false nearest neighbours method (#512).
+
 * Integrate R API and vignette for geographical cross mapping cardinality (#455).
 
 * Provide R-level API and vignette for spatial (granger) causality test (#403).
