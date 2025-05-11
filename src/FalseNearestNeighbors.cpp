@@ -84,3 +84,59 @@ double CppSingleFNN(const std::vector<std::vector<double>>& embedding,
   return total > 0 ? static_cast<double>(false_count) / total
   : std::numeric_limits<double>::quiet_NaN();
 }
+
+/*
+ * Compute False Nearest Neighbor (FNN) ratios for a range of embedding dimensions
+ * on spatial cross-sectional data.
+ *
+ * This function iteratively calls CppSingleFNN using pairs of embedding dimensions:
+ * from 1 to D-1 (where D is the number of columns in the embedding matrix), such that
+ * each E1 = d and E2 = d + 1.
+ *
+ * It is used to identify the optimal embedding dimension by observing how the proportion
+ * of false nearest neighbors decreases with higher dimensions.
+ *
+ * Parameters:
+ * - embedding: A matrix (vector of vectors) where each row is a spatial unit's
+ *              multidimensional embedding. Should have at least 2 columns.
+ * - Rtol: Vectors of relative distance threshold.
+ * - Atol: Vectors of absolute distance threshold.
+ * - L1norm: Whether to use L1 (Manhattan) distance instead of L2 (Euclidean).
+ * - threads: Number of parallel threads.
+ *
+ * Returns:
+ * - A vector of doubles, where each entry corresponds to the FNN ratio for a given
+ *   E1 (from 1 to D - 1), with E2 = E1 + 1. If the result is invalid, NaN is returned.
+ *   Returns an NaN vector if the embedding has fewer than 2 columns.
+ */
+std::vector<double> CppFNN(const std::vector<std::vector<double>>& embedding,
+                           const std::vector<double>& Rtol,
+                           const std::vector<double>& Atol,
+                           bool L1norm, int threads) {
+  // Configure threads
+  size_t threads_sizet = static_cast<size_t>(std::abs(threads));
+  threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
+
+  size_t max_E2 = embedding[0].size() - 1;
+  std::vector<double> results(max_E2 - 1, std::numeric_limits<double>::quiet_NaN());
+
+  if (embedding.empty() || embedding[0].size() < 2) {
+    return results;  // Not enough dimensions to compute FNN
+  }
+
+  // // Loop through E1 = 1 to max_E2 - 1
+  // for (size_t E1 = 1; E1 < max_E2; ++E1) {
+  //   size_t E2 = E1 + 1;
+  //   double fnn_ratio = CppSingleFNN(embedding, E1, E2, Rtol[E1 - 1], Atol[E1 - 1], L1norm);
+  //   results[E1 - 1] = fnn_ratio;
+  // }
+
+  // Parallel computation
+  RcppThread::parallelFor(1, max_E2, [&](size_t E1) {
+    size_t E2 = E1 + 1;
+    double fnn_ratio = CppSingleFNN(embedding, E1, E2, Rtol[E1 - 1], Atol[E1 - 1], L1norm);
+    results[E1 - 1] = fnn_ratio;
+  }, threads_sizet);
+
+  return results;
+}

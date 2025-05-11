@@ -38,4 +38,33 @@ double CppSingleFNN(const std::vector<std::vector<double>>& embedding,
                     double Atol = 2.0,
                     bool L1norm = false);
 
+/*
+ * Compute False Nearest Neighbor (FNN) ratios for a range of embedding dimensions
+ * on spatial cross-sectional data.
+ *
+ * This function iteratively calls CppSingleFNN using pairs of embedding dimensions:
+ * from 1 to D-1 (where D is the number of columns in the embedding matrix), such that
+ * each E1 = d and E2 = d + 1.
+ *
+ * It is used to identify the optimal embedding dimension by observing how the proportion
+ * of false nearest neighbors decreases with higher dimensions.
+ *
+ * Parameters:
+ * - embedding: A matrix (vector of vectors) where each row is a spatial unit's
+ *              multidimensional embedding. Should have at least 2 columns.
+ * - Rtol: Vectors of relative distance threshold.
+ * - Atol: Vectors of absolute distance threshold.
+ * - L1norm: Whether to use L1 (Manhattan) distance instead of L2 (Euclidean).
+ * - threads: Number of parallel threads.
+ *
+ * Returns:
+ * - A vector of doubles, where each entry corresponds to the FNN ratio for a given
+ *   E1 (from 1 to D - 1), with E2 = E1 + 1. If the result is invalid, NaN is returned.
+ *   Returns an NaN vector if the embedding has fewer than 2 columns.
+ */
+std::vector<double> CppFNN(const std::vector<std::vector<double>>& embedding,
+                           const std::vector<double>& Rtol,
+                           const std::vector<double>& Atol,
+                           bool L1norm, int threads);
+
 #endif // FalseNearestNeighbors_H
