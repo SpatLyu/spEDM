@@ -18,6 +18,8 @@
  * - embedding: A matrix (vector of vectors) representing the spatial embedding,
  *              where each row corresponds to a spatial unit's attributes.
  *              Must contain at least E2 columns.
+ * - lib: Library index vector (1-based in R, converted to 0-based).
+ * - pred: Prediction index vector (1-based in R, converted to 0-based).
  * - E1: The base embedding dimension used to identify the nearest neighbor (E1 < E2).
  * - E2: The full embedding dimension used to test false neighbors (usually E1 + 1).
  * - Rtol: Relative threshold (default 10.0). If the change in the added dimension is
@@ -31,6 +33,8 @@
  *   If no valid pairs are found, returns NaN.
  */
 double CppSingleFNN(const std::vector<std::vector<double>>& embedding,
+                    const std::vector<int>& lib,
+                    const std::vector<int>& pred,
                     size_t E1,
                     size_t E2,
                     double Rtol = 10.0,
@@ -99,6 +103,8 @@ double CppSingleFNN(const std::vector<std::vector<double>>& embedding,
  * Parameters:
  * - embedding: A matrix (vector of vectors) where each row is a spatial unit's
  *              multidimensional embedding. Should have at least 2 columns.
+ * - lib: Library index vector (1-based in R, converted to 0-based).
+ * - pred: Prediction index vector (1-based in R, converted to 0-based).
  * - Rtol: Vectors of relative distance threshold.
  * - Atol: Vectors of absolute distance threshold.
  * - L1norm: Whether to use L1 (Manhattan) distance instead of L2 (Euclidean).
@@ -110,6 +116,8 @@ double CppSingleFNN(const std::vector<std::vector<double>>& embedding,
  *   Returns an NaN vector if the embedding has fewer than 2 columns.
  */
 std::vector<double> CppFNN(const std::vector<std::vector<double>>& embedding,
+                           const std::vector<int>& lib,
+                           const std::vector<int>& pred,
                            const std::vector<double>& Rtol,
                            const std::vector<double>& Atol,
                            bool L1norm, int threads) {
@@ -127,14 +135,16 @@ std::vector<double> CppFNN(const std::vector<std::vector<double>>& embedding,
   // // Loop through E1 = 1 to max_E2 - 1
   // for (size_t E1 = 1; E1 < max_E2; ++E1) {
   //   size_t E2 = E1 + 1;
-  //   double fnn_ratio = CppSingleFNN(embedding, E1, E2, Rtol[E1 - 1], Atol[E1 - 1], L1norm);
+  //   double fnn_ratio = CppSingleFNN(embedding, lib, pred, E1, E2,
+  //                                   Rtol[E1 - 1], Atol[E1 - 1], L1norm);
   //   results[E1 - 1] = fnn_ratio;
   // }
 
   // Parallel computation
   RcppThread::parallelFor(1, max_E2, [&](size_t E1) {
     size_t E2 = E1 + 1;
-    double fnn_ratio = CppSingleFNN(embedding, E1, E2, Rtol[E1 - 1], Atol[E1 - 1], L1norm);
+    double fnn_ratio = CppSingleFNN(embedding, lib, pred, E1, E2,
+                                    Rtol[E1 - 1], Atol[E1 - 1], L1norm);
     results[E1 - 1] = fnn_ratio;
   }, threads_sizet);
 
