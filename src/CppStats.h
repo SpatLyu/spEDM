@@ -34,10 +34,10 @@ double CppMedian(const std::vector<double>& vec,
 double CppMean(const std::vector<double>& vec,
                bool NA_rm = false);
 
-double CppMax(const std::vector<double>& vec,
+double CppMin(const std::vector<double>& vec,
               bool NA_rm = false);
 
-double CppMin(const std::vector<double>& vec,
+double CppMax(const std::vector<double>& vec,
               bool NA_rm = false);
 
 double CppSum(const std::vector<double>& vec,
