@@ -848,6 +848,30 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppMax
+double RcppMax(const Rcpp::NumericVector& vec, bool NA_rm);
+RcppExport SEXP _spEDM_RcppMax(SEXP vecSEXP, SEXP NA_rmSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
+    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppMax(vec, NA_rm));
+    return rcpp_result_gen;
+END_RCPP
+}
+// RcppMin
+double RcppMin(const Rcpp::NumericVector& vec, bool NA_rm);
+RcppExport SEXP _spEDM_RcppMin(SEXP vecSEXP, SEXP NA_rmSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
+    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppMin(vec, NA_rm));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppSum
 double RcppSum(const Rcpp::NumericVector& vec, bool NA_rm);
 RcppExport SEXP _spEDM_RcppSum(SEXP vecSEXP, SEXP NA_rmSEXP) {
@@ -1246,6 +1270,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppLog", (DL_FUNC) &_spEDM_RcppLog, 2},
     {"_spEDM_RcppMedian", (DL_FUNC) &_spEDM_RcppMedian, 2},
     {"_spEDM_RcppMean", (DL_FUNC) &_spEDM_RcppMean, 2},
+    {"_spEDM_RcppMax", (DL_FUNC) &_spEDM_RcppMax, 2},
+    {"_spEDM_RcppMin", (DL_FUNC) &_spEDM_RcppMin, 2},
     {"_spEDM_RcppSum", (DL_FUNC) &_spEDM_RcppSum, 2},
     {"_spEDM_RcppVariance", (DL_FUNC) &_spEDM_RcppVariance, 2},
     {"_spEDM_RcppCovariance", (DL_FUNC) &_spEDM_RcppCovariance, 3},

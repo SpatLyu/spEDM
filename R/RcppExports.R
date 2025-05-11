@@ -213,6 +213,14 @@ RcppMean <- function(vec, NA_rm = FALSE) {
     .Call(`_spEDM_RcppMean`, vec, NA_rm)
 }
 
+RcppMax <- function(vec, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppMax`, vec, NA_rm)
+}
+
+RcppMin <- function(vec, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppMin`, vec, NA_rm)
+}
+
 RcppSum <- function(vec, NA_rm = FALSE) {
     .Call(`_spEDM_RcppSum`, vec, NA_rm)
 }
