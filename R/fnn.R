@@ -3,8 +3,8 @@ methods::setGeneric("fnn", function(data, ...) standardGeneric("fnn"))
 .fnn_sf_method = \(data, target, lib = NULL, pred = NULL, E = 1:10, tau = 1, nb = NULL,
                    rt = 10, eps = 2, threads = detectThreads(), trend.rm = TRUE){
   vec = .uni_lattice(data,target,trend.rm)
-  rt = .check_inputelementnum(rt,length(E))
-  eps = .check_inputelementnum(eps,length(E))
+  rt = .check_inputelementnum(rt,max(E))
+  eps = .check_inputelementnum(eps,max(E))
   if (is.null(lib)) lib = which(!is.na(vec))
   if (is.null(pred)) pred = lib
   if (is.null(nb)) nb = .internal_lattice_nb(data)
@@ -14,8 +14,8 @@ methods::setGeneric("fnn", function(data, ...) standardGeneric("fnn"))
 .fnn_spatraster_method = \(data, target, lib = NULL, pred = NULL, E = 1:10, tau = 1,
                            rt = 10, eps = 2, threads = detectThreads(), trend.rm = TRUE){
   mat = .uni_grid(data,target,trend.rm)
-  rt = .check_inputelementnum(rt,length(E))
-  eps = .check_inputelementnum(eps,length(E))
+  rt = .check_inputelementnum(rt,max(E))
+  eps = .check_inputelementnum(eps,max(E))
   if (is.null(lib)) lib = which(!is.na(mat), arr.ind = TRUE)
   if (is.null(pred)) pred = lib
   return(RcppFNN4Grid(mat,rt,eps,lib,pred,E,tau,threads))

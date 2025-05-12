@@ -125,15 +125,15 @@ std::vector<double> CppFNN(const std::vector<std::vector<double>>& embedding,
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
-  size_t max_E2 = embedding[0].size() - 1;
-  std::vector<double> results(max_E2, std::numeric_limits<double>::quiet_NaN());
+  size_t max_E2 = embedding[0].size();
+  std::vector<double> results(max_E2 - 1, std::numeric_limits<double>::quiet_NaN());
 
   if (embedding.empty() || embedding[0].size() < 2) {
     return results;  // Not enough dimensions to compute FNN
   }
 
   // // Loop through E1 = 1 to max_E2 - 1
-  // for (size_t E1 = 1; E1 < max_E2 + 1; ++E1) {
+  // for (size_t E1 = 1; E1 < max_E2; ++E1) {
   //   size_t E2 = E1 + 1;
   //   double fnn_ratio = CppSingleFNN(embedding, lib, pred, E1, E2,
   //                                   Rtol[E1 - 1], Atol[E1 - 1], L1norm);
@@ -141,7 +141,7 @@ std::vector<double> CppFNN(const std::vector<std::vector<double>>& embedding,
   // }
 
   // Parallel computation
-  RcppThread::parallelFor(1, max_E2 + 1, [&](size_t E1) {
+  RcppThread::parallelFor(1, max_E2, [&](size_t E1) {
     size_t E2 = E1 + 1;
     double fnn_ratio = CppSingleFNN(embedding, lib, pred, E1, E2,
                                     Rtol[E1 - 1], Atol[E1 - 1], L1norm);
