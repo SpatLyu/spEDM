@@ -4,6 +4,7 @@
 #include <vector>
 #include <cmath>
 #include <limits>
+#include <algorithm>
 #include "CppStats.h"
 #include <RcppThread.h>
 
