@@ -1,5 +1,6 @@
 #include <vector>
 #include <cmath>
+#include <string>
 #include <algorithm>
 #include "CppStats.h"
 #include "CppGridUtils.h"
@@ -237,8 +238,15 @@ Rcpp::NumericVector RcppFNN4Grid(
   // Perform FNN for spatial grid data
   std::vector<double> fnn = CppFNN(embeddings,lib_std,pred_std,rt_std,eps_std,true,threads);
 
-  // Convert the result back to Rcpp::NumericVector
-  return Rcpp::wrap(fnn);
+  // Convert the result back to Rcpp::NumericVector and set names as "E:1", "E:2", ..., "E:n"
+  Rcpp::NumericVector result = Rcpp::wrap(fnn);
+  Rcpp::CharacterVector resnames(result.size());
+  for (int i = 0; i < result.size(); ++i) {
+    resnames[i] = "E:" + std::to_string(i + 1);
+  }
+  result.names() = resnames;
+
+  return result;
 }
 
 // [[Rcpp::export]]
