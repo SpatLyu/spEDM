@@ -84,3 +84,14 @@ plot3D::scatter3D(r[,1], r[,5], r[,9], colvar = NULL, pch = 19,
 ```
 
 ## Determination of Embedding Dimension $E$ and Spatial Lag Step $\tau$
+
+### Method of false nearest neghbours to help deciding the optimal embedding dimension
+
+```{r fnn_lattice_data}
+fnn(popd_sf,"popd")
+```
+
+
+```{r fnn_grid_data}
+fnn(cu,"cu")
+```
