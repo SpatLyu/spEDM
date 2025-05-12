@@ -40,7 +40,7 @@ popd_nb = spdep::read.gal(system.file("case/popd_nb.gal",package = "spEDM"))
 ## neighbour object has 4 sub-graphs
 popd = readr::read_csv(system.file("case/popd.csv",package = "spEDM"))
 ## Rows: 2806 Columns: 7
-## ── Column specification ─────────────────────────────────────────────────────────
+## ── Column specification ────────────────────────────────────────────────────────────────────────────
 ## Delimiter: ","
 ## dbl (7): x, y, popd, elev, tem, pre, slope
 ## 
@@ -137,3 +137,24 @@ plot3D::scatter3D(r[,1], r[,5], r[,9], colvar = NULL, pch = 19,
 ![**Figure 2**. The reconstructed shadow manifolds for `cu`.](../man/figures/ssr/fig2-1.png)
 
 ## Determination of Embedding Dimension $E$ and Spatial Lag Step $\tau$
+
+### Method of false nearest neghbours to help deciding the optimal embedding dimension
+
+
+``` r
+fnn(popd_sf,"popd")
+##       E:1       E:2       E:3       E:4       E:5       E:6       E:7       E:8 
+## 0.9921597 0.9493942 0.9019957 0.8624376 0.8360656 0.8253742 0.8143264 0.7950820 
+##       E:9 
+## 0.7843906
+```
+
+
+
+``` r
+fnn(cu,"cu")
+##        E:1        E:2        E:3        E:4        E:5        E:6        E:7 
+## 0.98577099 0.56085496 0.13294656 0.08274809 0.07853435 0.07682443 0.07212214 
+##        E:8        E:9 
+## 0.06790840 0.05850382
+```
