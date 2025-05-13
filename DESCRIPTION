@@ -23,7 +23,7 @@ Imports:
     dplyr,
     ggplot2,
     methods,
-    sdsfun (>= 0.7.0),
+    sdsfun (>= 0.8.0),
     sf,
     terra
 Suggests: 
