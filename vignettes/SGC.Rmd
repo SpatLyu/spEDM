@@ -91,20 +91,20 @@ Use spatial granger causality test to detect spatial causality among the variabl
 # house value and crime
 sgc(columbus, "hoval", "crime", k = 15)
 ## spatial granger causality test
-## hoval -> crime: statistic = 1.101, p value = 0.526
-## crime -> hoval: statistic = 1.484, p value = 0.023
+## hoval -> crime: statistic = 1.114, p value = 0.539
+## crime -> hoval: statistic = 1.555, p value = 0.005
 
 # household income and crime
 sgc(columbus, "inc", "crime", k = 15)
 ## spatial granger causality test
-## inc -> crime: statistic = 1.116, p value = 0.449
-## crime -> inc: statistic = 0.848, p value = 0.845
+## inc -> crime: statistic = 0.739, p value = 0.965
+## crime -> inc: statistic = 0.946, p value = 0.784
 
 # household income and house value
 sgc(columbus, "inc", "hoval", k = 15)
 ## spatial granger causality test
-## inc -> hoval: statistic = 1.517, p value = 0.035
-## hoval -> inc: statistic = 0.851, p value = 0.922
+## inc -> hoval: statistic = 1.211, p value = 0.301
+## hoval -> inc: statistic = 0.992, p value = 0.674
 ```
 
 ### An example of spatial grid data
@@ -137,18 +137,18 @@ Use spatial granger causality test to detect spatial causality among the variabl
 # precipitation and npp
 sgc(npp,"pre","npp",k = 30)
 ## spatial granger causality test
-## pre -> npp: statistic = 0.189, p value = 0
-## npp -> pre: statistic = 0.111, p value = 0
+## pre -> npp: statistic = 0.224, p value = 0
+## npp -> pre: statistic = 0.15, p value = 0
 
 # temperature and npp
 sgc(npp,"tem","npp",k = 30)
 ## spatial granger causality test
-## tem -> npp: statistic = 0.063, p value = 0
-## npp -> tem: statistic = 0.057, p value = 0
+## tem -> npp: statistic = 0.172, p value = 0
+## npp -> tem: statistic = 0.168, p value = 0
 
 # precipitation and temperature
 sgc(npp,"pre","tem",k = 30)
 ## spatial granger causality test
-## pre -> tem: statistic = 0.077, p value = 0
-## tem -> pre: statistic = 0.052, p value = 0
+## pre -> tem: statistic = 0.19, p value = 0
+## tem -> pre: statistic = 0.145, p value = 0
 ```
