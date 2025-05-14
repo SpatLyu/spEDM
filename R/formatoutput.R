@@ -84,12 +84,22 @@ print.sc_res = \(x,...){
 #' plot ccm result
 #' @noRd
 #' @export
-plot.ccm_res = \(x, family = "serif", xbreaks = NULL, xlimits = NULL,
-                 ybreaks = seq(0, 1, by = 0.1), ylimits = c(-0.05, 1), ...){
+plot.ccm_res = \(x, family = "serif", label = "causes",
+                 xbreaks = NULL, xlimits = NULL,
+                 ybreaks = seq(0, 1, by = 0.1),
+                 ylimits = c(-0.05, 1), ...){
   resdf = x[[1]]
   bidirectional = x[[3]]
   if(is.null(xbreaks)) xbreaks = resdf$libsizes
   if(is.null(xlimits)) xlimits = c(min(xbreaks)-1,max(xbreaks)+1)
+
+  if (any(label == "xmap")) {
+    legend_labels = c(paste0(x$varname[1], " xmap ", x$varname[2]),
+                      paste0(x$varname[2], " xmap ", x$varname[1]))
+  } else {
+    legend_labels = c(paste0(x$varname[2], " causes ", x$varname[1]),
+                      paste0(x$varname[1], " causes ", x$varname[2]))
+  }
 
   fig1 = ggplot2::ggplot(data = resdf,
                          ggplot2::aes(x = libsizes)) +
@@ -110,8 +120,7 @@ plot.ccm_res = \(x, family = "serif", xbreaks = NULL, xlimits = NULL,
                                 expand = c(0, 0), name = expression(rho)) +
     ggplot2::scale_color_manual(values = c("x xmap y" = "#608dbe",
                                            "y xmap x" = "#ed795b"),
-                                labels = c(paste0(x$varname[2], " causes ", x$varname[1]),
-                                           paste0(x$varname[1], " causes ", x$varname[2])),
+                                labels = legend_labels,
                                 name = "") +
     ggplot2::theme_bw() +
     ggplot2::theme(axis.text = ggplot2::element_text(family = family),
