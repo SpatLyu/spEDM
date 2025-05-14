@@ -50,13 +50,13 @@
  * - pred: A vector of indices specifying which elements to compute the spatial Granger causality.
  * - k: Number of discrete bins used for symbolization or KDE estimation.
  * - base: Logarithm base for entropy (default = 2, for bits).
- * - symbolize: Whether to apply discretization for symbolic entropy (default = true).
+ * - symbolize: Whether to apply symbolication for symbolic entropy (default = true).
  * - normalize: Whether to normalize causality values to the range [-1, 1] (default = false).
  *
  * Returns:
  *   A `std::vector<double>` of size 2:
- *     - [0] Spatial granger causality from `x` to `y`.
- *     - [1] Spatial granger causality from `y` to `x`.
+ *     - [0] Estimated spatial granger causality from x to y
+ *     - [1] Estimated spatial granger causality from y to x
  *   If `normalize = true`, both values are scaled to the range [-1, 1].
  */
 std::vector<double> SGCSingle4Lattice(

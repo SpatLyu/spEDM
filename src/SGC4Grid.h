@@ -44,8 +44,8 @@
  * @param normalize Whether to normalize the causality scores to lie within [-1, 1] (default is false).
  *
  * @return A std::vector<double> of two values:
- *         - sc_x_to_y: spatial Granger causality from X to Y (normalized if specified).
- *         - sc_y_to_x: spatial Granger causality from Y to X (normalized if specified).
+ *         - sc_x_to_y: Estimated spatial granger causality from x to y (normalized if specified).
+ *         - sc_y_to_x: Estimated spatial granger causality from y to x (normalized if specified).
  */
 std::vector<double> SGCSingle4Grid(
     const std::vector<std::vector<double>>& x,
