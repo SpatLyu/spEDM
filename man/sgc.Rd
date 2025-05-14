@@ -66,7 +66,7 @@
 
 \item{threads}{(optional) Number of threads.}
 
-\item{trend.rm}{(optional) .}
+\item{trend.rm}{(optional) Whether to remove the linear trend.}
 
 \item{normalize}{(optional) Whether to normalize the result.}
 
