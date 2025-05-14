@@ -10,6 +10,8 @@
 
 ### enhancements
 
+* Enable legend style toggle (`xmap` vs `causes`) in `gccm` S4 generic (#534).
+
 * Reduce computational load in vignettes (#476).
 
 * Document overall structure and usage of spEDM in a dedicated vignette (#415).
