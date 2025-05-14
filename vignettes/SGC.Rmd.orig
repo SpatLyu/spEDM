@@ -1,10 +1,10 @@
 ---
-title: "Spatial (Granger) Causality Test (SCT)"
+title: "Spatial Granger Causality Test (SGC)"
 author: "Wenbo Lv"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{SCT}
+  %\VignetteIndexEntry{SGC}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -13,7 +13,7 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "##",
-  fig.path = "man/figures/sct/"
+  fig.path = "man/figures/sgc/"
 )
 ```
 
@@ -70,17 +70,17 @@ columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 columbus
 ```
 
-Use SCT to detect spatial causality among the variables *inc*, *crime*, and *hoval* :
+Use spatial granger causality test to detect spatial causality among the variables *inc*, *crime*, and *hoval* :
 
 ```{r case_lattice}
 # house value and crime
-sc.test(columbus, "hoval", "crime", k = 15)
+sgc(columbus, "hoval", "crime", k = 15)
 
 # household income and crime
-sc.test(columbus, "inc", "crime", k = 15)
+sgc(columbus, "inc", "crime", k = 15)
 
 # household income and house value
-sc.test(columbus, "inc", "hoval", k = 15)
+sgc(columbus, "inc", "hoval", k = 15)
 ```
 
 ### An example of spatial grid data
@@ -96,15 +96,15 @@ npp = terra::aggregate(npp, fact = 3, na.rm = TRUE)
 npp
 ```
 
-Use SCT to detect spatial causality among the variables *pre*, *tem*, and *npp* :
+Use spatial granger causality test to detect spatial causality among the variables *pre*, *tem*, and *npp* :
 
 ```{r case_grid}
 # precipitation and npp
-sc.test(npp,"pre","npp",k = 30)
+sgc(npp,"pre","npp",k = 30)
 
 # temperature and npp
-sc.test(npp,"tem","npp",k = 30)
+sgc(npp,"tem","npp",k = 30)
 
 # precipitation and temperature
-sc.test(npp,"pre","tem",k = 30)
+sgc(npp,"pre","tem",k = 30)
 ```
