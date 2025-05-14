@@ -68,7 +68,7 @@
 
 \item{symbolize}{(optional) Whether to apply the symbolic map process.}
 
-\item{normalize}{(optional) Whether to normalize the result to \verb{[-1, 1]}.}
+\item{normalize}{(optional) Whether to normalize the result.}
 
 \item{progressbar}{(optional) Whether to show the progress bar.}
 }
