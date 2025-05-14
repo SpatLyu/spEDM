@@ -13,7 +13,7 @@ methods::setGeneric("sgc", function(data, ...) standardGeneric("sgc"))
 }
 
 .sgc_spatraster_method = \(data, cause, effect, k, block = 3, boot = 399, seed = 42, base = 2, lib = NULL, pred = NULL,
-                           threads = detectThreads(),symbolize = TRUE,normalize = FALSE,progressbar = FALSE){
+                           threads = detectThreads(), symbolize = TRUE, normalize = FALSE, progressbar = FALSE){
   varname = .check_character(cause, effect)
   cause = .uni_grid(data,cause,FALSE)
   effect = .uni_grid(data,effect,FALSE)
