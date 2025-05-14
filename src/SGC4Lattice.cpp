@@ -171,12 +171,11 @@ std::vector<double> SGCSingle4Lattice(
  * @param normalize   Whether to normalize entropy values (optional, default: false).
  * @param progressbar Whether to display a progress bar during bootstrapping (default: true).
  *
- * ## Returns:
- * A std::vector<double> of length 4:
- * - [0] Observed spatial granger causality from x to y (sc_x_to_y).
- * - [1] Empirical p-value for x → y based on bootstrap distribution.
- * - [2] Observed spatial granger causality from y to x (sc_y_to_x).
- * - [3] Empirical p-value for y → x based on bootstrap distribution.
+ * @return A vector of four values:
+ *         - sc_x_to_y: Estimated spatial granger causality from x to y.
+ *         - p_x_to_y: Empirical p-value for x → y based on bootstrap distribution.
+ *         - sc_y_to_x: Estimated spatial granger causality from y to x.
+ *         - p_y_to_x: Empirical p-value for y → x based on bootstrap distribution.
  */
 std::vector<double> SGC4Lattice(
     const std::vector<double>& x,

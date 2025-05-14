@@ -96,10 +96,10 @@ std::vector<double> SGCSingle4Grid(
  * @param progressbar Whether to show a progress bar during bootstrap computation (default: true).
  *
  * @return A vector of four values:
- *         - sc_x_to_y: Estimated causality from X to Y.
- *         - p_x_to_y: Bootstrap p-value for X → Y.
- *         - sc_y_to_x: Estimated causality from Y to X.
- *         - p_y_to_x: Bootstrap p-value for Y → X.
+ *         - sc_x_to_y: Estimated spatial granger causality from x to y.
+ *         - p_x_to_y: Empirical p-value for x → y based on bootstrap distribution.
+ *         - sc_y_to_x: Estimated spatial granger causality from y to x.
+ *         - p_y_to_x: Empirical p-value for y → x based on bootstrap distribution.
  */
 std::vector<double> SGC4Grid(
     const std::vector<std::vector<double>>& x,
