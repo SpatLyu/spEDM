@@ -7,10 +7,10 @@
 // [[Rcpp::depends(RcppThread)]]
 
 /**
- * @brief Computes directional spatial Granger causality between two spatial variables
+ * @brief Computes directional spatial granger causality between two spatial variables
  * on a spatial lattice using spatial neighbor embeddings and quantized entropy measures.
  *
- * This function quantifies the asymmetric spatial Granger causality between two
+ * This function quantifies the asymmetric spatial granger causality between two
  * spatial variables `x` and `y`, both defined over a spatial lattice structure.
  * It adopts an information-theoretic framework based on symbolic (or continuous)
  * entropy estimation, incorporating spatial embedding through neighboring structures.
@@ -54,11 +54,11 @@
  *
  * Returns:
  *   A `std::vector<double>` of size 2:
- *     - [0] Spatial Granger causality from `x` to `y`.
- *     - [1] Spatial Granger causality from `y` to `x`.
+ *     - [0] Spatial granger causality from `x` to `y`.
+ *     - [1] Spatial granger causality from `y` to `x`.
  *   If `normalize = true`, both values are scaled to the range [-1, 1].
  */
-std::vector<double> SCTSingle4Lattice(
+std::vector<double> SGCSingle4Lattice(
     const std::vector<double>& x,
     const std::vector<double>& y,
     const std::vector<std::vector<int>>& nb,
@@ -134,9 +134,9 @@ std::vector<double> SCTSingle4Lattice(
 }
 
 /**
- * @brief Compute spatial Granger causality for lattice data using spatial block bootstrap.
+ * @brief Compute spatial granger causality for lattice data using spatial block bootstrap.
  *
- * This function estimates the directional spatial Granger causality between two lattice variables `x` and `y`,
+ * This function estimates the directional spatial granger causality between two lattice variables `x` and `y`,
  * by applying a symbolic entropy-based method, and assesses the statistical significance of the causality using
  * spatial block bootstrap techniques. It calculates the causality in both directions: X → Y and Y → X.
  * Additionally, the function evaluates the significance of the estimated causality statistics by comparing them
@@ -173,12 +173,12 @@ std::vector<double> SCTSingle4Lattice(
  *
  * ## Returns:
  * A std::vector<double> of length 4:
- * - [0] Observed symbolic causality from x to y (sc_x_to_y).
+ * - [0] Observed spatial granger causality from x to y (sc_x_to_y).
  * - [1] Empirical p-value for x → y based on bootstrap distribution.
- * - [2] Observed symbolic causality from y to x (sc_y_to_x).
+ * - [2] Observed spatial granger causality from y to x (sc_y_to_x).
  * - [3] Empirical p-value for y → x based on bootstrap distribution.
  */
-std::vector<double> SCT4Lattice(
+std::vector<double> SGC4Lattice(
     const std::vector<double>& x,
     const std::vector<double>& y,
     const std::vector<std::vector<int>>& nb,
@@ -210,7 +210,7 @@ std::vector<double> SCT4Lattice(
       y_boot[i] = y[boot_indice[i]];
     }
     // Estimate the bootstrapped realization of the spatial granger causality statistic
-    sc_bootstraps[n] = SCTSingle4Lattice(x_boot,y_boot,nb,lib,pred,static_cast<size_t>(std::abs(k)),base,symbolize,normalize);
+    sc_bootstraps[n] = SGCSingle4Lattice(x_boot,y_boot,nb,lib,pred,static_cast<size_t>(std::abs(k)),base,symbolize,normalize);
   };
 
   // Configure threads
@@ -231,7 +231,7 @@ std::vector<double> SCT4Lattice(
   }
 
   // The "true" spatial granger causality statistic
-  std::vector<double> sc = SCTSingle4Lattice(x,y,nb,lib,pred,static_cast<size_t>(std::abs(k)),base,symbolize,normalize);
+  std::vector<double> sc = SGCSingle4Lattice(x,y,nb,lib,pred,static_cast<size_t>(std::abs(k)),base,symbolize,normalize);
   double scx = sc[0];
   double scy = sc[1];
   // Compute the estimated bootstrap p–value
