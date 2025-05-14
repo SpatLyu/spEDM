@@ -53,7 +53,6 @@ $$
 
 where $\exp$ is the exponential function and $dis \left(\ast,\ast\right)$ represents the distance function between two states in the shadow manifold defined as:
 
-
 $$
 dis \left( \psi(M_x, s_i), \psi(M_x, s) \right) = \frac{1}{E} \sum_{m=1}^{E} \left| \psi_m(M_x, s_i) - \psi_m(M_x, s) \right|
 $$
