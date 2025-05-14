@@ -38,7 +38,7 @@ methods::setGeneric("sgc", function(data, ...) standardGeneric("sgc"))
 #' @param nb (optional) The neighbours list.
 #' @param threads (optional) Number of threads.
 #' @param symbolize (optional) Whether to apply the symbolic map process.
-#' @param normalize (optional) Whether to normalize the result to `[-1, 1]`.
+#' @param normalize (optional) Whether to normalize the result.
 #' @param progressbar (optional) Whether to show the progress bar.
 #'
 #' @return A list
