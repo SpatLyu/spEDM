@@ -10,7 +10,7 @@
 #include "SCPCM4Lattice.h"
 #include "CrossMappingCardinality.h"
 #include "FalseNearestNeighbors.h"
-#include "SCT4Lattice.h"
+#include "SGC4Lattice.h"
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
 
@@ -845,9 +845,9 @@ Rcpp::NumericMatrix RcppGCMC4Lattice(
   return resultMatrix;
 }
 
-// Wrapper function to perform SCT for spatial lattice data without bootstrapped significance
+// Wrapper function to perform SGC for spatial lattice data without bootstrapped significance
 // [[Rcpp::export]]
-Rcpp::NumericVector RcppSCTSingle4Lattice(const Rcpp::NumericVector& x,
+Rcpp::NumericVector RcppSGCSingle4Lattice(const Rcpp::NumericVector& x,
                                           const Rcpp::NumericVector& y,
                                           const Rcpp::List& nb,
                                           const Rcpp::IntegerVector& lib,
@@ -882,8 +882,8 @@ Rcpp::NumericVector RcppSCTSingle4Lattice(const Rcpp::NumericVector& x,
     pred_std[i] -= 1;
   }
 
-  // Perform SCT for spatial lattice data
-  std::vector<double> sc = SCTSingle4Lattice(
+  // Perform SGC for spatial lattice data
+  std::vector<double> sc = SGCSingle4Lattice(
     x_std,
     y_std,
     nb_vec,
@@ -905,9 +905,9 @@ Rcpp::NumericVector RcppSCTSingle4Lattice(const Rcpp::NumericVector& x,
   return sc_res;
 }
 
-// Wrapper function to perform SCT for spatial lattice data
+// Wrapper function to perform SGC for spatial lattice data
 // [[Rcpp::export]]
-Rcpp::NumericVector RcppSCT4Lattice(const Rcpp::NumericVector& x,
+Rcpp::NumericVector RcppSGC4Lattice(const Rcpp::NumericVector& x,
                                     const Rcpp::NumericVector& y,
                                     const Rcpp::List& nb,
                                     const Rcpp::IntegerVector& lib,
@@ -948,8 +948,8 @@ Rcpp::NumericVector RcppSCT4Lattice(const Rcpp::NumericVector& x,
     pred_std[i] -= 1;
   }
 
-  // Perform SCT for spatial lattice data
-  std::vector<double> sc = SCT4Lattice(
+  // Perform SGC for spatial lattice data
+  std::vector<double> sc = SGC4Lattice(
     x_std,
     y_std,
     nb_vec,

@@ -399,9 +399,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// RcppSCTSingle4Grid
-Rcpp::NumericVector RcppSCTSingle4Grid(const Rcpp::NumericMatrix& x, const Rcpp::NumericMatrix& y, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, int k, double base, bool symbolize, bool normalize);
-RcppExport SEXP _spEDM_RcppSCTSingle4Grid(SEXP xSEXP, SEXP ySEXP, SEXP libSEXP, SEXP predSEXP, SEXP kSEXP, SEXP baseSEXP, SEXP symbolizeSEXP, SEXP normalizeSEXP) {
+// RcppSGCSingle4Grid
+Rcpp::NumericVector RcppSGCSingle4Grid(const Rcpp::NumericMatrix& x, const Rcpp::NumericMatrix& y, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, int k, double base, bool symbolize, bool normalize);
+RcppExport SEXP _spEDM_RcppSGCSingle4Grid(SEXP xSEXP, SEXP ySEXP, SEXP libSEXP, SEXP predSEXP, SEXP kSEXP, SEXP baseSEXP, SEXP symbolizeSEXP, SEXP normalizeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -413,13 +413,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
     Rcpp::traits::input_parameter< bool >::type symbolize(symbolizeSEXP);
     Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppSCTSingle4Grid(x, y, lib, pred, k, base, symbolize, normalize));
+    rcpp_result_gen = Rcpp::wrap(RcppSGCSingle4Grid(x, y, lib, pred, k, base, symbolize, normalize));
     return rcpp_result_gen;
 END_RCPP
 }
-// RcppSCT4Grid
-Rcpp::NumericVector RcppSCT4Grid(const Rcpp::NumericMatrix& x, const Rcpp::NumericMatrix& y, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, const Rcpp::IntegerMatrix& block, int k, int threads, int boot, double base, unsigned int seed, bool symbolize, bool normalize, bool progressbar);
-RcppExport SEXP _spEDM_RcppSCT4Grid(SEXP xSEXP, SEXP ySEXP, SEXP libSEXP, SEXP predSEXP, SEXP blockSEXP, SEXP kSEXP, SEXP threadsSEXP, SEXP bootSEXP, SEXP baseSEXP, SEXP seedSEXP, SEXP symbolizeSEXP, SEXP normalizeSEXP, SEXP progressbarSEXP) {
+// RcppSGC4Grid
+Rcpp::NumericVector RcppSGC4Grid(const Rcpp::NumericMatrix& x, const Rcpp::NumericMatrix& y, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, const Rcpp::IntegerMatrix& block, int k, int threads, int boot, double base, unsigned int seed, bool symbolize, bool normalize, bool progressbar);
+RcppExport SEXP _spEDM_RcppSGC4Grid(SEXP xSEXP, SEXP ySEXP, SEXP libSEXP, SEXP predSEXP, SEXP blockSEXP, SEXP kSEXP, SEXP threadsSEXP, SEXP bootSEXP, SEXP baseSEXP, SEXP seedSEXP, SEXP symbolizeSEXP, SEXP normalizeSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -436,7 +436,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type symbolize(symbolizeSEXP);
     Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
     Rcpp::traits::input_parameter< bool >::type progressbar(progressbarSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppSCT4Grid(x, y, lib, pred, block, k, threads, boot, base, seed, symbolize, normalize, progressbar));
+    rcpp_result_gen = Rcpp::wrap(RcppSGC4Grid(x, y, lib, pred, block, k, threads, boot, base, seed, symbolize, normalize, progressbar));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -712,9 +712,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// RcppSCTSingle4Lattice
-Rcpp::NumericVector RcppSCTSingle4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, int k, double base, bool symbolize, bool normalize);
-RcppExport SEXP _spEDM_RcppSCTSingle4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP libSEXP, SEXP predSEXP, SEXP kSEXP, SEXP baseSEXP, SEXP symbolizeSEXP, SEXP normalizeSEXP) {
+// RcppSGCSingle4Lattice
+Rcpp::NumericVector RcppSGCSingle4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, int k, double base, bool symbolize, bool normalize);
+RcppExport SEXP _spEDM_RcppSGCSingle4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP libSEXP, SEXP predSEXP, SEXP kSEXP, SEXP baseSEXP, SEXP symbolizeSEXP, SEXP normalizeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -727,13 +727,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
     Rcpp::traits::input_parameter< bool >::type symbolize(symbolizeSEXP);
     Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppSCTSingle4Lattice(x, y, nb, lib, pred, k, base, symbolize, normalize));
+    rcpp_result_gen = Rcpp::wrap(RcppSGCSingle4Lattice(x, y, nb, lib, pred, k, base, symbolize, normalize));
     return rcpp_result_gen;
 END_RCPP
 }
-// RcppSCT4Lattice
-Rcpp::NumericVector RcppSCT4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& block, int k, int threads, int boot, double base, unsigned int seed, bool symbolize, bool normalize, bool progressbar);
-RcppExport SEXP _spEDM_RcppSCT4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP libSEXP, SEXP predSEXP, SEXP blockSEXP, SEXP kSEXP, SEXP threadsSEXP, SEXP bootSEXP, SEXP baseSEXP, SEXP seedSEXP, SEXP symbolizeSEXP, SEXP normalizeSEXP, SEXP progressbarSEXP) {
+// RcppSGC4Lattice
+Rcpp::NumericVector RcppSGC4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& block, int k, int threads, int boot, double base, unsigned int seed, bool symbolize, bool normalize, bool progressbar);
+RcppExport SEXP _spEDM_RcppSGC4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP libSEXP, SEXP predSEXP, SEXP blockSEXP, SEXP kSEXP, SEXP threadsSEXP, SEXP bootSEXP, SEXP baseSEXP, SEXP seedSEXP, SEXP symbolizeSEXP, SEXP normalizeSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -751,7 +751,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type symbolize(symbolizeSEXP);
     Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
     Rcpp::traits::input_parameter< bool >::type progressbar(progressbarSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppSCT4Lattice(x, y, nb, lib, pred, block, k, threads, boot, base, seed, symbolize, normalize, progressbar));
+    rcpp_result_gen = Rcpp::wrap(RcppSGC4Lattice(x, y, nb, lib, pred, block, k, threads, boot, base, seed, symbolize, normalize, progressbar));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1241,8 +1241,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppGCCM4Grid", (DL_FUNC) &_spEDM_RcppGCCM4Grid, 13},
     {"_spEDM_RcppSCPCM4Grid", (DL_FUNC) &_spEDM_RcppSCPCM4Grid, 15},
     {"_spEDM_RcppGCMC4Grid", (DL_FUNC) &_spEDM_RcppGCMC4Grid, 10},
-    {"_spEDM_RcppSCTSingle4Grid", (DL_FUNC) &_spEDM_RcppSCTSingle4Grid, 8},
-    {"_spEDM_RcppSCT4Grid", (DL_FUNC) &_spEDM_RcppSCT4Grid, 13},
+    {"_spEDM_RcppSGCSingle4Grid", (DL_FUNC) &_spEDM_RcppSGCSingle4Grid, 8},
+    {"_spEDM_RcppSGC4Grid", (DL_FUNC) &_spEDM_RcppSGC4Grid, 13},
     {"_spEDM_DetectMaxNumThreads", (DL_FUNC) &_spEDM_DetectMaxNumThreads, 0},
     {"_spEDM_OptEmbedDim", (DL_FUNC) &_spEDM_OptEmbedDim, 1},
     {"_spEDM_OptThetaParm", (DL_FUNC) &_spEDM_OptThetaParm, 1},
@@ -1260,8 +1260,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppGCCM4Lattice", (DL_FUNC) &_spEDM_RcppGCCM4Lattice, 14},
     {"_spEDM_RcppSCPCM4Lattice", (DL_FUNC) &_spEDM_RcppSCPCM4Lattice, 16},
     {"_spEDM_RcppGCMC4Lattice", (DL_FUNC) &_spEDM_RcppGCMC4Lattice, 11},
-    {"_spEDM_RcppSCTSingle4Lattice", (DL_FUNC) &_spEDM_RcppSCTSingle4Lattice, 9},
-    {"_spEDM_RcppSCT4Lattice", (DL_FUNC) &_spEDM_RcppSCT4Lattice, 14},
+    {"_spEDM_RcppSGCSingle4Lattice", (DL_FUNC) &_spEDM_RcppSGCSingle4Lattice, 9},
+    {"_spEDM_RcppSGC4Lattice", (DL_FUNC) &_spEDM_RcppSGC4Lattice, 14},
     {"_spEDM_RcppFactorial", (DL_FUNC) &_spEDM_RcppFactorial, 1},
     {"_spEDM_RcppCombine", (DL_FUNC) &_spEDM_RcppCombine, 2},
     {"_spEDM_RcppCombn", (DL_FUNC) &_spEDM_RcppCombn, 2},

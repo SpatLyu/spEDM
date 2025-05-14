@@ -7,9 +7,9 @@
 // [[Rcpp::depends(RcppThread)]]
 
 /**
- * @brief Compute directional spatial Granger causality for 2D grid data using symbolic entropy measures.
+ * @brief Compute directional spatial granger causality for 2D grid data using symbolic entropy measures.
  *
- * This function estimates the bidirectional spatial Granger causality between two spatial variables
+ * This function estimates the bidirectional spatial granger causality between two spatial variables
  * `x` and `y` observed on a 2D lattice/grid. It is based on a symbolic approximation of spatial transfer entropy,
  * which evaluates whether the spatial neighborhood of one variable improves the predictive information of the other.
  *
@@ -18,7 +18,7 @@
  * - **Spatial embedding construction**: Generate spatial lag vectors (`wx` and `wy`) for both variables using a neighborhood window.
  * - **Optional symbolization**: Convert raw values into discrete symbols to enhance robustness in the presence of spatial autocorrelation.
  * - **Entropy computation**: Estimate joint and marginal entropies of the original variables and their spatial embeddings.
- * - **Directional causality estimation**: Compute Granger-like causal influence based on the information gain from adding the other variable's lag:
+ * - **Directional causality estimation**: Compute granger-like causal influence based on the information gain from adding the other variable's lag:
  *
  *   - Causality from X to Y:
  *     \f[
@@ -35,8 +35,8 @@
  *
  * @param x         2D grid (matrix) representing variable X.
  * @param y         2D grid (matrix) representing variable Y.
- * @param lib            A vector of pairs representing the indices (row, column) of spatial units to be the library.
- * @param pred           A vector of pairs representing the indices (row, column) of spatial units to be predicted.
+ * @param lib       A vector of pairs representing the indices (row, column) of spatial units to be the library.
+ * @param pred      A vector of pairs representing the indices (row, column) of spatial units to be predicted.
  * @param k         Embedding neighborhood radius (e.g., k = 1 means 3×3 window).
  * @param base      Logarithm base used in entropy computation (default is 2, for bits).
  * @param symbolize Whether to discretize the data via symbolic transformation before entropy computation.
@@ -46,7 +46,7 @@
  *         - sc_x_to_y: spatial Granger causality from X to Y (normalized if specified).
  *         - sc_y_to_x: spatial Granger causality from Y to X (normalized if specified).
  */
-std::vector<double> SCTSingle4Grid(
+std::vector<double> SGCSingle4Grid(
     const std::vector<std::vector<double>>& x,
     const std::vector<std::vector<double>>& y,
     const std::vector<std::pair<int, int>>& lib,
@@ -128,9 +128,9 @@ std::vector<double> SCTSingle4Grid(
 }
 
 /**
- * @brief Compute spatial Granger causality for gridded data using spatial block bootstrap.
+ * @brief Compute spatial granger causality for gridded data using spatial block bootstrap.
  *
- * This function estimates the directional spatial Granger causality between two gridded variables `x` and `y`,
+ * This function estimates the directional spatial granger causality between two gridded variables `x` and `y`,
  * by applying a symbolic entropy-based method, and assesses the statistical significance of the causality using
  * spatial block bootstrap techniques. It calculates the causality in both directions: X → Y and Y → X.
  * Additionally, the function evaluates the significance of the estimated causality statistics by comparing them
@@ -152,8 +152,8 @@ std::vector<double> SCTSingle4Grid(
  *
  * @param x           2D grid (matrix) of variable X.
  * @param y           2D grid (matrix) of variable Y, same size as x.
- * @param lib            A vector of pairs representing the indices (row, column) of spatial units to be the library.
- * @param pred           A vector of pairs representing the indices (row, column) of spatial units to be predicted.
+ * @param lib         A vector of pairs representing the indices (row, column) of spatial units to be the library.
+ * @param pred        A vector of pairs representing the indices (row, column) of spatial units to be predicted.
  * @param block       Vector assigning each grid cell to a spatial block for bootstrapping.
  * @param k           Neighborhood window size used for symbolization (typically 3 or 5).
  * @param threads     Number of threads to use for parallel bootstrap estimation.
@@ -170,7 +170,7 @@ std::vector<double> SCTSingle4Grid(
  *         - sc_y_to_x: Estimated causality from Y to X.
  *         - p_y_to_x: Bootstrap p-value for Y → X.
  */
-std::vector<double> SCT4Grid(
+std::vector<double> SGC4Grid(
     const std::vector<std::vector<double>>& x,
     const std::vector<std::vector<double>>& y,
     const std::vector<std::pair<int, int>>& lib,
@@ -206,7 +206,7 @@ std::vector<double> SCT4Grid(
     std::vector<std::vector<double>> x_boot = GridVec2Mat(x_bs,static_cast<int>(rows));
     std::vector<std::vector<double>> y_boot = GridVec2Mat(y_bs,static_cast<int>(rows));
     // Estimate the bootstrapped realization of the spatial granger causality statistic
-    sc_bootstraps[n] = SCTSingle4Grid(x_boot,y_boot,lib,pred,static_cast<size_t>(std::abs(k)),base,symbolize,normalize);
+    sc_bootstraps[n] = SGCSingle4Grid(x_boot,y_boot,lib,pred,static_cast<size_t>(std::abs(k)),base,symbolize,normalize);
   };
 
   // Configure threads
@@ -227,7 +227,7 @@ std::vector<double> SCT4Grid(
   }
 
   // The "true" spatial granger causality statistic
-  std::vector<double> sc = SCTSingle4Grid(x,y,lib,pred,static_cast<size_t>(std::abs(k)),base,symbolize,normalize);
+  std::vector<double> sc = SGCSingle4Grid(x,y,lib,pred,static_cast<size_t>(std::abs(k)),base,symbolize,normalize);
   double scx = sc[0];
   double scy = sc[1];
   // Compute the estimated bootstrap p–value

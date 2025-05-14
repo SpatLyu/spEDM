@@ -10,7 +10,7 @@
 #include "SCPCM4Grid.h"
 #include "CrossMappingCardinality.h"
 #include "FalseNearestNeighbors.h"
-#include "SCT4Grid.h"
+#include "SGC4Grid.h"
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
 
@@ -1051,9 +1051,9 @@ Rcpp::NumericMatrix RcppGCMC4Grid(
   return resultMatrix;
 }
 
-// Wrapper function to perform SCT for spatial grid data without bootstrapped significance
+// Wrapper function to perform SGC for spatial grid data without bootstrapped significance
 // [[Rcpp::export]]
-Rcpp::NumericVector RcppSCTSingle4Grid(const Rcpp::NumericMatrix& x,
+Rcpp::NumericVector RcppSGCSingle4Grid(const Rcpp::NumericMatrix& x,
                                        const Rcpp::NumericMatrix& y,
                                        const Rcpp::IntegerMatrix& lib,
                                        const Rcpp::IntegerMatrix& pred,
@@ -1108,8 +1108,8 @@ Rcpp::NumericVector RcppSCTSingle4Grid(const Rcpp::NumericMatrix& x,
     }
   }
 
-  // Perform SCT for spatial grid data
-  std::vector<double> sc = SCTSingle4Grid(
+  // Perform SGC for spatial grid data
+  std::vector<double> sc = SGCSingle4Grid(
     xmat,
     ymat,
     lib_std,
@@ -1131,9 +1131,9 @@ Rcpp::NumericVector RcppSCTSingle4Grid(const Rcpp::NumericMatrix& x,
 }
 
 
-// Wrapper function to perform SCT for spatial grid data
+// Wrapper function to perform SGC for spatial grid data
 // [[Rcpp::export]]
-Rcpp::NumericVector RcppSCT4Grid(const Rcpp::NumericMatrix& x,
+Rcpp::NumericVector RcppSGC4Grid(const Rcpp::NumericMatrix& x,
                                  const Rcpp::NumericMatrix& y,
                                  const Rcpp::IntegerMatrix& lib,
                                  const Rcpp::IntegerMatrix& pred,
@@ -1209,8 +1209,8 @@ Rcpp::NumericVector RcppSCT4Grid(const Rcpp::NumericMatrix& x,
       }
   }
 
-  // Perform SCT for spatial grid data
-  std::vector<double> sc = SCT4Grid(
+  // Perform SGC for spatial grid data
+  std::vector<double> sc = SGC4Grid(
     xmat,
     ymat,
     lib_std,
