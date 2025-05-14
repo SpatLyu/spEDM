@@ -37,7 +37,7 @@ methods::setGeneric("sgc", function(data, ...) standardGeneric("sgc"))
 #' @param pred (optional) Predictions indices.
 #' @param nb (optional) The neighbours list.
 #' @param threads (optional) Number of threads.
-#' @param trend.rm (optional) Whether to remove the linear trend.
+#' @param trend.rm (optional) .
 #' @param normalize (optional) Whether to normalize the result.
 #' @param progressbar (optional) Whether to show the progress bar.
 #'
