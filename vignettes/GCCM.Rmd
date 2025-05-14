@@ -1,7 +1,7 @@
 ---
 title: "Geographical Convergent Cross Mapping (GCCM)"
 author: "Wenbo Lv"
-date: "2025-05-12"
+date: "2025-05-16"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{GCCM}
@@ -46,7 +46,6 @@ weight \left(\psi\left(M_x,s_i\right),\psi\left(M_x,s\right)\right) =
 $$
 
 where $\exp$ is the exponential function and $dis \left(\ast,\ast\right)$ represents the distance function between two states in the shadow manifold defined as:
-
 
 $$
 dis \left( \psi(M_x, s_i), \psi(M_x, s) \right) = \frac{1}{E} \sum_{m=1}^{E} \left| \psi_m(M_x, s_i) - \psi_m(M_x, s) \right|
@@ -122,23 +121,7 @@ popd_sf
 ## # ℹ 2,796 more rows
 ```
 
-Select the appropriate embedding dimension E:
-
-
-``` r
-simplex(popd_sf,"pre",lib = 1:2000,pred = 2001:nrow(popd_sf),k = 6,nb = popd_nb,trend.rm = TRUE)
-## The suggested E and k for variable pre is 2 and 6
-```
-
-
-``` r
-simplex(popd_sf,"popd",lib = 1:2000,pred = 2001:nrow(popd_sf),k = 6,nb = popd_nb,trend.rm = TRUE)
-## The suggested E and k for variable popd is 5 and 6
-```
-
-We choose the E with the highest rho and the lowest MAE and RMSE as the most suitable one. Under the selected lib and pred, the optimal embedding dimension E for the variable `pre` is 2, and for the variable `popdensity`, it is 5.
-
-Then, run GCCM:
+Run GCCM:
 
 
 ``` r
@@ -153,7 +136,7 @@ pd_res = gccm(data = popd_sf,
               progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 2.967593 mins
+## Time difference of 2.983497 mins
 pd_res
 ##    libsizes pre->popd  popd->pre
 ## 1       100 0.1712430 0.03310752
@@ -237,23 +220,7 @@ libindice = nnaindice[-indices,]
 predindice = nnaindice[indices,]
 ```
 
-Due to the high number of NA values in the npp raster data, we used all non-NA cell as the libraries when testing for the most suitable embedding dimensions.
-
-
-``` r
-simplex(npp,"pre",nnaindice,predindice,k = 8,trend.rm = TRUE)
-## The suggested E and k for variable pre is 2 and 8
-```
-
-
-``` r
-simplex(npp,"npp",nnaindice,predindice,k = 8,trend.rm = TRUE)
-## The suggested E and k for variable npp is 10 and 8
-```
-
-Under the selected lib and pred, the optimal embedding dimension E for the variable `pre` is 2, and for the variable `npp`, it is 10.
-
-Then, run GCCM:
+Run GCCM:
 
 
 ``` r
@@ -269,7 +236,7 @@ npp_res = gccm(data = npp,
                progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 4.998299 mins
+## Time difference of 5.021404 mins
 npp_res
 ##   libsizes  pre->npp  npp->pre
 ## 1       10 0.1295281 0.1013898
