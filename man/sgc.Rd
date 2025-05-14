@@ -19,7 +19,7 @@
   pred = NULL,
   nb = NULL,
   threads = detectThreads(),
-  symbolize = TRUE,
+  trend.rm = TRUE,
   normalize = FALSE,
   progressbar = FALSE
 )
@@ -36,7 +36,7 @@
   lib = NULL,
   pred = NULL,
   threads = detectThreads(),
-  symbolize = TRUE,
+  trend.rm = TRUE,
   normalize = FALSE,
   progressbar = FALSE
 )
@@ -66,7 +66,7 @@
 
 \item{threads}{(optional) Number of threads.}
 
-\item{symbolize}{(optional) Whether to apply the symbolic map process.}
+\item{trend.rm}{(optional) Whether to remove the linear trend.}
 
 \item{normalize}{(optional) Whether to normalize the result.}
 
