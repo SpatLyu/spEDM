@@ -10,7 +10,7 @@
 
 ### enhancements
 
-* Enable legend style toggle (`xmap` vs `causes`) in `gccm` S4 generic (#534).
+* Enable legend style toggle (`xmap` vs `causes`) in `gccm` s4 generic (#534).
 
 * Reduce computational load in vignettes (#476).
 
