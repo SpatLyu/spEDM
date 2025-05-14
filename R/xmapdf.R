@@ -58,8 +58,8 @@
   return(res)
 }
 
-.bind_sct = \(sc,varname,...){
+.bind_sc = \(sc,varname,...){
   res = list("sc" = sc,"varname" = varname)
-  class(res) = "sct"
+  class(res) = "sc_res"
   return(res)
 }

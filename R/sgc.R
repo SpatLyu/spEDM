@@ -1,6 +1,6 @@
-methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
+methods::setGeneric("sgc", function(data, ...) standardGeneric("sgc"))
 
-.sct_sf_method = \(data, cause, effect, k, block = 3, boot = 399, seed = 42, base = 2, lib = NULL, pred = NULL,
+.sgc_sf_method = \(data, cause, effect, k, block = 3, boot = 399, seed = 42, base = 2, lib = NULL, pred = NULL,
                    nb = NULL, threads = detectThreads(), symbolize = TRUE, normalize = FALSE, progressbar = FALSE){
   varname = .check_character(cause, effect)
   if (is.null(nb)) nb = .internal_lattice_nb(data)
@@ -9,10 +9,10 @@ methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
   effect = .uni_lattice(data,effect,FALSE)
   if (is.null(lib)) lib = which(!(is.na(cause) | is.na(effect)))
   if (is.null(pred)) pred = lib
-  return(.bind_sct(RcppSCT4Lattice(cause,effect,nb,lib,pred,block,k,threads,boot,base,seed,symbolize,normalize,progressbar),varname))
+  return(.bind_sc(RcppSGC4Lattice(cause,effect,nb,lib,pred,block,k,threads,boot,base,seed,symbolize,normalize,progressbar),varname))
 }
 
-.sct_spatraster_method = \(data, cause, effect, k, block = 3, boot = 399, seed = 42, base = 2, lib = NULL, pred = NULL,
+.sgc_spatraster_method = \(data, cause, effect, k, block = 3, boot = 399, seed = 42, base = 2, lib = NULL, pred = NULL,
                            threads = detectThreads(),symbolize = TRUE,normalize = FALSE,progressbar = FALSE){
   varname = .check_character(cause, effect)
   cause = .uni_grid(data,cause,FALSE)
@@ -20,10 +20,10 @@ methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
   block = matrix(RcppDivideGrid(effect,block),ncol = 1)
   if (is.null(lib)) lib = which(!(is.na(cause) | is.na(effect)), arr.ind = TRUE)
   if (is.null(pred)) pred = lib
-  return(.bind_sct(RcppSCT4Grid(cause,effect,lib,pred,block,k,threads,boot,base,seed,symbolize,normalize,progressbar),varname))
+  return(.bind_sc(RcppSGC4Grid(cause,effect,lib,pred,block,k,threads,boot,base,seed,symbolize,normalize,progressbar),varname))
 }
 
-#' spatial (granger) causality test
+#' spatial granger causality test
 #'
 #' @param data The observation data.
 #' @param cause Name of causal variable.
@@ -47,18 +47,18 @@ methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
 #' \item{\code{varname}}{names of causal and effect variable}
 #' }
 #' @export
-#' @name sc.test
-#' @rdname sc.test
-#' @aliases sc.test,sf-method
+#' @name sgc
+#' @rdname sgc
+#' @aliases sgc,sf-method
 #' @references
 #' Herrera, M., Mur, J., & Ruiz, M. (2016). Detecting causal relationships between spatial processes. Papers in Regional Science, 95(3), 577–595.
 #'
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 #' \donttest{
-#' sc.test(columbus,"hoval","crime", k = 15)
+#' sgc(columbus,"hoval","crime", k = 15)
 #' }
-methods::setMethod("sc.test", "sf", .sct_sf_method)
+methods::setMethod("sgc", "sf", .sgc_sf_method)
 
-#' @rdname sc.test
-methods::setMethod("sc.test", "SpatRaster", .sct_spatraster_method)
+#' @rdname sgc
+methods::setMethod("sgc", "SpatRaster", .sgc_spatraster_method)
