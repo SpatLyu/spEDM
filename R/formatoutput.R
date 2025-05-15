@@ -84,22 +84,22 @@ print.sc_res = \(x,...){
 #' plot ccm result
 #' @noRd
 #' @export
-plot.ccm_res = \(x, family = "serif", label = "causes",
+plot.ccm_res = \(x, family = "serif",
+                 legend_labels = NULL,
+                 legend_colors = c("#608dbe","#ed795b"),
                  xbreaks = NULL, xlimits = NULL,
                  ybreaks = seq(0, 1, by = 0.1),
                  ylimits = c(-0.05, 1), ...){
   resdf = x[[1]]
   bidirectional = x[[3]]
+
   if(is.null(xbreaks)) xbreaks = resdf$libsizes
   if(is.null(xlimits)) xlimits = c(min(xbreaks)-1,max(xbreaks)+1)
-
-  if (any(label == "xmap")) {
-    legend_labels = c(paste0(x$varname[1], " xmap ", x$varname[2]),
-                      paste0(x$varname[2], " xmap ", x$varname[1]))
-  } else {
-    legend_labels = c(paste0(x$varname[2], " causes ", x$varname[1]),
-                      paste0(x$varname[1], " causes ", x$varname[2]))
-  }
+  if (is.null(legend_labels)) legend_labels = c(paste0(x$varname[1], " xmap ", x$varname[2]),
+                                                paste0(x$varname[2], " xmap ", x$varname[1]))
+  legend_labels = .check_inputelementnum(legend_labels,2)
+  legend_colors = .check_inputelementnum(legend_colors,2)
+  names(legend_colors) = c("x xmap y","y xmap x")
 
   fig1 = ggplot2::ggplot(data = resdf,
                          ggplot2::aes(x = libsizes)) +
@@ -115,11 +115,10 @@ plot.ccm_res = \(x, family = "serif", label = "causes",
 
   fig1 = fig1 +
     ggplot2::scale_x_continuous(breaks = xbreaks, limits = xlimits,
-                                expand = c(0, 0), name = "Lib of Sizes") +
+                                expand = c(0, 0), name = "Library size") +
     ggplot2::scale_y_continuous(breaks = ybreaks, limits = ylimits,
                                 expand = c(0, 0), name = expression(rho)) +
-    ggplot2::scale_color_manual(values = c("x xmap y" = "#608dbe",
-                                           "y xmap x" = "#ed795b"),
+    ggplot2::scale_color_manual(values = legend_colors,
                                 labels = legend_labels,
                                 name = "") +
     ggplot2::theme_bw() +

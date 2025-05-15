@@ -16,7 +16,7 @@
   } else {
     res = c(x[1:2],rep(x[c(-1,-2)],length.out = condsnum))
   }
-  return(abs(res))
+  return(res)
 }
 
 .check_parallellevel = \(parallel.level){
