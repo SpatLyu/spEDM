@@ -22,7 +22,7 @@ navbar:
       - text: Geographical Cross Mapping Cardinality (GCMC)
         href: articles/GCMC.html
       - text: Spatial Causality Test (SCT)
-        href: articles/SGC.html
+        href: articles/SCT.html
 
 home:
   title: |
