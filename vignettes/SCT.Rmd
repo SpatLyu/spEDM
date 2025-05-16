@@ -1,10 +1,10 @@
 ---
-title: "Spatial Granger Causality Test (SGC)"
+title: "Spatial Causality Test (SCT)"
 author: "Wenbo Lv"
 date: "2025-05-16"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{SGC}
+  %\VignetteIndexEntry{SCT}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -84,25 +84,25 @@ columbus
 ## # ℹ 39 more rows
 ```
 
-Use spatial granger causality test to detect spatial causality among the variables *inc*, *crime*, and *hoval* :
+Detect spatial causality among the variables *inc*, *crime*, and *hoval* :
 
 
 ``` r
 # house value and crime
-sgc(columbus, "hoval", "crime", k = 15)
-## spatial granger causality test
+sc.test(columbus, "hoval", "crime", k = 15)
+## spatial causality test
 ## hoval -> crime: statistic = 1.114, p value = 0.539
 ## crime -> hoval: statistic = 1.555, p value = 0.005
 
 # household income and crime
-sgc(columbus, "inc", "crime", k = 15)
-## spatial granger causality test
+sc.test(columbus, "inc", "crime", k = 15)
+## spatial causality test
 ## inc -> crime: statistic = 0.739, p value = 0.965
 ## crime -> inc: statistic = 0.946, p value = 0.784
 
 # household income and house value
-sgc(columbus, "inc", "hoval", k = 15)
-## spatial granger causality test
+sc.test(columbus, "inc", "hoval", k = 15)
+## spatial causality test
 ## inc -> hoval: statistic = 1.211, p value = 0.301
 ## hoval -> inc: statistic = 0.992, p value = 0.674
 ```
@@ -130,25 +130,25 @@ npp
 ## max values  : 15381.89, 23734.5330, 262.8576, 5217.6431, 42.68803711
 ```
 
-Use spatial granger causality test to detect spatial causality among the variables *pre*, *tem*, and *npp* :
+Detect spatial causality among the variables *pre*, *tem*, and *npp* :
 
 
 ``` r
 # precipitation and npp
-sgc(npp,"pre","npp",k = 30)
-## spatial granger causality test
+sc.test(npp,"pre","npp",k = 30)
+## spatial causality test
 ## pre -> npp: statistic = 0.224, p value = 0
 ## npp -> pre: statistic = 0.15, p value = 0
 
 # temperature and npp
-sgc(npp,"tem","npp",k = 30)
-## spatial granger causality test
+sc.test(npp,"tem","npp",k = 30)
+## spatial causality test
 ## tem -> npp: statistic = 0.172, p value = 0
 ## npp -> tem: statistic = 0.168, p value = 0
 
 # precipitation and temperature
-sgc(npp,"pre","tem",k = 30)
-## spatial granger causality test
+sc.test(npp,"pre","tem",k = 30)
+## spatial causality test
 ## pre -> tem: statistic = 0.19, p value = 0
 ## tem -> pre: statistic = 0.145, p value = 0
 ```
