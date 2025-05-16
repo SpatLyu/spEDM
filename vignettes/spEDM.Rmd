@@ -234,6 +234,12 @@ Users can refer to several additional vignettes for more detailed examples of us
 | Geographical Cross Mapping Cardinality | [GCMC](https://stscl.github.io/spEDM/articles/GCMC.html) |
 | Spatial Causality Test |[SCT](https://stscl.github.io/spEDM/articles/SCT.html) |
 
+In addition to the spatial extensions provided by *spEDM*, several other R packages support Empirical Dynamic Modeling (EDM) for **time series data**:
+
+* **[rEDM](https://cran.r-project.org/package=rEDM)**: A foundational EDM package implementing simplex projection, S-map, and convergent cross mapping (CCM), widely used for analyzing nonlinear time series dynamics.
+* **[multispatialCCM](https://cran.r-project.org/package=multispatialCCM)**: Implements CCM for collections of short time series using bootstrapping, enabling causal inference across replicated or multi-site time series.
+* **[fastEDM](https://edm-developers.github.io/fastEDM-r/)**: A high-performance EDM package with a multi-threaded C++ backend. It supports large-scale time series analysis, handles panel data, and provides robust options for dealing with missing values using delay-tolerant algorithms or data exclusion.
+
 ## References
 
 Takens, F. (1981). Detecting strange attractors in turbulence. Dynamical Systems and Turbulence, Warwick 1980, 366–381. https://doi.org/10.1007/bfb0091924
