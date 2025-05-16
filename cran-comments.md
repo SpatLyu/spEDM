@@ -2,15 +2,13 @@
 
 0 errors | 0 warnings | 1 note
 
-* These words are correctly spelled:
-  - "Gao": a surname of a cited researcher.
-  - "granger": refers to "Granger causality", a well-established concept in econometrics.
+* "Gao" is correctly spelled: it is the surname of a cited researcher.
 
 ## This submission
 
 This release includes several new features, improvements, and bug fixes:
 
-* **New R APIs** for false nearest neighbours, spatial granger causality test, and geographical cross mapping cardinality.
+* **New R APIs** for false nearest neighbours, spatial causality test, and geographical cross mapping cardinality.
 
 * **New vignettes** covering spatial causality methods, SSR for spatial cross-sectional data, and an overview of the package structure.
 
