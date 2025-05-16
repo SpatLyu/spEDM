@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-The *spEDM* package is an open-source, computationally efficient toolkit designed to provide a unified API for **Spatial Empirical Dynamic Modeling**. It supports a suite of prediction-based causal inference algorithms, including *spatial granger causality test*, *spatial state-space reconstruction*, and *geographically convergent cross mapping*.
+The *spEDM* package is an open-source, computationally efficient toolkit designed to provide a unified API for **Spatial Empirical Dynamic Modeling**. It supports a suite of prediction-based causal inference algorithms, including *spatial (granger) causality test*, *geographically convergent cross mapping*, and *geographical cross mapping cardinality*.
 
 To support both learning and practical application, *spEDM* offers four carefully curated spatial cross-sectional datasets, each paired with a detailed example showcasing the use of key algorithms in the package.
 
