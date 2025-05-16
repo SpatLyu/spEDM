@@ -21,7 +21,7 @@ navbar:
         href: articles/GCCM.html
       - text: Geographical Cross Mapping Cardinality (GCMC)
         href: articles/GCMC.html
-      - text: Spatial Granger Causality Test (SGC)
+      - text: Spatial Causality Test (SCT)
         href: articles/SGC.html
 
 home:
@@ -53,7 +53,7 @@ reference:
 
 - title: Causality in Information Flux (for Comparison)
   contents:
-  - sgc
+  - sc.test
 
 - title: Miscellaneous Utility Functions
   contents:
