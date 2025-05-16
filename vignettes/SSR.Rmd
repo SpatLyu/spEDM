@@ -88,6 +88,7 @@ v[1:5,c(2,5,6)]
 plot3D::scatter3D(v[,2], v[,5], v[,6], colvar = NULL, pch = 19,
                   col = "red", theta = 45, phi = 10, cex = 0.45,
                   bty = "f", clab = NA, tickmarks = FALSE)
+## Warning: no DISPLAY variable so Tk is not available
 ```
 
 ![**Figure 1**. The reconstructed shadow manifolds for `popd`.](../man/figures/ssr/fig1-1.png)
@@ -136,9 +137,11 @@ plot3D::scatter3D(r[,1], r[,5], r[,9], colvar = NULL, pch = 19,
 
 ![**Figure 2**. The reconstructed shadow manifolds for `cu`.](../man/figures/ssr/fig2-1.png)
 
-## Determination of Embedding Dimension $E$ and Spatial Lag Step $\tau$
+### Determining Optimal Embedding Dimension Using False Nearest Neighbours
 
-### Method of false nearest neghbours to help deciding the optimal embedding dimension
+The false nearest neighbours (FNN) method helps identify the appropriate embedding dimension for reconstructing the state space of a time series or spatial cross-sectional. A low embedding dimension that minimizes false neighbours is considered optimal.
+
+Below are two examples applying the `fnn()` function. In both cases, `eps` is set to one-tenth of the standard deviation of the variable of interest, providing a relative threshold for identifying false neighbours.
 
 
 ``` r
@@ -149,7 +152,6 @@ fnn(popd_sf,"popd",
 ##       E:9 
 ## 0.3150392
 ```
-
 
 
 ``` r
