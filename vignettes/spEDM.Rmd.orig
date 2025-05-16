@@ -142,7 +142,7 @@ Users can refer to several additional vignettes for more detailed examples of us
 | State Space Reconstruction | [SSR](https://stscl.github.io/spEDM/articles/SSR.html) |
 | Geographical Convergent Cross Mapping | [GCCM](https://stscl.github.io/spEDM/articles/GCCM.html) |
 | Geographical Cross Mapping Cardinality | [GCMC](https://stscl.github.io/spEDM/articles/GCMC.html) |
-| Spatial Granger Causality Test |[SGC](https://stscl.github.io/spEDM/articles/SGC.html) |
+| Spatial Causality Test |[SCT](https://stscl.github.io/spEDM/articles/SCT.html) |
 
 ## References
 
