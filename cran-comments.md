@@ -1,6 +1,10 @@
 ## R CMD check results
 
-0 errors | 0 warnings | 0 note
+0 errors | 0 warnings | 1 note
+
+* These words are correctly spelled:
+  - "Gao": a surname of a cited researcher.
+  - "granger": refers to "Granger causality", a well-established concept in econometrics.
 
 ## This submission
 
@@ -23,5 +27,3 @@ This release includes several new features, improvements, and bug fixes:
 * **Bug fixes** addressing C++/R index mismatches and matrix input issues.
 
 This is a regular feature update aimed at expanding modeling support for spatial dynamic empirical modeling workflows and improving overall usability and documentation.
-
-
