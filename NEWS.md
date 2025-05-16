@@ -12,7 +12,7 @@
 
 ### enhancements
 
-* Enable custom legend texts and colors in `gccm` S4 generic (#535).
+* Enable custom legend texts and colors in plot method for `gccm` results (#535).
 
 * Reduce computational load in vignettes (#476).
 
