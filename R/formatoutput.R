@@ -86,7 +86,7 @@ print.sc_res = \(x,...){
 #' @export
 plot.ccm_res = \(x, family = "serif",
                  legend_texts = NULL,
-                 legend_cols = c("#608dbe","#ed795b"),
+                 legend_cols = c("#ed795b","#608dbe"),
                  draw_ci = FALSE, ci_alpha = 0.2,
                  xbreaks = NULL, xlimits = NULL,
                  ybreaks = seq(0, 1, by = 0.1),
@@ -96,37 +96,37 @@ plot.ccm_res = \(x, family = "serif",
 
   if(is.null(xbreaks)) xbreaks = resdf$libsizes
   if(is.null(xlimits)) xlimits = c(min(xbreaks)-1,max(xbreaks)+1)
-  if (is.null(legend_texts)) legend_texts = c(paste0(x$varname[1], " xmap ", x$varname[2]),
-                                              paste0(x$varname[2], " xmap ", x$varname[1]))
+  if (is.null(legend_texts)) legend_texts = c(paste0(x$varname[2], " xmap ", x$varname[1]),
+                                              paste0(x$varname[1], " xmap ", x$varname[2]))
   legend_texts = .check_inputelementnum(legend_texts,2)
   legend_cols = .check_inputelementnum(legend_cols,2)
-  names(legend_cols) = c("x xmap y","y xmap x")
+  names(legend_cols) = c("x - y","y - x")
 
   ci_alpha = .check_inputelementnum(ci_alpha,2)
 
   fig1 = ggplot2::ggplot(data = resdf,
                          ggplot2::aes(x = libsizes)) +
     ggplot2::geom_line(ggplot2::aes(y = y_xmap_x_mean,
-                                    color = "y xmap x"),
+                                    color = "x - y"),
                        lwd = 1.25)
 
   if (draw_ci) {
     fig1 = fig1 +
       ggplot2::geom_ribbon(ggplot2::aes(ymin = y_xmap_x_lower,
                                         ymax = y_xmap_x_upper),
-                           alpha = ci_alpha[2], fill = legend_cols[2])
+                           alpha = ci_alpha[1], fill = legend_cols[1])
   }
 
   if (bidirectional){
     fig1 = fig1 + ggplot2::geom_line(ggplot2::aes(y = x_xmap_y_mean,
-                                                  color = "x xmap y"),
+                                                  color = "y - x"),
                                      lwd = 1.25)
 
     if (draw_ci) {
       fig1 = fig1 +
         ggplot2::geom_ribbon(ggplot2::aes(ymin = x_xmap_y_lower,
                                           ymax = x_xmap_y_upper),
-                             alpha = ci_alpha[1], fill = legend_cols[1])
+                             alpha = ci_alpha[2], fill = legend_cols[2])
     }
   }
 

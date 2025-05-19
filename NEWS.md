@@ -4,6 +4,10 @@
 
 * Introduce confidence interval ribbon support in plot method for `gccm` results (#550).
 
+### bug fixes
+
+* Fix bug in the S3 plotting method for `gccm` where legend labels did not correctly match the corresponding line colors (#552).
+
 # spEDM 1.6
 
 ### new
