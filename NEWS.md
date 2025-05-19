@@ -6,7 +6,7 @@
 
 ### bug fixes
 
-* Fix bug in the plotting method for `gccm` results where legend labels did not correctly match the corresponding line colors (#552).
+* Fix bug in plot method for `gccm` results where legend labels did not correctly match the corresponding line colors (#552).
 
 # spEDM 1.6
 
