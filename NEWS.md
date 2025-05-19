@@ -1,5 +1,9 @@
 # spEDM 1.7
 
+### enhancements
+
+* Introduce confidence interval ribbon support in plot method for `gccm` results (#550).
+
 # spEDM 1.6
 
 ### new
