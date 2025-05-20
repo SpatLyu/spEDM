@@ -996,6 +996,32 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppSpearmanCor
+double RcppSpearmanCor(const Rcpp::NumericVector& y, const Rcpp::NumericVector& y_hat, bool NA_rm);
+RcppExport SEXP _spEDM_RcppSpearmanCor(SEXP ySEXP, SEXP y_hatSEXP, SEXP NA_rmSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y_hat(y_hatSEXP);
+    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSpearmanCor(y, y_hat, NA_rm));
+    return rcpp_result_gen;
+END_RCPP
+}
+// RcppKendallCor
+double RcppKendallCor(const Rcpp::NumericVector& y, const Rcpp::NumericVector& y_hat, bool NA_rm);
+RcppExport SEXP _spEDM_RcppKendallCor(SEXP ySEXP, SEXP y_hatSEXP, SEXP NA_rmSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y_hat(y_hatSEXP);
+    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppKendallCor(y, y_hat, NA_rm));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppPartialCor
 double RcppPartialCor(const Rcpp::NumericVector& y, const Rcpp::NumericVector& y_hat, const Rcpp::NumericMatrix& controls, bool NA_rm, bool linear);
 RcppExport SEXP _spEDM_RcppPartialCor(SEXP ySEXP, SEXP y_hatSEXP, SEXP controlsSEXP, SEXP NA_rmSEXP, SEXP linearSEXP) {
@@ -1282,6 +1308,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppSumNormalize", (DL_FUNC) &_spEDM_RcppSumNormalize, 2},
     {"_spEDM_RcppArithmeticSeq", (DL_FUNC) &_spEDM_RcppArithmeticSeq, 3},
     {"_spEDM_RcppPearsonCor", (DL_FUNC) &_spEDM_RcppPearsonCor, 3},
+    {"_spEDM_RcppSpearmanCor", (DL_FUNC) &_spEDM_RcppSpearmanCor, 3},
+    {"_spEDM_RcppKendallCor", (DL_FUNC) &_spEDM_RcppKendallCor, 3},
     {"_spEDM_RcppPartialCor", (DL_FUNC) &_spEDM_RcppPartialCor, 5},
     {"_spEDM_RcppPartialCorTrivar", (DL_FUNC) &_spEDM_RcppPartialCorTrivar, 5},
     {"_spEDM_RcppCorSignificance", (DL_FUNC) &_spEDM_RcppCorSignificance, 3},

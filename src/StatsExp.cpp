@@ -199,6 +199,30 @@ double RcppPearsonCor(const Rcpp::NumericVector& y,
   return PearsonCor(y_vec, y_hat_vec, NA_rm);
 }
 
+// [[Rcpp::export]]
+double RcppSpearmanCor(const Rcpp::NumericVector& y,
+                       const Rcpp::NumericVector& y_hat,
+                       bool NA_rm = false) {
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> y_vec = Rcpp::as<std::vector<double>>(y);
+  std::vector<double> y_hat_vec = Rcpp::as<std::vector<double>>(y_hat);
+
+  // Call the SpearmanCorfunction
+  return SpearmanCor(y_vec, y_hat_vec, NA_rm);
+}
+
+// [[Rcpp::export]]
+double RcppKendallCor(const Rcpp::NumericVector& y,
+                      const Rcpp::NumericVector& y_hat,
+                      bool NA_rm = false) {
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> y_vec = Rcpp::as<std::vector<double>>(y);
+  std::vector<double> y_hat_vec = Rcpp::as<std::vector<double>>(y_hat);
+
+  // Call the KendallCor function
+  return KendallCor(y_vec, y_hat_vec, NA_rm);
+}
+
 // Rcpp wrapper for PartialCor function
 // [[Rcpp::export]]
 double RcppPartialCor(const Rcpp::NumericVector& y,

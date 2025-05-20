@@ -261,6 +261,14 @@ RcppPearsonCor <- function(y, y_hat, NA_rm = FALSE) {
     .Call(`_spEDM_RcppPearsonCor`, y, y_hat, NA_rm)
 }
 
+RcppSpearmanCor <- function(y, y_hat, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppSpearmanCor`, y, y_hat, NA_rm)
+}
+
+RcppKendallCor <- function(y, y_hat, NA_rm = FALSE) {
+    .Call(`_spEDM_RcppKendallCor`, y, y_hat, NA_rm)
+}
+
 RcppPartialCor <- function(y, y_hat, controls, NA_rm = FALSE, linear = FALSE) {
     .Call(`_spEDM_RcppPartialCor`, y, y_hat, controls, NA_rm, linear)
 }
