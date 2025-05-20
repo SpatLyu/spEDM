@@ -522,6 +522,87 @@ double PearsonCor(const std::vector<double>& y,
 //   return corr;
 // }
 
+// Function to compute Spearman correlation using Armadillo
+double SpearmanCor(const std::vector<double>& y,
+                   const std::vector<double>& y_hat,
+                   bool NA_rm = false) {
+  if (y.size() != y_hat.size()) {
+    throw std::invalid_argument("Input vectors must have the same size.");
+  }
+
+  std::vector<double> clean_y, clean_y_hat;
+  for (size_t i = 0; i < y.size(); ++i) {
+    bool is_na = isNA(y[i]) || isNA(y_hat[i]);
+    if (is_na) {
+      if (!NA_rm) {
+        return std::numeric_limits<double>::quiet_NaN();
+      }
+    } else {
+      clean_y.push_back(y[i]);
+      clean_y_hat.push_back(y_hat[i]);
+    }
+  }
+
+  if (clean_y.empty()) {
+    return std::numeric_limits<double>::quiet_NaN();
+  }
+
+  arma::vec arma_y(clean_y);
+  arma::vec arma_y_hat(clean_y_hat);
+
+  // Rank-transform both vectors
+  arma::vec rank_y = arma::conv_to<arma::vec>::from(arma::sort_index(arma::sort_index(arma_y))) + 1;
+  arma::vec rank_y_hat = arma::conv_to<arma::vec>::from(arma::sort_index(arma::sort_index(arma_y_hat))) + 1;
+
+  // Compute Pearson correlation of ranks
+  double corr = arma::as_scalar(arma::cor(rank_y, rank_y_hat));
+  return std::max(-1.0, std::min(1.0, corr));
+}
+
+// Function to compute Kendall's tau correlation coefficient
+double KendallCor(const std::vector<double>& y,
+                  const std::vector<double>& y_hat,
+                  bool NA_rm = false) {
+  if (y.size() != y_hat.size()) {
+    throw std::invalid_argument("Input vectors must have the same size.");
+  }
+
+  std::vector<double> clean_y, clean_y_hat;
+  for (size_t i = 0; i < y.size(); ++i) {
+    bool is_na = isNA(y[i]) || isNA(y_hat[i]);
+    if (is_na) {
+      if (!NA_rm) {
+        return std::numeric_limits<double>::quiet_NaN();
+      }
+    } else {
+      clean_y.push_back(y[i]);
+      clean_y_hat.push_back(y_hat[i]);
+    }
+  }
+
+  size_t n = clean_y.size();
+  if (n < 2) {
+    return std::numeric_limits<double>::quiet_NaN();
+  }
+
+  // Count concordant and discordant pairs
+  int concordant = 0, discordant = 0;
+  for (size_t i = 0; i < n - 1; ++i) {
+    for (size_t j = i + 1; j < n; ++j) {
+      double dy = clean_y[i] - clean_y[j];
+      double dyh = clean_y_hat[i] - clean_y_hat[j];
+      double sign = dy * dyh;
+      if (sign > 0) ++concordant;
+      else if (sign < 0) ++discordant;
+      // ties are ignored (as in Kendall's tau-a)
+    }
+  }
+
+  double denom = 0.5 * n * (n - 1);
+  double tau = (concordant - discordant) / denom;
+  return std::max(-1.0, std::min(1.0, tau));
+}
+
 /*
  * Function to compute Partial Correlation using Armadillo
  *
