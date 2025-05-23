@@ -6,5 +6,5 @@ bibentry(
   author   = "Wenbo Lv",
   year     = "2025",
   note     = "R package version 1.7",
-  doi      = "https://doi.org/10.32614/CRAN.package.spEDM"
+  doi      = "10.32614/CRAN.package.spEDM"
 )
