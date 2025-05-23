@@ -4,6 +4,10 @@
 
 * Introduce confidence interval ribbon support in plot method for `gccm` results (#550).
 
+### breaking changes
+
+* Users must now use `detrend` instead of `trend.rm` (#559).
+
 ### bug fixes
 
 * Fix bug in plot method for `gccm` results where legend labels did not correctly match the corresponding line colors (#552).
