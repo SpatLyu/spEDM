@@ -19,7 +19,7 @@
   nb = NULL,
   top = NULL,
   threads = detectThreads(),
-  trend.rm = TRUE
+  detrend = TRUE
 )
 
 \S4method{multiview}{SpatRaster}(
@@ -34,7 +34,7 @@
   k = E + 2,
   top = NULL,
   threads = detectThreads(),
-  trend.rm = TRUE
+  detrend = TRUE
 )
 }
 \arguments{
@@ -62,7 +62,7 @@
 
 \item{threads}{(optional) Number of threads.}
 
-\item{trend.rm}{(optional) Whether to remove the linear trend.}
+\item{detrend}{(optional) Whether to remove the linear trend.}
 }
 \value{
 A vector (when input is sf object) or matrix

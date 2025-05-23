@@ -22,7 +22,7 @@
   threads = detectThreads(),
   parallel.level = "low",
   bidirectional = TRUE,
-  trend.rm = TRUE,
+  detrend = TRUE,
   progressbar = TRUE
 )
 
@@ -41,7 +41,7 @@
   threads = detectThreads(),
   parallel.level = "low",
   bidirectional = TRUE,
-  trend.rm = TRUE,
+  detrend = TRUE,
   progressbar = TRUE
 )
 }
@@ -76,7 +76,7 @@
 
 \item{bidirectional}{(optional) whether to examine bidirectional causality.}
 
-\item{trend.rm}{(optional) Whether to remove the linear trend.}
+\item{detrend}{(optional) Whether to remove the linear trend.}
 
 \item{progressbar}{(optional) whether to show the progress bar.}
 }

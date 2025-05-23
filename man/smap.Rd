@@ -18,7 +18,7 @@
     4, 6, 8),
   nb = NULL,
   threads = detectThreads(),
-  trend.rm = TRUE
+  detrend = TRUE
 )
 
 \S4method{smap}{SpatRaster}(
@@ -32,7 +32,7 @@
   theta = c(0, 1e-04, 3e-04, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 0.5, 0.75, 1, 1.5, 2, 3,
     4, 6, 8),
   threads = detectThreads(),
-  trend.rm = TRUE
+  detrend = TRUE
 )
 }
 \arguments{
@@ -56,7 +56,7 @@
 
 \item{threads}{(optional) Number of threads.}
 
-\item{trend.rm}{(optional) Whether to remove the linear trend.}
+\item{detrend}{(optional) Whether to remove the linear trend.}
 }
 \value{
 A list
