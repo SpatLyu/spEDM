@@ -44,7 +44,7 @@
   return(nb)
 }
 
-.internal_trend_rm = \(data,.varname,coords = NULL){
+.internal_detrend = \(data,.varname,coords = NULL){
   if (is.null(coords)){
     for (i in seq_along(.varname)){
       data[,.varname[i]] = sdsfun::rm_lineartrend(paste0(.varname[i],"~x+y"), data = data)
@@ -64,53 +64,53 @@
   return(nnaindice)
 }
 
-.uni_lattice = \(data,target,trend.rm = FALSE){
+.uni_lattice = \(data,target,detrend = FALSE){
   target = .check_character(target)
   coords = as.data.frame(sdsfun::sf_coordinates(data))
   data = sf::st_drop_geometry(data)
   data = data[,target,drop = FALSE]
   names(data) = "target"
-  if (trend.rm){
-    data = .internal_trend_rm(data,"target",coords)
+  if (detrend){
+    data = .internal_detrend(data,"target",coords)
   }
   res = data[,"target",drop = TRUE]
   return(res)
 }
 
-.uni_grid = \(data,target,trend.rm = FALSE){
+.uni_grid = \(data,target,detrend = FALSE){
   target = .check_character(target)
   data = data[[target]]
   names(data) = "target"
   dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
-  if (trend.rm){
-    dtf = .internal_trend_rm(dtf,"target")
+  if (detrend){
+    dtf = .internal_detrend(dtf,"target")
   }
   res = matrix(dtf[,"target"],nrow = terra::nrow(data),byrow = TRUE)
   return(res)
 }
 
-.multivar_lattice = \(data,columns,trend.rm = FALSE){
+.multivar_lattice = \(data,columns,detrend = FALSE){
   columns = .check_character(columns)
   coords = as.data.frame(sdsfun::sf_coordinates(data))
   data = sf::st_drop_geometry(data)
   data = data[,columns,drop = FALSE]
   .varname = paste0("z",seq_along(columns))
   names(data) = .varname
-  if (trend.rm){
-    data = .internal_trend_rm(data,.varname,coords)
+  if (detrend){
+    data = .internal_detrend(data,.varname,coords)
   }
   res = as.matrix(data[,.varname,drop = FALSE])
   return(res)
 }
 
-.multivar_grid = \(data,columns,trend.rm = FALSE){
+.multivar_grid = \(data,columns,detrend = FALSE){
   columns = .check_character(columns)
   data = data[[columns]]
   .varname = paste0("z",seq_along(columns))
   names(data) = .varname
   dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
-  if (trend.rm){
-    dtf = .internal_trend_rm(dtf,.varname)
+  if (detrend){
+    dtf = .internal_detrend(dtf,.varname)
   }
   res = as.matrix(dtf[,.varname,drop = FALSE])
   return(res)

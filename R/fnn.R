@@ -1,8 +1,8 @@
 methods::setGeneric("fnn", function(data, ...) standardGeneric("fnn"))
 
 .fnn_sf_method = \(data, target, lib = NULL, pred = NULL, E = 1:10, tau = 1, nb = NULL,
-                   rt = 10, eps = 2, threads = detectThreads(), trend.rm = TRUE){
-  vec = .uni_lattice(data,target,trend.rm)
+                   rt = 10, eps = 2, threads = detectThreads(), detrend = TRUE){
+  vec = .uni_lattice(data,target,detrend)
   rt = .check_inputelementnum(rt,max(E))
   eps = .check_inputelementnum(eps,max(E))
   if (is.null(lib)) lib = which(!is.na(vec))
@@ -12,8 +12,8 @@ methods::setGeneric("fnn", function(data, ...) standardGeneric("fnn"))
 }
 
 .fnn_spatraster_method = \(data, target, lib = NULL, pred = NULL, E = 1:10, tau = 1,
-                           rt = 10, eps = 2, threads = detectThreads(), trend.rm = TRUE){
-  mat = .uni_grid(data,target,trend.rm)
+                           rt = 10, eps = 2, threads = detectThreads(), detrend = TRUE){
+  mat = .uni_grid(data,target,detrend)
   rt = .check_inputelementnum(rt,max(E))
   eps = .check_inputelementnum(eps,max(E))
   if (is.null(lib)) lib = which(!is.na(mat), arr.ind = TRUE)
