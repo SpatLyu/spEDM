@@ -16,7 +16,7 @@
   k = E + 2,
   nb = NULL,
   threads = detectThreads(),
-  trend.rm = TRUE
+  detrend = TRUE
 )
 
 \S4method{simplex}{SpatRaster}(
@@ -28,7 +28,7 @@
   tau = 1,
   k = E + 2,
   threads = detectThreads(),
-  trend.rm = TRUE
+  detrend = TRUE
 )
 }
 \arguments{
@@ -50,7 +50,7 @@
 
 \item{threads}{(optional) Number of threads.}
 
-\item{trend.rm}{(optional) Whether to remove the linear trend.}
+\item{detrend}{(optional) Whether to remove the linear trend.}
 }
 \value{
 A list

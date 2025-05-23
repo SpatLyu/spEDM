@@ -1,22 +1,22 @@
 methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
 
 .sc_sf_method = \(data, cause, effect, k, block = 3, boot = 399, seed = 42, base = 2, lib = NULL, pred = NULL,
-                  nb = NULL, threads = detectThreads(), trend.rm = TRUE, normalize = FALSE, progressbar = FALSE){
+                  nb = NULL, threads = detectThreads(), detrend = TRUE, normalize = FALSE, progressbar = FALSE){
   varname = .check_character(cause, effect)
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   block = RcppDivideLattice(nb,block)
-  cause = .uni_lattice(data,cause,trend.rm)
-  effect = .uni_lattice(data,effect,trend.rm)
+  cause = .uni_lattice(data,cause,detrend)
+  effect = .uni_lattice(data,effect,detrend)
   if (is.null(lib)) lib = which(!(is.na(cause) | is.na(effect)))
   if (is.null(pred)) pred = lib
   return(.bind_sc(RcppSGC4Lattice(cause,effect,nb,lib,pred,block,k,threads,boot,base,seed,TRUE,normalize,progressbar),varname))
 }
 
 .sc_spatraster_method = \(data, cause, effect, k, block = 3, boot = 399, seed = 42, base = 2, lib = NULL, pred = NULL,
-                          threads = detectThreads(), trend.rm = TRUE, normalize = FALSE, progressbar = FALSE){
+                          threads = detectThreads(), detrend = TRUE, normalize = FALSE, progressbar = FALSE){
   varname = .check_character(cause, effect)
-  cause = .uni_grid(data,cause,trend.rm)
-  effect = .uni_grid(data,effect,trend.rm)
+  cause = .uni_grid(data,cause,detrend)
+  effect = .uni_grid(data,effect,detrend)
   block = matrix(RcppDivideGrid(effect,block),ncol = 1)
   if (is.null(lib)) lib = which(!(is.na(cause) | is.na(effect)), arr.ind = TRUE)
   if (is.null(pred)) pred = lib
@@ -37,7 +37,7 @@ methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
 #' @param pred (optional) Predictions indices.
 #' @param nb (optional) The neighbours list.
 #' @param threads (optional) Number of threads.
-#' @param trend.rm (optional) Whether to remove the linear trend.
+#' @param detrend (optional) Whether to remove the linear trend.
 #' @param normalize (optional) Whether to normalize the result.
 #' @param progressbar (optional) Whether to show the progress bar.
 #'

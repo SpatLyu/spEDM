@@ -2,7 +2,7 @@
 methods::setGeneric("gcmc", function(data, ...) standardGeneric("gcmc"))
 
 .gcmc_sf_method = \(data, cause, effect, E = 3, tau = 1, k = NULL, r = 0, lib = NULL, pred = NULL, nb = NULL,
-                    threads = detectThreads(), bidirectional = TRUE, trend.rm = TRUE, progressbar = TRUE){
+                    threads = detectThreads(), bidirectional = TRUE, detrend = TRUE, progressbar = TRUE){
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
   tau = .check_inputelementnum(tau,2)
@@ -13,8 +13,8 @@ methods::setGeneric("gcmc", function(data, ...) standardGeneric("gcmc"))
   data = data[,varname]
   names(data) = .varname
 
-  if (trend.rm){
-    data = .internal_trend_rm(data,.varname,coords)
+  if (detrend){
+    data = .internal_detrend(data,.varname,coords)
   }
   cause = data[,"cause",drop = TRUE]
   effect = data[,"effect",drop = TRUE]
@@ -34,7 +34,7 @@ methods::setGeneric("gcmc", function(data, ...) standardGeneric("gcmc"))
 }
 
 .gcmc_spatraster_method = \(data, cause, effect, E = 3, tau = 1, k = NULL, r = 0, lib = NULL, pred = NULL,
-                            threads = detectThreads(),bidirectional = TRUE,trend.rm = TRUE,progressbar = TRUE){
+                            threads = detectThreads(),bidirectional = TRUE,detrend = TRUE,progressbar = TRUE){
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
   tau = .check_inputelementnum(tau,2)
@@ -43,8 +43,8 @@ methods::setGeneric("gcmc", function(data, ...) standardGeneric("gcmc"))
   names(data) = .varname
 
   dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
-  if (trend.rm){
-    dtf = .internal_trend_rm(dtf,.varname)
+  if (detrend){
+    dtf = .internal_detrend(dtf,.varname)
   }
   causemat = matrix(dtf[,"cause"],nrow = terra::nrow(data),byrow = TRUE)
   effectmat = matrix(dtf[,"effect"],nrow = terra::nrow(data),byrow = TRUE)
@@ -77,7 +77,7 @@ methods::setGeneric("gcmc", function(data, ...) standardGeneric("gcmc"))
 #' @param nb (optional) The neighbours list.
 #' @param threads (optional) Number of threads.
 #' @param bidirectional (optional) whether to examine bidirectional causality.
-#' @param trend.rm (optional) Whether to remove the linear trend.
+#' @param detrend (optional) Whether to remove the linear trend.
 #' @param progressbar (optional) whether to show the progress bar.
 #'
 #' @return A list

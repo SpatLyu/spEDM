@@ -17,7 +17,7 @@
   rt = 10,
   eps = 2,
   threads = detectThreads(),
-  trend.rm = TRUE
+  detrend = TRUE
 )
 
 \S4method{fnn}{SpatRaster}(
@@ -30,7 +30,7 @@
   rt = 10,
   eps = 2,
   threads = detectThreads(),
-  trend.rm = TRUE
+  detrend = TRUE
 )
 }
 \arguments{
@@ -54,7 +54,7 @@
 
 \item{threads}{(optional) Number of threads.}
 
-\item{trend.rm}{(optional) Whether to remove the linear trend.}
+\item{detrend}{(optional) Whether to remove the linear trend.}
 }
 \value{
 A vector

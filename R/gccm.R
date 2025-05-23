@@ -1,7 +1,7 @@
 methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 
 .gccm_sf_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = E+2, theta = 1, algorithm = "simplex", lib = NULL, pred = NULL,
-                    nb = NULL,threads = detectThreads(),parallel.level = "low",bidirectional = TRUE,trend.rm = TRUE,progressbar = TRUE){
+                    nb = NULL,threads = detectThreads(),parallel.level = "low",bidirectional = TRUE,detrend = TRUE,progressbar = TRUE){
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
   tau = .check_inputelementnum(tau,2)
@@ -14,8 +14,8 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   data = data[,varname]
   names(data) = .varname
 
-  if (trend.rm){
-    data = .internal_trend_rm(data,.varname,coords)
+  if (detrend){
+    data = .internal_detrend(data,.varname,coords)
   }
   cause = data[,"cause",drop = TRUE]
   effect = data[,"effect",drop = TRUE]
@@ -34,7 +34,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 }
 
 .gccm_spatraster_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = E+2, theta = 1, algorithm = "simplex", lib = NULL, pred = NULL,
-                            threads = detectThreads(), parallel.level = "low", bidirectional = TRUE, trend.rm = TRUE, progressbar = TRUE){
+                            threads = detectThreads(), parallel.level = "low", bidirectional = TRUE, detrend = TRUE, progressbar = TRUE){
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
   tau = .check_inputelementnum(tau,2)
@@ -46,8 +46,8 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
   names(data) = .varname
 
   dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
-  if (trend.rm){
-    dtf = .internal_trend_rm(dtf,.varname)
+  if (detrend){
+    dtf = .internal_detrend(dtf,.varname)
   }
   causemat = matrix(dtf[,"cause"],nrow = terra::nrow(data),byrow = TRUE)
   effectmat = matrix(dtf[,"effect"],nrow = terra::nrow(data),byrow = TRUE)
@@ -82,7 +82,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 #' @param threads (optional) Number of threads.
 #' @param parallel.level (optional) Level of parallelism, `low` or `high`.
 #' @param bidirectional (optional) whether to examine bidirectional causality.
-#' @param trend.rm (optional) Whether to remove the linear trend.
+#' @param detrend (optional) Whether to remove the linear trend.
 #' @param progressbar (optional) whether to show the progress bar.
 #'
 #' @return A list

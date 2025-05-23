@@ -1,8 +1,8 @@
 methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
 
 .simplex_sf_method = \(data,target,lib = NULL,pred = NULL,E = 1:10,tau = 1,k = E+2,
-                       nb = NULL, threads = detectThreads(), trend.rm = TRUE){
-  vec = .uni_lattice(data,target,trend.rm)
+                       nb = NULL, threads = detectThreads(), detrend = TRUE){
+  vec = .uni_lattice(data,target,detrend)
   if (is.null(lib)) lib = which(!is.na(vec))
   if (is.null(pred)) pred = lib
   if (is.null(nb)) nb = .internal_lattice_nb(data)
@@ -11,8 +11,8 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
 }
 
 .simplex_spatraster_method = \(data,target,lib = NULL,pred = NULL,E = 1:10,tau = 1,
-                               k = E+2, threads = detectThreads(), trend.rm = TRUE){
-  mat = .uni_grid(data,target,trend.rm)
+                               k = E+2, threads = detectThreads(), detrend = TRUE){
+  mat = .uni_grid(data,target,detrend)
   if (is.null(lib)) lib = which(!is.na(mat), arr.ind = TRUE)
   if (is.null(pred)) pred = lib
   res = RcppSimplex4Grid(mat,lib,pred,E,k,tau,threads)
