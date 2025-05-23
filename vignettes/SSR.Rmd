@@ -73,7 +73,7 @@ Embedding the variable `popd` from county-level population density:
 
 
 ``` r
-v = embedded(popd_sf,"popd",E = 9,tau = 0,trend.rm = FALSE)
+v = embedded(popd_sf,"popd",E = 9,tau = 0)
 v[1:5,c(2,5,6)]
 ##           [,1]      [,2]     [,3]
 ## [1,]  440.7237  962.7204 1664.756
@@ -118,7 +118,7 @@ Embedding the variable `cu` from soil pollution data:
 
 
 ``` r
-r = spEDM::embedded(cu,"cu",E = 9,tau = 0,trend.rm = FALSE)
+r = spEDM::embedded(cu,"cu",E = 9,tau = 0)
 r[1:5,c(1,5,9)]
 ##          [,1]     [,2]     [,3]
 ## [1,] 14.80663 13.84810 15.40681
