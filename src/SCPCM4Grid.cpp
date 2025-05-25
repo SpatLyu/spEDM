@@ -837,8 +837,8 @@ std::vector<std::vector<double>> SCPCM4Grid(
  * - yMatrix: 2D grid of target variable values (row-major order)
  * - zMatrixs: Control variables stored as 2D grids (vector of vectors)
  * - lib_size: Number of consecutive spatial units to include in each library
- * - lib: Vector specifying library location as (row, col) pairs
- * - pred: Vector specifying prediction locations
+ * - lib: Vector specifying library location as raster(grid) cell indices in row-major order
+ * - pred: Vector specifying prediction location as raster(grid) cell indices in row-major order
  * - Es: Embedding dimensions for x and control variables
  * - taus: Spatial lag steps for x and control variables
  * - b: Numbers of nearest neighbors for prediction
