@@ -630,7 +630,7 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
 
   // Initialize pred_indices with all false
   std::vector<bool> pred_indices(totalRow*totalCol, false);
-  // Convert pred (1-based in R) to 0-based indices, exclude yPred NA and set corresponding positions to true
+  // Exclude yPred NA and set corresponding positions to true
   for (size_t i = 0; i < pred.size(); ++i) {
     if (!std::isnan(yPred[pred[i]])) {
       pred_indices[pred[i]] = true;

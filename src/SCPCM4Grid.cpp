@@ -920,7 +920,7 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
 
   std::vector<int> possible_lib_indices;
   for (size_t i = 0; i < lib.size(); ++i) {
-    int LibIndice = lib[i] - 1;
+    int LibIndice = lib[i];
     if (!std::isnan(yPred[LibIndice])) {
       possible_lib_indices.push_back(LibIndice);
     }
@@ -929,9 +929,9 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
 
   // Initialize pred_indices with all false
   std::vector<bool> pred_indices(totalRow*totalCol, false);
-  // Convert pred (1-based in R) to 0-based indices, exclude yPred NA and set corresponding positions to true
+  // Exclude yPred NA and set corresponding positions to true
   for (size_t i = 0; i < pred.size(); ++i) {
-    int PreIndice = pred[i] - 1;
+    int PreIndice = pred[i];
     if (!std::isnan(yPred[PreIndice])) {
       pred_indices[PreIndice] = true;
     }
