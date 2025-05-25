@@ -12,7 +12,7 @@ it is necessary to pre-build the vignettes prior to package submission.
 -   Compile all vignettes at once
 
 ``` r
-for (v in c("spEDM", "SSR", "SCT", "GCCM", "GCMC", "SCPCM")) {
+for (v in c("PkgIntro", "SSR", "SCT", "GCCM", "GCMC", "SCPCM")) {
   .prebuild_vignettes(v)
 }
 ```
@@ -20,7 +20,7 @@ for (v in c("spEDM", "SSR", "SCT", "GCCM", "GCMC", "SCPCM")) {
 -   Build vignettes separately
 
 ``` r
-.prebuild_vignettes("spEDM")
+.prebuild_vignettes("PkgIntro")
 .prebuild_vignettes("SSR")
 .prebuild_vignettes("SCT")
 .prebuild_vignettes("GCCM")
