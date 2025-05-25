@@ -1,21 +1,15 @@
 ---
-title: "Introduction to the spEDM package"
+title: "Introduction to the spEDM package (PkgIntro)"
 author: "Wenbo Lv"
-date: "`r Sys.Date()`"
+date: "2025-05-25"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{spEDM}
+  %\VignetteIndexEntry{PkgIntro}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "##",
-  fig.path = "man/figures/pkgintro/"
-)
-```
+
 
 ## Overview
 
@@ -60,35 +54,114 @@ These datasets can be loaded as shown below, including basic visualization for r
 
 ### Columbus OH spatial analysis dataset
 
-```{r columbus}
+
+``` r
 library(spEDM)
 
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 columbus
+## Simple feature collection with 49 features and 6 fields
+## Geometry type: POLYGON
+## Dimension:     XY
+## Bounding box:  xmin: 5.874907 ymin: 10.78863 xmax: 11.28742 ymax: 14.74245
+## Projected CRS: Undefined Cartesian SRS with unknown unit
+## # A tibble: 49 × 7
+##    hoval   inc  crime  open plumb discbd                                     geom
+##    <dbl> <dbl>  <dbl> <dbl> <dbl>  <dbl>                                <POLYGON>
+##  1  80.5 19.5  15.7   2.85  0.217   5.03 ((8.624129 14.23698, 8.5597 14.74245, 8…
+##  2  44.6 21.2  18.8   5.30  0.321   4.27 ((8.25279 14.23694, 8.282758 14.22994, …
+##  3  26.4 16.0  30.6   4.53  0.374   3.89 ((8.653305 14.00809, 8.81814 14.00205, …
+##  4  33.2  4.48 32.4   0.394 1.19    3.7  ((8.459499 13.82035, 8.473408 13.83227,…
+##  5  23.2 11.3  50.7   0.406 0.625   2.83 ((8.685274 13.63952, 8.677577 13.72221,…
+##  6  28.8 16.0  26.1   0.563 0.254   3.78 ((9.401384 13.5504, 9.434411 13.69427, …
+##  7  75    8.44  0.178 0     2.40    2.74 ((8.037741 13.60752, 8.062716 13.60452,…
+##  8  37.1 11.3  38.4   3.48  2.74    2.89 ((8.247527 13.58651, 8.2795 13.5965, 8.…
+##  9  52.6 17.6  30.5   0.527 0.891   3.17 ((9.333297 13.27242, 9.671007 13.27361,…
+## 10  96.4 13.6  34.0   1.55  0.558   4.33 ((10.08251 13.03377, 10.0925 13.05275, …
+## # ℹ 39 more rows
 ```
 
 ### County-level population density in mainland China
 
-```{r popd}
+
+``` r
 library(spEDM)
 
 popd_nb = spdep::read.gal(system.file("case/popd_nb.gal",package = "spEDM"))
+## Warning in spdep::read.gal(system.file("case/popd_nb.gal", package = "spEDM")):
+## neighbour object has 4 sub-graphs
 popd_nb
+## Neighbour list object:
+## Number of regions: 2806 
+## Number of nonzero links: 15942 
+## Percentage nonzero weights: 0.2024732 
+## Average number of links: 5.681397 
+## 4 disjoint connected subgraphs
 
 popd = readr::read_csv(system.file("case/popd.csv",package = "spEDM"))
+## Rows: 2806 Columns: 7
+## ── Column specification ─────────────────────────────────────────────────────────
+## Delimiter: ","
+## dbl (7): x, y, popd, elev, tem, pre, slope
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 popd
+## # A tibble: 2,806 × 7
+##        x     y  popd  elev   tem   pre slope
+##    <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
+##  1  117.  30.5  780.     8  17.4 1528. 0.452
+##  2  117.  30.6  395.    48  17.2 1487. 0.842
+##  3  117.  30.8  261.    49  16.0 1456. 3.56 
+##  4  116.  30.1  258.    23  17.4 1555. 0.932
+##  5  116.  30.5  211.   101  16.3 1494. 3.34 
+##  6  117.  31.0  386.    10  16.6 1382. 1.65 
+##  7  117.  30.2  350.    23  17.5 1569. 0.346
+##  8  117.  30.7  470.    22  17.1 1493. 1.88 
+##  9  117.  30.6 1226.    11  17.4 1526. 0.208
+## 10  116.  30.9  137.   598  13.9 1458. 5.92 
+## # ℹ 2,796 more rows
 
 popd_sf = sf::st_as_sf(popd, coords = c("x","y"), crs = 4326)
 popd_sf
+## Simple feature collection with 2806 features and 5 fields
+## Geometry type: POINT
+## Dimension:     XY
+## Bounding box:  xmin: 74.9055 ymin: 18.2698 xmax: 134.269 ymax: 52.9346
+## Geodetic CRS:  WGS 84
+## # A tibble: 2,806 × 6
+##     popd  elev   tem   pre slope          geometry
+##  * <dbl> <dbl> <dbl> <dbl> <dbl>       <POINT [°]>
+##  1  780.     8  17.4 1528. 0.452 (116.912 30.4879)
+##  2  395.    48  17.2 1487. 0.842 (116.755 30.5877)
+##  3  261.    49  16.0 1456. 3.56  (116.541 30.7548)
+##  4  258.    23  17.4 1555. 0.932  (116.241 30.104)
+##  5  211.   101  16.3 1494. 3.34   (116.173 30.495)
+##  6  386.    10  16.6 1382. 1.65  (116.935 30.9839)
+##  7  350.    23  17.5 1569. 0.346 (116.677 30.2412)
+##  8  470.    22  17.1 1493. 1.88  (117.066 30.6514)
+##  9 1226.    11  17.4 1526. 0.208 (117.171 30.5558)
+## 10  137.   598  13.9 1458. 5.92  (116.208 30.8983)
+## # ℹ 2,796 more rows
 ```
 
 ### Soil Cu heavy metal contamination
 
-```{r cu,fig.width=6.55,fig.height=2.60,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. Maps of soil Cu contamination, the density of industrial pollutants and nightlight.")}
+
+``` r
 library(spEDM)
 
 cu = terra::rast(system.file("case/cu.tif", package="spEDM"))
 cu
+## class       : SpatRaster 
+## dimensions  : 131, 125, 3  (nrow, ncol, nlyr)
+## resolution  : 5000, 5000  (x, y)
+## extent      : 360000, 985000, 1555000, 2210000  (xmin, xmax, ymin, ymax)
+## coord. ref. : North_American_1983_Albers 
+## source      : cu.tif 
+## names       :         cu, industry, ntl 
+## min values  :   1.201607,    0.000,   0 
+## max values  : 319.599274,    0.615,  63
 
 options(terra.pal = grDevices::terrain.colors(100,rev = T))
 terra::plot(cu, nc = 3,
@@ -98,12 +171,24 @@ terra::plot(cu, nc = 3,
             legend = FALSE)
 ```
 
+![**Figure 1**. Maps of soil Cu contamination, the density of industrial pollutants and nightlight.](../man/figures/pkgintro/cu-1.png)
+
 ### Farmland NPP and related variables in mainland China
 
-```{r npp,fig.width=4.75,fig.height=5.55,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. Maps of farmland NPP and climate factors.")}
+
+``` r
 library(spEDM)
 npp = terra::rast(system.file("case/npp.tif", package = "spEDM"))
 npp
+## class       : SpatRaster 
+## dimensions  : 404, 483, 5  (nrow, ncol, nlyr)
+## resolution  : 10000, 10000  (x, y)
+## extent      : -2625763, 2204237, 1877078, 5917078  (xmin, xmax, ymin, ymax)
+## coord. ref. : CGCS2000_Albers 
+## source      : npp.tif 
+## names       :      npp,        pre,      tem,      elev,         hfp 
+## min values  :   164.00,   384.3409, -47.8194, -122.2004,  0.03390418 
+## max values  : 16606.33, 23878.3555, 263.6938, 5350.4902, 44.90312195
 
 # directly visualize the raster layer
 options(terra.pal = grDevices::terrain.colors(100,rev = T))
@@ -112,7 +197,10 @@ terra::plot(npp, nc = 2,
             legend = FALSE)
 ```
 
-```{r npp2,fig.width=4.75,fig.height=7.25,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 3**. Maps of farmland NPP and climate factors.")}
+![**Figure 2**. Maps of farmland NPP and climate factors.](../man/figures/pkgintro/npp-1.png)
+
+
+``` r
 # add China's land borders and the ten-dash line in the South China Sea
 
 # install.packages("geocn",
@@ -132,6 +220,8 @@ for (i in 1:terra::nlyr(npp)) {
               legend = FALSE, add = TRUE)
 }
 ```
+
+![**Figure 3**. Maps of farmland NPP and climate factors.](../man/figures/pkgintro/npp2-1.png)
 
 ## Usage
 

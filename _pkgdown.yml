@@ -13,8 +13,8 @@ navbar:
     articles:
       text: Vignettes
       menu:
-      - text: Introduction to the spEDM package
-        href: articles/spEDM.html
+      - text: Introduction to the spEDM package (PkgIntro)
+        href: articles/PkgIntro.html
       - text: State Space Reconstruction (SSR)
         href: articles/SSR.html
       - text: Geographical Convergent Cross Mapping (GCCM)
