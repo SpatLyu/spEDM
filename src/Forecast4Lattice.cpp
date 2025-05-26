@@ -14,7 +14,8 @@
  * for lattice data using simplex projection.
  *
  * Parameters:
- *   - vec: A vector to be embedded.
+ *   - source: A vector to be embedded.
+ *   - target: A vector to be predicted.
  *   - nb_vec: A 2D vector of neighbor indices.
  *   - lib_indices: A boolean vector indicating library (training) set indices.
  *   - pred_indices: A boolean vector indicating prediction set indices.
@@ -26,7 +27,8 @@
  * Returns:
  *   A 2D vector where each row contains [E, b, rho, mae, rmse] for a given combination of embedding dimension and nearest neighbors.
  */
-std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& vec,
+std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& source,
+                                                 const std::vector<double>& target,
                                                  const std::vector<std::vector<int>>& nb_vec,
                                                  const std::vector<bool>& lib_indices,
                                                  const std::vector<bool>& pred_indices,
@@ -61,10 +63,10 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& vec,
   // Parallel loop over each embedding dimension E
   RcppThread::parallelFor(0, unique_Ebcom.size(), [&](size_t i) {
     // Generate embeddings for the current E
-    std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(vec, nb_vec, unique_Ebcom[i].first, tau);
+    std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(source, nb_vec, unique_Ebcom[i].first, tau);
 
     // Compute metrics using SimplexBehavior
-    std::vector<double> metrics = SimplexBehavior(embeddings, vec, lib_indices, pred_indices, unique_Ebcom[i].second);
+    std::vector<double> metrics = SimplexBehavior(embeddings, target, lib_indices, pred_indices, unique_Ebcom[i].second);
 
     // Store results in the matrix (no mutex needed since each thread writes to a unique index)
     result[i][0] = unique_Ebcom[i].first;   // Embedding dimension
@@ -81,7 +83,8 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& vec,
  * Evaluates prediction performance of different theta parameters for lattice data using the s-mapping method.
  *
  * Parameters:
- *   - vec: A vector to be embedded.
+ *   - source: A vector to be embedded.
+ *   - target: A vector to be predicted.
  *   - nb_vec: A 2D vector of neighbor indices.
  *   - lib_indices: A boolean vector indicating library (training) set indices.
  *   - pred_indices: A boolean vector indicating prediction set indices.
@@ -94,7 +97,8 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& vec,
  * Returns:
  *   A 2D vector where each row contains [theta, rho, mae, rmse] for a given theta value.
  */
-std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& vec,
+std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& source,
+                                              const std::vector<double>& target,
                                               const std::vector<std::vector<int>>& nb_vec,
                                               const std::vector<bool>& lib_indices,
                                               const std::vector<bool>& pred_indices,
@@ -108,7 +112,7 @@ std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& vec,
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   // Generate embeddings
-  std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(vec, nb_vec, E, tau);
+  std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(source, nb_vec, E, tau);
 
   // Initialize result matrix with theta.size() rows and 4 columns
   std::vector<std::vector<double>> result(theta.size(), std::vector<double>(4));
@@ -116,7 +120,7 @@ std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& vec,
   // Parallel loop over each theta
   RcppThread::parallelFor(0, theta.size(), [&](size_t i) {
     // Compute metrics using SMapBehavior
-    std::vector<double> metrics = SMapBehavior(embeddings, vec, lib_indices, pred_indices, b, theta[i]);
+    std::vector<double> metrics = SMapBehavior(embeddings, target, lib_indices, pred_indices, b, theta[i]);
 
     // Store results in the matrix (no mutex needed since each thread writes to a unique index)
     result[i][0] = theta[i];           // Weighting parameter for distances

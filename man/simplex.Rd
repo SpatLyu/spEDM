@@ -8,6 +8,7 @@
 \usage{
 \S4method{simplex}{sf}(
   data,
+  column,
   target,
   lib = NULL,
   pred = NULL,
@@ -21,6 +22,7 @@
 
 \S4method{simplex}{SpatRaster}(
   data,
+  column,
   target,
   lib = NULL,
   pred = NULL,
@@ -33,6 +35,8 @@
 }
 \arguments{
 \item{data}{The observation data.}
+
+\item{column}{Name of library variable.}
 
 \item{target}{Name of target variable.}
 
@@ -65,7 +69,7 @@ simplex forecast
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 \donttest{
-simplex(columbus,"crime")
+simplex(columbus,"inc","crime")
 }
 }
 \references{

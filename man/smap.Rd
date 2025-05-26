@@ -8,6 +8,7 @@
 \usage{
 \S4method{smap}{sf}(
   data,
+  column,
   target,
   lib = NULL,
   pred = NULL,
@@ -23,6 +24,7 @@
 
 \S4method{smap}{SpatRaster}(
   data,
+  column,
   target,
   lib = NULL,
   pred = NULL,
@@ -37,6 +39,8 @@
 }
 \arguments{
 \item{data}{The observation data.}
+
+\item{column}{Name of library variable.}
 
 \item{target}{Name of target variable.}
 
@@ -71,7 +75,7 @@ smap forecast
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 \donttest{
-smap(columbus,"inc")
+smap(columbus,"inc","crime")
 }
 }
 \references{

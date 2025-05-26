@@ -1,8 +1,8 @@
 methods::setGeneric("multiview", function(data, ...) standardGeneric("multiview"))
 
-.multiview_sf_method = \(data,columns,target,nvar,lib = NULL,pred = NULL,E = 3,tau = 1,k = E+2,
+.multiview_sf_method = \(data,column,target,nvar,lib = NULL,pred = NULL,E = 3,tau = 1,k = E+2,
                          nb = NULL, top = NULL, threads = detectThreads(), detrend = TRUE){
-  xmat = .multivar_lattice(data,columns,detrend)
+  xmat = .multivar_lattice(data,column,detrend)
   yvec = .uni_lattice(data,target,detrend)
   if (is.null(lib)) lib = .internal_library(cbind(xmat,yvec))
   if (is.null(pred)) pred = lib
@@ -12,9 +12,9 @@ methods::setGeneric("multiview", function(data, ...) standardGeneric("multiview"
   return(res)
 }
 
-.multiview_spatraster_method = \(data,columns,target,nvar,lib = NULL,pred = NULL,E = 3,tau = 1,
+.multiview_spatraster_method = \(data,column,target,nvar,lib = NULL,pred = NULL,E = 3,tau = 1,
                                  k = E+2,top = NULL,threads = detectThreads(),detrend = TRUE){
-  xmat = .multivar_grid(data,columns,detrend)
+  xmat = .multivar_grid(data,column,detrend)
   ymat = .multivar_grid(data,target,detrend)
   if (is.null(lib)) lib = .internal_library(cbind(xmat,ymat),TRUE)
   if (is.null(pred)) pred = lib
@@ -26,7 +26,6 @@ methods::setGeneric("multiview", function(data, ...) standardGeneric("multiview"
 #' multiview embedding forecast
 #'
 #' @inheritParams simplex
-#' @param columns Names of individual variables.
 #' @param nvar Number of variable combinations.
 #' @param top (optional) Number of reconstructions used in MVE forecast.
 #'
@@ -43,7 +42,7 @@ methods::setGeneric("multiview", function(data, ...) standardGeneric("multiview"
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 #' \donttest{
 #' multiview(columbus,
-#'           columns = c("inc","crime","open","plumb","discbd"),
+#'           column = c("inc","crime","open","plumb","discbd"),
 #'           target = "hoval", nvar = 3)
 #' }
 methods::setMethod("multiview", "sf", .multiview_sf_method)

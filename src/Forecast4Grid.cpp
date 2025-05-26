@@ -14,7 +14,8 @@
  * for grid data using simplex projection.
  *
  * Parameters:
- *   - mat: A matrix to be embedded.
+ *   - source: A matrix to be embedded.
+ *   - target: A matrix to be predicted.
  *   - lib_indices: A boolean vector indicating library (training) set indices.
  *   - pred_indices: A boolean vector indicating prediction set indices.
  *   - E: A vector of embedding dimensions to evaluate.
@@ -25,7 +26,8 @@
  * Returns:
  *   A 2D vector where each row contains [E, b, rho, mae, rmse] for a given embedding dimension.
  */
-std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<double>>& mat,
+std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<double>>& source,
+                                              const std::vector<std::vector<double>>& target,
                                               const std::vector<bool>& lib_indices,
                                               const std::vector<bool>& pred_indices,
                                               const std::vector<int>& E,
@@ -36,15 +38,15 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
-  int numRows = mat.size();
-  int numCols = mat[0].size();
+  int numRows = target.size();
+  int numCols = target[0].size();
 
   std::vector<double> vec_std;
   vec_std.reserve(numRows * numCols); // Reserve space for efficiency
 
   for (int i = 0; i < numRows; ++i) {
     for (int j = 0; j < numCols; ++j) {
-      vec_std.push_back(mat[i][j]); // Add element to the vector
+      vec_std.push_back(target[i][j]); // Add element to the vector
     }
   }
 
@@ -71,7 +73,7 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
   // Parallel loop over each embedding dimension E
   RcppThread::parallelFor(0, unique_Ebcom.size(), [&](size_t i) {
     // Generate embeddings for the current E
-    std::vector<std::vector<double>> embeddings = GenGridEmbeddings(mat, unique_Ebcom[i].first, tau);
+    std::vector<std::vector<double>> embeddings = GenGridEmbeddings(source, unique_Ebcom[i].first, tau);
 
     // Compute metrics using SimplexBehavior
     std::vector<double> metrics = SimplexBehavior(embeddings, vec_std, lib_indices, pred_indices, unique_Ebcom[i].second);
@@ -91,7 +93,8 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
  * Evaluates prediction performance of different theta parameters for grid data using the S-mapping method.
  *
  * Parameters:
- *   - mat: A matrix to be embedded.
+ *   - source: A matrix to be embedded.
+ *   - target: A matrix to be predicted.
  *   - lib_indices: A boolean vector indicating library (training) set indices.
  *   - pred_indices: A boolean vector indicating prediction set indices.
  *   - theta: A vector of weighting parameters for distance calculation in SMap.
@@ -103,7 +106,8 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
  * Returns:
  *   A 2D vector where each row contains [theta, rho, mae, rmse] for a given theta value.
  */
-std::vector<std::vector<double>> SMap4Grid(const std::vector<std::vector<double>>& mat,
+std::vector<std::vector<double>> SMap4Grid(const std::vector<std::vector<double>>& source,
+                                           const std::vector<std::vector<double>>& target,
                                            const std::vector<bool>& lib_indices,
                                            const std::vector<bool>& pred_indices,
                                            const std::vector<double>& theta,
@@ -115,20 +119,20 @@ std::vector<std::vector<double>> SMap4Grid(const std::vector<std::vector<double>
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
-  int numRows = mat.size();
-  int numCols = mat[0].size();
+  int numRows = target.size();
+  int numCols = target[0].size();
 
   std::vector<double> vec_std;
   vec_std.reserve(numRows * numCols); // Reserve space for efficiency
 
   for (int i = 0; i < numRows; ++i) {
     for (int j = 0; j < numCols; ++j) {
-      vec_std.push_back(mat[i][j]); // Add element to the vector
+      vec_std.push_back(target[i][j]); // Add element to the vector
     }
   }
 
   // Generate embeddings
-  std::vector<std::vector<double>> embeddings = GenGridEmbeddings(mat, E, tau);
+  std::vector<std::vector<double>> embeddings = GenGridEmbeddings(source, E, tau);
 
   // Initialize result matrix with theta.size() rows and 4 columns
   std::vector<std::vector<double>> result(theta.size(), std::vector<double>(4));

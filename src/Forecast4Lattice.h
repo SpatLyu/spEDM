@@ -15,7 +15,8 @@
  * for lattice data using simplex projection.
  *
  * Parameters:
- *   - vec: A vector to be embedded.
+ *   - source: A vector to be embedded.
+ *   - target: A vector to be predicted.
  *   - nb_vec: A 2D vector of neighbor indices.
  *   - lib_indices: A boolean vector indicating library (training) set indices.
  *   - pred_indices: A boolean vector indicating prediction set indices.
@@ -27,7 +28,8 @@
  * Returns:
  *   A 2D vector where each row contains [E, b, rho, mae, rmse] for a given combination of embedding dimension and nearest neighbors.
  */
-std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& vec,
+std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& source,
+                                                 const std::vector<double>& target,
                                                  const std::vector<std::vector<int>>& nb_vec,
                                                  const std::vector<bool>& lib_indices,
                                                  const std::vector<bool>& pred_indices,
@@ -40,7 +42,8 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& vec,
  * Evaluates prediction performance of different theta parameters for lattice data using the s-mapping method.
  *
  * Parameters:
- *   - vec: A vector to be embedded.
+ *   - source: A vector to be embedded.
+ *   - target: A vector to be predicted.
  *   - nb_vec: A 2D vector of neighbor indices.
  *   - lib_indices: A boolean vector indicating library (training) set indices.
  *   - pred_indices: A boolean vector indicating prediction set indices.
@@ -53,7 +56,8 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& vec,
  * Returns:
  *   A 2D vector where each row contains [theta, rho, mae, rmse] for a given theta value.
  */
-std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& vec,
+std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& source,
+                                              const std::vector<double>& target,
                                               const std::vector<std::vector<int>>& nb_vec,
                                               const std::vector<bool>& lib_indices,
                                               const std::vector<bool>& pred_indices,

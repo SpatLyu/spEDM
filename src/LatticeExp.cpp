@@ -287,7 +287,8 @@ Rcpp::NumericVector RcppFNN4Lattice(
  *   mean absolute error (MAE), and root mean squared error (RMSE).
  *
  * Parameters:
- *   - x: A NumericVector containing the time series data.
+ *   - source: A NumericVector containing the source spatial cross-sectional data to be embedded.
+ *   - target: A NumericVector containing the source spatial cross-sectional data to be predicted.
  *   - nb: A List containing neighborhood information for lattice data.
  *   - lib: An IntegerVector specifying the library indices (1-based in R, converted to 0-based in C++).
  *   - pred: An IntegerVector specifying the prediction indices (1-based in R, converted to 0-based in C++).
@@ -304,7 +305,8 @@ Rcpp::NumericVector RcppFNN4Lattice(
  *   - RMSE: The root mean squared error between the predicted and actual values.
  */
 // [[Rcpp::export]]
-Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
+Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& source,
+                                        const Rcpp::NumericVector& target,
                                         const Rcpp::List& nb,
                                         const Rcpp::IntegerVector& lib,
                                         const Rcpp::IntegerVector& pred,
@@ -316,17 +318,18 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
   // Convert Rcpp::NumericVector to std::vector<double>
-  std::vector<double> vec_std = Rcpp::as<std::vector<double>>(x);
+  std::vector<double> source_std = Rcpp::as<std::vector<double>>(source);
+  std::vector<double> target_std = Rcpp::as<std::vector<double>>(target);
 
   // Convert Rcpp::IntegerVector to std::vector<int>
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
   std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
 
   // Initialize lib_indices and pred_indices with all false
-  std::vector<bool> lib_indices(vec_std.size(), false);
-  std::vector<bool> pred_indices(vec_std.size(), false);
+  std::vector<bool> lib_indices(target_std.size(), false);
+  std::vector<bool> pred_indices(target_std.size(), false);
 
-  int target_len = vec_std.size();
+  int target_len = target_std.size();
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
   size_t n_libsize = lib.size();   // convert R R_xlen_t to C++ size_t
   for (size_t i = 0; i < n_libsize; ++i) {
@@ -344,7 +347,8 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
   }
 
   std::vector<std::vector<double>> res_std = Simplex4Lattice(
-    vec_std,
+    source_std,
+    target_std,
     nb_vec,
     lib_indices,
     pred_indices,
@@ -373,7 +377,8 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
 
 /**
  * Parameters:
- *   - x: A NumericVector containing the time series data.
+ *   - source: A NumericVector containing the source spatial cross-sectional data to be embedded.
+ *   - target: A NumericVector containing the source spatial cross-sectional data to be predicted.
  *   - nb: A List containing neighborhood information for lattice data.
  *   - lib: An IntegerVector specifying the library indices (1-based in R, converted to 0-based in C++).
  *   - pred: An IntegerVector specifying the prediction indices (1-based in R, converted to 0-based in C++).
@@ -393,7 +398,8 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& x,
  * This function utilizes parallel processing for faster computation across different values of theta.
  */
 // [[Rcpp::export]]
-Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& x,
+Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& source,
+                                     const Rcpp::NumericVector& target,
                                      const Rcpp::List& nb,
                                      const Rcpp::IntegerVector& lib,
                                      const Rcpp::IntegerVector& pred,
@@ -406,14 +412,15 @@ Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& x,
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
   // Convert Rcpp::NumericVector to std::vector<double>
-  std::vector<double> vec_std = Rcpp::as<std::vector<double>>(x);
+  std::vector<double> source_std = Rcpp::as<std::vector<double>>(source);
+  std::vector<double> target_std = Rcpp::as<std::vector<double>>(target);
   std::vector<double> theta_std = Rcpp::as<std::vector<double>>(theta);
 
   // Initialize lib_indices and pred_indices with all false
-  std::vector<bool> lib_indices(vec_std.size(), false);
-  std::vector<bool> pred_indices(vec_std.size(), false);
+  std::vector<bool> lib_indices(target_std.size(), false);
+  std::vector<bool> pred_indices(target_std.size(), false);
 
-  int target_len = vec_std.size();
+  int target_len = target_std.size();
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
   size_t n_libsize = lib.size();   // convert R R_xlen_t to C++ size_t
   for (size_t i = 0; i < n_libsize; ++i) {
@@ -431,7 +438,8 @@ Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& x,
   }
 
   std::vector<std::vector<double>> res_std = SMap4Lattice(
-    vec_std,
+    source_std,
+    target_std,
     nb_vec,
     lib_indices,
     pred_indices,
