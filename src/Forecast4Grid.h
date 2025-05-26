@@ -15,7 +15,8 @@
  * for grid data using simplex projection.
  *
  * Parameters:
- *   - mat: A matrix to be embedded.
+ *   - source: A matrix to be embedded.
+ *   - target: A matrix to be predicted.
  *   - lib_indices: A boolean vector indicating library (training) set indices.
  *   - pred_indices: A boolean vector indicating prediction set indices.
  *   - E: A vector of embedding dimensions to evaluate.
@@ -26,7 +27,8 @@
  * Returns:
  *   A 2D vector where each row contains [E, b, rho, mae, rmse] for a given embedding dimension.
  */
-std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<double>>& mat,
+std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<double>>& source,
+                                              const std::vector<std::vector<double>>& target,
                                               const std::vector<bool>& lib_indices,
                                               const std::vector<bool>& pred_indices,
                                               const std::vector<int>& E,
@@ -38,7 +40,8 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
  * Evaluates prediction performance of different theta parameters for grid data using the S-mapping method.
  *
  * Parameters:
- *   - mat: A matrix to be embedded.
+ *   - source: A matrix to be embedded.
+ *   - target: A matrix to be predicted.
  *   - lib_indices: A boolean vector indicating library (training) set indices.
  *   - pred_indices: A boolean vector indicating prediction set indices.
  *   - theta: A vector of weighting parameters for distance calculation in SMap.
@@ -50,7 +53,8 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
  * Returns:
  *   A 2D vector where each row contains [theta, rho, mae, rmse] for a given theta value.
  */
-std::vector<std::vector<double>> SMap4Grid(const std::vector<std::vector<double>>& mat,
+std::vector<std::vector<double>> SMap4Grid(const std::vector<std::vector<double>>& source,
+                                           const std::vector<std::vector<double>>& target,
                                            const std::vector<bool>& lib_indices,
                                            const std::vector<bool>& pred_indices,
                                            const std::vector<double>& theta,
