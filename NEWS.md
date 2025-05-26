@@ -1,5 +1,9 @@
 # spEDM 1.7
 
+### news
+
+* Enable `column` parameter to `simplex()` and `smap()` for specifying library column (#565).
+
 ### enhancements
 
 * Introduce confidence interval ribbon support in plot method for `gccm` results (#550).
