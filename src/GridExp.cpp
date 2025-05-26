@@ -250,7 +250,8 @@ Rcpp::NumericVector RcppFNN4Grid(
 }
 
 // [[Rcpp::export]]
-Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
+Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
+                                     const Rcpp::NumericMatrix& target,
                                      const Rcpp::IntegerMatrix& lib,
                                      const Rcpp::IntegerMatrix& pred,
                                      const Rcpp::IntegerVector& E,
@@ -258,13 +259,15 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
                                      int tau,
                                      int threads) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
-  int numRows = mat.nrow();
-  int numCols = mat.ncol();
-  std::vector<std::vector<double>> cppMat(numRows, std::vector<double>(numCols));
+  int numRows = target.nrow();
+  int numCols = target.ncol();
+  std::vector<std::vector<double>> sourceMat(numRows, std::vector<double>(numCols));
+  std::vector<std::vector<double>> targetMat(numRows, std::vector<double>(numCols));
 
   for (int r = 0; r < numRows; ++r) {
     for (int c = 0; c < numCols; ++c) {
-      cppMat[r][c] = mat(r, c);
+      sourceMat[r][c] = source(r, c);
+      targetMat[r][c] = target(r, c);
     }
   }
 
@@ -287,7 +290,7 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
       // Convert to 0-based index
       currow = lib(i,0);
       curcol = lib(i,1);
-      if (!std::isnan(cppMat[currow-1][curcol-1])){
+      if (!std::isnan(targetMat[currow-1][curcol-1])){
         lib_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
       }
     }
@@ -302,7 +305,7 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
       // Convert to 0-based index
       currow = pred(i,0);
       curcol = pred(i,1);
-      if (!std::isnan(cppMat[currow-1][curcol-1])){
+      if (!std::isnan(targetMat[currow-1][curcol-1])){
         pred_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
       }
     }
@@ -313,7 +316,8 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
   std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
 
   std::vector<std::vector<double>> res_std = Simplex4Grid(
-    cppMat,
+    sourceMat,
+    targetMat,
     lib_indices,
     pred_indices,
     E_std,
@@ -340,7 +344,8 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& mat,
 }
 
 // [[Rcpp::export]]
-Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& mat,
+Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& source,
+                                  const Rcpp::NumericMatrix& target,
                                   const Rcpp::IntegerMatrix& lib,
                                   const Rcpp::IntegerMatrix& pred,
                                   const Rcpp::NumericVector& theta,
@@ -349,13 +354,15 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& mat,
                                   int b,
                                   int threads) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
-  int numRows = mat.nrow();
-  int numCols = mat.ncol();
-  std::vector<std::vector<double>> cppMat(numRows, std::vector<double>(numCols));
+  int numRows = target.nrow();
+  int numCols = target.ncol();
+  std::vector<std::vector<double>> sourceMat(numRows, std::vector<double>(numCols));
+  std::vector<std::vector<double>> targetMat(numRows, std::vector<double>(numCols));
 
   for (int r = 0; r < numRows; ++r) {
     for (int c = 0; c < numCols; ++c) {
-      cppMat[r][c] = mat(r, c);
+      sourceMat[r][c] = source(r, c);
+      targetMat[r][c] = target(r, c);
     }
   }
 
@@ -378,7 +385,7 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& mat,
       // Convert to 0-based index
       currow = lib(i,0);
       curcol = lib(i,1);
-      if (!std::isnan(cppMat[currow-1][curcol-1])){
+      if (!std::isnan(targetMat[currow-1][curcol-1])){
         lib_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
       }
     }
@@ -393,7 +400,7 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& mat,
       // Convert to 0-based index
       currow = pred(i,0);
       curcol = pred(i,1);
-      if (!std::isnan(cppMat[currow-1][curcol-1])){
+      if (!std::isnan(targetMat[currow-1][curcol-1])){
         pred_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
       }
     }
@@ -403,7 +410,8 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& mat,
   std::vector<double> theta_std = Rcpp::as<std::vector<double>>(theta);
 
   std::vector<std::vector<double>> res_std = SMap4Grid(
-    cppMat,
+    sourceMat,
+    targetMat,
     lib_indices,
     pred_indices,
     theta_std,
