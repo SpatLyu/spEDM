@@ -8,7 +8,7 @@
 \usage{
 \S4method{multiview}{sf}(
   data,
-  columns,
+  column,
   target,
   nvar,
   lib = NULL,
@@ -24,7 +24,7 @@
 
 \S4method{multiview}{SpatRaster}(
   data,
-  columns,
+  column,
   target,
   nvar,
   lib = NULL,
@@ -40,7 +40,7 @@
 \arguments{
 \item{data}{The observation data.}
 
-\item{columns}{Names of individual variables.}
+\item{column}{Name of library variable.}
 
 \item{target}{Name of target variable.}
 
@@ -74,7 +74,7 @@ multiview embedding forecast
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 \donttest{
 multiview(columbus,
-          columns = c("inc","crime","open","plumb","discbd"),
+          column = c("inc","crime","open","plumb","discbd"),
           target = "hoval", nvar = 3)
 }
 }
