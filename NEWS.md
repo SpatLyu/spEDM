@@ -1,9 +1,5 @@
 # spEDM 1.7
 
-### news
-
-* Enable `column` parameter to `simplex()` and `smap()` for specifying library column (#565).
-
 ### enhancements
 
 * Introduce confidence interval ribbon support in plot method for `gccm` results (#550).
@@ -12,7 +8,7 @@
 
 * Users must now use `detrend` instead of `trend.rm` (#559).
 
-* Rename `columns` parameter to `column` in `multiview()` for consistency (#565).
+* Enable `column` parameter in `simplex()` and `smap()` and rename `columns` parameter to `column` in `multiview()` (#565).
 
 ### bug fixes
 
