@@ -12,6 +12,8 @@
 
 * Users must now use `detrend` instead of `trend.rm` (#559).
 
+* Rename `columns` parameter to `column` in `multiview()` for consistency (#565).
+
 ### bug fixes
 
 * Fix bug in plot method for `gccm` results where legend labels did not correctly match the corresponding line colors (#552).
