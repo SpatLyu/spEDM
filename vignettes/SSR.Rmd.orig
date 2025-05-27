@@ -90,11 +90,11 @@ The false nearest neighbours (FNN) method helps identify the appropriate embeddi
 Below are two examples applying the `fnn()` function. In both cases, `eps` is set to one-tenth of the standard deviation of the variable of interest, providing a relative threshold for identifying false neighbours.
 
 ```{r fnn_lattice_data}
-fnn(popd_sf,"popd",
+fnn(popd_sf,"popd", E = 1:15,
     eps = stats::sd(popd_sf$popd) / 10)
 ```
 
 ```{r fnn_grid_data}
-fnn(cu,"cu",
+fnn(cu,"cu", E = 1:15,
     eps = stats::sd(terra::values(cu[["cu"]]),na.rm = TRUE) / 10)
 ```
