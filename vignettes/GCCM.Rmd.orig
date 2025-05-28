@@ -98,6 +98,13 @@ popd_sf = sf::st_as_sf(popd, coords = c("x","y"), crs = 4326)
 popd_sf
 ```
 
+Determining optimal embedding dimension:
+
+```{r simplex_lattice}
+simplex(popd_sf, "pre", "pre", E = 1:10, k = 6)
+simplex(popd_sf, "popd", "popd", E = 1:10, k = 6)
+```
+
 Run GCCM:
 
 ```{r gccm_lattice}
@@ -106,7 +113,7 @@ pd_res = gccm(data = popd_sf,
               cause = "pre",
               effect = "popd",
               libsizes = seq(100, 2800, by = 200),
-              E = c(2,5),
+              E = c(3,9),
               k = 6,
               nb = popd_nb,
               progressbar = FALSE)
@@ -118,7 +125,7 @@ pd_res
 Visualize the result:
 
 ```{r fig1,fig.width=4.5,fig.height=3.65,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. The cross-mapping prediction outputs between population density and county-level precipitation.")}
-plot(pd_res,xlimits = c(0, 2800)) +
+plot(pd_res, xlimits = c(0, 2800), draw_ci = TRUE) +
   ggplot2::theme(legend.justification = c(0.85,1))
 ```
 
@@ -130,8 +137,6 @@ Load the `spEDM` package and its farmland NPP data:
 library(spEDM)
 
 npp = terra::rast(system.file("case/npp.tif", package = "spEDM"))
-npp
-
 # To save the computation time, we will aggregate the data by 3 times
 npp = terra::aggregate(npp, fact = 3, na.rm = TRUE)
 npp
@@ -148,6 +153,13 @@ set.seed(2025)
 indices = sample(nrow(nnaindice), size = 1500, replace = FALSE)
 libindice = nnaindice[-indices,]
 predindice = nnaindice[indices,]
+```
+
+Determining optimal embedding dimension:
+
+```{r simplex_grid}
+simplex(npp, "pre", "pre", E = 1:10, k = 8, lib = nnaindice, pred = predindice)
+simplex(npp, "npp", "npp", E = 1:10, k = 8, lib = nnaindice, pred = predindice)
 ```
 
 Run GCCM:
@@ -171,6 +183,6 @@ npp_res
 Visualize the result:
 
 ```{r fig2,fig.width=4.5,fig.height=3.5,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. The cross-mapping prediction outputs between farmland NPP and precipitation.")}
-plot(npp_res,xlimits = c(5, 135),ylimits = c(0.05,1)) +
+plot(npp_res,xlimits = c(5, 135),ylimits = c(0.05,1), draw_ci = TRUE) +
   ggplot2::theme(legend.justification = c(0.25,1))
 ```
