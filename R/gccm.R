@@ -75,7 +75,7 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 #' @param tau (optional) step of spatial lags.
 #' @param k (optional) number of nearest neighbors used in prediction.
 #' @param theta (optional) weighting parameter for distances, useful when `algorithm` is `smap`.
-#' @param algorithm (optional) algorithm used in prediction.
+#' @param algorithm (optional) prediction algorithm.
 #' @param lib (optional) libraries indices.
 #' @param pred (optional) predictions indices.
 #' @param nb (optional) neighbours list.

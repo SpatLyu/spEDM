@@ -42,35 +42,35 @@
 )
 }
 \arguments{
-\item{data}{The observation data.}
+\item{data}{observation data.}
 
-\item{cause}{Name of causal variable.}
+\item{cause}{name of causal variable.}
 
-\item{effect}{Name of effect variable.}
+\item{effect}{name of effect variable.}
 
-\item{k}{(optional) Number of nearest neighbors used in symbolization.}
+\item{k}{(optional) number of nearest neighbors used in symbolization.}
 
-\item{block}{(optional) Number of blocks used in spatial block bootstrap.}
+\item{block}{(optional) number of blocks used in spatial block bootstrap.}
 
-\item{boot}{(optional) Number of bootstraps to perform.}
+\item{boot}{(optional) number of bootstraps to perform.}
 
-\item{seed}{(optional) The random seed.}
+\item{seed}{(optional) random seed.}
 
-\item{base}{(optional) Base of the logarithm.}
+\item{base}{(optional) logarithm base.}
 
-\item{lib}{(optional) Libraries indices.}
+\item{lib}{(optional) libraries indices.}
 
-\item{pred}{(optional) Predictions indices.}
+\item{pred}{(optional) predictions indices.}
 
-\item{nb}{(optional) The neighbours list.}
+\item{nb}{(optional) neighbours list.}
 
-\item{threads}{(optional) Number of threads.}
+\item{threads}{(optional) number of threads to use.}
 
-\item{detrend}{(optional) Whether to remove the linear trend.}
+\item{detrend}{(optional) whether to remove the linear trend.}
 
-\item{normalize}{(optional) Whether to normalize the result.}
+\item{normalize}{(optional) whether to normalize the result.}
 
-\item{progressbar}{(optional) Whether to show the progress bar.}
+\item{progressbar}{(optional) whether to show the progress bar.}
 }
 \value{
 A list

@@ -40,27 +40,27 @@
 )
 }
 \arguments{
-\item{data}{The observation data.}
+\item{data}{observation data.}
 
-\item{cause}{Name of causal variable.}
+\item{cause}{name of causal variable.}
 
-\item{effect}{Name of effect variable.}
+\item{effect}{name of effect variable.}
 
-\item{E}{(optional) Dimensions of the embedding.}
+\item{E}{(optional) embedding dimensions.}
 
-\item{tau}{(optional) Step of spatial lags.}
+\item{tau}{(optional) step of spatial lags.}
 
-\item{k}{(optional) Number of nearest neighbors used in intersection.}
+\item{k}{(optional) number of nearest neighbors used in intersection.}
 
-\item{r}{(optional) Number of excluded neighbors in intersection.}
+\item{r}{(optional) number of excluded neighbors in intersection.}
 
-\item{lib}{(optional) Libraries indices.}
+\item{lib}{(optional) libraries indices.}
 
-\item{pred}{(optional) Predictions indices.}
+\item{pred}{(optional) predictions indices.}
 
-\item{nb}{(optional) The neighbours list.}
+\item{nb}{(optional) neighbours list.}
 
-\item{threads}{(optional) Number of threads.}
+\item{threads}{(optional) number of threads to use.}
 
 \item{bidirectional}{(optional) whether to examine bidirectional causality.}
 
