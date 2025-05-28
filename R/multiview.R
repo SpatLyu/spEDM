@@ -26,8 +26,8 @@ methods::setGeneric("multiview", function(data, ...) standardGeneric("multiview"
 #' multiview embedding forecast
 #'
 #' @inheritParams simplex
-#' @param nvar Number of variable combinations.
-#' @param top (optional) Number of reconstructions used in MVE forecast.
+#' @param nvar number of variable combinations.
+#' @param top (optional) number of reconstructions used in MVE forecast.
 #'
 #' @return A vector (when input is sf object) or matrix
 #' @export

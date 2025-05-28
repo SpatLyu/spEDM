@@ -24,11 +24,11 @@ methods::setGeneric("fnn", function(data, ...) standardGeneric("fnn"))
 #' false nearest neighbours
 #'
 #' @inheritParams embedded
-#' @param lib (optional) Libraries indices.
-#' @param pred (optional) Predictions indices.
+#' @param lib (optional) libraries indices.
+#' @param pred (optional) predictions indices.
 #' @param rt (optional) escape factor.
 #' @param eps (optional) neighborhood diameter.
-#' @param threads (optional) Number of threads.
+#' @param threads (optional) number of threads to use.
 #'
 #' @return A vector
 #' @export

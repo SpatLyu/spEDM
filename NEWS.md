@@ -2,6 +2,8 @@
 
 ### enhancements
 
+* Unify parameter descriptions to lowercase (#570).
+
 * Introduce confidence interval ribbon support in plot method for `gccm` results (#550).
 
 ### breaking changes

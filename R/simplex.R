@@ -24,11 +24,11 @@ methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
 #' simplex forecast
 #'
 #' @inheritParams embedded
-#' @param column Name of library variable.
-#' @param lib (optional) Libraries indices.
-#' @param pred (optional) Predictions indices.
-#' @param k (optional) Number of nearest neighbors used in prediction.
-#' @param threads (optional) Number of threads.
+#' @param column name of library variable.
+#' @param lib (optional) libraries indices.
+#' @param pred (optional) predictions indices.
+#' @param k (optional) number of nearest neighbors used in prediction.
+#' @param threads (optional) number of threads to use.
 #'
 #' @return A list
 #' \describe{
