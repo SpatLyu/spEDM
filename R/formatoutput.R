@@ -87,7 +87,7 @@ print.sc_res = \(x,...){
 plot.ccm_res = \(x, family = "serif",
                  legend_texts = NULL,
                  legend_cols = c("#ed795b","#608dbe"),
-                 draw_ci = FALSE, ci_alpha = 0.2,
+                 draw_ci = FALSE, ci_alpha = 0.25,
                  xbreaks = NULL, xlimits = NULL,
                  ybreaks = seq(0, 1, by = 0.1),
                  ylimits = c(-0.05, 1), ...){
