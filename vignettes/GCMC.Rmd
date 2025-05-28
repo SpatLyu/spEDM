@@ -196,17 +196,6 @@ Load the `spEDM` package and its farmland NPP data:
 library(spEDM)
 
 npp = terra::rast(system.file("case/npp.tif", package = "spEDM"))
-npp
-## class       : SpatRaster 
-## dimensions  : 404, 483, 5  (nrow, ncol, nlyr)
-## resolution  : 10000, 10000  (x, y)
-## extent      : -2625763, 2204237, 1877078, 5917078  (xmin, xmax, ymin, ymax)
-## coord. ref. : CGCS2000_Albers 
-## source      : npp.tif 
-## names       :      npp,        pre,      tem,      elev,         hfp 
-## min values  :   164.00,   384.3409, -47.8194, -122.2004,  0.03390418 
-## max values  : 16606.33, 23878.3555, 263.6938, 5350.4902, 44.90312195
-
 # To save the computation time, we will aggregate the data by 3 times
 npp = terra::aggregate(npp, fact = 3, na.rm = TRUE)
 npp
