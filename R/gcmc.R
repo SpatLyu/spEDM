@@ -65,17 +65,17 @@ methods::setGeneric("gcmc", function(data, ...) standardGeneric("gcmc"))
 
 #' geographical cross mapping cardinality
 #'
-#' @param data The observation data.
-#' @param cause Name of causal variable.
-#' @param effect Name of effect variable.
-#' @param E (optional) Dimensions of the embedding.
-#' @param tau (optional) Step of spatial lags.
-#' @param k (optional) Number of nearest neighbors used in intersection.
-#' @param r (optional) Number of excluded neighbors in intersection.
-#' @param lib (optional) Libraries indices.
-#' @param pred (optional) Predictions indices.
-#' @param nb (optional) The neighbours list.
-#' @param threads (optional) Number of threads.
+#' @param data observation data.
+#' @param cause name of causal variable.
+#' @param effect name of effect variable.
+#' @param E (optional) embedding dimensions.
+#' @param tau (optional) step of spatial lags.
+#' @param k (optional) number of nearest neighbors used in intersection.
+#' @param r (optional) number of excluded neighbors in intersection.
+#' @param lib (optional) libraries indices.
+#' @param pred (optional) predictions indices.
+#' @param nb (optional) neighbours list.
+#' @param threads (optional) number of threads to use.
 #' @param bidirectional (optional) whether to examine bidirectional causality.
 #' @param detrend (optional) Whether to remove the linear trend.
 #' @param progressbar (optional) whether to show the progress bar.

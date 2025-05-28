@@ -67,22 +67,22 @@ methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
 
 #' geographical convergent cross mapping
 #'
-#' @param data The observation data.
-#' @param cause Name of causal variable.
-#' @param effect Name of effect variable.
-#' @param libsizes Number of spatial units used in prediction.
-#' @param E (optional) Dimensions of the embedding.
-#' @param tau (optional) Step of spatial lags.
-#' @param k (optional) Number of nearest neighbors used in prediction.
-#' @param theta (optional) Weighting parameter for distances, useful when `algorithm` is `smap`.
-#' @param algorithm (optional) Algorithm used in prediction.
-#' @param lib (optional) Libraries indices.
-#' @param pred (optional) Predictions indices.
-#' @param nb (optional) The neighbours list.
-#' @param threads (optional) Number of threads.
-#' @param parallel.level (optional) Level of parallelism, `low` or `high`.
+#' @param data observation data.
+#' @param cause name of causal variable.
+#' @param effect name of effect variable.
+#' @param libsizes number of spatial units used in prediction.
+#' @param E (optional) embedding dimensions.
+#' @param tau (optional) step of spatial lags.
+#' @param k (optional) number of nearest neighbors used in prediction.
+#' @param theta (optional) weighting parameter for distances, useful when `algorithm` is `smap`.
+#' @param algorithm (optional) algorithm used in prediction.
+#' @param lib (optional) libraries indices.
+#' @param pred (optional) predictions indices.
+#' @param nb (optional) neighbours list.
+#' @param threads (optional) number of threads to use.
+#' @param parallel.level (optional) level of parallelism, `low` or `high`.
 #' @param bidirectional (optional) whether to examine bidirectional causality.
-#' @param detrend (optional) Whether to remove the linear trend.
+#' @param detrend (optional) whether to remove the linear trend.
 #' @param progressbar (optional) whether to show the progress bar.
 #'
 #' @return A list

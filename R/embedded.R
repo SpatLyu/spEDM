@@ -13,12 +13,12 @@ methods::setGeneric("embedded", function(data, ...) standardGeneric("embedded"))
 
 #' embedding spatial cross sectional data
 #'
-#' @param data The observation data.
-#' @param target Name of target variable.
-#' @param E (optional) Dimensions of the embedding.
-#' @param tau (optional) Step of spatial lags.
-#' @param nb (optional) The neighbours list.
-#' @param detrend (optional) Whether to remove the linear trend.
+#' @param data observation data.
+#' @param target name of target variable.
+#' @param E (optional) embedding dimensions.
+#' @param tau (optional) step of spatial lags.
+#' @param nb (optional) neighbours list.
+#' @param detrend (optional) whether to remove the linear trend.
 #'
 #' @return A matrix
 #' @export

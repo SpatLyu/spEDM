@@ -25,21 +25,21 @@ methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
 
 #' spatial causality test
 #'
-#' @param data The observation data.
-#' @param cause Name of causal variable.
-#' @param effect Name of effect variable.
-#' @param k (optional) Number of nearest neighbors used in symbolization.
-#' @param block (optional) Number of blocks used in spatial block bootstrap.
-#' @param boot (optional) Number of bootstraps to perform.
-#' @param seed (optional) The random seed.
-#' @param base (optional) Base of the logarithm.
-#' @param lib (optional) Libraries indices.
-#' @param pred (optional) Predictions indices.
-#' @param nb (optional) The neighbours list.
-#' @param threads (optional) Number of threads.
-#' @param detrend (optional) Whether to remove the linear trend.
-#' @param normalize (optional) Whether to normalize the result.
-#' @param progressbar (optional) Whether to show the progress bar.
+#' @param data observation data.
+#' @param cause name of causal variable.
+#' @param effect name of effect variable.
+#' @param k (optional) number of nearest neighbors used in symbolization.
+#' @param block (optional) number of blocks used in spatial block bootstrap.
+#' @param boot (optional) number of bootstraps to perform.
+#' @param seed (optional) random seed.
+#' @param base (optional) logarithm base.
+#' @param lib (optional) libraries indices.
+#' @param pred (optional) predictions indices.
+#' @param nb (optional) neighbours list.
+#' @param threads (optional) number of threads to use.
+#' @param detrend (optional) whether to remove the linear trend.
+#' @param normalize (optional) whether to normalize the result.
+#' @param progressbar (optional) whether to show the progress bar.
 #'
 #' @return A list
 #' \describe{
