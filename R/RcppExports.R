@@ -53,8 +53,8 @@ RcppRowColFromGrid <- function(cellNum, totalCol) {
     .Call(`_spEDM_RcppRowColFromGrid`, cellNum, totalCol)
 }
 
-RcppLaggedVar4Grid <- function(mat, lagNum) {
-    .Call(`_spEDM_RcppLaggedVar4Grid`, mat, lagNum)
+RcppLaggedVal4Grid <- function(mat, lagNum) {
+    .Call(`_spEDM_RcppLaggedVal4Grid`, mat, lagNum)
 }
 
 RcppGenGridEmbeddings <- function(mat, E, tau) {
