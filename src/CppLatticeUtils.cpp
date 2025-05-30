@@ -122,7 +122,7 @@ std::vector<std::vector<int>> CppLaggedNeighbor4Lattice(const std::vector<std::v
  *   A 2D vector where each element contains the lagged values corresponding to the computed
  *   lagged neighbors for each spatial unit.
  */
-std::vector<std::vector<double>> CppLaggedVar4Lattice(const std::vector<double>& vec,
+std::vector<std::vector<double>> CppLaggedVal4Lattice(const std::vector<double>& vec,
                                                       const std::vector<std::vector<int>>& nb,
                                                       int lagNum) {
   int n = vec.size();

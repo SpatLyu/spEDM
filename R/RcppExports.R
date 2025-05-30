@@ -125,8 +125,8 @@ RcppLaggedNeighbor4Lattice <- function(nb, lagNum) {
     .Call(`_spEDM_RcppLaggedNeighbor4Lattice`, nb, lagNum)
 }
 
-RcppLaggedVar4Lattice <- function(vec, nb, lagNum) {
-    .Call(`_spEDM_RcppLaggedVar4Lattice`, vec, nb, lagNum)
+RcppLaggedVal4Lattice <- function(vec, nb, lagNum) {
+    .Call(`_spEDM_RcppLaggedVal4Lattice`, vec, nb, lagNum)
 }
 
 RcppGenLatticeEmbeddings <- function(vec, nb, E, tau) {

@@ -75,7 +75,7 @@ Rcpp::List RcppLaggedNeighbor4Lattice(const Rcpp::List& nb, int lagNum) {
 
 // Wrapper function to calculate lagged values for spatial lattice data
 // [[Rcpp::export]]
-Rcpp::List RcppLaggedVar4Lattice(const Rcpp::NumericVector& vec,
+Rcpp::List RcppLaggedVal4Lattice(const Rcpp::NumericVector& vec,
                                  const Rcpp::List& nb, int lagNum) {
   int n = nb.size();
 
@@ -86,7 +86,7 @@ Rcpp::List RcppLaggedVar4Lattice(const Rcpp::NumericVector& vec,
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
   // Calculate lagged indices
-  std::vector<std::vector<double>> lagged_values = CppLaggedVar4Lattice(vec_std, nb_vec, lagNum);
+  std::vector<std::vector<double>> lagged_values = CppLaggedVal4Lattice(vec_std, nb_vec, lagNum);
 
   // Convert std::vector<std::vector<int>> to Rcpp::List
   Rcpp::List result(n);
