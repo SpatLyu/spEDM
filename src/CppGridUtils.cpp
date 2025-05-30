@@ -107,7 +107,7 @@ std::vector<std::vector<double>> GridVec2Mat(const std::vector<double>& Vec,
  * Note:
  *   The return value for each element is the lagged value of the neighbors, not the index of the neighbor.
  */
-std::vector<std::vector<double>> CppLaggedVar4Grid(
+std::vector<std::vector<double>> CppLaggedVal4Grid(
     const std::vector<std::vector<double>>& mat,
     int lagNum
 ) {
@@ -211,7 +211,7 @@ std::vector<std::vector<double>> GenGridEmbeddings(
     // Fill the remaining columns (2 to E) with the averaged lagged variables
     for (int lagNum = 1; lagNum < E; ++lagNum) {
       // Calculate the lagged variables for the current lagNum
-      std::vector<std::vector<double>> lagged_vars = CppLaggedVar4Grid(mat, lagNum);
+      std::vector<std::vector<double>> lagged_vars = CppLaggedVal4Grid(mat, lagNum);
 
       // Check if all elements in lagged_vars are NaN
       bool allNaN = true;
@@ -255,7 +255,7 @@ std::vector<std::vector<double>> GenGridEmbeddings(
       int lagNum = i * tau;  // Calculate the actual lag step
 
       // Calculate the lagged variables for the current lagNum
-      std::vector<std::vector<double>> lagged_vars = CppLaggedVar4Grid(mat, lagNum);
+      std::vector<std::vector<double>> lagged_vars = CppLaggedVal4Grid(mat, lagNum);
 
       // Check if all elements in lagged_vars are NaN
       bool allNaN = true;

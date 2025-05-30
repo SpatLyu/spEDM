@@ -84,7 +84,7 @@ std::vector<std::vector<double>> GridVec2Mat(const std::vector<double>& Vec,
  * Note:
  *   The return value for each element is the lagged value of the neighbors, not the index of the neighbor.
  */
-std::vector<std::vector<double>> CppLaggedVar4Grid(
+std::vector<std::vector<double>> CppLaggedVal4Grid(
     const std::vector<std::vector<double>>& mat,
     int lagNum
 );
