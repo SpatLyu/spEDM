@@ -206,15 +206,15 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// RcppLaggedVar4Grid
-Rcpp::NumericMatrix RcppLaggedVar4Grid(const Rcpp::NumericMatrix& mat, int lagNum);
-RcppExport SEXP _spEDM_RcppLaggedVar4Grid(SEXP matSEXP, SEXP lagNumSEXP) {
+// RcppLaggedVal4Grid
+Rcpp::NumericMatrix RcppLaggedVal4Grid(const Rcpp::NumericMatrix& mat, int lagNum);
+RcppExport SEXP _spEDM_RcppLaggedVal4Grid(SEXP matSEXP, SEXP lagNumSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< int >::type lagNum(lagNumSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppLaggedVar4Grid(mat, lagNum));
+    rcpp_result_gen = Rcpp::wrap(RcppLaggedVal4Grid(mat, lagNum));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1260,7 +1260,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppIntersectionCardinality", (DL_FUNC) &_spEDM_RcppIntersectionCardinality, 8},
     {"_spEDM_RcppLocateGridIndices", (DL_FUNC) &_spEDM_RcppLocateGridIndices, 4},
     {"_spEDM_RcppRowColFromGrid", (DL_FUNC) &_spEDM_RcppRowColFromGrid, 2},
-    {"_spEDM_RcppLaggedVar4Grid", (DL_FUNC) &_spEDM_RcppLaggedVar4Grid, 2},
+    {"_spEDM_RcppLaggedVal4Grid", (DL_FUNC) &_spEDM_RcppLaggedVal4Grid, 2},
     {"_spEDM_RcppGenGridEmbeddings", (DL_FUNC) &_spEDM_RcppGenGridEmbeddings, 3},
     {"_spEDM_RcppGenGridSymbolization", (DL_FUNC) &_spEDM_RcppGenGridSymbolization, 4},
     {"_spEDM_RcppDivideGrid", (DL_FUNC) &_spEDM_RcppDivideGrid, 3},

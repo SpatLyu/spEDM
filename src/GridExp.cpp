@@ -32,7 +32,7 @@ Rcpp::NumericVector RcppRowColFromGrid(int cellNum, int totalCol){
 };
 
 // [[Rcpp::export]]
-Rcpp::NumericMatrix RcppLaggedVar4Grid(const Rcpp::NumericMatrix& mat, int lagNum) {
+Rcpp::NumericMatrix RcppLaggedVal4Grid(const Rcpp::NumericMatrix& mat, int lagNum) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = mat.nrow();
   int numCols = mat.ncol();
@@ -44,8 +44,8 @@ Rcpp::NumericMatrix RcppLaggedVar4Grid(const Rcpp::NumericMatrix& mat, int lagNu
     }
   }
 
-  // Call the CppLaggedVar4Grid function
-  std::vector<std::vector<double>> laggedMat = CppLaggedVar4Grid(cppMat, lagNum);
+  // Call the CppLaggedVal4Grid function
+  std::vector<std::vector<double>> laggedMat = CppLaggedVal4Grid(cppMat, lagNum);
 
   // Convert the result back to Rcpp::NumericMatrix
   int laggedRows = laggedMat.size();
