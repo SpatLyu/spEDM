@@ -894,7 +894,7 @@ std::vector<double> CppDeLongAUCConfidence(const std::vector<double>& cases,
  * @param cases A vector of scores for the cases (positive class).
  * @param direction A string indicating the direction of comparison (">" for greater, "<" for less).
  * @param level The confidence level, default is 0.05.
- * @param sample_num Number of effective sample size
+ * @param num_samples Number of effective sample size
  *
  * @return A vector of four elements:
  *   - theta: The computed AUC value.
@@ -905,11 +905,11 @@ std::vector<double> CppDeLongAUCConfidence(const std::vector<double>& cases,
 std::vector<double> CppCMCTest(const std::vector<double>& cases,
                                const std::string& direction,
                                double level = 0.05,
-                               int num_samples = 0) {
+                               size_t num_samples = 0) {
   size_t m = cases.size(), n = cases.size();  // Both m and n are set to cases.size()
 
   if (num_samples == 0){
-    num_samples = static_cast<int>(m);
+    num_samples = m;
   }
 
   std::vector<double> controls;

@@ -104,7 +104,7 @@ std::vector<double> CppDeLongAUCConfidence(const std::vector<double>& cases,
 std::vector<double> CppCMCTest(const std::vector<double>& cases,
                                const std::string& direction,
                                double level = 0.05,
-                               int num_samples = 0);
+                               size_t num_samples = 0);
 
 std::vector<double> CppDeLongTest(const std::vector<double>& cases,
                                   const std::vector<double>& controls,
