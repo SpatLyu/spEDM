@@ -1,4 +1,5 @@
 #include <vector>
+#include <cstdint>
 #include <algorithm>
 #include <utility>
 #include <string>
@@ -46,23 +47,24 @@ DeLongPlacementsRes CppDeLongPlacements(const std::vector<double>& cases,
   }
 
   // Create combined vector with indices and class labels
-  std::vector<std::pair<int, double>> Z;
-  std::vector<bool> labels(L);
+  // Use size_t instead of int for indices and Replace vector<bool> with vector<uint8_t>
+  std::vector<std::pair<size_t, double>> Z;
+  std::vector<uint8_t> labels(L, 0);
 
   // Populate case data
   for (size_t i = 0; i < m; ++i) {
     Z.emplace_back(i, proc_cases[i]);
-    labels[i] = true;
+    labels[i] = 1;
   }
 
   // Populate control data
   for (size_t j = 0; j < n; ++j) {
     Z.emplace_back(m + j, proc_controls[j]);
-    labels[m + j] = false;
+    labels[m + j] = 0;
   }
 
   // Sort combined data by value
-  std::sort(Z.begin(), Z.end(), [](const std::pair<int, double>& a, const std::pair<int, double>& b) {
+  std::sort(Z.begin(), Z.end(), [](const std::pair<size_t, double>& a, const std::pair<size_t, double>& b) {
     return a.second < b.second;
   });
 
@@ -72,12 +74,12 @@ DeLongPlacementsRes CppDeLongPlacements(const std::vector<double>& cases,
   size_t i = 0;
 
   while (i < L) {
-    std::vector<int> case_indices, control_indices;
+    std::vector<size_t> case_indices, control_indices;
     size_t case_count = 0, control_count = 0;
 
     // Handle tied values
     while (true) {
-      int index = Z[i].first;
+      size_t index = Z[i].first;
       if (labels[index]) {
         ++case_count;
         case_indices.push_back(index);
@@ -91,12 +93,12 @@ DeLongPlacementsRes CppDeLongPlacements(const std::vector<double>& cases,
     }
 
     // Update XY values for cases
-    for (int idx : case_indices) {
+    for (size_t idx : case_indices) {
       XY[idx] = current_n + control_count/2.0;
     }
 
     // Update XY values for controls
-    for (int idx : control_indices) {
+    for (size_t idx : control_indices) {
       XY[idx] = current_m + case_count/2.0;
     }
 

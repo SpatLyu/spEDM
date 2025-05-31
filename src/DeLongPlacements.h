@@ -2,6 +2,7 @@
 #define DeLongPlacements_H
 
 #include <vector>
+#include <cstdint>
 #include <algorithm>
 #include <utility>
 #include <string>
