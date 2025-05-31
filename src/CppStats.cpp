@@ -386,7 +386,7 @@ std::vector<double> CppArithmeticSeq(double from, double to, size_t length_out) 
   double step = (to - from) / (length_out - 1);
 
   // Generate the sequence
-  for (int i = 0; i < length_out; ++i) {
+  for (size_t i = 0; i < length_out; ++i) {
     res.push_back(from + i * step);
   }
 
