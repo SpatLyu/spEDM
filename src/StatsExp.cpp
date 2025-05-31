@@ -308,7 +308,7 @@ Rcpp::NumericVector RcppCMCTest(const Rcpp::NumericVector& cases,
   std::string cpp_direction = Rcpp::as<std::string>(direction[0]);
 
   // Call the CppCMCTest function
-  std::vector<double> result = CppCMCTest(cpp_cases, cpp_direction, level, num_samples);
+  std::vector<double> result = CppCMCTest(cpp_cases, cpp_direction, level, static_cast<size_t>(num_samples));
 
   // Convert std::vector<double> to Rcpp::NumericVector
   return Rcpp::wrap(result);
