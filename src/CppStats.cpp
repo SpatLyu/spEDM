@@ -366,7 +366,7 @@ std::vector<double> CppSumNormalize(const std::vector<double>& vec,
 
 // Generates an arithmetic sequence of numbers starting from `from` and ending at `to`,
 // with a total of `length_out` elements. The sequence is evenly spaced.
-std::vector<double> CppArithmeticSeq(double from, double to, int length_out) {
+std::vector<double> CppArithmeticSeq(double from, double to, size_t length_out) {
   // Check for invalid input
   if (length_out < 1) {
     throw std::invalid_argument("length_out must be at least 1.");

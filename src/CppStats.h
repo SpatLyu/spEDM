@@ -59,7 +59,7 @@ std::vector<double> CppAbsDiff(const std::vector<double>& vec1,
 std::vector<double> CppSumNormalize(const std::vector<double>& vec,
                                     bool NA_rm = false);
 
-std::vector<double> CppArithmeticSeq(double from, double to, int length_out);
+std::vector<double> CppArithmeticSeq(double from, double to, size_t length_out);
 
 double CppVariance(const std::vector<double>& vec, bool NA_rm = false);
 
