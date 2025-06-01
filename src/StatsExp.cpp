@@ -265,7 +265,7 @@ double RcppPartialCorTrivar(const Rcpp::NumericVector& y,
 // Wrapper function to calculate the significance of a (partial) correlation coefficient
 // [[Rcpp::export]]
 double RcppCorSignificance(double r, int n, int k = 0){
-  return CppCorSignificance(r, n, k);
+  return CppCorSignificance(r, static_cast<size_t>(n), static_cast<size_t>(k));
 }
 
 // Wrapper function to calculate the confidence interval for a (partial) correlation coefficient and return a NumericVector
@@ -273,7 +273,10 @@ double RcppCorSignificance(double r, int n, int k = 0){
 Rcpp::NumericVector RcppCorConfidence(double r, int n, int k = 0,
                                       double level = 0.05) {
   // Calculate the confidence interval
-  std::vector<double> result = CppCorConfidence(r, n, k, level);
+  std::vector<double> result = CppCorConfidence(r,
+                                                static_cast<size_t>(n),
+                                                static_cast<size_t>(k),
+                                                level);
 
   // Convert std::vector<double> to Rcpp::NumericVector
   return Rcpp::wrap(result);

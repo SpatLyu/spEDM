@@ -578,7 +578,7 @@ std::vector<std::vector<double>> SCPCM4Grid(
   // Generate embeddings for xMatrix
   std::vector<std::vector<double>> xEmbedings = GenGridEmbeddings(xMatrix, Ex, taux);
 
-  int n_confounds;
+  size_t n_confounds;
   if (cumulate){
     n_confounds = 1;
   } else {
@@ -802,7 +802,7 @@ std::vector<std::vector<double>> SCPCM4Grid(
     final_results.push_back({static_cast<double>(group.first), mean_second, mean_third});
   }
 
-  int n = pred.size();
+  size_t n = pred.size();
   // Compute significance and confidence intervals for each result
   for (size_t i = 0; i < final_results.size(); ++i) {
     double rho_second = final_results[i][1];
@@ -911,7 +911,7 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
   // Generate embeddings for xMatrix
   std::vector<std::vector<double>> xEmbedings = GenGridEmbeddings(xMatrix, Ex, taux);
 
-  int n_confounds;
+  size_t n_confounds;
   if (cumulate){
     n_confounds = 1;
   } else {
@@ -1088,7 +1088,7 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
     final_results.push_back({static_cast<double>(group.first), mean_second, mean_third});
   }
 
-  int n = pred.size();
+  size_t n = pred.size();
   // Compute significance and confidence intervals for each result
   for (size_t i = 0; i < final_results.size(); ++i) {
     double rho_second = final_results[i][1];

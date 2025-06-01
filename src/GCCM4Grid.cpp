@@ -545,7 +545,7 @@ std::vector<std::vector<double>> GCCM4Grid(
     final_results.push_back({static_cast<double>(group.first), mean_value});
   }
 
-  int n = pred.size();
+  size_t n = pred.size();
   // Calculate significance and confidence interval for each result
   for (size_t i = 0; i < final_results.size(); ++i) {
     double rho = final_results[i][1];
@@ -760,7 +760,7 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
     final_results.push_back({static_cast<double>(group.first), mean_value});
   }
 
-  int n = pred.size();
+  size_t n = pred.size();
   // Calculate significance and confidence interval for each result
   for (size_t i = 0; i < final_results.size(); ++i) {
     double rho = final_results[i][1];
