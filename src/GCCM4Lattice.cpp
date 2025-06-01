@@ -202,7 +202,7 @@ std::vector<std::vector<double>> GCCM4Lattice(
   // Generate embeddings
   std::vector<std::vector<double>> x_vectors = GenLatticeEmbeddings(x, nb_vec, E, tau);
 
-  int n = x_vectors.size();
+  size_t n = x_vectors.size();
 
   std::vector<int> possible_lib_indices;
   for (size_t i = 0; i < lib.size(); ++i) {
