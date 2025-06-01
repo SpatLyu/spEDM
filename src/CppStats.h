@@ -91,9 +91,9 @@ double PartialCorTrivar(const std::vector<double>& y,
                         bool NA_rm = false,
                         bool linear = false);
 
-double CppCorSignificance(double r, int n, int k = 0);
+double CppCorSignificance(double r, size_t n, size_t k = 0);
 
-std::vector<double> CppCorConfidence(double r, int n, int k = 0,
+std::vector<double> CppCorConfidence(double r, size_t n, size_t k = 0,
                                      double level = 0.05);
 
 std::vector<double> CppDeLongAUCConfidence(const std::vector<double>& cases,

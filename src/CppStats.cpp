@@ -770,11 +770,17 @@ double PartialCorTrivar(const std::vector<double>& y,
  * @param k The number of control variables (default = 0).
  * @return The two-sided p-value.
  */
-double CppCorSignificance(double r, int n, int k = 0) {
-  double df = n - k - 2;
-  double t = r * std::sqrt(df / (1 - r * r));
+double CppCorSignificance(double r, size_t n, size_t k = 0) {
+  // Check if degrees of freedom are valid: df = n - k - 2 >= 1
+  if (n <= k + 2) {
+    return 1.0;  // Invalid degrees of freedom, return non-significant result
+  }
+
+  double df = static_cast<double>(n - k - 2);
+  double t = r * std::sqrt(df / (1.0 - r * r));
 
   double pvalue = (1 - R::pt(t, df, true, false)) * 2;
+
   // Ensure p value is within valid range [-1, 1]
   if (pvalue < 0) pvalue = 0;
   if (pvalue > 1.0) pvalue = 1.0;
@@ -804,13 +810,18 @@ double CppCorSignificance(double r, int n, int k = 0) {
  * @param level The significance level α for the confidence interval (default = 0.05).
  * @return A vector containing the upper and lower bounds of the confidence interval.
  */
-std::vector<double> CppCorConfidence(double r, int n, int k = 0,
+std::vector<double> CppCorConfidence(double r, size_t n, size_t k = 0,
                                      double level = 0.05) {
+  if (n <= k + 3) {
+    // Not enough degrees of freedom to compute confidence interval
+    return {std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN()};
+  }
+
   // Calculate the Fisher's z-transformation
   double z = 0.5 * std::log((1 + r) / (1 - r));
 
   // Calculate the standard error of z
-  double ztheta = 1 / std::sqrt(n - k - 3);
+  double ztheta = 1 / std::sqrt(static_cast<double>(n - k - 3));
 
   // Calculate the z-value for the given confidence level
   double qZ = R::qnorm(1 - level / 2, 0.0, 1.0, true, false);
