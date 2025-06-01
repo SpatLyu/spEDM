@@ -773,7 +773,7 @@ double PartialCorTrivar(const std::vector<double>& y,
 double CppCorSignificance(double r, size_t n, size_t k = 0) {
   // Check if degrees of freedom are valid: df = n - k - 2 >= 1
   if (n <= k + 2) {
-    return 1.0;  // Invalid degrees of freedom, return non-significant result
+    return std::numeric_limits<double>::quiet_NaN();  // Invalid degrees of freedom, return non-significant result
   }
 
   double df = static_cast<double>(n - k - 2);
