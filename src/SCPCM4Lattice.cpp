@@ -387,7 +387,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   std::vector<std::vector<double>> x_vectors = GenLatticeEmbeddings(x,nb_vec,Ex,taux);
-  size_t n = x_vectors.size();
+  size_t n = pred.size();
 
   size_t n_confounds;
   if (cumulate){
