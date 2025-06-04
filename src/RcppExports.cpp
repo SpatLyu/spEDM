@@ -582,6 +582,26 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppSLMBi4Lattice
+Rcpp::List RcppSLMBi4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, int k, int step, double alpha_x, double alpha_y, double beta_xy, double beta_yx, double escape_threshold);
+RcppExport SEXP _spEDM_RcppSLMBi4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP kSEXP, SEXP stepSEXP, SEXP alpha_xSEXP, SEXP alpha_ySEXP, SEXP beta_xySEXP, SEXP beta_yxSEXP, SEXP escape_thresholdSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< int >::type step(stepSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha_x(alpha_xSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha_y(alpha_ySEXP);
+    Rcpp::traits::input_parameter< double >::type beta_xy(beta_xySEXP);
+    Rcpp::traits::input_parameter< double >::type beta_yx(beta_yxSEXP);
+    Rcpp::traits::input_parameter< double >::type escape_threshold(escape_thresholdSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSLMBi4Lattice(x, y, nb, k, step, alpha_x, alpha_y, beta_xy, beta_yx, escape_threshold));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppFNN4Lattice
 Rcpp::NumericVector RcppFNN4Lattice(const Rcpp::NumericVector& vec, const Rcpp::List& nb, const Rcpp::NumericVector& rt, const Rcpp::NumericVector& eps, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, int tau, int threads);
 RcppExport SEXP _spEDM_RcppFNN4Lattice(SEXP vecSEXP, SEXP nbSEXP, SEXP rtSEXP, SEXP epsSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP threadsSEXP) {
@@ -1300,6 +1320,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppGenLatticeSymbolization", (DL_FUNC) &_spEDM_RcppGenLatticeSymbolization, 5},
     {"_spEDM_RcppDivideLattice", (DL_FUNC) &_spEDM_RcppDivideLattice, 2},
     {"_spEDM_RcppSLMUni4Lattice", (DL_FUNC) &_spEDM_RcppSLMUni4Lattice, 6},
+    {"_spEDM_RcppSLMBi4Lattice", (DL_FUNC) &_spEDM_RcppSLMBi4Lattice, 10},
     {"_spEDM_RcppFNN4Lattice", (DL_FUNC) &_spEDM_RcppFNN4Lattice, 9},
     {"_spEDM_RcppSimplex4Lattice", (DL_FUNC) &_spEDM_RcppSimplex4Lattice, 9},
     {"_spEDM_RcppSMap4Lattice", (DL_FUNC) &_spEDM_RcppSMap4Lattice, 10},

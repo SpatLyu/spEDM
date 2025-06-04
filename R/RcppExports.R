@@ -149,6 +149,10 @@ RcppSLMUni4Lattice <- function(vec, nb, k, step, alpha, escape_threshold = 1e10)
     .Call(`_spEDM_RcppSLMUni4Lattice`, vec, nb, k, step, alpha, escape_threshold)
 }
 
+RcppSLMBi4Lattice <- function(x, y, nb, k, step, alpha_x, alpha_y, beta_xy, beta_yx, escape_threshold = 1e10) {
+    .Call(`_spEDM_RcppSLMBi4Lattice`, x, y, nb, k, step, alpha_x, alpha_y, beta_xy, beta_yx, escape_threshold)
+}
+
 RcppFNN4Lattice <- function(vec, nb, rt, eps, lib, pred, E, tau, threads) {
     .Call(`_spEDM_RcppFNN4Lattice`, vec, nb, rt, eps, lib, pred, E, tau, threads)
 }
