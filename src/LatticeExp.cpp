@@ -306,6 +306,67 @@ Rcpp::List RcppSLMBi4Lattice(
   return out;
 }
 
+// Wrapper function to perform trivariate Spatial Logistic Map for spatial lattice data
+// [[Rcpp::export]]
+Rcpp::List RcppSLMTri4Lattice(
+    const Rcpp::NumericVector& x,
+    const Rcpp::NumericVector& y,
+    const Rcpp::NumericVector& z,
+    const Rcpp::List& nb,
+    int k = 4,
+    int step = 20,
+    double alpha_x = 0.625,
+    double alpha_y = 0.77,
+    double alpha_z = 0.55,
+    double beta_xy = 0.05,
+    double beta_xz = 0.05,
+    double beta_yx = 0.4,
+    double beta_yz = 0.4,
+    double beta_zx = 0.65,
+    double beta_zy = 0.65,
+    double escape_threshold = 1e10
+) {
+  // Convert x/y to std::vector<double>
+  std::vector<double> vec1 = Rcpp::as<std::vector<double>>(x);
+  std::vector<double> vec2 = Rcpp::as<std::vector<double>>(y);
+  std::vector<double> vec3 = Rcpp::as<std::vector<double>>(z);
+
+  // Convert Rcpp::List to std::vector<std::vector<int>>
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
+
+  // Call the core function
+  std::vector<std::vector<std::vector<double>>> result = SLMTri4Lattice(
+    vec1, vec2, vec3, nb_vec, k, step, alpha_x, alpha_y,
+    beta_xy, beta_xz, beta_yx, beta_yz, beta_zx, beta_zy,
+    escape_threshold
+  );
+
+  // Create NumericMatrix with rows = number of spatial units, cols = number of steps+1
+  int n_rows = static_cast<int>(result[0].size());
+  int n_cols = step + 1;
+  Rcpp::NumericMatrix out_x(n_rows, n_cols);
+  Rcpp::NumericMatrix out_y(n_rows, n_cols);
+  Rcpp::NumericMatrix out_z(n_rows, n_cols);
+
+  // Copy data into NumericMatrix
+  for (int i = 0; i < n_rows; ++i) {
+    for (int j = 0; j < n_cols; ++j) {
+      out_x(i, j) = result[0][i][j];
+      out_y(i, j) = result[1][i][j];
+      out_z(i, j) = result[2][i][j];
+    }
+  }
+
+  // Wrap results into an Rcpp::List
+  Rcpp::List out = Rcpp::List::create(
+    Rcpp::Named("x") = out_x,
+    Rcpp::Named("y") = out_y,
+    Rcpp::Named("z") = out_z
+  );
+
+  return out;
+}
+
 // Wrapper function to perform FNN for spatial lattice data
 // [[Rcpp::export]]
 Rcpp::NumericVector RcppFNN4Lattice(

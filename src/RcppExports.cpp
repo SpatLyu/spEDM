@@ -602,6 +602,32 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppSLMTri4Lattice
+Rcpp::List RcppSLMTri4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::NumericVector& z, const Rcpp::List& nb, int k, int step, double alpha_x, double alpha_y, double alpha_z, double beta_xy, double beta_xz, double beta_yx, double beta_yz, double beta_zx, double beta_zy, double escape_threshold);
+RcppExport SEXP _spEDM_RcppSLMTri4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP zSEXP, SEXP nbSEXP, SEXP kSEXP, SEXP stepSEXP, SEXP alpha_xSEXP, SEXP alpha_ySEXP, SEXP alpha_zSEXP, SEXP beta_xySEXP, SEXP beta_xzSEXP, SEXP beta_yxSEXP, SEXP beta_yzSEXP, SEXP beta_zxSEXP, SEXP beta_zySEXP, SEXP escape_thresholdSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type z(zSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< int >::type step(stepSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha_x(alpha_xSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha_y(alpha_ySEXP);
+    Rcpp::traits::input_parameter< double >::type alpha_z(alpha_zSEXP);
+    Rcpp::traits::input_parameter< double >::type beta_xy(beta_xySEXP);
+    Rcpp::traits::input_parameter< double >::type beta_xz(beta_xzSEXP);
+    Rcpp::traits::input_parameter< double >::type beta_yx(beta_yxSEXP);
+    Rcpp::traits::input_parameter< double >::type beta_yz(beta_yzSEXP);
+    Rcpp::traits::input_parameter< double >::type beta_zx(beta_zxSEXP);
+    Rcpp::traits::input_parameter< double >::type beta_zy(beta_zySEXP);
+    Rcpp::traits::input_parameter< double >::type escape_threshold(escape_thresholdSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSLMTri4Lattice(x, y, z, nb, k, step, alpha_x, alpha_y, alpha_z, beta_xy, beta_xz, beta_yx, beta_yz, beta_zx, beta_zy, escape_threshold));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppFNN4Lattice
 Rcpp::NumericVector RcppFNN4Lattice(const Rcpp::NumericVector& vec, const Rcpp::List& nb, const Rcpp::NumericVector& rt, const Rcpp::NumericVector& eps, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, int tau, int threads);
 RcppExport SEXP _spEDM_RcppFNN4Lattice(SEXP vecSEXP, SEXP nbSEXP, SEXP rtSEXP, SEXP epsSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP threadsSEXP) {
@@ -1321,6 +1347,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppDivideLattice", (DL_FUNC) &_spEDM_RcppDivideLattice, 2},
     {"_spEDM_RcppSLMUni4Lattice", (DL_FUNC) &_spEDM_RcppSLMUni4Lattice, 6},
     {"_spEDM_RcppSLMBi4Lattice", (DL_FUNC) &_spEDM_RcppSLMBi4Lattice, 10},
+    {"_spEDM_RcppSLMTri4Lattice", (DL_FUNC) &_spEDM_RcppSLMTri4Lattice, 16},
     {"_spEDM_RcppFNN4Lattice", (DL_FUNC) &_spEDM_RcppFNN4Lattice, 9},
     {"_spEDM_RcppSimplex4Lattice", (DL_FUNC) &_spEDM_RcppSimplex4Lattice, 9},
     {"_spEDM_RcppSMap4Lattice", (DL_FUNC) &_spEDM_RcppSMap4Lattice, 10},

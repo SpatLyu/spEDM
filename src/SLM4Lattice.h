@@ -73,4 +73,58 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Lattice(
     double escape_threshold = 1e10
 );
 
+/**
+ * @brief Simulate a trivariate Spatial Logistic Map (SLM) over lattice-structured data.
+ *
+ * This function simulates the dynamics of a three-variable coupled Spatial Logistic Map
+ * across a lattice. Each spatial variable evolves over discrete time steps under the
+ * influence of: (1) its own previous value, (2) the mean of its spatial neighbors,
+ * and (3) cross-variable interactions from the other two variables at the same location.
+ *
+ * For each spatial unit:
+ * - Variable 1 is influenced by its own neighbors and is inhibited by Variable 2 and Variable 3.
+ * - Variable 2 is influenced by its own neighbors and is inhibited by Variable 1 and Variable 3.
+ * - Variable 3 is influenced by its own neighbors and is inhibited by Variable 1 and Variable 2.
+ *
+ * @param vec1               Initial values of the first spatial variable.
+ * @param vec2               Initial values of the second spatial variable.
+ * @param vec3               Initial values of the third spatial variable.
+ * @param nb                 Neighbor list for each spatial unit (e.g., rook or queen adjacency).
+ * @param k                  Number of neighbors to select per unit (fixed-k).
+ * @param step               Number of simulation time steps to perform.
+ * @param alpha1             Growth/interaction parameter for variable 1.
+ * @param alpha2             Growth/interaction parameter for variable 2.
+ * @param alpha3             Growth/interaction parameter for variable 3.
+ * @param beta12             Cross-inhibition from variable 1 to variable 2.
+ * @param beta13             Cross-inhibition from variable 1 to variable 3.
+ * @param beta21             Cross-inhibition from variable 2 to variable 1.
+ * @param beta23             Cross-inhibition from variable 2 to variable 3.
+ * @param beta31             Cross-inhibition from variable 3 to variable 1.
+ * @param beta32             Cross-inhibition from variable 3 to variable 2.
+ * @param escape_threshold   Threshold beyond which values are treated as divergent (default: 1e10).
+ *
+ * @return A 3D vector of simulation results:
+ *         - First dimension: variable index (0 for vec1, 1 for vec2, 2 for vec3),
+ *         - Second dimension: spatial units,
+ *         - Third dimension: time steps (0 to step).
+ */
+std::vector<std::vector<std::vector<double>>> SLMTri4Lattice(
+    const std::vector<double>& vec1,
+    const std::vector<double>& vec2,
+    const std::vector<double>& vec3,
+    const std::vector<std::vector<int>>& nb,
+    size_t k,
+    size_t step,
+    double alpha1,
+    double alpha2,
+    double alpha3,
+    double beta12,
+    double beta13,
+    double beta21,
+    double beta23,
+    double beta31,
+    double beta32,
+    double escape_threshold = 1e10
+);
+
 #endif // SLM4Lattice_H
