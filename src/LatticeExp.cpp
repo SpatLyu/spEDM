@@ -257,6 +257,55 @@ Rcpp::NumericMatrix RcppSLMUni4Lattice(
   return out;
 }
 
+// Wrapper function to perform bivariate Spatial Logistic Map for spatial lattice data
+// [[Rcpp::export]]
+Rcpp::List RcppSLMBi4Lattice(
+    const Rcpp::NumericVector& x,
+    const Rcpp::NumericVector& y,
+    const Rcpp::List& nb,
+    int k,
+    int step,
+    double alpha_x,
+    double alpha_y,
+    double beta_xy,
+    double beta_yx,
+    double escape_threshold = 1e10
+) {
+  // Convert x/y to std::vector<double>
+  std::vector<double> vec1 = Rcpp::as<std::vector<double>>(x);
+  std::vector<double> vec2 = Rcpp::as<std::vector<double>>(y);
+
+  // Convert Rcpp::List to std::vector<std::vector<int>>
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
+
+  // Call the core function
+  std::vector<std::vector<std::vector<double>>> result = SLMBi4Lattice(
+    vec1, vec2, nb_vec, k, step, alpha_x, alpha_y, beta_xy, beta_yx, escape_threshold
+  );
+
+  // Create NumericMatrix with rows = number of spatial units, cols = number of steps+1
+  int n_rows = static_cast<int>(result.size());
+  int n_cols = step + 1;
+  Rcpp::NumericMatrix out_x(n_rows, n_cols);
+  Rcpp::NumericMatrix out_y(n_rows, n_cols);
+
+  // Copy data into NumericMatrix
+  for (int i = 0; i < n_rows; ++i) {
+    for (int j = 0; j < n_cols; ++j) {
+      out_x(i, j) = result[0][i][j];
+      out_y(i, j) = result[1][i][j];
+    }
+  }
+
+  // Wrap results into an Rcpp::List
+  Rcpp::List out = Rcpp::List::create(
+    Rcpp::Named("x") = out_x,
+    Rcpp::Named("y") = out_y
+  );
+
+  return out;
+}
+
 // Wrapper function to perform FNN for spatial lattice data
 // [[Rcpp::export]]
 Rcpp::NumericVector RcppFNN4Lattice(
