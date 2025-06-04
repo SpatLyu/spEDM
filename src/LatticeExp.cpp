@@ -226,8 +226,8 @@ Rcpp::IntegerVector RcppDivideLattice(const Rcpp::List& nb,int b) {
 // Wrapper function to perform univariate Spatial Logistic Map for spatial lattice data
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppSLMUni4Lattice(
-    Rcpp::NumericVector vec,
-    Rcpp::List nb,
+    const Rcpp::NumericVector& vec,
+    const Rcpp::List& nb,
     int k,
     int step,
     double alpha,

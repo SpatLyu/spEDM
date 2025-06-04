@@ -567,13 +567,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppSLMUni4Lattice
-Rcpp::NumericMatrix RcppSLMUni4Lattice(Rcpp::NumericVector vec, Rcpp::List nb, int k, int step, double alpha, double escape_threshold);
+Rcpp::NumericMatrix RcppSLMUni4Lattice(const Rcpp::NumericVector& vec, const Rcpp::List& nb, int k, int step, double alpha, double escape_threshold);
 RcppExport SEXP _spEDM_RcppSLMUni4Lattice(SEXP vecSEXP, SEXP nbSEXP, SEXP kSEXP, SEXP stepSEXP, SEXP alphaSEXP, SEXP escape_thresholdSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type vec(vecSEXP);
-    Rcpp::traits::input_parameter< Rcpp::List >::type nb(nbSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< int >::type step(stepSEXP);
     Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
