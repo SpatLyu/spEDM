@@ -284,7 +284,7 @@ Rcpp::List RcppSLMBi4Lattice(
   );
 
   // Create NumericMatrix with rows = number of spatial units, cols = number of steps+1
-  int n_rows = static_cast<int>(result.size());
+  int n_rows = static_cast<int>(result[0].size());
   int n_cols = step + 1;
   Rcpp::NumericMatrix out_x(n_rows, n_cols);
   Rcpp::NumericMatrix out_y(n_rows, n_cols);
