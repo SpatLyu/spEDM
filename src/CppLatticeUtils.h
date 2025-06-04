@@ -98,9 +98,6 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
  *
  * @return A vector of vectors, where each subvector contains the indices of the k nearest neighbors
  *         for each location, based on lattice structure and value similarity.
- *
- * @throw std::runtime_error If any location cannot find enough valid neighbors from `lib` to meet the k requirement.
- * @throw std::invalid_argument If `lib` contains invalid indices outside the range of `vec`.
  */
 std::vector<std::vector<int>> GenLatticeNeighbors(
     const std::vector<double>& vec,
