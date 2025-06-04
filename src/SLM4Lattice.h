@@ -34,4 +34,43 @@ std::vector<std::vector<double>> SLMUni4Lattice(
     double escape_threshold = 1e10
 );
 
+/**
+ * @brief Simulate a bivariate Spatial Logistic Map (SLM) over lattice-structured data.
+ *
+ * This function performs time-stepped simulations of a coupled bivariate Spatial Logistic Map
+ * on lattice data, where each of the two spatial variables evolves based on its own previous value,
+ * the average of its neighbors' values, and cross-variable interaction from the other variable.
+ *
+ * For each spatial unit, the evolution of variable 1 is influenced by its own spatial neighbors
+ * and an inhibitory term proportional to variable 2 at the same location, and vice versa.
+ *
+ * @param vec1               Initial values of the first spatial variable (e.g., species A density).
+ * @param vec2               Initial values of the second spatial variable (e.g., species B density).
+ * @param nb                 Neighbor list for each spatial unit (e.g., rook or queen adjacency).
+ * @param k                  Number of neighbors to consider.
+ * @param step               Number of simulation time steps to run.
+ * @param alpha1             Growth/interaction parameter for the first variable.
+ * @param alpha2             Growth/interaction parameter for the second variable.
+ * @param beta1              Cross-inhibition coefficient from variable 2 to variable 1.
+ * @param beta2              Cross-inhibition coefficient from variable 1 to variable 2.
+ * @param escape_threshold   Threshold to treat divergent values as invalid (default: 1e10).
+ *
+ * @return A 3D vector of simulation results:
+ *         - First dimension: variable index (0 for vec1, 1 for vec2),
+ *         - Second dimension: spatial units,
+ *         - Third dimension: time steps (0 to step).
+ */
+std::vector<std::vector<std::vector<double>>> SLMBi4Lattice(
+    const std::vector<double>& vec1,
+    const std::vector<double>& vec2,
+    const std::vector<std::vector<int>>& nb,
+    size_t k,
+    size_t step,
+    double alpha1,
+    double alpha2,
+    double beta1,
+    double beta2,
+    double escape_threshold = 1e10
+);
+
 #endif // SLM4Lattice_H
