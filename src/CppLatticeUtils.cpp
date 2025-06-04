@@ -550,17 +550,14 @@ std::vector<double> GenLatticeSymbolization(
   // The second indicator function and the symbolization map
   for (size_t s = 0; s < pred.size(); ++s) {
     int currentIndex = pred[s];
-    size_t num_neighbors = neighbors[currentIndex].size();
-    std::vector<double> l_s(num_neighbors);
-    std::vector<int> local_neighbors = neighbors[currentIndex];
+    const std::vector<int>& local_neighbors = neighbors[currentIndex];
     double taus = tau_s[currentIndex];
 
-    for (size_t i = 0; i < num_neighbors; ++i) {
-      l_s[i] = (tau_s[local_neighbors[i]] == taus) ? 1.0 : 0.0;
+    // Count how many neighbors share the same binary indicator
+    double fs = 0.0;
+    for (size_t i = 0; i < local_neighbors.size(); ++i) {
+      if (tau_s[local_neighbors[i]] == taus) fs += 1.0;
     }
-
-    // Count the number of neighbors that share the same indicator value
-    double fs = std::accumulate(l_s.begin(), l_s.end(), 0.0);
     result[s] = fs;
   }
 
