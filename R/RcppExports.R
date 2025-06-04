@@ -145,11 +145,11 @@ RcppDivideLattice <- function(nb, b) {
     .Call(`_spEDM_RcppDivideLattice`, nb, b)
 }
 
-RcppSLMUni4Lattice <- function(vec, nb, k, step, alpha, escape_threshold = 1e10) {
+RcppSLMUni4Lattice <- function(vec, nb, k = 4L, step = 20L, alpha = 0.77, escape_threshold = 1e10) {
     .Call(`_spEDM_RcppSLMUni4Lattice`, vec, nb, k, step, alpha, escape_threshold)
 }
 
-RcppSLMBi4Lattice <- function(x, y, nb, k, step, alpha_x, alpha_y, beta_xy, beta_yx, escape_threshold = 1e10) {
+RcppSLMBi4Lattice <- function(x, y, nb, k = 4L, step = 20L, alpha_x = 0.625, alpha_y = 0.77, beta_xy = 0.05, beta_yx = 0.4, escape_threshold = 1e10) {
     .Call(`_spEDM_RcppSLMBi4Lattice`, x, y, nb, k, step, alpha_x, alpha_y, beta_xy, beta_yx, escape_threshold)
 }
 
