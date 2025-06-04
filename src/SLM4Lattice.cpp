@@ -181,7 +181,7 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Lattice(
         res[0][currentIndex][s] = v_next_1;
       }
       if (std::abs(v_next_2) <= escape_threshold){
-        res[1][currentIndex][s] = v_next_1;
+        res[1][currentIndex][s] = v_next_2;
       }
     }
   }
