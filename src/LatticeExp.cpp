@@ -10,6 +10,7 @@
 #include "SCPCM4Lattice.h"
 #include "CrossMappingCardinality.h"
 #include "FalseNearestNeighbors.h"
+#include "SLM4Lattice.h"
 #include "SGC4Lattice.h"
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
@@ -220,6 +221,40 @@ Rcpp::IntegerVector RcppDivideLattice(const Rcpp::List& nb,int b) {
 
   // Convert the result back to Rcpp::IntegerVector
   return Rcpp::wrap(blocks);
+}
+
+// Wrapper function to perform univariate Spatial Logistic Map for spatial lattice data
+// [[Rcpp::export]]
+Rcpp::NumericMatrix RcppSLMUni4Lattice(
+    const Rcpp::NumericVector& vec,
+    const Rcpp::List& nb,
+    int k,
+    int step,
+    double alpha,
+    double escape_threshold = 1e10
+) {
+  // Convert vec to std::vector<double>
+  std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
+
+  // Convert Rcpp::List to std::vector<std::vector<int>>
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
+
+  // Call the core function
+  std::vector<std::vector<double>> result = SLMUni4Lattice(vec_std, nb_vec, k, step, alpha, escape_threshold);
+
+  // Create NumericMatrix with rows = number of spatial units, cols = number of steps+1
+  int n_rows = static_cast<int>(result.size());
+  int n_cols = step + 1;
+  Rcpp::NumericMatrix out(n_rows, n_cols);
+
+  // Copy data into NumericMatrix
+  for (int i = 0; i < n_rows; ++i) {
+    for (int j = 0; j < n_cols; ++j) {
+      out(i, j) = result[i][j];
+    }
+  }
+
+  return out;
 }
 
 // Wrapper function to perform FNN for spatial lattice data
