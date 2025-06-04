@@ -228,9 +228,9 @@ Rcpp::IntegerVector RcppDivideLattice(const Rcpp::List& nb,int b) {
 Rcpp::NumericMatrix RcppSLMUni4Lattice(
     const Rcpp::NumericVector& vec,
     const Rcpp::List& nb,
-    int k,
-    int step,
-    double alpha,
+    int k = 4,
+    int step = 20,
+    double alpha = 0.77,
     double escape_threshold = 1e10
 ) {
   // Convert vec to std::vector<double>
@@ -263,12 +263,12 @@ Rcpp::List RcppSLMBi4Lattice(
     const Rcpp::NumericVector& x,
     const Rcpp::NumericVector& y,
     const Rcpp::List& nb,
-    int k,
-    int step,
-    double alpha_x,
-    double alpha_y,
-    double beta_xy,
-    double beta_yx,
+    int k = 4,
+    int step = 20,
+    double alpha_x = 0.625,
+    double alpha_y = 0.77,
+    double beta_xy = 0.05,
+    double beta_yx = 0.4,
     double escape_threshold = 1e10
 ) {
   // Convert x/y to std::vector<double>
