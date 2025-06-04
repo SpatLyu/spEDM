@@ -51,8 +51,8 @@ std::vector<std::vector<double>> SLMUni4Lattice(
  * @param step               Number of simulation time steps to run.
  * @param alpha1             Growth/interaction parameter for the first variable.
  * @param alpha2             Growth/interaction parameter for the second variable.
- * @param beta1              Cross-inhibition coefficient from variable 2 to variable 1.
- * @param beta2              Cross-inhibition coefficient from variable 1 to variable 2.
+ * @param beta12             Cross-inhibition coefficient from variable 1 to variable 2.
+ * @param beta21             Cross-inhibition coefficient from variable 2 to variable 1.
  * @param escape_threshold   Threshold to treat divergent values as invalid (default: 1e10).
  *
  * @return A 3D vector of simulation results:
@@ -68,8 +68,8 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Lattice(
     size_t step,
     double alpha1,
     double alpha2,
-    double beta1,
-    double beta2,
+    double beta12,
+    double beta21,
     double escape_threshold = 1e10
 );
 

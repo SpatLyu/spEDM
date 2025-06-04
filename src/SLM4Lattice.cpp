@@ -100,8 +100,8 @@ std::vector<std::vector<double>> SLMUni4Lattice(
  * @param step               Number of simulation time steps to run.
  * @param alpha1             Growth/interaction parameter for the first variable.
  * @param alpha2             Growth/interaction parameter for the second variable.
- * @param beta1              Cross-inhibition coefficient from variable 2 to variable 1.
- * @param beta2              Cross-inhibition coefficient from variable 1 to variable 2.
+ * @param beta12             Cross-inhibition coefficient from variable 1 to variable 2.
+ * @param beta21             Cross-inhibition coefficient from variable 2 to variable 1.
  * @param escape_threshold   Threshold to treat divergent values as invalid (default: 1e10).
  *
  * @return A 3D vector of simulation results:
@@ -117,8 +117,8 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Lattice(
     size_t step,
     double alpha1,
     double alpha2,
-    double beta1,
-    double beta2,
+    double beta12,
+    double beta21,
     double escape_threshold = 1e10
 ){
   // Initialize index library for all spatial units
@@ -170,10 +170,10 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Lattice(
       double v_next_1 = std::numeric_limits<double>::quiet_NaN();
       double v_next_2 = std::numeric_limits<double>::quiet_NaN();
       if (valid_neighbors_1 > 0){
-        v_next_1 = 1 - alpha1 * res[0][currentIndex][s - 1] * (v_neighbors_1 / valid_neighbors_1 - beta1 * res[1][currentIndex][s - 1]);
+        v_next_1 = 1 - alpha1 * res[0][currentIndex][s - 1] * (v_neighbors_1 / valid_neighbors_1 - beta21 * res[1][currentIndex][s - 1]);
       }
       if (valid_neighbors_2 > 0){
-        v_next_2 = 1 - alpha2 * res[1][currentIndex][s - 1] * (v_neighbors_2 / valid_neighbors_2 - beta2 * res[0][currentIndex][s - 1]);
+        v_next_2 = 1 - alpha2 * res[1][currentIndex][s - 1] * (v_neighbors_2 / valid_neighbors_2 - beta12 * res[0][currentIndex][s - 1]);
       }
 
       // Update result only if the value is within the escape threshold
