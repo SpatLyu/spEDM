@@ -1,7 +1,7 @@
 ---
 title: "Introduction to the spEDM package (PkgIntro)"
 author: "Wenbo Lv"
-date: "2025-05-28"
+date: "2025-06-05"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{PkgIntro}
@@ -154,7 +154,7 @@ library(spEDM)
 cu = terra::rast(system.file("case/cu.tif", package="spEDM"))
 cu
 ## class       : SpatRaster 
-## dimensions  : 131, 125, 3  (nrow, ncol, nlyr)
+## size        : 131, 125, 3  (nrow, ncol, nlyr)
 ## resolution  : 5000, 5000  (x, y)
 ## extent      : 360000, 985000, 1555000, 2210000  (xmin, xmax, ymin, ymax)
 ## coord. ref. : North_American_1983_Albers 
@@ -181,7 +181,7 @@ library(spEDM)
 npp = terra::rast(system.file("case/npp.tif", package = "spEDM"))
 npp
 ## class       : SpatRaster 
-## dimensions  : 404, 483, 5  (nrow, ncol, nlyr)
+## size        : 404, 483, 5  (nrow, ncol, nlyr)
 ## resolution  : 10000, 10000  (x, y)
 ## extent      : -2625763, 2204237, 1877078, 5917078  (xmin, xmax, ymin, ymax)
 ## coord. ref. : CGCS2000_Albers 

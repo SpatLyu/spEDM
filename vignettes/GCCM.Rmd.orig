@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Model principles
+## Methodological Background
 
 Let $Y = \{y_i\}$ and $X = \{x_i\}$ be the two spatial cross sectional variable, where $i = 1, 2, \dots, n$ denotes spatial units (e.g., regions or grid cells), the shadow manifolds of $X$ can be constructed using the different spatial lag values of all spatial units:
 

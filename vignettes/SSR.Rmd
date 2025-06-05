@@ -1,7 +1,7 @@
 ---
 title: "State Space Reconstruction (SSR)"
 author: "Wenbo Lv"
-date: "2025-05-28"
+date: "2025-06-05"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{SSR}
@@ -11,7 +11,7 @@ vignette: >
 
 
 
-## Spatial State Space Reconstruction (S-SSR)
+## Methodological Background
 
 Takens theory proves that for a dynamical system $\phi$, if its trajectory converges to an attractor manifold $M$—a bounded and invariant set of states—then there exists a smooth mapping between the system $\phi$ and its attractor $M$. Consequently, the time series observations of $\phi$ can be used to reconstruct the structure of $M$ through delay embedding.
 
