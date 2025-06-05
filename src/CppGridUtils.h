@@ -5,6 +5,9 @@
 #include <stdexcept>
 #include <vector>
 #include <cmath>
+#include <queue>
+#include <unordered_set>
+#include <set>
 #include <limits>
 #include <numeric>
 #include <algorithm>
@@ -113,6 +116,30 @@ std::vector<std::vector<double>> GenGridEmbeddings(
     int E,
     int tau
 );
+
+/**
+ * @brief Generate k nearest neighbors for all cells in a grid,
+ *        choosing only from cells listed in lib and using Queen adjacency.
+ *
+ * This function identifies, for each cell in a 2D grid (represented by `mat`), its k nearest neighbors
+ * among a set of valid cells specified by `lib`. Neighbor relationships are determined based on
+ * Queen contiguity (8 directions: N, NE, E, SE, S, SW, W, NW), recursively expanding outward if fewer
+ * than k valid neighbors are found in immediate adjacency. The "distance" between cells is calculated
+ * as the absolute difference in cell values. When more than k valid candidates are available, the k
+ * closest cells (in value) are selected.
+ *
+ * The output is a vector of size mat.size() × k, where each entry corresponds to the linear index
+ * (row-major) of one neighbor per cell, and the output is grouped per row cell.
+ *
+ * @param mat 2D matrix of values (with possible NaNs).
+ * @param lib List of valid cells (flattened indices) to choose neighbors from.
+ * @param k   Number of neighbors to find for each cell.
+ * @return    A list of neighbors for each cell in mat, in row-major order.
+ */
+std::vector<std::vector<int>> GenGridNeighbors(
+    const std::vector<std::vector<double>>& mat,
+    const std::vector<int>& lib,
+    size_t k);
 
 /**
  * @brief Perform grid-based symbolization on a 2D numeric matrix using local neighborhood statistics.

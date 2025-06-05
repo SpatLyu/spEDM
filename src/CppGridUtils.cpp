@@ -2,6 +2,9 @@
 #include <stdexcept>
 #include <vector>
 #include <cmath>
+#include <queue>
+#include <unordered_set>
+#include <set>
 #include <limits>
 #include <numeric>
 #include <algorithm>
@@ -331,6 +334,106 @@ std::vector<std::vector<double>> GenGridEmbeddings(
     // Return the filtered embeddings matrix
     return filteredEmbeddings;
   }
+}
+
+/**
+ * @brief Generate k nearest neighbors for all cells in a grid,
+ *        choosing only from cells listed in lib and using Queen adjacency.
+ *
+ * This function identifies, for each cell in a 2D grid (represented by `mat`), its k nearest neighbors
+ * among a set of valid cells specified by `lib`. Neighbor relationships are determined based on
+ * Queen contiguity (8 directions: N, NE, E, SE, S, SW, W, NW), recursively expanding outward if fewer
+ * than k valid neighbors are found in immediate adjacency. The "distance" between cells is calculated
+ * as the absolute difference in cell values. When more than k valid candidates are available, the k
+ * closest cells (in value) are selected.
+ *
+ * The output is a vector of size mat.size() × k, where each entry corresponds to the linear index
+ * (row-major) of one neighbor per cell, and the output is grouped per row cell.
+ *
+ * @param mat 2D matrix of values (with possible NaNs).
+ * @param lib List of valid cells (flattened indices) to choose neighbors from.
+ * @param k   Number of neighbors to find for each cell.
+ * @return    A list of neighbors for each cell in mat, in row-major order.
+ */
+std::vector<std::vector<int>> GenGridNeighbors(
+    const std::vector<std::vector<double>>& mat,
+    const std::vector<int>& lib,
+    size_t k)
+{
+  size_t nrow = mat.size();
+  if (nrow == 0) return {};
+  size_t ncol = mat[0].size();
+  size_t total_cells = nrow * ncol;
+
+  // Fast lookup for lib
+  std::unordered_set<int> lib_set(lib.begin(), lib.end());
+
+  // Queen directions (8 neighbors)
+  const std::vector<std::pair<int, int>> directions = {
+    {-1, -1}, {-1, 0}, {-1, 1},
+    { 0, -1},          { 0, 1},
+    { 1, -1}, { 1, 0}, { 1, 1}
+  };
+
+  std::vector<std::vector<int>> result(total_cells);  // One entry per cell
+
+  for (size_t idx = 0; idx < total_cells; ++idx) {
+    int row = idx / ncol;
+    int col = idx % ncol;
+
+    double center_val = mat[row][col];
+
+    std::unordered_set<int> visited;
+    visited.insert(static_cast<int>(idx));
+
+    std::set<int> neighbor_candidates;
+
+    std::queue<std::pair<int, int>> frontier;
+    frontier.push({row, col});
+
+    while (!frontier.empty() && neighbor_candidates.size() < k) {
+      auto [r, c] = frontier.front(); frontier.pop();
+
+      for (const auto& [dr, dc] : directions) {
+        int nr = r + dr;
+        int nc = c + dc;
+        if (nr < 0 || nr >= static_cast<int>(nrow) ||
+            nc < 0 || nc >= static_cast<int>(ncol)) continue;
+
+        int flat_nb = nr * ncol + nc;
+        if (visited.count(flat_nb)) continue;
+        visited.insert(flat_nb);
+
+        // Only consider neighbors that are in lib and not NaN
+        if (lib_set.count(flat_nb) && !std::isnan(mat[nr][nc])) {
+          neighbor_candidates.insert(flat_nb);
+        }
+
+        // Always expand the search
+        frontier.push({nr, nc});
+      }
+    }
+
+    // If more than k, pick those closest in value
+    std::vector<std::pair<double, int>> dists;
+    for (int nb_idx : neighbor_candidates) {
+      int nr = nb_idx / ncol;
+      int nc = nb_idx % ncol;
+      double dist = std::abs(mat[nr][nc] - center_val);
+      dists.emplace_back(dist, nb_idx);
+    }
+
+    std::sort(dists.begin(), dists.end());
+
+    std::vector<int> neighbors;
+    for (size_t i = 0; i < std::min(k, dists.size()); ++i) {
+      neighbors.push_back(dists[i].second);
+    }
+
+    result[idx] = std::move(neighbors);
+  }
+
+  return result;
 }
 
 /**

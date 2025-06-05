@@ -231,6 +231,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppGenGridNeighbors
+Rcpp::List RcppGenGridNeighbors(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerMatrix& lib, int k);
+RcppExport SEXP _spEDM_RcppGenGridNeighbors(SEXP matSEXP, SEXP libSEXP, SEXP kSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type lib(libSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppGenGridNeighbors(mat, lib, k));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppGenGridSymbolization
 Rcpp::NumericVector RcppGenGridSymbolization(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, int k);
 RcppExport SEXP _spEDM_RcppGenGridSymbolization(SEXP matSEXP, SEXP libSEXP, SEXP predSEXP, SEXP kSEXP) {
@@ -1324,6 +1337,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppRowColFromGrid", (DL_FUNC) &_spEDM_RcppRowColFromGrid, 2},
     {"_spEDM_RcppLaggedVal4Grid", (DL_FUNC) &_spEDM_RcppLaggedVal4Grid, 2},
     {"_spEDM_RcppGenGridEmbeddings", (DL_FUNC) &_spEDM_RcppGenGridEmbeddings, 3},
+    {"_spEDM_RcppGenGridNeighbors", (DL_FUNC) &_spEDM_RcppGenGridNeighbors, 3},
     {"_spEDM_RcppGenGridSymbolization", (DL_FUNC) &_spEDM_RcppGenGridSymbolization, 4},
     {"_spEDM_RcppDivideGrid", (DL_FUNC) &_spEDM_RcppDivideGrid, 3},
     {"_spEDM_RcppFNN4Grid", (DL_FUNC) &_spEDM_RcppFNN4Grid, 8},

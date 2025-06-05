@@ -92,6 +92,54 @@ Rcpp::NumericMatrix RcppGenGridEmbeddings(const Rcpp::NumericMatrix& mat,
 }
 
 // [[Rcpp::export]]
+Rcpp::List RcppGenGridNeighbors(const Rcpp::NumericMatrix& mat,
+                                const Rcpp::IntegerMatrix& lib,
+                                int k) {
+  // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
+  int numRows = mat.nrow();
+  int numCols = mat.ncol();
+  std::vector<std::vector<double>> cppMat(numRows, std::vector<double>(numCols));
+
+  for (int r = 0; r < numRows; ++r) {
+    for (int c = 0; c < numCols; ++c) {
+      cppMat[r][c] = mat(r, c);
+    }
+  }
+
+  // Convert lib to a fundamental C++ data type
+  int lib_dim = lib.ncol();
+  std::vector<int> lib_std(lib.nrow());
+
+  if (lib_dim == 1){
+    for (int i = 0; i < lib.nrow(); ++i) {
+      lib_std[i] = lib(i, 0) - 1;
+    }
+  } else {
+    for (int i = 0; i < lib.nrow(); ++i) {
+      lib_std[i] = LocateGridIndices(lib(i, 0), lib(i, 1), numRows, numCols);
+    }
+  }
+
+  // Generate neighbors
+  std::vector<std::vector<int>> neighbors = GenGridNeighbors(
+    cppMat, lib_std, static_cast<size_t>(std::abs(k))
+  );
+
+  // Convert neighbors to Rcpp::List with 1-based indexing
+  int n = neighbors.size();
+  Rcpp::List result(n);
+  for (int i = 0; i < n; ++i) {
+    std::vector<int> neighbor_i = neighbors[i];
+    for (auto& idx : neighbor_i) {
+      idx += 1; // convert to 1-based index
+    }
+    result[i] = Rcpp::IntegerVector(neighbor_i.begin(), neighbor_i.end());
+  }
+
+  return result;
+}
+
+// [[Rcpp::export]]
 Rcpp::NumericVector RcppGenGridSymbolization(const Rcpp::NumericMatrix& mat,
                                              const Rcpp::IntegerMatrix& lib,
                                              const Rcpp::IntegerMatrix& pred,
