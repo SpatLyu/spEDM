@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Model principles
+## Methodological Background
 
 Let us begin by defining two spatial cross-sectional series $\{x_s\}_{s \in S}$ and $\{y_s\}_{s \in S}$, where $S$ represents the study area.
 
