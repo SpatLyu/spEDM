@@ -255,6 +255,61 @@ Rcpp::NumericMatrix RcppSLMUni4Grid(
   return out;
 }
 
+// Wrapper function to perform bivariate Spatial Logistic Map for spatial grid data
+// [[Rcpp::export]]
+Rcpp::List RcppSLMBi4Grid(
+    const Rcpp::NumericMatrix& mat1,
+    const Rcpp::NumericMatrix& mat2,
+    int k = 4,
+    int step = 20,
+    double alpha_x = 0.625,
+    double alpha_y = 0.77,
+    double beta_xy = 0.05,
+    double beta_yx = 0.4,
+    double escape_threshold = 1e10
+) {
+  // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
+  int numRows = mat1.nrow();
+  int numCols = mat1.ncol();
+  std::vector<std::vector<double>> cppMat1(numRows, std::vector<double>(numCols));
+  std::vector<std::vector<double>> cppMat2(numRows, std::vector<double>(numCols));
+
+  double validCellNum = 0;
+  for (int r = 0; r < numRows; ++r) {
+    for (int c = 0; c < numCols; ++c) {
+      cppMat1[r][c] = mat1(r, c);
+      cppMat2[r][c] = mat2(r, c);
+    }
+  }
+
+  // Call the core function
+  std::vector<std::vector<std::vector<double>>> result = SLMBi4Grid(
+    cppMat1, cppMat2, k, step, alpha_x, alpha_y, beta_xy, beta_yx, escape_threshold
+  );
+
+  // Create NumericMatrix with rows = number of spatial units, cols = number of steps+1
+  int n_rows = static_cast<int>(result[0].size());
+  int n_cols = result[0][1].size();
+  Rcpp::NumericMatrix out_x(n_rows, n_cols);
+  Rcpp::NumericMatrix out_y(n_rows, n_cols);
+
+  // Copy data into NumericMatrix
+  for (int i = 0; i < n_rows; ++i) {
+    for (int j = 0; j < n_cols; ++j) {
+      out_x(i, j) = result[0][i][j];
+      out_y(i, j) = result[1][i][j];
+    }
+  }
+
+  // Wrap results into an Rcpp::List
+  Rcpp::List out = Rcpp::List::create(
+    Rcpp::Named("x") = out_x,
+    Rcpp::Named("y") = out_y
+  );
+
+  return out;
+}
+
 // [[Rcpp::export]]
 Rcpp::NumericVector RcppFNN4Grid(
     const Rcpp::NumericMatrix& mat,
