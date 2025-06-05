@@ -104,7 +104,7 @@ library(spEDM)
 cu = terra::rast(system.file("case/cu.tif", package="spEDM"))
 cu
 ## class       : SpatRaster 
-## dimensions  : 131, 125, 3  (nrow, ncol, nlyr)
+## size        : 131, 125, 3  (nrow, ncol, nlyr)
 ## resolution  : 5000, 5000  (x, y)
 ## extent      : 360000, 985000, 1555000, 2210000  (xmin, xmax, ymin, ymax)
 ## coord. ref. : North_American_1983_Albers 
