@@ -117,32 +117,31 @@ std::vector<std::vector<double>> GenGridEmbeddings(
 /**
  * @brief Perform grid-based symbolization on a 2D numeric matrix using local neighborhood statistics.
  *
- * This function calculates a symbolic representation (`fs`) for each non-NaN grid cell based on its
- * k most similar neighbors in terms of value difference. The process expands radially (Queen's case)
- * around each cell until at least k valid neighbors are collected. The final symbol for each cell
- * reflects its local homogeneity pattern relative to the global median.
+ * This function computes a symbolic representation (`fs`) for each non-NaN grid cell in `pred` based on its
+ * k most similar neighbors selected from the `lib` set. Each symbol reflects local spatial consistency with
+ * respect to a global threshold derived from known values.
  *
- * The steps include:
- * 1. Flatten the matrix to compute the global median `s_me` using all valid values.
- * 2. For each grid cell:
- *    - Find up to k nearest neighbors by increasing the neighborhood lag until k valid neighbors are found.
- *    - Sort neighbors by absolute difference in value from the center cell.
- *    - Select the top k values and compute a first indicator vector (`tau_s`) by comparing to global median.
- *    - Compute a second indicator vector (`l_s`) by comparing `tau_s[i]` to the center cell’s own indicator (`taus`).
- *    - Sum `l_s` to get a symbolic value `fs` representing the symbolic spatial consistency.
+ * The updated process includes:
+ * 1. Compute the global threshold (`s_me`) as the median of all valid (non-NaN) values from `lib` locations only.
+ * 2. For each prediction location in `pred`:
+ *    - Identify neighbors from `lib` by radially expanding the neighborhood (Queen's case) until at least `k` valid neighbors are found.
+ *    - Rank neighbors by absolute difference from the center cell's value.
+ *    - Select the top `k` neighbors and assign each a binary symbol (`tau_s`) based on comparison to the global median (`s_me`).
+ *    - Compare each `tau_s` to the center cell's own binary symbol (`taus`), and count how many are consistent.
+ *    - Store this count as the final symbolic value `fs` for the cell.
  *
  * @param mat A 2D grid (matrix) of values to be symbolized. `NaN` values are treated as missing.
- * @param lib Valid library locations as (row,col) pairs
- * @param pred Prediction locations to process as (row,col) pairs
- * @param k The number of neighbors to consider for the symbolization of each cell.
+ * @param lib A set of valid reference (library) cell locations as (row, col) pairs. Used for both thresholding and neighbor selection.
+ * @param pred A set of prediction cell locations as (row, col) pairs where symbols will be computed.
+ * @param k The number of nearest neighbors (by value similarity) to use in symbolization.
  *
- * @return A flattened 1D vector representing the symbolic values of for prediction locations (row-major order).
- *         Cells with no valid value or insufficient neighbors remain as `NaN`.
+ * @return A 1D vector of symbolic values corresponding to the prediction locations, in row-major order.
+ *         Entries remain `NaN` if the center cell is invalid or lacks enough valid neighbors.
  *
- * Note:
- * - Uses Queen's neighborhood definition for expanding neighborhoods (8 directions per layer).
- * - Grid edges and missing values are handled robustly during expansion.
- * - Useful for symbolic dynamics, pattern analysis, or spatial entropy estimation.
+ * Notes:
+ * - Uses Queen’s case (8-directional) neighborhood expansion for neighbor search.
+ * - Median is computed only from valid values in the `lib` set (not the whole matrix).
+ * - Particularly useful in spatial symbolic analysis, spatial entropy estimation, or causal lattice models.
  */
 std::vector<double> GenGridSymbolization(
     const std::vector<std::vector<double>>& mat,

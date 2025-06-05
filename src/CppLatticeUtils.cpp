@@ -509,15 +509,15 @@ std::vector<std::vector<int>> GenLatticeNeighbors(
  * indicators within a defined spatial neighborhood.
  *
  * The procedure follows three main steps:
- * 1. Compute the global median of the input series `vec`.
- * 2. For each location in `pred`, define a binary indicator (`tau_s`) which is 1 if the value
- *    at that location is greater than or equal to the median, and 0 otherwise.
+ * 1. Compute the median of the input series `vec` using only the indices specified in `lib`.
+ * 2. For each location in `vec`, define a binary indicator (`tau_s`) which is 1 if the value
+ *    at that location is greater than or equal to the `lib`-based median, and 0 otherwise.
  * 3. For each location in `pred`, compare its indicator with those of its k nearest neighbors.
  *    The final symbolic value is the count of neighbors that share the same indicator value.
  *
  * @param vec A vector of double values representing the spatial process.
  * @param nb A nested vector containing neighborhood information (e.g., lattice connectivity).
- * @param lib A vector of indices representing valid neighbors to consider for each location.
+ * @param lib A vector of indices representing valid neighbors to consider for computing the median and selecting neighbors.
  * @param pred A vector of indices specifying which elements to compute the symbolization for.
  * @param k The number of nearest neighbors to consider for each location.
  *
@@ -529,25 +529,32 @@ std::vector<double> GenLatticeSymbolization(
     const std::vector<int>& lib,
     const std::vector<int>& pred,
     size_t k) {
-
   // Initialize the result vector with the same size as pred
   std::vector<double> result(pred.size());
 
   // Generate neighbors for the elements in pred
   std::vector<std::vector<int>> neighbors = GenLatticeNeighbors(vec, nb, lib, k);
 
-  // The median of the series vec
-  double vec_me = CppMedian(vec, true);
-  // // Compute global median of the 'pred' series
-  // double vec_me = CppMedian(pred, true);
+  // Compute the median using only values at lib indices
+  std::vector<double> lib_vals(lib.size());
+  // No need to filter no-nan value
+  // for (int idx : lib) {
+  //   if (!std::isnan(vec[idx])) {
+  //     lib_vals.push_back(vec[idx]);
+  //   }
+  // }
+  for (size_t i = 0; i < lib.size(); ++i){
+    lib_vals[i] = vec[lib[i]];
+  }
+  double vec_me = CppMedian(lib_vals, true);
 
-  // The first indicator function
+  // Define tau_s for all positions in vec
   std::vector<double> tau_s(vec.size());
   for (size_t i = 0; i < vec.size(); ++i) {
     tau_s[i] = (vec[i] >= vec_me) ? 1.0 : 0.0;
   }
 
-  // The second indicator function and the symbolization map
+  // For each location in pred, compute fs
   for (size_t s = 0; s < pred.size(); ++s) {
     int currentIndex = pred[s];
     const std::vector<int>& local_neighbors = neighbors[currentIndex];
