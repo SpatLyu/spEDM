@@ -1,7 +1,7 @@
 ---
 title: "Spatial Causality Test (SCT)"
 author: "Wenbo Lv"
-date: "2025-05-28"
+date: "2025-06-05"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{SCT}
@@ -11,7 +11,7 @@ vignette: >
 
 
 
-## Model principles
+## Methodological Background
 
 Let us begin by defining two spatial cross-sectional series $\{x_s\}_{s \in S}$ and $\{y_s\}_{s \in S}$, where $S$ represents the study area.
 
@@ -137,18 +137,18 @@ Detect spatial causality among the variables *pre*, *tem*, and *npp* :
 # precipitation and npp
 sc.test(npp,"pre","npp",k = 30)
 ## spatial causality test
-## pre -> npp: statistic = 0.224, p value = 0
-## npp -> pre: statistic = 0.15, p value = 0
+## pre -> npp: statistic = 0.227, p value = 0
+## npp -> pre: statistic = 0.16, p value = 0
 
 # temperature and npp
 sc.test(npp,"tem","npp",k = 30)
 ## spatial causality test
-## tem -> npp: statistic = 0.172, p value = 0
-## npp -> tem: statistic = 0.168, p value = 0
+## tem -> npp: statistic = 0.168, p value = 0
+## npp -> tem: statistic = 0.169, p value = 0
 
 # precipitation and temperature
 sc.test(npp,"pre","tem",k = 30)
 ## spatial causality test
 ## pre -> tem: statistic = 0.19, p value = 0
-## tem -> pre: statistic = 0.145, p value = 0
+## tem -> pre: statistic = 0.147, p value = 0
 ```
