@@ -230,7 +230,6 @@ Rcpp::NumericMatrix RcppSLMUni4Grid(
   int numCols = mat.ncol();
   std::vector<std::vector<double>> cppMat(numRows, std::vector<double>(numCols));
 
-  double validCellNum = 0;
   for (int r = 0; r < numRows; ++r) {
     for (int c = 0; c < numCols; ++c) {
       cppMat[r][c] = mat(r, c);
@@ -274,7 +273,6 @@ Rcpp::List RcppSLMBi4Grid(
   std::vector<std::vector<double>> cppMat1(numRows, std::vector<double>(numCols));
   std::vector<std::vector<double>> cppMat2(numRows, std::vector<double>(numCols));
 
-  double validCellNum = 0;
   for (int r = 0; r < numRows; ++r) {
     for (int c = 0; c < numCols; ++c) {
       cppMat1[r][c] = mat1(r, c);

@@ -77,6 +77,10 @@ RcppSLMUni4Grid <- function(mat, k = 4L, step = 20L, alpha = 0.77, escape_thresh
     .Call(`_spEDM_RcppSLMUni4Grid`, mat, k, step, alpha, escape_threshold)
 }
 
+RcppSLMBi4Grid <- function(mat1, mat2, k = 4L, step = 20L, alpha_x = 0.625, alpha_y = 0.77, beta_xy = 0.05, beta_yx = 0.4, escape_threshold = 1e10) {
+    .Call(`_spEDM_RcppSLMBi4Grid`, mat1, mat2, k, step, alpha_x, alpha_y, beta_xy, beta_yx, escape_threshold)
+}
+
 RcppFNN4Grid <- function(mat, rt, eps, lib, pred, E, tau, threads) {
     .Call(`_spEDM_RcppFNN4Grid`, mat, rt, eps, lib, pred, E, tau, threads)
 }

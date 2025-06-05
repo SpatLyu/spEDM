@@ -286,6 +286,25 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppSLMBi4Grid
+Rcpp::List RcppSLMBi4Grid(const Rcpp::NumericMatrix& mat1, const Rcpp::NumericMatrix& mat2, int k, int step, double alpha_x, double alpha_y, double beta_xy, double beta_yx, double escape_threshold);
+RcppExport SEXP _spEDM_RcppSLMBi4Grid(SEXP mat1SEXP, SEXP mat2SEXP, SEXP kSEXP, SEXP stepSEXP, SEXP alpha_xSEXP, SEXP alpha_ySEXP, SEXP beta_xySEXP, SEXP beta_yxSEXP, SEXP escape_thresholdSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat1(mat1SEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat2(mat2SEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< int >::type step(stepSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha_x(alpha_xSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha_y(alpha_ySEXP);
+    Rcpp::traits::input_parameter< double >::type beta_xy(beta_xySEXP);
+    Rcpp::traits::input_parameter< double >::type beta_yx(beta_yxSEXP);
+    Rcpp::traits::input_parameter< double >::type escape_threshold(escape_thresholdSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSLMBi4Grid(mat1, mat2, k, step, alpha_x, alpha_y, beta_xy, beta_yx, escape_threshold));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppFNN4Grid
 Rcpp::NumericVector RcppFNN4Grid(const Rcpp::NumericMatrix& mat, const Rcpp::NumericVector& rt, const Rcpp::NumericVector& eps, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, const Rcpp::IntegerVector& E, int tau, int threads);
 RcppExport SEXP _spEDM_RcppFNN4Grid(SEXP matSEXP, SEXP rtSEXP, SEXP epsSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP threadsSEXP) {
@@ -1356,6 +1375,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppGenGridSymbolization", (DL_FUNC) &_spEDM_RcppGenGridSymbolization, 4},
     {"_spEDM_RcppDivideGrid", (DL_FUNC) &_spEDM_RcppDivideGrid, 3},
     {"_spEDM_RcppSLMUni4Grid", (DL_FUNC) &_spEDM_RcppSLMUni4Grid, 5},
+    {"_spEDM_RcppSLMBi4Grid", (DL_FUNC) &_spEDM_RcppSLMBi4Grid, 9},
     {"_spEDM_RcppFNN4Grid", (DL_FUNC) &_spEDM_RcppFNN4Grid, 8},
     {"_spEDM_RcppSimplex4Grid", (DL_FUNC) &_spEDM_RcppSimplex4Grid, 8},
     {"_spEDM_RcppSMap4Grid", (DL_FUNC) &_spEDM_RcppSMap4Grid, 9},
