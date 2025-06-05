@@ -73,6 +73,10 @@ RcppDivideGrid <- function(mat, b, shape = 3L) {
     .Call(`_spEDM_RcppDivideGrid`, mat, b, shape)
 }
 
+RcppSLMUni4Grid <- function(mat, k = 4L, step = 20L, alpha = 0.77, escape_threshold = 1e10) {
+    .Call(`_spEDM_RcppSLMUni4Grid`, mat, k, step, alpha, escape_threshold)
+}
+
 RcppFNN4Grid <- function(mat, rt, eps, lib, pred, E, tau, threads) {
     .Call(`_spEDM_RcppFNN4Grid`, mat, rt, eps, lib, pred, E, tau, threads)
 }

@@ -10,6 +10,7 @@
 #include "SCPCM4Grid.h"
 #include "CrossMappingCardinality.h"
 #include "FalseNearestNeighbors.h"
+#include "SLM4Grid.h"
 #include "SGC4Grid.h"
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
@@ -213,6 +214,45 @@ Rcpp::IntegerVector RcppDivideGrid(const Rcpp::NumericMatrix& mat,
 
   // Convert the result back to Rcpp::IntegerVector
   return Rcpp::wrap(blocks);
+}
+
+// Wrapper function to perform univariate Spatial Logistic Map for spatial grid data
+// [[Rcpp::export]]
+Rcpp::NumericMatrix RcppSLMUni4Grid(
+    const Rcpp::NumericMatrix& mat,
+    int k = 4,
+    int step = 20,
+    double alpha = 0.77,
+    double escape_threshold = 1e10
+) {
+  // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
+  int numRows = mat.nrow();
+  int numCols = mat.ncol();
+  std::vector<std::vector<double>> cppMat(numRows, std::vector<double>(numCols));
+
+  double validCellNum = 0;
+  for (int r = 0; r < numRows; ++r) {
+    for (int c = 0; c < numCols; ++c) {
+      cppMat[r][c] = mat(r, c);
+    }
+  }
+
+  // Call the core function
+  std::vector<std::vector<double>> result = SLMUni4Grid(cppMat, k, step, alpha, escape_threshold);
+
+  // Create NumericMatrix with rows = number of spatial units, cols = number of steps+1
+  int n_rows = static_cast<int>(result.size());
+  int n_cols = result[0].size();
+  Rcpp::NumericMatrix out(n_rows, n_cols);
+
+  // Copy data into NumericMatrix
+  for (int i = 0; i < n_rows; ++i) {
+    for (int j = 0; j < n_cols; ++j) {
+      out(i, j) = result[i][j];
+    }
+  }
+
+  return out;
 }
 
 // [[Rcpp::export]]
