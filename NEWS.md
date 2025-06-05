@@ -8,6 +8,8 @@
 
 ### breaking changes
 
+* Symbolization `C++` functions now compute medians from lib subset only (#599).
+
 * Users must now use `detrend` instead of `trend.rm` (#559).
 
 * Enable `column` parameter in `simplex()` and `smap()` and rename `columns` parameter to `column` in `multiview()` (#565).
