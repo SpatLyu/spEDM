@@ -210,7 +210,7 @@ Rcpp::NumericVector RcppGenLatticeSymbolization(const Rcpp::NumericVector& vec,
   return Rcpp::wrap(symbolmap);
 }
 
-// Wrapper function to implement a symbolic transformation of a univariate spatial lattice data
+// Wrapper function to partition spatial units in spatial lattice data
 // [[Rcpp::export]]
 Rcpp::IntegerVector RcppDivideLattice(const Rcpp::List& nb,int b) {
   // Convert Rcpp::List to std::vector<std::vector<int>>

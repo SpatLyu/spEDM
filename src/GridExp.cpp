@@ -15,6 +15,7 @@
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
 
+// Wrapper function to convert row and column indices to 1-based linear indices
 // [[Rcpp::export]]
 int RcppLocateGridIndices(int curRow, int curCol,
                           int totalRow, int totalCol){
@@ -22,6 +23,7 @@ int RcppLocateGridIndices(int curRow, int curCol,
   return indices + 1;
 };
 
+// Wrapper function to convert a row-major linear index to row and column indices
 // [[Rcpp::export]]
 Rcpp::NumericVector RcppRowColFromGrid(int cellNum, int totalCol){
   std::vector<int> result = RowColFromGrid(cellNum - 1, totalCol);
@@ -32,6 +34,7 @@ Rcpp::NumericVector RcppRowColFromGrid(int cellNum, int totalCol){
   return Rcpp::wrap(result);
 };
 
+// Wrapper function to calculate lagged values for spatial grid data
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppLaggedVal4Grid(const Rcpp::NumericMatrix& mat, int lagNum) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
@@ -62,6 +65,7 @@ Rcpp::NumericMatrix RcppLaggedVal4Grid(const Rcpp::NumericMatrix& mat, int lagNu
   return result;
 }
 
+// Wrapper function to generate embeddings for spatial grid data
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppGenGridEmbeddings(const Rcpp::NumericMatrix& mat,
                                           int E, int tau) {
@@ -92,6 +96,7 @@ Rcpp::NumericMatrix RcppGenGridEmbeddings(const Rcpp::NumericMatrix& mat,
   return result;
 }
 
+// Wrapper function to generate neighbors for spatial grid data
 // [[Rcpp::export]]
 Rcpp::List RcppGenGridNeighbors(const Rcpp::NumericMatrix& mat,
                                 const Rcpp::IntegerMatrix& lib,
@@ -140,6 +145,7 @@ Rcpp::List RcppGenGridNeighbors(const Rcpp::NumericMatrix& mat,
   return result;
 }
 
+// Wrapper function to implement a symbolic transformation of a univariate spatial grid data
 // [[Rcpp::export]]
 Rcpp::NumericVector RcppGenGridSymbolization(const Rcpp::NumericMatrix& mat,
                                              const Rcpp::IntegerMatrix& lib,
@@ -195,6 +201,7 @@ Rcpp::NumericVector RcppGenGridSymbolization(const Rcpp::NumericMatrix& mat,
   return Rcpp::wrap(symbolmap);
 }
 
+// Wrapper function to partition spatial units in spatial grid data
 // [[Rcpp::export]]
 Rcpp::IntegerVector RcppDivideGrid(const Rcpp::NumericMatrix& mat,
                                    int b, int shape = 3) {
@@ -308,6 +315,7 @@ Rcpp::List RcppSLMBi4Grid(
   return out;
 }
 
+// Wrapper function to perform FNN for spatial grid data
 // [[Rcpp::export]]
 Rcpp::NumericVector RcppFNN4Grid(
     const Rcpp::NumericMatrix& mat,
@@ -390,6 +398,7 @@ Rcpp::NumericVector RcppFNN4Grid(
   return result;
 }
 
+// Wrapper function to perform simplex forecasting for spatial grid data
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
                                      const Rcpp::NumericMatrix& target,
@@ -484,6 +493,7 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
   return result;
 }
 
+// Wrapper function to perform s-mapping for spatial grid data
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& source,
                                   const Rcpp::NumericMatrix& target,
@@ -579,6 +589,7 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& source,
   return result;
 }
 
+// Wrapper function to perform multiview forecasting for spatial grid data
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
                                        const Rcpp::NumericMatrix& yMatrix,
@@ -737,6 +748,7 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
   return resmat;
 }
 
+// Wrapper function to perform GCCM for spatial grid data
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppGCCM4Grid(
     const Rcpp::NumericMatrix& xMatrix,
@@ -902,6 +914,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
   return resultMatrix;
 }
 
+// Wrapper function to perform SCPCM for spatial grid data
 // [[Rcpp::export]]
 Rcpp::NumericMatrix RcppSCPCM4Grid(
     const Rcpp::NumericMatrix& xMatrix,
@@ -1278,7 +1291,6 @@ Rcpp::NumericVector RcppSGCSingle4Grid(const Rcpp::NumericMatrix& x,
 
   return sc_res;
 }
-
 
 // Wrapper function to perform SGC for spatial grid data
 // [[Rcpp::export]]
