@@ -120,7 +120,7 @@ npp = terra::rast(system.file("case/npp.tif", package = "spEDM"))
 npp = terra::aggregate(npp, fact = 3, na.rm = TRUE)
 npp
 ## class       : SpatRaster 
-## dimensions  : 135, 161, 5  (nrow, ncol, nlyr)
+## size        : 135, 161, 5  (nrow, ncol, nlyr)
 ## resolution  : 30000, 30000  (x, y)
 ## extent      : -2625763, 2204237, 1867078, 5917078  (xmin, xmax, ymin, ymax)
 ## coord. ref. : CGCS2000_Albers 
