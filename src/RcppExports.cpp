@@ -305,6 +305,31 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppSLMTri4Grid
+Rcpp::List RcppSLMTri4Grid(const Rcpp::NumericMatrix& mat1, const Rcpp::NumericMatrix& mat2, const Rcpp::NumericMatrix& mat3, int k, int step, double alpha_x, double alpha_y, double alpha_z, double beta_xy, double beta_xz, double beta_yx, double beta_yz, double beta_zx, double beta_zy, double escape_threshold);
+RcppExport SEXP _spEDM_RcppSLMTri4Grid(SEXP mat1SEXP, SEXP mat2SEXP, SEXP mat3SEXP, SEXP kSEXP, SEXP stepSEXP, SEXP alpha_xSEXP, SEXP alpha_ySEXP, SEXP alpha_zSEXP, SEXP beta_xySEXP, SEXP beta_xzSEXP, SEXP beta_yxSEXP, SEXP beta_yzSEXP, SEXP beta_zxSEXP, SEXP beta_zySEXP, SEXP escape_thresholdSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat1(mat1SEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat2(mat2SEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat3(mat3SEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< int >::type step(stepSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha_x(alpha_xSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha_y(alpha_ySEXP);
+    Rcpp::traits::input_parameter< double >::type alpha_z(alpha_zSEXP);
+    Rcpp::traits::input_parameter< double >::type beta_xy(beta_xySEXP);
+    Rcpp::traits::input_parameter< double >::type beta_xz(beta_xzSEXP);
+    Rcpp::traits::input_parameter< double >::type beta_yx(beta_yxSEXP);
+    Rcpp::traits::input_parameter< double >::type beta_yz(beta_yzSEXP);
+    Rcpp::traits::input_parameter< double >::type beta_zx(beta_zxSEXP);
+    Rcpp::traits::input_parameter< double >::type beta_zy(beta_zySEXP);
+    Rcpp::traits::input_parameter< double >::type escape_threshold(escape_thresholdSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSLMTri4Grid(mat1, mat2, mat3, k, step, alpha_x, alpha_y, alpha_z, beta_xy, beta_xz, beta_yx, beta_yz, beta_zx, beta_zy, escape_threshold));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppFNN4Grid
 Rcpp::NumericVector RcppFNN4Grid(const Rcpp::NumericMatrix& mat, const Rcpp::NumericVector& rt, const Rcpp::NumericVector& eps, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, const Rcpp::IntegerVector& E, int tau, int threads);
 RcppExport SEXP _spEDM_RcppFNN4Grid(SEXP matSEXP, SEXP rtSEXP, SEXP epsSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP threadsSEXP) {
@@ -1376,6 +1401,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppDivideGrid", (DL_FUNC) &_spEDM_RcppDivideGrid, 3},
     {"_spEDM_RcppSLMUni4Grid", (DL_FUNC) &_spEDM_RcppSLMUni4Grid, 5},
     {"_spEDM_RcppSLMBi4Grid", (DL_FUNC) &_spEDM_RcppSLMBi4Grid, 9},
+    {"_spEDM_RcppSLMTri4Grid", (DL_FUNC) &_spEDM_RcppSLMTri4Grid, 15},
     {"_spEDM_RcppFNN4Grid", (DL_FUNC) &_spEDM_RcppFNN4Grid, 8},
     {"_spEDM_RcppSimplex4Grid", (DL_FUNC) &_spEDM_RcppSimplex4Grid, 8},
     {"_spEDM_RcppSMap4Grid", (DL_FUNC) &_spEDM_RcppSMap4Grid, 9},
