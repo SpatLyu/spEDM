@@ -51,6 +51,10 @@ reference:
   - gccm
   - gcmc
 
+- subtitle: Spatiotemporal Chaos
+  contents:
+  - slm
+
 - title: Causality in Information Flux (for Comparison)
   contents:
   - sc.test
@@ -58,4 +62,3 @@ reference:
 - title: Miscellaneous Utility Functions
   contents:
   - detectThreads
-
