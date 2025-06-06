@@ -1,8 +1,8 @@
 methods::setGeneric("slm", function(data, ...) standardGeneric("slm"))
 
 .slm_sf_method = \(data, x, y = NULL, z = NULL,
-                   k = 4, step = 20, alpha_x = 0.77, alpha_y = 0, alpha_z = 0,
-                   beta_xy = 0, beta_xz = 0, beta_yx = 0, beta_yz = 0, beta_zx = 0, beta_zy = 0,
+                   k = 4, step = 20, alpha_x = 0.625, alpha_y = 0.77, alpha_z = 0.55,
+                   beta_xy = 0.05, beta_xz = 0.05, beta_yx = 0.4, beta_yz = 0.4, beta_zx = 0.65, beta_zy = 0.65,
                    threshold = 1e10, nb = NULL){
   vx = .uni_lattice(data,x,FALSE)
   vy = .uni_lattice(data,y,FALSE)
@@ -12,8 +12,8 @@ methods::setGeneric("slm", function(data, ...) standardGeneric("slm"))
 }
 
 .slm_spatraster_method = \(data, x, y = NULL, z = NULL,
-                           k = 4, step = 20, alpha_x = 0.77, alpha_y = 0, alpha_z = 0,
-                           beta_xy = 0, beta_xz = 0, beta_yx = 0, beta_yz = 0, beta_zx = 0, beta_zy = 0,
+                           k = 4, step = 20, alpha_x = 0.625, alpha_y = 0.77, alpha_z = 0.55,
+                           beta_xy = 0.05, beta_xz = 0.05, beta_yx = 0.4, beta_yz = 0.4, beta_zx = 0.65, beta_zy = 0.65,
                            threshold = 1e10){
   mx = .uni_grid(data,x,FALSE)
   my = .uni_grid(data,y,FALSE)
