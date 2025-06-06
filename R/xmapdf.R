@@ -63,3 +63,10 @@
   class(res) = "sc_res"
   return(res)
 }
+
+.bind_slm = \(mat_list,y,z){
+  res = lapply(mat_list, \(.x) apply(.x,1,mean,na.rm = TRUE))
+  if (is.null(y)) res$y = NULL
+  if (is.null(z)) res$z = NULL
+  return(res)
+}
