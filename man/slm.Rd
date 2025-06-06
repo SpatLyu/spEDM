@@ -86,6 +86,7 @@ spatial logistic map
 }
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
+columbus$inc = sdsfun::normalize_vector(columbus$inc)
 slm(columbus,"inc")
 
 }
