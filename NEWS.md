@@ -1,5 +1,9 @@
 # spEDM 1.7
 
+### new
+
+* Provide R-level API [#609](https://github.com/stscl/spEDM/pull/609) and vignette for spatial logistic map.
+
 ### enhancements
 
 * Unify parameter descriptions to lowercase (#570).
