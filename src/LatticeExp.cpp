@@ -336,7 +336,8 @@ Rcpp::List RcppSLMTri4Lattice(
 
   // Call the core function
   std::vector<std::vector<std::vector<double>>> result = SLMTri4Lattice(
-    vec1, vec2, vec3, nb_vec, k, step, alpha_x, alpha_y,
+    vec1, vec2, vec3, nb_vec,
+    k, step, alpha_x, alpha_y, alpha_z,
     beta_xy, beta_xz, beta_yx, beta_yz, beta_zx, beta_zy,
     escape_threshold
   );
