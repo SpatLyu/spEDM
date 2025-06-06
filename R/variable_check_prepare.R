@@ -65,6 +65,7 @@
 }
 
 .uni_lattice = \(data,target,detrend = FALSE){
+  if (is.null(target)) return(rep(0,nrow(data)))
   target = .check_character(target)
   coords = as.data.frame(sdsfun::sf_coordinates(data))
   data = sf::st_drop_geometry(data)
@@ -78,6 +79,7 @@
 }
 
 .uni_grid = \(data,target,detrend = FALSE){
+  if (is.null(target)) return(matrix(0,terra::nrow(data),terra::ncol(data)))
   target = .check_character(target)
   data = data[[target]]
   names(data) = "target"
