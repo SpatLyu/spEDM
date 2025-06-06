@@ -39,6 +39,7 @@ methods::setGeneric("slm", function(data, ...) standardGeneric("slm"))
 #' @param beta_zx (optional) cross-inhibition from z to x.
 #' @param beta_zy (optional) cross-inhibition from z to y.
 #' @param threshold (optional) set to `NaN` if the absolute value exceeds this threshold.
+#' @param nb (optional) neighbours list.
 #'
 #' @return A list
 #' @export

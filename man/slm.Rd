@@ -77,6 +77,8 @@
 \item{beta_zy}{(optional) cross-inhibition from z to y.}
 
 \item{threshold}{(optional) set to \code{NaN} if the absolute value exceeds this threshold.}
+
+\item{nb}{(optional) neighbours list.}
 }
 \value{
 A list
