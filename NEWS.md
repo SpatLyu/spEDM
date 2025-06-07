@@ -2,7 +2,7 @@
 
 ### new
 
-* Provide R-level API [#609](https://github.com/stscl/spEDM/pull/609) and vignette for spatial logistic map.
+* Provide R-level API and vignette for spatial logistic map ([#609](https://github.com/stscl/spEDM/pull/609),[#612](https://github.com/stscl/spEDM/pull/612)).
 
 ### enhancements
 
