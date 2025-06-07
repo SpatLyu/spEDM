@@ -24,9 +24,9 @@ methods::setGeneric("slm", function(data, ...) standardGeneric("slm"))
 #' spatial logistic map
 #'
 #' @param data observation data.
-#' @param x first spatial variable.
-#' @param y (optional) second spatial variable.
-#' @param z (optional) third spatial variable.
+#' @param x name of first spatial variable.
+#' @param y (optional) name of second spatial variable.
+#' @param z (optional) name of third spatial variable.
 #' @param k (optional) number of neighbors to used.
 #' @param step (optional) number of simulation time steps.
 #' @param alpha_x (optional) growth parameter for x.
