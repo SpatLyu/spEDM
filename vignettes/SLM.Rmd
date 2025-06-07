@@ -1,0 +1,51 @@
+---
+title: "Spatial Logistic Map (SLM)"
+author: "Wenbo Lv"
+date: "2025-06-07"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{SLM}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+
+## Methodological Background
+
+The **logistic map** is one of the most fundamental nonlinear dynamical systems used to explore the transition from regularity to chaos. In its univariate temporal form, the logistic map is expressed as:
+
+$$
+x_{t+1} = r x_t (1 - x_t),
+$$
+
+where $x_t \in [0,1]$ is the state of the system at time $t$, and $r$ is a growth parameter. Despite its algebraic simplicity, the logistic map exhibits a rich spectrum of dynamical behaviors, including bifurcations, periodic orbits, and deterministic chaos, depending on the value of $r$. Its sensitivity to initial conditions and nonlinear feedback makes it a canonical model for exploring complex temporal dynamics.
+
+In multivariate extensions of the logistic map, such as coupled logistic systems, each variable evolves under its own logistic rule but is also influenced by the states of other variables. A common form is:
+
+$$
+x_{t+1}^{(i)} = r_i x_t^{(i)} \left(1 - x_t^{(i)} - \sum_{j \neq i} \beta_{ij} x_t^{(j)} \right),
+$$
+
+where $\beta_{ij}$ denotes the inhibitory (or facilitative) effect of variable $j$ on variable $i$. These multivariate systems allow the study of interaction-driven complexity, including predator-prey dynamics, interspecies competition, and coevolutionary processes.
+
+This framework can be further extended to **spatial domains** to account for interactions among neighboring spatial units. The resulting system, known as the **Spatial Logistic Map (SLM)**, distributes the logistic dynamics over a spatial lattice. In the simplest case, each location $i$ on the lattice updates according to:
+
+$$
+x_{i}^{(t+1)} = 1 - \alpha x_i^{(t)} \cdot \frac{1}{k} \sum_{j \in \mathcal{N}(i)} x_j^{(t)},
+$$
+
+where $\alpha$ controls the strength of nonlinearity and spatial coupling, $\mathcal{N}(i)$ denotes the set of spatial neighbors (e.g., rook- or queen-connected units), and $k = |\mathcal{N}(i)|$ is the number of neighbors. This form reflects a **local averaging interaction**: the future value of a unit depends on its current value and the average state of its neighbors.
+
+Importantly, when extended to multivariate spatial settings, such as **bivariate or trivariate spatial logistic maps**, each spatial variable evolves not only through its own neighbors but also through inter-variable interactions at the same spatial location. For example, in a bivariate spatial logistic map:
+
+$$
+x_{i}^{(t+1)} = 1 - \alpha_1 x_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} x_j^{(t)} - \beta_{21} y_i^{(t)} \right), \\
+y_{i}^{(t+1)} = 1 - \alpha_2 y_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} y_j^{(t)} - \beta_{12} x_i^{(t)} \right),
+$$
+
+with similar expressions for the trivariate case. These models capture **local spatial coupling** and **in-place cross-variable inhibition**, producing spatiotemporal patterns such as waves, kinks, frozen random states, and spatiotemporal chaos.
+
+By performing statistical aggregation over the long-run time series values at each spatial unit, one can generate spatial cross-sectional data that reflect different causal scenarios.
+
+## Usage examples

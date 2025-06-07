@@ -17,6 +17,8 @@ navbar:
         href: articles/PkgIntro.html
       - text: State Space Reconstruction (SSR)
         href: articles/SSR.html
+      - text: Spatial Logistic Map (SLM)
+        href: articles/SLM.html
       - text: Geographical Convergent Cross Mapping (GCCM)
         href: articles/GCCM.html
       - text: Geographical Cross Mapping Cardinality (GCMC)
