@@ -362,19 +362,22 @@ Rcpp::List RcppSLMTri4Grid(
   int n_cols = result[0][1].size();
   Rcpp::NumericMatrix out_x(n_rows, n_cols);
   Rcpp::NumericMatrix out_y(n_rows, n_cols);
+  Rcpp::NumericMatrix out_z(n_rows, n_cols);
 
   // Copy data into NumericMatrix
   for (int i = 0; i < n_rows; ++i) {
     for (int j = 0; j < n_cols; ++j) {
       out_x(i, j) = result[0][i][j];
       out_y(i, j) = result[1][i][j];
+      out_z(i, j) = result[2][i][j];
     }
   }
 
   // Wrap results into an Rcpp::List
   Rcpp::List out = Rcpp::List::create(
     Rcpp::Named("x") = out_x,
-    Rcpp::Named("y") = out_y
+    Rcpp::Named("y") = out_y,
+    Rcpp::Named("z") = out_z
   );
 
   return out;
