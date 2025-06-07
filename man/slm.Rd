@@ -48,11 +48,11 @@
 \arguments{
 \item{data}{observation data.}
 
-\item{x}{first spatial variable.}
+\item{x}{name of first spatial variable.}
 
-\item{y}{(optional) second spatial variable.}
+\item{y}{(optional) name of second spatial variable.}
 
-\item{z}{(optional) third spatial variable.}
+\item{z}{(optional) name of third spatial variable.}
 
 \item{k}{(optional) number of neighbors to used.}
 
