@@ -69,7 +69,7 @@ sim_trispecies = \(nx,ny,seed = 123){
   res = replicate(3, {
     MASS::mvrnorm(1, rep(0, nrow(grid)), cov.mat) |>
       pmax(0) |>
-      sdsfun::normalize_vector() |>
+      sdsfun::normalize_vector(0,0.5) |>
       matrix(nrow = nx, ncol = ny) |>
       terra::rast()
   }, simplify = FALSE)
@@ -91,7 +91,7 @@ terra::plot(species, nc = 3,
 We assume an underlying causal interaction structure among species, where species *a* influences *b*, and *b* in turn influences *c* (i.e., *a* → *b* → *c*). The intrinsic growth rates for species *a*, *b*, and *c* are set to 0.55, 0.35, and 0.15 respectively. The effect of species *a* on *b* is set to 0.625, and the effect of species *b* on *c* is set to 0.77. All other interspecific influence parameters are set to zero. This setup provides a controlled environment to test spatial causality detection methods under known dynamic interactions.
 
 ```{r spatial_logistic_map,fig.width=6.55,fig.height=2.60,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. Species distributions following spatiotemporal interaction and evolution after 20 simulation steps with 4-neighbor interactions.")}
-simv = spEDM::slm(species,x = "a", y = "b", z = "c", k = 4, step = 20,
+simv = spEDM::slm(species,x = "a", y = "b", z = "c", k = 4, step = 20, transient = 1:3,
                   alpha_x = 0.55, alpha_y = 0.35, alpha_z = 0.15,
                   beta_xy = 0.625, beta_xz = 0, beta_yx = 0, beta_yz = 0.77, beta_zx = 0, beta_zy = 0)
 
@@ -100,7 +100,6 @@ terra::values(species_evolution[["a"]]) = simv$x
 terra::values(species_evolution[["b"]]) = simv$y
 terra::values(species_evolution[["c"]]) = simv$z
 species_evolution
-
 
 terra::plot(species_evolution, nc = 3,
             mar = rep(0.1,4),
