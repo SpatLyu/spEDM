@@ -8,7 +8,7 @@ methods::setGeneric("slm", function(data, ...) standardGeneric("slm"))
   vy = .uni_lattice(data,y,FALSE)
   vz = .uni_lattice(data,z,FALSE)
   if (is.null(nb)) nb = .internal_lattice_nb(data)
-  return(.bind_slm(RcppSLMTri4Lattice(vx,vy,vz,nb,k,step,alpha_x,alpha_y,alpha_z,beta_xy,beta_xz,beta_yx,beta_yz,beta_zx,beta_zy,threshold),y,z))
+  return(.bind_slm(RcppSLMTri4Lattice(vx,vy,vz,nb,k,step,alpha_x,alpha_y,alpha_z,beta_xy,beta_xz,beta_yx,beta_yz,beta_zx,beta_zy,threshold),y,z,transient))
 }
 
 .slm_spatraster_method = \(data, x, y = NULL, z = NULL,
@@ -18,7 +18,7 @@ methods::setGeneric("slm", function(data, ...) standardGeneric("slm"))
   mx = .uni_grid(data,x,FALSE)
   my = .uni_grid(data,y,FALSE)
   mz = .uni_grid(data,z,FALSE)
-  return(.bind_slm(RcppSLMTri4Grid(mx,my,mz,k,step,alpha_x,alpha_y,alpha_z,beta_xy,beta_xz,beta_yx,beta_yz,beta_zx,beta_zy,threshold),y,z))
+  return(.bind_slm(RcppSLMTri4Grid(mx,my,mz,k,step,alpha_x,alpha_y,alpha_z,beta_xy,beta_xz,beta_yx,beta_yz,beta_zx,beta_zy,threshold),y,z,transient))
 }
 
 #' spatial logistic map
