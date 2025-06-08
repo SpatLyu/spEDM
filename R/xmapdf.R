@@ -65,7 +65,7 @@
 }
 
 .bind_slm = \(mat_list,y,z,transient){
-  res = lapply(mat_list, \(.x) apply(.x[,-transient],1,mean,na.rm = TRUE))
+  res = lapply(mat_list, \(.x) apply(.x[,-transient,drop = FALSE],1,mean,na.rm = TRUE))
   if (is.null(y)) res$y = NULL
   if (is.null(z)) res$z = NULL
   return(res)
