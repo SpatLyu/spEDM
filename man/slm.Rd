@@ -23,6 +23,7 @@
   beta_zx = 0.65,
   beta_zy = 0.65,
   threshold = 1e+10,
+  transient = 1,
   nb = NULL
 )
 
@@ -42,7 +43,8 @@
   beta_yz = 0.4,
   beta_zx = 0.65,
   beta_zy = 0.65,
-  threshold = 1e+10
+  threshold = 1e+10,
+  transient = 1
 )
 }
 \arguments{
@@ -77,6 +79,8 @@
 \item{beta_zy}{(optional) cross-inhibition from z to y.}
 
 \item{threshold}{(optional) set to \code{NaN} if the absolute value exceeds this threshold.}
+
+\item{transient}{(optional) transients to be excluded from the results.}
 
 \item{nb}{(optional) neighbours list.}
 }
