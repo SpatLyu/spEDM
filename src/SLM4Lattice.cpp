@@ -30,16 +30,6 @@ std::vector<std::vector<double>> SLMUni4Lattice(
     double alpha,
     double escape_threshold = 1e10
 ){
-  // Initialize index library for all spatial units
-  std::vector<int> lib(vec.size());
-  // for(size_t i = 0; i < vec.size(); ++i){
-  //   lib[i] = static_cast<int>(i);
-  // }
-  std::iota(lib.begin(), lib.end(), 0); // Fill with 0, 1, ..., vec.size()-1
-
-  // Generate fixed-k neighbors (if possible)
-  std::vector<std::vector<int>> neighbors = GenLatticeNeighbors(vec, nb, lib, k);
-
   // Initialize result matrix with NaNs (rows: spatial units, cols: time steps)
   std::vector<std::vector<double>> res(vec.size(),
                                        std::vector<double>(step + 1,
@@ -50,32 +40,60 @@ std::vector<std::vector<double>> SLMUni4Lattice(
     res[i][0] = vec[i];
   }
 
-  // Time-stepped simulation
-  for (size_t s = 1; s <= step; ++s){
-    for(size_t currentIndex = 0; currentIndex < vec.size(); ++currentIndex){
-      // Skip if the current value is invalid (NaN)
-      if (std::isnan(res[currentIndex][s - 1])) continue;
+  if (k > 0){
+    // Initialize index library for all spatial units
+    std::vector<int> lib(vec.size());
+    // for(size_t i = 0; i < vec.size(); ++i){
+    //   lib[i] = static_cast<int>(i);
+    // }
+    std::iota(lib.begin(), lib.end(), 0); // Fill with 0, 1, ..., vec.size()-1
 
-      // Compute the average of valid neighboring values
-      double v_neighbors = 0;
-      double valid_neighbors = 0;
-      const std::vector<int>& local_neighbors = neighbors[currentIndex];
-      for (size_t i = 0; i < local_neighbors.size(); ++i) {
-        if (!std::isnan(res[local_neighbors[i]][s - 1])){
-          v_neighbors += res[local_neighbors[i]][s - 1];
-          valid_neighbors += 1;
+    // Generate fixed-k neighbors (if possible)
+    std::vector<std::vector<int>> neighbors = GenLatticeNeighbors(vec, nb, lib, k);
+
+    // Time-stepped simulation
+    for (size_t s = 1; s <= step; ++s){
+      for(size_t currentIndex = 0; currentIndex < vec.size(); ++currentIndex){
+        // Skip if the current value is invalid (NaN)
+        if (std::isnan(res[currentIndex][s - 1])) continue;
+
+        // Compute the average of valid neighboring values
+        double v_neighbors = 0;
+        double valid_neighbors = 0;
+        const std::vector<int>& local_neighbors = neighbors[currentIndex];
+        for (size_t i = 0; i < local_neighbors.size(); ++i) {
+          if (!std::isnan(res[local_neighbors[i]][s - 1])){
+            v_neighbors += res[local_neighbors[i]][s - 1];
+            valid_neighbors += 1;
+          }
+        }
+
+        // Apply the spatial logistic map update if neighbors exist
+        double v_next = std::numeric_limits<double>::quiet_NaN();
+        if (valid_neighbors > 0){
+          v_next = 1 - alpha * res[currentIndex][s - 1] * v_neighbors / valid_neighbors;
+        }
+
+        // Update result only if the value is within the escape threshold
+        if (std::abs(v_next) <= escape_threshold){
+          res[currentIndex][s] = v_next;
         }
       }
+    }
+  } else {
+    // Time-stepped simulation
+    for (size_t s = 1; s <= step; ++s){
+      for(size_t currentIndex = 0; currentIndex < vec.size(); ++currentIndex){
+        // Skip if the current value is invalid (NaN)
+        if (std::isnan(res[currentIndex][s - 1])) continue;
 
-      // Apply the spatial logistic map update if neighbors exist
-      double v_next = std::numeric_limits<double>::quiet_NaN();
-      if (valid_neighbors > 0){
-        v_next = 1 - alpha * res[currentIndex][s - 1] * v_neighbors / valid_neighbors;
-      }
+        // Apply the logistic map update if no neighbors exist
+        double v_next = res[currentIndex][s - 1] * (alpha - alpha * res[currentIndex][s - 1]);
 
-      // Update result only if the value is within the escape threshold
-      if (std::abs(v_next) <= escape_threshold){
-        res[currentIndex][s] = v_next;
+        // Update result only if the value is within the escape threshold
+        if (std::abs(v_next) <= escape_threshold){
+          res[currentIndex][s] = v_next;
+        }
       }
     }
   }
@@ -121,16 +139,6 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Lattice(
     double beta21,
     double escape_threshold = 1e10
 ){
-  // Initialize index library for all spatial units
-  std::vector<int> lib(vec1.size());
-  // for(size_t i = 0; i < vec1.size(); ++i){
-  //   lib[i] = static_cast<int>(i);
-  // }
-  std::iota(lib.begin(), lib.end(), 0); // Fill with 0, 1, ..., vec1.size()-1
-
-  // Generate fixed-k neighbors (if possible)
-  std::vector<std::vector<int>> neighbors = GenLatticeNeighbors(vec1, nb, lib, k);
-
   // Initialize result array with NaNs (2, rows: spatial units, cols: time steps)
   std::vector<std::vector<std::vector<double>>> res(2,
                                                     std::vector<std::vector<double>>(vec1.size(),
@@ -143,45 +151,77 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Lattice(
     res[1][i][0] = vec2[i];
   }
 
-  // Time-stepped simulation
-  for (size_t s = 1; s <= step; ++s){
-    for(size_t currentIndex = 0; currentIndex < vec1.size(); ++currentIndex){
-      // Skip if the current value is invalid (NaN)
-      if (std::isnan(res[0][currentIndex][s - 1]) && std::isnan(res[1][currentIndex][s - 1])) continue;
+  if (k > 0){
+    // Initialize index library for all spatial units
+    std::vector<int> lib(vec1.size());
+    // for(size_t i = 0; i < vec1.size(); ++i){
+    //   lib[i] = static_cast<int>(i);
+    // }
+    std::iota(lib.begin(), lib.end(), 0); // Fill with 0, 1, ..., vec1.size()-1
 
-      // Compute the average of valid neighboring values
-      double v_neighbors_1 = 0;
-      double v_neighbors_2 = 0;
-      double valid_neighbors_1 = 0;
-      double valid_neighbors_2 = 0;
-      const std::vector<int>& local_neighbors = neighbors[currentIndex];
-      for (size_t i = 0; i < local_neighbors.size(); ++i) {
-        if (!std::isnan(res[0][local_neighbors[i]][s - 1])){
-          v_neighbors_1 += res[0][local_neighbors[i]][s - 1];
-          valid_neighbors_1 += 1;
+    // Generate fixed-k neighbors (if possible)
+    std::vector<std::vector<int>> neighbors = GenLatticeNeighbors(vec1, nb, lib, k);
+
+    // Time-stepped simulation
+    for (size_t s = 1; s <= step; ++s){
+      for(size_t currentIndex = 0; currentIndex < vec1.size(); ++currentIndex){
+        // Skip if the current value is invalid (NaN)
+        if (std::isnan(res[0][currentIndex][s - 1]) && std::isnan(res[1][currentIndex][s - 1])) continue;
+
+        // Compute the average of valid neighboring values
+        double v_neighbors_1 = 0;
+        double v_neighbors_2 = 0;
+        double valid_neighbors_1 = 0;
+        double valid_neighbors_2 = 0;
+        const std::vector<int>& local_neighbors = neighbors[currentIndex];
+        for (size_t i = 0; i < local_neighbors.size(); ++i) {
+          if (!std::isnan(res[0][local_neighbors[i]][s - 1])){
+            v_neighbors_1 += res[0][local_neighbors[i]][s - 1];
+            valid_neighbors_1 += 1;
+          }
+          if (!std::isnan(res[1][local_neighbors[i]][s - 1])){
+            v_neighbors_2 += res[1][local_neighbors[i]][s - 1];
+            valid_neighbors_2 += 1;
+          }
         }
-        if (!std::isnan(res[1][local_neighbors[i]][s - 1])){
-          v_neighbors_2 += res[1][local_neighbors[i]][s - 1];
-          valid_neighbors_2 += 1;
+
+        // Apply the spatial logistic map update if neighbors exist
+        double v_next_1 = std::numeric_limits<double>::quiet_NaN();
+        double v_next_2 = std::numeric_limits<double>::quiet_NaN();
+        if (valid_neighbors_1 > 0){
+          v_next_1 = 1 - alpha1 * res[0][currentIndex][s - 1] * (v_neighbors_1 / valid_neighbors_1 - beta21 * res[1][currentIndex][s - 1]);
+        }
+        if (valid_neighbors_2 > 0){
+          v_next_2 = 1 - alpha2 * res[1][currentIndex][s - 1] * (v_neighbors_2 / valid_neighbors_2 - beta12 * res[0][currentIndex][s - 1]);
+        }
+
+        // Update result only if the value is within the escape threshold
+        if (std::abs(v_next_1) <= escape_threshold){
+          res[0][currentIndex][s] = v_next_1;
+        }
+        if (std::abs(v_next_2) <= escape_threshold){
+          res[1][currentIndex][s] = v_next_2;
         }
       }
+    }
+  } else {
+    // Time-stepped simulation
+    for (size_t s = 1; s <= step; ++s){
+      for(size_t currentIndex = 0; currentIndex < vec1.size(); ++currentIndex){
+        // Skip if the current value is invalid (NaN)
+        if (std::isnan(res[0][currentIndex][s - 1]) && std::isnan(res[1][currentIndex][s - 1])) continue;
 
-      // Apply the spatial logistic map update if neighbors exist
-      double v_next_1 = std::numeric_limits<double>::quiet_NaN();
-      double v_next_2 = std::numeric_limits<double>::quiet_NaN();
-      if (valid_neighbors_1 > 0){
-        v_next_1 = 1 - alpha1 * res[0][currentIndex][s - 1] * (v_neighbors_1 / valid_neighbors_1 - beta21 * res[1][currentIndex][s - 1]);
-      }
-      if (valid_neighbors_2 > 0){
-        v_next_2 = 1 - alpha2 * res[1][currentIndex][s - 1] * (v_neighbors_2 / valid_neighbors_2 - beta12 * res[0][currentIndex][s - 1]);
-      }
+        // Apply the logistic map update if no neighbors exist
+        double v_next_1 = res[0][currentIndex][s - 1] * (alpha1 - alpha1 * res[0][currentIndex][s - 1] - beta21 * res[1][currentIndex][s - 1]);
+        double v_next_2 = res[1][currentIndex][s - 1] * (alpha2 - alpha2 * res[1][currentIndex][s - 1] - beta12 * res[0][currentIndex][s - 1]);
 
-      // Update result only if the value is within the escape threshold
-      if (std::abs(v_next_1) <= escape_threshold){
-        res[0][currentIndex][s] = v_next_1;
-      }
-      if (std::abs(v_next_2) <= escape_threshold){
-        res[1][currentIndex][s] = v_next_2;
+        // Update result only if the value is within the escape threshold
+        if (std::abs(v_next_1) <= escape_threshold){
+          res[0][currentIndex][s] = v_next_1;
+        }
+        if (std::abs(v_next_2) <= escape_threshold){
+          res[1][currentIndex][s] = v_next_2;
+        }
       }
     }
   }
@@ -242,16 +282,6 @@ std::vector<std::vector<std::vector<double>>> SLMTri4Lattice(
     double beta32,
     double escape_threshold = 1e10
 ){
-  // Initialize index library for all spatial units
-  std::vector<int> lib(vec1.size());
-  // for(size_t i = 0; i < vec1.size(); ++i){
-  //   lib[i] = static_cast<int>(i);
-  // }
-  std::iota(lib.begin(), lib.end(), 0); // Fill with 0, 1, ..., vec1.size()-1
-
-  // Generate fixed-k neighbors (if possible)
-  std::vector<std::vector<int>> neighbors = GenLatticeNeighbors(vec1, nb, lib, k);
-
   // Initialize result array with NaNs (3, rows: spatial units, cols: time steps)
   std::vector<std::vector<std::vector<double>>> res(3,
                                                     std::vector<std::vector<double>>(vec1.size(),
@@ -265,60 +295,98 @@ std::vector<std::vector<std::vector<double>>> SLMTri4Lattice(
     res[2][i][0] = vec3[i];
   }
 
-  // Time-stepped simulation
-  for (size_t s = 1; s <= step; ++s){
-    for(size_t currentIndex = 0; currentIndex < vec1.size(); ++currentIndex){
-      // Skip if the current value is invalid (NaN)
-      if (std::isnan(res[0][currentIndex][s - 1]) &&
-          std::isnan(res[1][currentIndex][s - 1]) &&
-          std::isnan(res[2][currentIndex][s - 1])) continue;
+  if (k > 0){
+    // Initialize index library for all spatial units
+    std::vector<int> lib(vec1.size());
+    // for(size_t i = 0; i < vec1.size(); ++i){
+    //   lib[i] = static_cast<int>(i);
+    // }
+    std::iota(lib.begin(), lib.end(), 0); // Fill with 0, 1, ..., vec1.size()-1
 
-      // Compute the average of valid neighboring values
-      double v_neighbors_1 = 0;
-      double v_neighbors_2 = 0;
-      double v_neighbors_3 = 0;
-      double valid_neighbors_1 = 0;
-      double valid_neighbors_2 = 0;
-      double valid_neighbors_3 = 0;
-      const std::vector<int>& local_neighbors = neighbors[currentIndex];
-      for (size_t i = 0; i < local_neighbors.size(); ++i) {
-        if (!std::isnan(res[0][local_neighbors[i]][s - 1])){
-          v_neighbors_1 += res[0][local_neighbors[i]][s - 1];
-          valid_neighbors_1 += 1;
-        }
-        if (!std::isnan(res[1][local_neighbors[i]][s - 1])){
-          v_neighbors_2 += res[1][local_neighbors[i]][s - 1];
-          valid_neighbors_2 += 1;
-        }
-        if (!std::isnan(res[2][local_neighbors[i]][s - 1])){
-          v_neighbors_2 += res[2][local_neighbors[i]][s - 1];
-          valid_neighbors_3 += 1;
-        }
-      }
+    // Generate fixed-k neighbors (if possible)
+    std::vector<std::vector<int>> neighbors = GenLatticeNeighbors(vec1, nb, lib, k);
 
-      // Apply the spatial logistic map update if neighbors exist
-      double v_next_1 = std::numeric_limits<double>::quiet_NaN();
-      double v_next_2 = std::numeric_limits<double>::quiet_NaN();
-      double v_next_3 = std::numeric_limits<double>::quiet_NaN();
-      if (valid_neighbors_1 > 0){
-        v_next_1 = 1 - alpha1 * res[0][currentIndex][s - 1] * (v_neighbors_1 / valid_neighbors_1 - beta21 * res[1][currentIndex][s - 1] - beta31 * res[2][currentIndex][s - 1]);
-      }
-      if (valid_neighbors_2 > 0){
-        v_next_2 = 1 - alpha2 * res[1][currentIndex][s - 1] * (v_neighbors_2 / valid_neighbors_2 - beta12 * res[0][currentIndex][s - 1] - beta32 * res[2][currentIndex][s - 1]);
-      }
-      if (valid_neighbors_3 > 0){
-        v_next_3 = 1 - alpha3 * res[2][currentIndex][s - 1] * (v_neighbors_3 / valid_neighbors_3 - beta13 * res[0][currentIndex][s - 1] - beta23 * res[1][currentIndex][s - 1]);
-      }
+    // Time-stepped simulation
+    for (size_t s = 1; s <= step; ++s){
+      for(size_t currentIndex = 0; currentIndex < vec1.size(); ++currentIndex){
+        // Skip if the current value is invalid (NaN)
+        if (std::isnan(res[0][currentIndex][s - 1]) &&
+            std::isnan(res[1][currentIndex][s - 1]) &&
+            std::isnan(res[2][currentIndex][s - 1])) continue;
 
-      // Update result only if the value is within the escape threshold
-      if (std::abs(v_next_1) <= escape_threshold){
-        res[0][currentIndex][s] = v_next_1;
+        // Compute the average of valid neighboring values
+        double v_neighbors_1 = 0;
+        double v_neighbors_2 = 0;
+        double v_neighbors_3 = 0;
+        double valid_neighbors_1 = 0;
+        double valid_neighbors_2 = 0;
+        double valid_neighbors_3 = 0;
+        const std::vector<int>& local_neighbors = neighbors[currentIndex];
+        for (size_t i = 0; i < local_neighbors.size(); ++i) {
+          if (!std::isnan(res[0][local_neighbors[i]][s - 1])){
+            v_neighbors_1 += res[0][local_neighbors[i]][s - 1];
+            valid_neighbors_1 += 1;
+          }
+          if (!std::isnan(res[1][local_neighbors[i]][s - 1])){
+            v_neighbors_2 += res[1][local_neighbors[i]][s - 1];
+            valid_neighbors_2 += 1;
+          }
+          if (!std::isnan(res[2][local_neighbors[i]][s - 1])){
+            v_neighbors_2 += res[2][local_neighbors[i]][s - 1];
+            valid_neighbors_3 += 1;
+          }
+        }
+
+        // Apply the spatial logistic map update if neighbors exist
+        double v_next_1 = std::numeric_limits<double>::quiet_NaN();
+        double v_next_2 = std::numeric_limits<double>::quiet_NaN();
+        double v_next_3 = std::numeric_limits<double>::quiet_NaN();
+        if (valid_neighbors_1 > 0){
+          v_next_1 = 1 - alpha1 * res[0][currentIndex][s - 1] * (v_neighbors_1 / valid_neighbors_1 - beta21 * res[1][currentIndex][s - 1] - beta31 * res[2][currentIndex][s - 1]);
+        }
+        if (valid_neighbors_2 > 0){
+          v_next_2 = 1 - alpha2 * res[1][currentIndex][s - 1] * (v_neighbors_2 / valid_neighbors_2 - beta12 * res[0][currentIndex][s - 1] - beta32 * res[2][currentIndex][s - 1]);
+        }
+        if (valid_neighbors_3 > 0){
+          v_next_3 = 1 - alpha3 * res[2][currentIndex][s - 1] * (v_neighbors_3 / valid_neighbors_3 - beta13 * res[0][currentIndex][s - 1] - beta23 * res[1][currentIndex][s - 1]);
+        }
+
+        // Update result only if the value is within the escape threshold
+        if (std::abs(v_next_1) <= escape_threshold){
+          res[0][currentIndex][s] = v_next_1;
+        }
+        if (std::abs(v_next_2) <= escape_threshold){
+          res[1][currentIndex][s] = v_next_2;
+        }
+        if (std::abs(v_next_3) <= escape_threshold){
+          res[2][currentIndex][s] = v_next_3;
+        }
       }
-      if (std::abs(v_next_2) <= escape_threshold){
-        res[1][currentIndex][s] = v_next_2;
-      }
-      if (std::abs(v_next_3) <= escape_threshold){
-        res[2][currentIndex][s] = v_next_3;
+    }
+  } else {
+    // Time-stepped simulation
+    for (size_t s = 1; s <= step; ++s){
+      for(size_t currentIndex = 0; currentIndex < vec1.size(); ++currentIndex){
+        // Skip if the current value is invalid (NaN)
+        if (std::isnan(res[0][currentIndex][s - 1]) &&
+            std::isnan(res[1][currentIndex][s - 1]) &&
+            std::isnan(res[2][currentIndex][s - 1])) continue;
+
+        // Apply the logistic map update if no neighbors exist
+        double v_next_1 = res[0][currentIndex][s - 1] * (alpha1 - alpha1 * res[0][currentIndex][s - 1] - beta21 * res[1][currentIndex][s - 1] - beta31 * res[2][currentIndex][s - 1]);
+        double v_next_2 = res[1][currentIndex][s - 1] * (alpha2 - alpha2 * res[1][currentIndex][s - 1] - beta12 * res[0][currentIndex][s - 1] - beta32 * res[2][currentIndex][s - 1]);
+        double v_next_3 = res[2][currentIndex][s - 1] * (alpha3 - alpha3 * res[2][currentIndex][s - 1] - beta13 * res[0][currentIndex][s - 1] - beta23 * res[1][currentIndex][s - 1]);
+
+        // Update result only if the value is within the escape threshold
+        if (std::abs(v_next_1) <= escape_threshold){
+          res[0][currentIndex][s] = v_next_1;
+        }
+        if (std::abs(v_next_2) <= escape_threshold){
+          res[1][currentIndex][s] = v_next_2;
+        }
+        if (std::abs(v_next_3) <= escape_threshold){
+          res[2][currentIndex][s] = v_next_3;
+        }
       }
     }
   }
