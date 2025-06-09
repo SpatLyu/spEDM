@@ -75,7 +75,7 @@ std::vector<std::vector<double>> SLMUni4Lattice(
         }
 
         // Update result only if the value is within the escape threshold
-        if (std::abs(v_next) <= escape_threshold){
+        if (!std::isinf(v_next) && std::abs(v_next) <= escape_threshold){
           res[currentIndex][s] = v_next;
         }
       }
@@ -91,7 +91,7 @@ std::vector<std::vector<double>> SLMUni4Lattice(
         double v_next = res[currentIndex][s - 1] * (alpha - alpha * res[currentIndex][s - 1]);
 
         // Update result only if the value is within the escape threshold
-        if (std::abs(v_next) <= escape_threshold){
+        if (!std::isinf(v_next) && std::abs(v_next) <= escape_threshold){
           res[currentIndex][s] = v_next;
         }
       }
@@ -196,10 +196,10 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Lattice(
         }
 
         // Update result only if the value is within the escape threshold
-        if (std::abs(v_next_1) <= escape_threshold){
+        if (!std::isinf(v_next_1) && std::abs(v_next_1) <= escape_threshold){
           res[0][currentIndex][s] = v_next_1;
         }
-        if (std::abs(v_next_2) <= escape_threshold){
+        if (!std::isinf(v_next_2) && std::abs(v_next_2) <= escape_threshold){
           res[1][currentIndex][s] = v_next_2;
         }
       }
@@ -216,10 +216,10 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Lattice(
         double v_next_2 = res[1][currentIndex][s - 1] * (alpha2 - alpha2 * res[1][currentIndex][s - 1] - beta12 * res[0][currentIndex][s - 1]);
 
         // Update result only if the value is within the escape threshold
-        if (std::abs(v_next_1) <= escape_threshold){
+        if (!std::isinf(v_next_1) && std::abs(v_next_1) <= escape_threshold){
           res[0][currentIndex][s] = v_next_1;
         }
-        if (std::abs(v_next_2) <= escape_threshold){
+        if (!std::isinf(v_next_2) && std::abs(v_next_2) <= escape_threshold){
           res[1][currentIndex][s] = v_next_2;
         }
       }
@@ -352,13 +352,13 @@ std::vector<std::vector<std::vector<double>>> SLMTri4Lattice(
         }
 
         // Update result only if the value is within the escape threshold
-        if (std::abs(v_next_1) <= escape_threshold){
+        if (!std::isinf(v_next_1) && std::abs(v_next_1) <= escape_threshold){
           res[0][currentIndex][s] = v_next_1;
         }
-        if (std::abs(v_next_2) <= escape_threshold){
+        if (!std::isinf(v_next_2) && std::abs(v_next_2) <= escape_threshold){
           res[1][currentIndex][s] = v_next_2;
         }
-        if (std::abs(v_next_3) <= escape_threshold){
+        if (!std::isinf(v_next_3) && std::abs(v_next_3) <= escape_threshold){
           res[2][currentIndex][s] = v_next_3;
         }
       }
@@ -378,13 +378,13 @@ std::vector<std::vector<std::vector<double>>> SLMTri4Lattice(
         double v_next_3 = res[2][currentIndex][s - 1] * (alpha3 - alpha3 * res[2][currentIndex][s - 1] - beta13 * res[0][currentIndex][s - 1] - beta23 * res[1][currentIndex][s - 1]);
 
         // Update result only if the value is within the escape threshold
-        if (std::abs(v_next_1) <= escape_threshold){
+        if (!std::isinf(v_next_1) && std::abs(v_next_1) <= escape_threshold){
           res[0][currentIndex][s] = v_next_1;
         }
-        if (std::abs(v_next_2) <= escape_threshold){
+        if (!std::isinf(v_next_2) && std::abs(v_next_2) <= escape_threshold){
           res[1][currentIndex][s] = v_next_2;
         }
-        if (std::abs(v_next_3) <= escape_threshold){
+        if (!std::isinf(v_next_3) && std::abs(v_next_3) <= escape_threshold){
           res[2][currentIndex][s] = v_next_3;
         }
       }
