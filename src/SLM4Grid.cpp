@@ -80,7 +80,7 @@ std::vector<std::vector<double>> SLMUni4Grid(
           v_next = 1 - alpha * res[i][s - 1] * v_neighbors / valid_neighbors;
         }
 
-        if (std::abs(v_next) <= escape_threshold){
+        if (!std::isinf(v_next) && std::abs(v_next) <= escape_threshold){
           res[i][s] = v_next;
         }
       }
@@ -94,7 +94,7 @@ std::vector<std::vector<double>> SLMUni4Grid(
         // Apply the logistic map update if no neighbors exist
         double v_next = res[i][s - 1] * (alpha - alpha * res[i][s - 1]);
 
-        if (std::abs(v_next) <= escape_threshold){
+        if (!std::isinf(v_next) && std::abs(v_next) <= escape_threshold){
           res[i][s] = v_next;
         }
       }
@@ -215,10 +215,10 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Grid(
         }
 
         // Update result only if the value is within the escape threshold
-        if (std::abs(v_next_1) <= escape_threshold){
+        if (!std::isinf(v_next_1) && std::abs(v_next_1) <= escape_threshold){
           res[0][i][s] = v_next_1;
         }
-        if (std::abs(v_next_2) <= escape_threshold){
+        if (!std::isinf(v_next_2) && std::abs(v_next_2) <= escape_threshold){
           res[1][i][s] = v_next_2;
         }
       }
@@ -235,10 +235,10 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Grid(
         double v_next_2 = res[1][i][s - 1] * (alpha2 - alpha2 * res[1][i][s - 1] - beta12 * res[0][i][s - 1]);
 
         // Update result only if the value is within the escape threshold
-        if (std::abs(v_next_1) <= escape_threshold){
+        if (!std::isinf(v_next_1) && std::abs(v_next_1) <= escape_threshold){
           res[0][i][s] = v_next_1;
         }
-        if (std::abs(v_next_2) <= escape_threshold){
+        if (!std::isinf(v_next_2) && std::abs(v_next_2) <= escape_threshold){
           res[1][i][s] = v_next_2;
         }
       }
@@ -381,13 +381,13 @@ std::vector<std::vector<std::vector<double>>> SLMTri4Grid(
         }
 
         // Update result only if the value is within the escape threshold
-        if (std::abs(v_next_1) <= escape_threshold){
+        if (!std::isinf(v_next_1) && std::abs(v_next_1) <= escape_threshold){
           res[0][i][s] = v_next_1;
         }
-        if (std::abs(v_next_2) <= escape_threshold){
+        if (!std::isinf(v_next_2) && std::abs(v_next_2) <= escape_threshold){
           res[1][i][s] = v_next_2;
         }
-        if (std::abs(v_next_3) <= escape_threshold){
+        if (!std::isinf(v_next_3) && std::abs(v_next_3) <= escape_threshold){
           res[2][i][s] = v_next_3;
         }
       }
@@ -407,13 +407,13 @@ std::vector<std::vector<std::vector<double>>> SLMTri4Grid(
         double v_next_3 = res[2][i][s - 1] * (alpha3 - alpha3 * res[2][i][s - 1] - beta13 * res[0][i][s - 1] - beta23 * res[1][i][s - 1]);
 
         // Update result only if the value is within the escape threshold
-        if (std::abs(v_next_1) <= escape_threshold){
+        if (!std::isinf(v_next_1) && std::abs(v_next_1) <= escape_threshold){
           res[0][i][s] = v_next_1;
         }
-        if (std::abs(v_next_2) <= escape_threshold){
+        if (!std::isinf(v_next_2) && std::abs(v_next_2) <= escape_threshold){
           res[1][i][s] = v_next_2;
         }
-        if (std::abs(v_next_3) <= escape_threshold){
+        if (!std::isinf(v_next_3) && std::abs(v_next_3) <= escape_threshold){
           res[2][i][s] = v_next_3;
         }
       }
