@@ -20,9 +20,7 @@
 #'
 #' @return A matrix
 #' @export
-#'
 #' @name embedded
-#' @rdname embedded
 #' @aliases embedded,sf-method
 #'
 #' @examples

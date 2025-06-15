@@ -85,7 +85,6 @@
 #' }
 #' @export
 #' @name gcmc
-#' @rdname gcmc
 #' @aliases gcmc,sf-method
 #'
 #' @examples

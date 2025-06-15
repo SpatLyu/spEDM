@@ -29,9 +29,7 @@
 #'
 #' @return A vector (when input is sf object) or matrix
 #' @export
-#'
 #' @name multiview
-#' @rdname multiview
 #' @aliases multiview,sf-method
 #' @references
 #' Ye H., and G. Sugihara, 2016. Information leverage in interconnected ecosystems: Overcoming the curse of dimensionality. Science 353:922-925.
