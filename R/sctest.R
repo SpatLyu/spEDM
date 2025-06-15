@@ -1,5 +1,3 @@
-methods::setGeneric("sc.test", function(data, ...) standardGeneric("sc.test"))
-
 .sc_sf_method = \(data, cause, effect, k, block = 3, boot = 399, seed = 42, base = 2, lib = NULL, pred = NULL,
                   nb = NULL, threads = detectThreads(), detrend = TRUE, normalize = FALSE, progressbar = FALSE){
   varname = .check_character(cause, effect)

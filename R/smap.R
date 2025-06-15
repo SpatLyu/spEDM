@@ -1,5 +1,3 @@
-methods::setGeneric("smap", function(data, ...) standardGeneric("smap"))
-
 .smap_sf_method = \(data,column,target,lib = NULL,pred = NULL,E = 3,tau = 1,k = E+2,
                     theta = c(0, 1e-04, 3e-04, 0.001, 0.003, 0.01, 0.03,
                               0.1, 0.3, 0.5, 0.75, 1, 1.5, 2, 3, 4, 6, 8),

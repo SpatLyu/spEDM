@@ -1,5 +1,3 @@
-methods::setGeneric("gccm", function(data, ...) standardGeneric("gccm"))
-
 .gccm_sf_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = E+2, theta = 1, algorithm = "simplex", lib = NULL, pred = NULL,
                     nb = NULL,threads = detectThreads(),parallel.level = "low",bidirectional = TRUE,detrend = TRUE,progressbar = TRUE){
   varname = .check_character(cause, effect)
