@@ -1,5 +1,3 @@
-methods::setGeneric("multiview", function(data, ...) standardGeneric("multiview"))
-
 .multiview_sf_method = \(data,column,target,nvar,lib = NULL,pred = NULL,E = 3,tau = 1,k = E+2,
                          nb = NULL, top = NULL, threads = detectThreads(), detrend = TRUE){
   xmat = .multivar_lattice(data,column,detrend)

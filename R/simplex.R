@@ -1,5 +1,3 @@
-methods::setGeneric("simplex", function(data, ...) standardGeneric("simplex"))
-
 .simplex_sf_method = \(data,column,target,lib = NULL,pred = NULL,E = 1:10,tau = 1,
                        k = E+2, nb = NULL, threads = detectThreads(), detrend = TRUE){
   vx = .uni_lattice(data,column,detrend)

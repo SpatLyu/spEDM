@@ -1,5 +1,3 @@
-methods::setGeneric("embedded", function(data, ...) standardGeneric("embedded"))
-
 .embedded_sf_method = \(data,target,E = 3,tau = 1,nb = NULL,detrend = FALSE){
   vec = .uni_lattice(data,target,detrend)
   if (is.null(nb)) nb = .internal_lattice_nb(data)

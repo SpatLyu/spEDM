@@ -1,6 +1,3 @@
-
-methods::setGeneric("gcmc", function(data, ...) standardGeneric("gcmc"))
-
 .gcmc_sf_method = \(data, cause, effect, E = 3, tau = 1, k = NULL, r = 0, lib = NULL, pred = NULL, nb = NULL,
                     threads = detectThreads(), bidirectional = TRUE, detrend = TRUE, progressbar = TRUE){
   varname = .check_character(cause, effect)

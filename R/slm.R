@@ -1,5 +1,3 @@
-methods::setGeneric("slm", function(data, ...) standardGeneric("slm"))
-
 .slm_sf_method = \(data, x, y = NULL, z = NULL,
                    k = 4, step = 15, alpha_x = 0.28, alpha_y = 0.25, alpha_z = 0.22,
                    beta_xy = 0.05, beta_xz = 0.05, beta_yx = 0.2, beta_yz = 0.2, beta_zx = 0.35, beta_zy = 0.35,

@@ -1,5 +1,3 @@
-methods::setGeneric("fnn", function(data, ...) standardGeneric("fnn"))
-
 .fnn_sf_method = \(data, target, lib = NULL, pred = NULL, E = 1:10, tau = 1, nb = NULL,
                    rt = 10, eps = 2, threads = detectThreads(), detrend = TRUE){
   vec = .uni_lattice(data,target,detrend)
