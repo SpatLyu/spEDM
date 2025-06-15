@@ -2,7 +2,6 @@
 % Please edit documentation in R/embedded.R
 \name{embedded}
 \alias{embedded}
-\alias{embedded,sf-method}
 \alias{embedded,SpatRaster-method}
 \title{embedding spatial cross sectional data}
 \usage{

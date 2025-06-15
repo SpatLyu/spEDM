@@ -20,10 +20,7 @@
 #'
 #' @return A matrix
 #' @export
-#'
 #' @name embedded
-#' @rdname embedded
-#' @aliases embedded,sf-method
 #'
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))

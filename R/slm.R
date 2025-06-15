@@ -42,10 +42,7 @@
 #'
 #' @return A list
 #' @export
-#'
 #' @name slm
-#' @rdname slm
-#' @aliases slm,sf-method
 #' @references
 #' Willeboordse, F.H., The spatial logistic map as a simple prototype for spatiotemporal chaos, Chaos, 533–540 (2003).
 #'

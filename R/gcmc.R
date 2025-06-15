@@ -85,8 +85,6 @@
 #' }
 #' @export
 #' @name gcmc
-#' @rdname gcmc
-#' @aliases gcmc,sf-method
 #'
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))

@@ -91,8 +91,6 @@
 #' }
 #' @export
 #' @name gccm
-#' @rdname gccm
-#' @aliases gccm,sf-method
 #' @references
 #' Gao, B., Yang, J., Chen, Z. et al. Causal inference from cross-sectional earth system data with geographical convergent cross mapping. Nat Commun 14, 5875 (2023).
 #'
