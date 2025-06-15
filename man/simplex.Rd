@@ -2,6 +2,7 @@
 % Please edit documentation in R/simplex.R
 \name{simplex}
 \alias{simplex}
+\alias{simplex,sf-method}
 \alias{simplex,SpatRaster-method}
 \title{simplex forecast}
 \usage{

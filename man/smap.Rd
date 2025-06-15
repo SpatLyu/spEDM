@@ -2,6 +2,7 @@
 % Please edit documentation in R/smap.R
 \name{smap}
 \alias{smap}
+\alias{smap,sf-method}
 \alias{smap,SpatRaster-method}
 \title{smap forecast}
 \usage{

@@ -2,6 +2,7 @@
 % Please edit documentation in R/gccm.R
 \name{gccm}
 \alias{gccm}
+\alias{gccm,sf-method}
 \alias{gccm,SpatRaster-method}
 \title{geographical convergent cross mapping}
 \usage{

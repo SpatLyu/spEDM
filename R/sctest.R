@@ -46,6 +46,7 @@
 #' }
 #' @export
 #' @name sc.test
+#' @aliases sc.test,sf-method
 #' @references
 #' Herrera, M., Mur, J., & Ruiz, M. (2016). Detecting causal relationships between spatial processes. Papers in Regional Science, 95(3), 577–595.
 #'

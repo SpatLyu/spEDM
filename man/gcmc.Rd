@@ -2,6 +2,7 @@
 % Please edit documentation in R/gcmc.R
 \name{gcmc}
 \alias{gcmc}
+\alias{gcmc,sf-method}
 \alias{gcmc,SpatRaster-method}
 \title{geographical cross mapping cardinality}
 \usage{

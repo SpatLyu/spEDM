@@ -2,6 +2,7 @@
 % Please edit documentation in R/sctest.R
 \name{sc.test}
 \alias{sc.test}
+\alias{sc.test,sf-method}
 \alias{sc.test,SpatRaster-method}
 \title{spatial causality test}
 \usage{

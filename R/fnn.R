@@ -31,6 +31,7 @@
 #' @return A vector
 #' @export
 #' @name fnn
+#' @aliases fnn,sf-method
 #' @references
 #' Kennel M. B., Brown R. and Abarbanel H. D. I., Determining embedding dimension for phase-space reconstruction using a geometrical construction, Phys. Rev. A, Volume 45, 3403 (1992).
 #'

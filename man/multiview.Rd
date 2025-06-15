@@ -2,6 +2,7 @@
 % Please edit documentation in R/multiview.R
 \name{multiview}
 \alias{multiview}
+\alias{multiview,sf-method}
 \alias{multiview,SpatRaster-method}
 \title{multiview embedding forecast}
 \usage{
