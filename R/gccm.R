@@ -90,8 +90,6 @@
 #' \item{\code{bidirectional}}{whether to examine bidirectional causality}
 #' }
 #' @export
-#' @importFrom methods setGeneric
-#' @importFrom methods setMethod
 #' @name gccm
 #' @rdname gccm
 #' @aliases gccm,sf-method
