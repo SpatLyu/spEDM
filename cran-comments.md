@@ -1,27 +1,31 @@
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note
-
-* "Gao" is correctly spelled: it is the surname of a cited researcher.
+0 errors | 0 warnings | 0 note
 
 ## This submission
 
-This release includes several new features, improvements, and bug fixes:
+This release introduces new modeling capabilities, streamlined method infrastructure, and refinements to the package interface and visualization support:
 
-* **New R APIs** for false nearest neighbours, spatial causality test, and geographical cross mapping cardinality.
+* **New R API and vignette** for the spatial logistic map, enabling simulation and analysis of spatial nonlinear dynamics.
 
-* **New vignettes** covering spatial causality methods, SSR for spatial cross-sectional data, and an overview of the package structure.
+* **Enhancements** to method infrastructure, documentation consistency, and plotting functionality:
 
-* **Enhancements** to vignette performance, documentation clarity, and plotting flexibility:
-  
-  * The S3 plotting method for cross mapping results now supports custom legend text and colors.
+  * Generic method registration has been made more robust, preventing duplicate registrations and simplifying S4 method management.
+
+  * All parameter descriptions have been standardized to lowercase for improved documentation clarity.
+
+  * Confidence interval ribbons are now supported in the S3 plotting method for cross mapping results.
 
 * **Breaking changes**:
 
-  * `lib`/`pred` options now exclude `NA` by default.
-  
-  * Internal example datasets have been refined for consistency with updated method interfaces.
-  
-* **Bug fixes** addressing C++/R index mismatches and matrix input issues.
+  * C++ symbolization functions now compute medians using only the `lib` subset, ensuring consistency with library-based inference.
 
-This is a regular feature update aimed at expanding modeling support for spatial dynamic empirical modeling workflows and improving overall usability and documentation.
+  * The argument `trend.rm` has been renamed to `detrend` for improved naming consistency.
+
+  * The `column` argument is now uniformly supported in `simplex()`, `smap()`, and `multiview()` (renaming `columns` to `column`).
+
+* **Bug fixes**:
+
+  * Corrected a mismatch between legend labels and line colors in plots of cross mapping results.
+
+This is a regular feature update focused on extending support for spatial nonlinear modeling workflows, improving code robustness, and maintaining interface consistency.
