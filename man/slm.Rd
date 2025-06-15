@@ -2,7 +2,6 @@
 % Please edit documentation in R/slm.R
 \name{slm}
 \alias{slm}
-\alias{slm,sf-method}
 \alias{slm,SpatRaster-method}
 \title{spatial logistic map}
 \usage{

@@ -2,7 +2,6 @@
 % Please edit documentation in R/fnn.R
 \name{fnn}
 \alias{fnn}
-\alias{fnn,sf-method}
 \alias{fnn,SpatRaster-method}
 \title{false nearest neighbours}
 \usage{
