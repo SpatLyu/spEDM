@@ -482,9 +482,9 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& source,
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
   std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
 
-  // Initialize lib_indices and pred_indices with all false
-  std::vector<bool> lib_indices(target_std.size(), false);
-  std::vector<bool> pred_indices(target_std.size(), false);
+  // Initialize lib_indices and pred_indices
+  std::vector<int> lib_indices;
+  std::vector<int> pred_indices;
 
   int target_len = target_std.size();
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
@@ -494,7 +494,7 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& source,
       Rcpp::stop("lib contains out-of-bounds index at position %d (value: %d)", i + 1, lib[i]);
     }
     if (!std::isnan(target_std[lib[i] - 1])) {
-      lib_indices[lib[i] - 1] = true; // Convert to 0-based index
+      lib_indices.push_back(lib[i] - 1); // Convert to 0-based index
     }
   }
   size_t n_predsize = pred.size();   // convert R R_xlen_t to C++ size_t
@@ -503,7 +503,7 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& source,
       Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
     }
     if (!std::isnan(target_std[pred[i] - 1])) {
-      pred_indices[pred[i] - 1] = true; // Convert to 0-based index
+      pred_indices.push_back(pred[i] - 1); // Convert to 0-based index
     }
   }
 
@@ -577,9 +577,9 @@ Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& source,
   std::vector<double> target_std = Rcpp::as<std::vector<double>>(target);
   std::vector<double> theta_std = Rcpp::as<std::vector<double>>(theta);
 
-  // Initialize lib_indices and pred_indices with all false
-  std::vector<bool> lib_indices(target_std.size(), false);
-  std::vector<bool> pred_indices(target_std.size(), false);
+  // Initialize lib_indices and pred_indices
+  std::vector<int> lib_indices;
+  std::vector<int> pred_indices;
 
   int target_len = target_std.size();
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
@@ -589,7 +589,7 @@ Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& source,
       Rcpp::stop("lib contains out-of-bounds index at position %d (value: %d)", i + 1, lib[i]);
     }
     if (!std::isnan(target_std[lib[i] - 1])) {
-      lib_indices[lib[i] - 1] = true; // Convert to 0-based index
+      lib_indices.push_back(lib[i] - 1); // Convert to 0-based index
     }
   }
   size_t n_predsize = pred.size();   // convert R R_xlen_t to C++ size_t
@@ -598,7 +598,7 @@ Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& source,
       Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
     }
     if (!std::isnan(target_std[pred[i] - 1])) {
-      pred_indices[pred[i] - 1] = true; // Convert to 0-based index
+      pred_indices.push_back(pred[i] - 1); // Convert to 0-based index
     }
   }
 
@@ -670,8 +670,8 @@ Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
   // Initialize lib_indices and pred_indices with all false
-  std::vector<bool> lib_indices(target.size(), false);
-  std::vector<bool> pred_indices(target.size(), false);
+  std::vector<int> lib_indices;
+  std::vector<int> pred_indices;
 
   int target_len = target.size();
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
@@ -681,7 +681,7 @@ Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
       Rcpp::stop("lib contains out-of-bounds index at position %d (value: %d)", i + 1, lib[i]);
     }
     if (!std::isnan(target[lib[i] - 1])) {
-      lib_indices[lib[i] - 1] = true; // Convert to 0-based index
+      lib_indices.push_back(lib[i] - 1); // Convert to 0-based index
     }
   }
   size_t n_predsize = pred.size();   // convert R R_xlen_t to C++ size_t
@@ -690,7 +690,7 @@ Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
       Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
     }
     if (!std::isnan(target[pred[i] - 1])) {
-      pred_indices[pred[i] - 1] = true; // Convert to 0-based index
+      pred_indices.push_back(pred[i] - 1); // Convert to 0-based index
     }
   }
 
