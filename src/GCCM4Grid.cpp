@@ -427,12 +427,12 @@ std::vector<std::vector<double>> GCCM4Grid(
     pred_indices[LocateGridIndices(p.first + 1, p.second + 1, totalRow, totalCol)] = true;
   }
 
-  // Exclude NA values in yPred from prediction indices
-  for (size_t i = 0; i < yPred.size(); ++i) {
-    if (std::isnan(yPred[i])) {
-      pred_indices[i] = false;
-    }
-  }
+  // // Exclude NA values in yPred from prediction indices, have been finished in rcpp wrapper level
+  // for (size_t i = 0; i < yPred.size(); ++i) {
+  //   if (std::isnan(yPred[i])) {
+  //     pred_indices[i] = false;
+  //   }
+  // }
 
   // Local results for each library
   std::vector<std::vector<std::pair<int, double>>> local_results(unique_lib_size_pairs.size());
