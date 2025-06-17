@@ -39,8 +39,6 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   const int numRows = target.size();
-  if (numRows == 0) return {};
-
   const int numCols = target[0].size();
 
   // Flatten target matrix
@@ -124,8 +122,6 @@ std::vector<std::vector<double>> SMap4Grid(const std::vector<std::vector<double>
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   const int numRows = target.size();
-  if (numRows == 0) return {};
-
   const int numCols = target[0].size();
 
   // Flatten target matrix
