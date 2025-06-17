@@ -22,8 +22,8 @@
  * @param target: Spatial cross-section series to be used as the target, aligned with 'vectors'.
  * @param controls: Cross-sectional data of control variables, stored row-wise.
  * @param nb_vec: Neighbor indices for each spatial unit.
- * @param lib_indices: Boolean vector indicating which states to include when searching for neighbors.
- * @param pred_indices: Boolean vector indicating which states to use for predictions.
+ * @param lib_indices: Vector of indices indicating which states to include when searching for neighbors.
+ * @param pred_indices: Vector of indices indicating which states to predict from.
  * @param conEs: Vector specifying the number of dimensions for attractor reconstruction with control variables.
  * @param taus: Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
  * @param num_neighbors: Vector specifying the numbers of neighbors to use for simplex projection.
@@ -38,8 +38,8 @@ std::vector<double> PartialSimplex4Lattice(
     const std::vector<double>& target,
     const std::vector<std::vector<double>>& controls,
     const std::vector<std::vector<int>>& nb_vec,
-    const std::vector<bool>& lib_indices,
-    const std::vector<bool>& pred_indices,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
     const std::vector<int>& conEs,
     const std::vector<int>& taus,
     const std::vector<int>& num_neighbors,
@@ -102,8 +102,8 @@ std::vector<double> PartialSimplex4Lattice(
  * @param target: Spatial cross-section series used as the prediction target.
  * @param controls: Cross-sectional data of control variables, stored row-wise.
  * @param nb_vec: Neighbor indices vector specifying spatial unit neighbors.
- * @param lib_indices: Boolean vector indicating which states to include when searching for neighbors.
- * @param pred_indices: Boolean vector indicating which states to predict from.
+ * @param lib_indices: Vector of indices indicating which states to include when searching for neighbors.
+ * @param pred_indices: Vector of indices indicating which states to predict from.
  * @param conEs: Vector specifying the number of dimensions for attractor reconstruction with control variables.
  * @param taus: Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
  * @param num_neighbors: Vector specifying the numbers of neighbors to use for S-Map prediction.
@@ -118,8 +118,8 @@ std::vector<double> PartialSMap4Lattice(
     const std::vector<double>& target,
     const std::vector<std::vector<double>>& controls,
     const std::vector<std::vector<int>>& nb_vec,
-    const std::vector<bool>& lib_indices,
-    const std::vector<bool>& pred_indices,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
     const std::vector<int>& conEs,
     const std::vector<int>& taus,
     const std::vector<int>& num_neighbors,
@@ -180,9 +180,8 @@ std::vector<double> PartialSMap4Lattice(
  *   - controls: Cross-sectional data of control variables (stored by row).
  *   - nb_vec: Neighbor indices vector of the spatial units.
  *   - lib_size: Size of the library used for cross mapping.
- *   - max_lib_size: Maximum size of the library.
- *   - possible_lib_indices: Indices of possible library states.
- *   - pred_indices: A boolean vector indicating which states to use for prediction.
+ *   - lib_indices: Vector of indices indicating which states to include when searching for neighbors.
+ *   - pred_indices: Vector of indices indicating which states to predict from.
  *   - conEs: Number of dimensions for attractor reconstruction with control variables.
  *   - taus: Spatial lag step for constructing lagged state-space vectors with control variables.
  *   - b: A vector specifying the numbers of neighbors to use for simplex projection.
@@ -204,9 +203,8 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
     const std::vector<std::vector<double>>& controls,   // Cross-sectional data of control variables (**stored by row**)
     const std::vector<std::vector<int>>& nb_vec,        // Neighbor indices vector of the spatial units
     int lib_size,                                       // Size of the library
-    int max_lib_size,                                   // Maximum size of the library
-    const std::vector<int>& possible_lib_indices,       // Indices of possible library states
-    const std::vector<bool>& pred_indices,              // Vector of T/F values (which states to predict from)
+    const std::vector<int>& lib_indices,                // Indices of possible library states
+    const std::vector<int>& pred_indices,               // Vector of indices indicating which states to predict from
     const std::vector<int>& conEs,                      // Number of dimensions for the attractor reconstruction with control variables
     const std::vector<int>& taus,                       // Spatial lag step for constructing lagged state-space vectors with control variables
     const std::vector<int>& b,                          // Numbers of neighbors to use for simplex projection
@@ -216,15 +214,10 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
     int parallel_level,                                 // Level of parallel computing: 0 for `lower`, 1 for `higher`
     bool cumulate                                       // Whether to cumulate the partial correlations
 ) {
-  int n = x_vectors.size();
+  int max_lib_size = lib_indices.size();
 
   // No possible library variation if using all vectors
   if (lib_size == max_lib_size) {
-    std::vector<bool> lib_indices(n, false);
-    for (int idx : possible_lib_indices) {
-      lib_indices[idx] = true;
-    }
-
     std::vector<PartialCorRes> x_xmap_y;
     // Run partial cross map and store results
     std::vector<double> rho;
@@ -243,15 +236,15 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
       // Loop around to beginning of lib indices
       if (start_lib + lib_size > max_lib_size) {
         for (int i = start_lib; i < max_lib_size; ++i) {
-          local_lib_indices.emplace_back(i);
+          local_lib_indices.emplace_back(lib_indices[i]);
         }
         int num_vectors_remaining = lib_size - (max_lib_size - start_lib);
         for (int i = 0; i < num_vectors_remaining; ++i) {
-          local_lib_indices.emplace_back(i);
+          local_lib_indices.emplace_back(lib_indices[i]);
         }
       } else {
         for (int i = start_lib; i < start_lib + lib_size; ++i) {
-          local_lib_indices.emplace_back(i);
+          local_lib_indices.emplace_back(lib_indices[i]);
         }
       }
       valid_lib_indices.emplace_back(local_lib_indices);
@@ -262,18 +255,12 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
 
     // Perform the operations using RcppThread
     RcppThread::parallelFor(0, valid_lib_indices.size(), [&](size_t i) {
-      std::vector<bool> lib_indices(n, false);
-      std::vector<int> local_lib_indices = valid_lib_indices[i];
-      for(int& li : local_lib_indices){
-        lib_indices[possible_lib_indices[li]] = true;
-      }
-
       // Run partial cross map and store results
       std::vector<double> rho;
       if (simplex) {
-        rho = PartialSimplex4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, taus, b, cumulate);
+        rho = PartialSimplex4Lattice(x_vectors, y, controls, nb_vec, valid_lib_indices[i], pred_indices, conEs, taus, b, cumulate);
       } else {
-        rho = PartialSMap4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, taus, b, theta, cumulate);
+        rho = PartialSMap4Lattice(x_vectors, y, controls, nb_vec, valid_lib_indices[i], pred_indices, conEs, taus, b, theta, cumulate);
       }
       // Directly initialize a PartialCorRes struct with the three values
       PartialCorRes result(lib_size, rho[0], rho[1]);
@@ -285,28 +272,28 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
     std::vector<PartialCorRes> x_xmap_y;
 
     for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
-      std::vector<bool> lib_indices(n, false);
+      std::vector<int> local_lib_indices;
       // Setup changing library
       if (start_lib + lib_size > max_lib_size) { // Loop around to beginning of lib indices
         for (int i = start_lib; i < max_lib_size; ++i) {
-          lib_indices[possible_lib_indices[i]] = true;
+          local_lib_indices.emplace_back(lib_indices[i]);
         }
         int num_vectors_remaining = lib_size - (max_lib_size - start_lib);
         for (int i = 0; i < num_vectors_remaining; ++i) {
-          lib_indices[possible_lib_indices[i]] = true;
+          local_lib_indices.emplace_back(lib_indices[i]);
         }
       } else {
         for (int i = start_lib; i < start_lib + lib_size; ++i) {
-          lib_indices[possible_lib_indices[i]] = true;
+          local_lib_indices.emplace_back(lib_indices[i]);
         }
       }
 
       // Run partial cross map and store results
       std::vector<double> rho;
       if (simplex) {
-        rho = PartialSimplex4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, taus, b, cumulate);
+        rho = PartialSimplex4Lattice(x_vectors, y, controls, nb_vec, local_lib_indices, pred_indices, conEs, taus, b, cumulate);
       } else {
-        rho = PartialSMap4Lattice(x_vectors, y, controls, nb_vec, lib_indices, pred_indices, conEs, taus, b, theta, cumulate);
+        rho = PartialSMap4Lattice(x_vectors, y, controls, nb_vec, local_lib_indices, pred_indices, conEs, taus, b, theta, cumulate);
       }
       x_xmap_y.emplace_back(lib_size, rho[0], rho[1]);
     }
@@ -396,20 +383,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
     n_confounds = controls.size();
   }
 
-  std::vector<int> possible_lib_indices;
-  for (size_t i = 0; i < lib.size(); ++i) {
-    possible_lib_indices.push_back(lib[i]);
-  }
-  int max_lib_size = static_cast<int>(possible_lib_indices.size()); // Maximum lib size
-
-  std::vector<bool> pred_indices(n, false);
-  for (size_t i = 0; i < pred.size(); ++i) {
-    // // Do not strictly exclude spatial units with embedded state-space vectors containing NaN values from participating in cross mapping.
-    // if (!checkOneDimVectorHasNaN(x_vectors[pred[i]])){
-    //   pred_indices[pred[i]] = true;
-    // }
-    pred_indices[pred[i]] = true; // Convert to 0-based index
-  }
+  int max_lib_size = static_cast<int>(lib.size()); // Maximum lib size
 
   std::vector<int> unique_lib_sizes(lib_sizes.begin(), lib_sizes.end());
 
@@ -439,9 +413,8 @@ std::vector<std::vector<double>> SCPCM4Lattice(
           controls,
           nb_vec,
           unique_lib_sizes[i],
-          max_lib_size,
-          possible_lib_indices,
-          pred_indices,
+          lib,
+          pred,
           conEs,
           contaus,
           bs,
@@ -461,9 +434,8 @@ std::vector<std::vector<double>> SCPCM4Lattice(
           controls,
           nb_vec,
           unique_lib_sizes[i],
-          max_lib_size,
-          possible_lib_indices,
-          pred_indices,
+          lib,
+          pred,
           conEs,
           contaus,
           bs,
@@ -487,9 +459,8 @@ std::vector<std::vector<double>> SCPCM4Lattice(
           controls,
           nb_vec,
           lib_size,
-          max_lib_size,
-          possible_lib_indices,
-          pred_indices,
+          lib,
+          pred,
           conEs,
           contaus,
           bs,
@@ -510,9 +481,8 @@ std::vector<std::vector<double>> SCPCM4Lattice(
           controls,
           nb_vec,
           lib_size,
-          max_lib_size,
-          possible_lib_indices,
-          pred_indices,
+          lib,
+          pred,
           conEs,
           contaus,
           bs,
