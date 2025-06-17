@@ -31,8 +31,8 @@
 std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& source,
                                                  const std::vector<double>& target,
                                                  const std::vector<std::vector<int>>& nb_vec,
-                                                 const std::vector<int>& lib_indices,   // changed
-                                                 const std::vector<int>& pred_indices,  // changed
+                                                 const std::vector<int>& lib_indices,
+                                                 const std::vector<int>& pred_indices,
                                                  const std::vector<int>& E,
                                                  const std::vector<int>& b,
                                                  int tau,
@@ -59,8 +59,8 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& sour
 std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& source,
                                               const std::vector<double>& target,
                                               const std::vector<std::vector<int>>& nb_vec,
-                                              const std::vector<int>& lib_indices,   // changed
-                                              const std::vector<int>& pred_indices,  // changed
+                                              const std::vector<int>& lib_indices,
+                                              const std::vector<int>& pred_indices,
                                               const std::vector<double>& theta,
                                               int E,
                                               int tau,

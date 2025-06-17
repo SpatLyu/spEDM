@@ -16,8 +16,8 @@
  * Parameters:
  *   - source: A matrix to be embedded.
  *   - target: A matrix to be predicted.
- *   - lib_indices: A boolean vector indicating library (training) set indices.
- *   - pred_indices: A boolean vector indicating prediction set indices.
+ *   - lib_indices: A vector of indices indicating the library (training) set.
+ *   - pred_indices: A vector of indices indicating the prediction set.
  *   - E: A vector of embedding dimensions to evaluate.
  *   - b: A vector of nearest neighbors to use for prediction.
  *   - tau: The spatial lag step for constructing lagged state-space vectors.
@@ -28,8 +28,8 @@
  */
 std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<double>>& source,
                                               const std::vector<std::vector<double>>& target,
-                                              const std::vector<bool>& lib_indices,
-                                              const std::vector<bool>& pred_indices,
+                                              const std::vector<int>& lib_indices,
+                                              const std::vector<int>& pred_indices,
                                               const std::vector<int>& E,
                                               const std::vector<int>& b,
                                               int tau,
@@ -38,19 +38,19 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
-  int numRows = target.size();
-  int numCols = target[0].size();
+  const int numRows = target.size();
+  if (numRows == 0) return {};
 
+  const int numCols = target[0].size();
+
+  // Flatten target matrix
   std::vector<double> vec_std;
-  vec_std.reserve(numRows * numCols); // Reserve space for efficiency
-
-  for (int i = 0; i < numRows; ++i) {
-    for (int j = 0; j < numCols; ++j) {
-      vec_std.push_back(target[i][j]); // Add element to the vector
-    }
+  vec_std.reserve(numRows * numCols);
+  for (const auto& row : target) {
+    vec_std.insert(vec_std.end(), row.begin(), row.end());
   }
 
-  // Sort and remove duplicates
+  // Remove duplicates from E and b
   std::vector<int> Es = E;
   std::sort(Es.begin(), Es.end());
   Es.erase(std::unique(Es.begin(), Es.end()), Es.end());
@@ -59,35 +59,39 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
   std::sort(bs.begin(), bs.end());
   bs.erase(std::unique(bs.begin(), bs.end()), bs.end());
 
-  // Generate unique pairs of E and b
+  // Generate all unique (E, b) pairs
   std::vector<std::pair<int, int>> unique_Ebcom;
-  for (size_t i = 0; i < Es.size(); ++i){
-    for (size_t j = 0; j < bs.size(); ++j){
-      unique_Ebcom.emplace_back(Es[i],bs[j]); // Pair with E and b
+  unique_Ebcom.reserve(Es.size() * bs.size());
+  for (int e : Es) {
+    for (int bn : bs) {
+      unique_Ebcom.emplace_back(e, bn);
     }
   }
 
-  // Initialize result matrix with unique_Ebcom.size() rows and 5 columns
   std::vector<std::vector<double>> result(unique_Ebcom.size(), std::vector<double>(5));
 
-  // Parallel loop over each embedding dimension E
+  // Parallel loop over combinations
   RcppThread::parallelFor(0, unique_Ebcom.size(), [&](size_t i) {
-    // Generate embeddings for the current E
-    std::vector<std::vector<double>> embeddings = GenGridEmbeddings(source, unique_Ebcom[i].first, tau);
+    const int cur_E = unique_Ebcom[i].first;
+    const int cur_b = unique_Ebcom[i].second;
 
-    // Compute metrics using SimplexBehavior
-    std::vector<double> metrics = SimplexBehavior(embeddings, vec_std, lib_indices, pred_indices, unique_Ebcom[i].second);
+    // Generate embedding
+    std::vector<std::vector<double>> embeddings = GenGridEmbeddings(source, cur_E, tau);
 
-    // Store results in the matrix (no mutex needed since each thread writes to a unique index)
-    result[i][0] = unique_Ebcom[i].first;   // Embedding dimension
-    result[i][1] = unique_Ebcom[i].second;  // Number of nearest neighbors
-    result[i][2] = metrics[0];              // Pearson correlation (rho)
-    result[i][3] = metrics[1];              // Mean Absolute Error (MAE)
-    result[i][4] = metrics[2];              // Root Mean Squared Error (RMSE)
+    // Evaluate performance
+    std::vector<double> metrics = SimplexBehavior(embeddings, vec_std, lib_indices, pred_indices, cur_b);
+
+    // Store results
+    result[i][0] = cur_E;
+    result[i][1] = cur_b;
+    result[i][2] = metrics[0];
+    result[i][3] = metrics[1];
+    result[i][4] = metrics[2];
   }, threads_sizet);
 
   return result;
 }
+
 
 /*
  * Evaluates prediction performance of different theta parameters for grid data using the S-mapping method.
@@ -95,8 +99,8 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
  * Parameters:
  *   - source: A matrix to be embedded.
  *   - target: A matrix to be predicted.
- *   - lib_indices: A boolean vector indicating library (training) set indices.
- *   - pred_indices: A boolean vector indicating prediction set indices.
+ *   - lib_indices: A vector of indices indicating the library (training) set.
+ *   - pred_indices: A vector of indices indicating the prediction set.
  *   - theta: A vector of weighting parameters for distance calculation in SMap.
  *   - E: The embedding dimension to evaluate.
  *   - tau: The spatial lag step for constructing lagged state-space vectors.
@@ -108,8 +112,8 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
  */
 std::vector<std::vector<double>> SMap4Grid(const std::vector<std::vector<double>>& source,
                                            const std::vector<std::vector<double>>& target,
-                                           const std::vector<bool>& lib_indices,
-                                           const std::vector<bool>& pred_indices,
+                                           const std::vector<int>& lib_indices,
+                                           const std::vector<int>& pred_indices,
                                            const std::vector<double>& theta,
                                            int E,
                                            int tau,
@@ -119,35 +123,30 @@ std::vector<std::vector<double>> SMap4Grid(const std::vector<std::vector<double>
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
-  int numRows = target.size();
-  int numCols = target[0].size();
+  const int numRows = target.size();
+  if (numRows == 0) return {};
 
+  const int numCols = target[0].size();
+
+  // Flatten target matrix
   std::vector<double> vec_std;
-  vec_std.reserve(numRows * numCols); // Reserve space for efficiency
-
-  for (int i = 0; i < numRows; ++i) {
-    for (int j = 0; j < numCols; ++j) {
-      vec_std.push_back(target[i][j]); // Add element to the vector
-    }
+  vec_std.reserve(numRows * numCols);
+  for (const auto& row : target) {
+    vec_std.insert(vec_std.end(), row.begin(), row.end());
   }
 
-  // Generate embeddings
+  // Generate embedding once
   std::vector<std::vector<double>> embeddings = GenGridEmbeddings(source, E, tau);
 
-  // Initialize result matrix with theta.size() rows and 4 columns
   std::vector<std::vector<double>> result(theta.size(), std::vector<double>(4));
 
-  // Parallel loop over each theta parameter
   RcppThread::parallelFor(0, theta.size(), [&](size_t i) {
-
-    // Compute metrics using SimplexBehavior
     std::vector<double> metrics = SMapBehavior(embeddings, vec_std, lib_indices, pred_indices, b, theta[i]);
 
-    // Store results in the matrix (no mutex needed since each thread writes to a unique index)
-    result[i][0] = theta[i];           // Weighting parameter for distances
-    result[i][1] = metrics[0];         // Pearson correlation (rho)
-    result[i][2] = metrics[1];         // Mean Absolute Error (MAE)
-    result[i][3] = metrics[2];         // Root Mean Squared Error (RMSE)
+    result[i][0] = theta[i];
+    result[i][1] = metrics[0];
+    result[i][2] = metrics[1];
+    result[i][3] = metrics[2];
   }, threads_sizet);
 
   return result;
