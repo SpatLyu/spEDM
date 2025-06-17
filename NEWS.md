@@ -6,6 +6,8 @@
 
 ### enhancements
 
+* Replace logical vectors with integer index vectors for `lib` and `pred` in `simplex` and `s-mapping` forecasting sources (#632).
+
 * Prevent duplicate generic registrations and simplify method definitions (#627).
 
 * Unify parameter descriptions to lowercase (#570).
