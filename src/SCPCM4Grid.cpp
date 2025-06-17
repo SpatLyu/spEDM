@@ -25,8 +25,8 @@
  * @param vectors: Reconstructed state-space where each row represents a separate vector/state.
  * @param target: Spatial cross-section series used as the prediction target.
  * @param controls: Cross-sectional data of control variables, stored row-wise.
- * @param lib_indices: Boolean vector indicating which states to include when searching for neighbors.
- * @param pred_indices: Boolean vector indicating which states to predict from.
+ * @param lib_indices: Integer vector indicating which states to include when searching for neighbors.
+ * @param pred_indices: Integer vector indicating which states to predict from.
  * @param conEs: Vector specifying the number of dimensions for attractor reconstruction with control variables.
  * @param taus: Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
  * @param num_neighbors: Vector specifying the numbers of neighbors to use for Simplex Projection.
@@ -40,8 +40,8 @@ std::vector<double> PartialSimplex4Grid(
     const std::vector<std::vector<double>>& vectors,
     const std::vector<double>& target,
     const std::vector<std::vector<double>>& controls,
-    const std::vector<bool>& lib_indices,
-    const std::vector<bool>& pred_indices,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
     const std::vector<int>& conEs,
     const std::vector<int>& taus,
     const std::vector<int>& num_neighbors,
@@ -108,8 +108,8 @@ std::vector<double> PartialSimplex4Grid(
  * @param vectors: Reconstructed state-space where each row represents a separate vector/state.
  * @param target: Spatial cross-section series used as the prediction target.
  * @param controls: Cross-sectional data of control variables, stored row-wise.
- * @param lib_indices: Boolean vector indicating which states to include when searching for neighbors.
- * @param pred_indices: Boolean vector indicating which states to predict from.
+ * @param lib_indices: Integer vector indicating which states to include when searching for neighbors.
+ * @param pred_indices: Integer vector indicating which states to predict from.
  * @param conEs: Vector specifying the number of dimensions for attractor reconstruction with control variables.
  * @param taus: Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
  * @param num_neighbors: Vector specifying the numbers of neighbors to use for Simplex Projection.
@@ -124,8 +124,8 @@ std::vector<double> PartialSMap4Grid(
     const std::vector<std::vector<double>>& vectors,
     const std::vector<double>& target,
     const std::vector<std::vector<double>>& controls,
-    const std::vector<bool>& lib_indices,
-    const std::vector<bool>& pred_indices,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
     const std::vector<int>& conEs,
     const std::vector<int>& taus,
     const std::vector<int>& num_neighbors,
@@ -193,7 +193,7 @@ std::vector<double> PartialSMap4Grid(
  * @param controls             A 2D matrix that stores the control variables.
  * @param lib_sizes            A vector of two integers, where the first element is the row-wise library size and the second element is the column-wise library size.
  * @param possible_lib_indices A boolean vector indicating which spatial units are valid for inclusion in the library.
- * @param pred_indices         A boolean vector indicating which spatial units to be predicted.
+ * @param pred_indices         A integer vector indicating which spatial units to be predicted.
  * @param conEs                Number of dimensions for the attractor reconstruction with control variables
  * @param taus:                Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
  * @param totalRow             The total number of rows in the 2D grid.
@@ -214,7 +214,7 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
     const std::vector<std::vector<double>>& controls,
     const std::vector<int>& lib_sizes,
     const std::vector<bool>& possible_lib_indices,
-    const std::vector<bool>& pred_indices,
+    const std::vector<int>& pred_indices,
     const std::vector<int>& conEs,
     const std::vector<int>& taus,
     const std::vector<int>& b,
@@ -258,17 +258,13 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
     const int c = valid_indices[idx].second;
 
     // Initialize library indices and count the number of the nan value together
-    std::vector<bool> lib_indices(totalRow * totalCol, false);
-    int na_count = 0;
+    std::vector<int> lib_indices;
 
     for (int ii = r; ii < r + lib_size_row; ++ii) {
       for (int jj = c; jj < c + lib_size_col; ++jj) {
-        const int index = (ii - 1) * totalCol + (jj - 1);
+        int index = (ii - 1) * totalCol + (jj - 1);
         if (possible_lib_indices[index]) {
-          lib_indices[index] = true;
-          if (std::isnan(yPred[index])) {
-            ++na_count;
-          }
+          lib_indices.emplace_back(index);
         }
       }
     }
@@ -276,13 +272,11 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
     // Directly initialize std::vector<double> with two NaN values
     std::vector<double> rho(2, std::numeric_limits<double>::quiet_NaN());
 
-    if (na_count <= half_lib_size) {
-      // Run partial cross map and store results
-      if (simplex) {
-        rho = PartialSimplex4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, cumulate);
-      } else {
-        rho = PartialSMap4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, theta, cumulate);
-      }
+    // Run partial cross map and store results
+    if (simplex) {
+      rho = PartialSimplex4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, cumulate);
+    } else {
+      rho = PartialSMap4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, theta, cumulate);
     }
 
     // Directly assign a PartialCorRes struct with the three values
@@ -311,9 +305,8 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
  * @param yPred                Target spatial cross-section series
  * @param controls             Control variables stored by row
  * @param lib_size             Number of consecutive spatial units to include in each library
- * @param max_lib_size         Maximum possible library size (total valid spatial units)
- * @param possible_lib_indices Integer vector indicating the indices of eligible spatial units for library construction
- * @param pred_indices         Boolean vector indicating spatial units to predict
+ * @param lib_indices          Integer vector indicating the indices of eligible spatial units for library construction
+ * @param pred_indices         Integer vector indicating spatial units to predict
  * @param conEs                Embedding dimensions for control variables
  * @param taus                 Spatial lag steps for control variable embeddings
  * @param b                    Number of nearest neighbors for prediction
@@ -332,9 +325,8 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
     const std::vector<double>& yPred,
     const std::vector<std::vector<double>>& controls,
     int lib_size,
-    int max_lib_size,
-    const std::vector<int>& possible_lib_indices,
-    const std::vector<bool>& pred_indices,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
     const std::vector<int>& conEs,
     const std::vector<int>& taus,
     const std::vector<int>& b,
@@ -345,32 +337,17 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
     size_t threads,
     int parallel_level,
     bool cumulate) {
-  int n = yPred.size();
+  int max_lib_size = lib_indices.size();
 
   // No possible library variation if using all vectors
   if (lib_size == max_lib_size) {
-    std::vector<bool> lib_indices(n, false);
-    for (int idx : possible_lib_indices) {
-      lib_indices[idx] = true;
-    }
-
-    // Check if more than half of the library is NA
-    int na_count = 0;
-    for (size_t i = 0; i < lib_indices.size(); ++i) {
-      if (lib_indices[i] && std::isnan(yPred[i])) {
-        ++na_count;
-      }
-    }
-
     std::vector<PartialCorRes> x_xmap_y;
     std::vector<double> rho(2, std::numeric_limits<double>::quiet_NaN());
-    if (na_count <= max_lib_size / 2.0) {
-      // Run partial cross map and store results
-      if (simplex) {
-        rho = PartialSimplex4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, cumulate);
-      } else {
-        rho = PartialSMap4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, theta, cumulate);
-      }
+    // Run partial cross map and store results
+    if (simplex) {
+      rho = PartialSimplex4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, cumulate);
+    } else {
+      rho = PartialSMap4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, theta, cumulate);
     }
 
     x_xmap_y.emplace_back(lib_size, rho[0], rho[1]);
@@ -383,15 +360,15 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
       // Loop around to beginning of lib indices
       if (start_lib + lib_size > max_lib_size) {
         for (int i = start_lib; i < max_lib_size; ++i) {
-          local_lib_indices.emplace_back(i);
+          local_lib_indices.emplace_back(lib_indices[i]);
         }
         int num_vectors_remaining = lib_size - (max_lib_size - start_lib);
         for (int i = 0; i < num_vectors_remaining; ++i) {
-          local_lib_indices.emplace_back(i);
+          local_lib_indices.emplace_back(lib_indices[i]);
         }
       } else {
         for (int i = start_lib; i < start_lib + lib_size; ++i) {
-          local_lib_indices.emplace_back(i);
+          local_lib_indices.emplace_back(lib_indices[i]);
         }
       }
       valid_lib_indices.emplace_back(local_lib_indices);
@@ -402,30 +379,13 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
 
     // Perform the operations using RcppThread
     RcppThread::parallelFor(0, valid_lib_indices.size(), [&](size_t i) {
-      std::vector<bool> lib_indices(n, false);
-      std::vector<int> local_lib_indices = valid_lib_indices[i];
-      for(int& li : local_lib_indices){
-        lib_indices[possible_lib_indices[li]] = true;
-      }
-
-      // Check if more than half of the library is NA
-      int na_count = 0;
-      for (size_t ii = 0; ii < lib_indices.size(); ++ii) {
-        if (lib_indices[ii] && std::isnan(yPred[ii])) {
-          ++na_count;
-        }
-      }
-
       std::vector<double> rho(2, std::numeric_limits<double>::quiet_NaN());
-      if (na_count <= max_lib_size / 2.0) {
-        // Run partial cross map and store results
-        if (simplex) {
-          rho = PartialSimplex4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, cumulate);
-        } else {
-          rho = PartialSMap4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, theta, cumulate);
-        }
+      // Run partial cross map and store results
+      if (simplex) {
+        rho = PartialSimplex4Grid(xEmbedings, yPred, controls, valid_lib_indices[i], pred_indices, conEs, taus, b, totalRow, cumulate);
+      } else {
+        rho = PartialSMap4Grid(xEmbedings, yPred, controls, valid_lib_indices[i], pred_indices, conEs, taus, b, totalRow, theta, cumulate);
       }
-
       // Directly initialize a PartialCorRes struct with the three values
       PartialCorRes result(lib_size, rho[0], rho[1]);
       x_xmap_y[i] = result;
@@ -440,15 +400,15 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
       // Loop around to beginning of lib indices
       if (start_lib + lib_size > max_lib_size) {
         for (int i = start_lib; i < max_lib_size; ++i) {
-          local_lib_indices.emplace_back(i);
+          local_lib_indices.emplace_back(lib_indices[i]);
         }
         int num_vectors_remaining = lib_size - (max_lib_size - start_lib);
         for (int i = 0; i < num_vectors_remaining; ++i) {
-          local_lib_indices.emplace_back(i);
+          local_lib_indices.emplace_back(lib_indices[i]);
         }
       } else {
         for (int i = start_lib; i < start_lib + lib_size; ++i) {
-          local_lib_indices.emplace_back(i);
+          local_lib_indices.emplace_back(lib_indices[i]);
         }
       }
       valid_lib_indices.emplace_back(local_lib_indices);
@@ -459,30 +419,13 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
 
     // Iterate through precomputed valid_lib_indices
     for (size_t i = 0; i < valid_lib_indices.size(); ++i){
-      std::vector<bool> lib_indices(n, false);
-      std::vector<int> local_lib_indices = valid_lib_indices[i];
-      for(int& li : local_lib_indices){
-        lib_indices[possible_lib_indices[li]] = true;
-      }
-
-      // Check if more than half of the library is NA
-      int na_count = 0;
-      for (size_t ii = 0; ii < lib_indices.size(); ++ii) {
-        if (lib_indices[ii] && std::isnan(yPred[ii])) {
-          ++na_count;
-        }
-      }
-
       std::vector<double> rho(2, std::numeric_limits<double>::quiet_NaN());
-      if (na_count <= max_lib_size / 2.0) {
-        // Run partial cross map and store results
-        if (simplex) {
-          rho = PartialSimplex4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, cumulate);
-        } else {
-          rho = PartialSMap4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, theta, cumulate);
-        }
+      // Run partial cross map and store results
+      if (simplex) {
+        rho = PartialSimplex4Grid(xEmbedings, yPred, controls, valid_lib_indices[i], pred_indices, conEs, taus, b, totalRow, cumulate);
+      } else {
+        rho = PartialSMap4Grid(xEmbedings, yPred, controls, valid_lib_indices[i], pred_indices, conEs, taus, b, totalRow, theta, cumulate);
       }
-
       // Directly initialize a PartialCorRes struct with the three values
       PartialCorRes result(lib_size, rho[0], rho[1]);
       x_xmap_y[i] = result;
@@ -648,19 +591,11 @@ std::vector<std::vector<double>> SCPCM4Grid(
     lib_indices[LocateGridIndices(l.first + 1, l.second + 1, totalRow, totalCol)] = true;
   }
 
-  // Set prediction indices
-  std::vector<bool> pred_indices(totalRow * totalCol, false);
+  // Set predict indices
+  std::vector<int> pred_indices;
   for (const auto& p : pred) {
-    pred_indices[LocateGridIndices(p.first + 1, p.second + 1, totalRow, totalCol)] = true;
+    pred_indices.push_back(LocateGridIndices(p.first + 1, p.second + 1, totalRow, totalCol));
   }
-
-  // Exclude NA values in yPred from the library and prediction indices,, have been finished in rcpp wrapper level
-  // for (size_t i = 0; i < yPred.size(); ++i) {
-  //   if (std::isnan(yPred[i])) {
-  //     lib_indices[i] = false;
-  //     pred_indices[i] = false;
-  //   }
-  // }
 
   // Local results for each library
   std::vector<std::vector<PartialCorRes>> local_results(unique_lib_size_pairs.size());
@@ -918,24 +853,7 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
     n_confounds = zMatrixs.size();
   }
 
-  std::vector<int> possible_lib_indices;
-  for (size_t i = 0; i < lib.size(); ++i) {
-    int LibIndice = lib[i];
-    if (!std::isnan(yPred[LibIndice])) {
-      possible_lib_indices.push_back(LibIndice);
-    }
-  }
-  int max_lib_size = static_cast<int>(possible_lib_indices.size()); // Maximum lib size
-
-  // Initialize pred_indices with all false
-  std::vector<bool> pred_indices(totalRow*totalCol, false);
-  // Exclude yPred NA and set corresponding positions to true
-  for (size_t i = 0; i < pred.size(); ++i) {
-    int PreIndice = pred[i];
-    if (!std::isnan(yPred[PreIndice])) {
-      pred_indices[PreIndice] = true;
-    }
-  }
+  int max_lib_size = static_cast<int>(lib.size()); // Maximum lib size
 
   std::vector<int> unique_lib_sizes(lib_sizes.begin(), lib_sizes.end());
 
@@ -964,9 +882,8 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
           yPred,
           zMatrixs,
           unique_lib_sizes[i],
-          max_lib_size,
-          possible_lib_indices,
-          pred_indices,
+          lib,
+          pred,
           conEs,
           contaus,
           bs,
@@ -987,9 +904,8 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
           yPred,
           zMatrixs,
           unique_lib_sizes[i],
-          max_lib_size,
-          possible_lib_indices,
-          pred_indices,
+          lib,
+          pred,
           conEs,
           contaus,
           bs,
@@ -1014,9 +930,8 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
           yPred,
           zMatrixs,
           lib_size,
-          max_lib_size,
-          possible_lib_indices,
-          pred_indices,
+          lib,
+          pred,
           conEs,
           contaus,
           bs,
@@ -1038,9 +953,8 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
           yPred,
           zMatrixs,
           lib_size,
-          max_lib_size,
-          possible_lib_indices,
-          pred_indices,
+          lib,
+          pred,
           conEs,
           contaus,
           bs,
