@@ -494,7 +494,6 @@ std::vector<double> GenGridSymbolization(
   //   }
   // }
 
-
   std::vector<double> valid_values;
 
   // // Compute global median from all non-NaN values

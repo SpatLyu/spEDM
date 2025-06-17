@@ -420,7 +420,10 @@ Rcpp::NumericVector RcppFNN4Grid(
   std::vector<int> lib_std;
   if (n_libcol == 1){
     for (int i = 0; i < lib.nrow(); ++i) {
-      lib_std.push_back(lib(i,0) - 1);
+      // disallow lib indices to point to vectors with NaN
+      if (!std::isnan(cppMat[(lib(i,0)-1) / numCols][(lib(i,0)-1) % numCols])){
+        lib_std.push_back(lib(i,0) - 1);
+      }
     }
   } else {
     for (int i = 0; i < lib.nrow(); ++i) {
@@ -435,7 +438,10 @@ Rcpp::NumericVector RcppFNN4Grid(
   std::vector<int> pred_std;
   if (n_predcol == 1){
     for (int i = 0; i < pred.nrow(); ++i) {
-      pred_std.push_back(pred(i,0) - 1);
+      // disallow pred indices to point to vectors with NaN
+      if (!std::isnan(cppMat[(pred(i,0)-1) / numCols][(pred(i,0)-1) % numCols])){
+        pred_std.push_back(pred(i,0) - 1);
+      }
     }
   } else {
     for (int i = 0; i < pred.nrow(); ++i) {
@@ -501,13 +507,17 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
 
   if (lib_col == 1){
     for (int i = 0; i < lib.nrow(); ++i) {
-      lib_indices[lib(i,0)-1] = true;
+      // disallow lib indices to point to vectors with NaN
+      if (!std::isnan(targetMat[(lib(i,0)-1) / numCols][(lib(i,0)-1) % numCols])){
+        lib_indices[lib(i,0)-1] = true;
+      }
     }
   } else {
     for (int i = 0; i < lib.nrow(); ++i) {
       // Convert to 0-based index
       currow = lib(i,0);
       curcol = lib(i,1);
+      // disallow lib indices to point to vectors with NaN
       if (!std::isnan(targetMat[currow-1][curcol-1])){
         lib_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
       }
@@ -516,13 +526,17 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
 
   if (pred_col == 1){
     for (int i = 0; i < pred.nrow(); ++i) {
-      pred_indices[pred(i,0)-1] = true;
+      // disallow pred indices to point to vectors with NaN
+      if (!std::isnan(targetMat[(pred(i,0)-1) / numCols][(pred(i,0)-1) % numCols])){
+        pred_indices[pred(i,0)-1] = true;
+      }
     }
   } else {
     for (int i = 0; i < pred.nrow(); ++i) {
       // Convert to 0-based index
       currow = pred(i,0);
       curcol = pred(i,1);
+      // disallow pred indices to point to vectors with NaN
       if (!std::isnan(targetMat[currow-1][curcol-1])){
         pred_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
       }
@@ -597,13 +611,17 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& source,
 
   if (lib_col == 1){
     for (int i = 0; i < lib.nrow(); ++i) {
-      lib_indices[lib(i,0)-1] = true;
+      // disallow lib indices to point to vectors with NaN
+      if (!std::isnan(targetMat[(lib(i,0)-1) / numCols][(lib(i,0)-1) % numCols])){
+        lib_indices[lib(i,0)-1] = true;
+      }
     }
   } else {
     for (int i = 0; i < lib.nrow(); ++i) {
       // Convert to 0-based index
       currow = lib(i,0);
       curcol = lib(i,1);
+      // disallow lib indices to point to vectors with NaN
       if (!std::isnan(targetMat[currow-1][curcol-1])){
         lib_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
       }
@@ -612,13 +630,17 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& source,
 
   if (pred_col == 1){
     for (int i = 0; i < pred.nrow(); ++i) {
-      pred_indices[pred(i,0)-1] = true;
+      // disallow pred indices to point to vectors with NaN
+      if (!std::isnan(targetMat[(pred(i,0)-1) / numCols][(pred(i,0)-1) % numCols])){
+        pred_indices[pred(i,0)-1] = true;
+      }
     }
   } else {
     for (int i = 0; i < pred.nrow(); ++i) {
       // Convert to 0-based index
       currow = pred(i,0);
       curcol = pred(i,1);
+      // disallow pred indices to point to vectors with NaN
       if (!std::isnan(targetMat[currow-1][curcol-1])){
         pred_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
       }
@@ -672,6 +694,14 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
   int numRows = yMatrix.nrow();
   int numCols = yMatrix.ncol();
 
+  // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
+  std::vector<std::vector<double>> yMatrix_cpp(numRows, std::vector<double>(numCols));
+  for (int i = 0; i < numRows; ++i) {
+    for (int j = 0; j < numCols; ++j) {
+      yMatrix_cpp[i][j] = yMatrix(i, j);
+    }
+  }
+
   // Convert yMatrix to std::vector<double>
   std::vector<double> target(numRows * numCols);
 
@@ -680,13 +710,6 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
       target[i] =  yMatrix(i,0);
     }
   } else {
-    // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
-    std::vector<std::vector<double>> yMatrix_cpp(numRows, std::vector<double>(numCols));
-    for (int i = 0; i < numRows; ++i) {
-      for (int j = 0; j < numCols; ++j) {
-        yMatrix_cpp[i][j] = yMatrix(i, j);
-      }
-    }
     target = GridMat2Vec(yMatrix_cpp);
   }
 
@@ -700,13 +723,17 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
 
   if (lib_col == 1){
     for (int i = 0; i < lib.nrow(); ++i) {
-      lib_indices[lib(i,0)-1] = true;
+      // disallow lib indices to point to vectors with NaN
+      if (!std::isnan(yMatrix_cpp[(lib(i,0)-1) / numCols][(lib(i,0)-1) % numCols])){
+        lib_indices[lib(i,0)-1] = true;
+      }
     }
   } else {
     for (int i = 0; i < lib.nrow(); ++i) {
       // Convert to 0-based index
       int currow = lib(i,0);
       int curcol = lib(i,1);
+      // disallow lib indices to point to vectors with NaN
       int cellindice = LocateGridIndices(currow, curcol, numRows, numCols);
       if (!std::isnan(target[cellindice])){
         lib_indices[cellindice] = true;
@@ -716,13 +743,17 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
 
   if (pred_col == 1){
     for (int i = 0; i < pred.nrow(); ++i) {
-      pred_indices[pred(i,0)-1] = true;
+      // disallow pred indices to point to vectors with NaN
+      if (!std::isnan(yMatrix_cpp[(pred(i,0)-1) / numCols][(pred(i,0)-1) % numCols])){
+        pred_indices[pred(i,0)-1] = true;
+      }
     }
   } else {
     for (int i = 0; i < pred.nrow(); ++i) {
       // Convert to 0-based index
       int currow = pred(i,0);
       int curcol = pred(i,1);
+      // disallow pred indices to point to vectors with NaN
       int cellindice = LocateGridIndices(currow, curcol, numRows, numCols);
       if (!std::isnan(target[cellindice])){
         pred_indices[cellindice] = true;
@@ -873,13 +904,17 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
   if (libsizes_dim == 1){
     if (lib_dim == 1){
       for (int i = 0; i < lib.nrow(); ++i) {
-        lib_cpp1.push_back(lib(i, 0) - 1);
+        // disallow lib indices to point to vectors with NaN
+        if (!std::isnan(yMatrix_cpp[(lib(i,0)-1) / numCols][(lib(i,0)-1) % numCols])){
+          lib_cpp1.push_back(lib(i, 0) - 1);
+        }
       }
     } else {
       for (int i = 0; i < lib.nrow(); ++i) {
         // Convert to 0-based index
         int currow = lib(i,0);
         int curcol = lib(i,1);
+        // disallow lib indices to point to vectors with NaN
         if (!std::isnan(yMatrix_cpp[currow-1][curcol-1])){
           lib_cpp1.push_back(LocateGridIndices(currow, curcol, numRows, numCols));
         }
@@ -889,11 +924,17 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
     if (lib_dim == 1){
       for (int i = 0; i < lib.nrow(); ++i) {
         std::vector<int> rowcolnum = RowColFromGrid(lib(i, 0) - 1, numCols);
-        lib_cpp2[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+        // disallow lib indices to point to vectors with NaN
+        if (!std::isnan(yMatrix_cpp[rowcolnum[0]][rowcolnum[1]])){
+          lib_cpp2[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+        }
       }
     } else {
       for (int i = 0; i < lib.nrow(); ++i) {
-        lib_cpp2[i] = std::make_pair(lib(i, 0) - 1, lib(i, 1) - 1);
+        // disallow lib indices to point to vectors with NaN
+        if (!std::isnan(yMatrix_cpp[lib(i, 0) - 1][lib(i, 1) - 1])){
+          lib_cpp2[i] = std::make_pair(lib(i, 0) - 1, lib(i, 1) - 1);
+        }
       }
     }
   }
@@ -905,13 +946,17 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
   if (libsizes_dim == 1){
     if (pred_dim == 1){
       for (int i = 0; i < pred.nrow(); ++i) {
-        pred_cpp1.push_back(pred(i, 0) - 1);
+        // disallow pred indices to point to vectors with NaN
+        if (!std::isnan(yMatrix_cpp[(pred(i,0)-1) / numCols][(pred(i,0)-1) % numCols])){
+          pred_cpp1.push_back(pred(i, 0) - 1);
+        }
       }
     } else {
       for (int i = 0; i < pred.nrow(); ++i) {
         // Convert to 0-based index
         int currow = pred(i,0);
         int curcol = pred(i,1);
+        // disallow pred indices to point to vectors with NaN
         if (!std::isnan(yMatrix_cpp[currow-1][curcol-1])){
           pred_cpp1.push_back(LocateGridIndices(currow, curcol, numRows, numCols));
         }
@@ -921,11 +966,17 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
     if (pred_dim == 1){
       for (int i = 0; i < pred.nrow(); ++i) {
         std::vector<int> rowcolnum = RowColFromGrid(pred(i, 0) - 1, numCols);
-        pred_cpp2[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+        // disallow pred indices to point to vectors with NaN
+        if (!std::isnan(yMatrix_cpp[rowcolnum[0]][rowcolnum[1]])){
+          pred_cpp2[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+        }
       }
     } else {
       for (int i = 0; i < pred.nrow(); ++i) {
-        pred_cpp2[i] = std::make_pair(pred(i, 0) - 1, pred(i, 1) - 1);
+        // disallow pred indices to point to vectors with NaN
+        if (!std::isnan(yMatrix_cpp[pred(i, 0) - 1][pred(i, 1) - 1])){
+          pred_cpp2[i] = std::make_pair(pred(i, 0) - 1, pred(i, 1) - 1);
+        }
       }
     }
   }
@@ -1048,13 +1099,17 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
   if (libsizes_dim == 1){
     if (lib_dim == 1){
       for (int i = 0; i < lib.nrow(); ++i) {
-        lib_cpp1.push_back(lib(i, 0) - 1);
+        // disallow lib indices to point to vectors with NaN
+        if (!std::isnan(yMatrix_cpp[(lib(i,0)-1) / numCols][(lib(i,0)-1) % numCols])){
+          lib_cpp1.push_back(lib(i, 0) - 1);
+        }
       }
     } else {
       for (int i = 0; i < lib.nrow(); ++i) {
         // Convert to 0-based index
         int currow = lib(i,0);
         int curcol = lib(i,1);
+        // disallow lib indices to point to vectors with NaN
         if (!std::isnan(yMatrix_cpp[currow-1][curcol-1])){
           lib_cpp1.push_back(LocateGridIndices(currow, curcol, numRows, numCols));
         }
@@ -1064,11 +1119,17 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
     if (lib_dim == 1){
       for (int i = 0; i < lib.nrow(); ++i) {
         std::vector<int> rowcolnum = RowColFromGrid(lib(i, 0) - 1, numCols);
-        lib_cpp2[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+        // disallow lib indices to point to vectors with NaN
+        if (!std::isnan(yMatrix_cpp[rowcolnum[0]][rowcolnum[1]])){
+          lib_cpp2[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+        }
       }
     } else {
       for (int i = 0; i < lib.nrow(); ++i) {
-        lib_cpp2[i] = std::make_pair(lib(i, 0) - 1, lib(i, 1) - 1);
+        // disallow lib indices to point to vectors with NaN
+        if (!std::isnan(yMatrix_cpp[lib(i, 0) - 1][lib(i, 1) - 1])){
+          lib_cpp2[i] = std::make_pair(lib(i, 0) - 1, lib(i, 1) - 1);
+        }
       }
     }
   }
@@ -1080,13 +1141,17 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
   if (libsizes_dim == 1){
     if (pred_dim == 1){
       for (int i = 0; i < pred.nrow(); ++i) {
-        pred_cpp1.push_back(pred(i, 0) - 1);
+        // disallow pred indices to point to vectors with NaN
+        if (!std::isnan(yMatrix_cpp[(pred(i,0)-1) / numCols][(pred(i,0)-1) % numCols])){
+          pred_cpp1.push_back(pred(i, 0) - 1);
+        }
       }
     } else {
       for (int i = 0; i < pred.nrow(); ++i) {
         // Convert to 0-based index
         int currow = pred(i,0);
         int curcol = pred(i,1);
+        // disallow pred indices to point to vectors with NaN
         if (!std::isnan(yMatrix_cpp[currow-1][curcol-1])){
           pred_cpp1.push_back(LocateGridIndices(currow, curcol, numRows, numCols));
         }
@@ -1096,11 +1161,17 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
     if (pred_dim == 1){
       for (int i = 0; i < pred.nrow(); ++i) {
         std::vector<int> rowcolnum = RowColFromGrid(pred(i, 0) - 1, numCols);
-        pred_cpp2[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+        // disallow pred indices to point to vectors with NaN
+        if (!std::isnan(yMatrix_cpp[rowcolnum[0]][rowcolnum[1]])){
+          pred_cpp2[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+        }
       }
     } else {
       for (int i = 0; i < pred.nrow(); ++i) {
-        pred_cpp2[i] = std::make_pair(pred(i, 0) - 1, pred(i, 1) - 1);
+        // disallow pred indices to point to vectors with NaN
+        if (!std::isnan(yMatrix_cpp[pred(i, 0) - 1][pred(i, 1) - 1])){
+          pred_cpp2[i] = std::make_pair(pred(i, 0) - 1, pred(i, 1) - 1);
+        }
       }
     }
   }
@@ -1233,12 +1304,16 @@ Rcpp::NumericMatrix RcppGCMC4Grid(
   std::vector<int> lib_std;
   if (n_libcol == 1){
     for (int i = 0; i < lib.nrow(); ++i) {
-      lib_std.push_back(lib(i,0) - 1);
+      // disallow lib indices to point to vectors with NaN
+      if (!std::isnan(yMatrix_cpp[(pred(i,0)-1) / numCols][(pred(i,0)-1) % numCols])){
+        lib_std.push_back(lib(i,0) - 1);
+      }
     }
   } else {
     for (int i = 0; i < lib.nrow(); ++i) {
       int rowLibIndice = lib(i,0);
       int colLibIndice = lib(i,1);
+      // disallow lib indices to point to vectors with NaN
       if (!std::isnan(yMatrix_cpp[rowLibIndice-1][colLibIndice-1])){
         lib_std.push_back(LocateGridIndices(rowLibIndice, colLibIndice, numRows, numCols));
       }
@@ -1248,12 +1323,16 @@ Rcpp::NumericMatrix RcppGCMC4Grid(
   std::vector<int> pred_std;
   if (n_predcol == 1){
     for (int i = 0; i < pred.nrow(); ++i) {
-      pred_std.push_back(pred(i,0) - 1);
+      // disallow pred indices to point to vectors with NaN
+      if (!std::isnan(yMatrix_cpp[(pred(i,0)-1) / numCols][(pred(i,0)-1) % numCols])){
+        pred_std.push_back(pred(i, 0) - 1);
+      }
     }
   } else {
     for (int i = 0; i < pred.nrow(); ++i) {
       int rowPredIndice = pred(i,0);
       int colPredIndice = pred(i,1);
+      // disallow pred indices to point to vectors with NaN
       if (!std::isnan(yMatrix_cpp[rowPredIndice-1][colPredIndice-1])){
         pred_std.push_back(LocateGridIndices(rowPredIndice, colPredIndice, numRows, numCols));
       }
@@ -1315,11 +1394,15 @@ Rcpp::NumericVector RcppSGCSingle4Grid(const Rcpp::NumericMatrix& x,
   if (lib_dim == 1){
     for (int i = 0; i < lib.nrow(); ++i) {
       std::vector<int> rowcolnum = RowColFromGrid(lib(i, 0) - 1, numCols);
-      lib_std[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+      if (!std::isnan(ymat[rowcolnum[0]][rowcolnum[1]])){
+        lib_std[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+      }
     }
   } else {
     for (int i = 0; i < lib.nrow(); ++i) {
-      lib_std[i] = std::make_pair(lib(i, 0) - 1, lib(i, 1) - 1);
+      if (!std::isnan(ymat[lib(i, 0) - 1][lib(i, 1) - 1])){
+        lib_std[i] = std::make_pair(lib(i, 0) - 1, lib(i, 1) - 1);
+      }
     }
   }
 
@@ -1330,11 +1413,15 @@ Rcpp::NumericVector RcppSGCSingle4Grid(const Rcpp::NumericMatrix& x,
   if (pred_dim == 1){
     for (int i = 0; i < pred.nrow(); ++i) {
       std::vector<int> rowcolnum = RowColFromGrid(pred(i, 0) - 1, numCols);
-      pred_std[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+      if (!std::isnan(ymat[rowcolnum[0]][rowcolnum[1]])){
+        pred_std[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+      }
     }
   } else {
     for (int i = 0; i < pred.nrow(); ++i) {
-      pred_std[i] = std::make_pair(pred(i, 0) - 1, pred(i, 1) - 1);
+      if (!std::isnan(ymat[pred(i, 0) - 1][pred(i, 1) - 1])){
+        pred_std[i] = std::make_pair(pred(i, 0) - 1, pred(i, 1) - 1);
+      }
     }
   }
 
@@ -1399,11 +1486,15 @@ Rcpp::NumericVector RcppSGC4Grid(const Rcpp::NumericMatrix& x,
   if (lib_dim == 1){
     for (int i = 0; i < lib.nrow(); ++i) {
       std::vector<int> rowcolnum = RowColFromGrid(lib(i, 0) - 1, numCols);
-      lib_std[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+      if (!std::isnan(ymat[rowcolnum[0]][rowcolnum[1]])){
+        lib_std[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+      }
     }
   } else {
     for (int i = 0; i < lib.nrow(); ++i) {
-      lib_std[i] = std::make_pair(lib(i, 0) - 1, lib(i, 1) - 1);
+      if (!std::isnan(ymat[lib(i, 0) - 1][lib(i, 1) - 1])){
+        lib_std[i] = std::make_pair(lib(i, 0) - 1, lib(i, 1) - 1);
+      }
     }
   }
 
@@ -1414,11 +1505,15 @@ Rcpp::NumericVector RcppSGC4Grid(const Rcpp::NumericMatrix& x,
   if (pred_dim == 1){
     for (int i = 0; i < pred.nrow(); ++i) {
       std::vector<int> rowcolnum = RowColFromGrid(pred(i, 0) - 1, numCols);
-      pred_std[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+      if (!std::isnan(ymat[rowcolnum[0]][rowcolnum[1]])){
+        pred_std[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+      }
     }
   } else {
     for (int i = 0; i < pred.nrow(); ++i) {
-      pred_std[i] = std::make_pair(pred(i, 0) - 1, pred(i, 1) - 1);
+      if (!std::isnan(ymat[pred(i, 0) - 1][pred(i, 1) - 1])){
+        pred_std[i] = std::make_pair(pred(i, 0) - 1, pred(i, 1) - 1);
+      }
     }
   }
 

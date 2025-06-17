@@ -654,13 +654,13 @@ std::vector<std::vector<double>> SCPCM4Grid(
     pred_indices[LocateGridIndices(p.first + 1, p.second + 1, totalRow, totalCol)] = true;
   }
 
-  // Exclude NA values in yPred from the library and prediction indices
-  for (size_t i = 0; i < yPred.size(); ++i) {
-    if (std::isnan(yPred[i])) {
-      lib_indices[i] = false;
-      pred_indices[i] = false;
-    }
-  }
+  // Exclude NA values in yPred from the library and prediction indices,, have been finished in rcpp wrapper level
+  // for (size_t i = 0; i < yPred.size(); ++i) {
+  //   if (std::isnan(yPred[i])) {
+  //     lib_indices[i] = false;
+  //     pred_indices[i] = false;
+  //   }
+  // }
 
   // Local results for each library
   std::vector<std::vector<PartialCorRes>> local_results(unique_lib_size_pairs.size());
