@@ -20,9 +20,8 @@
  *   - x_vectors: Reconstructed state-space (each row represents a separate vector/state).
  *   - y: Spatial cross-section series used as the target (should align with x_vectors).
  *   - lib_size: Size of the library used for cross mapping.
- *   - max_lib_size: Maximum size of the library.
- *   - possible_lib_indices: Indices of possible library states.
- *   - pred_indices: A boolean vector indicating which states to use for prediction.
+ *   - lib_indices: Vector of indices indicating which states to include when searching for neighbors.
+ *   - pred_indices: Vector of indices indicating which states to predict from.
  *   - b: Number of neighbors to use for simplex projection.
  *   - simplex: If true, uses simplex projection for prediction; otherwise, uses s-mapping.
  *   - theta: Distance weighting parameter for local neighbors in the manifold (used in s-mapping).
@@ -38,24 +37,18 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
     const std::vector<std::vector<double>>& x_vectors,
     const std::vector<double>& y,
     int lib_size,
-    int max_lib_size,
-    const std::vector<int>& possible_lib_indices,
-    const std::vector<bool>& pred_indices,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
     int b,
     bool simplex,
     double theta,
     size_t threads,
     int parallel_level
 ) {
-  int n = x_vectors.size();
+  int max_lib_size = lib_indices.size();
 
   // No possible library variation if using all vectors
   if (lib_size == max_lib_size) {
-    std::vector<bool> lib_indices(n, false);
-    for (int idx : possible_lib_indices) {
-      lib_indices[idx] = true;
-    }
-
     std::vector<std::pair<int, double>> x_xmap_y;
 
     // Run cross map and store results
@@ -75,15 +68,15 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
       // Loop around to beginning of lib indices
       if (start_lib + lib_size > max_lib_size) {
         for (int i = start_lib; i < max_lib_size; ++i) {
-          local_lib_indices.emplace_back(i);
+          local_lib_indices.emplace_back(lib_indices[i]);
         }
         int num_vectors_remaining = lib_size - (max_lib_size - start_lib);
         for (int i = 0; i < num_vectors_remaining; ++i) {
-          local_lib_indices.emplace_back(i);
+          local_lib_indices.emplace_back(lib_indices[i]);
         }
       } else {
         for (int i = start_lib; i < start_lib + lib_size; ++i) {
-          local_lib_indices.emplace_back(i);
+          local_lib_indices.emplace_back(lib_indices[i]);
         }
       }
       valid_lib_indices.emplace_back(local_lib_indices);
@@ -94,18 +87,12 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
 
     // Perform the operations using RcppThread
     RcppThread::parallelFor(0, valid_lib_indices.size(), [&](size_t i) {
-      std::vector<bool> lib_indices(n, false);
-      std::vector<int> local_lib_indices = valid_lib_indices[i];
-      for(int& li : local_lib_indices){
-        lib_indices[possible_lib_indices[li]] = true;
-      }
-
       // Run cross map and store results
       double rho = std::numeric_limits<double>::quiet_NaN();
       if (simplex) {
-        rho = SimplexProjection(x_vectors, y, lib_indices, pred_indices, b);
+        rho = SimplexProjection(x_vectors, y, valid_lib_indices[i], pred_indices, b);
       } else {
-        rho = SMap(x_vectors, y, lib_indices, pred_indices, b, theta);
+        rho = SMap(x_vectors, y, valid_lib_indices[i], pred_indices, b, theta);
       }
 
       std::pair<int, double> result(lib_size, rho); // Store the product of row and column library sizes
@@ -117,28 +104,28 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
     std::vector<std::pair<int, double>> x_xmap_y;
 
     for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
-      std::vector<bool> lib_indices(n, false);
+      std::vector<int> local_lib_indices;
       // Setup changing library
       if (start_lib + lib_size > max_lib_size) { // Loop around to beginning of lib indices
         for (int i = start_lib; i < max_lib_size; ++i) {
-          lib_indices[possible_lib_indices[i]] = true;
+          local_lib_indices.emplace_back(lib_indices[i]);
         }
         int num_vectors_remaining = lib_size - (max_lib_size - start_lib);
         for (int i = 0; i < num_vectors_remaining; ++i) {
-          lib_indices[possible_lib_indices[i]] = true;
+          local_lib_indices.emplace_back(lib_indices[i]);
         }
       } else {
         for (int i = start_lib; i < start_lib + lib_size; ++i) {
-          lib_indices[possible_lib_indices[i]] = true;
+          local_lib_indices.emplace_back(lib_indices[i]);
         }
       }
 
       // Run cross map and store results
       double rho = std::numeric_limits<double>::quiet_NaN();
       if (simplex) {
-        rho = SimplexProjection(x_vectors, y, lib_indices, pred_indices, b);
+        rho = SimplexProjection(x_vectors, y, local_lib_indices, pred_indices, b);
       } else {
-        rho = SMap(x_vectors, y, lib_indices, pred_indices, b, theta);
+        rho = SMap(x_vectors, y, local_lib_indices, pred_indices, b, theta);
       }
       x_xmap_y.emplace_back(lib_size, rho);
     }
@@ -204,24 +191,10 @@ std::vector<std::vector<double>> GCCM4Lattice(
 
   size_t n = pred.size();
 
-  std::vector<int> possible_lib_indices;
-  for (size_t i = 0; i < lib.size(); ++i) {
-    possible_lib_indices.push_back(lib[i]);
-  }
-  int max_lib_size = static_cast<int>(possible_lib_indices.size()); // Maximum lib size
-
-  std::vector<bool> pred_indices(n, false);
-  for (size_t i = 0; i < pred.size(); ++i) {
-    // // Do not strictly exclude spatial units with embedded state-space vectors containing NaN values from participating in cross mapping.
-    // if (!checkOneDimVectorHasNaN(x_vectors[pred[i]])){
-    //   pred_indices[pred[i]] = true;
-    // }
-    pred_indices[pred[i]] = true; // Convert to 0-based index
-  }
-
   std::vector<int> unique_lib_sizes(lib_sizes.begin(), lib_sizes.end());
 
-  // Transform to ensure no size exceeds max_lib_size
+  // Transform to ensure no size exceeds max library size
+  int max_lib_size = lib.size();
   std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
                  [&](int size) { return std::min(size, max_lib_size); });
 
@@ -245,9 +218,8 @@ std::vector<std::vector<double>> GCCM4Lattice(
           x_vectors,
           y,
           unique_lib_sizes[i],
-          max_lib_size,
-          possible_lib_indices,
-          pred_indices,
+          lib,
+          pred,
           b,
           simplex,
           theta,
@@ -261,9 +233,8 @@ std::vector<std::vector<double>> GCCM4Lattice(
           x_vectors,
           y,
           unique_lib_sizes[i],
-          max_lib_size,
-          possible_lib_indices,
-          pred_indices,
+          lib,
+          pred,
           b,
           simplex,
           theta,
@@ -281,9 +252,8 @@ std::vector<std::vector<double>> GCCM4Lattice(
           x_vectors,
           y,
           lib_size,
-          max_lib_size,
-          possible_lib_indices,
-          pred_indices,
+          lib,
+          pred,
           b,
           simplex,
           theta,
@@ -298,9 +268,8 @@ std::vector<std::vector<double>> GCCM4Lattice(
           x_vectors,
           y,
           lib_size,
-          max_lib_size,
-          possible_lib_indices,
-          pred_indices,
+          lib,
+          pred,
           b,
           simplex,
           theta,
