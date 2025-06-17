@@ -10,6 +10,8 @@ This release introduces new modeling capabilities, streamlined method infrastruc
 
 * **Enhancements** to method infrastructure, documentation consistency, and plotting functionality:
 
+  * Replaced logical vectors with integer indices for more efficient `lib/pred` indexing in `C++` level forecasting methods.
+
   * Generic method registration has been made more robust, preventing duplicate registrations and simplifying S4 method management.
 
   * All parameter descriptions have been standardized to lowercase for improved documentation clarity.
