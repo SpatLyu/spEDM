@@ -24,7 +24,7 @@
  * @param yPred                A 1D vector of the response variable's values (spatial cross-section data).
  * @param lib_sizes            A vector of two integers, where the first element is the row-wise library size and the second element is the column-wise library size.
  * @param possible_lib_indices A boolean vector indicating which spatial units are valid for inclusion in the library.
- * @param pred_indices         A boolean vector indicating which spatial units to be predicted.
+ * @param pred_indices         A vector indicating which spatial units to be predicted.
  * @param totalRow             The total number of rows in the 2D grid.
  * @param totalCol             The total number of columns in the 2D grid.
  * @param b                    The number of nearest neighbors to use for prediction.
@@ -41,7 +41,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
     const std::vector<double>& yPred,
     const std::vector<int>& lib_sizes,
     const std::vector<bool>& possible_lib_indices,
-    const std::vector<bool>& pred_indices,
+    const std::vector<int>& pred_indices,
     int totalRow,
     int totalCol,
     int b,
@@ -61,9 +61,8 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
  * @param xEmbedings           State-space embeddings for the predictor variable (each row is a spatial vector)
  * @param yPred                Target spatial cross-section series
  * @param lib_size             Number of consecutive spatial units to include in each library
- * @param max_lib_size         Maximum possible library size (total valid spatial units)
- * @param possible_lib_indices Integer vector indicating the indices of eligible spatial units for library construction
- * @param pred_indices         Boolean vector indicating spatial units to predict
+ * @param lib_indices          Integer vector indicating the indices of eligible spatial units for library construction
+ * @param pred_indices         Integer vector indicating spatial units to predict
  * @param totalRow             Total rows in spatial grid
  * @param totalCol             Total columns in spatial grid
  * @param b                    Number of nearest neighbors for prediction
@@ -78,9 +77,8 @@ std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
     const std::vector<std::vector<double>>& xEmbedings,
     const std::vector<double>& yPred,
     int lib_size,
-    int max_lib_size,
-    const std::vector<int>& possible_lib_indices,
-    const std::vector<bool>& pred_indices,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
     int totalRow,
     int totalCol,
     int b,

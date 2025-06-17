@@ -495,9 +495,9 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
     }
   }
 
-  // Initialize lib_indices and pred_indices with all false
-  std::vector<bool> pred_indices(numRows * numCols, false);
-  std::vector<bool> lib_indices(numRows * numCols, false);
+  // Initialize lib_indices and pred_indices
+  std::vector<int> pred_indices;
+  std::vector<int> lib_indices;
 
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
   int currow;
@@ -509,7 +509,7 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
     for (int i = 0; i < lib.nrow(); ++i) {
       // disallow lib indices to point to vectors with NaN
       if (!std::isnan(targetMat[(lib(i,0)-1) / numCols][(lib(i,0)-1) % numCols])){
-        lib_indices[lib(i,0)-1] = true;
+        lib_indices.push_back(lib(i,0)-1);
       }
     }
   } else {
@@ -519,7 +519,7 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
       curcol = lib(i,1);
       // disallow lib indices to point to vectors with NaN
       if (!std::isnan(targetMat[currow-1][curcol-1])){
-        lib_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+        lib_indices.push_back(LocateGridIndices(currow, curcol, numRows, numCols));
       }
     }
   }
@@ -528,7 +528,7 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
     for (int i = 0; i < pred.nrow(); ++i) {
       // disallow pred indices to point to vectors with NaN
       if (!std::isnan(targetMat[(pred(i,0)-1) / numCols][(pred(i,0)-1) % numCols])){
-        pred_indices[pred(i,0)-1] = true;
+        pred_indices.push_back(pred(i,0)-1);
       }
     }
   } else {
@@ -538,7 +538,7 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
       curcol = pred(i,1);
       // disallow pred indices to point to vectors with NaN
       if (!std::isnan(targetMat[currow-1][curcol-1])){
-        pred_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+        pred_indices.push_back(LocateGridIndices(currow, curcol, numRows, numCols));
       }
     }
   }
@@ -599,9 +599,9 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& source,
     }
   }
 
-  // Initialize lib_indices and pred_indices with all false
-  std::vector<bool> pred_indices(numRows * numCols, false);
-  std::vector<bool> lib_indices(numRows * numCols, false);
+  // Initialize lib_indices and pred_indices
+  std::vector<int> pred_indices;
+  std::vector<int> lib_indices;
 
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
   int currow;
@@ -613,7 +613,7 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& source,
     for (int i = 0; i < lib.nrow(); ++i) {
       // disallow lib indices to point to vectors with NaN
       if (!std::isnan(targetMat[(lib(i,0)-1) / numCols][(lib(i,0)-1) % numCols])){
-        lib_indices[lib(i,0)-1] = true;
+        lib_indices.push_back(lib(i,0)-1);
       }
     }
   } else {
@@ -623,7 +623,7 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& source,
       curcol = lib(i,1);
       // disallow lib indices to point to vectors with NaN
       if (!std::isnan(targetMat[currow-1][curcol-1])){
-        lib_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+        lib_indices.push_back(LocateGridIndices(currow, curcol, numRows, numCols));
       }
     }
   }
@@ -632,7 +632,7 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& source,
     for (int i = 0; i < pred.nrow(); ++i) {
       // disallow pred indices to point to vectors with NaN
       if (!std::isnan(targetMat[(pred(i,0)-1) / numCols][(pred(i,0)-1) % numCols])){
-        pred_indices[pred(i,0)-1] = true;
+        pred_indices.push_back(pred(i,0)-1);
       }
     }
   } else {
@@ -642,7 +642,7 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& source,
       curcol = pred(i,1);
       // disallow pred indices to point to vectors with NaN
       if (!std::isnan(targetMat[currow-1][curcol-1])){
-        pred_indices[LocateGridIndices(currow, curcol, numRows, numCols)] = true;
+        pred_indices.push_back(LocateGridIndices(currow, curcol, numRows, numCols));
       }
     }
   }
@@ -713,9 +713,9 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
     target = GridMat2Vec(yMatrix_cpp);
   }
 
-  // Initialize lib_indices and pred_indices with all false
-  std::vector<bool> pred_indices(numRows * numCols, false);
-  std::vector<bool> lib_indices(numRows * numCols, false);
+  // Initialize lib_indices and pred_indices
+  std::vector<int> pred_indices;
+  std::vector<int> lib_indices;
 
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
   int lib_col = lib.ncol();
@@ -725,7 +725,7 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
     for (int i = 0; i < lib.nrow(); ++i) {
       // disallow lib indices to point to vectors with NaN
       if (!std::isnan(yMatrix_cpp[(lib(i,0)-1) / numCols][(lib(i,0)-1) % numCols])){
-        lib_indices[lib(i,0)-1] = true;
+        lib_indices.push_back(lib(i,0)-1);
       }
     }
   } else {
@@ -736,7 +736,7 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
       // disallow lib indices to point to vectors with NaN
       int cellindice = LocateGridIndices(currow, curcol, numRows, numCols);
       if (!std::isnan(target[cellindice])){
-        lib_indices[cellindice] = true;
+        lib_indices.push_back(cellindice);
       }
     }
   }
@@ -745,7 +745,7 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
     for (int i = 0; i < pred.nrow(); ++i) {
       // disallow pred indices to point to vectors with NaN
       if (!std::isnan(yMatrix_cpp[(pred(i,0)-1) / numCols][(pred(i,0)-1) % numCols])){
-        pred_indices[pred(i,0)-1] = true;
+        pred_indices.push_back(pred(i,0)-1);
       }
     }
   } else {
@@ -756,7 +756,7 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
       // disallow pred indices to point to vectors with NaN
       int cellindice = LocateGridIndices(currow, curcol, numRows, numCols);
       if (!std::isnan(target[cellindice])){
-        pred_indices[cellindice] = true;
+        pred_indices.push_back(cellindice);
       }
     }
   }

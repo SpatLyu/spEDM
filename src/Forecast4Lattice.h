@@ -18,21 +18,21 @@
  *   - source: A vector to be embedded.
  *   - target: A vector to be predicted.
  *   - nb_vec: A 2D vector of neighbor indices.
- *   - lib_indices: A boolean vector indicating library (training) set indices.
- *   - pred_indices: A boolean vector indicating prediction set indices.
+ *   - lib_indices: A vector of indices indicating the library (training) set.
+ *   - pred_indices: A vector of indices indicating the prediction set.
  *   - E: A vector of embedding dimensions to evaluate.
  *   - b: A vector of nearest neighbor values to evaluate.
  *   - tau: The spatial lag step for constructing lagged state-space vectors.
  *   - threads: Number of threads used from the global pool.
  *
  * Returns:
- *   A 2D vector where each row contains [E, b, rho, mae, rmse] for a given combination of embedding dimension and nearest neighbors.
+ *   A 2D vector where each row contains [E, b, rho, mae, rmse] for a given combination of E and b.
  */
 std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& source,
                                                  const std::vector<double>& target,
                                                  const std::vector<std::vector<int>>& nb_vec,
-                                                 const std::vector<bool>& lib_indices,
-                                                 const std::vector<bool>& pred_indices,
+                                                 const std::vector<int>& lib_indices,
+                                                 const std::vector<int>& pred_indices,
                                                  const std::vector<int>& E,
                                                  const std::vector<int>& b,
                                                  int tau,
@@ -45,8 +45,8 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& sour
  *   - source: A vector to be embedded.
  *   - target: A vector to be predicted.
  *   - nb_vec: A 2D vector of neighbor indices.
- *   - lib_indices: A boolean vector indicating library (training) set indices.
- *   - pred_indices: A boolean vector indicating prediction set indices.
+ *   - lib_indices: A vector of indices indicating the library (training) set.
+ *   - pred_indices: A vector of indices indicating the prediction set.
  *   - theta: A vector of weighting parameters for distance calculation in SMap.
  *   - E: The embedding dimension to evaluate.
  *   - tau: The spatial lag step for constructing lagged state-space vectors.
@@ -59,8 +59,8 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& sour
 std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& source,
                                               const std::vector<double>& target,
                                               const std::vector<std::vector<int>>& nb_vec,
-                                              const std::vector<bool>& lib_indices,
-                                              const std::vector<bool>& pred_indices,
+                                              const std::vector<int>& lib_indices,
+                                              const std::vector<int>& pred_indices,
                                               const std::vector<double>& theta,
                                               int E,
                                               int tau,

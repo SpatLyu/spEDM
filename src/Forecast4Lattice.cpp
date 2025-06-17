@@ -17,21 +17,21 @@
  *   - source: A vector to be embedded.
  *   - target: A vector to be predicted.
  *   - nb_vec: A 2D vector of neighbor indices.
- *   - lib_indices: A boolean vector indicating library (training) set indices.
- *   - pred_indices: A boolean vector indicating prediction set indices.
+ *   - lib_indices: A vector of indices indicating the library (training) set.
+ *   - pred_indices: A vector of indices indicating the prediction set.
  *   - E: A vector of embedding dimensions to evaluate.
  *   - b: A vector of nearest neighbor values to evaluate.
  *   - tau: The spatial lag step for constructing lagged state-space vectors.
  *   - threads: Number of threads used from the global pool.
  *
  * Returns:
- *   A 2D vector where each row contains [E, b, rho, mae, rmse] for a given combination of embedding dimension and nearest neighbors.
+ *   A 2D vector where each row contains [E, b, rho, mae, rmse] for a given combination of E and b.
  */
 std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& source,
                                                  const std::vector<double>& target,
                                                  const std::vector<std::vector<int>>& nb_vec,
-                                                 const std::vector<bool>& lib_indices,
-                                                 const std::vector<bool>& pred_indices,
+                                                 const std::vector<int>& lib_indices,
+                                                 const std::vector<int>& pred_indices,
                                                  const std::vector<int>& E,
                                                  const std::vector<int>& b,
                                                  int tau,
@@ -40,7 +40,7 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& sour
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
-  // Sort and remove duplicates
+  // Unique sorted embedding dimensions and neighbor values
   std::vector<int> Es = E;
   std::sort(Es.begin(), Es.end());
   Es.erase(std::unique(Es.begin(), Es.end()), Es.end());
@@ -49,31 +49,26 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& sour
   std::sort(bs.begin(), bs.end());
   bs.erase(std::unique(bs.begin(), bs.end()), bs.end());
 
-  // Generate unique pairs of E and b
+  // Generate unique (E, b) combinations
   std::vector<std::pair<int, int>> unique_Ebcom;
-  for (size_t i = 0; i < Es.size(); ++i){
-    for (size_t j = 0; j < bs.size(); ++j){
-      unique_Ebcom.emplace_back(Es[i],bs[j]); // Pair with E and b
-    }
-  }
+  for (int e : Es)
+    for (int bb : bs)
+      unique_Ebcom.emplace_back(e, bb);
 
-  // Initialize result matrix with unique_Ebcom.size() rows and 5 columns
   std::vector<std::vector<double>> result(unique_Ebcom.size(), std::vector<double>(5));
 
-  // Parallel loop over each embedding dimension E
   RcppThread::parallelFor(0, unique_Ebcom.size(), [&](size_t i) {
-    // Generate embeddings for the current E
-    std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(source, nb_vec, unique_Ebcom[i].first, tau);
+    const int Ei = unique_Ebcom[i].first;
+    const int bi = unique_Ebcom[i].second;
 
-    // Compute metrics using SimplexBehavior
-    std::vector<double> metrics = SimplexBehavior(embeddings, target, lib_indices, pred_indices, unique_Ebcom[i].second);
+    auto embeddings = GenLatticeEmbeddings(source, nb_vec, Ei, tau);
+    auto metrics = SimplexBehavior(embeddings, target, lib_indices, pred_indices, bi);
 
-    // Store results in the matrix (no mutex needed since each thread writes to a unique index)
-    result[i][0] = unique_Ebcom[i].first;   // Embedding dimension
-    result[i][1] = unique_Ebcom[i].second;  // Number of nearest neighbors
-    result[i][2] = metrics[0];              // Pearson correlation (rho)
-    result[i][3] = metrics[1];              // Mean Absolute Error (MAE)
-    result[i][4] = metrics[2];              // Root Mean Squared Error (RMSE)
+    result[i][0] = Ei;
+    result[i][1] = bi;
+    result[i][2] = metrics[0]; // rho
+    result[i][3] = metrics[1]; // MAE
+    result[i][4] = metrics[2]; // RMSE
   }, threads_sizet);
 
   return result;
@@ -86,8 +81,8 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& sour
  *   - source: A vector to be embedded.
  *   - target: A vector to be predicted.
  *   - nb_vec: A 2D vector of neighbor indices.
- *   - lib_indices: A boolean vector indicating library (training) set indices.
- *   - pred_indices: A boolean vector indicating prediction set indices.
+ *   - lib_indices: A vector of indices indicating the library (training) set.
+ *   - pred_indices: A vector of indices indicating the prediction set.
  *   - theta: A vector of weighting parameters for distance calculation in SMap.
  *   - E: The embedding dimension to evaluate.
  *   - tau: The spatial lag step for constructing lagged state-space vectors.
@@ -100,8 +95,8 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& sour
 std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& source,
                                               const std::vector<double>& target,
                                               const std::vector<std::vector<int>>& nb_vec,
-                                              const std::vector<bool>& lib_indices,
-                                              const std::vector<bool>& pred_indices,
+                                              const std::vector<int>& lib_indices,
+                                              const std::vector<int>& pred_indices,
                                               const std::vector<double>& theta,
                                               int E,
                                               int tau,
@@ -112,21 +107,16 @@ std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& source,
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   // Generate embeddings
-  std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(source, nb_vec, E, tau);
-
-  // Initialize result matrix with theta.size() rows and 4 columns
+  auto embeddings = GenLatticeEmbeddings(source, nb_vec, E, tau);
   std::vector<std::vector<double>> result(theta.size(), std::vector<double>(4));
 
-  // Parallel loop over each theta
   RcppThread::parallelFor(0, theta.size(), [&](size_t i) {
-    // Compute metrics using SMapBehavior
-    std::vector<double> metrics = SMapBehavior(embeddings, target, lib_indices, pred_indices, b, theta[i]);
+    auto metrics = SMapBehavior(embeddings, target, lib_indices, pred_indices, b, theta[i]);
 
-    // Store results in the matrix (no mutex needed since each thread writes to a unique index)
-    result[i][0] = theta[i];           // Weighting parameter for distances
-    result[i][1] = metrics[0];         // Pearson correlation (rho)
-    result[i][2] = metrics[1];         // Mean Absolute Error (MAE)
-    result[i][3] = metrics[2];         // Root Mean Squared Error (RMSE)
+    result[i][0] = theta[i];   // theta
+    result[i][1] = metrics[0]; // rho
+    result[i][2] = metrics[1]; // MAE
+    result[i][3] = metrics[2]; // RMSE
   }, threads_sizet);
 
   return result;

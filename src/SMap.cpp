@@ -7,70 +7,48 @@
 #include "CppStats.h"
 
 /*
- * Computes the 'S-Maps' prediction.
+ * Computes the S-Map prediction using a reconstructed state-space representation.
  *
  * Parameters:
- *   - vectors: Reconstructed state-space (each row is a separate vector/state).
- *   - target: Spatial cross sectional series to be used as the target (should align with vectors).
- *   - lib_indices: Vector of T/F values (which states to include when searching for neighbors).
- *   - pred_indices: Vector of T/F values (which states to predict from).
- *   - num_neighbors: Number of neighbors to use for S-Map.
- *   - theta: Weighting parameter for distances.
+ *   - vectors: A 2D vector where each row is a reconstructed state vector.
+ *   - target: A vector of taregt values corresponding to each state.
+ *   - lib_indices: A vector of indices indicating which states to use as the library (neighbors).
+ *   - pred_indices: A vector of indices indicating which states to make predictions for.
+ *   - num_neighbors: Number of nearest neighbors to use in the S-Map algorithm.
+ *   - theta: Distance weighting parameter for neighbor contributions.
  *
- * Returns: A vector<double> containing the predicted target values.
+ * Returns: A vector<double> containing predicted target values at the positions in pred_indices.
  */
 std::vector<double> SMapPrediction(
     const std::vector<std::vector<double>>& vectors,
     const std::vector<double>& target,
-    const std::vector<bool>& lib_indices,
-    const std::vector<bool>& pred_indices,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
     int num_neighbors,
     double theta
 ) {
-  // Convert num_neighbors to size_t
-  size_t num_neighbors_sizet = static_cast<size_t>(num_neighbors);
+  size_t N = target.size();
+  std::vector<double> pred(N, std::numeric_limits<double>::quiet_NaN());
 
-  // Setup output
-  std::vector<double> pred(target.size(), std::numeric_limits<double>::quiet_NaN());
-
-  // no neighbor to use, return all nan
-  if (num_neighbors <= 0){
+  if (num_neighbors <= 0 || lib_indices.empty() || pred_indices.empty()) {
     return pred;
   }
 
-  // // Count the number of true values in lib_indices
-  // size_t lib_count = std::count(lib_indices.begin(), lib_indices.end(), true);
-  //
-  // // no library to use, return all nan
-  // if (lib_count == 0){
-  //   return pred;
-  // }
-  //
-  // // If the number of true values is less than num_neighbors, return NaN vector
-  // if (lib_count < num_neighbors_sizet) {
-  //   return pred;
-  // }
+  size_t num_neighbors_sizet = static_cast<size_t>(num_neighbors);
 
-  // Make predictions
-  for (size_t p = 0; p < pred_indices.size(); ++p) {
-    if (!pred_indices[p]) continue;
-
-    // Create a local copy of lib_indices to modify
-    std::vector<bool> local_lib_indices = lib_indices;
-    bool temp_lib = local_lib_indices[p];
-    local_lib_indices[p] = false;
+  for (int pred_i : pred_indices) {
     std::vector<size_t> libs;
-    for (size_t i = 0; i < local_lib_indices.size(); ++i) {
-      if (local_lib_indices[i]) libs.push_back(i);
+    for (int lib_i : lib_indices) {
+      if (lib_i != pred_i) {
+        libs.push_back(static_cast<size_t>(lib_i));
+      }
     }
 
-    // Handle the case where libs is empty
     if (libs.empty()) {
-      pred[p] = std::numeric_limits<double>::quiet_NaN();
+      pred[pred_i] = std::numeric_limits<double>::quiet_NaN();
       continue;
     }
 
-    // Adjust num_neighbors_sizet if it exceeds libs.size()
     if (num_neighbors_sizet > libs.size()) {
       num_neighbors_sizet = libs.size();
     }
@@ -80,18 +58,13 @@ std::vector<double> SMapPrediction(
     for (size_t i : libs) {
       double sum_sq = 0.0;
       double sum_na = 0.0;
-      for (size_t j = 0; j < vectors[p].size(); ++j) {
-        if (!std::isnan(vectors[i][j]) && !std::isnan(vectors[p][j])) {
-          sum_sq += std::pow(vectors[i][j] - vectors[p][j], 2);
+      for (size_t j = 0; j < vectors[pred_i].size(); ++j) {
+        if (!std::isnan(vectors[i][j]) && !std::isnan(vectors[pred_i][j])) {
+          sum_sq += std::pow(vectors[i][j] - vectors[pred_i][j], 2);
           sum_na += 1.0;
         }
       }
-
-      if (sum_na > 0) {
-        distances.push_back(std::sqrt(sum_sq / sum_na));
-      } else {
-        distances.push_back(std::numeric_limits<double>::quiet_NaN());
-      }
+      distances.push_back((sum_na > 0) ? std::sqrt(sum_sq / sum_na) : std::numeric_limits<double>::quiet_NaN());
     }
 
     // Compute mean distance
@@ -110,31 +83,32 @@ std::vector<double> SMapPrediction(
     // Find nearest neighbors
     std::vector<size_t> neighbors(distances.size());
     std::iota(neighbors.begin(), neighbors.end(), 0);
-    std::partial_sort(neighbors.begin(), neighbors.begin() + num_neighbors_sizet, neighbors.end(),
-                      [&](size_t a, size_t b) {
-                        return (distances[a] < distances[b]) ||
-                               (distances[a] == distances[b] && a < b);
-                        });
+    std::partial_sort(
+      neighbors.begin(), neighbors.begin() + num_neighbors_sizet, neighbors.end(),
+      [&](size_t a, size_t b) {
+        return (distances[a] < distances[b]) ||
+          (distances[a] == distances[b] && a < b);
+      });
 
-    // Prepare data for SVD
-    std::vector<std::vector<double>> A(num_neighbors_sizet, std::vector<double>(vectors[p].size() + 1, 0.0));
+    // Prepare A matrix and b vector for weighted linear system
+    std::vector<std::vector<double>> A(num_neighbors_sizet, std::vector<double>(vectors[pred_i].size() + 1, 0.0));
     std::vector<double> b(num_neighbors_sizet, 0.0);
     for (size_t i = 0; i < num_neighbors_sizet; ++i) {
       size_t idx = libs[neighbors[i]];
-      for (size_t j = 0; j < vectors[p].size(); ++j) {
+      for (size_t j = 0; j < vectors[pred_i].size(); ++j) {
         A[i][j] = vectors[idx][j] * weights[neighbors[i]];
       }
-      A[i][vectors[p].size()] = weights[neighbors[i]]; // Bias term
+      A[i][vectors[pred_i].size()] = weights[neighbors[i]]; // bias term
       b[i] = target[idx] * weights[neighbors[i]];
     }
 
-    // Perform Singular Value Decomposition (SVD)
+    // Perform SVD
     std::vector<std::vector<std::vector<double>>> svd_result = CppSVD(A);
     std::vector<std::vector<double>> U = svd_result[0];
     std::vector<double> S = svd_result[1][0];
     std::vector<std::vector<double>> V = svd_result[2];
 
-    // Remove singular values that are too small
+    // Invert singular values with threshold
     double max_s = *std::max_element(S.begin(), S.end());
     std::vector<double> S_inv(S.size(), 0.0);
     for (size_t i = 0; i < S.size(); ++i) {
@@ -143,29 +117,26 @@ std::vector<double> SMapPrediction(
       }
     }
 
-    // Compute the map coefficients
-    std::vector<double> map_coeffs(vectors[p].size() + 1, 0.0);
+    // Compute map coefficients
+    std::vector<double> map_coeffs(vectors[pred_i].size() + 1, 0.0);
     for (size_t i = 0; i < V.size(); ++i) {
       for (size_t j = 0; j < S_inv.size(); ++j) {
         map_coeffs[i] += V[i][j] * S_inv[j] * U[j][i];
       }
     }
 
-    // Multiply by b to get the final coefficients
+    // Multiply map coefficients by b
     for (size_t i = 0; i < map_coeffs.size(); ++i) {
       map_coeffs[i] *= b[i];
     }
 
-    // Make prediction
+    // Generate prediction
     double prediction = 0.0;
-    for (size_t i = 0; i < vectors[p].size(); ++i) {
-      prediction += map_coeffs[i] * vectors[p][i];
+    for (size_t i = 0; i < vectors[pred_i].size(); ++i) {
+      prediction += map_coeffs[i] * vectors[pred_i][i];
     }
-    prediction += map_coeffs[vectors[p].size()]; // Bias term
-    pred[p] = prediction;
-
-    // Restore the original lib_indices state
-    local_lib_indices[p] = temp_lib;
+    prediction += map_coeffs[vectors[pred_i].size()]; // bias term
+    pred[pred_i] = prediction;
   }
 
   return pred;
@@ -176,9 +147,9 @@ std::vector<double> SMapPrediction(
  *
  * Parameters:
  *   - vectors: Reconstructed state-space (each row is a separate vector/state).
- *   - target: Spatial cross sectional series to be used as the target (should align with vectors).
- *   - lib_indices: Vector of T/F values (which states to include when searching for neighbors).
- *   - pred_indices: Vector of T/F values (which states to predict from).
+ *   - target: Cross-sectional data vector to be predicted.
+ *   - lib_indices: Vector of integer indices specifying which states to use for finding neighbors.
+ *   - pred_indices: Vector of integer indices specifying which states to predict.
  *   - num_neighbors: Number of neighbors to use for S-Map.
  *   - theta: Weighting parameter for distances.
  *
@@ -187,8 +158,8 @@ std::vector<double> SMapPrediction(
 double SMap(
     const std::vector<std::vector<double>>& vectors,
     const std::vector<double>& target,
-    const std::vector<bool>& lib_indices,
-    const std::vector<bool>& pred_indices,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
     int num_neighbors,
     double theta
 ) {
@@ -203,24 +174,25 @@ double SMap(
   return rho;
 }
 
+
 /*
- * Description: Computes the S-Map prediction and evaluates prediction performance.
+ * Computes the S-Map prediction and evaluates prediction performance.
  *
  * Parameters:
  *   - vectors: Reconstructed state-space (each row is a separate vector/state).
- *   - target: Spatial cross sectional series to be used as the target (should align with vectors).
- *   - lib_indices: Vector of T/F values (which states to include when searching for neighbors).
- *   - pred_indices: Vector of T/F values (which states to predict from).
+ *   - target: Cross-sectional data vector to be predicted.
+ *   - lib_indices: Vector of integer indices specifying which states to use for finding neighbors.
+ *   - pred_indices: Vector of integer indices specifying which states to predict.
  *   - num_neighbors: Number of neighbors to use for S-Map.
  *   - theta: Weighting parameter for distances.
  *
- * Returns: A vector<double> containing {PearsonCor, MAE, RMSE}.
+ * Returns: A vector<double> containing {Pearson correlation, MAE, RMSE}.
  */
 std::vector<double> SMapBehavior(
     const std::vector<std::vector<double>>& vectors,
     const std::vector<double>& target,
-    const std::vector<bool>& lib_indices,
-    const std::vector<bool>& pred_indices,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
     int num_neighbors,
     double theta
 ) {

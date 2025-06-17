@@ -17,8 +17,8 @@
  * Parameters:
  *   - source: A matrix to be embedded.
  *   - target: A matrix to be predicted.
- *   - lib_indices: A boolean vector indicating library (training) set indices.
- *   - pred_indices: A boolean vector indicating prediction set indices.
+ *   - lib_indices: A vector of indices indicating the library (training) set.
+ *   - pred_indices: A vector of indices indicating the prediction set.
  *   - E: A vector of embedding dimensions to evaluate.
  *   - b: A vector of nearest neighbors to use for prediction.
  *   - tau: The spatial lag step for constructing lagged state-space vectors.
@@ -29,8 +29,8 @@
  */
 std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<double>>& source,
                                               const std::vector<std::vector<double>>& target,
-                                              const std::vector<bool>& lib_indices,
-                                              const std::vector<bool>& pred_indices,
+                                              const std::vector<int>& lib_indices,
+                                              const std::vector<int>& pred_indices,
                                               const std::vector<int>& E,
                                               const std::vector<int>& b,
                                               int tau,
@@ -42,8 +42,8 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
  * Parameters:
  *   - source: A matrix to be embedded.
  *   - target: A matrix to be predicted.
- *   - lib_indices: A boolean vector indicating library (training) set indices.
- *   - pred_indices: A boolean vector indicating prediction set indices.
+ *   - lib_indices: A vector of indices indicating the library (training) set.
+ *   - pred_indices: A vector of indices indicating the prediction set.
  *   - theta: A vector of weighting parameters for distance calculation in SMap.
  *   - E: The embedding dimension to evaluate.
  *   - tau: The spatial lag step for constructing lagged state-space vectors.
@@ -55,8 +55,8 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
  */
 std::vector<std::vector<double>> SMap4Grid(const std::vector<std::vector<double>>& source,
                                            const std::vector<std::vector<double>>& target,
-                                           const std::vector<bool>& lib_indices,
-                                           const std::vector<bool>& pred_indices,
+                                           const std::vector<int>& lib_indices,
+                                           const std::vector<int>& pred_indices,
                                            const std::vector<double>& theta,
                                            int E,
                                            int tau,

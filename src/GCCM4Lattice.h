@@ -21,9 +21,8 @@
  *   - x_vectors: Reconstructed state-space (each row represents a separate vector/state).
  *   - y: Spatial cross-section series used as the target (should align with x_vectors).
  *   - lib_size: Size of the library used for cross mapping.
- *   - max_lib_size: Maximum size of the library.
- *   - possible_lib_indices: Indices of possible library states.
- *   - pred_indices: A boolean vector indicating which states to use for prediction.
+ *   - lib_indices: Vector of indices indicating which states to include when searching for neighbors.
+ *   - pred_indices: Vector of indices indicating which states to predict from.
  *   - b: Number of neighbors to use for simplex projection.
  *   - simplex: If true, uses simplex projection for prediction; otherwise, uses s-mapping.
  *   - theta: Distance weighting parameter for local neighbors in the manifold (used in s-mapping).
@@ -39,9 +38,8 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
     const std::vector<std::vector<double>>& x_vectors,
     const std::vector<double>& y,
     int lib_size,
-    int max_lib_size,
-    const std::vector<int>& possible_lib_indices,
-    const std::vector<bool>& pred_indices,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
     int b,
     bool simplex,
     double theta,

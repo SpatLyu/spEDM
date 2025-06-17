@@ -23,7 +23,7 @@
  * @param yPred                A 1D vector of the response variable's values (spatial cross-section data).
  * @param lib_sizes            A vector of two integers, where the first element is the row-wise library size and the second element is the column-wise library size.
  * @param possible_lib_indices A boolean vector indicating which spatial units are valid for inclusion in the library.
- * @param pred_indices         A boolean vector indicating which spatial units to be predicted.
+ * @param pred_indices         A vector indicating which spatial units to be predicted.
  * @param totalRow             The total number of rows in the 2D grid.
  * @param totalCol             The total number of columns in the 2D grid.
  * @param b                    The number of nearest neighbors to use for prediction.
@@ -40,7 +40,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
     const std::vector<double>& yPred,
     const std::vector<int>& lib_sizes,
     const std::vector<bool>& possible_lib_indices,
-    const std::vector<bool>& pred_indices,
+    const std::vector<int>& pred_indices,
     int totalRow,
     int totalCol,
     int b,
@@ -55,7 +55,6 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
 
   // Determine the marked libsize
   const int libsize = row_size_mark ? lib_size_row : lib_size_col;
-  const int half_lib_size = (lib_size_row * lib_size_col) / 2;
 
   // Precompute valid (r, c) pairs
   std::vector<std::pair<int, int>> valid_indices;
@@ -78,29 +77,23 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
     const int c = valid_indices[idx].second;
 
     // Initialize library indices and count the number of the nan value together
-    std::vector<bool> lib_indices(totalRow * totalCol, false);
-    int na_count = 0;
+    std::vector<int> lib_indices;
 
     for (int ii = r; ii < r + lib_size_row; ++ii) {
       for (int jj = c; jj < c + lib_size_col; ++jj) {
         int index = (ii - 1) * totalCol + (jj - 1);
         if (possible_lib_indices[index]) {
-          lib_indices[index] = true;
-          if (std::isnan(yPred[index])) {
-            ++na_count;
-          }
+          lib_indices.emplace_back(index);
         }
       }
     }
 
     double rho = std::numeric_limits<double>::quiet_NaN();
-    if (na_count <= half_lib_size) {
-      // Run cross map and store results
-      if (simplex) {
-        rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
-      } else {
-        rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
-      }
+    // Run cross map and store results
+    if (simplex) {
+      rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
+    } else {
+      rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
     }
     x_xmap_y[idx] = std::make_pair(libsize, rho);
   };
@@ -126,9 +119,8 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
  * @param xEmbedings           State-space embeddings for the predictor variable (each row is a spatial vector)
  * @param yPred                Target spatial cross-section series
  * @param lib_size             Number of consecutive spatial units to include in each library
- * @param max_lib_size         Maximum possible library size (total valid spatial units)
- * @param possible_lib_indices Integer vector indicating the indices of eligible spatial units for library construction
- * @param pred_indices         Boolean vector indicating spatial units to predict
+ * @param lib_indices          Integer vector indicating the indices of eligible spatial units for library construction
+ * @param pred_indices         Integer vector indicating spatial units to predict
  * @param totalRow             Total rows in spatial grid
  * @param totalCol             Total columns in spatial grid
  * @param b                    Number of nearest neighbors for prediction
@@ -143,9 +135,8 @@ std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
     const std::vector<std::vector<double>>& xEmbedings,
     const std::vector<double>& yPred,
     int lib_size,
-    int max_lib_size,
-    const std::vector<int>& possible_lib_indices,
-    const std::vector<bool>& pred_indices,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
     int totalRow,
     int totalCol,
     int b,
@@ -153,33 +144,18 @@ std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
     double theta,
     size_t threads,
     int parallel_level) {
-  int n = yPred.size();
+  int max_lib_size = lib_indices.size();
 
   // No possible library variation if using all vectors
   if (lib_size == max_lib_size) {
-    std::vector<bool> lib_indices(n, false);
-    for (int idx : possible_lib_indices) {
-      lib_indices[idx] = true;
-    }
-
     std::vector<std::pair<int, double>> x_xmap_y;
 
-    // Check if more than half of the library is NA
-    int na_count = 0;
-    for (size_t i = 0; i < lib_indices.size(); ++i) {
-      if (lib_indices[i] && std::isnan(yPred[i])) {
-        ++na_count;
-      }
-    }
-
     double rho = std::numeric_limits<double>::quiet_NaN();
-    if (na_count <= max_lib_size / 2.0) {
-      // Run cross map and store results
-      if (simplex) {
-        rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
-      } else {
-        rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
-      }
+    // Run cross map and store results
+    if (simplex) {
+      rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
+    } else {
+      rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
     }
     x_xmap_y.emplace_back(lib_size, rho);
     return x_xmap_y;
@@ -191,15 +167,15 @@ std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
       // Loop around to beginning of lib indices
       if (start_lib + lib_size > max_lib_size) {
         for (int i = start_lib; i < max_lib_size; ++i) {
-          local_lib_indices.emplace_back(i);
+          local_lib_indices.emplace_back(lib_indices[i]);
         }
         int num_vectors_remaining = lib_size - (max_lib_size - start_lib);
         for (int i = 0; i < num_vectors_remaining; ++i) {
-          local_lib_indices.emplace_back(i);
+          local_lib_indices.emplace_back(lib_indices[i]);
         }
       } else {
         for (int i = start_lib; i < start_lib + lib_size; ++i) {
-          local_lib_indices.emplace_back(i);
+          local_lib_indices.emplace_back(lib_indices[i]);
         }
       }
       valid_lib_indices.emplace_back(local_lib_indices);
@@ -210,28 +186,12 @@ std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
 
     // Perform the operations using RcppThread
     RcppThread::parallelFor(0, valid_lib_indices.size(), [&](size_t i) {
-      std::vector<bool> lib_indices(n, false);
-      std::vector<int> local_lib_indices = valid_lib_indices[i];
-      for(int& li : local_lib_indices){
-        lib_indices[possible_lib_indices[li]] = true;
-      }
-
-      // Check if more than half of the library is NA
-      int na_count = 0;
-      for (size_t ii = 0; ii < lib_indices.size(); ++ii) {
-        if (lib_indices[ii] && std::isnan(yPred[ii])) {
-          ++na_count;
-        }
-      }
-
       double rho = std::numeric_limits<double>::quiet_NaN();
-      if (na_count <= max_lib_size / 2.0) {
-        // Run cross map and store results
-        if (simplex) {
-          rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
-        } else {
-          rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
-        }
+      // Run cross map and store results
+      if (simplex) {
+        rho = SimplexProjection(xEmbedings, yPred, valid_lib_indices[i], pred_indices, b);
+      } else {
+        rho = SMap(xEmbedings, yPred, valid_lib_indices[i], pred_indices, b, theta);
       }
 
       std::pair<int, double> result(lib_size, rho); // Store the product of row and column library sizes
@@ -247,15 +207,15 @@ std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
       // Loop around to beginning of lib indices
       if (start_lib + lib_size > max_lib_size) {
         for (int i = start_lib; i < max_lib_size; ++i) {
-          local_lib_indices.emplace_back(i);
+          local_lib_indices.emplace_back(lib_indices[i]);
         }
         int num_vectors_remaining = lib_size - (max_lib_size - start_lib);
         for (int i = 0; i < num_vectors_remaining; ++i) {
-          local_lib_indices.emplace_back(i);
+          local_lib_indices.emplace_back(lib_indices[i]);
         }
       } else {
         for (int i = start_lib; i < start_lib + lib_size; ++i) {
-          local_lib_indices.emplace_back(i);
+          local_lib_indices.emplace_back(lib_indices[i]);
         }
       }
       valid_lib_indices.emplace_back(local_lib_indices);
@@ -266,28 +226,12 @@ std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
 
     // Iterate through precomputed valid_lib_indices
     for (size_t i = 0; i < valid_lib_indices.size(); ++i){
-      std::vector<bool> lib_indices(n, false);
-      std::vector<int> local_lib_indices = valid_lib_indices[i];
-      for(int& li : local_lib_indices){
-        lib_indices[possible_lib_indices[li]] = true;
-      }
-
-      // Check if more than half of the library is NA
-      int na_count = 0;
-      for (size_t ii = 0; ii < lib_indices.size(); ++ii) {
-        if (lib_indices[ii] && std::isnan(yPred[ii])) {
-          ++na_count;
-        }
-      }
-
       double rho = std::numeric_limits<double>::quiet_NaN();
-      if (na_count <= max_lib_size / 2.0) {
-        // Run cross map and store results
-        if (simplex) {
-          rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
-        } else {
-          rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
-        }
+      // Run cross map and store results
+      if (simplex) {
+        rho = SimplexProjection(xEmbedings, yPred, valid_lib_indices[i], pred_indices, b);
+      } else {
+        rho = SMap(xEmbedings, yPred, valid_lib_indices[i], pred_indices, b, theta);
       }
 
       std::pair<int, double> result(lib_size, rho); // Store the product of row and column library sizes
@@ -421,18 +365,11 @@ std::vector<std::vector<double>> GCCM4Grid(
     lib_indices[LocateGridIndices(l.first + 1, l.second + 1, totalRow, totalCol)] = true;
   }
 
-  // Set prediction indices
-  std::vector<bool> pred_indices(totalRow * totalCol, false);
+  // Set predict indices
+  std::vector<int> pred_indices;
   for (const auto& p : pred) {
-    pred_indices[LocateGridIndices(p.first + 1, p.second + 1, totalRow, totalCol)] = true;
+    pred_indices.push_back(LocateGridIndices(p.first + 1, p.second + 1, totalRow, totalCol));
   }
-
-  // // Exclude NA values in yPred from prediction indices, have been finished in rcpp wrapper level
-  // for (size_t i = 0; i < yPred.size(); ++i) {
-  //   if (std::isnan(yPred[i])) {
-  //     pred_indices[i] = false;
-  //   }
-  // }
 
   // Local results for each library
   std::vector<std::vector<std::pair<int, double>>> local_results(unique_lib_size_pairs.size());
@@ -620,22 +557,7 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
   // Generate embeddings for xMatrix
   std::vector<std::vector<double>> xEmbedings = GenGridEmbeddings(xMatrix, E, tau);
 
-  std::vector<int> possible_lib_indices;
-  for (size_t i = 0; i < lib.size(); ++i) {
-    if (!std::isnan(yPred[lib[i]])) {
-      possible_lib_indices.push_back(lib[i]);
-    }
-  }
-  int max_lib_size = static_cast<int>(possible_lib_indices.size()); // Maximum lib size
-
-  // Initialize pred_indices with all false
-  std::vector<bool> pred_indices(totalRow*totalCol, false);
-  // Exclude yPred NA and set corresponding positions to true
-  for (size_t i = 0; i < pred.size(); ++i) {
-    if (!std::isnan(yPred[pred[i]])) {
-      pred_indices[pred[i]] = true;
-    }
-  }
+  int max_lib_size = static_cast<int>(lib.size()); // Maximum lib size
 
   std::vector<int> unique_lib_sizes(lib_sizes.begin(), lib_sizes.end());
 
@@ -663,9 +585,8 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
           xEmbedings,
           yPred,
           unique_lib_sizes[i],
-          max_lib_size,
-          possible_lib_indices,
-          pred_indices,
+          lib,
+          pred,
           totalRow,
           totalCol,
           b,
@@ -682,9 +603,8 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
           xEmbedings,
           yPred,
           unique_lib_sizes[i],
-          max_lib_size,
-          possible_lib_indices,
-          pred_indices,
+          lib,
+          pred,
           totalRow,
           totalCol,
           b,
@@ -705,9 +625,8 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
           xEmbedings,
           yPred,
           lib_size,
-          max_lib_size,
-          possible_lib_indices,
-          pred_indices,
+          lib,
+          pred,
           totalRow,
           totalCol,
           b,
@@ -725,9 +644,8 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
           xEmbedings,
           yPred,
           lib_size,
-          max_lib_size,
-          possible_lib_indices,
-          pred_indices,
+          lib,
+          pred,
           totalRow,
           totalCol,
           b,

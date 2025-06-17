@@ -26,8 +26,8 @@
  * @param vectors: Reconstructed state-space where each row represents a separate vector/state.
  * @param target: Spatial cross-section series used as the prediction target.
  * @param controls: Cross-sectional data of control variables, stored row-wise.
- * @param lib_indices: Boolean vector indicating which states to include when searching for neighbors.
- * @param pred_indices: Boolean vector indicating which states to predict from.
+ * @param lib_indices: Integer vector indicating which states to include when searching for neighbors.
+ * @param pred_indices: Integer vector indicating which states to predict from.
  * @param conEs: Vector specifying the number of dimensions for attractor reconstruction with control variables.
  * @param taus: Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
  * @param num_neighbors: Vector specifying the numbers of neighbors to use for Simplex Projection.
@@ -41,8 +41,8 @@ std::vector<double> PartialSimplex4Grid(
     const std::vector<std::vector<double>>& vectors,
     const std::vector<double>& target,
     const std::vector<std::vector<double>>& controls,
-    const std::vector<bool>& lib_indices,
-    const std::vector<bool>& pred_indices,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
     const std::vector<int>& conEs,
     const std::vector<int>& taus,
     const std::vector<int>& num_neighbors,
@@ -61,8 +61,8 @@ std::vector<double> PartialSimplex4Grid(
  * @param vectors: Reconstructed state-space where each row represents a separate vector/state.
  * @param target: Spatial cross-section series used as the prediction target.
  * @param controls: Cross-sectional data of control variables, stored row-wise.
- * @param lib_indices: Boolean vector indicating which states to include when searching for neighbors.
- * @param pred_indices: Boolean vector indicating which states to predict from.
+ * @param lib_indices: Integer vector indicating which states to include when searching for neighbors.
+ * @param pred_indices: Integer vector indicating which states to predict from.
  * @param conEs: Vector specifying the number of dimensions for attractor reconstruction with control variables.
  * @param taus: Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
  * @param num_neighbors: Vector specifying the numbers of neighbors to use for Simplex Projection.
@@ -77,8 +77,8 @@ std::vector<double> PartialSMap4Grid(
     const std::vector<std::vector<double>>& vectors,
     const std::vector<double>& target,
     const std::vector<std::vector<double>>& controls,
-    const std::vector<bool>& lib_indices,
-    const std::vector<bool>& pred_indices,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
     const std::vector<int>& conEs,
     const std::vector<int>& taus,
     const std::vector<int>& num_neighbors,
@@ -98,7 +98,7 @@ std::vector<double> PartialSMap4Grid(
  * @param controls             A 2D matrix that stores the control variables.
  * @param lib_sizes            A vector of two integers, where the first element is the row-wise library size and the second element is the column-wise library size.
  * @param possible_lib_indices A boolean vector indicating which spatial units are valid for inclusion in the library.
- * @param pred_indices         A boolean vector indicating which spatial units to be predicted.
+ * @param pred_indices         A integer vector indicating which spatial units to be predicted.
  * @param conEs                Number of dimensions for the attractor reconstruction with control variables
  * @param taus:                Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
  * @param totalRow             The total number of rows in the 2D grid.
@@ -119,7 +119,7 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
     const std::vector<std::vector<double>>& controls,
     const std::vector<int>& lib_sizes,
     const std::vector<bool>& possible_lib_indices,
-    const std::vector<bool>& pred_indices,
+    const std::vector<int>& pred_indices,
     const std::vector<int>& conEs,
     const std::vector<int>& taus,
     const std::vector<int>& b,
@@ -143,9 +143,8 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
  * @param yPred                Target spatial cross-section series
  * @param controls             Control variables stored by row
  * @param lib_size             Number of consecutive spatial units to include in each library
- * @param max_lib_size         Maximum possible library size (total valid spatial units)
- * @param possible_lib_indices Integer vector indicating the indices of eligible spatial units for library construction
- * @param pred_indices         Boolean vector indicating spatial units to predict
+ * @param lib_indices          Integer vector indicating the indices of eligible spatial units for library construction
+ * @param pred_indices         Integer vector indicating spatial units to predict
  * @param conEs                Embedding dimensions for control variables
  * @param taus                 Spatial lag steps for control variable embeddings
  * @param b                    Number of nearest neighbors for prediction
@@ -164,9 +163,8 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
     const std::vector<double>& yPred,
     const std::vector<std::vector<double>>& controls,
     int lib_size,
-    int max_lib_size,
-    const std::vector<int>& possible_lib_indices,
-    const std::vector<bool>& pred_indices,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
     const std::vector<int>& conEs,
     const std::vector<int>& taus,
     const std::vector<int>& b,

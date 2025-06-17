@@ -15,8 +15,8 @@
  * Parameters:
  *   - vectors: 2D vector where each row represents a sample and each column a feature.
  *   - target: Target spatial cross sectional series aligned with the samples in vectors.
- *   - lib_indices: Boolean flag indicating which samples to use for neighbor search.
- *   - pred_indices: Boolean flag indicating which samples to predict.
+ *   - lib_indices: A vector of indices indicating the library (training) set.
+ *   - pred_indices: A vector of indices indicating the prediction set.
  *   - num_neighbors: Number of neighbors used for simplex projection.
  *   - top_num: Number of top-performing reconstructions to select.
  *   - threads: Number of threads used from the global pool.
@@ -27,8 +27,8 @@
 std::vector<double> MultiViewEmbedding(
     const std::vector<std::vector<double>>& vectors,
     const std::vector<double>& target,
-    const std::vector<bool>& lib_indices,
-    const std::vector<bool>& pred_indices,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
     int num_neighbors,
     int top_num,
     int threads
@@ -153,8 +153,8 @@ std::vector<double> MultiViewEmbedding(
 //  * Parameters:
 //  *   - vectors: 2D vector where each row represents a sample and each column a feature.
 //  *   - target: Target spatial cross sectional series aligned with the samples in vectors.
-//  *   - lib_indices: Boolean flag indicating which samples to use for neighbor search.
-//  *   - pred_indices: Boolean flag indicating which samples to predict.
+//  *   - lib_indices: A vector of indices indicating the library (training) set.
+//  *   - pred_indices: A vector of indices indicating the prediction set.
 //  *   - num_neighbors: Number of neighbors used for simplex projection.
 //  *   - top_num: Number of top-performing reconstructions to select.
 //  *   - threads: Number of threads used from the global pool.
@@ -165,8 +165,8 @@ std::vector<double> MultiViewEmbedding(
 // std::vector<double> MultiViewEmbedding(
 //     const std::vector<std::vector<double>>& vectors,
 //     const std::vector<double>& target,
-//     const std::vector<bool>& lib_indices,
-//     const std::vector<bool>& pred_indices,
+//     const std::vector<int>& lib_indices,
+//     const std::vector<int>& pred_indices,
 //     int num_neighbors,
 //     int top_num,
 //     int threads
