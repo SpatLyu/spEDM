@@ -8,7 +8,7 @@
 \usage{
 \S4method{slm}{sf}(
   data,
-  x,
+  x = NULL,
   y = NULL,
   z = NULL,
   k = 4,
@@ -29,7 +29,7 @@
 
 \S4method{slm}{SpatRaster}(
   data,
-  x,
+  x = NULL,
   y = NULL,
   z = NULL,
   k = 4,
@@ -50,7 +50,7 @@
 \arguments{
 \item{data}{observation data.}
 
-\item{x}{name of first spatial variable.}
+\item{x}{(optional) name of first spatial variable.}
 
 \item{y}{(optional) name of second spatial variable.}
 
