@@ -184,9 +184,11 @@
   return(res)
 }
 
-.bind_slm = \(mat_list,y,z,transient){
+.bind_slm = \(mat_list,x,y,z,transient){
   res = lapply(mat_list, \(.x) apply(.x[,-transient,drop = FALSE],1,mean,na.rm = TRUE))
-  if (is.null(y)) res$y = NULL
-  if (is.null(z)) res$z = NULL
-  return(res)
+  indices = c()
+  if (is.null(x)) indices = c(indices,1)
+  if (is.null(y)) indices = c(indices,2)
+  if (is.null(z)) indices = c(indices,3)
+  return(res[-indices])
 }
