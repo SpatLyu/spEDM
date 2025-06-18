@@ -1,4 +1,4 @@
-.slm_sf_method = \(data, x, y = NULL, z = NULL,
+.slm_sf_method = \(data, x = NULL, y = NULL, z = NULL,
                    k = 4, step = 15, alpha_x = 0.28, alpha_y = 0.25, alpha_z = 0.22,
                    beta_xy = 0.05, beta_xz = 0.05, beta_yx = 0.2, beta_yz = 0.2, beta_zx = 0.35, beta_zy = 0.35,
                    threshold = Inf, transient = 1, nb = NULL){
@@ -6,23 +6,23 @@
   vy = .uni_lattice(data,y,FALSE)
   vz = .uni_lattice(data,z,FALSE)
   if (is.null(nb)) nb = .internal_lattice_nb(data)
-  return(.bind_slm(RcppSLMTri4Lattice(vx,vy,vz,nb,k,step,alpha_x,alpha_y,alpha_z,beta_xy,beta_xz,beta_yx,beta_yz,beta_zx,beta_zy,threshold),y,z,transient))
+  return(.bind_slm(RcppSLMTri4Lattice(vx,vy,vz,nb,k,step,alpha_x,alpha_y,alpha_z,beta_xy,beta_xz,beta_yx,beta_yz,beta_zx,beta_zy,threshold),x,y,z,transient))
 }
 
-.slm_spatraster_method = \(data, x, y = NULL, z = NULL,
+.slm_spatraster_method = \(data, x = NULL, y = NULL, z = NULL,
                            k = 4, step = 15, alpha_x = 0.28, alpha_y = 0.25, alpha_z = 0.22,
                            beta_xy = 0.05, beta_xz = 0.05, beta_yx = 0.2, beta_yz = 0.2, beta_zx = 0.35, beta_zy = 0.35,
                            threshold = Inf, transient = 1){
   mx = .uni_grid(data,x,FALSE)
   my = .uni_grid(data,y,FALSE)
   mz = .uni_grid(data,z,FALSE)
-  return(.bind_slm(RcppSLMTri4Grid(mx,my,mz,k,step,alpha_x,alpha_y,alpha_z,beta_xy,beta_xz,beta_yx,beta_yz,beta_zx,beta_zy,threshold),y,z,transient))
+  return(.bind_slm(RcppSLMTri4Grid(mx,my,mz,k,step,alpha_x,alpha_y,alpha_z,beta_xy,beta_xz,beta_yx,beta_yz,beta_zx,beta_zy,threshold),x,y,z,transient))
 }
 
 #' spatial logistic map
 #'
 #' @param data observation data.
-#' @param x name of first spatial variable.
+#' @param x (optional) name of first spatial variable.
 #' @param y (optional) name of second spatial variable.
 #' @param z (optional) name of third spatial variable.
 #' @param k (optional) number of neighbors to used.
