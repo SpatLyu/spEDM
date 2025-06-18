@@ -233,7 +233,6 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
 
   // Determine the marked libsize
   const int libsize = row_size_mark ? lib_size_row : lib_size_col;
-  const int half_lib_size = (lib_size_row * lib_size_col) / 2;
 
   // Precompute valid (r, c) pairs
   std::vector<std::pair<int, int>> valid_indices;
