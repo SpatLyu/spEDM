@@ -42,7 +42,7 @@
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 #' \donttest{
-#' smap(columbus,"inc","crime")
+#' smap(columbus,"inc","crime",E = 5,k = 6)
 #' }
 methods::setMethod("smap", "sf", .smap_sf_method)
 
