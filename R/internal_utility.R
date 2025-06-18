@@ -117,3 +117,76 @@
   res = as.matrix(dtf[,.varname,drop = FALSE])
   return(res)
 }
+
+.internal_xmapdf_binding = \(varname,x_xmap_y,y_xmap_x,bidirectional,keyname = "libsizes"){
+  colnames(y_xmap_x) = c(keyname,"y_xmap_x_mean","y_xmap_x_sig",
+                         "y_xmap_x_upper","y_xmap_x_lower")
+  y_xmap_x = as.data.frame(y_xmap_x)
+
+  if (bidirectional){
+    colnames(x_xmap_y) = c(keyname,"x_xmap_y_mean","x_xmap_y_sig",
+                           "x_xmap_y_upper","x_xmap_y_lower")
+    x_xmap_y = as.data.frame(x_xmap_y)
+    resdf = x_xmap_y |>
+      dplyr::full_join(y_xmap_x, by = keyname) |>
+      dplyr::arrange({{keyname}})
+  } else {
+    resdf = dplyr::arrange(y_xmap_x,{{keyname}})
+  }
+
+  return(resdf)
+}
+
+.bind_xmapdf = \(varname,x_xmap_y,y_xmap_x,bidirectional){
+  resdf = .internal_xmapdf_binding(varname,x_xmap_y,y_xmap_x,bidirectional)
+  res = list("xmap" = resdf, "varname" = varname, "bidirectional" = bidirectional)
+  class(res) = 'ccm_res'
+  return(res)
+}
+
+.bind_xmapdf2 = \(varname,x_xmap_y,y_xmap_x,bidirectional){
+
+  tyxmapx = y_xmap_x[,c(1,2,4:6),drop = FALSE]
+  dyxmapx = y_xmap_x[,c(1,3,7:9),drop = FALSE]
+  txxmapy = NULL
+  dxxmapy = NULL
+  if(bidirectional){
+    txxmapy = x_xmap_y[,c(1,2,4:6),drop = FALSE]
+    dxxmapy = x_xmap_y[,c(1,3,7:9),drop = FALSE]
+  }
+
+  txmap = .internal_xmapdf_binding(varname[1:2],txxmapy,tyxmapx,bidirectional)
+  dxmap = .internal_xmapdf_binding(varname[1:2],dxxmapy,dyxmapx,bidirectional)
+
+  res = list("pxmap" = dxmap, "xmap" = txmap,
+             "varname" = varname[1:2],
+             "bidirectional" = bidirectional)
+  class(res) = 'pcm_res'
+  return(res)
+}
+
+.bind_intersectdf = \(varname,x_xmap_y,y_xmap_x,bidirectional){
+  resdf = .internal_xmapdf_binding(varname,x_xmap_y,y_xmap_x,bidirectional,keyname = "neighbors")
+  res = list("xmap" = resdf, "varname" = varname, "bidirectional" = bidirectional)
+  class(res) = 'cmc_res'
+  return(res)
+}
+
+.bind_xmapself = \(x,varname,...){
+  res = list("xmap" = x,"varname" = varname)
+  class(res) = "xmap_self"
+  return(res)
+}
+
+.bind_sc = \(sc,varname,...){
+  res = list("sc" = sc,"varname" = varname)
+  class(res) = "sc_res"
+  return(res)
+}
+
+.bind_slm = \(mat_list,y,z,transient){
+  res = lapply(mat_list, \(.x) apply(.x[,-transient,drop = FALSE],1,mean,na.rm = TRUE))
+  if (is.null(y)) res$y = NULL
+  if (is.null(z)) res$z = NULL
+  return(res)
+}
