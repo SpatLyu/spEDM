@@ -186,7 +186,7 @@
 
 .bind_slm = \(mat_list,x,y,z,transient){
   res = lapply(mat_list, \(.x) apply(.x[,-transient,drop = FALSE],1,mean,na.rm = TRUE))
-  indices = c()
+  indices = NULL
   if (is.null(x)) indices = c(indices,1)
   if (is.null(y)) indices = c(indices,2)
   if (is.null(z)) indices = c(indices,3)
