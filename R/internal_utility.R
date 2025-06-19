@@ -173,7 +173,8 @@
 }
 
 .bind_xmapself = \(x,varname,tau = NULL,...){
-  res = list("xmap" = x,"varname" = varname, "tau" = tau)
+  res = list("xmap" = x,"varname" = varname)
+  if (!is.null(tau)) res = append(res,c("tau" = tau))
   class(res) = "xmap_self"
   return(res)
 }
