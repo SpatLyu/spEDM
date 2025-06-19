@@ -65,7 +65,7 @@
 \value{
 A list
 \describe{
-\item{\code{xmap}}{forecast results}
+\item{\code{xmap}}{forecast performance}
 \item{\code{varname}}{name of target variable}
 }
 }
