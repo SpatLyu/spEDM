@@ -23,4 +23,27 @@ std::vector<int> SpatialBlockBootstrap(
     unsigned int seed = 42
 );
 
+/**
+ * Generate a spatial block bootstrap sample of indices using an external random number generator.
+ *
+ * This function performs block-based resampling from spatial or grouped data. The input vector `block`
+ * specifies a block ID for each observation (e.g., spatial unit, group, or time block). The function:
+ *
+ *   1. Groups indices by block ID;
+ *   2. Randomly samples block IDs with replacement using the provided `std::mt19937` RNG;
+ *   3. Concatenates the indices of the selected blocks to form the bootstrap sample;
+ *   4. Trims the result to ensure the same length as the original data.
+ *
+ * The sampling is done at the block level rather than at the individual level, preserving local structure.
+ * This is particularly useful for spatial or temporal data where neighboring observations may be dependent.
+ *
+ * @param block  A vector of block identifiers (one per observation), e.g., spatial or temporal blocks.
+ * @param rng    A reference to an externally managed random number generator (e.g., from a parallel RNG pool).
+ * @return       A vector of resampled indices with the same length as the input data.
+ */
+std::vector<int> SpatialBlockBootstrapRNG(
+    const std::vector<int>& block,
+    std::mt19937& rng
+);
+
 #endif // SpatialBlockBootstrap_H
