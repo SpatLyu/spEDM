@@ -2,6 +2,7 @@
 #define SGC4Lattice_H
 
 #include <vector>
+#include <cstdint>
 #include "CppLatticeUtils.h"
 #include "Entropy.h"
 #include "SpatialBlockBootstrap.h"
