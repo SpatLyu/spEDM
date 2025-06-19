@@ -17,7 +17,6 @@ double RcppEntropy_Cont(const Rcpp::NumericVector& vec, int k, double base, bool
 RcppExport SEXP _spEDM_RcppEntropy_Cont(SEXP vecSEXP, SEXP kSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
@@ -31,7 +30,6 @@ double RcppJoinEntropy_Cont(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerV
 RcppExport SEXP _spEDM_RcppJoinEntropy_Cont(SEXP matSEXP, SEXP columnsSEXP, SEXP kSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type columns(columnsSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
@@ -46,7 +44,6 @@ double RcppMutualInformation_Cont(const Rcpp::NumericMatrix& mat, const Rcpp::In
 RcppExport SEXP _spEDM_RcppMutualInformation_Cont(SEXP matSEXP, SEXP columns1SEXP, SEXP columns2SEXP, SEXP kSEXP, SEXP algSEXP, SEXP normalizeSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type columns1(columns1SEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type columns2(columns2SEXP);
@@ -63,7 +60,6 @@ double RcppConditionalEntropy_Cont(const Rcpp::NumericMatrix& mat, const Rcpp::I
 RcppExport SEXP _spEDM_RcppConditionalEntropy_Cont(SEXP matSEXP, SEXP target_columnsSEXP, SEXP conditional_columnsSEXP, SEXP kSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type target_columns(target_columnsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type conditional_columns(conditional_columnsSEXP);
@@ -79,7 +75,6 @@ double RcppEntropy_Disc(const Rcpp::NumericVector& vec, double base, bool NA_rm)
 RcppExport SEXP _spEDM_RcppEntropy_Disc(SEXP vecSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
@@ -92,7 +87,6 @@ double RcppJoinEntropy_Disc(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerV
 RcppExport SEXP _spEDM_RcppJoinEntropy_Disc(SEXP matSEXP, SEXP columnsSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type columns(columnsSEXP);
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
@@ -106,7 +100,6 @@ double RcppMutualInformation_Disc(const Rcpp::NumericMatrix& mat, const Rcpp::In
 RcppExport SEXP _spEDM_RcppMutualInformation_Disc(SEXP matSEXP, SEXP columns1SEXP, SEXP columns2SEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type columns1(columns1SEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type columns2(columns2SEXP);
@@ -121,7 +114,6 @@ double RcppConditionalEntropy_Disc(const Rcpp::NumericMatrix& mat, const Rcpp::I
 RcppExport SEXP _spEDM_RcppConditionalEntropy_Disc(SEXP matSEXP, SEXP target_columnsSEXP, SEXP conditional_columnsSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type target_columns(target_columnsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type conditional_columns(conditional_columnsSEXP);
@@ -136,7 +128,6 @@ Rcpp::NumericVector RcppSimplexForecast(const Rcpp::NumericMatrix& embedding, co
 RcppExport SEXP _spEDM_RcppSimplexForecast(SEXP embeddingSEXP, SEXP targetSEXP, SEXP libSEXP, SEXP predSEXP, SEXP num_neighborsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type embedding(embeddingSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type target(targetSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type lib(libSEXP);
@@ -151,7 +142,6 @@ Rcpp::NumericVector RcppSMapForecast(const Rcpp::NumericMatrix& embedding, const
 RcppExport SEXP _spEDM_RcppSMapForecast(SEXP embeddingSEXP, SEXP targetSEXP, SEXP libSEXP, SEXP predSEXP, SEXP num_neighborsSEXP, SEXP thetaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type embedding(embeddingSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type target(targetSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type lib(libSEXP);
@@ -167,7 +157,6 @@ Rcpp::NumericVector RcppIntersectionCardinality(const Rcpp::NumericMatrix& embed
 RcppExport SEXP _spEDM_RcppIntersectionCardinality(SEXP embedding_xSEXP, SEXP embedding_ySEXP, SEXP libSEXP, SEXP predSEXP, SEXP num_neighborsSEXP, SEXP n_excludedSEXP, SEXP threadsSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type embedding_x(embedding_xSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type embedding_y(embedding_ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type lib(libSEXP);
@@ -185,7 +174,6 @@ int RcppLocateGridIndices(int curRow, int curCol, int totalRow, int totalCol);
 RcppExport SEXP _spEDM_RcppLocateGridIndices(SEXP curRowSEXP, SEXP curColSEXP, SEXP totalRowSEXP, SEXP totalColSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type curRow(curRowSEXP);
     Rcpp::traits::input_parameter< int >::type curCol(curColSEXP);
     Rcpp::traits::input_parameter< int >::type totalRow(totalRowSEXP);
@@ -199,7 +187,6 @@ Rcpp::NumericVector RcppRowColFromGrid(int cellNum, int totalCol);
 RcppExport SEXP _spEDM_RcppRowColFromGrid(SEXP cellNumSEXP, SEXP totalColSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type cellNum(cellNumSEXP);
     Rcpp::traits::input_parameter< int >::type totalCol(totalColSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppRowColFromGrid(cellNum, totalCol));
@@ -211,7 +198,6 @@ Rcpp::NumericMatrix RcppLaggedVal4Grid(const Rcpp::NumericMatrix& mat, int lagNu
 RcppExport SEXP _spEDM_RcppLaggedVal4Grid(SEXP matSEXP, SEXP lagNumSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< int >::type lagNum(lagNumSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppLaggedVal4Grid(mat, lagNum));
@@ -223,7 +209,6 @@ Rcpp::NumericMatrix RcppGenGridEmbeddings(const Rcpp::NumericMatrix& mat, int E,
 RcppExport SEXP _spEDM_RcppGenGridEmbeddings(SEXP matSEXP, SEXP ESEXP, SEXP tauSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< int >::type E(ESEXP);
     Rcpp::traits::input_parameter< int >::type tau(tauSEXP);
@@ -236,7 +221,6 @@ Rcpp::List RcppGenGridNeighbors(const Rcpp::NumericMatrix& mat, const Rcpp::Inte
 RcppExport SEXP _spEDM_RcppGenGridNeighbors(SEXP matSEXP, SEXP libSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type lib(libSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
@@ -249,7 +233,6 @@ Rcpp::NumericVector RcppGenGridSymbolization(const Rcpp::NumericMatrix& mat, con
 RcppExport SEXP _spEDM_RcppGenGridSymbolization(SEXP matSEXP, SEXP libSEXP, SEXP predSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type lib(libSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type pred(predSEXP);
@@ -263,7 +246,6 @@ Rcpp::IntegerVector RcppDivideGrid(const Rcpp::NumericMatrix& mat, int b, int sh
 RcppExport SEXP _spEDM_RcppDivideGrid(SEXP matSEXP, SEXP bSEXP, SEXP shapeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< int >::type b(bSEXP);
     Rcpp::traits::input_parameter< int >::type shape(shapeSEXP);
@@ -276,7 +258,6 @@ Rcpp::NumericMatrix RcppSLMUni4Grid(const Rcpp::NumericMatrix& mat, int k, int s
 RcppExport SEXP _spEDM_RcppSLMUni4Grid(SEXP matSEXP, SEXP kSEXP, SEXP stepSEXP, SEXP alphaSEXP, SEXP escape_thresholdSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< int >::type step(stepSEXP);
@@ -291,7 +272,6 @@ Rcpp::List RcppSLMBi4Grid(const Rcpp::NumericMatrix& mat1, const Rcpp::NumericMa
 RcppExport SEXP _spEDM_RcppSLMBi4Grid(SEXP mat1SEXP, SEXP mat2SEXP, SEXP kSEXP, SEXP stepSEXP, SEXP alpha_xSEXP, SEXP alpha_ySEXP, SEXP beta_xySEXP, SEXP beta_yxSEXP, SEXP escape_thresholdSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat1(mat1SEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat2(mat2SEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
@@ -310,7 +290,6 @@ Rcpp::List RcppSLMTri4Grid(const Rcpp::NumericMatrix& mat1, const Rcpp::NumericM
 RcppExport SEXP _spEDM_RcppSLMTri4Grid(SEXP mat1SEXP, SEXP mat2SEXP, SEXP mat3SEXP, SEXP kSEXP, SEXP stepSEXP, SEXP alpha_xSEXP, SEXP alpha_ySEXP, SEXP alpha_zSEXP, SEXP beta_xySEXP, SEXP beta_xzSEXP, SEXP beta_yxSEXP, SEXP beta_yzSEXP, SEXP beta_zxSEXP, SEXP beta_zySEXP, SEXP escape_thresholdSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat1(mat1SEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat2(mat2SEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat3(mat3SEXP);
@@ -335,7 +314,6 @@ Rcpp::NumericVector RcppFNN4Grid(const Rcpp::NumericMatrix& mat, const Rcpp::Num
 RcppExport SEXP _spEDM_RcppFNN4Grid(SEXP matSEXP, SEXP rtSEXP, SEXP epsSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type rt(rtSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type eps(epsSEXP);
@@ -353,7 +331,6 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source, const Rc
 RcppExport SEXP _spEDM_RcppSimplex4Grid(SEXP sourceSEXP, SEXP targetSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP bSEXP, SEXP tauSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type source(sourceSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type target(targetSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type lib(libSEXP);
@@ -371,7 +348,6 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& source, const Rcpp:
 RcppExport SEXP _spEDM_RcppSMap4Grid(SEXP sourceSEXP, SEXP targetSEXP, SEXP libSEXP, SEXP predSEXP, SEXP thetaSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type source(sourceSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type target(targetSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type lib(libSEXP);
@@ -390,7 +366,6 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix, const
 RcppExport SEXP _spEDM_RcppMultiView4Grid(SEXP xMatrixSEXP, SEXP yMatrixSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP topSEXP, SEXP nvarSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type xMatrix(xMatrixSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type yMatrix(yMatrixSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type lib(libSEXP);
@@ -410,7 +385,6 @@ Rcpp::NumericMatrix RcppGCCM4Grid(const Rcpp::NumericMatrix& xMatrix, const Rcpp
 RcppExport SEXP _spEDM_RcppGCCM4Grid(SEXP xMatrixSEXP, SEXP yMatrixSEXP, SEXP libsizesSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP simplexSEXP, SEXP thetaSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type xMatrix(xMatrixSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type yMatrix(yMatrixSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type libsizes(libsizesSEXP);
@@ -433,7 +407,6 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(const Rcpp::NumericMatrix& xMatrix, const Rcp
 RcppExport SEXP _spEDM_RcppSCPCM4Grid(SEXP xMatrixSEXP, SEXP yMatrixSEXP, SEXP zMatrixSEXP, SEXP libsizesSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP simplexSEXP, SEXP thetaSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP, SEXP cumulateSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type xMatrix(xMatrixSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type yMatrix(yMatrixSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type zMatrix(zMatrixSEXP);
@@ -458,7 +431,6 @@ Rcpp::NumericMatrix RcppGCMC4Grid(const Rcpp::NumericMatrix& xMatrix, const Rcpp
 RcppExport SEXP _spEDM_RcppGCMC4Grid(SEXP xMatrixSEXP, SEXP yMatrixSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP max_rSEXP, SEXP threadsSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type xMatrix(xMatrixSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type yMatrix(yMatrixSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type lib(libSEXP);
@@ -478,7 +450,6 @@ Rcpp::NumericVector RcppSGCSingle4Grid(const Rcpp::NumericMatrix& x, const Rcpp:
 RcppExport SEXP _spEDM_RcppSGCSingle4Grid(SEXP xSEXP, SEXP ySEXP, SEXP libSEXP, SEXP predSEXP, SEXP kSEXP, SEXP baseSEXP, SEXP symbolizeSEXP, SEXP normalizeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type x(xSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type lib(libSEXP);
@@ -496,7 +467,6 @@ Rcpp::NumericVector RcppSGC4Grid(const Rcpp::NumericMatrix& x, const Rcpp::Numer
 RcppExport SEXP _spEDM_RcppSGC4Grid(SEXP xSEXP, SEXP ySEXP, SEXP libSEXP, SEXP predSEXP, SEXP blockSEXP, SEXP kSEXP, SEXP threadsSEXP, SEXP bootSEXP, SEXP baseSEXP, SEXP seedSEXP, SEXP symbolizeSEXP, SEXP normalizeSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type x(xSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type lib(libSEXP);
@@ -519,7 +489,6 @@ unsigned int DetectMaxNumThreads();
 RcppExport SEXP _spEDM_DetectMaxNumThreads() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     rcpp_result_gen = Rcpp::wrap(DetectMaxNumThreads());
     return rcpp_result_gen;
 END_RCPP
@@ -529,7 +498,6 @@ Rcpp::IntegerVector OptEmbedDim(Rcpp::NumericMatrix Emat);
 RcppExport SEXP _spEDM_OptEmbedDim(SEXP EmatSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Emat(EmatSEXP);
     rcpp_result_gen = Rcpp::wrap(OptEmbedDim(Emat));
     return rcpp_result_gen;
@@ -540,7 +508,6 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat);
 RcppExport SEXP _spEDM_OptThetaParm(SEXP ThetamatSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Thetamat(ThetamatSEXP);
     rcpp_result_gen = Rcpp::wrap(OptThetaParm(Thetamat));
     return rcpp_result_gen;
@@ -551,7 +518,6 @@ Rcpp::NumericMatrix MatNotNAIndice(Rcpp::NumericMatrix mat, bool byrow);
 RcppExport SEXP _spEDM_MatNotNAIndice(SEXP matSEXP, SEXP byrowSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type mat(matSEXP);
     Rcpp::traits::input_parameter< bool >::type byrow(byrowSEXP);
     rcpp_result_gen = Rcpp::wrap(MatNotNAIndice(mat, byrow));
@@ -563,7 +529,6 @@ Rcpp::List RcppLaggedNeighbor4Lattice(const Rcpp::List& nb, int lagNum);
 RcppExport SEXP _spEDM_RcppLaggedNeighbor4Lattice(SEXP nbSEXP, SEXP lagNumSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
     Rcpp::traits::input_parameter< int >::type lagNum(lagNumSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppLaggedNeighbor4Lattice(nb, lagNum));
@@ -575,7 +540,6 @@ Rcpp::List RcppLaggedVal4Lattice(const Rcpp::NumericVector& vec, const Rcpp::Lis
 RcppExport SEXP _spEDM_RcppLaggedVal4Lattice(SEXP vecSEXP, SEXP nbSEXP, SEXP lagNumSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
     Rcpp::traits::input_parameter< int >::type lagNum(lagNumSEXP);
@@ -588,7 +552,6 @@ Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec, con
 RcppExport SEXP _spEDM_RcppGenLatticeEmbeddings(SEXP vecSEXP, SEXP nbSEXP, SEXP ESEXP, SEXP tauSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
     Rcpp::traits::input_parameter< int >::type E(ESEXP);
@@ -602,7 +565,6 @@ Rcpp::List RcppGenLatticeNeighbors(const Rcpp::NumericVector& vec, const Rcpp::L
 RcppExport SEXP _spEDM_RcppGenLatticeNeighbors(SEXP vecSEXP, SEXP nbSEXP, SEXP libSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type lib(libSEXP);
@@ -616,7 +578,6 @@ Rcpp::NumericVector RcppGenLatticeSymbolization(const Rcpp::NumericVector& vec, 
 RcppExport SEXP _spEDM_RcppGenLatticeSymbolization(SEXP vecSEXP, SEXP nbSEXP, SEXP libSEXP, SEXP predSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type lib(libSEXP);
@@ -631,7 +592,6 @@ Rcpp::IntegerVector RcppDivideLattice(const Rcpp::List& nb, int b);
 RcppExport SEXP _spEDM_RcppDivideLattice(SEXP nbSEXP, SEXP bSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
     Rcpp::traits::input_parameter< int >::type b(bSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppDivideLattice(nb, b));
@@ -643,7 +603,6 @@ Rcpp::NumericMatrix RcppSLMUni4Lattice(const Rcpp::NumericVector& vec, const Rcp
 RcppExport SEXP _spEDM_RcppSLMUni4Lattice(SEXP vecSEXP, SEXP nbSEXP, SEXP kSEXP, SEXP stepSEXP, SEXP alphaSEXP, SEXP escape_thresholdSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
@@ -659,7 +618,6 @@ Rcpp::List RcppSLMBi4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVe
 RcppExport SEXP _spEDM_RcppSLMBi4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP kSEXP, SEXP stepSEXP, SEXP alpha_xSEXP, SEXP alpha_ySEXP, SEXP beta_xySEXP, SEXP beta_yxSEXP, SEXP escape_thresholdSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
@@ -679,7 +637,6 @@ Rcpp::List RcppSLMTri4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericV
 RcppExport SEXP _spEDM_RcppSLMTri4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP zSEXP, SEXP nbSEXP, SEXP kSEXP, SEXP stepSEXP, SEXP alpha_xSEXP, SEXP alpha_ySEXP, SEXP alpha_zSEXP, SEXP beta_xySEXP, SEXP beta_xzSEXP, SEXP beta_yxSEXP, SEXP beta_yzSEXP, SEXP beta_zxSEXP, SEXP beta_zySEXP, SEXP escape_thresholdSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type z(zSEXP);
@@ -705,7 +662,6 @@ Rcpp::NumericVector RcppFNN4Lattice(const Rcpp::NumericVector& vec, const Rcpp::
 RcppExport SEXP _spEDM_RcppFNN4Lattice(SEXP vecSEXP, SEXP nbSEXP, SEXP rtSEXP, SEXP epsSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type rt(rtSEXP);
@@ -724,7 +680,6 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& source, const
 RcppExport SEXP _spEDM_RcppSimplex4Lattice(SEXP sourceSEXP, SEXP targetSEXP, SEXP nbSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP bSEXP, SEXP tauSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type source(sourceSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type target(targetSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
@@ -743,7 +698,6 @@ Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& source, const Rc
 RcppExport SEXP _spEDM_RcppSMap4Lattice(SEXP sourceSEXP, SEXP targetSEXP, SEXP nbSEXP, SEXP libSEXP, SEXP predSEXP, SEXP thetaSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type source(sourceSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type target(targetSEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
@@ -763,7 +717,6 @@ Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x, const Rc
 RcppExport SEXP _spEDM_RcppMultiView4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP topSEXP, SEXP nvarSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type x(xSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
@@ -784,7 +737,6 @@ Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x, const Rcpp::N
 RcppExport SEXP _spEDM_RcppGCCM4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP libsizesSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP simplexSEXP, SEXP thetaSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
@@ -808,7 +760,6 @@ Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x, const Rcpp::
 RcppExport SEXP _spEDM_RcppSCPCM4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP zSEXP, SEXP nbSEXP, SEXP libsizesSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP simplexSEXP, SEXP thetaSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP, SEXP cumulateSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type z(zSEXP);
@@ -834,7 +785,6 @@ Rcpp::NumericMatrix RcppGCMC4Lattice(const Rcpp::NumericVector& x, const Rcpp::N
 RcppExport SEXP _spEDM_RcppGCMC4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP max_rSEXP, SEXP threadsSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
@@ -855,7 +805,6 @@ Rcpp::NumericVector RcppSGCSingle4Lattice(const Rcpp::NumericVector& x, const Rc
 RcppExport SEXP _spEDM_RcppSGCSingle4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP libSEXP, SEXP predSEXP, SEXP kSEXP, SEXP baseSEXP, SEXP symbolizeSEXP, SEXP normalizeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
@@ -874,7 +823,6 @@ Rcpp::NumericVector RcppSGC4Lattice(const Rcpp::NumericVector& x, const Rcpp::Nu
 RcppExport SEXP _spEDM_RcppSGC4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP libSEXP, SEXP predSEXP, SEXP blockSEXP, SEXP kSEXP, SEXP threadsSEXP, SEXP bootSEXP, SEXP baseSEXP, SEXP seedSEXP, SEXP symbolizeSEXP, SEXP normalizeSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
@@ -898,7 +846,6 @@ int RcppFactorial(int n);
 RcppExport SEXP _spEDM_RcppFactorial(SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppFactorial(n));
     return rcpp_result_gen;
@@ -909,7 +856,6 @@ double RcppCombine(int n, int k);
 RcppExport SEXP _spEDM_RcppCombine(SEXP nSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppCombine(n, k));
@@ -921,7 +867,6 @@ Rcpp::List RcppCombn(const Rcpp::RObject& vec, int m);
 RcppExport SEXP _spEDM_RcppCombn(SEXP vecSEXP, SEXP mSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::RObject& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< int >::type m(mSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppCombn(vec, m));
@@ -933,7 +878,6 @@ Rcpp::List RcppGenSubsets(const Rcpp::RObject& vec);
 RcppExport SEXP _spEDM_RcppGenSubsets(SEXP vecSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::RObject& >::type vec(vecSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppGenSubsets(vec));
     return rcpp_result_gen;
@@ -944,7 +888,6 @@ double RcppDigamma(double x);
 RcppExport SEXP _spEDM_RcppDigamma(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< double >::type x(xSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppDigamma(x));
     return rcpp_result_gen;
@@ -955,7 +898,6 @@ double RcppLog(double x, double base);
 RcppExport SEXP _spEDM_RcppLog(SEXP xSEXP, SEXP baseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< double >::type x(xSEXP);
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppLog(x, base));
@@ -967,7 +909,6 @@ double RcppMedian(const Rcpp::NumericVector& vec, bool NA_rm);
 RcppExport SEXP _spEDM_RcppMedian(SEXP vecSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppMedian(vec, NA_rm));
@@ -979,7 +920,6 @@ double RcppMean(const Rcpp::NumericVector& vec, bool NA_rm);
 RcppExport SEXP _spEDM_RcppMean(SEXP vecSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppMean(vec, NA_rm));
@@ -991,7 +931,6 @@ double RcppMin(const Rcpp::NumericVector& vec, bool NA_rm);
 RcppExport SEXP _spEDM_RcppMin(SEXP vecSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppMin(vec, NA_rm));
@@ -1003,7 +942,6 @@ double RcppMax(const Rcpp::NumericVector& vec, bool NA_rm);
 RcppExport SEXP _spEDM_RcppMax(SEXP vecSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppMax(vec, NA_rm));
@@ -1015,7 +953,6 @@ double RcppSum(const Rcpp::NumericVector& vec, bool NA_rm);
 RcppExport SEXP _spEDM_RcppSum(SEXP vecSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppSum(vec, NA_rm));
@@ -1027,7 +964,6 @@ double RcppVariance(const Rcpp::NumericVector& vec, bool NA_rm);
 RcppExport SEXP _spEDM_RcppVariance(SEXP vecSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppVariance(vec, NA_rm));
@@ -1039,7 +975,6 @@ double RcppCovariance(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector
 RcppExport SEXP _spEDM_RcppCovariance(SEXP vec1SEXP, SEXP vec2SEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec1(vec1SEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec2(vec2SEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
@@ -1052,7 +987,6 @@ double RcppMAE(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2,
 RcppExport SEXP _spEDM_RcppMAE(SEXP vec1SEXP, SEXP vec2SEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec1(vec1SEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec2(vec2SEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
@@ -1065,7 +999,6 @@ double RcppRMSE(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2
 RcppExport SEXP _spEDM_RcppRMSE(SEXP vec1SEXP, SEXP vec2SEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec1(vec1SEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec2(vec2SEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
@@ -1078,7 +1011,6 @@ Rcpp::NumericVector RcppCumSum(const Rcpp::NumericVector& vec);
 RcppExport SEXP _spEDM_RcppCumSum(SEXP vecSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppCumSum(vec));
     return rcpp_result_gen;
@@ -1089,7 +1021,6 @@ Rcpp::NumericVector RcppAbsDiff(const Rcpp::NumericVector& vec1, const Rcpp::Num
 RcppExport SEXP _spEDM_RcppAbsDiff(SEXP vec1SEXP, SEXP vec2SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec1(vec1SEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec2(vec2SEXP);
     rcpp_result_gen = Rcpp::wrap(RcppAbsDiff(vec1, vec2));
@@ -1101,7 +1032,6 @@ Rcpp::NumericVector RcppSumNormalize(const Rcpp::NumericVector& vec, bool NA_rm)
 RcppExport SEXP _spEDM_RcppSumNormalize(SEXP vecSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppSumNormalize(vec, NA_rm));
@@ -1113,7 +1043,6 @@ Rcpp::NumericVector RcppArithmeticSeq(double from, double to, int length_out);
 RcppExport SEXP _spEDM_RcppArithmeticSeq(SEXP fromSEXP, SEXP toSEXP, SEXP length_outSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< double >::type from(fromSEXP);
     Rcpp::traits::input_parameter< double >::type to(toSEXP);
     Rcpp::traits::input_parameter< int >::type length_out(length_outSEXP);
@@ -1126,7 +1055,6 @@ double RcppPearsonCor(const Rcpp::NumericVector& y, const Rcpp::NumericVector& y
 RcppExport SEXP _spEDM_RcppPearsonCor(SEXP ySEXP, SEXP y_hatSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y_hat(y_hatSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
@@ -1139,7 +1067,6 @@ double RcppSpearmanCor(const Rcpp::NumericVector& y, const Rcpp::NumericVector& 
 RcppExport SEXP _spEDM_RcppSpearmanCor(SEXP ySEXP, SEXP y_hatSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y_hat(y_hatSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
@@ -1152,7 +1079,6 @@ double RcppKendallCor(const Rcpp::NumericVector& y, const Rcpp::NumericVector& y
 RcppExport SEXP _spEDM_RcppKendallCor(SEXP ySEXP, SEXP y_hatSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y_hat(y_hatSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
@@ -1165,7 +1091,6 @@ double RcppPartialCor(const Rcpp::NumericVector& y, const Rcpp::NumericVector& y
 RcppExport SEXP _spEDM_RcppPartialCor(SEXP ySEXP, SEXP y_hatSEXP, SEXP controlsSEXP, SEXP NA_rmSEXP, SEXP linearSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y_hat(y_hatSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type controls(controlsSEXP);
@@ -1180,7 +1105,6 @@ double RcppPartialCorTrivar(const Rcpp::NumericVector& y, const Rcpp::NumericVec
 RcppExport SEXP _spEDM_RcppPartialCorTrivar(SEXP ySEXP, SEXP y_hatSEXP, SEXP controlSEXP, SEXP NA_rmSEXP, SEXP linearSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y_hat(y_hatSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type control(controlSEXP);
@@ -1195,7 +1119,6 @@ double RcppCorSignificance(double r, int n, int k);
 RcppExport SEXP _spEDM_RcppCorSignificance(SEXP rSEXP, SEXP nSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< double >::type r(rSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
@@ -1208,7 +1131,6 @@ Rcpp::NumericVector RcppCorConfidence(double r, int n, int k, double level);
 RcppExport SEXP _spEDM_RcppCorConfidence(SEXP rSEXP, SEXP nSEXP, SEXP kSEXP, SEXP levelSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< double >::type r(rSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
@@ -1222,7 +1144,6 @@ Rcpp::NumericVector RcppDeLongAUCConfidence(const Rcpp::NumericVector& cases, co
 RcppExport SEXP _spEDM_RcppDeLongAUCConfidence(SEXP casesSEXP, SEXP controlsSEXP, SEXP directionSEXP, SEXP levelSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type cases(casesSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type controls(controlsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type direction(directionSEXP);
@@ -1236,7 +1157,6 @@ Rcpp::NumericVector RcppCMCTest(const Rcpp::NumericVector& cases, const Rcpp::Ch
 RcppExport SEXP _spEDM_RcppCMCTest(SEXP casesSEXP, SEXP directionSEXP, SEXP levelSEXP, SEXP num_samplesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type cases(casesSEXP);
     Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type direction(directionSEXP);
     Rcpp::traits::input_parameter< double >::type level(levelSEXP);
@@ -1250,7 +1170,6 @@ double RcppDistance(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& 
 RcppExport SEXP _spEDM_RcppDistance(SEXP vec1SEXP, SEXP vec2SEXP, SEXP L1normSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec1(vec1SEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec2(vec2SEXP);
     Rcpp::traits::input_parameter< bool >::type L1norm(L1normSEXP);
@@ -1264,7 +1183,6 @@ Rcpp::NumericVector RcppKNearestDistance(const Rcpp::NumericVector& vec1, int k,
 RcppExport SEXP _spEDM_RcppKNearestDistance(SEXP vec1SEXP, SEXP kSEXP, SEXP L1normSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec1(vec1SEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< bool >::type L1norm(L1normSEXP);
@@ -1278,7 +1196,6 @@ Rcpp::NumericMatrix RcppMatDistance(const Rcpp::NumericMatrix& mat, bool L1norm,
 RcppExport SEXP _spEDM_RcppMatDistance(SEXP matSEXP, SEXP L1normSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< bool >::type L1norm(L1normSEXP);
     Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
@@ -1291,7 +1208,6 @@ Rcpp::IntegerVector RcppNeighborsNum(const Rcpp::NumericVector& vec, const Rcpp:
 RcppExport SEXP _spEDM_RcppNeighborsNum(SEXP vecSEXP, SEXP radiusSEXP, SEXP equalSEXP, SEXP L1normSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type radius(radiusSEXP);
     Rcpp::traits::input_parameter< bool >::type equal(equalSEXP);
@@ -1306,7 +1222,6 @@ Rcpp::IntegerVector RcppKNNIndice(const Rcpp::NumericMatrix& embedding_space, in
 RcppExport SEXP _spEDM_RcppKNNIndice(SEXP embedding_spaceSEXP, SEXP target_idxSEXP, SEXP kSEXP, SEXP libSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type embedding_space(embedding_spaceSEXP);
     Rcpp::traits::input_parameter< int >::type target_idx(target_idxSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
@@ -1320,7 +1235,6 @@ Rcpp::IntegerVector RcppDistKNNIndice(const Rcpp::NumericMatrix& dist_mat, int t
 RcppExport SEXP _spEDM_RcppDistKNNIndice(SEXP dist_matSEXP, SEXP target_idxSEXP, SEXP kSEXP, SEXP libSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type dist_mat(dist_matSEXP);
     Rcpp::traits::input_parameter< int >::type target_idx(target_idxSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
@@ -1334,7 +1248,6 @@ Rcpp::NumericVector RcppLinearTrendRM(const Rcpp::NumericVector& vec, const Rcpp
 RcppExport SEXP _spEDM_RcppLinearTrendRM(SEXP vecSEXP, SEXP xcoordSEXP, SEXP ycoordSEXP, SEXP NA_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type xcoord(xcoordSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type ycoord(ycoordSEXP);
@@ -1348,7 +1261,6 @@ Rcpp::List RcppSVD(const Rcpp::NumericMatrix& X);
 RcppExport SEXP _spEDM_RcppSVD(SEXP XSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type X(XSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppSVD(X));
     return rcpp_result_gen;
@@ -1359,7 +1271,6 @@ Rcpp::List RcppDeLongPlacements(const Rcpp::NumericVector& cases, const Rcpp::Nu
 RcppExport SEXP _spEDM_RcppDeLongPlacements(SEXP casesSEXP, SEXP controlsSEXP, SEXP directionSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type cases(casesSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type controls(controlsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type direction(directionSEXP);
@@ -1372,7 +1283,6 @@ Rcpp::IntegerVector RcppSpatialBlockBootstrap(const Rcpp::IntegerVector& block, 
 RcppExport SEXP _spEDM_RcppSpatialBlockBootstrap(SEXP blockSEXP, SEXP seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type block(blockSEXP);
     Rcpp::traits::input_parameter< unsigned int >::type seed(seedSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppSpatialBlockBootstrap(block, seed));

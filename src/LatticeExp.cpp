@@ -47,7 +47,7 @@ std::vector<std::vector<int>> nb2vec(const Rcpp::List& nb) {
 }
 
 // Wrapper function to calculate accumulated lagged neighbor indices for spatial lattice data
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 Rcpp::List RcppLaggedNeighbor4Lattice(const Rcpp::List& nb, int lagNum) {
   int n = nb.size();
 
@@ -77,7 +77,7 @@ Rcpp::List RcppLaggedNeighbor4Lattice(const Rcpp::List& nb, int lagNum) {
 }
 
 // Wrapper function to calculate lagged values for spatial lattice data
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 Rcpp::List RcppLaggedVal4Lattice(const Rcpp::NumericVector& vec,
                                  const Rcpp::List& nb, int lagNum) {
   int n = nb.size();
@@ -101,7 +101,7 @@ Rcpp::List RcppLaggedVal4Lattice(const Rcpp::NumericVector& vec,
 }
 
 // Wrapper function to generate embeddings for spatial lattice data
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec,
                                              const Rcpp::List& nb,
                                              int E,
@@ -129,7 +129,7 @@ Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec,
 }
 
 // Wrapper function to generate neighbors for spatial lattice data
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 Rcpp::List RcppGenLatticeNeighbors(const Rcpp::NumericVector& vec,
                                    const Rcpp::List& nb,
                                    const Rcpp::IntegerVector& lib,
@@ -175,7 +175,7 @@ Rcpp::List RcppGenLatticeNeighbors(const Rcpp::NumericVector& vec,
 }
 
 // Wrapper function to implement a symbolic transformation of a univariate spatial lattice data
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 Rcpp::NumericVector RcppGenLatticeSymbolization(const Rcpp::NumericVector& vec,
                                                 const Rcpp::List& nb,
                                                 const Rcpp::IntegerVector& lib,
@@ -220,7 +220,7 @@ Rcpp::NumericVector RcppGenLatticeSymbolization(const Rcpp::NumericVector& vec,
 }
 
 // Wrapper function to partition spatial units in spatial lattice data
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 Rcpp::IntegerVector RcppDivideLattice(const Rcpp::List& nb,int b) {
   // Convert Rcpp::List to std::vector<std::vector<int>>
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
@@ -233,7 +233,7 @@ Rcpp::IntegerVector RcppDivideLattice(const Rcpp::List& nb,int b) {
 }
 
 // Wrapper function to perform univariate Spatial Logistic Map for spatial lattice data
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 Rcpp::NumericMatrix RcppSLMUni4Lattice(
     const Rcpp::NumericVector& vec,
     const Rcpp::List& nb,
@@ -267,7 +267,7 @@ Rcpp::NumericMatrix RcppSLMUni4Lattice(
 }
 
 // Wrapper function to perform bivariate Spatial Logistic Map for spatial lattice data
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 Rcpp::List RcppSLMBi4Lattice(
     const Rcpp::NumericVector& x,
     const Rcpp::NumericVector& y,
@@ -316,7 +316,7 @@ Rcpp::List RcppSLMBi4Lattice(
 }
 
 // Wrapper function to perform trivariate Spatial Logistic Map for spatial lattice data
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 Rcpp::List RcppSLMTri4Lattice(
     const Rcpp::NumericVector& x,
     const Rcpp::NumericVector& y,
@@ -378,7 +378,7 @@ Rcpp::List RcppSLMTri4Lattice(
 }
 
 // Wrapper function to perform FNN for spatial lattice data
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 Rcpp::NumericVector RcppFNN4Lattice(
     const Rcpp::NumericVector& vec,
     const Rcpp::List& nb,
@@ -463,7 +463,7 @@ Rcpp::NumericVector RcppFNN4Lattice(
  *   - MAE: The mean absolute error between the predicted and actual values.
  *   - RMSE: The root mean squared error between the predicted and actual values.
  */
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& source,
                                         const Rcpp::NumericVector& target,
                                         const Rcpp::List& nb,
@@ -560,7 +560,7 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& source,
  *
  * This function utilizes parallel processing for faster computation across different values of theta.
  */
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& source,
                                      const Rcpp::NumericVector& target,
                                      const Rcpp::List& nb,
@@ -653,7 +653,7 @@ Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& source,
  * Returns:
  * - An Rcpp::NumericVector containing the prediction results based on the multiview embedding.
  */
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
                                           const Rcpp::NumericVector& y,
                                           const Rcpp::List& nb,
@@ -773,7 +773,7 @@ Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
 
 // Wrapper function to perform GCCM for spatial lattice data
 // predict y based on x ====> x xmap y ====> y causes x
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,
                                      const Rcpp::NumericVector& y,
                                      const Rcpp::List& nb,
@@ -855,7 +855,7 @@ Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,
 
 // Wrapper function to perform SCPCM for spatial lattice data
 // predict y based on x ====> x xmap y ====> y causes x (account for controls)
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x,
                                       const Rcpp::NumericVector& y,
                                       const Rcpp::NumericMatrix& z,
@@ -955,7 +955,7 @@ Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x,
 }
 
 // Wrapper function to perform GCMC for spatial lattice data
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 Rcpp::NumericMatrix RcppGCMC4Lattice(
     const Rcpp::NumericVector& x,
     const Rcpp::NumericVector& y,
@@ -1037,7 +1037,7 @@ Rcpp::NumericMatrix RcppGCMC4Lattice(
 }
 
 // Wrapper function to perform SGC for spatial lattice data without bootstrapped significance
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 Rcpp::NumericVector RcppSGCSingle4Lattice(const Rcpp::NumericVector& x,
                                           const Rcpp::NumericVector& y,
                                           const Rcpp::List& nb,
@@ -1101,7 +1101,7 @@ Rcpp::NumericVector RcppSGCSingle4Lattice(const Rcpp::NumericVector& x,
 }
 
 // Wrapper function to perform SGC for spatial lattice data
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 Rcpp::NumericVector RcppSGC4Lattice(const Rcpp::NumericVector& x,
                                     const Rcpp::NumericVector& y,
                                     const Rcpp::List& nb,
