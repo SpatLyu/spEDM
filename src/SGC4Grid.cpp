@@ -1,4 +1,5 @@
 #include <vector>
+#include <cstdint>
 #include "CppGridUtils.h"
 #include "Entropy.h"
 #include "SpatialBlockBootstrap.h"
