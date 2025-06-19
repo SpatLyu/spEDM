@@ -195,6 +195,23 @@ std::vector<double> SGC4Lattice(
 ){
   std::vector<std::vector<double>> sc_bootstraps(boot);
 
+  // // Previous implementation may cause spurious correlations during randomization process
+  // auto monte_boots = [&](int n){
+  //   // Use different seed for each iteration to ensure different random samples
+  //   unsigned int current_seed = seed + n;
+  //   // Generate a spatial block bootstrap resample of indices
+  //   std::vector<int> boot_indice = SpatialBlockBootstrap(block,current_seed);
+  //   // Obtain the bootstrapped realization series
+  //   std::vector<double> x_boot(x.size());
+  //   std::vector<double> y_boot(y.size());
+  //   for (size_t i = 0; i < boot_indice.size(); ++i){
+  //     x_boot[i] = x[boot_indice[i]];
+  //     y_boot[i] = y[boot_indice[i]];
+  //   }
+  //   // Estimate the bootstrapped realization of the spatial granger causality statistic
+  //   sc_bootstraps[n] = SGCSingle4Lattice(x_boot,y_boot,nb,lib,pred,static_cast<size_t>(std::abs(k)),base,symbolize,normalize);
+  // };
+
   // Prebuild RNG pool with seed sequence
   std::vector<std::mt19937> rng_pool(boot);
   for (int i = 0; i < boot; ++i) {

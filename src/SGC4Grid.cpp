@@ -190,11 +190,37 @@ std::vector<double> SGC4Grid(
 
   const size_t rows = x.size();
   const size_t cols = x[0].size();
+
+  // // Previous implementation may cause spurious correlations during randomization process
+  // auto monte_boots = [&](int n){
+  //   // Use different seed for each iteration to ensure different random samples
+  //   unsigned int current_seed = seed + n;
+  //   // Generate a spatial block bootstrap resample of indices
+  //   std::vector<int> boot_indice = SpatialBlockBootstrap(block,current_seed);
+  //   // Obtain the bootstrapped realization series
+  //   std::vector<double> x_bs(boot_indice.size());
+  //   std::vector<double> y_bs(boot_indice.size());
+  //   for (size_t i = 0; i < boot_indice.size(); ++i){
+  //     std::vector<int> cellindice = RowColFromGrid(i,cols);
+  //     x_bs[i] = x[cellindice[0]][cellindice[1]];
+  //     y_bs[i] = y[cellindice[0]][cellindice[1]];
+  //   }
+  //   std::vector<std::vector<double>> x_boot = GridVec2Mat(x_bs,static_cast<int>(rows));
+  //   std::vector<std::vector<double>> y_boot = GridVec2Mat(y_bs,static_cast<int>(rows));
+  //   // Estimate the bootstrapped realization of the spatial granger causality statistic
+  //   sc_bootstraps[n] = SGCSingle4Grid(x_boot,y_boot,lib,pred,static_cast<size_t>(std::abs(k)),base,symbolize,normalize);
+  // };
+
+  // Prebuild RNG pool with seed sequence
+  std::vector<std::mt19937> rng_pool(boot);
+  for (int i = 0; i < boot; ++i) {
+    std::seed_seq seq{static_cast<uint32_t>(seed), static_cast<uint32_t>(i)};
+    rng_pool[i] = std::mt19937(seq);
+  }
+
   auto monte_boots = [&](int n){
-    // Use different seed for each iteration to ensure different random samples
-    unsigned int current_seed = seed + n;
-    // Generate a spatial block bootstrap resample of indices
-    std::vector<int> boot_indice = SpatialBlockBootstrap(block,current_seed);
+    // Use prebuilt rng instance
+    std::vector<int> boot_indice = SpatialBlockBootstrapRNG(block, rng_pool[n]);
     // Obtain the bootstrapped realization series
     std::vector<double> x_bs(boot_indice.size());
     std::vector<double> y_bs(boot_indice.size());
