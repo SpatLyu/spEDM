@@ -20,6 +20,8 @@ This release introduces new modeling capabilities, streamlined method infrastruc
 
 * **Breaking changes**:
 
+  * Refined randomization strategy in spatial causality test.
+
   * C++ symbolization functions now compute medians using only the `lib` subset, ensuring consistency with library-based inference.
 
   * The argument `trend.rm` has been renamed to `detrend` for improved naming consistency.
