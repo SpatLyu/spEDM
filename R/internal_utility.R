@@ -172,8 +172,8 @@
   return(res)
 }
 
-.bind_xmapself = \(x,varname,...){
-  res = list("xmap" = x,"varname" = varname)
+.bind_xmapself = \(x,varname,tau = NULL, ...){
+  res = list("xmap" = x,"varname" = varname, "tau" = tau)
   class(res) = "xmap_self"
   return(res)
 }

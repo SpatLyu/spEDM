@@ -6,7 +6,7 @@
   if (is.null(pred)) pred = lib
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   res = RcppSimplex4Lattice(vx,vy,nb,lib,pred,E,k,tau,threads)
-  return(.bind_xmapself(res,target))
+  return(.bind_xmapself(res,target,tau))
 }
 
 .simplex_spatraster_method = \(data,column,target,lib = NULL,pred = NULL,E = 1:10,tau = 1,
@@ -16,7 +16,7 @@
   if (is.null(lib)) lib = which(!(is.na(mx) | is.na(my)), arr.ind = TRUE)
   if (is.null(pred)) pred = lib
   res = RcppSimplex4Grid(mx,my,lib,pred,E,k,tau,threads)
-  return(.bind_xmapself(res,target))
+  return(.bind_xmapself(res,target,tau))
 }
 
 #' simplex forecast
