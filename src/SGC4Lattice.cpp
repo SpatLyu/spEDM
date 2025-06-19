@@ -193,30 +193,37 @@ std::vector<double> SGC4Lattice(
     bool normalize = false,
     bool progressbar = true
 ){
-  // Initialize the bootstrapped realizations of the spatial granger causality statistic
   std::vector<std::vector<double>> sc_bootstraps(boot);
 
+  // Prebuild RNG pool with seed sequence
+  std::vector<std::mt19937> rng_pool(boot);
+  for (int i = 0; i < boot; ++i) {
+    std::seed_seq seq{static_cast<uint32_t>(seed), static_cast<uint32_t>(i)};
+    rng_pool[i] = std::mt19937(seq);
+  }
+
   auto monte_boots = [&](int n){
-    // Use different seed for each iteration to ensure different random samples
-    unsigned int current_seed = seed + n;
-    // Generate a spatial block bootstrap resample of indices
-    std::vector<int> boot_indice = SpatialBlockBootstrap(block,current_seed);
-    // Obtain the bootstrapped realization series
-    std::vector<double> x_boot(x.size());
-    std::vector<double> y_boot(y.size());
+    // Use prebuilt rng instance
+    std::vector<int> boot_indice = SpatialBlockBootstrapRNG(block, rng_pool[n]);
+
+    std::vector<double> x_boot(x.size()), y_boot(y.size());
     for (size_t i = 0; i < boot_indice.size(); ++i){
       x_boot[i] = x[boot_indice[i]];
       y_boot[i] = y[boot_indice[i]];
     }
-    // Estimate the bootstrapped realization of the spatial granger causality statistic
-    sc_bootstraps[n] = SGCSingle4Lattice(x_boot,y_boot,nb,lib,pred,static_cast<size_t>(std::abs(k)),base,symbolize,normalize);
+
+    sc_bootstraps[n] = SGCSingle4Lattice(
+      x_boot, y_boot, nb, lib, pred,
+      static_cast<size_t>(std::abs(k)), base,
+      symbolize, normalize
+    );
   };
 
   // Configure threads
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
-  // Parallel computation with or without a progress bar
+  // Parallel execution with progress bar if enabled
   if (progressbar) {
     RcppThread::ProgressBar bar(boot, 1);
     RcppThread::parallelFor(0, boot, [&](int i) {
@@ -224,26 +231,22 @@ std::vector<double> SGC4Lattice(
       bar++;
     }, threads_sizet);
   } else {
-    RcppThread::parallelFor(0, boot, [&](int i) {
-      monte_boots(i);
-    }, threads_sizet);
+    RcppThread::parallelFor(0, boot, monte_boots, threads_sizet);
   }
 
-  // The "true" spatial granger causality statistic
-  std::vector<double> sc = SGCSingle4Lattice(x,y,nb,lib,pred,static_cast<size_t>(std::abs(k)),base,symbolize,normalize);
-  double scx = sc[0];
-  double scy = sc[1];
-  // Compute the estimated bootstrap p–value
-  double b_xy = 0;
-  double b_yx = 0;
+  // Compute the original statistic (non-bootstrapped)
+  std::vector<double> sc = SGCSingle4Lattice(
+    x, y, nb, lib, pred,
+    static_cast<size_t>(std::abs(k)), base,
+    symbolize, normalize
+  );
+
+  double scx = sc[0], scy = sc[1];
+  double b_xy = 0, b_yx = 0;
   for (size_t i = 0; i < sc_bootstraps.size(); ++i){
-    if (sc_bootstraps[i][0] > scx){
-      b_xy += 1;
-    }
-    if (sc_bootstraps[i][1] > scy) {
-      b_yx += 1;
-    }
+    if (sc_bootstraps[i][0] > scx) ++b_xy;
+    if (sc_bootstraps[i][1] > scy) ++b_yx;
   }
 
-  return {scx,b_xy / boot,scy,b_yx / boot};
+  return {scx, b_xy / boot, scy, b_yx / boot};
 }
