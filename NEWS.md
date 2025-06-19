@@ -16,6 +16,8 @@
 
 ### breaking changes
 
+* Refine randomization strategy in spatial causality test (#643).
+
 * Symbolization `C++` functions now compute medians from lib subset only (#599).
 
 * Users must now use `detrend` instead of `trend.rm` (#559).
