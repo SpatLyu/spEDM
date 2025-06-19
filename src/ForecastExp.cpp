@@ -22,7 +22,7 @@
  *
  * Returns: A Rcpp::NumericVector containing the predicted target values.
  */
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 Rcpp::NumericVector RcppSimplexForecast(
     const Rcpp::NumericMatrix& embedding,
     const Rcpp::NumericVector& target,
@@ -89,7 +89,7 @@ Rcpp::NumericVector RcppSimplexForecast(
  *
  * Returns: A Rcpp::NumericVector containing the predicted target values.
  */
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 Rcpp::NumericVector RcppSMapForecast(
     const Rcpp::NumericMatrix& embedding,
     const Rcpp::NumericVector& target,
@@ -163,7 +163,7 @@ Rcpp::NumericVector RcppSMapForecast(
  * Returns:
  *   A NumericVector containing the intersection cardinality scores.
  */
-// [[Rcpp::export]]
+// [[Rcpp::export(rng = false)]]
 Rcpp::NumericVector RcppIntersectionCardinality(
     const Rcpp::NumericMatrix& embedding_x,
     const Rcpp::NumericMatrix& embedding_y,
