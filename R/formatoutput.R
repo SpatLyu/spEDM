@@ -57,7 +57,7 @@ print.pcm_res = \(x,...){
 #' print xmap_self result
 #' @noRd
 #' @export
-print.xmap_self = \(x, ...){
+print.xmap_self = \(x,...){
   res = x$xmap
   if (ncol(res) == 5){
     outres = OptEmbedDim(res)
