@@ -30,8 +30,9 @@
 #'
 #' @return A list
 #' \describe{
-#' \item{\code{xmap}}{self mapping prediction results}
+#' \item{\code{xmap}}{forecast results}
 #' \item{\code{varname}}{name of target variable}
+#' \item{\code{tau}}{step of time lag}
 #' }
 #' @export
 #' @name simplex
