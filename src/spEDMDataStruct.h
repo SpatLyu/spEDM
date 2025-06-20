@@ -15,6 +15,18 @@ struct PartialCorRes {
   PartialCorRes(int f, double s, double t) : first(f), second(s), third(t) {}
 };
 
+struct IntersectionRes {
+  int libsize;
+  std::vector<double> Intersection;
+
+  // Default constructor
+  IntersectionRes() : libsize(0), Intersection() {}
+
+  // Parameterized constructor
+  IntersectionRes(int t, const std::vector<double>& x)
+    : libsize(t), Intersection(x) {}
+};
+
 struct DeLongPlacementsRes {
   double theta;
   std::vector<double> X;

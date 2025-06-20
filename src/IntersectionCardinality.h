@@ -6,10 +6,48 @@
 #include <algorithm>
 #include <numeric>
 #include <limits>
-#include <utility>
 #include <unordered_set>
+#include <unordered_map>
 #include "CppStats.h"
+#include "spEDMDataStruct.h"
 #include <RcppThread.h>
+
+/**
+ * Computes intersection-based mapping ratio sequences between two neighbor graphs
+ * for use in Cross Mapping Cardinality (CMC) or similar causal inference frameworks.
+ *
+ * Parameters:
+ *   neighborsX     - Precomputed sorted neighbor indices for embedding X
+ *   neighborsY     - Precomputed sorted neighbor indices for embedding Y
+ *   lib_size       - Size of the moving library used in mapping
+ *   lib_indices    - Global indices from which to draw the sliding libraries
+ *   pred_indices   - Indices at which to perform prediction (evaluation points)
+ *   num_neighbors  - Number of neighbors used for mapping (after exclusion)
+ *   n_excluded     - Number of nearest neighbors to exclude from the front
+ *   threads        - Number of parallel threads for computation
+ *   parallel_level - Whether to use multithreaded (0) or serial (1) mode
+ *
+ * Returns:
+ *   A vector of IntersectionRes structures, each containing the average intersection
+ *   ratio sequence (IC curve) for a different starting point of the moving library.
+ *   If lib_size == lib_indices.size(), returns a single result using full library.
+ *
+ * Notes:
+ *   - Neighbor lists must use std::numeric_limits<size_t>::max() to indicate invalid entries.
+ *   - This function assumes that the neighbor vectors are sorted by ascending distance.
+ *   - Use in combination with AUC computation to assess causal strength.
+ */
+std::vector<IntersectionRes> IntersectionCardinalitySingle(
+    const std::vector<std::vector<size_t>>& neighborsX,
+    const std::vector<std::vector<size_t>>& neighborsY,
+    int lib_size,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
+    size_t num_neighbors,
+    size_t n_excluded,
+    size_t threads,
+    int parallel_level
+);
 
 /*
  * Computes the Intersection Cardinality (IC) scores
