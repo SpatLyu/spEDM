@@ -936,6 +936,9 @@ std::vector<double> CppCMCTest(const std::vector<double>& cases,
 
   // Compute area AUC using trapezoidal integration
   double area_auc = 0.0;
+  // for (size_t i = 0; i < cases.size(); ++i) {
+  //   controls.push_back(static_cast<double>(i) / num_samples);
+  // }
   for (size_t i = 1; i < m; ++i) {
     area_auc += 0.5 * (cases[i] + cases[i - 1]) * (x[i] - x[i - 1]);
   }
@@ -965,9 +968,19 @@ std::vector<double> CppCMCTest(const std::vector<double>& cases,
   SX /= (m - 1);
   SY /= (m - 1);  // controls.size() == cases.size()
 
+  // Compute the overall variance S
   double S = SX / m + SY / m;
+
+  // Compute the Z-score for the p-value
   double z = (theta - 0.5) / std::sqrt(S);
+
+  // Compute the two-tailed p-value (AUC ≠ 0.5)
   double p_value = 2 * R::pnorm(-std::abs(z), 0.0, 1.0, true, false);
+
+  // // Compute the one-sided test (right-tailed) p-value (AUC > 0.5)
+  // // double p_value = R::pnorm(z, 0.0, 1.0, true, false);
+  // // Set theta to negative when sample size is small to mitigate sample size effect`
+  // double p_value = R::pnorm(-std::abs(z), 0.0, 1.0, true, false);
 
   // Confidence interval using DeLong variance
   double ci_lower = R::qnorm(level / 2, theta, std::sqrt(S), true, false);
