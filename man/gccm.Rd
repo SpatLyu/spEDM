@@ -52,13 +52,13 @@
 
 \item{effect}{name of effect variable.}
 
-\item{libsizes}{number of spatial units used in prediction.}
+\item{libsizes}{number of spatial units used.}
 
 \item{E}{(optional) embedding dimensions.}
 
 \item{tau}{(optional) step of spatial lags.}
 
-\item{k}{(optional) number of nearest neighbors used in prediction.}
+\item{k}{(optional) number of nearest neighbors.}
 
 \item{theta}{(optional) weighting parameter for distances, useful when \code{algorithm} is \code{smap}.}
 

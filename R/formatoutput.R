@@ -1,21 +1,24 @@
 .internal_xmapdf_print = \(x,keyname = "libsizes",significant = FALSE){
-  resdf = x[[1]]
-  bidirectional = x[[3]]
+  resdf = x$xmap
+  if (keyname != "libsizes"){
+    resdf = x$cs
+  }
+  bidirectional = x$bidirectional
   if (bidirectional){
     if (significant) {
       resdf = resdf[resdf$x_xmap_y_sig < 0.05 & resdf$y_xmap_x_sig < 0.05,
-                    c(keyname, "y_xmap_x_mean", "x_xmap_y_mean")]
+                    c(keyname, "y_xmap_x_mean", "x_xmap_y_mean"),drop = FALSE]
     } else {
-      resdf = resdf[,c(keyname, "y_xmap_x_mean", "x_xmap_y_mean")]
+      resdf = resdf[,c(keyname, "y_xmap_x_mean", "x_xmap_y_mean"),drop = FALSE]
     }
     names(resdf) = c(keyname,
                      paste0(x$varname[1], "->", x$varname[2]),
                      paste0(x$varname[2], "->", x$varname[1]))
   } else {
     if (significant) {
-      resdf = resdf[resdf$y_xmap_x_sig < 0.05,c(keyname, "y_xmap_x_mean")]
+      resdf = resdf[resdf$y_xmap_x_sig < 0.05,c(keyname, "y_xmap_x_mean"),drop = FALSE]
     } else {
-      resdf = resdf[,c(keyname, "y_xmap_x_mean")]
+      resdf = resdf[,c(keyname, "y_xmap_x_mean"),drop = FALSE]
     }
     names(resdf) = c(keyname,
                      paste0(x$varname[1], "->", x$varname[2]))
