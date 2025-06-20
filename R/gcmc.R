@@ -79,6 +79,7 @@
 #' @return A list
 #' \describe{
 #' \item{\code{xmap}}{cross mapping results}
+#' \item{\code{cs}}{causal strength}
 #' \item{\code{varname}}{names of causal and effect variable}
 #' \item{\code{bidirectional}}{whether to examine bidirectional causality}
 #' }
@@ -89,7 +90,7 @@
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 #' \donttest{
-#' g = gcmc(columbus,"hoval","crime",E = 5)
+#' g = gcmc(columbus,"hoval","crime",libsizes = seq(5,45,5),E = 5,k = 12)
 #' g
 #' }
 methods::setMethod("gcmc", "sf", .gcmc_sf_method)

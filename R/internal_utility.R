@@ -118,14 +118,23 @@
   return(res)
 }
 
-.internal_xmapdf_binding = \(varname,x_xmap_y,y_xmap_x,bidirectional,keyname = "libsizes"){
-  colnames(y_xmap_x) = c(keyname,"y_xmap_x_mean","y_xmap_x_sig",
-                         "y_xmap_x_upper","y_xmap_x_lower")
+.internal_xmapdf_binding = \(varname,x_xmap_y,y_xmap_x,bidirectional,
+                             keyname = "libsizes", only_cs = FALSE){
+  if (only_cs){
+    colnames(y_xmap_x) = c(keyname,"y_xmap_x_mean")
+  } else {
+    colnames(y_xmap_x) = c(keyname,"y_xmap_x_mean","y_xmap_x_sig",
+                           "y_xmap_x_upper","y_xmap_x_lower")
+  }
   y_xmap_x = as.data.frame(y_xmap_x)
 
   if (bidirectional){
-    colnames(x_xmap_y) = c(keyname,"x_xmap_y_mean","x_xmap_y_sig",
-                           "x_xmap_y_upper","x_xmap_y_lower")
+    if (only_cs){
+      colnames(x_xmap_y) = c(keyname,"x_xmap_y_mean")
+    } else {
+      colnames(x_xmap_y) = c(keyname,"x_xmap_y_mean","x_xmap_y_sig",
+                             "x_xmap_y_upper","x_xmap_y_lower")
+    }
     x_xmap_y = as.data.frame(x_xmap_y)
     resdf = x_xmap_y |>
       dplyr::full_join(y_xmap_x, by = keyname) |>
@@ -166,8 +175,9 @@
 }
 
 .bind_intersectdf = \(varname,x_xmap_y,y_xmap_x,bidirectional){
-  resdf = .internal_xmapdf_binding(varname,x_xmap_y,y_xmap_x,bidirectional,keyname = "neighbors")
-  res = list("xmap" = resdf, "varname" = varname, "bidirectional" = bidirectional)
+  xmapdf = .internal_xmapdf_binding(varname,x_xmap_y$xmap,y_xmap_x$xmap,bidirectional,only_cs = TRUE)
+  csdf = .internal_xmapdf_binding(varname,x_xmap_y$cs,y_xmap_x$cs,bidirectional,keyname = "neighbors")
+  res = list("xmap" = xmapdf, "cs" = csdf, "varname" = varname, "bidirectional" = bidirectional)
   class(res) = 'cmc_res'
   return(res)
 }

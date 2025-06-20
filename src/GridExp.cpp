@@ -1362,7 +1362,7 @@ Rcpp::List RcppGCMC4Grid(
 
   Rcpp::DataFrame xmap_df = Rcpp::DataFrame::create(
     Rcpp::Named("libsizes") = libs,
-    Rcpp::Named("causal_score") = aucs
+    Rcpp::Named("x_xmap_y_mean") = aucs
   );
 
   // Wrap causal_strength with names

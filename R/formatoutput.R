@@ -1,6 +1,9 @@
 .internal_xmapdf_print = \(x,keyname = "libsizes",significant = FALSE){
-  resdf = x[[1]]
-  bidirectional = x[[3]]
+  resdf = x$xmap
+  if (keyname != "libsizes"){
+    resdf = x$csdf
+  }
+  bidirectional = x$bidirectional
   if (bidirectional){
     if (significant) {
       resdf = resdf[resdf$x_xmap_y_sig < 0.05 & resdf$y_xmap_x_sig < 0.05,
