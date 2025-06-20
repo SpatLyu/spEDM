@@ -1,7 +1,7 @@
 ---
 title: "Spatial Causality Test (SCT)"
 author: "Wenbo Lv"
-date: "2025-06-17"
+date: "2025-06-20"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{SCT}
@@ -91,20 +91,20 @@ Detect spatial causality among the variables *inc*, *crime*, and *hoval* :
 # house value and crime
 sc.test(columbus, "hoval", "crime", k = 15)
 ## spatial causality test
-## hoval -> crime: statistic = 1.114, p value = 0.539
-## crime -> hoval: statistic = 1.555, p value = 0.005
+## hoval -> crime: statistic = 1.114, p value = 0.574
+## crime -> hoval: statistic = 1.555, p value = 0
 
 # household income and crime
 sc.test(columbus, "inc", "crime", k = 15)
 ## spatial causality test
-## inc -> crime: statistic = 0.739, p value = 0.965
-## crime -> inc: statistic = 0.946, p value = 0.784
+## inc -> crime: statistic = 0.739, p value = 0.975
+## crime -> inc: statistic = 0.946, p value = 0.762
 
 # household income and house value
 sc.test(columbus, "inc", "hoval", k = 15)
 ## spatial causality test
-## inc -> hoval: statistic = 1.211, p value = 0.301
-## hoval -> inc: statistic = 0.992, p value = 0.674
+## inc -> hoval: statistic = 1.211, p value = 0.311
+## hoval -> inc: statistic = 0.992, p value = 0.712
 ```
 
 ### An example of spatial grid data
