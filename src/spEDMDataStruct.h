@@ -28,4 +28,16 @@ struct DeLongPlacementsRes {
     : theta(t), X(x), Y(y) {}
 };
 
+struct IntersectionRes {
+  double libsize;
+  std::vector<double> Intersection;
+
+  // Default constructor
+  IntersectionRes() : libsize(0.0), Intersection() {}
+
+  // Parameterized constructor
+  IntersectionRes(double t, const std::vector<double>& x)
+    : libsize(t), Intersection(x) {}
+};
+
 #endif // spEDMDataStruct_H

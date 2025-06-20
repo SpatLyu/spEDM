@@ -1470,7 +1470,10 @@ std::vector<std::vector<size_t>> CppDistSortedIndice(
       }
     }
 
-    std::sort(valid_neighbors.begin(), valid_neighbors.end());
+    std::sort(valid_neighbors.begin(), valid_neighbors.end(),
+              [](const std::pair<double, size_t>& a, const std::pair<double, size_t>& b) {
+                return (a.first < b.first) || (a.first == b.first && a.second < b.second);
+              });
 
     std::vector<size_t> indices;
     for (const auto& pair : valid_neighbors) {
