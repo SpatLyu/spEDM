@@ -158,7 +158,6 @@ Rcpp::NumericVector RcppSMapForecast(
  *   num_neighbors: An integer specifying the number of neighbors to use for cross mapping.
  *   n_excluded: An integer indicating the number of neighbors to exclude from the distance matrix.
  *   threads: The number of parallel threads to use for computation.
- *   progressbar: A boolean value specifying whether to display a progress bar during computation.
  *
  * Returns:
  *   A NumericVector containing the intersection cardinality scores.
@@ -171,8 +170,7 @@ Rcpp::NumericVector RcppIntersectionCardinality(
     const Rcpp::IntegerVector& pred,
     const int& num_neighbors,
     const int& n_excluded,
-    const int& threads,
-    const bool& progressbar){
+    const int& threads){
   // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
   std::vector<std::vector<double>> e1(embedding_x.nrow(),
                                       std::vector<double>(embedding_x.ncol()));
@@ -208,6 +206,10 @@ Rcpp::NumericVector RcppIntersectionCardinality(
     pred_indices.push_back(pred[i] - 1); // Convert to 0-based index
   }
 
+  if (lib_indices.size() > static_cast<size_t>(num_neighbors)){
+    Rcpp::stop("Library size must not exceed the number of nearest neighbors used for mapping.");
+  }
+
   // Call the IntersectionCardinality function
   std::vector<double> pred_res = IntersectionCardinality(
     e1,
@@ -216,8 +218,7 @@ Rcpp::NumericVector RcppIntersectionCardinality(
     pred_indices,
     num_neighbors,
     n_excluded,
-    threads,
-    progressbar
+    threads
   );
 
   // Convert the result back to Rcpp::NumericVector
