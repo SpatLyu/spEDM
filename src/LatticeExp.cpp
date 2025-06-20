@@ -1007,7 +1007,7 @@ Rcpp::List RcppGCMC4Lattice(
   if (b < 3 || b > validSampleNum) {
     Rcpp::stop("k cannot be less than or equal to 3 or greater than the number of non-NA values.");
   } else if (b + 1 > static_cast<int>(lib_std.size())){
-    Rcpp::stop("k cannot be less than or equal to 3 or greater than the number of non-NA values.");
+    Rcpp::stop("Please check `libsizes` or `lib`; no valid libraries available for running GCMC.");
   }
 
   // Generate embeddings

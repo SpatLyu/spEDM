@@ -1247,16 +1247,18 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
 
 // Wrapper function to perform GCMC for spatial grid data
 // [[Rcpp::export(rng = false)]]
-Rcpp::NumericMatrix RcppGCMC4Grid(
+Rcpp::List RcppGCMC4Grid(
     const Rcpp::NumericMatrix& xMatrix,
     const Rcpp::NumericMatrix& yMatrix,
+    const Rcpp::IntegerMatrix& libsizes,
     const Rcpp::IntegerMatrix& lib,
     const Rcpp::IntegerMatrix& pred,
     const Rcpp::IntegerVector& E,
     const Rcpp::IntegerVector& tau,
-    const Rcpp::IntegerVector& b,
-    const Rcpp::IntegerVector& max_r,
+    int b,
+    int r,
     int threads,
+    int parallel_level,
     bool progressbar){
   // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
   std::vector<std::vector<double>> xMatrix_cpp(xMatrix.nrow(), std::vector<double>(xMatrix.ncol()));
@@ -1281,27 +1283,26 @@ Rcpp::NumericMatrix RcppGCMC4Grid(
   // Convert Rcpp IntegerVector to std::vector<int>
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
   std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
-  std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
-  std::vector<int> maxr_std = Rcpp::as<std::vector<int>>(max_r);
-
-  // Remove values in b_std that are greater than validCellNum or less than or equal to 3
-  b_std.erase(std::remove_if(b_std.begin(), b_std.end(),
-                             [validCellNum](int x) { return x > validCellNum || x <= 3; }),
-                             b_std.end());
-
-  if (b_std.empty()) {
-    Rcpp::stop("k cannot be less than or equal to 3 or greater than the number of non-NA values.");
-  }
-
-  // Remove duplicates for b_std
-  std::sort(b_std.begin(), b_std.end());
-  b_std.erase(std::unique(b_std.begin(), b_std.end()), b_std.end());
 
   // Convert Rcpp IntegerMatrix to std::vector<int>
   int n_libcol = lib.ncol();
   int n_predcol = pred.ncol();
   int numRows = yMatrix.nrow();
   int numCols = yMatrix.ncol();
+
+  // Convert libsizes to a fundamental C++ data type
+  int libsizes_dim = libsizes.ncol();
+  std::vector<int> libsizes_std;
+  if (libsizes_dim == 1){
+    for (int i = 0; i < libsizes.nrow(); ++i) {
+      libsizes_std.push_back(libsizes(i, 0));
+    }
+  } else {
+    for (int i = 0; i < libsizes.nrow(); ++i) { // Fill all the sub-vector
+      libsizes_std.push_back(LocateGridIndices(libsizes(i, 0),libsizes(i, 1),
+                                               numRows, numCols));
+    }
+  }
 
   std::vector<int> lib_std;
   if (n_libcol == 1){
@@ -1341,25 +1342,40 @@ Rcpp::NumericMatrix RcppGCMC4Grid(
     }
   }
 
+  if (b < 3 || b > validCellNum) {
+    Rcpp::stop("k cannot be less than or equal to 3 or greater than the number of non-NA values.");
+  }
+
   // Generate embeddings
   std::vector<std::vector<double>> e1 = GenGridEmbeddings(xMatrix_cpp, E[0], tau_std[0]);
   std::vector<std::vector<double>> e2 = GenGridEmbeddings(yMatrix_cpp, E[1], tau_std[1]);
 
   // Perform GCMC for spatial grid data
-  std::vector<std::vector<double>> cs1 = CrossMappingCardinality(e1,e2,lib_std,pred_std,b_std,maxr_std,threads,0,progressbar);
+  CMCRes res = CrossMappingCardinality(e1,e2,libsizes_std,lib_std,pred_std,b,r,threads,parallel_level,progressbar);
 
-  Rcpp::NumericMatrix resultMatrix(b_std.size(), 5);
-  for (size_t i = 0; i < b_std.size(); ++i) {
-    for (size_t j = 0; j < cs1[0].size(); ++j){
-      resultMatrix(i, j) = cs1[i][j];
-    }
+  // Convert mean_aucs to Rcpp::DataFrame
+  std::vector<double> libs, aucs;
+  for (const auto& cm : res.cross_mapping) {
+    libs.push_back(cm[0]);
+    aucs.push_back(cm[1]);
   }
 
-  // Set column names for the result matrix
-  Rcpp::colnames(resultMatrix) = Rcpp::CharacterVector::create("neighbors",
-                 "x_xmap_y_mean","x_xmap_y_sig",
-                 "x_xmap_y_upper","x_xmap_y_lower");
-  return resultMatrix;
+  Rcpp::DataFrame xmap_df = Rcpp::DataFrame::create(
+    Rcpp::Named("libsizes") = libs,
+    Rcpp::Named("causal_score") = aucs
+  );
+
+  // Wrap causal_strength with names
+  Rcpp::NumericVector cs(res.causal_strength.begin(), res.causal_strength.end());
+  cs.names() = Rcpp::CharacterVector::create(
+    "neighbors", "x_xmap_y_mean", "x_xmap_y_sig",
+    "x_xmap_y_upper", "x_xmap_y_lower"
+  );
+
+  return Rcpp::List::create(
+    Rcpp::Named("xmap") = xmap_df,
+    Rcpp::Named("cs") = cs
+  );
 }
 
 // Wrapper function to perform SGC for spatial grid data without bootstrapped significance
