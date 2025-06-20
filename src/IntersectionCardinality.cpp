@@ -339,15 +339,14 @@ std::vector<double> IntersectionCardinality(
   // Parameter initialization
   const size_t k = static_cast<size_t>(num_neighbors);
   const size_t n_excluded_sizet = static_cast<size_t>(n_excluded);
-  const size_t max_r = static_cast<size_t>(num_neighbors + n_excluded); // Total number of neighbors = actual used + excluded ones
 
   // Configure threads
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   // Precompute neighbors
-  auto nx = CppDistSortedIndice(embedding_x);
-  auto ny = CppDistSortedIndice(embedding_y);
+  auto nx = CppDistSortedIndice(CppMatDistance(embedding_x, false, true));
+  auto ny = CppDistSortedIndice(CppMatDistance(embedding_y, false, true));
 
   // run cross mapping
   std::vector<IntersectionRes> res = IntersectionCardinalitySingle(
