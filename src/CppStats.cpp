@@ -924,11 +924,9 @@ std::vector<double> CppCMCTest(const std::vector<double>& cases,
   }
 
   std::vector<double> controls;
-  // for (size_t i = 0; i < cases.size(); ++i) {
-  //   controls.push_back(static_cast<double>(i) / num_samples);
-  // }
-  for (size_t i = 1; i <= cases.size(); ++i) {
-    controls.push_back(static_cast<double>(i) / num_samples);
+  for (size_t i = 0; i < cases.size(); ++i) {
+    // controls.push_back(static_cast<double>(i) / num_samples);
+    controls.push_back(static_cast<double>(i + 1) / num_samples);
   }
 
   // Compute DeLong placements
@@ -979,6 +977,98 @@ std::vector<double> CppCMCTest(const std::vector<double>& cases,
   // Return the results as a four-element vector
   return {theta, p_value, ci_upper, ci_lower};
 }
+
+// /**
+//  * Computes the AUC (via area method), p-value, and confidence interval using the DeLong method.
+//  *
+//  * @param cases A vector of scores for the cases (positive class).
+//  * @param direction A string indicating the direction of comparison (">" or "<").
+//  * @param level The confidence level, default is 0.05.
+//  * @param num_samples Number of effective sample size for the control group.
+//  *
+//  * @return A vector of four elements:
+//  *   - area_auc: AUC computed by trapezoidal rule (area method).
+//  *   - p_value: The p-value testing H0: AUC = 0.5 (via DeLong).
+//  *   - ci_upper: Upper bound of 100*(1-level)% confidence interval (via DeLong).
+//  *   - ci_lower: Lower bound of 100*(1-level)% confidence interval (via DeLong).
+//  */
+// std::vector<double> CppCMCTest(const std::vector<double>& cases,
+//                                const std::string& direction,
+//                                double level = 0.05,
+//                                size_t num_samples = 0) {
+//   size_t m = cases.size();
+//   if (m <= 1) {
+//     return {std::numeric_limits<double>::quiet_NaN(), 1.0,
+//             std::numeric_limits<double>::quiet_NaN(),
+//             std::numeric_limits<double>::quiet_NaN()};
+//   }
+//
+//   if (num_samples == 0) {
+//     num_samples = m;
+//   }
+//
+//   // === AUC via area under curve (trapezoidal rule) ===
+//   std::vector<double> x(m);
+//   for (size_t i = 0; i < m; ++i) {
+//     x[i] = static_cast<double>(i) / (m - 1);  // normalized x-axis [0,1]
+//   }
+//
+//   // Compute area AUC using trapezoidal integration
+//   double area_auc = 0.0;
+//   for (size_t i = 1; i < m; ++i) {
+//     area_auc += 0.5 * (cases[i] + cases[i - 1]) * (x[i] - x[i - 1]);
+//   }
+//
+//   // === DeLong p-value and CI ===
+//   std::vector<double> controls;
+//   // for (size_t i = 0; i < cases.size(); ++i) {
+//   //   controls.push_back(static_cast<double>(i) / num_samples);
+//   // }
+//   for (size_t i = 0; i < m; ++i) {
+//     controls.push_back(0.5 * static_cast<double>(i + 1) / num_samples);
+//   }
+//
+//   // DeLong placements
+//   DeLongPlacementsRes ret = CppDeLongPlacements(cases, controls, direction);
+//   double theta = ret.theta;
+//   std::vector<double> X = ret.X;
+//   std::vector<double> Y = ret.Y;
+//
+//   if (X.size() <= 1 || Y.size() <= 1) {
+//     return {area_auc, 1.0, std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN()};
+//   }
+//
+//   // Compute variances
+//   double SX = 0.0, SY = 0.0;
+//   for (size_t i = 0; i < m; ++i) {
+//     SX += (X[i] - theta) * (X[i] - theta);
+//     SY += (Y[i] - theta) * (Y[i] - theta);
+//   }
+//   SX /= (m - 1);
+//   SY /= (m - 1);  // controls.size() == cases.size()
+//
+//   // Compute the overall variance S
+//   double S = SX / m + SY / m;
+//
+//   // Compute the Z-score for the p-value
+//   double z = (theta - 0.5) / std::sqrt(S);
+//
+//   // Compute the two-tailed p-value (AUC ≠ 0.5)
+//   double p_value = 2 * R::pnorm(-std::abs(z), 0.0, 1.0, true, false);
+//
+//   // // Compute the one-sided test (right-tailed) p-value (AUC > 0.5)
+//   // // double p_value = R::pnorm(z, 0.0, 1.0, true, false);
+//   // // Set theta to negative when sample size is small to mitigate sample size effect`
+//   // double p_value = R::pnorm(-std::abs(z), 0.0, 1.0, true, false);
+//
+//   // Confidence interval using DeLong variance
+//   double ci_lower = R::qnorm(level / 2, theta, std::sqrt(S), true, false);
+//   double ci_upper = R::qnorm(1 - level / 2, theta, std::sqrt(S), true, false);
+//   ci_lower = std::max(0.0, ci_lower);
+//   ci_upper = std::min(1.0, ci_upper);
+//
+//   return {area_auc, p_value, ci_upper, ci_lower};
+// }
 
 // Function to compute distance between two vectors:
 double CppDistance(const std::vector<double>& vec1,

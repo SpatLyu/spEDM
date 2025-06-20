@@ -1020,7 +1020,7 @@ Rcpp::NumericMatrix RcppGCMC4Lattice(
   std::vector<std::vector<double>> e2 = GenLatticeEmbeddings(y_std, nb_vec, E[1], tau_std[1]);
 
   // Perform GCMC for spatial lattice data
-  std::vector<std::vector<double>> cs1 = CrossMappingCardinality(e1,e2,lib_std,pred_std,b_std,maxr_std,threads,progressbar);
+  std::vector<std::vector<double>> cs1 = CrossMappingCardinality(e1,e2,lib_std,pred_std,b_std,maxr_std,threads,0,progressbar);
 
   Rcpp::NumericMatrix resultMatrix(b_std.size(), 5);
   for (size_t i = 0; i < b_std.size(); ++i) {
