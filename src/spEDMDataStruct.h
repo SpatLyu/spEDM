@@ -15,6 +15,18 @@ struct PartialCorRes {
   PartialCorRes(int f, double s, double t) : first(f), second(s), third(t) {}
 };
 
+struct IntersectionRes {
+  int libsize;
+  std::vector<double> Intersection;
+
+  // Default constructor
+  IntersectionRes() : libsize(0), Intersection() {}
+
+  // Parameterized constructor
+  IntersectionRes(int t, const std::vector<double>& x)
+    : libsize(t), Intersection(x) {}
+};
+
 struct DeLongPlacementsRes {
   double theta;
   std::vector<double> X;
@@ -26,18 +38,6 @@ struct DeLongPlacementsRes {
   // Parameterized constructor
   DeLongPlacementsRes(double t, const std::vector<double>& x, const std::vector<double>& y)
     : theta(t), X(x), Y(y) {}
-};
-
-struct IntersectionRes {
-  double libsize;
-  std::vector<double> Intersection;
-
-  // Default constructor
-  IntersectionRes() : libsize(0.0), Intersection() {}
-
-  // Parameterized constructor
-  IntersectionRes(double t, const std::vector<double>& x)
-    : libsize(t), Intersection(x) {}
 };
 
 #endif // spEDMDataStruct_H

@@ -279,7 +279,7 @@ std::vector<IntersectionRes> IntersectionCardinalitySingle(
       }
 
       // Run cross map and store results
-      x_xmap_y.emplace_back(lib_size, lib_size, ICSingle(local_lib_indices));
+      x_xmap_y.emplace_back(lib_size, ICSingle(local_lib_indices));
     }
 
     return x_xmap_y;
