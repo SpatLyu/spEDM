@@ -927,8 +927,8 @@ std::vector<double> CppCMCTest(const std::vector<double>& cases,
   // for (size_t i = 0; i < cases.size(); ++i) {
   //   controls.push_back(static_cast<double>(i) / num_samples);
   // }
-  for (size_t i = 1; i <= cases.size(); ++i) {
-    controls.push_back(static_cast<double>(i) / num_samples);
+  for (size_t i = 0; i < cases.size(); ++i) {
+    controls.push_back(0.5 * static_cast<double>(i + 1) / num_samples); // theoretical AUC for H0 = 0.5
   }
 
   // Compute DeLong placements
