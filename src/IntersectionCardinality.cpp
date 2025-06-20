@@ -286,21 +286,29 @@ std::vector<IntersectionRes> IntersectionCardinalitySingle(
   }
 }
 
-/*
- * Computes the Intersection Cardinality (IC) scores
+/**
+ * Computes the Intersection Cardinality (IC) AUC-based causal strength score.
+ *
+ * This function evaluates the extent to which neighbors of the effect variable Y
+ * are preserved when mapped through the neighbors of cause variable X, by calculating
+ * the intersection ratio curve and evaluating its AUC (area under curve).
+ * Statistical significance (p-value) and confidence interval are computed via DeLong's test.
  *
  * Parameters:
- *   embedding_x: State-space reconstruction (embedded) of the potential cause variable.
- *   embedding_y: State-space reconstruction (embedded) of the potential effect variable.
- *   lib: Library index vector (1-based in R, converted to 0-based).
- *   pred: Prediction index vector (1-based in R, converted to 0-based).
- *   num_neighbors: Number of neighbors used for cross mapping (corresponding to n_neighbor in python package crossmapy).
- *   n_excluded: Number of neighbors excluded from the distance matrix (corresponding to n_excluded in python package crossmapy).
- *   threads: Number of parallel threads.
- *   progressbar: Whether to display a progress bar.
+ *   embedding_x    - State-space reconstruction (embedding) of the potential cause variable.
+ *   embedding_y    - State-space reconstruction (embedding) of the potential effect variable.
+ *   lib            - Library index vector (1-based in R, converted to 0-based).
+ *   pred           - Prediction index vector (1-based in R, converted to 0-based).
+ *   num_neighbors  - Number of neighbors used for cross mapping (after exclusion).
+ *   n_excluded     - Number of nearest neighbors to exclude (e.g. temporal).
+ *   threads        - Number of threads used in parallel computation.
  *
  * Returns:
- *   - A vector representing the intersection cardinality (IC) scores, normalized between [0, 1].
+ *   A vector of 4 values:
+ *     [0] - AUC (Intersection Cardinality score, bounded [0, 1])
+ *     [1] - p-value from DeLong test (testing whether AUC > 0.5)
+ *     [2] - Confidence interval upper bound
+ *     [3] - Confidence interval lower bound
  */
 std::vector<double> IntersectionCardinality(
     const std::vector<std::vector<double>>& embedding_x,
@@ -309,9 +317,7 @@ std::vector<double> IntersectionCardinality(
     const std::vector<int>& pred,
     int num_neighbors,
     int n_excluded,
-    int threads,
-    bool progressbar) {
-
+    int threads) {
   // Input validation
   if (embedding_x.size() != embedding_y.size() || embedding_x.empty()) {
     return {0, 1.0, std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN()};
@@ -339,80 +345,16 @@ std::vector<double> IntersectionCardinality(
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
-  // Precompute distance matrices (corresponding to _dismats in python package crossmapy)
-  auto dist_x = CppMatDistance(embedding_x, false, true);
-  auto dist_y = CppMatDistance(embedding_y, false, true);
+  // Precompute neighbors
+  auto nx = CppDistSortedIndice(embedding_x);
+  auto ny = CppDistSortedIndice(embedding_y);
 
-  // Store mapping ratio curves for each prediction point (corresponding to ratios_x2y in python package crossmapy)
-  std::vector<std::vector<double>> ratio_curves(valid_pred.size(), std::vector<double>(k, std::numeric_limits<double>::quiet_NaN()));
+  // run cross mapping
+  std::vector<IntersectionRes> res = IntersectionCardinalitySingle(
+    nx,ny,static_cast<size_t>(lib.size()),lib,pred,k,n_excluded_sizet,threads_sizet,0
+  );
 
-  // Main parallel computation logic
-  auto CMCSingle = [&](size_t i) {
-    const int idx = valid_pred[i];
+  if (res.empty()) return {0, 1.0, std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN()};
 
-    // Get the k-nearest neighbors of x (excluding the first n_excluded ones)
-    auto neighbors_x = CppDistKNNIndice(dist_x, idx, max_r, lib);
-    if (neighbors_x.size() > n_excluded_sizet) {
-      neighbors_x.erase(neighbors_x.begin(), neighbors_x.begin() + n_excluded);
-    }
-    neighbors_x.resize(k); // Keep only the k actual neighbors
-
-    // Get the k-nearest neighbors of y (excluding the first n_excluded ones)
-    auto neighbors_y = CppDistKNNIndice(dist_y, idx, max_r, lib);
-    if (neighbors_y.size() > n_excluded_sizet) {
-      neighbors_y.erase(neighbors_y.begin(), neighbors_y.begin() + n_excluded);
-    }
-    neighbors_y.resize(k); // Keep only the k actual neighbors
-
-    // Precompute y-neighbors set for fast lookup
-    std::unordered_set<size_t> y_neighbors_set(neighbors_y.begin(), neighbors_y.end());
-
-    // Retrieve y's neighbor indices by mapping x-neighbors through x->y mapping
-    std::vector<std::vector<size_t>> mapped_neighbors(embedding_x.size());
-    for (size_t nx : neighbors_x) {
-      mapped_neighbors[nx] = CppDistKNNIndice(dist_y, nx, k, lib);
-    }
-
-    // Compute intersection ratio between mapped x-neighbors and original y-neighbors
-    for (size_t ki = 0; ki < k; ++ki) {
-      size_t count = 0;
-      for (size_t nx : neighbors_x) {
-        if (ki < mapped_neighbors[nx].size()) {
-          auto& yn = mapped_neighbors[nx];
-          // Check if any of first ki+1 mapped neighbors exist in y's original neighbors
-          for (size_t pos = 0; pos <= ki && pos < yn.size(); ++pos) {
-            if (y_neighbors_set.count(yn[pos])) {
-              ++count;
-              break; // Count each x-neighbor only once if has any intersection
-            }
-          }
-        }
-      }
-      if (!neighbors_x.empty()) {
-        ratio_curves[i][ki] = static_cast<double>(count) / neighbors_x.size();
-      }
-    }
-  };
-
-  if (progressbar) {
-    // Parallel computation with a progress bar
-    RcppThread::ProgressBar bar(valid_pred.size(), 1);
-    RcppThread::parallelFor(0, valid_pred.size(), [&](size_t i) {
-      CMCSingle(i);
-      bar++;
-    }, threads_sizet);
-  } else {
-    // Parallel computation without a progress bar
-    RcppThread::parallelFor(0, valid_pred.size(), CMCSingle, threads_sizet);
-  }
-
-  std::vector<double> H1sequence;
-  for (size_t col = 0; col < k; ++col) {
-    std::vector<double> mean_intersect;
-    for (size_t row = 0; row < ratio_curves.size(); ++row){
-      mean_intersect.push_back(ratio_curves[row][col]);
-    }
-    H1sequence.push_back(CppMean(mean_intersect,true));
-  }
-  return H1sequence;
+  return CppCMCTest(res[0].Intersection,">");
 }

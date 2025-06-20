@@ -49,21 +49,29 @@ std::vector<IntersectionRes> IntersectionCardinalitySingle(
     int parallel_level
 );
 
-/*
- * Computes the Intersection Cardinality (IC) scores
+/**
+ * Computes the Intersection Cardinality (IC) AUC-based causal strength score.
+ *
+ * This function evaluates the extent to which neighbors of the effect variable Y
+ * are preserved when mapped through the neighbors of cause variable X, by calculating
+ * the intersection ratio curve and evaluating its AUC (area under curve).
+ * Statistical significance (p-value) and confidence interval are computed via DeLong's test.
  *
  * Parameters:
- *   embedding_x: State-space reconstruction (embedded) of the potential cause variable.
- *   embedding_y: State-space reconstruction (embedded) of the potential effect variable.
- *   lib: Library index vector (1-based in R, converted to 0-based).
- *   pred: Prediction index vector (1-based in R, converted to 0-based).
- *   num_neighbors: Number of neighbors used for cross mapping (corresponding to n_neighbor in python package crossmapy).
- *   n_excluded: Number of neighbors excluded from the distance matrix (corresponding to n_excluded in python package crossmapy).
- *   threads: Number of parallel threads.
- *   progressbar: Whether to display a progress bar.
+ *   embedding_x    - State-space reconstruction (embedding) of the potential cause variable.
+ *   embedding_y    - State-space reconstruction (embedding) of the potential effect variable.
+ *   lib            - Library index vector (1-based in R, converted to 0-based).
+ *   pred           - Prediction index vector (1-based in R, converted to 0-based).
+ *   num_neighbors  - Number of neighbors used for cross mapping (after exclusion).
+ *   n_excluded     - Number of nearest neighbors to exclude (e.g. temporal).
+ *   threads        - Number of threads used in parallel computation.
  *
  * Returns:
- *   - A vector representing the intersection cardinality (IC) scores, normalized between [0, 1].
+ *   A vector of 4 values:
+ *     [0] - AUC (Intersection Cardinality score, bounded [0, 1])
+ *     [1] - p-value from DeLong test (testing whether AUC > 0.5)
+ *     [2] - Confidence interval upper bound
+ *     [3] - Confidence interval lower bound
  */
 std::vector<double> IntersectionCardinality(
     const std::vector<std::vector<double>>& embedding_x,
@@ -72,7 +80,6 @@ std::vector<double> IntersectionCardinality(
     const std::vector<int>& pred,
     int num_neighbors,
     int n_excluded,
-    int threads,
-    bool progressbar);
+    int threads);
 
 #endif // IntersectionCardinality_H
