@@ -33,15 +33,15 @@ RcppConditionalEntropy_Disc <- function(mat, target_columns, conditional_columns
     .Call(`_spEDM_RcppConditionalEntropy_Disc`, mat, target_columns, conditional_columns, base, NA_rm)
 }
 
-RcppSimplexForecast <- function(embedding, target, lib, pred, num_neighbors) {
+RcppSimplexForecast <- function(embedding, target, lib, pred, num_neighbors = 4L) {
     .Call(`_spEDM_RcppSimplexForecast`, embedding, target, lib, pred, num_neighbors)
 }
 
-RcppSMapForecast <- function(embedding, target, lib, pred, num_neighbors, theta) {
+RcppSMapForecast <- function(embedding, target, lib, pred, num_neighbors = 4L, theta = 1.0) {
     .Call(`_spEDM_RcppSMapForecast`, embedding, target, lib, pred, num_neighbors, theta)
 }
 
-RcppIntersectionCardinality <- function(embedding_x, embedding_y, lib, pred, num_neighbors, n_excluded, threads) {
+RcppIntersectionCardinality <- function(embedding_x, embedding_y, lib, pred, num_neighbors = 4L, n_excluded = 0L, threads = 8L) {
     .Call(`_spEDM_RcppIntersectionCardinality`, embedding_x, embedding_y, lib, pred, num_neighbors, n_excluded, threads)
 }
 
