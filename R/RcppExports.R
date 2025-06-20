@@ -345,6 +345,10 @@ RcppDistKNNIndice <- function(dist_mat, target_idx, k, lib) {
     .Call(`_spEDM_RcppDistKNNIndice`, dist_mat, target_idx, k, lib)
 }
 
+RcppDistSortedIndice <- function(dist_mat, include_self = FALSE) {
+    .Call(`_spEDM_RcppDistSortedIndice`, dist_mat, include_self)
+}
+
 RcppLinearTrendRM <- function(vec, xcoord, ycoord, NA_rm = FALSE) {
     .Call(`_spEDM_RcppLinearTrendRM`, vec, xcoord, ycoord, NA_rm)
 }

@@ -206,7 +206,7 @@ Rcpp::NumericVector RcppIntersectionCardinality(
     pred_indices.push_back(pred[i] - 1); // Convert to 0-based index
   }
 
-  if (lib_indices.size() > static_cast<size_t>(num_neighbors)){
+  if (lib_indices.size() < static_cast<size_t>(num_neighbors)){
     Rcpp::stop("Library size must not exceed the number of nearest neighbors used for mapping.");
   }
 
