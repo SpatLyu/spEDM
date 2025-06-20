@@ -65,23 +65,9 @@
 
 #' geographical convergent cross mapping
 #'
-#' @param data observation data.
-#' @param cause name of causal variable.
-#' @param effect name of effect variable.
-#' @param libsizes number of spatial units used in prediction.
-#' @param E (optional) embedding dimensions.
-#' @param tau (optional) step of spatial lags.
-#' @param k (optional) number of nearest neighbors used in prediction.
+#' @inheritParams gcmc
 #' @param theta (optional) weighting parameter for distances, useful when `algorithm` is `smap`.
 #' @param algorithm (optional) prediction algorithm.
-#' @param lib (optional) libraries indices.
-#' @param pred (optional) predictions indices.
-#' @param nb (optional) neighbours list.
-#' @param threads (optional) number of threads to use.
-#' @param parallel.level (optional) level of parallelism, `low` or `high`.
-#' @param bidirectional (optional) whether to examine bidirectional causality.
-#' @param detrend (optional) whether to remove the linear trend.
-#' @param progressbar (optional) whether to show the progress bar.
 #'
 #' @return A list
 #' \describe{
