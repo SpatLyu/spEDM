@@ -169,6 +169,7 @@ CMCRes CrossMappingCardinality(
     if (h1.libsize == largest_libsize) {
       // Run full CppCMCTest on this intersection vector
       result_auc = CppCMCTest(h1.Intersection, ">");
+      result_auc.insert(result_auc.begin(), static_cast<double>(num_neighbors));
       break;
     }
   }
