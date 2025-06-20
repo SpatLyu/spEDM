@@ -339,7 +339,6 @@ std::vector<double> IntersectionCardinality(
   // Parameter initialization
   const size_t k = static_cast<size_t>(num_neighbors);
   const size_t n_excluded_sizet = static_cast<size_t>(n_excluded);
-  const size_t max_r = static_cast<size_t>(num_neighbors + n_excluded); // Total number of neighbors = actual used + excluded ones
 
   // Configure threads
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
