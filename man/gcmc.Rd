@@ -10,14 +10,15 @@
   data,
   cause,
   effect,
+  libsizes,
   E = 3,
   tau = 1,
-  k = NULL,
-  r = 0,
+  k = pmin(E^2),
   lib = NULL,
   pred = NULL,
   nb = NULL,
   threads = detectThreads(),
+  parallel.level = "low",
   bidirectional = TRUE,
   detrend = TRUE,
   progressbar = TRUE
@@ -27,13 +28,14 @@
   data,
   cause,
   effect,
+  libsizes,
   E = 3,
   tau = 1,
-  k = NULL,
-  r = 0,
+  k = pmin(E^2),
   lib = NULL,
   pred = NULL,
   threads = detectThreads(),
+  parallel.level = "low",
   bidirectional = TRUE,
   detrend = TRUE,
   progressbar = TRUE
@@ -46,13 +48,13 @@
 
 \item{effect}{name of effect variable.}
 
+\item{libsizes}{number of spatial units used.}
+
 \item{E}{(optional) embedding dimensions.}
 
 \item{tau}{(optional) step of spatial lags.}
 
-\item{k}{(optional) number of nearest neighbors used in intersection.}
-
-\item{r}{(optional) number of excluded neighbors in intersection.}
+\item{k}{(optional) number of nearest neighbors.}
 
 \item{lib}{(optional) libraries indices.}
 
@@ -62,9 +64,11 @@
 
 \item{threads}{(optional) number of threads to use.}
 
+\item{parallel.level}{(optional) level of parallelism, \code{low} or \code{high}.}
+
 \item{bidirectional}{(optional) whether to examine bidirectional causality.}
 
-\item{detrend}{(optional) Whether to remove the linear trend.}
+\item{detrend}{(optional) whether to remove the linear trend.}
 
 \item{progressbar}{(optional) whether to show the progress bar.}
 }
@@ -72,6 +76,7 @@
 A list
 \describe{
 \item{\code{xmap}}{cross mapping results}
+\item{\code{cs}}{causal strength}
 \item{\code{varname}}{names of causal and effect variable}
 \item{\code{bidirectional}}{whether to examine bidirectional causality}
 }
@@ -82,7 +87,7 @@ geographical cross mapping cardinality
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 \donttest{
-g = gcmc(columbus,"hoval","crime",E = 5)
+g = gcmc(columbus,"hoval","crime",libsizes = seq(5,45,5),E = 5,k = 12)
 g
 }
 }
