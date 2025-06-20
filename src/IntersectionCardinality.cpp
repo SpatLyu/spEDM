@@ -346,8 +346,8 @@ std::vector<double> IntersectionCardinality(
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   // Precompute neighbors
-  auto nx = CppDistSortedIndice(embedding_x);
-  auto ny = CppDistSortedIndice(embedding_y);
+  auto nx = CppDistSortedIndice(CppMatDistance(embedding_x, false, true));
+  auto ny = CppDistSortedIndice(CppMatDistance(embedding_y, false, true));
 
   // run cross mapping
   std::vector<IntersectionRes> res = IntersectionCardinalitySingle(

@@ -233,6 +233,7 @@ std::vector<std::vector<double>> CrossMappingCardinality(
   return results; // Return the vector of results
 }
 
+// // Previous version of CCM implementation, retained for comparison
 // #include <vector>
 // #include <cmath>
 // #include <algorithm>
