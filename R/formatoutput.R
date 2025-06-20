@@ -29,32 +29,32 @@
 #' print ccm result
 #' @noRd
 #' @export
-print.ccm_res = \(x,...){
-  print(.internal_xmapdf_print(x))
+print.ccm_res = \(x,significant = FALSE,...){
+  print(.internal_xmapdf_print(x,significant = significant))
 }
 
 #' print cmc result
 #' @noRd
 #' @export
-print.cmc_res = \(x,...){
-  print(.internal_xmapdf_print(x,"neighbors",TRUE))
+print.cmc_res = \(x,significant = FALSE,...){
+  print(.internal_xmapdf_print(x,"neighbors",significant = significant))
 }
 
 #' print pcm result
 #' @noRd
 #' @export
-print.pcm_res = \(x,...){
+print.pcm_res = \(x,significant = FALSE,...){
   pxmap = x[-2]
   xmap = x[-1]
 
   cat('-------------------------------------- \n')
   cat("***partial cross mapping prediction*** \n")
   cat('-------------------------------------- \n')
-  print(.internal_xmapdf_print(pxmap))
+  print(.internal_xmapdf_print(pxmap,significant = significant))
   cat("\n------------------------------ \n")
   cat("***cross mapping prediction*** \n")
   cat('------------------------------ \n')
-  print(.internal_xmapdf_print(xmap))
+  print(.internal_xmapdf_print(xmap,significant = significant))
 }
 
 #' print xmap_self result
@@ -95,8 +95,8 @@ plot.ccm_res = \(x, family = "serif",
                  xbreaks = NULL, xlimits = NULL,
                  ybreaks = seq(0, 1, by = 0.1),
                  ylimits = c(-0.05, 1), ...){
-  resdf = x[[1]]
-  bidirectional = x[[3]]
+  resdf = x$xmap
+  bidirectional = x$bidirectional
 
   if(is.null(xbreaks)) xbreaks = resdf$libsizes
   if(is.null(xlimits)) xlimits = c(min(xbreaks)-1,max(xbreaks)+1)
@@ -151,6 +151,17 @@ plot.ccm_res = \(x, family = "serif",
                    legend.justification = c(0.05,1),
                    legend.background = ggplot2::element_rect(fill = 'transparent'),
                    legend.text = ggplot2::element_text(family = family))
+  return(fig1)
+}
+
+#' plot cmc result
+#' @noRd
+#' @export
+plot.cmc_res = \(x, ...){
+  xmap = x[-2]
+  class(xmap) = "ccm"
+  draw_ci = FALSE
+  fig1 = plot.ccm_res(xmap,draw_ci,...)
   return(fig1)
 }
 
