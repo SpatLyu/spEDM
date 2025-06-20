@@ -28,7 +28,7 @@ Rcpp::NumericVector RcppSimplexForecast(
     const Rcpp::NumericVector& target,
     const Rcpp::IntegerVector& lib,
     const Rcpp::IntegerVector& pred,
-    const int& num_neighbors){
+    const int& num_neighbors = 4){
   // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
   std::vector<std::vector<double>> embedding_std(embedding.nrow(),
                                                  std::vector<double>(embedding.ncol()));
@@ -95,8 +95,8 @@ Rcpp::NumericVector RcppSMapForecast(
     const Rcpp::NumericVector& target,
     const Rcpp::IntegerVector& lib,
     const Rcpp::IntegerVector& pred,
-    const int& num_neighbors,
-    const double& theta){
+    const int& num_neighbors = 4,
+    const double& theta = 1.0){
   // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
   std::vector<std::vector<double>> embedding_std(embedding.nrow(),
                                                  std::vector<double>(embedding.ncol()));
@@ -168,9 +168,9 @@ Rcpp::NumericVector RcppIntersectionCardinality(
     const Rcpp::NumericMatrix& embedding_y,
     const Rcpp::IntegerVector& lib,
     const Rcpp::IntegerVector& pred,
-    const int& num_neighbors,
-    const int& n_excluded,
-    const int& threads){
+    const int& num_neighbors = 4,
+    const int& n_excluded = 0,
+    const int& threads = 8){
   // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
   std::vector<std::vector<double>> e1(embedding_x.nrow(),
                                       std::vector<double>(embedding_x.ncol()));
