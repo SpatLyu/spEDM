@@ -158,7 +158,7 @@ plot.ccm_res = \(x, family = "serif",
 #' @noRd
 #' @export
 plot.cmc_res = \(x, ...){
-  xmap = x$xmap
+  xmap = x[-2]
   class(xmap) = "ccm"
   draw_ci = FALSE
   fig1 = plot.ccm_res(xmap,draw_ci,...)
