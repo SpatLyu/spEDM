@@ -1430,6 +1430,59 @@ std::vector<size_t> CppDistKNNIndice(
   return neighbors;
 }
 
+/**
+ * Computes sorted neighbor indices for each row in a precomputed distance matrix.
+ *
+ * Parameters:
+ *   dist_mat      - Precomputed n x n distance matrix (may include NaN).
+ *   include_self  - Whether to include self (i == j) as a neighbor.
+ *
+ * Returns:
+ *   A vector of n vectors. Each subvector contains the indices of valid neighbors
+ *   (sorted by increasing distance). If a row is entirely invalid (e.g., all NaN or self is NaN),
+ *   it will be filled with `invalid_index`(std::numeric_limits<size_t>::max()).
+ */
+std::vector<std::vector<size_t>> CppDistSortedIndice(
+    const std::vector<std::vector<double>>& dist_mat,
+    bool include_self = false)
+{
+  const size_t n = dist_mat.size();
+  const size_t invalid_index = std::numeric_limits<size_t>::max();
+  std::vector<std::vector<size_t>> sorted_indices(n);
+
+  for (size_t i = 0; i < n; ++i) {
+    const auto& row = dist_mat[i];
+
+    // If self-distance is NaN or row is malformed, mark as invalid
+    if (std::isnan(row[i])) {
+      sorted_indices[i] = std::vector<size_t>(1, invalid_index);  // or empty
+      continue;
+    }
+
+    std::vector<std::pair<double, size_t>> valid_neighbors;
+
+    for (size_t j = 0; j < row.size(); ++j) {
+      if (!include_self && i == j) continue;
+
+      double d = row[j];
+      if (!std::isnan(d)) {
+        valid_neighbors.emplace_back(d, j);
+      }
+    }
+
+    std::sort(valid_neighbors.begin(), valid_neighbors.end());
+
+    std::vector<size_t> indices;
+    for (const auto& pair : valid_neighbors) {
+      indices.push_back(pair.second);
+    }
+
+    sorted_indices[i] = indices;
+  }
+
+  return sorted_indices;
+}
+
 /*
  * Function to compute Singular Value Decomposition (SVD) similar to R's svd()
  *
