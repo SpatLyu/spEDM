@@ -565,9 +565,9 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
   std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
                  [&](int size) { return std::min(size, max_lib_size); });
 
-  // Ensure the minimum value in unique_lib_sizes is Ex + 2 (uncomment this section if required)
+  // Ensure the minimum value in unique_lib_sizes is b (uncomment this section if required)
   // std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
-  //                [&](int size) { return std::max(size, Ex + 2); });
+  //                [&](int size) { return std::max(size, b); });
 
   // Remove duplicates
   std::sort(unique_lib_sizes.begin(), unique_lib_sizes.end());

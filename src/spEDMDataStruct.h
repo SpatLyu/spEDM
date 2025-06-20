@@ -15,6 +15,18 @@ struct PartialCorRes {
   PartialCorRes(int f, double s, double t) : first(f), second(s), third(t) {}
 };
 
+struct CMCRes {
+  std::vector<double> causal_strength;
+  std::vector<std::vector<double>> cross_mapping;
+
+  CMCRes() = default;
+
+  CMCRes(const std::vector<double>& causal_strength,
+         const std::vector<std::vector<double>>& cross_mapping)
+    : causal_strength(causal_strength), cross_mapping(cross_mapping) {}
+};
+
+
 struct IntersectionRes {
   int libsize;
   std::vector<double> Intersection;
