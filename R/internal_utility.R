@@ -118,7 +118,7 @@
   return(res)
 }
 
-.internal_xmapdf_binding = \(varname,x_xmap_y,y_xmap_x,bidirectional,
+.internal_xmapdf_binding = \(x_xmap_y, y_xmap_x, bidirectional,
                              keyname = "libsizes", only_cs = FALSE){
   if (only_cs){
     colnames(y_xmap_x) = c(keyname,"y_xmap_x_mean")
@@ -147,7 +147,7 @@
 }
 
 .bind_xmapdf = \(varname,x_xmap_y,y_xmap_x,bidirectional){
-  resdf = .internal_xmapdf_binding(varname,x_xmap_y,y_xmap_x,bidirectional)
+  resdf = .internal_xmapdf_binding(x_xmap_y,y_xmap_x,bidirectional)
   res = list("xmap" = resdf, "varname" = varname, "bidirectional" = bidirectional)
   class(res) = 'ccm_res'
   return(res)
@@ -164,8 +164,8 @@
     dxxmapy = x_xmap_y[,c(1,3,7:9),drop = FALSE]
   }
 
-  txmap = .internal_xmapdf_binding(varname[1:2],txxmapy,tyxmapx,bidirectional)
-  dxmap = .internal_xmapdf_binding(varname[1:2],dxxmapy,dyxmapx,bidirectional)
+  txmap = .internal_xmapdf_binding(txxmapy,tyxmapx,bidirectional)
+  dxmap = .internal_xmapdf_binding(dxxmapy,dyxmapx,bidirectional)
 
   res = list("pxmap" = dxmap, "xmap" = txmap,
              "varname" = varname[1:2],
@@ -175,8 +175,8 @@
 }
 
 .bind_intersectdf = \(varname,x_xmap_y,y_xmap_x,bidirectional){
-  xmapdf = .internal_xmapdf_binding(varname,x_xmap_y$xmap,y_xmap_x$xmap,bidirectional,only_cs = TRUE)
-  csdf = .internal_xmapdf_binding(varname,x_xmap_y$cs,y_xmap_x$cs,bidirectional,keyname = "neighbors")
+  xmapdf = .internal_xmapdf_binding(x_xmap_y$xmap,y_xmap_x$xmap,bidirectional,only_cs = TRUE)
+  csdf = .internal_xmapdf_binding(x_xmap_y$cs,y_xmap_x$cs,bidirectional,keyname = "neighbors")
   res = list("xmap" = xmapdf, "cs" = csdf, "varname" = varname, "bidirectional" = bidirectional)
   class(res) = 'cmc_res'
   return(res)

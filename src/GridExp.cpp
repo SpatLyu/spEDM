@@ -1366,10 +1366,12 @@ Rcpp::List RcppGCMC4Grid(
   );
 
   // Wrap causal_strength with names
-  Rcpp::NumericVector cs(res.causal_strength.begin(), res.causal_strength.end());
-  cs.names() = Rcpp::CharacterVector::create(
-    "neighbors", "x_xmap_y_mean", "x_xmap_y_sig",
-    "x_xmap_y_upper", "x_xmap_y_lower"
+  Rcpp::DataFrame cs = Rcpp::DataFrame::create(
+    Rcpp::Named("neighbors") = res.causal_strength[0],
+    Rcpp::Named("x_xmap_y_mean") = res.causal_strength[1],
+    Rcpp::Named("x_xmap_y_sig") = res.causal_strength[2],
+    Rcpp::Named("x_xmap_y_upper") = res.causal_strength[3],
+    Rcpp::Named("x_xmap_y_lower")  = res.causal_strength[4]
   );
 
   return Rcpp::List::create(
