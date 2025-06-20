@@ -1242,6 +1242,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppDistSortedIndice
+Rcpp::List RcppDistSortedIndice(Rcpp::NumericMatrix dist_mat, bool include_self);
+RcppExport SEXP _spEDM_RcppDistSortedIndice(SEXP dist_matSEXP, SEXP include_selfSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type dist_mat(dist_matSEXP);
+    Rcpp::traits::input_parameter< bool >::type include_self(include_selfSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppDistSortedIndice(dist_mat, include_self));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppLinearTrendRM
 Rcpp::NumericVector RcppLinearTrendRM(const Rcpp::NumericVector& vec, const Rcpp::NumericVector& xcoord, const Rcpp::NumericVector& ycoord, bool NA_rm);
 RcppExport SEXP _spEDM_RcppLinearTrendRM(SEXP vecSEXP, SEXP xcoordSEXP, SEXP ycoordSEXP, SEXP NA_rmSEXP) {
@@ -1376,6 +1387,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppNeighborsNum", (DL_FUNC) &_spEDM_RcppNeighborsNum, 5},
     {"_spEDM_RcppKNNIndice", (DL_FUNC) &_spEDM_RcppKNNIndice, 4},
     {"_spEDM_RcppDistKNNIndice", (DL_FUNC) &_spEDM_RcppDistKNNIndice, 4},
+    {"_spEDM_RcppDistSortedIndice", (DL_FUNC) &_spEDM_RcppDistSortedIndice, 2},
     {"_spEDM_RcppLinearTrendRM", (DL_FUNC) &_spEDM_RcppLinearTrendRM, 4},
     {"_spEDM_RcppSVD", (DL_FUNC) &_spEDM_RcppSVD, 1},
     {"_spEDM_RcppDeLongPlacements", (DL_FUNC) &_spEDM_RcppDeLongPlacements, 3},

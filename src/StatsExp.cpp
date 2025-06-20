@@ -498,6 +498,36 @@ Rcpp::IntegerVector RcppDistKNNIndice(const Rcpp::NumericMatrix& dist_mat,
   return result;
 }
 
+// Wrapper function to generate sorted neighbor indices
+// [[Rcpp::export(rng = false)]]
+Rcpp::List RcppDistSortedIndice(Rcpp::NumericMatrix dist_mat, bool include_self = false) {
+  // Get number of rows and columns
+  const int n = dist_mat.nrow();
+  const int m = dist_mat.ncol();
+
+  // Convert NumericMatrix to std::vector<std::vector<double>>
+  std::vector<std::vector<double>> dist_vec(n, std::vector<double>(m));
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < m; ++j) {
+      dist_vec[i][j] = dist_mat(i, j);
+    }
+  }
+
+  // Call the existing C++ function to compute sorted neighbor indices
+  std::vector<std::vector<size_t>> result = CppDistSortedIndice(dist_vec, include_self);
+
+  // Convert the result to an R list of integer vectors
+  Rcpp::List out(n);
+  for (int i = 0; i < n; ++i) {
+    // Convert size_t vector to IntegerVector for R (size_t cast to int)
+    Rcpp::IntegerVector indices(result[i].begin(), result[i].end());
+    out[i] = indices;
+  }
+
+  // Return the list where each element contains sorted neighbor indices for that row
+  return out;
+}
+
 // Wrapper function to perform Linear Trend Removal and return a NumericVector
 // [[Rcpp::export(rng = false)]]
 Rcpp::NumericVector RcppLinearTrendRM(const Rcpp::NumericVector& vec,
