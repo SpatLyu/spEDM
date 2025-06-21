@@ -174,7 +174,7 @@ std::vector<std::vector<double>> SMap4Grid(const std::vector<std::vector<double>
  * @param threads Maximum number of threads to use.
  * @param parallel_level If > 0, enables parallel evaluation of b for each E.
  *
- * @return A matrix of size (|E| × |b|) × 3 with rows: [E, b, AUC]
+ * @return A matrix of size (|E| × |b|) × 4 with rows: [E, b, AUC, P-value]
  */
 std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>& source,
                                          const std::vector<std::vector<double>>& target,
@@ -208,7 +208,7 @@ std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>&
     }
   }
 
-  std::vector<std::vector<double>> result(unique_Ebcom.size(), std::vector<double>(3));
+  std::vector<std::vector<double>> result(unique_Ebcom.size(), std::vector<double>(4));
 
   if (parallel_level == 0){
     for (size_t i = 0; i < Es.size(); ++i) {
@@ -243,12 +243,13 @@ std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>&
           nx,ny,static_cast<size_t>(lib_indices.size()),lib_indices,valid_pred,k,n_excluded_sizet,threads_sizet,0
         );
 
-        double auc = 0;
-        if (!res.empty()) auc = CppCMCTest(res[0].Intersection,">")[0];
+        std::vector<double> cs = {0,1};
+        if (!res.empty())  cs = CppCMCTest(res[0].Intersection,">");
 
         result[j + bs.size() * i][0] = Es[i];  // E
         result[j + bs.size() * i][1] = bs[j];  // k
-        result[j + bs.size() * i][2] = auc;    // AUC
+        result[j + bs.size() * i][2] = cs[0];  // AUC
+        result[j + bs.size() * i][2] = cs[1];  // P value
       }
     }
   } else {
@@ -287,9 +288,13 @@ std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>&
         double auc = 0;
         if (!res.empty()) auc = CppCMCTest(res[0].Intersection,">")[0];
 
+        std::vector<double> cs = {0,1};
+        if (!res.empty())  cs = CppCMCTest(res[0].Intersection,">");
+
         result[j + bs.size() * i][0] = Es[i];  // E
         result[j + bs.size() * i][1] = bs[j];  // k
-        result[j + bs.size() * i][2] = auc;    // AUC
+        result[j + bs.size() * i][2] = cs[0];  // AUC
+        result[j + bs.size() * i][2] = cs[1];  // P value
       }, threads_sizet);
     }
   }

@@ -90,7 +90,7 @@ std::vector<std::vector<double>> SMap4Grid(const std::vector<std::vector<double>
  * @param threads Maximum number of threads to use.
  * @param parallel_level If > 0, enables parallel evaluation of b for each E.
  *
- * @return A matrix of size (|E| × |b|) × 3 with rows: [E, b, AUC]
+ * @return A matrix of size (|E| × |b|) × 4 with rows: [E, b, AUC, P-value]
  */
 std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>& source,
                                          const std::vector<std::vector<double>>& target,

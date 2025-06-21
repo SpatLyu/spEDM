@@ -154,7 +154,7 @@ std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& source,
  *         If inputs are invalid or no prediction point is valid, the AUC value is NaN.
  *
  * @note
- *   - Only AUC is returned in current version. Use other utilities to derive p-values or CI.
+ *   - Only AUC and p value are returned in current version. Use other utilities to derive CI.
  *   - Library and prediction indices should be adjusted for 0-based indexing before calling.
  *   - Lattice embedding assumes neighborhood-based spatial structure.
  */
@@ -188,7 +188,7 @@ std::vector<std::vector<double>> IC4Lattice(const std::vector<double>& source,
     for (int bb : bs)
       unique_Ebcom.emplace_back(e, bb);
 
-  std::vector<std::vector<double>> result(unique_Ebcom.size(), std::vector<double>(3));
+  std::vector<std::vector<double>> result(unique_Ebcom.size(), std::vector<double>(4));
 
   if (parallel_level == 0){
     for (size_t i = 0; i < Es.size(); ++i) {
@@ -223,12 +223,13 @@ std::vector<std::vector<double>> IC4Lattice(const std::vector<double>& source,
           nx,ny,static_cast<size_t>(lib_indices.size()),lib_indices,valid_pred,k,n_excluded_sizet,threads_sizet,0
         );
 
-        double auc = 0;
-        if (!res.empty()) auc = CppCMCTest(res[0].Intersection,">")[0];
+        std::vector<double> cs = {0,1};
+        if (!res.empty())  cs = CppCMCTest(res[0].Intersection,">");
 
         result[j + bs.size() * i][0] = Es[i];  // E
         result[j + bs.size() * i][1] = bs[j];  // k
-        result[j + bs.size() * i][2] = auc;    // AUC
+        result[j + bs.size() * i][2] = cs[0];  // AUC
+        result[j + bs.size() * i][2] = cs[1];  // P value
       }
     }
   } else {
@@ -264,12 +265,13 @@ std::vector<std::vector<double>> IC4Lattice(const std::vector<double>& source,
           nx,ny,static_cast<size_t>(lib_indices.size()),lib_indices,valid_pred,k,n_excluded_sizet,threads_sizet,1
         );
 
-        double auc = 0;
-        if (!res.empty()) auc = CppCMCTest(res[0].Intersection,">")[0];
+        std::vector<double> cs = {0,1};
+        if (!res.empty())  cs = CppCMCTest(res[0].Intersection,">");
 
         result[j + bs.size() * i][0] = Es[i];  // E
         result[j + bs.size() * i][1] = bs[j];  // k
-        result[j + bs.size() * i][2] = auc;    // AUC
+        result[j + bs.size() * i][2] = cs[0];  // AUC
+        result[j + bs.size() * i][2] = cs[1];  // P value
       }, threads_sizet);
     }
   }
