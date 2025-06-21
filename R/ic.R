@@ -7,7 +7,7 @@
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   pl = .check_parallellevel(parallel.level)
   res = RcppIC4Lattice(vx,vy,nb,lib,pred,E,k,tau,0,threads,pl)
-  return(.bind_xmapself(res,target,tau))
+  return(.bind_xmapself(res,target,"ic",tau))
 }
 
 .ic_spatraster_method = \(data, column, target, lib = NULL, pred = NULL, E = 1:10, tau = 1, k = E+2,
@@ -18,7 +18,7 @@
   if (is.null(pred)) pred = lib
   pl = .check_parallellevel(parallel.level)
   res = RcppIC4Grid(mx,my,lib,pred,E,k,tau,0,threads,pl)
-  return(.bind_xmapself(res,target,tau))
+  return(.bind_xmapself(res,target,"ic",tau))
 }
 
 #' intersection cardinality
@@ -28,8 +28,9 @@
 #'
 #' @return A list
 #' \describe{
-#' \item{\code{xmap}}{forecast performance}
+#' \item{\code{xmap}}{cross mapping performance}
 #' \item{\code{varname}}{name of target variable}
+#' \item{\code{method}}{method of cross mapping}
 #' \item{\code{tau}}{step of time lag}
 #' }
 #' @export

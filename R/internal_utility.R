@@ -182,8 +182,8 @@
   return(res)
 }
 
-.bind_xmapself = \(x,varname,tau = NULL,...){
-  res = list("xmap" = x,"varname" = varname)
+.bind_xmapself = \(x,varname,method,tau = NULL,...){
+  res = list("xmap" = x,"varname" = varname,"method" = method)
   if (!is.null(tau)) res = append(res,c("tau" = tau))
   class(res) = "xmap_self"
   return(res)

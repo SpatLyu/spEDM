@@ -285,9 +285,6 @@ std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>&
           nx,ny,static_cast<size_t>(lib_indices.size()),lib_indices,valid_pred,k,n_excluded_sizet,threads_sizet,1
         );
 
-        double auc = 0;
-        if (!res.empty()) auc = CppCMCTest(res[0].Intersection,">")[0];
-
         std::vector<double> cs = {0,1};
         if (!res.empty())  cs = CppCMCTest(res[0].Intersection,">");
 

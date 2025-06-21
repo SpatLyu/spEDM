@@ -8,7 +8,7 @@
   if (is.null(pred)) pred = lib
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   res = RcppSMap4Lattice(vx,vy,nb,lib,pred,theta,E,tau,k,threads)
-  return(.bind_xmapself(res,target))
+  return(.bind_xmapself(res,target,"smap"))
 }
 
 .smap_spatraster_method = \(data,column,target,lib = NULL,pred = NULL,E = 3,tau = 1,k = E+2,
@@ -20,7 +20,7 @@
   if (is.null(lib)) lib = which(!(is.na(mx) | is.na(my)), arr.ind = TRUE)
   if (is.null(pred)) pred = lib
   res = RcppSMap4Grid(mx,my,lib,pred,theta,E,tau,k,threads)
-  return(.bind_xmapself(res,target))
+  return(.bind_xmapself(res,target,"smap"))
 }
 
 #' smap forecast
@@ -32,6 +32,7 @@
 #' \describe{
 #' \item{\code{xmap}}{forecast performance}
 #' \item{\code{varname}}{name of target variable}
+#' \item{\code{method}}{method of cross mapping}
 #' }
 #' @export
 #' @name smap
