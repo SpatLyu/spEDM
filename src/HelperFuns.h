@@ -8,12 +8,15 @@
 /**
  * Determine the optimal embedding dimension (E) and number of nearest neighbors (k).
  *
- * This function takes a matrix `Emat` with columns "E", "k", "rho", "mae", and "rmse".
- * It selects the optialmal embedding dimension (E) and number of nearest neighbors (k)
- * by first maximizing "rho", then minimizing "rmse", and finally minimizing "mae" if necessary.
+ * This function selects the best (E, k) combination based on:
+ *   1. Maximizing rho
+ *   2. Minimizing rmse
+ *   3. Minimizing mae
+ *   4. If still tied, choosing smallest k, then smallest E
+ * A warning is issued when tie-breaking by k and E is used.
  *
- * @param Emat A NumericMatrix with five columns: "E", k", "rho", "mae", and "rmse".
- * @return The optimal embedding dimension (E) and number of nearest neighbors (k) as an integer vector.
+ * @param Emat A NumericMatrix with 5 columns: E, k, rho, mae, rmse.
+ * @return IntegerVector with optimal E and k.
  */
 Rcpp::IntegerVector OptEmbedDim(Rcpp::NumericMatrix Emat);
 
@@ -22,7 +25,9 @@ Rcpp::IntegerVector OptEmbedDim(Rcpp::NumericMatrix Emat);
  *
  * This function takes a matrix `Thetamat` with columns "theta", "rho", "mae", and "rmse".
  * It selects the optimal theta parameter by first maximizing "rho",
- * then minimizing "rmse", and finally minimizing "mae" if necessary.
+ * then minimizing "rmse", and finally minimizing "mae".
+ * If multiple rows tie, it prefers theta == 1, or the value closest to 1.
+ * A warning is issued when tie-breaking by theta proximity is used.
  *
  * @param Thetamat A NumericMatrix with four columns: "theta", "rho", "mae", and "rmse".
  * @return The optimal theta parameter as a double.
@@ -32,13 +37,20 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat);
 /**
  * Select the optimal embedding dimension (E) and number of nearest neighbors (k)
  * from a 4-column matrix: E, k, performance metric, and p-value.
- * Only rows with p-value <= 0.05 are considered. Among them, rows are compared by:
- *  - highest metric,
- *  - smallest k (tie-breaker),
- *  - smallest E (final tie-breaker).
  *
- * @param Emat A NumericMatrix with four columns: E, k, metric, and p-value.
- * @return IntegerVector of length 2: the optimal E and k.
+ * Only rows with p-value <= 0.05 are considered.
+ * Among them, select the row with:
+ *   1. Highest metric,
+ *   2. If tie, smallest k,
+ *   3. If still tie, smallest E.
+ *
+ * If multiple rows tie on the best metric, a warning is issued and the combination
+ * with the smallest k and E is chosen.
+ *
+ * If no valid rows (p <= 0.05) exist, the function stops with an error.
+ *
+ * @param Emat NumericMatrix with columns: E, k, metric, and p-value.
+ * @return IntegerVector of length 2: optimal E and k.
  */
 Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat);
 
