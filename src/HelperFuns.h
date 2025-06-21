@@ -21,15 +21,19 @@
 Rcpp::IntegerVector OptEmbedDim(Rcpp::NumericMatrix Emat);
 
 /**
- * Determine the optimal theta parameter based on the evaluation metrics.
+ * Determine the optimal theta parameter based on evaluation metrics.
  *
- * This function takes a matrix `Thetamat` with columns "theta", "rho", "mae", and "rmse".
- * It selects the optimal theta parameter by first maximizing "rho",
- * then minimizing "rmse", and finally minimizing "mae".
- * If multiple rows tie, it prefers theta == 1, or the value closest to 1.
- * A warning is issued when tie-breaking by theta proximity is used.
+ * This function takes a NumericMatrix `Thetamat` with columns:
+ * "theta", "rho", "mae", and "rmse".
+ * The selection criteria are:
+ *  - Maximize "rho"
+ *  - Minimize "rmse" if "rho" ties
+ *  - Minimize "mae" if "rho" and "rmse" tie
+ * If multiple rows tie on these metrics (within a tolerance of 1e-10),
+ * preference is given to theta == 1, or else to the theta closest to 1.
+ * Warnings are issued when tie-breaking occurs or when all metrics are identical.
  *
- * @param Thetamat A NumericMatrix with four columns: "theta", "rho", "mae", and "rmse".
+ * @param Thetamat A NumericMatrix with four columns: theta, rho, mae, and rmse.
  * @return The optimal theta parameter as a double.
  */
 double OptThetaParm(Rcpp::NumericMatrix Thetamat);

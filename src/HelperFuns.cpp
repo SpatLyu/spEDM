@@ -31,6 +31,7 @@ Rcpp::IntegerVector OptEmbedDim(Rcpp::NumericMatrix Emat) {
     Rcpp::stop("Input matrix must have exactly 5 columns: E, k, rho, mae, and rmse.");
   }
 
+  const double tol = 1e-10;
   int n = Emat.nrow();
   int opt_row = 0;
 
@@ -49,9 +50,16 @@ Rcpp::IntegerVector OptEmbedDim(Rcpp::NumericMatrix Emat) {
     int k = static_cast<int>(Emat(i, 1));
     int E = static_cast<int>(Emat(i, 0));
 
-    if (rho > best_rho ||
-        (rho == best_rho && rmse < best_rmse) ||
-        (rho == best_rho && rmse == best_rmse && mae < best_mae)) {
+    bool rho_better = (rho - best_rho) > tol;
+    bool rho_equal = std::abs(rho - best_rho) <= tol;
+    bool rmse_better = (best_rmse - rmse) > tol;
+    bool rmse_equal = std::abs(rmse - best_rmse) <= tol;
+    bool mae_better = (best_mae - mae) > tol;
+    bool mae_equal = std::abs(mae - best_mae) <= tol;
+
+    if (rho_better ||
+        (rho_equal && rmse_better) ||
+        (rho_equal && rmse_equal && mae_better)) {
       opt_row = i;
       best_rho = rho;
       best_rmse = rmse;
@@ -59,7 +67,7 @@ Rcpp::IntegerVector OptEmbedDim(Rcpp::NumericMatrix Emat) {
       best_k = k;
       best_E = E;
       used_kE_tiebreak = false;
-    } else if (rho == best_rho && rmse == best_rmse && mae == best_mae) {
+    } else if (rho_equal && rmse_equal && mae_equal) {
       // Tie on all three metrics: resolve using k then E
       if (k < best_k || (k == best_k && E < best_E)) {
         opt_row = i;
@@ -81,15 +89,19 @@ Rcpp::IntegerVector OptEmbedDim(Rcpp::NumericMatrix Emat) {
 }
 
 /**
- * Determine the optimal theta parameter based on the evaluation metrics.
+ * Determine the optimal theta parameter based on evaluation metrics.
  *
- * This function takes a matrix `Thetamat` with columns "theta", "rho", "mae", and "rmse".
- * It selects the optimal theta parameter by first maximizing "rho",
- * then minimizing "rmse", and finally minimizing "mae".
- * If multiple rows tie, it prefers theta == 1, or the value closest to 1.
- * A warning is issued when tie-breaking by theta proximity is used.
+ * This function takes a NumericMatrix `Thetamat` with columns:
+ * "theta", "rho", "mae", and "rmse".
+ * The selection criteria are:
+ *  - Maximize "rho"
+ *  - Minimize "rmse" if "rho" ties
+ *  - Minimize "mae" if "rho" and "rmse" tie
+ * If multiple rows tie on these metrics (within a tolerance of 1e-10),
+ * preference is given to theta == 1, or else to the theta closest to 1.
+ * Warnings are issued when tie-breaking occurs or when all metrics are identical.
  *
- * @param Thetamat A NumericMatrix with four columns: "theta", "rho", "mae", and "rmse".
+ * @param Thetamat A NumericMatrix with four columns: theta, rho, mae, and rmse.
  * @return The optimal theta parameter as a double.
  */
 // [[Rcpp::export(rng = false)]]
@@ -103,6 +115,7 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
   double best_rho = Thetamat(0, 1);
   double best_rmse = Thetamat(0, 3);
   double best_mae = Thetamat(0, 2);
+  const double tol = 1e-10;
 
   best_rows.push_back(0);
 
@@ -111,43 +124,52 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
     double rmse = Thetamat(i, 3);
     double mae = Thetamat(i, 2);
 
-    if (rho > best_rho ||
-        (rho == best_rho && rmse < best_rmse) ||
-        (rho == best_rho && rmse == best_rmse && mae < best_mae)) {
+    bool rho_better = (rho - best_rho) > tol;
+    bool rho_equal = std::abs(rho - best_rho) <= tol;
+    bool rmse_better = (best_rmse - rmse) > tol;
+    bool rmse_equal = std::abs(rmse - best_rmse) <= tol;
+    bool mae_better = (best_mae - mae) > tol;
+    bool mae_equal = std::abs(mae - best_mae) <= tol;
+
+    if (rho_better ||
+        (rho_equal && rmse_better) ||
+        (rho_equal && rmse_equal && mae_better)) {
       best_rows.clear();
       best_rows.push_back(i);
       best_rho = rho;
       best_rmse = rmse;
       best_mae = mae;
-    } else if (rho == best_rho && rmse == best_rmse && mae == best_mae) {
+    } else if (rho_equal && rmse_equal && mae_equal) {
       best_rows.push_back(i);
     }
   }
 
-  // Now resolve tie in best_rows
+  // If only one best row, return its theta
   if (best_rows.size() == 1) {
-    return Thetamat(best_rows[0], 0); // Only one best row
+    return Thetamat(best_rows[0], 0);
   }
 
-  // Check if all metrics across all rows are exactly equal
+  // Check if all metrics are identical (within tolerance)
   bool all_equal = true;
-  for (int i = 1; i < best_rows.size(); ++i) {
-    int r0 = best_rows[0], r1 = best_rows[i];
-    if (Thetamat(r0, 1) != Thetamat(r1, 1) ||
-        Thetamat(r0, 2) != Thetamat(r1, 2) ||
-        Thetamat(r0, 3) != Thetamat(r1, 3)) {
+  for (size_t i = 1; i < best_rows.size(); ++i) {
+    int r0 = best_rows[0];
+    int r1 = best_rows[i];
+    if (std::abs(Thetamat(r0, 1) - Thetamat(r1, 1)) > tol ||
+        std::abs(Thetamat(r0, 2) - Thetamat(r1, 2)) > tol ||
+        std::abs(Thetamat(r0, 3) - Thetamat(r1, 3)) > tol) {
       all_equal = false;
       break;
     }
   }
 
-  double selected_theta = std::numeric_limits<double>::quiet_NaN();;
+  // Select theta == 1 if exists, else theta closest to 1
+  double selected_theta = std::numeric_limits<double>::quiet_NaN();
   double min_dist_to_1 = std::numeric_limits<double>::max();
   bool found_theta_1 = false;
 
   for (int i : best_rows) {
     double theta = Thetamat(i, 0);
-    if (theta == 1.0) {
+    if (std::abs(theta - 1.0) <= tol) {
       selected_theta = theta;
       found_theta_1 = true;
       break;
@@ -161,9 +183,9 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
   }
 
   if (all_equal) {
-    Rcpp::warning("All evaluation metrics are identical across theta values. Choosing theta == 1 if available, otherwise closest to 1.");
+    Rcpp::warning("All evaluation metrics are identical within tolerance; choosing theta == 1 if available, otherwise closest to 1.");
   } else if (best_rows.size() > 1) {
-    Rcpp::warning("Tied best evaluation metrics; choosing theta == 1 if available, otherwise closest to 1.");
+    Rcpp::warning("Tied best evaluation metrics within tolerance; choosing theta == 1 if available, otherwise closest to 1.");
   }
 
   return selected_theta;
@@ -216,13 +238,13 @@ Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat) {
     int current_k = static_cast<int>(Emat(row, 1));
     int current_E = static_cast<int>(Emat(row, 0));
 
-    if (current_metric > best_metric + 1e-8) {
+    if (current_metric > best_metric + 1e-10) {
       optimal_row = row;
       best_metric = current_metric;
       best_k = current_k;
       best_E = current_E;
       tie_count = 1;
-    } else if (std::abs(current_metric - best_metric) < 1e-8) {
+    } else if (std::abs(current_metric - best_metric) < 1e-10) {
       ++tie_count;
       if (current_k < best_k || (current_k == best_k && current_E < best_E)) {
         optimal_row = row;
