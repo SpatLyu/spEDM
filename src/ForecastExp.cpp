@@ -145,10 +145,10 @@ Rcpp::NumericVector RcppSMapForecast(
 /*
  * Computes the Intersection Cardinality (IC) scores
  *
- * This function serves as an interface between R and C++ to compute the Intersection Cardinality (IC) score,
- * which quantifies the causal relationship between two variables by comparing the intersection
- * of their nearest neighbors in a state-space reconstruction. The function works by performing cross-mapping
- * and calculating the ratio of shared neighbors for each prediction index.
+ * This function serves as an interface between R and C++ to compute the Intersection Cardinality (IC) curve,
+ * which quantifies the causal relationship between two variables by comparing the intersection of their nearest
+ * neighbors in a state-space reconstruction. The function works by performing cross-mapping and calculating the
+ * ratio of shared neighbors for each prediction index.
  *
  * Parameters:
  *   embedding_x: A NumericMatrix representing the state-space reconstruction (embedded) of the potential cause variable.
@@ -158,9 +158,10 @@ Rcpp::NumericVector RcppSMapForecast(
  *   num_neighbors: An integer specifying the number of neighbors to use for cross mapping.
  *   n_excluded: An integer indicating the number of neighbors to exclude from the distance matrix.
  *   threads: The number of parallel threads to use for computation.
+ *   parallel_level: Whether to use multithreaded (0) or serial (1) mode
  *
  * Returns:
- *   A NumericVector containing the intersection cardinality scores.
+ *   A NumericVector containing the intersection cardinality curve.
  */
 // [[Rcpp::export(rng = false)]]
 Rcpp::NumericVector RcppIntersectionCardinality(
@@ -170,7 +171,8 @@ Rcpp::NumericVector RcppIntersectionCardinality(
     const Rcpp::IntegerVector& pred,
     const int& num_neighbors = 4,
     const int& n_excluded = 0,
-    const int& threads = 8){
+    const int& threads = 8,
+    const int& parallel_level = 0){
   // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
   std::vector<std::vector<double>> e1(embedding_x.nrow(),
                                       std::vector<double>(embedding_x.ncol()));
@@ -218,7 +220,8 @@ Rcpp::NumericVector RcppIntersectionCardinality(
     pred_indices,
     num_neighbors,
     n_excluded,
-    threads
+    threads,
+    parallel_level
   );
 
   // Convert the result back to Rcpp::NumericVector
