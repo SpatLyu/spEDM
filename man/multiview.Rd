@@ -54,7 +54,7 @@
 
 \item{tau}{(optional) step of spatial lags.}
 
-\item{k}{(optional) number of nearest neighbors used in prediction.}
+\item{k}{(optional) number of nearest neighbors used.}
 
 \item{nb}{(optional) neighbours list.}
 
