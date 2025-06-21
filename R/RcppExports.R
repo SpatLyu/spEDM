@@ -145,10 +145,6 @@ MatNotNAIndice <- function(mat, byrow = TRUE) {
     .Call(`_spEDM_MatNotNAIndice`, mat, byrow)
 }
 
-OptICparm <- function(Emat) {
-    .Call(`_spEDM_OptICparm`, Emat)
-}
-
 RcppLaggedNeighbor4Lattice <- function(nb, lagNum) {
     .Call(`_spEDM_RcppLaggedNeighbor4Lattice`, nb, lagNum)
 }
