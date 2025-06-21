@@ -87,7 +87,7 @@ geographical cross mapping cardinality
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 \donttest{
-g = gcmc(columbus,"hoval","crime",libsizes = seq(5,45,5),E = 5,k = 12)
+g = gcmc(columbus,"hoval","crime",libsizes = seq(7,49,7),E = 4,k = 14)
 g
 }
 }
