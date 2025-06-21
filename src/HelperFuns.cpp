@@ -132,6 +132,55 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
 }
 
 /**
+ * Select the optimal embedding dimension (E) and number of nearest neighbors (k)
+ * from a 3-column matrix sorted by decreasing third column value, with tie-breakers.
+ *
+ * @param Emat A NumericMatrix with three columns: E, k, and a performance metric (e.g., AUC).
+ * @return IntegerVector of length 2: the optimal E and k.
+ */
+// [[Rcpp::export(rng = false)]]
+Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat) {
+  if (Emat.ncol() != 3) {
+    Rcpp::stop("Input matrix must have exactly 3 columns: E, k, and performance metric.");
+  }
+
+  int optimal_row = 0;
+  double best_metric = Emat(0, 2);
+  int best_k = static_cast<int>(Emat(0, 1));
+  int best_E = static_cast<int>(Emat(0, 0));
+
+  for (int i = 1; i < Emat.nrow(); ++i) {
+    double current_metric = Emat(i, 2);
+    int current_k = static_cast<int>(Emat(i, 1));
+    int current_E = static_cast<int>(Emat(i, 0));
+
+    if (current_metric > best_metric) {
+      optimal_row = i;
+      best_metric = current_metric;
+      best_k = current_k;
+      best_E = current_E;
+    } else if (current_metric == best_metric) {
+      if (current_k < best_k) {
+        optimal_row = i;
+        best_k = current_k;
+        best_E = current_E;
+      } else if (current_k == best_k) {
+        if (current_E < best_E) {
+          optimal_row = i;
+          best_E = current_E;
+        }
+      }
+    }
+  }
+
+  Rcpp::IntegerVector result(2);
+  result[0] = static_cast<int>(Emat(optimal_row, 0));  // E
+  result[1] = static_cast<int>(Emat(optimal_row, 1));  // k
+
+  return result;
+};
+
+/**
  * This function takes a NumericMatrix as input and returns a matrix
  * containing the row and column indices of all non-NA elements in the input matrix.
  *
