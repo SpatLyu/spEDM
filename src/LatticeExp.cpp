@@ -855,7 +855,7 @@ Rcpp::NumericMatrix RcppIC4Lattice(const Rcpp::NumericVector& source,
   }
 
   // Set column names for the result matrix
-  Rcpp::colnames(result) = Rcpp::CharacterVector::create("E", "k", "CausalScore");
+  Rcpp::colnames(result) = Rcpp::CharacterVector::create("E", "k", "CausalScore", "Significance");
   return result;
 }
 

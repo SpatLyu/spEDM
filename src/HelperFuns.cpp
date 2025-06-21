@@ -133,52 +133,72 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
 
 /**
  * Select the optimal embedding dimension (E) and number of nearest neighbors (k)
- * from a 3-column matrix sorted by decreasing third column value, with tie-breakers.
+ * from a 4-column matrix: E, k, performance metric, and p-value.
+ * Only rows with p-value <= 0.05 are considered. Among them, rows are compared by:
+ *  - highest metric,
+ *  - smallest k (tie-breaker),
+ *  - smallest E (final tie-breaker).
  *
- * @param Emat A NumericMatrix with three columns: E, k, and a performance metric (e.g., AUC).
+ * @param Emat A NumericMatrix with four columns: E, k, metric, and p-value.
  * @return IntegerVector of length 2: the optimal E and k.
  */
 // [[Rcpp::export(rng = false)]]
 Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat) {
-  if (Emat.ncol() != 3) {
-    Rcpp::stop("Input matrix must have exactly 3 columns: E, k, and performance metric.");
+  if (Emat.ncol() != 4) {
+    Rcpp::stop("Input matrix must have exactly 4 columns: E, k, metric, and p-value.");
   }
 
-  int optimal_row = 0;
-  double best_metric = Emat(0, 2);
-  int best_k = static_cast<int>(Emat(0, 1));
-  int best_E = static_cast<int>(Emat(0, 0));
+  // Step 1: Find all valid rows with p-value <= 0.05
+  std::vector<int> valid_rows;
+  for (int i = 0; i < Emat.nrow(); ++i) {
+    if (Emat(i, 3) <= 0.05) {
+      valid_rows.push_back(i);
+    }
+  }
 
-  for (int i = 1; i < Emat.nrow(); ++i) {
-    double current_metric = Emat(i, 2);
-    int current_k = static_cast<int>(Emat(i, 1));
-    int current_E = static_cast<int>(Emat(i, 0));
+  // Step 2: Stop if no valid rows found
+  if (valid_rows.empty()) {
+    Rcpp::stop("No valid rows with p-value <= 0.05. The chosen neighborhood parameter may be unreasonable or there's no causal relationship. Please consider resetting.");
+  }
+
+  // Step 3: Select the optimal row from the valid ones
+  int optimal_row = valid_rows[0];
+  double best_metric = Emat(optimal_row, 2);
+  int best_k = static_cast<int>(Emat(optimal_row, 1));
+  int best_E = static_cast<int>(Emat(optimal_row, 0));
+
+  for (size_t i = 1; i < valid_rows.size(); ++i) {
+    int row = valid_rows[i];
+    double current_metric = Emat(row, 2);
+    int current_k = static_cast<int>(Emat(row, 1));
+    int current_E = static_cast<int>(Emat(row, 0));
 
     if (current_metric > best_metric) {
-      optimal_row = i;
+      optimal_row = row;
       best_metric = current_metric;
       best_k = current_k;
       best_E = current_E;
     } else if (current_metric == best_metric) {
       if (current_k < best_k) {
-        optimal_row = i;
+        optimal_row = row;
         best_k = current_k;
         best_E = current_E;
       } else if (current_k == best_k) {
         if (current_E < best_E) {
-          optimal_row = i;
+          optimal_row = row;
           best_E = current_E;
         }
       }
     }
   }
 
+  // Step 4: Return result
   Rcpp::IntegerVector result(2);
   result[0] = static_cast<int>(Emat(optimal_row, 0));  // E
   result[1] = static_cast<int>(Emat(optimal_row, 1));  // k
 
   return result;
-};
+}
 
 /**
  * This function takes a NumericMatrix as input and returns a matrix
