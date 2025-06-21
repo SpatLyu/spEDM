@@ -20,7 +20,7 @@
  *        incorporating control variables using a lattice-based embedding approach.
  *
  * @param vectors: Reconstructed state-space, where each row represents a separate state vector.
- * @param target: Spatial cross-section series to be used as the target, aligned with 'vectors'.
+ * @param target: Spatial cross-sectional series to be used as the target, aligned with 'vectors'.
  * @param controls: Cross-sectional data of control variables, stored row-wise.
  * @param nb_vec: Neighbor indices for each spatial unit.
  * @param lib_indices: Vector of indices indicating which states to include when searching for neighbors.
@@ -48,7 +48,7 @@ std::vector<double> PartialSimplex4Lattice(
 );
 
 /**
- * @brief Computes the partial correlation between a spatial cross-section series and its prediction
+ * @brief Computes the partial correlation between a spatial cross-sectional series and its prediction
  *        using the S-Map method, incorporating control variables.
  *
  * This function performs state-space reconstruction and S-Map prediction while accounting for
@@ -56,7 +56,7 @@ std::vector<double> PartialSimplex4Lattice(
  * independent in terms of incorporating control variables.
  *
  * @param vectors: Reconstructed state-space where each row represents a separate vector/state.
- * @param target: Spatial cross-section series used as the prediction target.
+ * @param target: Spatial cross-sectional series used as the prediction target.
  * @param controls: Cross-sectional data of control variables, stored row-wise.
  * @param nb_vec: Neighbor indices vector specifying spatial unit neighbors.
  * @param lib_indices: Vector of indices indicating which states to include when searching for neighbors.
@@ -89,7 +89,7 @@ std::vector<double> PartialSMap4Lattice(
  *
  * Parameters:
  *   - x_vectors: Reconstructed state-space (each row represents a separate vector/state).
- *   - y: Spatial cross-section series used as the target (should align with x_vectors).
+ *   - y: Spatial cross-sectional series used as the target (should align with x_vectors).
  *   - controls: Cross-sectional data of control variables (stored by row).
  *   - nb_vec: Neighbor indices vector of the spatial units.
  *   - lib_size: Size of the library used for cross mapping.
@@ -112,7 +112,7 @@ std::vector<double> PartialSMap4Lattice(
  */
 std::vector<PartialCorRes> SCPCMSingle4Lattice(
     const std::vector<std::vector<double>>& x_vectors,  // Reconstructed state-space (each row is a separate vector/state)
-    const std::vector<double>& y,                       // Spatial cross-section series to be used as the target (should line up with vectors)
+    const std::vector<double>& y,                       // Spatial cross-sectional series to be used as the target (should line up with vectors)
     const std::vector<std::vector<double>>& controls,   // Cross-sectional data of control variables (**stored by row**)
     const std::vector<std::vector<int>>& nb_vec,        // Neighbor indices vector of the spatial units
     int lib_size,                                       // Size of the library
@@ -132,8 +132,8 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
  * Performs SCPCM on a spatial lattice dataset.
  *
  * Parameters:
- * - x: Spatial cross-section series used as the predictor variable (**cross mapping from**).
- * - y: Spatial cross-section series used as the target variable (**cross mapping to**).
+ * - x: Spatial cross-sectional series used as the predictor variable (**cross mapping from**).
+ * - y: Spatial cross-sectional series used as the target variable (**cross mapping to**).
  * - controls: Cross-sectional data of control variables (**stored by row**).
  * - nb_vec: A nested vector containing neighborhood information for lattice data.
  * - lib_sizes: A vector specifying different library sizes for SCPCM analysis.
@@ -162,8 +162,8 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
  *      - The lower bound of the partial correlation confidence interval.
  */
 std::vector<std::vector<double>> SCPCM4Lattice(
-    const std::vector<double>& x,                       // Spatial cross-section series to cross map from
-    const std::vector<double>& y,                       // Spatial cross-section series to cross map to
+    const std::vector<double>& x,                       // Spatial cross-sectional series to cross map from
+    const std::vector<double>& y,                       // Spatial cross-sectional series to cross map to
     const std::vector<std::vector<double>>& controls,   // Cross-sectional data of control variables (**stored by row**)
     const std::vector<std::vector<int>>& nb_vec,        // Neighbor indices vector of the spatial units
     const std::vector<int>& lib_sizes,                  // Vector of library sizes to use
