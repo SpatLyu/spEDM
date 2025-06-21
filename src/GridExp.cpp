@@ -924,7 +924,14 @@ Rcpp::NumericMatrix RcppIC4Grid(const Rcpp::NumericMatrix& source,
 
   // Convert Rcpp::IntegerVector to std::vector<int>
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
-  std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
+
+  // Check the validity of the neignbor numbers
+  std::vector<int> b_std;
+  for (int i = 0; i < b.size(); ++i){
+    if (b[i] > static_cast<int>(lib_indices.size())) {
+      Rcpp::stop("Neighbor numbers count out of acceptable range at position %d (value: %d)", i + 1, b[i]);
+    }
+  }
 
   std::vector<std::vector<double>> res_std = IC4Grid(
     sourceMat,

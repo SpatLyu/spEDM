@@ -793,7 +793,6 @@ Rcpp::NumericMatrix RcppIC4Lattice(const Rcpp::NumericVector& source,
 
   // Convert Rcpp::IntegerVector to std::vector<int>
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
-  std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
 
   // Initialize lib_indices and pred_indices
   std::vector<int> lib_indices;
@@ -817,6 +816,14 @@ Rcpp::NumericMatrix RcppIC4Lattice(const Rcpp::NumericVector& source,
     }
     if (!std::isnan(target_std[pred[i] - 1])) {
       pred_indices.push_back(pred[i] - 1); // Convert to 0-based index
+    }
+  }
+
+  // Check the validity of the neignbor numbers
+  std::vector<int> b_std;
+  for (int i = 0; i < b.size(); ++i){
+    if (b[i] > static_cast<int>(lib_indices.size())) {
+      Rcpp::stop("Neighbor numbers count out of acceptable range at position %d (value: %d)", i + 1, b[i]);
     }
   }
 
