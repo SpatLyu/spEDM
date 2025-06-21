@@ -90,7 +90,7 @@
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 #' \donttest{
-#' g = gcmc(columbus,"hoval","crime",libsizes = 5:49,E = 3,k = 25)
+#' g = gcmc(columbus,"hoval","crime",libsizes = 26:49,E = 3,k = 25)
 #' g
 #' }
 methods::setMethod("gcmc", "sf", .gcmc_sf_method)
