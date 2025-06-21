@@ -101,6 +101,10 @@ RcppMultiView4Grid <- function(xMatrix, yMatrix, lib, pred, E, tau, b, top, nvar
     .Call(`_spEDM_RcppMultiView4Grid`, xMatrix, yMatrix, lib, pred, E, tau, b, top, nvar, threads)
 }
 
+RcppIC4Grid <- function(source, target, lib, pred, E, b, tau, exclude = 0L, threads = 8L, parallel_level = 0L) {
+    .Call(`_spEDM_RcppIC4Grid`, source, target, lib, pred, E, b, tau, exclude, threads, parallel_level)
+}
+
 RcppGCCM4Grid <- function(xMatrix, yMatrix, libsizes, lib, pred, E, tau, b, simplex, theta, threads, parallel_level, progressbar) {
     .Call(`_spEDM_RcppGCCM4Grid`, xMatrix, yMatrix, libsizes, lib, pred, E, tau, b, simplex, theta, threads, parallel_level, progressbar)
 }
@@ -187,6 +191,10 @@ RcppSMap4Lattice <- function(source, target, nb, lib, pred, theta, E, tau, b, th
 
 RcppMultiView4Lattice <- function(x, y, nb, lib, pred, E, tau, b, top, nvar, threads) {
     .Call(`_spEDM_RcppMultiView4Lattice`, x, y, nb, lib, pred, E, tau, b, top, nvar, threads)
+}
+
+RcppIC4Lattice <- function(source, target, nb, lib, pred, E, b, tau, exclude = 0L, threads = 8L, parallel_level = 0L) {
+    .Call(`_spEDM_RcppIC4Lattice`, source, target, nb, lib, pred, E, b, tau, exclude, threads, parallel_level)
 }
 
 RcppGCCM4Lattice <- function(x, y, nb, libsizes, lib, pred, E, tau, b, simplex, theta, threads, parallel_level, progressbar) {
