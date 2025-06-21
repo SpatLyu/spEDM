@@ -36,7 +36,6 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat);
  * @param Emat A NumericMatrix with three columns: E, k, and a performance metric (e.g., AUC).
  * @return IntegerVector of length 2: the optimal E and k.
  */
-// [[Rcpp::export(rng = false)]]
 Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat);
 
 /**
