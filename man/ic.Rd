@@ -75,7 +75,7 @@ intersection cardinality
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 \donttest{
-ic(columbus,"hoval","crime", k = 5:25)
+ic(columbus,"hoval","crime", k = 25)
 }
 }
 \references{
