@@ -61,6 +61,7 @@ A list
 \describe{
 \item{\code{xmap}}{forecast performance}
 \item{\code{varname}}{name of target variable}
+\item{\code{method}}{method of cross mapping}
 \item{\code{tau}}{step of time lag}
 }
 }
