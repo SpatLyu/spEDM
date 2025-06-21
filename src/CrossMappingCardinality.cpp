@@ -56,9 +56,9 @@ CMCRes CrossMappingCardinality(
   std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
                  [&](int size) { return std::min(size, max_lib_size); });
 
-  // Ensure the minimum value in unique_lib_sizes is num_neighbors + n_excluded + 1
+  // Ensure the minimum value in unique_lib_sizes is num_neighbors + n_excluded
   std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
-                 [&](int size) { return std::max(size, num_neighbors + n_excluded + 1 ); });
+                 [&](int size) { return std::max(size, num_neighbors + n_excluded ); });
 
   // Remove duplicates
   std::sort(unique_lib_sizes.begin(), unique_lib_sizes.end());
