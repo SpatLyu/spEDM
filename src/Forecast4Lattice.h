@@ -99,7 +99,7 @@ std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& source,
  *         If inputs are invalid or no prediction point is valid, the AUC value is NaN.
  *
  * @note
- *   - Only AUC is returned in current version. Use other utilities to derive p-values or CI.
+ *   - Only AUC and p value are returned in current version. Use other utilities to derive CI.
  *   - Library and prediction indices should be adjusted for 0-based indexing before calling.
  *   - Lattice embedding assumes neighborhood-based spatial structure.
  */

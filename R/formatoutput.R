@@ -62,10 +62,10 @@ print.pcm_res = \(x,significant = FALSE,...){
 #' @export
 print.xmap_self = \(x,...){
   res = x$xmap
-  if (ncol(res) == 4){
+  if (x$method == "smap"){
     cat(paste0("The suggested theta for variable ", x$varname, " is ", OptThetaParm(res)), "\n")
   } else {
-    if (ncol(res) == 5){
+    if (x$method == "simplex"){
       outres = OptEmbedDim(res)
     } else {
       outres = OptICparm(res)

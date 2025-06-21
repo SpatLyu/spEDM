@@ -31,9 +31,13 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat);
 
 /**
  * Select the optimal embedding dimension (E) and number of nearest neighbors (k)
- * from a 3-column matrix sorted by decreasing third column value, with tie-breakers.
+ * from a 4-column matrix: E, k, performance metric, and p-value.
+ * Only rows with p-value <= 0.05 are considered. Among them, rows are compared by:
+ *  - highest metric,
+ *  - smallest k (tie-breaker),
+ *  - smallest E (final tie-breaker).
  *
- * @param Emat A NumericMatrix with three columns: E, k, and a performance metric (e.g., AUC).
+ * @param Emat A NumericMatrix with four columns: E, k, metric, and p-value.
  * @return IntegerVector of length 2: the optimal E and k.
  */
 Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat);
