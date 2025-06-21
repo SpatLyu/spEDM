@@ -24,7 +24,7 @@
   if (bidirectional){
     x_xmap_y = RcppGCMC4Lattice(cause,effect,nb,libsizes,lib,pred,E,tau,k,0,threads,pl,progressbar)
   }
-  y_xmap_x = RcppGCMC4Lattice(effect,cause,nb,libsizes,lib,pred,rev(E),rev(tau),k,0,pl,threads,progressbar)
+  y_xmap_x = RcppGCMC4Lattice(effect,cause,nb,libsizes,lib,pred,rev(E),rev(tau),k,0,threads,pl,progressbar)
 
   return(.bind_intersectdf(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
@@ -90,7 +90,7 @@
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 #' \donttest{
-#' g = gcmc(columbus,"hoval","crime",libsizes = seq(5,45,5),E = 5,k = 12)
+#' g = gcmc(columbus,"hoval","crime",libsizes = seq(7,49,7),E = 4,k = 14)
 #' g
 #' }
 methods::setMethod("gcmc", "sf", .gcmc_sf_method)

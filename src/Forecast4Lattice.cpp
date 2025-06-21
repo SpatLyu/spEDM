@@ -229,7 +229,7 @@ std::vector<std::vector<double>> IC4Lattice(const std::vector<double>& source,
         result[j + bs.size() * i][0] = Es[i];  // E
         result[j + bs.size() * i][1] = bs[j];  // k
         result[j + bs.size() * i][2] = cs[0];  // AUC
-        result[j + bs.size() * i][2] = cs[1];  // P value
+        result[j + bs.size() * i][3] = cs[1];  // P value
       }
     }
   } else {
@@ -271,7 +271,7 @@ std::vector<std::vector<double>> IC4Lattice(const std::vector<double>& source,
         result[j + bs.size() * i][0] = Es[i];  // E
         result[j + bs.size() * i][1] = bs[j];  // k
         result[j + bs.size() * i][2] = cs[0];  // AUC
-        result[j + bs.size() * i][2] = cs[1];  // P value
+        result[j + bs.size() * i][3] = cs[1];  // P value
       }, threads_sizet);
     }
   }

@@ -12,7 +12,7 @@
   target,
   lib = NULL,
   pred = NULL,
-  E = 1:10,
+  E = 2:10,
   tau = 1,
   k = E + 2,
   nb = NULL,
@@ -27,7 +27,7 @@
   target,
   lib = NULL,
   pred = NULL,
-  E = 1:10,
+  E = 2:10,
   tau = 1,
   k = E + 2,
   threads = detectThreads(),
@@ -75,7 +75,7 @@ intersection cardinality
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 \donttest{
-ic(columbus,"inc","crime", k = 5:25)
+ic(columbus,"hoval","crime", k = 5:25)
 }
 }
 \references{

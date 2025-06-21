@@ -44,12 +44,12 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat);
  *
  * Only rows with p-value <= 0.05 are considered.
  * Among them, select the row with:
- *   1. Highest metric,
+ *   1. Highest metric (compared using relative tolerance for robustness),
  *   2. If tie, smallest k,
  *   3. If still tie, smallest E.
  *
- * If multiple rows tie on the best metric, a warning is issued and the combination
- * with the smallest k and E is chosen.
+ * If multiple rows tie on the best metric (within tolerance), a warning is issued
+ * and the combination with the smallest k and E is chosen.
  *
  * If no valid rows (p <= 0.05) exist, the function stops with an error.
  *

@@ -1,4 +1,4 @@
-.ic_sf_method = \(data, column, target, lib = NULL, pred = NULL, E = 1:10, tau = 1, k = E+2,
+.ic_sf_method = \(data, column, target, lib = NULL, pred = NULL, E = 2:10, tau = 1, k = E+2,
                   nb = NULL, threads = detectThreads(), parallel.level = "low", detrend = TRUE){
   vx = .uni_lattice(data,column,detrend)
   vy = .uni_lattice(data,target,detrend)
@@ -10,7 +10,7 @@
   return(.bind_xmapself(res,target,"ic",tau))
 }
 
-.ic_spatraster_method = \(data, column, target, lib = NULL, pred = NULL, E = 1:10, tau = 1, k = E+2,
+.ic_spatraster_method = \(data, column, target, lib = NULL, pred = NULL, E = 2:10, tau = 1, k = E+2,
                           threads = detectThreads(), parallel.level = "low", detrend = TRUE){
   mx = .uni_grid(data,column,detrend)
   my = .uni_grid(data,target,detrend)
@@ -42,7 +42,7 @@
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 #' \donttest{
-#' ic(columbus,"inc","crime", k = 5:25)
+#' ic(columbus,"hoval","crime", k = 5:25)
 #' }
 methods::setMethod("ic", "sf", .ic_sf_method)
 
