@@ -165,13 +165,11 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
   // Select theta == 1 if exists, else theta closest to 1
   double selected_theta = std::numeric_limits<double>::quiet_NaN();
   double min_dist_to_1 = std::numeric_limits<double>::max();
-  bool found_theta_1 = false;
 
   for (int i : best_rows) {
     double theta = Thetamat(i, 0);
     if (std::abs(theta - 1.0) <= tol) {
       selected_theta = theta;
-      found_theta_1 = true;
       break;
     } else {
       double dist = std::abs(theta - 1.0);
