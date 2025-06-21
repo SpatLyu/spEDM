@@ -62,7 +62,7 @@ print.pcm_res = \(x,significant = FALSE,...){
 #' @export
 print.xmap_self = \(x,...){
   res = x$xmap
-  if (x$method == "samp"){
+  if (x$method == "smap"){
     cat(paste0("The suggested theta for variable ", x$varname, " is ", OptThetaParm(res)), "\n")
   } else {
     if (x$method == "simplex"){
