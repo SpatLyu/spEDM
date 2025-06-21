@@ -195,12 +195,12 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
  *
  * Only rows with p-value <= 0.05 are considered.
  * Among them, select the row with:
- *   1. Highest metric,
+ *   1. Highest metric (compared using relative tolerance for robustness),
  *   2. If tie, smallest k,
  *   3. If still tie, smallest E.
  *
- * If multiple rows tie on the best metric, a warning is issued and the combination
- * with the smallest k and E is chosen.
+ * If multiple rows tie on the best metric (within tolerance), a warning is issued
+ * and the combination with the smallest k and E is chosen.
  *
  * If no valid rows (p <= 0.05) exist, the function stops with an error.
  *
@@ -212,6 +212,11 @@ Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat) {
   if (Emat.ncol() != 4) {
     Rcpp::stop("Input matrix must have exactly 4 columns: E, k, metric, and p-value.");
   }
+
+  // Helper: check if two doubles are nearly equal (relative + absolute tolerance)
+  auto nearlyEqual = [](double a, double b, double rel_tol = 1e-6, double abs_tol = 1e-12) -> bool {
+    return std::abs(a - b) <= std::max(rel_tol * std::max(std::abs(a), std::abs(b)), abs_tol);
+  };
 
   std::vector<int> valid_rows;
   for (int i = 0; i < Emat.nrow(); ++i) {
@@ -236,13 +241,13 @@ Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat) {
     int current_k = static_cast<int>(Emat(row, 1));
     int current_E = static_cast<int>(Emat(row, 0));
 
-    if (current_metric > best_metric + 1e-10) {
+    if (current_metric > best_metric && !nearlyEqual(current_metric, best_metric)) {
       optimal_row = row;
       best_metric = current_metric;
       best_k = current_k;
       best_E = current_E;
       tie_count = 1;
-    } else if (std::abs(current_metric - best_metric) < 1e-10) {
+    } else if (nearlyEqual(current_metric, best_metric)) {
       ++tie_count;
       if (current_k < best_k || (current_k == best_k && current_E < best_E)) {
         optimal_row = row;
@@ -253,7 +258,7 @@ Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat) {
   }
 
   if (tie_count > 1) {
-    Rcpp::warning("Multiple parameter combinations have identical optimal metric; selected one with smallest k and E.");
+    Rcpp::warning("Multiple parameter combinations have identical optimal metric (within tolerance); selected one with smallest k and E.");
   }
 
   Rcpp::IntegerVector result(2);
