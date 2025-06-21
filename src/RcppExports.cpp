@@ -153,8 +153,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppIntersectionCardinality
-Rcpp::NumericVector RcppIntersectionCardinality(const Rcpp::NumericMatrix& embedding_x, const Rcpp::NumericMatrix& embedding_y, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const int& num_neighbors, const int& n_excluded, const int& threads);
-RcppExport SEXP _spEDM_RcppIntersectionCardinality(SEXP embedding_xSEXP, SEXP embedding_ySEXP, SEXP libSEXP, SEXP predSEXP, SEXP num_neighborsSEXP, SEXP n_excludedSEXP, SEXP threadsSEXP) {
+Rcpp::NumericVector RcppIntersectionCardinality(const Rcpp::NumericMatrix& embedding_x, const Rcpp::NumericMatrix& embedding_y, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const int& num_neighbors, const int& n_excluded, const int& threads, const int& parallel_level);
+RcppExport SEXP _spEDM_RcppIntersectionCardinality(SEXP embedding_xSEXP, SEXP embedding_ySEXP, SEXP libSEXP, SEXP predSEXP, SEXP num_neighborsSEXP, SEXP n_excludedSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type embedding_x(embedding_xSEXP);
@@ -164,7 +164,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int& >::type num_neighbors(num_neighborsSEXP);
     Rcpp::traits::input_parameter< const int& >::type n_excluded(n_excludedSEXP);
     Rcpp::traits::input_parameter< const int& >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppIntersectionCardinality(embedding_x, embedding_y, lib, pred, num_neighbors, n_excluded, threads));
+    Rcpp::traits::input_parameter< const int& >::type parallel_level(parallel_levelSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppIntersectionCardinality(embedding_x, embedding_y, lib, pred, num_neighbors, n_excluded, threads, parallel_level));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1315,7 +1316,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppConditionalEntropy_Disc", (DL_FUNC) &_spEDM_RcppConditionalEntropy_Disc, 5},
     {"_spEDM_RcppSimplexForecast", (DL_FUNC) &_spEDM_RcppSimplexForecast, 5},
     {"_spEDM_RcppSMapForecast", (DL_FUNC) &_spEDM_RcppSMapForecast, 6},
-    {"_spEDM_RcppIntersectionCardinality", (DL_FUNC) &_spEDM_RcppIntersectionCardinality, 7},
+    {"_spEDM_RcppIntersectionCardinality", (DL_FUNC) &_spEDM_RcppIntersectionCardinality, 8},
     {"_spEDM_RcppLocateGridIndices", (DL_FUNC) &_spEDM_RcppLocateGridIndices, 4},
     {"_spEDM_RcppRowColFromGrid", (DL_FUNC) &_spEDM_RcppRowColFromGrid, 2},
     {"_spEDM_RcppLaggedVal4Grid", (DL_FUNC) &_spEDM_RcppLaggedVal4Grid, 2},

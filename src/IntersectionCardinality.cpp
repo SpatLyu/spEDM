@@ -287,6 +287,88 @@ std::vector<IntersectionRes> IntersectionCardinalitySingle(
 }
 
 /**
+ * Computes the Intersection Cardinality (IC) curve for causal inference via cross mapping.
+ *
+ * This function evaluates the extent to which neighbors of the effect variable Y
+ * are preserved when mapped through the neighbors of cause variable X.
+ * Specifically, for each number of neighbors from 1 to `num_neighbors`, it computes
+ * the intersection count between the k nearest neighbors of Y and the k nearest neighbors of X,
+ * for each prediction point.
+ *
+ * The output is an Intersection Cardinality (IC) curve, which can be further processed
+ * (e.g., calculating AUC, statistical significance) outside this function.
+ *
+ * @param embedding_x     State-space embedding of the potential cause variable (NxE matrix).
+ * @param embedding_y     State-space embedding of the potential effect variable (NxE matrix).
+ * @param lib             Vector of library indices (shouble be 0-based in C++).
+ * @param pred            Vector of prediction indices (shouble be 0-based in C++).
+ * @param num_neighbors   Maximum number of neighbors to consider in intersection (e.g., from 1 to k).
+ * @param n_excluded      Number of nearest neighbors to exclude (e.g., due to temporal proximity).
+ * @param threads         Number of threads used for parallel computation.
+ * @param parallel_level  Parallel mode flag: 0 = parallel, 1 = serial.
+ *
+ * @return A vector of size `num_neighbors`:
+ *         - Each element represents the average number of overlapping neighbors
+ *           between X and Y across prediction points, for each neighbor count k = 1, 2, ..., num_neighbors.
+ *
+ *         If inputs are invalid or no valid prediction points exist, the returned vector
+ *         is filled with `NaN` values.
+ *
+ * @note
+ *   - This function returns only the raw intersection values. To compute AUC or p-values,
+ *     use additional post-processing such as DeLong’s test.
+ */
+std::vector<double> IntersectionCardinality(
+    const std::vector<std::vector<double>>& embedding_x,
+    const std::vector<std::vector<double>>& embedding_y,
+    const std::vector<int>& lib,
+    const std::vector<int>& pred,
+    int num_neighbors,
+    int n_excluded,
+    int threads,
+    int parallel_level = 0) {
+  std::vector<double> result (num_neighbors, std::numeric_limits<double>::quiet_NaN());
+  // Input validation
+  if (embedding_x.size() != embedding_y.size() || embedding_x.empty()) {
+    return result;
+  }
+
+  // Filter valid prediction points (exclude those with all NaN values)
+  std::vector<int> valid_pred;
+  for (int idx : pred) {
+    if (idx < 0 || static_cast<size_t>(idx) >= embedding_x.size()) continue;
+
+    bool x_nan = std::all_of(embedding_x[idx].begin(), embedding_x[idx].end(),
+                             [](double v) { return std::isnan(v); });
+    bool y_nan = std::all_of(embedding_y[idx].begin(), embedding_y[idx].end(),
+                             [](double v) { return std::isnan(v); });
+    if (!x_nan && !y_nan) valid_pred.push_back(idx);
+  }
+  if (valid_pred.empty()) return result;
+
+  // Parameter initialization
+  const size_t k = static_cast<size_t>(num_neighbors);
+  const size_t n_excluded_sizet = static_cast<size_t>(n_excluded);
+
+  // Configure threads
+  size_t threads_sizet = static_cast<size_t>(std::abs(threads));
+  threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
+
+  // Precompute neighbors
+  auto nx = CppDistSortedIndice(CppMatDistance(embedding_x, false, true));
+  auto ny = CppDistSortedIndice(CppMatDistance(embedding_y, false, true));
+
+  // run cross mapping
+  std::vector<IntersectionRes> res = IntersectionCardinalitySingle(
+    nx,ny,static_cast<size_t>(lib.size()),lib,pred,k,n_excluded_sizet,threads_sizet,parallel_level
+  );
+
+  if (res.empty()) return result;
+
+  return res[0].Intersection;
+}
+
+/**
  * Computes the Intersection Cardinality (IC) AUC-based causal strength score.
  *
  * This function evaluates the extent to which neighbors of the effect variable Y
@@ -297,11 +379,12 @@ std::vector<IntersectionRes> IntersectionCardinalitySingle(
  * Parameters:
  *   embedding_x    - State-space reconstruction (embedding) of the potential cause variable.
  *   embedding_y    - State-space reconstruction (embedding) of the potential effect variable.
- *   lib            - Library index vector (1-based in R, converted to 0-based).
- *   pred           - Prediction index vector (1-based in R, converted to 0-based).
+ *   lib            - Library index vector (shouble be 0-based in C++).
+ *   pred           - Prediction index vector (shouble be 0-based in C++).
  *   num_neighbors  - Number of neighbors used for cross mapping (after exclusion).
  *   n_excluded     - Number of nearest neighbors to exclude (e.g. temporal).
  *   threads        - Number of threads used in parallel computation.
+ *   parallel_level - Whether to use multithreaded (0) or serial (1) mode
  *
  * Returns:
  *   A vector of 4 values:
@@ -310,14 +393,15 @@ std::vector<IntersectionRes> IntersectionCardinalitySingle(
  *     [2] - Confidence interval upper bound
  *     [3] - Confidence interval lower bound
  */
-std::vector<double> IntersectionCardinality(
+std::vector<double> IntersectionCardinalityScores(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
     const std::vector<int>& lib,
     const std::vector<int>& pred,
     int num_neighbors,
     int n_excluded,
-    int threads) {
+    int threads,
+    int parallel_level = 0) {
   // Input validation
   if (embedding_x.size() != embedding_y.size() || embedding_x.empty()) {
     return {0, 1.0, std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN()};
@@ -350,7 +434,7 @@ std::vector<double> IntersectionCardinality(
 
   // run cross mapping
   std::vector<IntersectionRes> res = IntersectionCardinalitySingle(
-    nx,ny,static_cast<size_t>(lib.size()),lib,pred,k,n_excluded_sizet,threads_sizet,0
+    nx,ny,static_cast<size_t>(lib.size()),lib,pred,k,n_excluded_sizet,threads_sizet,parallel_level
   );
 
   if (res.empty()) return {0, 1.0, std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN()};

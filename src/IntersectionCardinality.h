@@ -50,6 +50,48 @@ std::vector<IntersectionRes> IntersectionCardinalitySingle(
 );
 
 /**
+ * Computes the Intersection Cardinality (IC) curve for causal inference via cross mapping.
+ *
+ * This function evaluates the extent to which neighbors of the effect variable Y
+ * are preserved when mapped through the neighbors of cause variable X.
+ * Specifically, for each number of neighbors from 1 to `num_neighbors`, it computes
+ * the intersection count between the k nearest neighbors of Y and the k nearest neighbors of X,
+ * for each prediction point.
+ *
+ * The output is an Intersection Cardinality (IC) curve, which can be further processed
+ * (e.g., calculating AUC, statistical significance) outside this function.
+ *
+ * @param embedding_x     State-space embedding of the potential cause variable (NxE matrix).
+ * @param embedding_y     State-space embedding of the potential effect variable (NxE matrix).
+ * @param lib             Vector of library indices (shouble be 0-based in C++).
+ * @param pred            Vector of prediction indices (shouble be 0-based in C++).
+ * @param num_neighbors   Maximum number of neighbors to consider in intersection (e.g., from 1 to k).
+ * @param n_excluded      Number of nearest neighbors to exclude (e.g., due to temporal proximity).
+ * @param threads         Number of threads used for parallel computation.
+ * @param parallel_level  Parallel mode flag: 0 = parallel, 1 = serial.
+ *
+ * @return A vector of size `num_neighbors`:
+ *         - Each element represents the average number of overlapping neighbors
+ *           between X and Y across prediction points, for each neighbor count k = 1, 2, ..., num_neighbors.
+ *
+ *         If inputs are invalid or no valid prediction points exist, the returned vector
+ *         is filled with `NaN` values.
+ *
+ * @note
+ *   - This function returns only the raw intersection values. To compute AUC or p-values,
+ *     use additional post-processing such as DeLong’s test.
+ */
+std::vector<double> IntersectionCardinality(
+    const std::vector<std::vector<double>>& embedding_x,
+    const std::vector<std::vector<double>>& embedding_y,
+    const std::vector<int>& lib,
+    const std::vector<int>& pred,
+    int num_neighbors,
+    int n_excluded,
+    int threads,
+    int parallel_level = 0);
+
+/**
  * Computes the Intersection Cardinality (IC) AUC-based causal strength score.
  *
  * This function evaluates the extent to which neighbors of the effect variable Y
@@ -60,11 +102,12 @@ std::vector<IntersectionRes> IntersectionCardinalitySingle(
  * Parameters:
  *   embedding_x    - State-space reconstruction (embedding) of the potential cause variable.
  *   embedding_y    - State-space reconstruction (embedding) of the potential effect variable.
- *   lib            - Library index vector (1-based in R, converted to 0-based).
- *   pred           - Prediction index vector (1-based in R, converted to 0-based).
+ *   lib            - Library index vector (shouble be 0-based in C++).
+ *   pred           - Prediction index vector (shouble be 0-based in C++).
  *   num_neighbors  - Number of neighbors used for cross mapping (after exclusion).
  *   n_excluded     - Number of nearest neighbors to exclude (e.g. temporal).
  *   threads        - Number of threads used in parallel computation.
+ *   parallel_level - Whether to use multithreaded (0) or serial (1) mode
  *
  * Returns:
  *   A vector of 4 values:
@@ -73,13 +116,14 @@ std::vector<IntersectionRes> IntersectionCardinalitySingle(
  *     [2] - Confidence interval upper bound
  *     [3] - Confidence interval lower bound
  */
-std::vector<double> IntersectionCardinality(
+std::vector<double> IntersectionCardinalityScores(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
     const std::vector<int>& lib,
     const std::vector<int>& pred,
     int num_neighbors,
     int n_excluded,
-    int threads);
+    int threads,
+    int parallel_level = 0);
 
 #endif // IntersectionCardinality_H
