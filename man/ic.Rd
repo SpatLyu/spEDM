@@ -17,7 +17,7 @@
   k = E + 2,
   nb = NULL,
   threads = detectThreads(),
-  parallel_level = "low",
+  parallel.level = "low",
   detrend = TRUE
 )
 
@@ -31,7 +31,7 @@
   tau = 1,
   k = E + 2,
   threads = detectThreads(),
-  parallel_level = "low",
+  parallel.level = "low",
   detrend = TRUE
 )
 }
@@ -56,9 +56,9 @@
 
 \item{threads}{(optional) number of threads to use.}
 
-\item{detrend}{(optional) whether to remove the linear trend.}
-
 \item{parallel.level}{(optional) level of parallelism, \code{low} or \code{high}.}
+
+\item{detrend}{(optional) whether to remove the linear trend.}
 }
 \value{
 A list
@@ -74,7 +74,7 @@ intersection cardinality
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 \donttest{
-ic(columbus,"inc","crime")
+ic(columbus,"inc","crime", k = 5:25)
 }
 }
 \references{
