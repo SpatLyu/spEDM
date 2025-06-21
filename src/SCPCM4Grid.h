@@ -16,7 +16,7 @@
 #include <RcppThread.h>
 
 /**
- * @brief Computes the partial correlation between a spatial cross-section series and its prediction
+ * @brief Computes the partial correlation between a spatial cross-sectional series and its prediction
  *        using the Simplex Projection method, incorporating control variables in a grid-based spatial setting.
  *
  * This function reconstructs the state-space and applies Simplex Projection prediction while accounting
@@ -24,7 +24,7 @@
  * control variables.
  *
  * @param vectors: Reconstructed state-space where each row represents a separate vector/state.
- * @param target: Spatial cross-section series used as the prediction target.
+ * @param target: Spatial cross-sectional series used as the prediction target.
  * @param controls: Cross-sectional data of control variables, stored row-wise.
  * @param lib_indices: Integer vector indicating which states to include when searching for neighbors.
  * @param pred_indices: Integer vector indicating which states to predict from.
@@ -51,7 +51,7 @@ std::vector<double> PartialSimplex4Grid(
 );
 
 /**
- * @brief Computes the partial correlation between a spatial cross-section series and its prediction
+ * @brief Computes the partial correlation between a spatial cross-sectional series and its prediction
  *        using the S-Map method, incorporating control variables in a grid-based spatial setting.
  *
  * This function reconstructs the state-space and applies S-Map prediction while accounting for
@@ -59,7 +59,7 @@ std::vector<double> PartialSimplex4Grid(
  * control variables.
  *
  * @param vectors: Reconstructed state-space where each row represents a separate vector/state.
- * @param target: Spatial cross-section series used as the prediction target.
+ * @param target: Spatial cross-sectional series used as the prediction target.
  * @param controls: Cross-sectional data of control variables, stored row-wise.
  * @param lib_indices: Integer vector indicating which states to include when searching for neighbors.
  * @param pred_indices: Integer vector indicating which states to predict from.
@@ -93,8 +93,8 @@ std::vector<double> PartialSMap4Grid(
  * This function calculates the partial cross mapping between a predictor variable (xEmbedings) and a response
  * variable (yPred) over a 2D grid, using either Simplex Projection or S-Mapping.
  *
- * @param xEmbedings           A 2D matrix of the predictor variable's embeddings (spatial cross-section data).
- * @param yPred                A 1D vector of the response variable's values (spatial cross-section data).
+ * @param xEmbedings           A 2D matrix of the predictor variable's embeddings (spatial cross-sectional data).
+ * @param yPred                A 1D vector of the response variable's values (spatial cross-sectional data).
  * @param controls             A 2D matrix that stores the control variables.
  * @param lib_sizes            A vector of two integers, where the first element is the row-wise library size and the second element is the column-wise library size.
  * @param possible_lib_indices A boolean vector indicating which spatial units are valid for inclusion in the library.
@@ -140,7 +140,7 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
  * are created by selecting consecutive indices from possible_lib_indices with possible wraparound.
  *
  * @param xEmbedings           State-space embeddings for the predictor variable (each row is a spatial vector)
- * @param yPred                Target spatial cross-section series
+ * @param yPred                Target spatial cross-sectional series
  * @param controls             Control variables stored by row
  * @param lib_size             Number of consecutive spatial units to include in each library
  * @param lib_indices          Integer vector indicating the indices of eligible spatial units for library construction
@@ -185,8 +185,8 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
  * and S-Mapping, with options for parallel computation and progress tracking.
  *
  * Parameters:
- * - xMatrix: A 2D matrix of predictor variable values (spatial cross-section data).
- * - yMatrix: A 2D matrix of response variable values (spatial cross-section data).
+ * - xMatrix: A 2D matrix of predictor variable values (spatial cross-sectional data).
+ * - yMatrix: A 2D matrix of response variable values (spatial cross-sectional data).
  * - zMatrixs: A 2D matrix storing the control variables.
  * - lib_sizes: A 2D vector where the first sub-vector contains row-wise library sizes and the second sub-vector contains column-wise library sizes.
  * - lib: A vector of pairs representing the indices (row, column) of spatial units to be the library.
