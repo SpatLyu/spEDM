@@ -825,6 +825,7 @@ Rcpp::NumericMatrix RcppIC4Lattice(const Rcpp::NumericVector& source,
     if (b[i] > static_cast<int>(lib_indices.size())) {
       Rcpp::stop("Neighbor numbers count out of acceptable range at position %d (value: %d)", i + 1, b[i]);
     }
+    b_std.push_back(b[i]);
   }
 
   std::vector<std::vector<double>> res_std = IC4Lattice(
