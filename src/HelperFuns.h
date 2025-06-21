@@ -30,6 +30,15 @@ Rcpp::IntegerVector OptEmbedDim(Rcpp::NumericMatrix Emat);
 double OptThetaParm(Rcpp::NumericMatrix Thetamat);
 
 /**
+ * Select the optimal embedding dimension (E) and number of nearest neighbors (k)
+ * from a 3-column matrix sorted by decreasing third column value, with tie-breakers.
+ *
+ * @param Emat A NumericMatrix with three columns: E, k, and a performance metric (e.g., AUC).
+ * @return IntegerVector of length 2: the optimal E and k.
+ */
+Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat);
+
+/**
  * This function takes a NumericMatrix as input and returns a matrix
  * containing the row and column indices of all non-NA elements in the input matrix.
  *

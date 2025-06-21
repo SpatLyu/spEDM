@@ -137,6 +137,10 @@ OptThetaParm <- function(Thetamat) {
     .Call(`_spEDM_OptThetaParm`, Thetamat)
 }
 
+OptICparm <- function(Emat) {
+    .Call(`_spEDM_OptICparm`, Emat)
+}
+
 MatNotNAIndice <- function(mat, byrow = TRUE) {
     .Call(`_spEDM_MatNotNAIndice`, mat, byrow)
 }
