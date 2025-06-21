@@ -90,13 +90,13 @@ print.sc_res = \(x,...){
 #' plot ccm result
 #' @noRd
 #' @export
-plot.ccm_res = \(x, family = "serif",
-                 legend_texts = NULL,
+plot.ccm_res = \(x, family = "serif", legend_texts = NULL,
                  legend_cols = c("#ed795b","#608dbe"),
                  draw_ci = FALSE, ci_alpha = 0.25,
                  xbreaks = NULL, xlimits = NULL,
                  ybreaks = seq(0, 1, by = 0.1),
-                 ylimits = c(-0.05, 1), ...){
+                 ylimits = c(-0.05, 1),
+                 ylabel = expression(rho), ...){
   resdf = x$xmap
   bidirectional = x$bidirectional
 
@@ -140,7 +140,7 @@ plot.ccm_res = \(x, family = "serif",
     ggplot2::scale_x_continuous(breaks = xbreaks, limits = xlimits,
                                 expand = c(0, 0), name = "Library size") +
     ggplot2::scale_y_continuous(breaks = ybreaks, limits = ylimits,
-                                expand = c(0, 0), name = expression(rho)) +
+                                expand = c(0, 0), name = ylabel) +
     ggplot2::scale_color_manual(values = legend_cols,
                                 labels = legend_texts,
                                 name = "") +
@@ -163,7 +163,7 @@ plot.cmc_res = \(x, ...){
   xmap = x[-2]
   class(xmap) = "ccm"
   draw_ci = FALSE
-  fig1 = plot.ccm_res(xmap,draw_ci,...)
+  fig1 = plot.ccm_res(xmap,draw_ci = draw_ci,ylabel = "Causal Score",...)
   return(fig1)
 }
 
