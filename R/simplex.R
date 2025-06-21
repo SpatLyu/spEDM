@@ -25,7 +25,7 @@
 #' @param column name of library variable.
 #' @param lib (optional) libraries indices.
 #' @param pred (optional) predictions indices.
-#' @param k (optional) number of nearest neighbors used in prediction.
+#' @param k (optional) number of nearest neighbors used.
 #' @param threads (optional) number of threads to use.
 #'
 #' @return A list

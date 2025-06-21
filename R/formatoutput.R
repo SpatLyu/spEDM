@@ -62,14 +62,16 @@ print.pcm_res = \(x,significant = FALSE,...){
 #' @export
 print.xmap_self = \(x,...){
   res = x$xmap
-  if (ncol(res) == 5){
-    outres = OptEmbedDim(res)
-    cat(paste0("The suggested E and k for variable ", x$varname, " is ", outres[1], " and ", outres[2]), "\n")
-    if (outres[2] == 1 && x$tau == 0) warning("When tau = 0, E should not be 1")
-  } else if (ncol(res) == 4){
+  if (ncol(res) == 4){
     cat(paste0("The suggested theta for variable ", x$varname, " is ", OptThetaParm(res)), "\n")
   } else {
-    print(x)
+    if (ncol(res) == 5){
+      outres = OptEmbedDim(res)
+    } else {
+      outres = OptICparm(res)
+    }
+    cat(paste0("The suggested E and k for variable ", x$varname, " is ", outres[1], " and ", outres[2]), "\n")
+    if (outres[1] == 1 && x$tau == 0) warning("When tau = 0, E should not be 1")
   }
 }
 
