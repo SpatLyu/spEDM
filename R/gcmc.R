@@ -49,7 +49,7 @@
 
   if (is.null(lib)) lib = .internal_library(dtf,TRUE)
   if (is.null(pred)) pred = lib
-  if (is.null(libsizes)) libsizes = nrow(lib)
+  if (is.null(libsizes)) libsizes = matrix(nrow(lib))
 
   x_xmap_y = NULL
   if (bidirectional){
@@ -92,7 +92,7 @@
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 #' \donttest{
-#' g = gcmc(columbus,"hoval","crime",E = 3,k = 25)
+#' g = gcmc(columbus,"hoval","crime",E = 2,k = 25)
 #' g
 #' }
 methods::setMethod("gcmc", "sf", .gcmc_sf_method)

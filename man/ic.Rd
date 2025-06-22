@@ -18,7 +18,7 @@
   nb = NULL,
   threads = detectThreads(),
   parallel.level = "low",
-  detrend = TRUE
+  detrend = FALSE
 )
 
 \S4method{ic}{SpatRaster}(
@@ -32,7 +32,7 @@
   k = E + 2,
   threads = detectThreads(),
   parallel.level = "low",
-  detrend = TRUE
+  detrend = FALSE
 )
 }
 \arguments{
