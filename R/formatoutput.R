@@ -61,17 +61,18 @@ print.pcm_res = \(x,significant = FALSE,...){
 #' @noRd
 #' @export
 print.xmap_self = \(x,...){
-  res = x$xmap
+  res = as.matrix(x$xmap)
   if (x$method == "smap"){
-    cat(paste0("The suggested theta for variable ", x$varname, " is ", OptThetaParm(res)), "\n")
+    res = OptThetaParm(res)
+    cat(paste0("The suggested theta for variable ", x$varname, " is ", res[1], "\n"))
   } else {
     if (x$method == "simplex"){
-      outres = OptEmbedDim(res)
+      res = OptEmbedDim(res)
     } else {
-      outres = OptICparm(res)
+      res = OptICparm(res)
     }
-    cat(paste0("The suggested E and k for variable ", x$varname, " is ", outres[1], " and ", outres[2]), "\n")
-    if (outres[1] == 1 && x$tau == 0) warning("When tau = 0, E should not be 1")
+    cat(paste0("The suggested E and k for variable ", x$varname, " is ", res[1], " and ", res[2]), "\n")
+    if (res[1] == 1 && x$tau == 0) warning("When tau = 0, E should not be 1")
   }
 }
 
