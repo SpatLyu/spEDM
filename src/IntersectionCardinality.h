@@ -40,9 +40,9 @@
 std::vector<IntersectionRes> IntersectionCardinalitySingle(
     const std::vector<std::vector<size_t>>& neighborsX,
     const std::vector<std::vector<size_t>>& neighborsY,
-    int lib_size,
-    const std::vector<int>& lib_indices,
-    const std::vector<int>& pred_indices,
+    size_t lib_size,
+    const std::vector<size_t>& lib_indices,
+    const std::vector<size_t>& pred_indices,
     size_t num_neighbors,
     size_t n_excluded,
     size_t threads,
@@ -84,10 +84,10 @@ std::vector<IntersectionRes> IntersectionCardinalitySingle(
 std::vector<double> IntersectionCardinality(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
-    const std::vector<int>& lib,
-    const std::vector<int>& pred,
-    int num_neighbors,
-    int n_excluded,
+    const std::vector<size_t>& lib,
+    const std::vector<size_t>& pred,
+    size_t num_neighbors,
+    size_t n_excluded,
     int threads,
     int parallel_level = 0);
 
@@ -119,10 +119,10 @@ std::vector<double> IntersectionCardinality(
 std::vector<double> IntersectionCardinalityScores(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
-    const std::vector<int>& lib,
-    const std::vector<int>& pred,
-    int num_neighbors,
-    int n_excluded,
+    const std::vector<size_t>& lib,
+    const std::vector<size_t>& pred,
+    size_t num_neighbors,
+    size_t n_excluded,
     int threads,
     int parallel_level = 0);
 

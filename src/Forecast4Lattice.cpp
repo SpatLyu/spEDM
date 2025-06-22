@@ -161,8 +161,8 @@ std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& source,
 std::vector<std::vector<double>> IC4Lattice(const std::vector<double>& source,
                                             const std::vector<double>& target,
                                             const std::vector<std::vector<int>>& nb_vec,
-                                            const std::vector<int>& lib_indices,
-                                            const std::vector<int>& pred_indices,
+                                            const std::vector<size_t>& lib_indices,
+                                            const std::vector<size_t>& pred_indices,
                                             const std::vector<int>& E,
                                             const std::vector<int>& b,
                                             int tau,
@@ -197,9 +197,9 @@ std::vector<std::vector<double>> IC4Lattice(const std::vector<double>& source,
       auto embedding_y = GenLatticeEmbeddings(target, nb_vec, Es[i], tau);
 
       // Filter valid prediction points (exclude those with all NaN values)
-      std::vector<int> valid_pred;
-      for (int idx : pred_indices) {
-        if (idx < 0 || static_cast<size_t>(idx) >= embedding_x.size()) continue;
+      std::vector<size_t> valid_pred;
+      for (size_t idx : pred_indices) {
+        if (idx < 0 || idx >= embedding_x.size()) continue;
 
         bool x_nan = std::all_of(embedding_x[idx].begin(), embedding_x[idx].end(),
                                  [](double v) { return std::isnan(v); });
@@ -209,8 +209,8 @@ std::vector<std::vector<double>> IC4Lattice(const std::vector<double>& source,
       }
 
       // Precompute neighbors
-      auto nx = CppDistSortedIndice(CppMatDistance(embedding_x, false, true));
-      auto ny = CppDistSortedIndice(CppMatDistance(embedding_y, false, true));
+      auto nx = CppDistSortedIndice(CppMatDistance(embedding_x, false, true),lib_indices);
+      auto ny = CppDistSortedIndice(CppMatDistance(embedding_y, false, true),lib_indices);
 
       // Parameter initialization
       const size_t n_excluded_sizet = static_cast<size_t>(exclude);
@@ -220,7 +220,7 @@ std::vector<std::vector<double>> IC4Lattice(const std::vector<double>& source,
 
         // run cross mapping
         std::vector<IntersectionRes> res = IntersectionCardinalitySingle(
-          nx,ny,static_cast<size_t>(lib_indices.size()),lib_indices,valid_pred,k,n_excluded_sizet,threads_sizet,0
+          nx,ny,lib_indices.size(),lib_indices,valid_pred,k,n_excluded_sizet,threads_sizet,0
         );
 
         std::vector<double> cs = {0,1};
@@ -239,9 +239,9 @@ std::vector<std::vector<double>> IC4Lattice(const std::vector<double>& source,
       auto embedding_y = GenLatticeEmbeddings(target, nb_vec, Es[i], tau);
 
       // Filter valid prediction points (exclude those with all NaN values)
-      std::vector<int> valid_pred;
-      for (int idx : pred_indices) {
-        if (idx < 0 || static_cast<size_t>(idx) >= embedding_x.size()) continue;
+      std::vector<size_t> valid_pred;
+      for (size_t idx : pred_indices) {
+        if (idx < 0 || idx >= embedding_x.size()) continue;
 
         bool x_nan = std::all_of(embedding_x[idx].begin(), embedding_x[idx].end(),
                                  [](double v) { return std::isnan(v); });
@@ -251,8 +251,8 @@ std::vector<std::vector<double>> IC4Lattice(const std::vector<double>& source,
       }
 
       // Precompute neighbors
-      auto nx = CppDistSortedIndice(CppMatDistance(embedding_x, false, true));
-      auto ny = CppDistSortedIndice(CppMatDistance(embedding_y, false, true));
+      auto nx = CppDistSortedIndice(CppMatDistance(embedding_x, false, true),lib_indices);
+      auto ny = CppDistSortedIndice(CppMatDistance(embedding_y, false, true),lib_indices);
 
       // Parameter initialization
       const size_t n_excluded_sizet = static_cast<size_t>(exclude);
@@ -262,7 +262,7 @@ std::vector<std::vector<double>> IC4Lattice(const std::vector<double>& source,
 
         // run cross mapping
         std::vector<IntersectionRes> res = IntersectionCardinalitySingle(
-          nx,ny,static_cast<size_t>(lib_indices.size()),lib_indices,valid_pred,k,n_excluded_sizet,threads_sizet,1
+          nx,ny,lib_indices.size(),lib_indices,valid_pred,k,n_excluded_sizet,threads_sizet,1
         );
 
         std::vector<double> cs = {0,1};

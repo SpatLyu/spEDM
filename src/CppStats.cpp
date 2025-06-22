@@ -1431,37 +1431,39 @@ std::vector<size_t> CppDistKNNIndice(
 }
 
 /**
- * Computes sorted neighbor indices for each row in a precomputed distance matrix.
+ * Computes sorted neighbor indices for selected rows in a precomputed distance matrix,
+ * with neighbors restricted to a specified subset of indices (lib).
  *
  * Parameters:
  *   dist_mat      - Precomputed n x n distance matrix (may include NaN).
+ *   lib           - Indices to compute neighbors for (and restrict neighbors to).
  *   include_self  - Whether to include self (i == j) as a neighbor.
  *
  * Returns:
- *   A vector of n vectors. Each subvector contains the indices of valid neighbors
- *   (sorted by increasing distance). If a row is entirely invalid (e.g., all NaN or self is NaN),
- *   it will be filled with `invalid_index`(std::numeric_limits<size_t>::max()).
+ *   A vector of n vectors. For rows in lib, each subvector contains the indices of valid neighbors
+ *   (from lib, sorted by increasing distance). Other rows are filled with `invalid_index`.
  */
 std::vector<std::vector<size_t>> CppDistSortedIndice(
     const std::vector<std::vector<double>>& dist_mat,
+    const std::vector<size_t>& lib,
     bool include_self = false)
 {
   const size_t n = dist_mat.size();
   const size_t invalid_index = std::numeric_limits<size_t>::max();
-  std::vector<std::vector<size_t>> sorted_indices(n);
 
-  for (size_t i = 0; i < n; ++i) {
+  // Initialize all rows as invalid by default
+  std::vector<std::vector<size_t>> sorted_indices(n, std::vector<size_t>{invalid_index});
+
+  for (size_t i : lib) {
+    if (i >= n || dist_mat[i].size() != n) continue;
+
     const auto& row = dist_mat[i];
 
-    // If self-distance is NaN or row is malformed, mark as invalid
-    if (std::isnan(row[i])) {
-      sorted_indices[i] = std::vector<size_t>(1, invalid_index);  // or empty
-      continue;
-    }
+    if (std::isnan(row[i])) continue;
 
     std::vector<std::pair<double, size_t>> valid_neighbors;
 
-    for (size_t j = 0; j < row.size(); ++j) {
+    for (size_t j : lib) {
       if (!include_self && i == j) continue;
 
       double d = row[j];

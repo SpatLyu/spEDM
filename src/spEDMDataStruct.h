@@ -28,14 +28,14 @@ struct CMCRes {
 
 
 struct IntersectionRes {
-  int libsize;
+  size_t libsize;
   std::vector<double> Intersection;
 
   // Default constructor
   IntersectionRes() : libsize(0), Intersection() {}
 
   // Parameterized constructor
-  IntersectionRes(int t, const std::vector<double>& x)
+  IntersectionRes(size_t t, const std::vector<double>& x)
     : libsize(t), Intersection(x) {}
 };
 
