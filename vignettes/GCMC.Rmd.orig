@@ -50,18 +50,18 @@ Run GCMC:
 
 ```{r case_lattice}
 # temperature and population density
-g1 = gcmc(popd_sf, "tem", "popd", E = c(2,5),
-          k = 210, nb = popd_nb, progressbar = FALSE)
+g1 = gcmc(popd_sf, "tem", "popd", E = c(2,5), k = 210,
+          nb = popd_nb, detrend = TRUE, progressbar = FALSE)
 g1
 
 # elevation and population density
-g2 = gcmc(popd_sf, "elev", "popd", E = c(1,5),
-          k = 210, nb = popd_nb, progressbar = FALSE)
+g2 = gcmc(popd_sf, "elev", "popd", E = c(1,5), k = 210,
+          nb = popd_nb, detrend = TRUE, progressbar = FALSE)
 g2
 
 # elevation and temperature
-g3 = gcmc(popd_sf, "elev", "tem", E = c(1,2),
-          k = 210, nb = popd_nb, progressbar = FALSE)
+g3 = gcmc(popd_sf, "elev", "tem", E = c(1,2), k = 210,
+          nb = popd_nb, detrend = TRUE, progressbar = FALSE)
 g3
 ```
 
@@ -173,18 +173,21 @@ Run GCMC:
 
 ```{r case_grid}
 # precipitation and npp
-g1 = gcmc(npp, "pre", "npp", E = 2, k = 270, libsizes = matrix(nrow(predindice)),
-          lib = predindice, pred = predindice, progressbar = FALSE)
+g1 = gcmc(npp, "pre", "npp", E = 2, k = 270,
+          lib = predindice, pred = predindice,
+          detrend = TRUE, progressbar = FALSE)
 g1
 
 # temperature and npp
-g2 = gcmc(npp, "tem", "npp", E = 2, k = 270, libsizes = matrix(nrow(predindice)),
-          lib = predindice, pred = predindice, progressbar = FALSE)
+g2 = gcmc(npp, "tem", "npp", E = 2, k = 270,
+          lib = predindice, pred = predindice,
+          detrend = TRUE, progressbar = FALSE)
 g2
 
 # precipitation and temperature
-g3 = gcmc(npp, "pre", "tem", E = 2, k = 270, libsizes = matrix(nrow(predindice)),
-          lib = predindice, pred = predindice, progressbar = FALSE)
+g3 = gcmc(npp, "pre", "tem", E = 2, k = 270,
+          lib = predindice, pred = predindice,
+          detrend = TRUE, progressbar = FALSE)
 g3
 ```
 
