@@ -795,8 +795,8 @@ Rcpp::NumericMatrix RcppIC4Lattice(const Rcpp::NumericVector& source,
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
 
   // Initialize lib_indices and pred_indices
-  std::vector<int> lib_indices;
-  std::vector<int> pred_indices;
+  std::vector<size_t> lib_indices;
+  std::vector<size_t> pred_indices;
 
   int target_len = target_std.size();
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
@@ -806,7 +806,7 @@ Rcpp::NumericMatrix RcppIC4Lattice(const Rcpp::NumericVector& source,
       Rcpp::stop("lib contains out-of-bounds index at position %d (value: %d)", i + 1, lib[i]);
     }
     if (!std::isnan(target_std[lib[i] - 1])) {
-      lib_indices.push_back(lib[i] - 1); // Convert to 0-based index
+      lib_indices.push_back(static_cast<size_t>(lib[i] - 1)); // Convert to 0-based index
     }
   }
   size_t n_predsize = pred.size();   // convert R R_xlen_t to C++ size_t
@@ -815,7 +815,7 @@ Rcpp::NumericMatrix RcppIC4Lattice(const Rcpp::NumericVector& source,
       Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
     }
     if (!std::isnan(target_std[pred[i] - 1])) {
-      pred_indices.push_back(pred[i] - 1); // Convert to 0-based index
+      pred_indices.push_back(static_cast<size_t>(pred[i] - 1)); // Convert to 0-based index
     }
   }
 
@@ -1066,20 +1066,20 @@ Rcpp::List RcppGCMC4Lattice(
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
   // Convert Rcpp IntegerVector to std::vector<int>
-  std::vector<int> libsizes_std = Rcpp::as<std::vector<int>>(libsizes);
+  std::vector<size_t> libsizes_std = Rcpp::as<std::vector<size_t>>(libsizes);
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
   std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
 
   int validSampleNum = x_std.size();
   // Convert and check that lib and pred indices are within bounds & convert R based 1 index to C++ based 0 index
-  std::vector<int> lib_std;
-  std::vector<int> pred_std;
+  std::vector<size_t> lib_std;
+  std::vector<size_t> pred_std;
   for (int i = 0; i < lib.size(); ++i) {
     if (lib[i] < 1 || lib[i] > validSampleNum) {
       Rcpp::stop("lib contains out-of-bounds index at position %d (value: %d)", i + 1, lib[i]);
     }
     if (!std::isnan(y_std[lib[i] - 1])) {
-      lib_std.push_back(lib[i] - 1);
+      lib_std.push_back(static_cast<size_t>(lib[i] - 1));
     }
   }
   for (int i = 0; i < pred.size(); ++i) {
@@ -1087,7 +1087,7 @@ Rcpp::List RcppGCMC4Lattice(
       Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
     }
     if (!std::isnan(y_std[pred[i] - 1])) {
-      pred_std.push_back(pred[i] - 1);
+      pred_std.push_back(static_cast<size_t>(pred[i] - 1));
     }
   }
 
@@ -1103,7 +1103,9 @@ Rcpp::List RcppGCMC4Lattice(
   std::vector<std::vector<double>> e2 = GenLatticeEmbeddings(y_std, nb_vec, E[1], tau_std[1]);
 
   // Perform GCMC for spatial lattice data
-  CMCRes res = CrossMappingCardinality(e1,e2,libsizes_std,lib_std,pred_std,b,r,threads,parallel_level,progressbar);
+  CMCRes res = CrossMappingCardinality(e1,e2,libsizes_std,lib_std,pred_std,
+                                       static_cast<size_t>(b),static_cast<size_t>(r),
+                                       threads,parallel_level,progressbar);
 
   // Convert mean_aucs to Rcpp::DataFrame
   std::vector<double> libs, aucs;

@@ -190,8 +190,8 @@ Rcpp::NumericVector RcppIntersectionCardinality(
   }
 
   // Initialize lib_indices and pred_indices
-  std::vector<int> lib_indices;
-  std::vector<int> pred_indices;
+  std::vector<size_t> lib_indices;
+  std::vector<size_t> pred_indices;
 
   int target_len = embedding_x.nrow();
   // Convert lib and pred (1-based in R) to 0-based indices and check validity
@@ -199,13 +199,13 @@ Rcpp::NumericVector RcppIntersectionCardinality(
     if (lib[i] < 0 || lib[i] > target_len) {
       Rcpp::stop("lib contains out-of-bounds index at position %d (value: %d)", i + 1, lib[i]);
     }
-    lib_indices.push_back(lib[i] - 1); // Convert to 0-based index
+    lib_indices.push_back(static_cast<size_t>(lib[i] - 1)); // Convert to 0-based index
   }
   for (int i = 0; i < pred.size(); ++i) {
     if (pred[i] < 0 || pred[i] > target_len) {
       Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
     }
-    pred_indices.push_back(pred[i] - 1); // Convert to 0-based index
+    pred_indices.push_back(static_cast<size_t>(pred[i] - 1)); // Convert to 0-based index
   }
 
   if (lib_indices.size() < static_cast<size_t>(num_neighbors)){
@@ -218,8 +218,8 @@ Rcpp::NumericVector RcppIntersectionCardinality(
     e2,
     lib_indices,
     pred_indices,
-    num_neighbors,
-    n_excluded,
+    static_cast<size_t>(num_neighbors),
+    static_cast<size_t>(n_excluded),
     threads,
     parallel_level
   );

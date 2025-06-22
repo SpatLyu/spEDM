@@ -39,18 +39,18 @@
 std::vector<IntersectionRes> IntersectionCardinalitySingle(
     const std::vector<std::vector<size_t>>& neighborsX,
     const std::vector<std::vector<size_t>>& neighborsY,
-    int lib_size,
-    const std::vector<int>& lib_indices,
-    const std::vector<int>& pred_indices,
+    size_t lib_size,
+    const std::vector<size_t>& lib_indices,
+    const std::vector<size_t>& pred_indices,
     size_t num_neighbors,
     size_t n_excluded,
     size_t threads,
     int parallel_level
 ){
-  int max_lib_size = lib_indices.size();
+  size_t max_lib_size = lib_indices.size();
   const size_t max_r = num_neighbors + n_excluded; // Total number of neighbors = actual used + excluded ones
 
-  auto ICSingle = [&](const std::vector<int>& lib) {
+  auto ICSingle = [&](const std::vector<size_t>& lib) {
     // Store mapping ratio curves for each prediction point
     std::vector<std::vector<double>> ratio_curves(pred_indices.size(), std::vector<double>(num_neighbors, std::numeric_limits<double>::quiet_NaN()));
 
@@ -60,7 +60,7 @@ std::vector<IntersectionRes> IntersectionCardinalitySingle(
     if (parallel_level == 0){
       // Perform the operations using RcppThread
       RcppThread::parallelFor(0, pred_indices.size(), [&](size_t i) {
-        const int idx = pred_indices[i];
+        const size_t idx = pred_indices[i];
 
         if ((neighborsX[idx][0] != std::numeric_limits<size_t>::max()) &&
             (neighborsY[idx][0] != std::numeric_limits<size_t>::max())){
@@ -135,7 +135,7 @@ std::vector<IntersectionRes> IntersectionCardinalitySingle(
     } else {
       // Perform the operations one by one
       for (size_t i = 0; i < pred_indices.size(); ++i){
-        const int idx = pred_indices[i];
+        const size_t idx = pred_indices[i];
 
         if ((neighborsX[idx][0] != std::numeric_limits<size_t>::max()) &&
             (neighborsY[idx][0] != std::numeric_limits<size_t>::max())){
@@ -230,20 +230,20 @@ std::vector<IntersectionRes> IntersectionCardinalitySingle(
     if (parallel_level == 0){
       parallel_level += 1; // change parallelism level
       // Precompute valid indices for the library
-      std::vector<std::vector<int>> valid_lib_indices;
-      for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
-        std::vector<int> local_lib_indices;
+      std::vector<std::vector<size_t>> valid_lib_indices;
+      for (size_t start_lib = 0; start_lib < max_lib_size; ++start_lib) {
+        std::vector<size_t> local_lib_indices;
         // Loop around to beginning of lib indices
         if (start_lib + lib_size > max_lib_size) {
-          for (int i = start_lib; i < max_lib_size; ++i) {
+          for (size_t i = start_lib; i < max_lib_size; ++i) {
             local_lib_indices.emplace_back(lib_indices[i]);
           }
-          int num_vectors_remaining = lib_size - (max_lib_size - start_lib);
+          int num_vectors_remaining = static_cast<int>(lib_size) - (static_cast<int>(max_lib_size) - static_cast<int>(start_lib));
           for (int i = 0; i < num_vectors_remaining; ++i) {
             local_lib_indices.emplace_back(lib_indices[i]);
           }
         } else {
-          for (int i = start_lib; i < start_lib + lib_size; ++i) {
+          for (size_t i = start_lib; i < start_lib + lib_size; ++i) {
             local_lib_indices.emplace_back(lib_indices[i]);
           }
         }
@@ -260,23 +260,24 @@ std::vector<IntersectionRes> IntersectionCardinalitySingle(
       }, threads);
       return x_xmap_y;
     } else {
+      // Serial version
       parallel_level += 1; // change parallelism level
       // Preallocate the result vector to avoid out-of-bounds access
       std::vector<IntersectionRes> x_xmap_y;
 
-      for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
-        std::vector<int> local_lib_indices;
+      for (size_t start_lib = 0; start_lib < max_lib_size; ++start_lib) {
+        std::vector<size_t> local_lib_indices;
         // Setup changing library
         if (start_lib + lib_size > max_lib_size) { // Loop around to beginning of lib indices
-          for (int i = start_lib; i < max_lib_size; ++i) {
+          for (size_t i = start_lib; i < max_lib_size; ++i) {
             local_lib_indices.emplace_back(lib_indices[i]);
           }
-          int num_vectors_remaining = lib_size - (max_lib_size - start_lib);
+          int num_vectors_remaining = static_cast<int>(lib_size) - (static_cast<int>(max_lib_size) - static_cast<int>(start_lib));
           for (int i = 0; i < num_vectors_remaining; ++i) {
             local_lib_indices.emplace_back(lib_indices[i]);
           }
         } else {
-          for (int i = start_lib; i < start_lib + lib_size; ++i) {
+          for (size_t i = start_lib; i < start_lib + lib_size; ++i) {
             local_lib_indices.emplace_back(lib_indices[i]);
           }
         }
@@ -325,10 +326,10 @@ std::vector<IntersectionRes> IntersectionCardinalitySingle(
 std::vector<double> IntersectionCardinality(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
-    const std::vector<int>& lib,
-    const std::vector<int>& pred,
-    int num_neighbors,
-    int n_excluded,
+    const std::vector<size_t>& lib,
+    const std::vector<size_t>& pred,
+    size_t num_neighbors,
+    size_t n_excluded,
     int threads,
     int parallel_level = 0) {
   std::vector<double> result (num_neighbors, std::numeric_limits<double>::quiet_NaN());
@@ -338,9 +339,9 @@ std::vector<double> IntersectionCardinality(
   }
 
   // Filter valid prediction points (exclude those with all NaN values)
-  std::vector<int> valid_pred;
-  for (int idx : pred) {
-    if (idx < 0 || static_cast<size_t>(idx) >= embedding_x.size()) continue;
+  std::vector<size_t> valid_pred;
+  for (size_t idx : pred) {
+    if (idx < 0 || idx >= embedding_x.size()) continue;
 
     bool x_nan = std::all_of(embedding_x[idx].begin(), embedding_x[idx].end(),
                              [](double v) { return std::isnan(v); });
@@ -350,21 +351,17 @@ std::vector<double> IntersectionCardinality(
   }
   if (valid_pred.empty()) return result;
 
-  // Parameter initialization
-  const size_t k = static_cast<size_t>(num_neighbors);
-  const size_t n_excluded_sizet = static_cast<size_t>(n_excluded);
-
   // Configure threads
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   // Precompute neighbors
-  auto nx = CppDistSortedIndice(CppMatDistance(embedding_x, false, true));
-  auto ny = CppDistSortedIndice(CppMatDistance(embedding_y, false, true));
+  auto nx = CppDistSortedIndice(CppMatDistance(embedding_x, false, true),lib);
+  auto ny = CppDistSortedIndice(CppMatDistance(embedding_y, false, true),lib);
 
   // run cross mapping
   std::vector<IntersectionRes> res = IntersectionCardinalitySingle(
-    nx,ny,static_cast<size_t>(lib.size()),lib,pred,k,n_excluded_sizet,threads_sizet,parallel_level
+    nx,ny,lib.size(),lib,pred,num_neighbors,n_excluded,threads_sizet,parallel_level
   );
 
   if (res.empty()) return result;
@@ -400,10 +397,10 @@ std::vector<double> IntersectionCardinality(
 std::vector<double> IntersectionCardinalityScores(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
-    const std::vector<int>& lib,
-    const std::vector<int>& pred,
-    int num_neighbors,
-    int n_excluded,
+    const std::vector<size_t>& lib,
+    const std::vector<size_t>& pred,
+    size_t num_neighbors,
+    size_t n_excluded,
     int threads,
     int parallel_level = 0) {
   // Input validation
@@ -412,9 +409,9 @@ std::vector<double> IntersectionCardinalityScores(
   }
 
   // Filter valid prediction points (exclude those with all NaN values)
-  std::vector<int> valid_pred;
-  for (int idx : pred) {
-    if (idx < 0 || static_cast<size_t>(idx) >= embedding_x.size()) continue;
+  std::vector<size_t> valid_pred;
+  for (size_t idx : pred) {
+    if (idx < 0 || idx >= embedding_x.size()) continue;
 
     bool x_nan = std::all_of(embedding_x[idx].begin(), embedding_x[idx].end(),
                              [](double v) { return std::isnan(v); });
@@ -424,21 +421,17 @@ std::vector<double> IntersectionCardinalityScores(
   }
   if (valid_pred.empty()) return {0, 1.0, std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN()};
 
-  // Parameter initialization
-  const size_t k = static_cast<size_t>(num_neighbors);
-  const size_t n_excluded_sizet = static_cast<size_t>(n_excluded);
-
   // Configure threads
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   // Precompute neighbors
-  auto nx = CppDistSortedIndice(CppMatDistance(embedding_x, false, true));
-  auto ny = CppDistSortedIndice(CppMatDistance(embedding_y, false, true));
+  auto nx = CppDistSortedIndice(CppMatDistance(embedding_x, false, true),lib);
+  auto ny = CppDistSortedIndice(CppMatDistance(embedding_y, false, true),lib);
 
   // run cross mapping
   std::vector<IntersectionRes> res = IntersectionCardinalitySingle(
-    nx,ny,static_cast<size_t>(lib.size()),lib,pred,k,n_excluded_sizet,threads_sizet,parallel_level
+    nx,ny,lib.size(),lib,pred,num_neighbors,n_excluded,threads_sizet,parallel_level
   );
 
   if (res.empty()) return {0, 1.0, std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN()};

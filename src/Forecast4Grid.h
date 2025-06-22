@@ -94,8 +94,8 @@ std::vector<std::vector<double>> SMap4Grid(const std::vector<std::vector<double>
  */
 std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>& source,
                                          const std::vector<std::vector<double>>& target,
-                                         const std::vector<int>& lib_indices,
-                                         const std::vector<int>& pred_indices,
+                                         const std::vector<size_t>& lib_indices,
+                                         const std::vector<size_t>& pred_indices,
                                          const std::vector<int>& E,
                                          const std::vector<int>& b,
                                          int tau,

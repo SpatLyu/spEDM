@@ -875,8 +875,8 @@ Rcpp::NumericMatrix RcppIC4Grid(const Rcpp::NumericMatrix& source,
   }
 
   // Initialize lib_indices and pred_indices
-  std::vector<int> pred_indices;
-  std::vector<int> lib_indices;
+  std::vector<size_t> pred_indices;
+  std::vector<size_t> lib_indices;
 
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
   int currow;
@@ -888,7 +888,7 @@ Rcpp::NumericMatrix RcppIC4Grid(const Rcpp::NumericMatrix& source,
     for (int i = 0; i < lib.nrow(); ++i) {
       // disallow lib indices to point to vectors with NaN
       if (!std::isnan(targetMat[(lib(i,0)-1) / numCols][(lib(i,0)-1) % numCols])){
-        lib_indices.push_back(lib(i,0)-1);
+        lib_indices.push_back(static_cast<size_t>(lib(i,0)-1));
       }
     }
   } else {
@@ -898,7 +898,7 @@ Rcpp::NumericMatrix RcppIC4Grid(const Rcpp::NumericMatrix& source,
       curcol = lib(i,1);
       // disallow lib indices to point to vectors with NaN
       if (!std::isnan(targetMat[currow-1][curcol-1])){
-        lib_indices.push_back(LocateGridIndices(currow, curcol, numRows, numCols));
+        lib_indices.push_back(static_cast<size_t>(LocateGridIndices(currow, curcol, numRows, numCols)));
       }
     }
   }
@@ -907,7 +907,7 @@ Rcpp::NumericMatrix RcppIC4Grid(const Rcpp::NumericMatrix& source,
     for (int i = 0; i < pred.nrow(); ++i) {
       // disallow pred indices to point to vectors with NaN
       if (!std::isnan(targetMat[(pred(i,0)-1) / numCols][(pred(i,0)-1) % numCols])){
-        pred_indices.push_back(pred(i,0)-1);
+        pred_indices.push_back(static_cast<size_t>(pred(i,0)-1));
       }
     }
   } else {
@@ -917,7 +917,7 @@ Rcpp::NumericMatrix RcppIC4Grid(const Rcpp::NumericMatrix& source,
       curcol = pred(i,1);
       // disallow pred indices to point to vectors with NaN
       if (!std::isnan(targetMat[currow-1][curcol-1])){
-        pred_indices.push_back(LocateGridIndices(currow, curcol, numRows, numCols));
+        pred_indices.push_back(static_cast<size_t>(LocateGridIndices(currow, curcol, numRows, numCols)));
       }
     }
   }
@@ -1407,24 +1407,24 @@ Rcpp::List RcppGCMC4Grid(
 
   // Convert libsizes to a fundamental C++ data type
   int libsizes_dim = libsizes.ncol();
-  std::vector<int> libsizes_std;
+  std::vector<size_t> libsizes_std;
   if (libsizes_dim == 1){
     for (int i = 0; i < libsizes.nrow(); ++i) {
-      libsizes_std.push_back(libsizes(i, 0));
+      libsizes_std.push_back(static_cast<size_t>(libsizes(i, 0)));
     }
   } else {
     for (int i = 0; i < libsizes.nrow(); ++i) { // Fill all the sub-vector
-      libsizes_std.push_back(LocateGridIndices(libsizes(i, 0),libsizes(i, 1),
-                                               numRows, numCols));
+      libsizes_std.push_back(static_cast<size_t>(LocateGridIndices(libsizes(i, 0),libsizes(i, 1),
+                                                                   numRows, numCols)));
     }
   }
 
-  std::vector<int> lib_std;
+  std::vector<size_t> lib_std;
   if (n_libcol == 1){
     for (int i = 0; i < lib.nrow(); ++i) {
       // disallow lib indices to point to vectors with NaN
       if (!std::isnan(yMatrix_cpp[(pred(i,0)-1) / numCols][(pred(i,0)-1) % numCols])){
-        lib_std.push_back(lib(i,0) - 1);
+        lib_std.push_back(static_cast<size_t>(lib(i,0) - 1));
       }
     }
   } else {
@@ -1433,17 +1433,17 @@ Rcpp::List RcppGCMC4Grid(
       int colLibIndice = lib(i,1);
       // disallow lib indices to point to vectors with NaN
       if (!std::isnan(yMatrix_cpp[rowLibIndice-1][colLibIndice-1])){
-        lib_std.push_back(LocateGridIndices(rowLibIndice, colLibIndice, numRows, numCols));
+        lib_std.push_back(static_cast<size_t>(LocateGridIndices(rowLibIndice, colLibIndice, numRows, numCols)));
       }
     }
   }
 
-  std::vector<int> pred_std;
+  std::vector<size_t> pred_std;
   if (n_predcol == 1){
     for (int i = 0; i < pred.nrow(); ++i) {
       // disallow pred indices to point to vectors with NaN
       if (!std::isnan(yMatrix_cpp[(pred(i,0)-1) / numCols][(pred(i,0)-1) % numCols])){
-        pred_std.push_back(pred(i, 0) - 1);
+        pred_std.push_back(static_cast<size_t>(pred(i, 0) - 1));
       }
     }
   } else {
@@ -1452,7 +1452,7 @@ Rcpp::List RcppGCMC4Grid(
       int colPredIndice = pred(i,1);
       // disallow pred indices to point to vectors with NaN
       if (!std::isnan(yMatrix_cpp[rowPredIndice-1][colPredIndice-1])){
-        pred_std.push_back(LocateGridIndices(rowPredIndice, colPredIndice, numRows, numCols));
+        pred_std.push_back(static_cast<size_t>(LocateGridIndices(rowPredIndice, colPredIndice, numRows, numCols)));
       }
     }
   }
@@ -1466,7 +1466,9 @@ Rcpp::List RcppGCMC4Grid(
   std::vector<std::vector<double>> e2 = GenGridEmbeddings(yMatrix_cpp, E[1], tau_std[1]);
 
   // Perform GCMC for spatial grid data
-  CMCRes res = CrossMappingCardinality(e1,e2,libsizes_std,lib_std,pred_std,b,r,threads,parallel_level,progressbar);
+  CMCRes res = CrossMappingCardinality(e1,e2,libsizes_std,lib_std,pred_std,
+                                       static_cast<size_t>(b),static_cast<size_t>(r),
+                                       threads,parallel_level,progressbar);
 
   // Convert mean_aucs to Rcpp::DataFrame
   std::vector<double> libs, aucs;

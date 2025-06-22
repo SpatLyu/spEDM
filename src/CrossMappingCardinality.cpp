@@ -37,11 +37,11 @@
 CMCRes CrossMappingCardinality(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
-    const std::vector<int>& lib_sizes,
-    const std::vector<int>& lib,
-    const std::vector<int>& pred,
-    int num_neighbors = 4,
-    int n_excluded = 0,
+    const std::vector<size_t>& lib_sizes,
+    const std::vector<size_t>& lib,
+    const std::vector<size_t>& pred,
+    size_t num_neighbors = 4,
+    size_t n_excluded = 0,
     int threads = 8,
     int parallel_level = 0,
     bool progressbar = true) {
@@ -50,9 +50,9 @@ CMCRes CrossMappingCardinality(
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   // Filter valid prediction points (exclude those with all NaN values)
-  std::vector<int> valid_pred;
-  for (int idx : pred) {
-    if (idx < 0 || static_cast<size_t>(idx) >= embedding_x.size()) continue;
+  std::vector<size_t> valid_pred;
+  for (size_t idx : pred) {
+    if (idx < 0 || idx >= embedding_x.size()) continue;
 
     bool x_nan = std::all_of(embedding_x[idx].begin(), embedding_x[idx].end(),
                              [](double v) { return std::isnan(v); });
@@ -62,30 +62,30 @@ CMCRes CrossMappingCardinality(
   }
 
   // Transform to ensure no size exceeds max library number
-  int max_lib_size = lib.size();
-  std::vector<int> unique_lib_sizes(lib_sizes.begin(), lib_sizes.end());
+  size_t max_lib_size = lib.size();
+  std::vector<size_t> unique_lib_sizes(lib_sizes.begin(), lib_sizes.end());
   unique_lib_sizes.push_back(max_lib_size);  // Ensure max_lib_size is included
 
   // // Clamp each size between (num_neighbors + n_excluded) and max_lib_size (need C++17, so commented)
   // std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
-  //                [&](int size) {
+  //                [&](size_t size) {
   //                  return std::clamp(size, num_neighbors + n_excluded, max_lib_size);
   //                });
 
   std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
-                 [&](int size) { return std::min(size, max_lib_size); });
+                 [&](size_t size) { return std::min(size, max_lib_size); });
 
   // Ensure the minimum value in unique_lib_sizes is num_neighbors + n_excluded
   std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
-                 [&](int size) { return std::max(size, num_neighbors + n_excluded ); });
+                 [&](size_t size) { return std::max(size, num_neighbors + n_excluded ); });
 
   // Remove duplicates
   std::sort(unique_lib_sizes.begin(), unique_lib_sizes.end());
   unique_lib_sizes.erase(std::unique(unique_lib_sizes.begin(), unique_lib_sizes.end()), unique_lib_sizes.end());
 
   // Precompute neighbors
-  auto nx = CppDistSortedIndice(CppMatDistance(embedding_x, false, true));
-  auto ny = CppDistSortedIndice(CppMatDistance(embedding_y, false, true));
+  auto nx = CppDistSortedIndice(CppMatDistance(embedding_x, false, true), lib);
+  auto ny = CppDistSortedIndice(CppMatDistance(embedding_y, false, true), lib);
 
   // Local results for each library
   std::vector<std::vector<IntersectionRes>> local_results(unique_lib_sizes.size());
@@ -96,8 +96,7 @@ CMCRes CrossMappingCardinality(
       for(size_t i = 0; i < unique_lib_sizes.size(); ++i){
         local_results[i] = IntersectionCardinalitySingle(
           nx,ny,unique_lib_sizes[i],lib,valid_pred,
-          static_cast<size_t>(num_neighbors),
-          static_cast<size_t>(n_excluded),
+          num_neighbors, n_excluded,
           threads_sizet, parallel_level
         );
         bar++;
@@ -106,8 +105,7 @@ CMCRes CrossMappingCardinality(
       for(size_t i = 0; i < unique_lib_sizes.size(); ++i){
         local_results[i] = IntersectionCardinalitySingle(
           nx,ny,unique_lib_sizes[i],lib,valid_pred,
-          static_cast<size_t>(num_neighbors),
-          static_cast<size_t>(n_excluded),
+          num_neighbors, n_excluded,
           threads_sizet, parallel_level
         );
       }
@@ -118,8 +116,7 @@ CMCRes CrossMappingCardinality(
       RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
         local_results[i] = IntersectionCardinalitySingle(
           nx,ny,unique_lib_sizes[i],lib,valid_pred,
-          static_cast<size_t>(num_neighbors),
-          static_cast<size_t>(n_excluded),
+          num_neighbors, n_excluded,
           threads_sizet, parallel_level
         );
         bar++;
@@ -128,8 +125,7 @@ CMCRes CrossMappingCardinality(
       RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
         local_results[i] = IntersectionCardinalitySingle(
           nx,ny,unique_lib_sizes[i],lib,valid_pred,
-          static_cast<size_t>(num_neighbors),
-          static_cast<size_t>(n_excluded),
+          num_neighbors, n_excluded,
           threads_sizet, parallel_level
         );
       }, threads_sizet);
@@ -151,7 +147,7 @@ CMCRes CrossMappingCardinality(
 
     // If the result is non-empty, store the first AUC value along with libsize
     if (!auc_result.empty()) {
-      x_xmap_y.emplace_back(h1.libsize, auc_result[0]);
+      x_xmap_y.emplace_back(static_cast<int>(h1.libsize), auc_result[0]);
     }
   }
 
@@ -168,7 +164,7 @@ CMCRes CrossMappingCardinality(
   }
 
   // Find the largest valid libsize
-  int largest_libsize = unique_lib_sizes.back();
+  size_t largest_libsize = unique_lib_sizes.back();
 
   // Locate the corresponding PartialCorRes from H1_vector
   std::vector<double> result_auc;

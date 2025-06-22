@@ -39,15 +39,14 @@
 CMCRes CrossMappingCardinality(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
-    const std::vector<int>& lib_sizes,
-    const std::vector<int>& lib,
-    const std::vector<int>& pred,
-    int num_neighbors = 4,
-    int n_excluded = 0,
+    const std::vector<size_t>& lib_sizes,
+    const std::vector<size_t>& lib,
+    const std::vector<size_t>& pred,
+    size_t num_neighbors = 4,
+    size_t n_excluded = 0,
     int threads = 8,
     int parallel_level = 0,
-    bool progressbar = true
-  );
+    bool progressbar = true);
 
 // /**
 //  * Computes the Cross Mapping Cardinality (CMC) causal strength score (adjusted based on Python logic).
