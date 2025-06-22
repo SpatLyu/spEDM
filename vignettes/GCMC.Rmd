@@ -1,7 +1,7 @@
 ---
 title: "Geographical Cross Mapping Cardinality (GCMC)"
 author: "Wenbo Lv"
-date: "2025-06-17"
+date: "2025-06-23"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{GCMC}
@@ -74,30 +74,25 @@ Run GCMC:
 
 ``` r
 # temperature and population density
-g1 = gcmc(data = popd_sf, cause = "tem", effect = "popd", E = c(2,5),
-          k = 210, nb = popd_nb, progressbar = FALSE)
+g1 = gcmc(popd_sf, "tem", "popd", E = c(2,5), k = 210,
+          nb = popd_nb, detrend = TRUE, progressbar = FALSE)
 g1
 ##   neighbors tem->popd popd->tem
-## 1       210 0.7538776  0.197619
+## 1       210 0.7536054 0.1971655
 
 # elevation and population density
-g2 = gcmc(data = popd_sf, cause = "elev", effect = "popd", E = c(1,5),
-          k = 210, nb = popd_nb, progressbar = FALSE)
+g2 = gcmc(popd_sf, "elev", "popd", E = c(1,5), k = 210,
+          nb = popd_nb, detrend = TRUE, progressbar = FALSE)
 g2
 ##   neighbors elev->popd popd->elev
-## 1       210  0.8355329  0.2065986
+## 1       210  0.8352381  0.2061451
 
 # elevation and temperature
-g3 = gcmc(data = popd_sf, cause = "elev", effect = "tem", E = c(1,2),
-          k = 210, nb = popd_nb, progressbar = FALSE)
-g3 # When there are insignificant results, we set spEDM to suppress output. This is not a bug.
-## [1] neighbors elev->tem tem->elev
-## <0 rows> (or 0-length row.names)
-g3$xmap
-##   neighbors x_xmap_y_mean x_xmap_y_sig x_xmap_y_upper x_xmap_y_lower
-## 1       210     0.5094785    0.7677155      0.5723751      0.4465818
-##   y_xmap_x_mean y_xmap_x_sig y_xmap_x_upper y_xmap_x_lower
-## 1     0.6279365 4.342088e-05      0.6892676      0.5666054
+g3 = gcmc(popd_sf, "elev", "tem", E = c(1,2), k = 210,
+          nb = popd_nb, detrend = TRUE, progressbar = FALSE)
+g3
+##   neighbors elev->tem tem->elev
+## 1       210 0.6272562 0.5090023
 ```
 
 Here we define two functions to process the results and plot the causal association matrix.
@@ -173,12 +168,12 @@ res1 = list(g1,g2,g3) |>
   purrr::list_rbind()
 res1
 ##   cause effect        ca          sig
-## 1   tem   popd 0.7538776 1.110975e-19
-## 2  popd    tem 0.1976190 4.543832e-35
-## 3  elev   popd 0.8355329 9.586182e-44
-## 4  popd   elev 0.2065986 6.101271e-32
-## 5  elev    tem 0.6279365 4.342088e-05
-## 6   tem   elev 0.5094785 7.677155e-01
+## 1   tem   popd 0.7536054 1.253182e-19
+## 2  popd    tem 0.1971655 3.035074e-35
+## 3  elev   popd 0.8352381 1.374037e-43
+## 4  popd   elev 0.2061451 4.111211e-32
+## 5  elev    tem 0.6272562 4.805542e-05
+## 6   tem   elev 0.5090023 7.790993e-01
 ```
 
 Visualize the result:
@@ -239,30 +234,28 @@ Run GCMC:
 
 ``` r
 # precipitation and npp
-g1 = gcmc(data = npp, cause = "pre", effect = "npp", E = 2, k = 270,
-          lib = predindice, pred = predindice, progressbar = FALSE)
+g1 = gcmc(npp, "pre", "npp", E = 2, k = 270,
+          lib = predindice, pred = predindice,
+          detrend = TRUE, progressbar = FALSE)
 g1
-## [1] neighbors pre->npp  npp->pre 
-## <0 rows> (or 0-length row.names)
-g1$xmap
-##   neighbors x_xmap_y_mean x_xmap_y_sig x_xmap_y_upper x_xmap_y_lower
-## 1       270     0.5383539    0.1686404      0.5929617      0.4837461
-##   y_xmap_x_mean y_xmap_x_sig y_xmap_x_upper y_xmap_x_lower
-## 1     0.6088477 8.929335e-05      0.6632986      0.5543968
+##   neighbors  pre->npp  npp->pre
+## 1       270 0.6074486 0.5375995
 
 # temperature and npp
-g2 = gcmc(data = npp, cause = "tem", effect = "npp", E = 2, k = 270,
-          lib = predindice, pred = predindice, progressbar = FALSE)
+g2 = gcmc(npp, "tem", "npp", E = 2, k = 270,
+          lib = predindice, pred = predindice,
+          detrend = TRUE, progressbar = FALSE)
 g2
-##   neighbors  tem->npp  npp->tem
-## 1       270 0.6401509 0.6113992
+##   neighbors  tem->npp npp->tem
+## 1       270 0.6398354 0.610631
 
 # precipitation and temperature
-g3 = gcmc(data = npp, cause = "pre", effect = "tem", E = 2, k = 270,
-          lib = predindice, pred = predindice, progressbar = FALSE)
+g3 = gcmc(npp, "pre", "tem", E = 2, k = 270,
+          lib = predindice, pred = predindice,
+          detrend = TRUE, progressbar = FALSE)
 g3
 ##   neighbors  pre->tem  tem->pre
-## 1       270 0.6800274 0.6381344
+## 1       270 0.6789575 0.6376543
 ```
 
 Organize the results into a long table:
@@ -274,12 +267,12 @@ res2 = list(g1,g2,g3) |>
   purrr::list_rbind()
 res2
 ##   cause effect        ca          sig
-## 1   pre    npp 0.6088477 8.929335e-05
-## 2   npp    pre 0.5383539 1.686404e-01
-## 3   tem    npp 0.6401509 2.548677e-07
-## 4   npp    tem 0.6113992 4.810113e-05
-## 5   pre    tem 0.6800274 1.305997e-11
-## 6   tem    pre 0.6381344 3.699711e-07
+## 1   pre    npp 0.6074486 1.108801e-04
+## 2   npp    pre 0.5375995 1.772553e-01
+## 3   tem    npp 0.6398354 2.731791e-07
+## 4   npp    tem 0.6106310 5.454179e-05
+## 5   pre    tem 0.6789575 1.796755e-11
+## 6   tem    pre 0.6376543 4.110065e-07
 ```
 
 Visualize the result:
