@@ -1472,28 +1472,28 @@ Rcpp::List RcppGCMC4Grid(
 
   // Convert mean_aucs to Rcpp::DataFrame
   std::vector<double> libs, aucs;
-  for (const auto& cm : res.cross_mapping) {
+  for (const auto& cm : res.causal_strength) {
     libs.push_back(cm[0]);
     aucs.push_back(cm[1]);
   }
 
-  Rcpp::DataFrame xmap_df = Rcpp::DataFrame::create(
+  Rcpp::DataFrame cs_df = Rcpp::DataFrame::create(
     Rcpp::Named("libsizes") = libs,
     Rcpp::Named("x_xmap_y_mean") = aucs
   );
 
   // Wrap causal_strength with names
-  Rcpp::DataFrame cs = Rcpp::DataFrame::create(
-    Rcpp::Named("neighbors") = res.causal_strength[0],
-    Rcpp::Named("x_xmap_y_mean") = res.causal_strength[1],
-    Rcpp::Named("x_xmap_y_sig") = res.causal_strength[2],
-    Rcpp::Named("x_xmap_y_upper") = res.causal_strength[3],
-    Rcpp::Named("x_xmap_y_lower")  = res.causal_strength[4]
+  Rcpp::DataFrame xmap_df = Rcpp::DataFrame::create(
+    Rcpp::Named("neighbors") = res.cross_mapping[0],
+                                                Rcpp::Named("x_xmap_y_mean") = res.cross_mapping[1],
+                                                                                                Rcpp::Named("x_xmap_y_sig") = res.cross_mapping[2],
+                                                                                                                                               Rcpp::Named("x_xmap_y_upper") = res.cross_mapping[3],
+                                                                                                                                                                                                Rcpp::Named("x_xmap_y_lower")  = res.cross_mapping[4]
   );
 
   return Rcpp::List::create(
     Rcpp::Named("xmap") = xmap_df,
-    Rcpp::Named("cs") = cs
+    Rcpp::Named("cs") = cs_df
   );
 }
 

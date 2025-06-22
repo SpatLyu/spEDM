@@ -33,8 +33,8 @@
  * @param progressbar Boolean flag to show or hide a progress bar.
  *
  * @return CMCRes A struct containing:
- *   - causal_strength: A vector of AUC values for the largest library size.
- *   - cross_mapping: A 2D vector with rows [library size, mean AUC] across all lib sizes.
+ *   - cross_mapping: A vector of AUC values for the largest library size.
+ *   - causal_strength: A 2D vector with rows [library size, mean AUC] across all lib sizes.
  */
 CMCRes CrossMappingCardinality(
     const std::vector<std::vector<double>>& embedding_x,
