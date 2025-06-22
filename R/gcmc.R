@@ -1,5 +1,5 @@
-.gcmc_sf_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = pmin(E^2), lib = NULL, pred = NULL, nb = NULL,
-                    threads = detectThreads(), parallel.level = "low", bidirectional = TRUE, detrend = TRUE, progressbar = TRUE){
+.gcmc_sf_method = \(data, cause, effect, libsizes = NULL, E = 3, tau = 1, k = pmin(E^2), lib = NULL, pred = NULL, nb = NULL,
+                    threads = detectThreads(), parallel.level = "low", bidirectional = TRUE, detrend = FALSE, progressbar = TRUE){
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
   tau = .check_inputelementnum(tau,2)
@@ -19,6 +19,7 @@
 
   if (is.null(lib)) lib = .internal_library(data)
   if (is.null(pred)) pred = lib
+  if (is.null(libsizes)) libsizes = length(lib)
 
   x_xmap_y = NULL
   if (bidirectional){
@@ -29,8 +30,8 @@
   return(.bind_intersectdf(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
 
-.gcmc_spatraster_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = pmin(E^2), lib = NULL, pred = NULL,
-                            threads = detectThreads(), parallel.level = "low", bidirectional = TRUE, detrend = TRUE, progressbar = TRUE){
+.gcmc_spatraster_method = \(data, cause, effect, libsizes = NULL, E = 3, tau = 1, k = pmin(E^2), lib = NULL, pred = NULL,
+                            threads = detectThreads(), parallel.level = "low", bidirectional = TRUE, detrend = FALSE, progressbar = TRUE){
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
   tau = .check_inputelementnum(tau,2)
@@ -48,6 +49,7 @@
 
   if (is.null(lib)) lib = .internal_library(dtf,TRUE)
   if (is.null(pred)) pred = lib
+  if (is.null(libsizes)) libsizes = nrow(lib)
 
   x_xmap_y = NULL
   if (bidirectional){
@@ -90,7 +92,7 @@
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 #' \donttest{
-#' g = gcmc(columbus,"hoval","crime",libsizes = 26:49,E = 3,k = 25)
+#' g = gcmc(columbus,"hoval","crime",E = 3,k = 25)
 #' g
 #' }
 methods::setMethod("gcmc", "sf", .gcmc_sf_method)

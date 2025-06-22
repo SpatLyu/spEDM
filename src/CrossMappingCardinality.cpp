@@ -64,6 +64,13 @@ CMCRes CrossMappingCardinality(
   // Transform to ensure no size exceeds max library number
   int max_lib_size = lib.size();
   std::vector<int> unique_lib_sizes(lib_sizes.begin(), lib_sizes.end());
+  unique_lib_sizes.push_back(max_lib_size);  // Ensure max_lib_size is included
+
+  // // Clamp each size between (num_neighbors + n_excluded) and max_lib_size (need C++17, so commented)
+  // std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
+  //                [&](int size) {
+  //                  return std::clamp(size, num_neighbors + n_excluded, max_lib_size);
+  //                });
 
   std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
                  [&](int size) { return std::min(size, max_lib_size); });
@@ -160,15 +167,19 @@ CMCRes CrossMappingCardinality(
     mean_aucs.push_back({static_cast<double>(group.first), mean_value});
   }
 
-  // Compute causal scores using the entire available library
-  std::vector<IntersectionRes> cs_res = IntersectionCardinalitySingle(
-    nx,ny,static_cast<size_t>(lib.size()),lib,valid_pred,
-    static_cast<size_t>(num_neighbors),
-    static_cast<size_t>(n_excluded),
-    threads_sizet,parallel_level
-  );
+  // Find the largest valid libsize
+  int largest_libsize = unique_lib_sizes.back();
 
-  std::vector<double> result_auc = CppCMCTest(cs_res[0].Intersection,">");
+  // Locate the corresponding PartialCorRes from H1_vector
+  std::vector<double> result_auc;
+  for (const auto& h1 : H1_vector) {
+    if (h1.libsize == largest_libsize) {
+      // Run full CppCMCTest on this intersection vector
+      result_auc = CppCMCTest(h1.Intersection, ">");
+      result_auc.insert(result_auc.begin(), static_cast<double>(num_neighbors));
+      break;
+    }
+  }
 
   CMCRes result;
   result.causal_strength = result_auc;
