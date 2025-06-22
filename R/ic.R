@@ -1,5 +1,5 @@
 .ic_sf_method = \(data, column, target, lib = NULL, pred = NULL, E = 2:10, tau = 1, k = E+2,
-                  nb = NULL, threads = detectThreads(), parallel.level = "low", detrend = TRUE){
+                  nb = NULL, threads = detectThreads(), parallel.level = "low", detrend = FALSE){
   vx = .uni_lattice(data,column,detrend)
   vy = .uni_lattice(data,target,detrend)
   if (is.null(lib)) lib = .internal_library(cbind(vx,vy))
@@ -11,7 +11,7 @@
 }
 
 .ic_spatraster_method = \(data, column, target, lib = NULL, pred = NULL, E = 2:10, tau = 1, k = E+2,
-                          threads = detectThreads(), parallel.level = "low", detrend = TRUE){
+                          threads = detectThreads(), parallel.level = "low", detrend = FALSE){
   mx = .uni_grid(data,column,detrend)
   my = .uni_grid(data,target,detrend)
   if (is.null(lib)) lib = which(!(is.na(mx) | is.na(my)), arr.ind = TRUE)
