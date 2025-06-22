@@ -49,21 +49,6 @@ CMCRes CrossMappingCardinality(
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
-  std::vector<int> unique_lib_sizes(lib_sizes.begin(), lib_sizes.end());
-
-  // Transform to ensure no size exceeds max library size
-  int max_lib_size = static_cast<int>(lib.size());
-  std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
-                 [&](int size) { return std::min(size, max_lib_size); });
-
-  // Ensure the minimum value in unique_lib_sizes is num_neighbors + n_excluded
-  std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
-                 [&](int size) { return std::max(size, num_neighbors + n_excluded ); });
-
-  // Remove duplicates
-  std::sort(unique_lib_sizes.begin(), unique_lib_sizes.end());
-  unique_lib_sizes.erase(std::unique(unique_lib_sizes.begin(), unique_lib_sizes.end()), unique_lib_sizes.end());
-
   // Filter valid prediction points (exclude those with all NaN values)
   std::vector<int> valid_pred;
   for (int idx : pred) {
@@ -75,6 +60,21 @@ CMCRes CrossMappingCardinality(
                              [](double v) { return std::isnan(v); });
     if (!x_nan && !y_nan) valid_pred.push_back(idx);
   }
+
+  // Transform to ensure no size exceeds max library number
+  int max_lib_size = lib.size();
+  std::vector<int> unique_lib_sizes(lib_sizes.begin(), lib_sizes.end());
+
+  std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
+                 [&](int size) { return std::min(size, max_lib_size); });
+
+  // Ensure the minimum value in unique_lib_sizes is num_neighbors + n_excluded
+  std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
+                 [&](int size) { return std::max(size, num_neighbors + n_excluded ); });
+
+  // Remove duplicates
+  std::sort(unique_lib_sizes.begin(), unique_lib_sizes.end());
+  unique_lib_sizes.erase(std::unique(unique_lib_sizes.begin(), unique_lib_sizes.end()), unique_lib_sizes.end());
 
   // Precompute neighbors
   auto nx = CppDistSortedIndice(CppMatDistance(embedding_x, false, true));
@@ -160,19 +160,15 @@ CMCRes CrossMappingCardinality(
     mean_aucs.push_back({static_cast<double>(group.first), mean_value});
   }
 
-  // Find the largest valid libsize
-  int largest_libsize = unique_lib_sizes.back();
+  // Compute causal scores using the entire available library
+  std::vector<IntersectionRes> cs_res = IntersectionCardinalitySingle(
+    nx,ny,static_cast<size_t>(lib.size()),lib,valid_pred,
+    static_cast<size_t>(num_neighbors),
+    static_cast<size_t>(n_excluded),
+    threads_sizet,parallel_level
+  );
 
-  // Locate the corresponding PartialCorRes from H1_vector
-  std::vector<double> result_auc;
-  for (const auto& h1 : H1_vector) {
-    if (h1.libsize == largest_libsize) {
-      // Run full CppCMCTest on this intersection vector
-      result_auc = CppCMCTest(h1.Intersection, ">");
-      result_auc.insert(result_auc.begin(), static_cast<double>(num_neighbors));
-      break;
-    }
-  }
+  std::vector<double> result_auc = CppCMCTest(cs_res[0].Intersection,">");
 
   CMCRes result;
   result.causal_strength = result_auc;
