@@ -83,7 +83,29 @@ CMCRes CrossMappingCardinality(
   // Local results for each library
   std::vector<std::vector<IntersectionRes>> local_results(unique_lib_sizes.size());
 
-  if (parallel_level > 1){
+  if (parallel_level == 0){
+    if (progressbar) {
+      RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
+      for(size_t i = 0; i < unique_lib_sizes.size(); ++i){
+        local_results[i] = IntersectionCardinalitySingle(
+          nx,ny,unique_lib_sizes[i],lib,valid_pred,
+          static_cast<size_t>(num_neighbors),
+          static_cast<size_t>(n_excluded),
+          threads_sizet, parallel_level
+        );
+        bar++;
+      }
+    } else {
+      for(size_t i = 0; i < unique_lib_sizes.size(); ++i){
+        local_results[i] = IntersectionCardinalitySingle(
+          nx,ny,unique_lib_sizes[i],lib,valid_pred,
+          static_cast<size_t>(num_neighbors),
+          static_cast<size_t>(n_excluded),
+          threads_sizet, parallel_level
+        );
+      }
+    }
+  } else {
     if (progressbar) {
       RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
       RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
@@ -91,43 +113,21 @@ CMCRes CrossMappingCardinality(
           nx,ny,unique_lib_sizes[i],lib,valid_pred,
           static_cast<size_t>(num_neighbors),
           static_cast<size_t>(n_excluded),
-          threads_sizet, parallel_level + 1
+          threads_sizet, parallel_level
         );
         bar++;
       }, threads_sizet);
     } else {
       RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
-          local_results[i] = IntersectionCardinalitySingle(
-            nx,ny,unique_lib_sizes[i],lib,valid_pred,
-            static_cast<size_t>(num_neighbors),
-            static_cast<size_t>(n_excluded),
-            threads_sizet, parallel_level + 1
-          );
+        local_results[i] = IntersectionCardinalitySingle(
+          nx,ny,unique_lib_sizes[i],lib,valid_pred,
+          static_cast<size_t>(num_neighbors),
+          static_cast<size_t>(n_excluded),
+          threads_sizet, parallel_level
+        );
       }, threads_sizet);
     }
-  } else {
-      if (progressbar) {
-        RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
-        for(size_t i = 0; i < unique_lib_sizes.size(); ++i){
-          local_results[i] = IntersectionCardinalitySingle(
-            nx,ny,unique_lib_sizes[i],lib,valid_pred,
-            static_cast<size_t>(num_neighbors),
-            static_cast<size_t>(n_excluded),
-            threads_sizet, parallel_level + 1
-          );
-          bar++;
-        }
-      } else {
-        for(size_t i = 0; i < unique_lib_sizes.size(); ++i){
-          local_results[i] = IntersectionCardinalitySingle(
-            nx,ny,unique_lib_sizes[i],lib,valid_pred,
-            static_cast<size_t>(num_neighbors),
-            static_cast<size_t>(n_excluded),
-            threads_sizet, parallel_level + 1
-          );
-        }
-      }
-    }
+  }
 
   // Output vector to store pairs of (libsize, AUC)
   std::vector<std::pair<int, double>> x_xmap_y;

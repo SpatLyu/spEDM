@@ -226,63 +226,67 @@ std::vector<IntersectionRes> IntersectionCardinalitySingle(
     std::vector<IntersectionRes> x_xmap_y;
     x_xmap_y.emplace_back(lib_size, ICSingle(lib_indices));
     return x_xmap_y;
-  } else if (parallel_level == 1){
-    // Precompute valid indices for the library
-    std::vector<std::vector<int>> valid_lib_indices;
-    for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
-      std::vector<int> local_lib_indices;
-      // Loop around to beginning of lib indices
-      if (start_lib + lib_size > max_lib_size) {
-        for (int i = start_lib; i < max_lib_size; ++i) {
-          local_lib_indices.emplace_back(lib_indices[i]);
-        }
-        int num_vectors_remaining = lib_size - (max_lib_size - start_lib);
-        for (int i = 0; i < num_vectors_remaining; ++i) {
-          local_lib_indices.emplace_back(lib_indices[i]);
-        }
-      } else {
-        for (int i = start_lib; i < start_lib + lib_size; ++i) {
-          local_lib_indices.emplace_back(lib_indices[i]);
-        }
-      }
-      valid_lib_indices.emplace_back(local_lib_indices);
-    }
-
-    // Preallocate the result vector to avoid out-of-bounds access
-    std::vector<IntersectionRes> x_xmap_y(valid_lib_indices.size());
-
-    // Perform the operations using RcppThread
-    RcppThread::parallelFor(0, valid_lib_indices.size(), [&](size_t i) {
-      IntersectionRes result(lib_size, ICSingle(valid_lib_indices[i]));
-      x_xmap_y[i] = result;
-    }, threads);
-    return x_xmap_y;
   } else {
-    // Preallocate the result vector to avoid out-of-bounds access
-    std::vector<IntersectionRes> x_xmap_y;
-
-    for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
-      std::vector<int> local_lib_indices;
-      // Setup changing library
-      if (start_lib + lib_size > max_lib_size) { // Loop around to beginning of lib indices
-        for (int i = start_lib; i < max_lib_size; ++i) {
-          local_lib_indices.emplace_back(lib_indices[i]);
+    if (parallel_level == 0){
+      parallel_level += 1; // change parallelism level
+      // Precompute valid indices for the library
+      std::vector<std::vector<int>> valid_lib_indices;
+      for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
+        std::vector<int> local_lib_indices;
+        // Loop around to beginning of lib indices
+        if (start_lib + lib_size > max_lib_size) {
+          for (int i = start_lib; i < max_lib_size; ++i) {
+            local_lib_indices.emplace_back(lib_indices[i]);
+          }
+          int num_vectors_remaining = lib_size - (max_lib_size - start_lib);
+          for (int i = 0; i < num_vectors_remaining; ++i) {
+            local_lib_indices.emplace_back(lib_indices[i]);
+          }
+        } else {
+          for (int i = start_lib; i < start_lib + lib_size; ++i) {
+            local_lib_indices.emplace_back(lib_indices[i]);
+          }
         }
-        int num_vectors_remaining = lib_size - (max_lib_size - start_lib);
-        for (int i = 0; i < num_vectors_remaining; ++i) {
-          local_lib_indices.emplace_back(lib_indices[i]);
-        }
-      } else {
-        for (int i = start_lib; i < start_lib + lib_size; ++i) {
-          local_lib_indices.emplace_back(lib_indices[i]);
-        }
+        valid_lib_indices.emplace_back(local_lib_indices);
       }
 
-      // Run cross map and store results
-      x_xmap_y.emplace_back(lib_size, ICSingle(local_lib_indices));
-    }
+      // Preallocate the result vector to avoid out-of-bounds access
+      std::vector<IntersectionRes> x_xmap_y(valid_lib_indices.size());
 
-    return x_xmap_y;
+      // Perform the operations using RcppThread
+      RcppThread::parallelFor(0, valid_lib_indices.size(), [&](size_t i) {
+        IntersectionRes result(lib_size, ICSingle(valid_lib_indices[i]));
+        x_xmap_y[i] = result;
+      }, threads);
+      return x_xmap_y;
+    } else {
+      parallel_level += 1; // change parallelism level
+      // Preallocate the result vector to avoid out-of-bounds access
+      std::vector<IntersectionRes> x_xmap_y;
+
+      for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
+        std::vector<int> local_lib_indices;
+        // Setup changing library
+        if (start_lib + lib_size > max_lib_size) { // Loop around to beginning of lib indices
+          for (int i = start_lib; i < max_lib_size; ++i) {
+            local_lib_indices.emplace_back(lib_indices[i]);
+          }
+          int num_vectors_remaining = lib_size - (max_lib_size - start_lib);
+          for (int i = 0; i < num_vectors_remaining; ++i) {
+            local_lib_indices.emplace_back(lib_indices[i]);
+          }
+        } else {
+          for (int i = start_lib; i < start_lib + lib_size; ++i) {
+            local_lib_indices.emplace_back(lib_indices[i]);
+          }
+        }
+
+        // Run cross map and store results
+        x_xmap_y.emplace_back(lib_size, ICSingle(local_lib_indices));
+      }
+
+      return x_xmap_y;
+    }
   }
 }
 
