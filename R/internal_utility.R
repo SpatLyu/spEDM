@@ -175,8 +175,8 @@
 }
 
 .bind_intersectdf = \(varname,x_xmap_y,y_xmap_x,bidirectional){
-  xmapdf = .internal_xmapdf_binding(x_xmap_y$xmap,y_xmap_x$xmap,bidirectional,only_cs = TRUE)
-  csdf = .internal_xmapdf_binding(x_xmap_y$cs,y_xmap_x$cs,bidirectional,keyname = "neighbors")
+  xmapdf = .internal_xmapdf_binding(x_xmap_y$xmap,y_xmap_x$xmap,bidirectional,keyname = "neighbors")
+  csdf = .internal_xmapdf_binding(x_xmap_y$cs,y_xmap_x$cs,bidirectional,only_cs = TRUE)
   res = list("xmap" = xmapdf, "cs" = csdf, "varname" = varname, "bidirectional" = bidirectional)
   class(res) = 'cmc_res'
   return(res)

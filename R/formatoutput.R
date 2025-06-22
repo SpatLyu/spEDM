@@ -1,8 +1,5 @@
 .internal_xmapdf_print = \(x,keyname = "libsizes",significant = FALSE){
   resdf = x$xmap
-  if (keyname != "libsizes"){
-    resdf = x$cs
-  }
   bidirectional = x$bidirectional
   if (bidirectional){
     if (significant) {
@@ -160,7 +157,8 @@ plot.ccm_res = \(x, family = "serif", legend_texts = NULL,
 #' @noRd
 #' @export
 plot.cmc_res = \(x, ...){
-  xmap = x[-2]
+  xmap = x[-1]
+  names(xmap) = c("xmap", "varname", "bidirectional")
   class(xmap) = "ccm"
   draw_ci = FALSE
   fig1 = plot.ccm_res(xmap,draw_ci = draw_ci,ylabel = "Causal Score",...)

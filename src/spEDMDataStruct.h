@@ -16,14 +16,14 @@ struct PartialCorRes {
 };
 
 struct CMCRes {
-  std::vector<double> causal_strength;
-  std::vector<std::vector<double>> cross_mapping;
+  std::vector<double> cross_mapping;
+  std::vector<std::vector<double>> causal_strength;
 
   CMCRes() = default;
 
-  CMCRes(const std::vector<double>& causal_strength,
-         const std::vector<std::vector<double>>& cross_mapping)
-    : causal_strength(causal_strength), cross_mapping(cross_mapping) {}
+  CMCRes(const std::vector<double>& cross_mapping,
+         const std::vector<std::vector<double>>& causal_strength)
+    : cross_mapping(cross_mapping), causal_strength(causal_strength) {}
 };
 
 
