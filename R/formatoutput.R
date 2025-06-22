@@ -63,8 +63,7 @@ print.pcm_res = \(x,significant = FALSE,...){
 print.xmap_self = \(x,...){
   res = as.matrix(x$xmap)
   if (x$method == "smap"){
-    res = OptThetaParm(res)
-    cat(paste0("The suggested theta for variable ", x$varname, " is ", res[1], "\n"))
+    cat(paste0("The suggested theta for variable ", x$varname, " is ", OptThetaParm(res), "\n"))
   } else {
     if (x$method == "simplex"){
       res = OptEmbedDim(res)
