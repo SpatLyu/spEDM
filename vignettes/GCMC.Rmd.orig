@@ -173,18 +173,17 @@ Run GCMC:
 
 ```{r case_grid}
 # precipitation and npp
-g1 = gcmc(npp, "pre", "npp", E = 2, k = 270,
+g1 = gcmc(npp, "pre", "npp", E = 2, k = 270, libsizes = matrix(nrow(predindice)),
           lib = predindice, pred = predindice, progressbar = FALSE)
 g1
-g1$xmap
 
 # temperature and npp
-g2 = gcmc(npp, "tem", "npp", E = 2, k = 270,
+g2 = gcmc(npp, "tem", "npp", E = 2, k = 270, libsizes = matrix(nrow(predindice)),
           lib = predindice, pred = predindice, progressbar = FALSE)
 g2
 
 # precipitation and temperature
-g3 = gcmc(npp, "pre", "tem", E = 2, k = 270,
+g3 = gcmc(npp, "pre", "tem", E = 2, k = 270, libsizes = matrix(nrow(predindice)),
           lib = predindice, pred = predindice, progressbar = FALSE)
 g3
 ```

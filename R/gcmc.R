@@ -49,7 +49,7 @@
 
   if (is.null(lib)) lib = .internal_library(dtf,TRUE)
   if (is.null(pred)) pred = lib
-  if (is.null(libsizes)) libsizes = nrow(lib)
+  if (is.null(libsizes)) libsizes = matrix(nrow(lib))
 
   x_xmap_y = NULL
   if (bidirectional){
