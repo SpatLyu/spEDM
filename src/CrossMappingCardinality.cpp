@@ -49,21 +49,6 @@ CMCRes CrossMappingCardinality(
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
-  std::vector<int> unique_lib_sizes(lib_sizes.begin(), lib_sizes.end());
-
-  // Transform to ensure no size exceeds max library size
-  int max_lib_size = static_cast<int>(lib.size());
-  std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
-                 [&](int size) { return std::min(size, max_lib_size); });
-
-  // Ensure the minimum value in unique_lib_sizes is num_neighbors + n_excluded
-  std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
-                 [&](int size) { return std::max(size, num_neighbors + n_excluded ); });
-
-  // Remove duplicates
-  std::sort(unique_lib_sizes.begin(), unique_lib_sizes.end());
-  unique_lib_sizes.erase(std::unique(unique_lib_sizes.begin(), unique_lib_sizes.end()), unique_lib_sizes.end());
-
   // Filter valid prediction points (exclude those with all NaN values)
   std::vector<int> valid_pred;
   for (int idx : pred) {
@@ -75,6 +60,28 @@ CMCRes CrossMappingCardinality(
                              [](double v) { return std::isnan(v); });
     if (!x_nan && !y_nan) valid_pred.push_back(idx);
   }
+
+  // Transform to ensure no size exceeds max library number
+  int max_lib_size = lib.size();
+  std::vector<int> unique_lib_sizes(lib_sizes.begin(), lib_sizes.end());
+  unique_lib_sizes.push_back(max_lib_size);  // Ensure max_lib_size is included
+
+  // // Clamp each size between (num_neighbors + n_excluded) and max_lib_size (need C++17, so commented)
+  // std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
+  //                [&](int size) {
+  //                  return std::clamp(size, num_neighbors + n_excluded, max_lib_size);
+  //                });
+
+  std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
+                 [&](int size) { return std::min(size, max_lib_size); });
+
+  // Ensure the minimum value in unique_lib_sizes is num_neighbors + n_excluded
+  std::transform(unique_lib_sizes.begin(), unique_lib_sizes.end(), unique_lib_sizes.begin(),
+                 [&](int size) { return std::max(size, num_neighbors + n_excluded ); });
+
+  // Remove duplicates
+  std::sort(unique_lib_sizes.begin(), unique_lib_sizes.end());
+  unique_lib_sizes.erase(std::unique(unique_lib_sizes.begin(), unique_lib_sizes.end()), unique_lib_sizes.end());
 
   // Precompute neighbors
   auto nx = CppDistSortedIndice(CppMatDistance(embedding_x, false, true));

@@ -10,7 +10,7 @@
   data,
   cause,
   effect,
-  libsizes,
+  libsizes = NULL,
   E = 3,
   tau = 1,
   k = pmin(E^2),
@@ -20,7 +20,7 @@
   threads = detectThreads(),
   parallel.level = "low",
   bidirectional = TRUE,
-  detrend = TRUE,
+  detrend = FALSE,
   progressbar = TRUE
 )
 
@@ -28,7 +28,7 @@
   data,
   cause,
   effect,
-  libsizes,
+  libsizes = NULL,
   E = 3,
   tau = 1,
   k = pmin(E^2),
@@ -37,7 +37,7 @@
   threads = detectThreads(),
   parallel.level = "low",
   bidirectional = TRUE,
-  detrend = TRUE,
+  detrend = FALSE,
   progressbar = TRUE
 )
 }
@@ -87,7 +87,7 @@ geographical cross mapping cardinality
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 \donttest{
-g = gcmc(columbus,"hoval","crime",libsizes = 26:49,E = 3,k = 25)
+g = gcmc(columbus,"hoval","crime",E = 3,k = 25)
 g
 }
 }
