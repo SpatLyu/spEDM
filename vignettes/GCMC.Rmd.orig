@@ -194,7 +194,7 @@ g2 = gcmc(npp, "tem", "npp", E = 15, k = 300, lib = nnaindice, pred = predindice
 g2
 
 # precipitation and temperature
-g3 = gcmc(npp, "pre", "tem", E = 15, k = 200, lib = nnaindice, pred = predindice, progressbar = FALSE)
+g3 = gcmc(npp, "pre", "tem", E = 15, k = 300, lib = nnaindice, pred = predindice, progressbar = FALSE)
 g3
 ```
 
