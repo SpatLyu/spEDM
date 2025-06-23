@@ -257,22 +257,22 @@ At E = 3, the false nearest neighbor ratio decreases to approximately 0.13, wher
 
 ``` r
 # precipitation and npp
-g1 = gcmc(npp, "pre", "npp", E = 3, k = 350, lib = nnaindice, pred = predindice, progressbar = FALSE)
+g1 = gcmc(npp, "pre", "npp", E = 3, k = 350, lib = predindice, pred = predindice, progressbar = FALSE)
 g1
 ##   neighbors  pre->npp  npp->pre
-## 1       350 0.6358939 0.5521714
+## 1       350 0.2181796 0.1876816
 
 # temperature and npp
-g2 = gcmc(npp, "tem", "npp", E = 3, k = 350, lib = nnaindice, pred = predindice, progressbar = FALSE)
+g2 = gcmc(npp, "tem", "npp", E = 3, k = 350, lib = predindice, pred = predindice, progressbar = FALSE)
 g2
 ##   neighbors  tem->npp  npp->tem
-## 1       350 0.7226041 0.7212735
+## 1       350 0.3869143 0.3799673
 
 # precipitation and temperature
-g3 = gcmc(npp, "pre", "tem", E = 3, k = 350, lib = nnaindice, pred = predindice, progressbar = FALSE)
+g3 = gcmc(npp, "pre", "tem", E = 3, k = 350, lib = predindice, pred = predindice, progressbar = FALSE)
 g3
 ##   neighbors  pre->tem  tem->pre
-## 1       350 0.7078204 0.6440735
+## 1       350 0.3206776 0.2926694
 ```
 
 Organize the results into a long table:
@@ -284,12 +284,12 @@ res2 = list(g1,g2,g3) |>
   purrr::list_rbind()
 res2
 ##   cause effect        ca          sig
-## 1   pre    npp 0.6358939 2.138182e-08
-## 2   npp    pre 0.5521714 3.717032e-02
-## 3   tem    npp 0.7226041 7.687707e-23
-## 4   npp    tem 0.7212735 2.707422e-22
-## 5   pre    tem 0.7078204 2.079939e-19
-## 6   tem    pre 0.6440735 2.311726e-09
+## 1   pre    npp 0.2181796 4.990672e-48
+## 2   npp    pre 0.1876816 7.390331e-67
+## 3   tem    npp 0.3869143 1.716558e-06
+## 4   npp    tem 0.3799673 3.234268e-07
+## 5   pre    tem 0.3206776 1.429895e-15
+## 6   tem    pre 0.2926694 2.796329e-21
 ```
 
 Visualize the result:
