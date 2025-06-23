@@ -101,15 +101,11 @@ We assume an underlying causal interaction structure among species, where specie
 simv = spEDM::slm(species,x = "a", y = "b", z = "c", k = 4, step = 15, transient = 1,
                   alpha_x = 0.28, alpha_y = 0.25, alpha_z = 0.22,
                   beta_xy = 0.625, beta_xz = 0, beta_yx = 0, beta_yz = 0.77, beta_zx = 0, beta_zy = 0)
-## Error in -indices: invalid argument to unary operator
 
 species_evolution = species
 terra::values(species_evolution[["a"]]) = simv$x
-## Error: object 'simv' not found
 terra::values(species_evolution[["b"]]) = simv$y
-## Error: object 'simv' not found
 terra::values(species_evolution[["c"]]) = simv$z
-## Error: object 'simv' not found
 species_evolution
 ## class       : SpatRaster 
 ## size        : 20, 20, 3  (nrow, ncol, nlyr)
@@ -117,9 +113,9 @@ species_evolution
 ## extent      : 0, 20, 0, 20  (xmin, xmax, ymin, ymax)
 ## coord. ref. :  
 ## source(s)   : memory
-## names       : a, b, c 
-## min values  : 0, 0, 0 
-## max values  : 1, 1, 1
+## names       :         a,         b,         c 
+## min values  : 0.8149217, 0.9079235, 0.9432498 
+## max values  : 0.8223571, 0.9157017, 0.9546753
 
 terra::plot(species_evolution, nc = 3,
             mar = rep(0.1,4),
