@@ -65,7 +65,7 @@
 #' @param data observation data.
 #' @param cause name of causal variable.
 #' @param effect name of effect variable.
-#' @param libsizes number of spatial units used.
+#' @param libsizes (optional) number of spatial units used.
 #' @param E (optional) embedding dimensions.
 #' @param tau (optional) step of spatial lags.
 #' @param k (optional) number of nearest neighbors.

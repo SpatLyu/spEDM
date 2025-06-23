@@ -1,4 +1,4 @@
-.gccm_sf_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = E+2, theta = 1, algorithm = "simplex", lib = NULL, pred = NULL,
+.gccm_sf_method = \(data, cause, effect, libsizes = NULL, E = 3, tau = 1, k = E+2, theta = 1, algorithm = "simplex", lib = NULL, pred = NULL,
                     nb = NULL,threads = detectThreads(),parallel.level = "low",bidirectional = TRUE,detrend = TRUE,progressbar = TRUE){
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
@@ -20,6 +20,7 @@
 
   if (is.null(lib)) lib = .internal_library(data)
   if (is.null(pred)) pred = lib
+  if (is.null(libsizes)) libsizes = length(lib)
 
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
   x_xmap_y = NULL
@@ -31,7 +32,7 @@
   return(.bind_xmapdf(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
 
-.gccm_spatraster_method = \(data, cause, effect, libsizes, E = 3, tau = 1, k = E+2, theta = 1, algorithm = "simplex", lib = NULL, pred = NULL,
+.gccm_spatraster_method = \(data, cause, effect, libsizes = NULL, E = 3, tau = 1, k = E+2, theta = 1, algorithm = "simplex", lib = NULL, pred = NULL,
                             threads = detectThreads(), parallel.level = "low", bidirectional = TRUE, detrend = TRUE, progressbar = TRUE){
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
@@ -52,6 +53,7 @@
 
   if (is.null(lib)) lib = .internal_library(dtf,TRUE)
   if (is.null(pred)) pred = lib
+  if (is.null(libsizes)) libsizes = matrix(nrow(lib))
 
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
   x_xmap_y = NULL
