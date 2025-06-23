@@ -160,41 +160,28 @@ npp = terra::rast(system.file("case/npp.tif", package = "spEDM"))
 # To save the computation time, we will aggregate the data by 3 times
 npp = terra::aggregate(npp, fact = 3, na.rm = TRUE)
 npp
-
-# Inspect NA values
-terra::global(npp,"isNA")
-terra::ncell(npp)
-nnamat = terra::as.matrix(npp[[1]], wide = TRUE)
-nnaindice = which(!is.na(nnamat), arr.ind = TRUE)
-dim(nnaindice)
-
-# Select 1500 non-NA pixels to predict:
-set.seed(2025)
-indices = sample(nrow(nnaindice), size = 1500, replace = FALSE)
-libindice = nnaindice[-indices,]
-predindice = nnaindice[indices,]
 ```
 
 Determining optimal embedding dimension:
 
 ```{r fnn_grid_data}
-fnn(npp,"npp", E = 1:20, lib = nnaindice, pred = predindice,
+fnn(npp,"npp", E = 1:15,
     eps = stats::sd(terra::values(npp[["npp"]]),na.rm = TRUE) / 10)
 ```
 
-After E reaches 12, the ratio of false nearest neighbors remains around 0.2, and only drops to the 0.2 range when E increases to 14. Therefore, an embedding dimension of 5 is selected for the subsequent GCMC analysis.
+After E reaches 12, the ratio of false nearest neighbors drops to around 0.25 and remains at approximately 0.2 thereafter. Therefore, an embedding dimension of 12 is selected for the subsequent GCMC analysis.
 
 ```{r case_grid}
 # precipitation and npp
-g1 = gcmc(npp, "pre", "npp", E = 15, k = 300, lib = nnaindice, pred = predindice, progressbar = FALSE)
+g1 = gcmc(npp, "pre", "npp", E = 12, k = 600, progressbar = FALSE)
 g1
 
 # temperature and npp
-g2 = gcmc(npp, "tem", "npp", E = 15, k = 300, lib = nnaindice, pred = predindice, progressbar = FALSE)
+g2 = gcmc(npp, "tem", "npp", E = 12, k = 600, progressbar = FALSE)
 g2
 
 # precipitation and temperature
-g3 = gcmc(npp, "pre", "tem", E = 15, k = 300, lib = nnaindice, pred = predindice, progressbar = FALSE)
+g3 = gcmc(npp, "pre", "tem", E = 12, k = 600, progressbar = FALSE)
 g3
 ```
 
