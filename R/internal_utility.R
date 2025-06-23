@@ -201,5 +201,6 @@
   if (is.null(x)) indices = c(indices,1)
   if (is.null(y)) indices = c(indices,2)
   if (is.null(z)) indices = c(indices,3)
+  if (is.null(indices)) return(res)
   return(res[-indices])
 }
