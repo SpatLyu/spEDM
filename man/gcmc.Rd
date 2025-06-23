@@ -48,7 +48,7 @@
 
 \item{effect}{name of effect variable.}
 
-\item{libsizes}{number of spatial units used.}
+\item{libsizes}{(optional) number of spatial units used.}
 
 \item{E}{(optional) embedding dimensions.}
 

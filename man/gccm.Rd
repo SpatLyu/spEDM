@@ -10,7 +10,7 @@
   data,
   cause,
   effect,
-  libsizes,
+  libsizes = NULL,
   E = 3,
   tau = 1,
   k = E + 2,
@@ -30,7 +30,7 @@
   data,
   cause,
   effect,
-  libsizes,
+  libsizes = NULL,
   E = 3,
   tau = 1,
   k = E + 2,
@@ -52,7 +52,7 @@
 
 \item{effect}{name of effect variable.}
 
-\item{libsizes}{number of spatial units used.}
+\item{libsizes}{(optional) number of spatial units used.}
 
 \item{E}{(optional) embedding dimensions.}
 
