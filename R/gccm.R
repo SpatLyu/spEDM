@@ -39,7 +39,6 @@
   tau = .check_inputelementnum(tau,2)
   k = .check_inputelementnum(k,2)
   pl = .check_parallellevel(parallel.level)
-  libsizes = as.matrix(libsizes)
   .varname = .internal_varname()
   data = data[[varname]]
   names(data) = .varname
