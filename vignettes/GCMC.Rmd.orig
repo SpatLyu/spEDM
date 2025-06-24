@@ -49,7 +49,7 @@ popd_sf
 The false nearest neighbours (FNN) method helps identify the appropriate embedding dimension for reconstructing the state space of a time series or spatial cross-sectional data. A low embedding dimension that minimizes false neighbours is considered optimal.
 
 ```{r fnn_lattice_data}
-fnn(popd_sf,"popd", E = 1:15,
+fnn(popd_sf, "popd", E = 1:15,
     eps = stats::sd(popd_sf$popd) / 10)
 ```
 
@@ -178,7 +178,7 @@ predindice = nnaindice[indices,]
 Determining optimal embedding dimension:
 
 ```{r fnn_grid_data}
-fnn(npp,"npp", E = 1:15, lib = predindice, pred = predindice,
+fnn(npp, "npp", E = 1:15, lib = predindice, pred = predindice,
     eps = stats::sd(terra::values(npp[["npp"]]),na.rm = TRUE) / 10)
 ```
 
