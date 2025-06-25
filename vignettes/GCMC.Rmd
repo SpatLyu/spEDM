@@ -1,7 +1,7 @@
 ---
 title: "Geographical Cross Mapping Cardinality (GCMC)"
 author: "Wenbo Lv"
-date: "2025-06-24"
+date: "2025-06-25"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{GCMC}
@@ -73,7 +73,7 @@ The false nearest neighbours (FNN) method helps identify the appropriate embeddi
 
 
 ``` r
-fnn(popd_sf,"popd", E = 1:15,
+fnn(popd_sf, "popd", E = 1:15,
     eps = stats::sd(popd_sf$popd) / 10)
 ##       E:1       E:2       E:3       E:4       E:5       E:6       E:7       E:8 
 ## 0.9707769 0.6404134 0.4885959 0.4012830 0.3346401 0.3296507 0.3260870 0.3150392 
@@ -244,7 +244,7 @@ Determining optimal embedding dimension:
 
 
 ``` r
-fnn(npp,"npp", E = 1:15, lib = predindice, pred = predindice,
+fnn(npp, "npp", E = 1:15, lib = predindice, pred = predindice,
     eps = stats::sd(terra::values(npp[["npp"]]),na.rm = TRUE) / 10)
 ##       E:1       E:2       E:3       E:4       E:5       E:6       E:7       E:8 
 ## 0.4666667 0.4000000 0.1333333 0.5333333 0.4000000 0.4000000 0.4666667 0.4000000 
