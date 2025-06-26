@@ -124,7 +124,7 @@ std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& source,
 }
 
 /**
- * Compute Intersection Cardinality AUC over Lattice Embedding Settings.
+ * Compute Intersection Cardinality AUC over spatial lattice data.
  *
  * This function computes the causal strength between two lattice-structured time series
  * (`source` and `target`) by evaluating the Intersection Cardinality (IC) curve, and
@@ -150,7 +150,7 @@ std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& source,
  * @param parallel_level Flag indicating whether to use multi-threading (0: serial, 1: parallel).
  *
  * @return A vector of size `E.size() * b.size()`, each element is a vector:
- *         [embedding_dimension, neighbor_size, auc_value].
+ *         [embedding_dimension, neighbor_size, auc_value, p value].
  *         If inputs are invalid or no prediction point is valid, the AUC value is NaN.
  *
  * @note

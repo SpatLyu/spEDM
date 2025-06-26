@@ -3,6 +3,7 @@
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
   tau = .check_inputelementnum(tau,2)
+  k = .check_inputelementnum(k,2)
   pl = .check_parallellevel(parallel.level)
   .varname = .internal_varname()
   if (is.null(nb)) nb = .internal_lattice_nb(data)
@@ -23,9 +24,9 @@
 
   x_xmap_y = NULL
   if (bidirectional){
-    x_xmap_y = RcppGCMC4Lattice(cause,effect,nb,libsizes,lib,pred,E,tau,k,0,threads,pl,progressbar)
+    x_xmap_y = RcppGCMC4Lattice(cause,effect,nb,libsizes,lib,pred,E,tau,k[1],0,threads,pl,progressbar)
   }
-  y_xmap_x = RcppGCMC4Lattice(effect,cause,nb,libsizes,lib,pred,rev(E),rev(tau),k,0,threads,pl,progressbar)
+  y_xmap_x = RcppGCMC4Lattice(effect,cause,nb,libsizes,lib,pred,rev(E),rev(tau),k[2],0,threads,pl,progressbar)
 
   return(.bind_intersectdf(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
@@ -35,6 +36,7 @@
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
   tau = .check_inputelementnum(tau,2)
+  k = .check_inputelementnum(k,2)
   pl = .check_parallellevel(parallel.level)
   .varname = .internal_varname()
   data = data[[varname]]
@@ -53,9 +55,9 @@
 
   x_xmap_y = NULL
   if (bidirectional){
-    x_xmap_y = RcppGCMC4Grid(causemat,effectmat,libsizes,lib,pred,E,tau,k,0,threads,pl,progressbar)
+    x_xmap_y = RcppGCMC4Grid(causemat,effectmat,libsizes,lib,pred,E,tau,k[1],0,threads,pl,progressbar)
   }
-  y_xmap_x = RcppGCMC4Grid(effectmat,causemat,libsizes,lib,pred,rev(E),rev(tau),k,0,threads,pl,progressbar)
+  y_xmap_x = RcppGCMC4Grid(effectmat,causemat,libsizes,lib,pred,rev(E),rev(tau),k[2],0,threads,pl,progressbar)
 
   return(.bind_intersectdf(varname,x_xmap_y,y_xmap_x,bidirectional))
 }

@@ -26,7 +26,6 @@ struct CMCRes {
     : cross_mapping(cross_mapping), causal_strength(causal_strength) {}
 };
 
-
 struct IntersectionRes {
   size_t libsize;
   std::vector<double> Intersection;
