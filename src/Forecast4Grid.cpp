@@ -149,7 +149,7 @@ std::vector<std::vector<double>> SMap4Grid(const std::vector<std::vector<double>
 }
 
 /**
- * @brief Evaluate intersection cardinality (IC) for spatial grid embeddings.
+ * @brief Evaluate intersection cardinality (IC) for spatial grid data.
  *
  * This function computes the intersection cardinality between the k-nearest neighbors
  * of grid-embedded source and target spatial variables, across a range of embedding dimensions (E)
