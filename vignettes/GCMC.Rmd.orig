@@ -96,18 +96,17 @@ Here we define two functions to process the results and plot the causal associat
 plot_ca_matrix = \(.tbf,legend_title = "Causal Association"){
   .tbf = .tbf |>
     dplyr::mutate(sig_marker = dplyr::case_when(
-      sig < 0.001 ~ "***",
-      sig < 0.01  ~ "**",
-      sig < 0.05  ~ "*",
-      .default =  ""
-    )) |>
-    dplyr::mutate(sig_marker = paste0(round(ca,3),sig_marker))
+      sig > 0.05 ~ paste0(sprintf("%.4f", ca), "^a"),
+      TRUE       ~ sprintf("%.4f", ca)
+    ))
 
   fig = ggplot2::ggplot(data = .tbf,
                         ggplot2::aes(x = effect, y = cause)) +
     ggplot2::geom_tile(color = "black", ggplot2::aes(fill = ca)) +
-    ggplot2::geom_abline(slope = 1, intercept = 0, color = "black", linewidth = 0.25) +
-    ggplot2::geom_text(ggplot2::aes(label = sig_marker), color = "black", family = "serif") +
+    ggplot2::geom_abline(slope = 1, intercept = 0,
+                         color = "black", linewidth = 0.25) +
+    ggplot2::geom_text(ggplot2::aes(label = sig_marker), parse = TRUE,
+                       color = "black", family = "serif") +
     ggplot2::labs(x = "Effect", y = "Cause", fill = legend_title) +
     ggplot2::scale_x_discrete(expand = c(0, 0)) +
     ggplot2::scale_y_discrete(expand = c(0, 0)) +
@@ -178,23 +177,23 @@ predindice = nnaindice[indices,]
 Determining optimal embedding dimension:
 
 ```{r fnn_grid_data}
-fnn(npp, "npp", E = 1:15, lib = predindice, pred = predindice,
+fnn(npp, "npp", E = 1:20, lib = predindice, pred = predindice,
     eps = stats::sd(terra::values(npp[["npp"]]),na.rm = TRUE) / 10)
 ```
 
-At E = 3, the false nearest neighbor ratio decreases to approximately 0.13, whereas it remains above 0.25 for all other embedding dimensions. Hence, E = 3 is chosen for the subsequent GCMC analysis.
+At $E = 17$, the false nearest neighbor ratio drops to 0 and remains at 0 thereafter. Therefore, $E = 17$ is selected for the subsequent GCMC analysis.
 
 ```{r case_grid}
 # precipitation and npp
-g1 = gcmc(npp, "pre", "npp", E = 3, k = 350, lib = predindice, pred = predindice, progressbar = FALSE)
+g1 = gcmc(npp, "pre", "npp", E = 17, k = 172, lib = predindice, pred = predindice, progressbar = FALSE)
 g1
 
 # temperature and npp
-g2 = gcmc(npp, "tem", "npp", E = 3, k = 350, lib = predindice, pred = predindice, progressbar = FALSE)
+g2 = gcmc(npp, "tem", "npp", E = 17, k = 172, lib = predindice, pred = predindice, progressbar = FALSE)
 g2
 
 # precipitation and temperature
-g3 = gcmc(npp, "pre", "tem", E = 3, k = 350, lib = predindice, pred = predindice, progressbar = FALSE)
+g3 = gcmc(npp, "pre", "tem", E = 17, k = 172, lib = predindice, pred = predindice, progressbar = FALSE)
 g3
 ```
 
