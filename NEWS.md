@@ -1,5 +1,9 @@
 # spEDM 1.8
 
+### breaking changes
+
+* Switch mean-of-rho to full-vector Fisher z-transform for significance and CI calculations (#706).
+
 # spEDM 1.7
 
 ### new
