@@ -719,11 +719,11 @@ std::vector<std::vector<double>> SCPCM4Grid(
     grouped_results[result.first].emplace_back(result.second, result.third);
   }
 
-  std::vector<std::vector<double>> final_results;
   size_t n = pred.size();
 
   // // Previous implementation calculated significance and confidence intervals using the mean of rho vector only.
   // // This approach is now deprecated and kept here for comparison purposes.
+  // std::vector<std::vector<double>> final_results;
   // // Compute the mean of second and third values for each group
   // for (const auto& group : grouped_results) {
   //   std::vector<double> second_values, third_values;
@@ -763,6 +763,7 @@ std::vector<std::vector<double>> SCPCM4Grid(
   // }
 
   // For each group, compute the mean of second and third values and calculate significance and confidence intervals using the original vectors
+  std::vector<std::vector<double>> final_results;
   for (const auto& group : grouped_results) {
     std::vector<double> second_values, third_values;
 
@@ -1021,11 +1022,11 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
     grouped_results[result.first].emplace_back(result.second, result.third);
   }
 
-  std::vector<std::vector<double>> final_results;
   size_t n = pred.size();
 
   // // Previous implementation calculated significance and confidence intervals using the mean of rho vector only.
   // // This approach is now deprecated and kept here for comparison purposes.
+  // std::vector<std::vector<double>> final_results;
   // Compute the mean of second and third values for each group
   // for (const auto& group : grouped_results) {
   //   std::vector<double> second_values, third_values;
@@ -1065,6 +1066,7 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
   // }
 
   // For each group, compute the mean of second and third values and calculate significance and confidence intervals using the original vectors
+  std::vector<std::vector<double>> final_results;
   for (const auto& group : grouped_results) {
     std::vector<double> second_values, third_values;
 
