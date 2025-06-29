@@ -325,6 +325,14 @@ RcppCorConfidence <- function(r, n, k = 0L, level = 0.05) {
     .Call(`_spEDM_RcppCorConfidence`, r, n, k, level)
 }
 
+RcppMeanCorSignificance <- function(r, n, k = 0L) {
+    .Call(`_spEDM_RcppMeanCorSignificance`, r, n, k)
+}
+
+RcppMeanCorConfidence <- function(r, n, k = 0L, level = 0.05) {
+    .Call(`_spEDM_RcppMeanCorConfidence`, r, n, k, level)
+}
+
 RcppDeLongAUCConfidence <- function(cases, controls, direction, level = 0.05) {
     .Call(`_spEDM_RcppDeLongAUCConfidence`, cases, controls, direction, level)
 }
