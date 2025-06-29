@@ -1192,6 +1192,31 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppMeanCorSignificance
+double RcppMeanCorSignificance(const Rcpp::NumericVector& r, int n, int k);
+RcppExport SEXP _spEDM_RcppMeanCorSignificance(SEXP rSEXP, SEXP nSEXP, SEXP kSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type r(rSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppMeanCorSignificance(r, n, k));
+    return rcpp_result_gen;
+END_RCPP
+}
+// RcppMeanCorConfidence
+Rcpp::NumericVector RcppMeanCorConfidence(const Rcpp::NumericVector& r, int n, int k, double level);
+RcppExport SEXP _spEDM_RcppMeanCorConfidence(SEXP rSEXP, SEXP nSEXP, SEXP kSEXP, SEXP levelSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type r(rSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< double >::type level(levelSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppMeanCorConfidence(r, n, k, level));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppDeLongAUCConfidence
 Rcpp::NumericVector RcppDeLongAUCConfidence(const Rcpp::NumericVector& cases, const Rcpp::NumericVector& controls, const Rcpp::CharacterVector& direction, double level);
 RcppExport SEXP _spEDM_RcppDeLongAUCConfidence(SEXP casesSEXP, SEXP controlsSEXP, SEXP directionSEXP, SEXP levelSEXP) {
@@ -1437,6 +1462,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppPartialCorTrivar", (DL_FUNC) &_spEDM_RcppPartialCorTrivar, 5},
     {"_spEDM_RcppCorSignificance", (DL_FUNC) &_spEDM_RcppCorSignificance, 3},
     {"_spEDM_RcppCorConfidence", (DL_FUNC) &_spEDM_RcppCorConfidence, 4},
+    {"_spEDM_RcppMeanCorSignificance", (DL_FUNC) &_spEDM_RcppMeanCorSignificance, 3},
+    {"_spEDM_RcppMeanCorConfidence", (DL_FUNC) &_spEDM_RcppMeanCorConfidence, 4},
     {"_spEDM_RcppDeLongAUCConfidence", (DL_FUNC) &_spEDM_RcppDeLongAUCConfidence, 4},
     {"_spEDM_RcppCMCTest", (DL_FUNC) &_spEDM_RcppCMCTest, 4},
     {"_spEDM_RcppDistance", (DL_FUNC) &_spEDM_RcppDistance, 4},
