@@ -6,7 +6,7 @@
 #include <unordered_set>
 #include <unordered_map>
 #include "CppStats.h"
-#include "tEDMDataStruct.h"
+#include "spEDMDataStruct.h"
 #include <RcppThread.h>
 
 // [[Rcpp::depends(RcppThread)]]
