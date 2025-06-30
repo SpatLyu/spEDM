@@ -42,7 +42,7 @@
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 #' \donttest{
-#' ic(columbus,"hoval","crime", k = 25)
+#' ic(columbus,"hoval","crime", E = 7, k = 15:25)
 #' }
 methods::setMethod("ic", "sf", .ic_sf_method)
 
