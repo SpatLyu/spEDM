@@ -109,7 +109,7 @@ plot.ccm_res = \(x, family = "serif",
         dplyr::select(y_xmap_x_sig,x_xmap_y_sig) |>
         unlist() |>
         round(3)
-      legend_texts = paste0(legend_texts,pval)
+      legend_texts = paste0(legend_texts,", P = ",pval)
     }
   }
   legend_texts = .check_inputelementnum(legend_texts,2)
