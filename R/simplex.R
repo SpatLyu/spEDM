@@ -9,8 +9,8 @@
   return(.bind_xmapself(res,target,"simplex",tau))
 }
 
-.simplex_spatraster_method = \(data,column,target,lib = NULL,pred = NULL,E = 1:10,
-                               tau = 1, k = E+2, threads = detectThreads(), detrend = TRUE){
+.simplex_spatraster_method = \(data,column,target,lib = NULL,pred = NULL,E = 1:10,tau = 1,
+                               k = E+2, threads = detectThreads(), detrend = TRUE){
   mx = .uni_grid(data,column,detrend)
   my = .uni_grid(data,target,detrend)
   if (is.null(lib)) lib = which(!(is.na(mx) | is.na(my)), arr.ind = TRUE)
