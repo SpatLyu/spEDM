@@ -1,4 +1,4 @@
-.simplex_sf_method = \(data,column,target = column,lib = NULL,pred = NULL,E = 1:10,tau = 1,
+.simplex_sf_method = \(data,column,target,lib = NULL,pred = NULL,E = 1:10,tau = 1,
                        k = E+2, nb = NULL, threads = detectThreads(), detrend = TRUE){
   vx = .uni_lattice(data,column,detrend)
   vy = .uni_lattice(data,target,detrend)
@@ -9,7 +9,7 @@
   return(.bind_xmapself(res,target,"simplex",tau))
 }
 
-.simplex_spatraster_method = \(data,column,target = column,lib = NULL,pred = NULL,E = 1:10,
+.simplex_spatraster_method = \(data,column,target,lib = NULL,pred = NULL,E = 1:10,
                                tau = 1, k = E+2, threads = detectThreads(), detrend = TRUE){
   mx = .uni_grid(data,column,detrend)
   my = .uni_grid(data,target,detrend)
@@ -23,7 +23,6 @@
 #'
 #' @inheritParams embedded
 #' @param column name of library variable.
-#' @param target (optional) name of target variable.
 #' @param lib (optional) libraries indices.
 #' @param pred (optional) predictions indices.
 #' @param k (optional) number of nearest neighbors used.
