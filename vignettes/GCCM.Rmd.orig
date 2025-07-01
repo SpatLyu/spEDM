@@ -126,7 +126,7 @@ Visualize the result:
 
 ```{r fig1,fig.width=4.5,fig.height=3.65,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. The cross-mapping prediction outputs between population density and county-level precipitation.")}
 plot(pd_res, xlimits = c(0, 2800), draw_ci = TRUE) +
-  ggplot2::theme(legend.justification = c(0.85,1))
+  ggplot2::theme(legend.justification = c(0.65,1))
 ```
 
 ### An example of spatial grid data

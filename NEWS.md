@@ -1,5 +1,9 @@
 # spEDM 1.8
 
+### enhancements
+
+* Display p-value annotation for maximum library size in cross mapping visualization legend (#710).
+
 ### breaking changes
 
 * Switch mean-of-rho to full-vector Fisher z-transform for significance and CI calculations (#706).
