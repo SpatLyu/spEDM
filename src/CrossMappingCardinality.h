@@ -9,6 +9,7 @@
 #include <utility>
 #include <unordered_set>
 #include "CppStats.h"
+#include "CppDistances.h"
 #include "spEDMDataStruct.h"
 #include "IntersectionCardinality.h"
 #include <RcppThread.h>

@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include "CppStats.h"
+#include "CppDistances.h"
 
 double CppEntropy_Cont(const std::vector<double>& vec, size_t k,
                        double base = 10, bool NA_rm = false);

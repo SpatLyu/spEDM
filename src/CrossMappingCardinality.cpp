@@ -6,6 +6,7 @@
 #include <utility>
 #include <unordered_set>
 #include "CppStats.h"
+#include "CppDistances.h"
 #include "spEDMDataStruct.h"
 #include "IntersectionCardinality.h"
 #include <RcppThread.h>
@@ -83,7 +84,7 @@ CMCRes CrossMappingCardinality(
   std::sort(unique_lib_sizes.begin(), unique_lib_sizes.end());
   unique_lib_sizes.erase(std::unique(unique_lib_sizes.begin(), unique_lib_sizes.end()), unique_lib_sizes.end());
 
-  // Precompute neighbors
+  // Precompute neighbors (The earlier implementation based on a serial version)
   auto nx = CppDistSortedIndice(CppMatDistance(embedding_x, false, true), lib, num_neighbors + n_excluded);
   auto ny = CppDistSortedIndice(CppMatDistance(embedding_y, false, true), lib, num_neighbors + n_excluded);
 
@@ -193,6 +194,7 @@ CMCRes CrossMappingCardinality(
 // #include <utility>
 // #include <unordered_set>
 // #include "CppStats.h"
+// #include "CppDistances.h"
 // #include <RcppThread.h>
 //
 // // [[Rcpp::depends(RcppThread)]]

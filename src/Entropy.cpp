@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include "CppStats.h"
+#include "CppDistances.h"
 
 /**
  * @brief Computes the entropy of a given vector using k-nearest neighbors estimation.

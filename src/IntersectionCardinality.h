@@ -9,6 +9,7 @@
 #include <unordered_set>
 #include <unordered_map>
 #include "CppStats.h"
+#include "CppDistances.h"
 #include "spEDMDataStruct.h"
 #include <RcppThread.h>
 
