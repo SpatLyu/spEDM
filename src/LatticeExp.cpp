@@ -48,7 +48,7 @@ std::vector<std::vector<int>> nb2vec(const Rcpp::List& nb) {
 
 // Wrapper function to calculate accumulated lagged neighbor indices for spatial lattice data
 // [[Rcpp::export(rng = false)]]
-Rcpp::List RcppLaggedNeighbor4Lattice(const Rcpp::List& nb, int lagNum) {
+Rcpp::List RcppLaggedNeighbor4Lattice(const Rcpp::List& nb, int lagNum = 1) {
   int n = nb.size();
 
   // Convert Rcpp::List to std::vector<std::vector<int>>
@@ -79,7 +79,7 @@ Rcpp::List RcppLaggedNeighbor4Lattice(const Rcpp::List& nb, int lagNum) {
 // Wrapper function to calculate lagged values for spatial lattice data
 // [[Rcpp::export(rng = false)]]
 Rcpp::List RcppLaggedVal4Lattice(const Rcpp::NumericVector& vec,
-                                 const Rcpp::List& nb, int lagNum) {
+                                 const Rcpp::List& nb, int lagNum = 1) {
   int n = nb.size();
 
   // Convert Rcpp::NumericVector to std::vector<double>
@@ -104,8 +104,8 @@ Rcpp::List RcppLaggedVal4Lattice(const Rcpp::NumericVector& vec,
 // [[Rcpp::export(rng = false)]]
 Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec,
                                              const Rcpp::List& nb,
-                                             int E,
-                                             int tau) {
+                                             int E = 3,
+                                             int tau = 1) {
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
 
@@ -133,7 +133,7 @@ Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec,
 Rcpp::List RcppGenLatticeNeighbors(const Rcpp::NumericVector& vec,
                                    const Rcpp::List& nb,
                                    const Rcpp::IntegerVector& lib,
-                                   int k) {
+                                   int k = 8) {
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
 
@@ -180,7 +180,7 @@ Rcpp::NumericVector RcppGenLatticeSymbolization(const Rcpp::NumericVector& vec,
                                                 const Rcpp::List& nb,
                                                 const Rcpp::IntegerVector& lib,
                                                 const Rcpp::IntegerVector& pred,
-                                                int k) {
+                                                int k = 8) {
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
 
@@ -221,7 +221,7 @@ Rcpp::NumericVector RcppGenLatticeSymbolization(const Rcpp::NumericVector& vec,
 
 // Wrapper function to partition spatial units in spatial lattice data
 // [[Rcpp::export(rng = false)]]
-Rcpp::IntegerVector RcppDivideLattice(const Rcpp::List& nb,int b) {
+Rcpp::IntegerVector RcppDivideLattice(const Rcpp::List& nb,int b = 3) {
   // Convert Rcpp::List to std::vector<std::vector<int>>
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
@@ -387,7 +387,7 @@ Rcpp::NumericVector RcppFNN4Lattice(
     const Rcpp::IntegerVector& lib,
     const Rcpp::IntegerVector& pred,
     const Rcpp::IntegerVector& E,
-    int tau,
+    int tau = 1,
     int threads = 8,
     int parallel_level = 0){
   // Convert Rcpp::NumericVector to std::vector<double>
@@ -472,8 +472,8 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& source,
                                         const Rcpp::IntegerVector& pred,
                                         const Rcpp::IntegerVector& E,
                                         const Rcpp::IntegerVector& b,
-                                        int tau,
-                                        int threads) {
+                                        int tau = 1,
+                                        int threads = 8) {
   // Convert neighborhood list to std::vector<std::vector<int>>
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
@@ -568,10 +568,10 @@ Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& source,
                                      const Rcpp::IntegerVector& lib,
                                      const Rcpp::IntegerVector& pred,
                                      const Rcpp::NumericVector& theta,
-                                     int E,
-                                     int tau,
-                                     int b,
-                                     int threads) {
+                                     int E = 3,
+                                     int tau = 1,
+                                     int b = 5,
+                                     int threads = 8) {
   // Convert neighborhood list to std::vector<std::vector<int>>
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
@@ -660,12 +660,12 @@ Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
                                           const Rcpp::List& nb,
                                           const Rcpp::IntegerVector& lib,
                                           const Rcpp::IntegerVector& pred,
-                                          int E,
-                                          int tau,
-                                          int b,
-                                          int top,
-                                          int nvar,
-                                          int threads){
+                                          int E = 3,
+                                          int tau = 1,
+                                          int b = 5,
+                                          int top = 5,
+                                          int nvar = 3,
+                                          int threads = 8){
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> target = Rcpp::as<std::vector<double>>(y);
 
@@ -781,7 +781,7 @@ Rcpp::NumericMatrix RcppIC4Lattice(const Rcpp::NumericVector& source,
                                    const Rcpp::IntegerVector& pred,
                                    const Rcpp::IntegerVector& E,
                                    const Rcpp::IntegerVector& b,
-                                   int tau,
+                                   int tau = 1,
                                    int exclude = 0,
                                    int threads = 8,
                                    int parallel_level = 0) {
@@ -869,14 +869,14 @@ Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,
                                      const Rcpp::IntegerVector& libsizes,
                                      const Rcpp::IntegerVector& lib,
                                      const Rcpp::IntegerVector& pred,
-                                     int E,
-                                     int tau,
-                                     int b,
-                                     bool simplex,
-                                     double theta,
-                                     int threads,
-                                     int parallel_level,
-                                     bool progressbar) {
+                                     int E = 3,
+                                     int tau = 1,
+                                     int b = 5,
+                                     bool simplex = true,
+                                     double theta = 0,
+                                     int threads = 8,
+                                     int parallel_level = 0,
+                                     bool progressbar = false) {
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
   std::vector<double> y_std = Rcpp::as<std::vector<double>>(y);
@@ -955,12 +955,12 @@ Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x,
                                       const Rcpp::IntegerVector& E,
                                       const Rcpp::IntegerVector& tau,
                                       const Rcpp::IntegerVector& b,
-                                      bool simplex,
-                                      double theta,
-                                      int threads,
-                                      int parallel_level,
-                                      bool cumulate,
-                                      bool progressbar) {
+                                      bool simplex = true,
+                                      double theta = 0,
+                                      int threads = 8,
+                                      int parallel_level = 0,
+                                      bool cumulate = false,
+                                      bool progressbar = false) {
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
   std::vector<double> y_std = Rcpp::as<std::vector<double>>(y);
@@ -1055,10 +1055,10 @@ Rcpp::List RcppGCMC4Lattice(
     const Rcpp::IntegerVector& E,
     const Rcpp::IntegerVector& tau,
     int b,
-    int r,
-    int threads,
-    int parallel_level,
-    bool progressbar){
+    int r = 0,
+    int threads = 8,
+    int parallel_level = 0,
+    bool progressbar = false){
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
   std::vector<double> y_std = Rcpp::as<std::vector<double>>(y);
@@ -1208,7 +1208,7 @@ Rcpp::NumericVector RcppSGC4Lattice(const Rcpp::NumericVector& x,
                                     const Rcpp::IntegerVector& pred,
                                     const Rcpp::IntegerVector& block,
                                     int k,
-                                    int threads,
+                                    int threads = 8,
                                     int boot = 399,
                                     double base = 2,
                                     unsigned int seed = 42,
