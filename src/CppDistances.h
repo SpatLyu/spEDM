@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <numeric>
 #include <limits>
+#include <utility>
 #include <RcppThread.h>
 
 double CppDistance(const std::vector<double>& vec1,
@@ -62,5 +63,11 @@ std::vector<std::vector<size_t>> CppDistSortedIndice(
     const std::vector<size_t>& lib,
     size_t k,
     bool include_self = false);
+
+std::vector<std::vector<size_t>> CppMatKNNeighbors(
+    const std::vector<std::vector<double>>& embedding_space,
+    const std::vector<size_t>& lib,
+    size_t k,
+    size_t threads);
 
 #endif // CppDistances_H
