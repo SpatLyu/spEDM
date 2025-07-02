@@ -193,7 +193,7 @@ Visualize the result:
 plot_ca_matrix(res1)
 ```
 
-![**Figure 1**. **Causal associations among elevation, temperature, and population density.**](man/figures/gcmc/fig1-1.png)
+![**Figure 1**. **Causal associations among elevation, temperature, and population density.**](../man/figures/gcmc/fig1-1.png)
 
 ### An example of spatial grid data
 
@@ -300,4 +300,4 @@ Visualize the result:
 plot_ca_matrix(res2)
 ```
 
-![**Figure 2**. **Causal associations among precipitation, temperature, and NPP.**](man/figures/gcmc/fig2-1.png)
+![**Figure 2**. **Causal associations among precipitation, temperature, and NPP.**](../man/figures/gcmc/fig2-1.png)
