@@ -501,7 +501,8 @@ std::vector<std::vector<size_t>> CppMatKNNeighbors(
   //                       return a.first < b.first || (a.first == b.first && a.second < b.second);
   //                     });
   //
-  //   // Fill with neighbor indices
+  //   // Resize the output vector for the current point and fill with neighbor indices
+  //   sorted_indices[i].resize(knn);
   //   for (size_t m = 0; m < knn; ++m) {
   //     sorted_indices[i][m] = dist_idx_pairs[m].second;
   //   }
@@ -535,7 +536,8 @@ std::vector<std::vector<size_t>> CppMatKNNeighbors(
                         return a.first < b.first || (a.first == b.first && a.second < b.second);
                       });
 
-    // Fill with neighbor indices
+    // Resize the output vector for the current point and fill with neighbor indices
+    sorted_indices[i].resize(knn);
     for (size_t m = 0; m < knn; ++m) {
       sorted_indices[i][m] = dist_idx_pairs[m].second;
     }
