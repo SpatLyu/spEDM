@@ -84,11 +84,11 @@ CMCRes CrossMappingCardinality(
   std::sort(unique_lib_sizes.begin(), unique_lib_sizes.end());
   unique_lib_sizes.erase(std::unique(unique_lib_sizes.begin(), unique_lib_sizes.end()), unique_lib_sizes.end());
 
-   // // Precompute neighbors (The earlier implementation based on a serial version)
+  // // Precompute neighbors (The earlier implementation based on a serial version)
   // auto nx = CppDistSortedIndice(CppMatDistance(embedding_x, false, true), lib, num_neighbors + n_excluded);
   // auto ny = CppDistSortedIndice(CppMatDistance(embedding_y, false, true), lib, num_neighbors + n_excluded);
 
-  // Precompute neighbors
+  // Precompute neighbors (parallel computation)
   auto nx = CppMatKNNeighbors(embedding_x, lib, num_neighbors + n_excluded, threads_sizet);
   auto ny = CppMatKNNeighbors(embedding_y, lib, num_neighbors + n_excluded, threads_sizet);
 
