@@ -38,7 +38,7 @@ Rcpp::NumericVector RcppRowColFromGrid(int cellNum, int totalCol){
 
 // Wrapper function to calculate lagged values for spatial grid data
 // [[Rcpp::export(rng = false)]]
-Rcpp::NumericMatrix RcppLaggedVal4Grid(const Rcpp::NumericMatrix& mat, int lagNum) {
+Rcpp::NumericMatrix RcppLaggedVal4Grid(const Rcpp::NumericMatrix& mat, int lagNum = 1) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = mat.nrow();
   int numCols = mat.ncol();
@@ -70,7 +70,7 @@ Rcpp::NumericMatrix RcppLaggedVal4Grid(const Rcpp::NumericMatrix& mat, int lagNu
 // Wrapper function to generate embeddings for spatial grid data
 // [[Rcpp::export(rng = false)]]
 Rcpp::NumericMatrix RcppGenGridEmbeddings(const Rcpp::NumericMatrix& mat,
-                                          int E, int tau) {
+                                          int E = 3, int tau = 1) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = mat.nrow();
   int numCols = mat.ncol();
@@ -102,7 +102,7 @@ Rcpp::NumericMatrix RcppGenGridEmbeddings(const Rcpp::NumericMatrix& mat,
 // [[Rcpp::export(rng = false)]]
 Rcpp::List RcppGenGridNeighbors(const Rcpp::NumericMatrix& mat,
                                 const Rcpp::IntegerMatrix& lib,
-                                int k) {
+                                int k = 8) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = mat.nrow();
   int numCols = mat.ncol();
@@ -152,7 +152,7 @@ Rcpp::List RcppGenGridNeighbors(const Rcpp::NumericMatrix& mat,
 Rcpp::NumericVector RcppGenGridSymbolization(const Rcpp::NumericMatrix& mat,
                                              const Rcpp::IntegerMatrix& lib,
                                              const Rcpp::IntegerMatrix& pred,
-                                             int k) {
+                                             int k = 8) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = mat.nrow();
   int numCols = mat.ncol();
@@ -206,7 +206,7 @@ Rcpp::NumericVector RcppGenGridSymbolization(const Rcpp::NumericMatrix& mat,
 // Wrapper function to partition spatial units in spatial grid data
 // [[Rcpp::export(rng = false)]]
 Rcpp::IntegerVector RcppDivideGrid(const Rcpp::NumericMatrix& mat,
-                                   int b, int shape = 3) {
+                                   int b = 9, int shape = 3) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = mat.nrow();
   int numCols = mat.ncol();
@@ -394,8 +394,8 @@ Rcpp::NumericVector RcppFNN4Grid(
     const Rcpp::IntegerMatrix& lib,
     const Rcpp::IntegerMatrix& pred,
     const Rcpp::IntegerVector& E,
-    int tau,
-    int threads,
+    int tau = 1,
+    int threads = 8,
     int parallel_level = 0){
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = mat.nrow();
@@ -483,8 +483,8 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
                                      const Rcpp::IntegerMatrix& pred,
                                      const Rcpp::IntegerVector& E,
                                      const Rcpp::IntegerVector& b,
-                                     int tau,
-                                     int threads) {
+                                     int tau = 1,
+                                     int threads = 8) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = target.nrow();
   int numCols = target.ncol();
@@ -589,10 +589,10 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& source,
                                   const Rcpp::IntegerMatrix& lib,
                                   const Rcpp::IntegerMatrix& pred,
                                   const Rcpp::NumericVector& theta,
-                                  int E,
-                                  int tau,
-                                  int b,
-                                  int threads) {
+                                  int E = 3,
+                                  int tau = 1,
+                                  int b = 5,
+                                  int threads = 8) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = target.nrow();
   int numCols = target.ncol();
@@ -696,12 +696,12 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
                                        const Rcpp::NumericMatrix& yMatrix,
                                        const Rcpp::IntegerMatrix& lib,
                                        const Rcpp::IntegerMatrix& pred,
-                                       int E,
-                                       int tau,
-                                       int b,
-                                       int top,
-                                       int nvar,
-                                       int threads){
+                                       int E = 3,
+                                       int tau = 1,
+                                       int b = 5,
+                                       int top = 5,
+                                       int nvar = 3,
+                                       int threads = 8){
   int numRows = yMatrix.nrow();
   int numCols = yMatrix.ncol();
 
@@ -866,7 +866,7 @@ Rcpp::NumericMatrix RcppIC4Grid(const Rcpp::NumericMatrix& source,
                                 const Rcpp::IntegerMatrix& pred,
                                 const Rcpp::IntegerVector& E,
                                 const Rcpp::IntegerVector& b,
-                                int tau,
+                                int tau = 1,
                                 int exclude = 0,
                                 int threads = 8,
                                 int parallel_level = 0) {
@@ -985,14 +985,14 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
     const Rcpp::IntegerMatrix& libsizes,
     const Rcpp::IntegerMatrix& lib,
     const Rcpp::IntegerMatrix& pred,
-    int E,
-    int tau,
-    int b,
-    bool simplex,
-    double theta,
-    int threads,
-    int parallel_level,
-    bool progressbar) {
+    int E = 3,
+    int tau = 1,
+    int b = 5,
+    bool simplex = true,
+    double theta = 0,
+    int threads = 8,
+    int parallel_level = 0,
+    bool progressbar = false) {
   int numRows = yMatrix.nrow();
   int numCols = yMatrix.ncol();
 
@@ -1183,12 +1183,12 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
     const Rcpp::IntegerVector& E,
     const Rcpp::IntegerVector& tau,
     const Rcpp::IntegerVector& b,
-    bool simplex,
-    double theta,
-    int threads,
-    int parallel_level,
-    bool cumulate,
-    bool progressbar) {
+    bool simplex = true,
+    double theta = 0,
+    int threads = 8,
+    int parallel_level = 0,
+    bool cumulate = false,
+    bool progressbar = false) {
   int numRows = yMatrix.nrow();
   int numCols = yMatrix.ncol();
 
@@ -1400,10 +1400,10 @@ Rcpp::List RcppGCMC4Grid(
     const Rcpp::IntegerVector& E,
     const Rcpp::IntegerVector& tau,
     int b,
-    int r,
-    int threads,
-    int parallel_level,
-    bool progressbar){
+    int r = 0,
+    int threads = 8,
+    int parallel_level = 0,
+    bool progressbar = false){
   // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
   std::vector<std::vector<double>> xMatrix_cpp(xMatrix.nrow(), std::vector<double>(xMatrix.ncol()));
   for (int i = 0; i < xMatrix.nrow(); ++i) {
@@ -1629,7 +1629,7 @@ Rcpp::NumericVector RcppSGC4Grid(const Rcpp::NumericMatrix& x,
                                  const Rcpp::IntegerMatrix& pred,
                                  const Rcpp::IntegerMatrix& block,
                                  int k,
-                                 int threads,
+                                 int threads = 8,
                                  int boot = 399,
                                  double base = 2,
                                  unsigned int seed = 42,
