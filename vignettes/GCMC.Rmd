@@ -245,12 +245,12 @@ Determining optimal embedding dimension:
 ``` r
 fnn(npp, "npp", E = 1:20, lib = predindice, pred = predindice,
     eps = stats::sd(terra::values(npp[["npp"]]),na.rm = TRUE) / 10)
-##        E:1        E:2        E:3        E:4        E:5        E:6        E:7 
-## 0.46666667 0.40000000 0.13333333 0.53333333 0.40000000 0.40000000 0.46666667 
-##        E:8        E:9       E:10       E:11       E:12       E:13       E:14 
-## 0.40000000 0.46666667 0.40000000 0.46666667 0.40000000 0.40000000 0.26666667 
-##       E:15       E:16       E:17       E:18       E:19 
-## 0.13333333 0.06666667 0.00000000 0.00000000 0.00000000
+##       E:1       E:2       E:3       E:4       E:5       E:6       E:7       E:8 
+## 0.9406271 0.4326667 0.2953333 0.2820000 0.2413333 0.2306667 0.2306667 0.1973333 
+##       E:9      E:10      E:11      E:12      E:13      E:14      E:15      E:16 
+## 0.1953333 0.1533333 0.1593333 0.1633333 0.1460000 0.1300000 0.1340000 0.1073333 
+##      E:17      E:18      E:19 
+## 0.1146667 0.1093333 0.0900000
 ```
 
 At $E = 17$, the false nearest neighbor ratio drops to 0 and remains at 0 thereafter. Therefore, $E = 17$ is selected for the subsequent GCMC analysis.
