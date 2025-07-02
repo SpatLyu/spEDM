@@ -395,7 +395,8 @@ Rcpp::NumericVector RcppFNN4Grid(
     const Rcpp::IntegerMatrix& pred,
     const Rcpp::IntegerVector& E,
     int tau,
-    int threads){
+    int threads,
+    int parallel_level = 0){
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = mat.nrow();
   int numCols = mat.ncol();
@@ -461,7 +462,7 @@ Rcpp::NumericVector RcppFNN4Grid(
   std::vector<std::vector<double>> embeddings = GenGridEmbeddings(cppMat, max_E, tau);
 
   // Perform FNN for spatial grid data
-  std::vector<double> fnn = CppFNN(embeddings,lib_std,pred_std,rt_std,eps_std,true,threads);
+  std::vector<double> fnn = CppFNN(embeddings,lib_std,pred_std,rt_std,eps_std,true,threads,parallel_level);
 
   // Convert the result back to Rcpp::NumericVector and set names as "E:1", "E:2", ..., "E:n"
   Rcpp::NumericVector result = Rcpp::wrap(fnn);
