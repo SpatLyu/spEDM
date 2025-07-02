@@ -181,19 +181,19 @@ fnn(npp, "npp", E = 1:20, lib = predindice, pred = predindice,
     eps = stats::sd(terra::values(npp[["npp"]]),na.rm = TRUE) / 10)
 ```
 
-At $E = 17$, the false nearest neighbor ratio drops to 0 and remains at 0 thereafter. Therefore, $E = 17$ is selected for the subsequent GCMC analysis.
+At $E = 18$, the false nearest neighbor ratio stabilizes at 0.10 and remains constant thereafter. Therefore, $E = 18$ is selected for the subsequent GCMC analysis.
 
 ```{r case_grid}
 # precipitation and npp
-g1 = gcmc(npp, "pre", "npp", E = 17, k = 172, lib = predindice, pred = predindice, progressbar = FALSE)
+g1 = gcmc(npp, "pre", "npp", E = 18, k = 165, lib = predindice, pred = predindice, progressbar = FALSE)
 g1
 
 # temperature and npp
-g2 = gcmc(npp, "tem", "npp", E = 17, k = 172, lib = predindice, pred = predindice, progressbar = FALSE)
+g2 = gcmc(npp, "tem", "npp", E = 18, k = 165, lib = predindice, pred = predindice, progressbar = FALSE)
 g2
 
 # precipitation and temperature
-g3 = gcmc(npp, "pre", "tem", E = 17, k = 172, lib = predindice, pred = predindice, progressbar = FALSE)
+g3 = gcmc(npp, "pre", "tem", E = 18, k = 165, lib = predindice, pred = predindice, progressbar = FALSE)
 g3
 ```
 
