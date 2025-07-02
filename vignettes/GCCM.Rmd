@@ -1,7 +1,7 @@
 ---
 title: "Geographical Convergent Cross Mapping (GCCM)"
 author: "Wenbo Lv"
-date: "2025-06-25"
+date: "2025-07-02"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{GCCM}
@@ -146,7 +146,7 @@ pd_res = gccm(data = popd_sf,
               progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 2.906415 mins
+## Time difference of 2.901236 mins
 pd_res
 ##    libsizes pre->popd  popd->pre
 ## 1       100 0.1140592 0.03269659
@@ -170,7 +170,7 @@ Visualize the result:
 
 ``` r
 plot(pd_res, xlimits = c(0, 2800), draw_ci = TRUE) +
-  ggplot2::theme(legend.justification = c(0.85,1))
+  ggplot2::theme(legend.justification = c(0.65,1))
 ```
 
 ![**Figure 1**. The cross-mapping prediction outputs between population density and county-level precipitation.](../man/figures/gccm/fig1-1.png)
@@ -245,7 +245,7 @@ npp_res = gccm(data = npp,
                progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 1.497058 mins
+## Time difference of 1.477644 mins
 npp_res
 ##   libsizes  pre->npp  npp->pre
 ## 1       10 0.1282926 0.1095679
