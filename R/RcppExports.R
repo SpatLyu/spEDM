@@ -369,6 +369,10 @@ RcppDistSortedIndice <- function(dist_mat, lib, k, include_self = FALSE) {
     .Call(`_spEDM_RcppDistSortedIndice`, dist_mat, lib, k, include_self)
 }
 
+RcppMatKNNeighbors <- function(embeddings, lib, k, threads = 8L) {
+    .Call(`_spEDM_RcppMatKNNeighbors`, embeddings, lib, k, threads)
+}
+
 RcppLinearTrendRM <- function(vec, xcoord, ycoord, NA_rm = FALSE) {
     .Call(`_spEDM_RcppLinearTrendRM`, vec, xcoord, ycoord, NA_rm)
 }

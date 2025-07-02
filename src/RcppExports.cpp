@@ -1334,6 +1334,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppMatKNNeighbors
+Rcpp::List RcppMatKNNeighbors(const Rcpp::NumericMatrix& embeddings, const Rcpp::IntegerVector& lib, int k, int threads);
+RcppExport SEXP _spEDM_RcppMatKNNeighbors(SEXP embeddingsSEXP, SEXP libSEXP, SEXP kSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type embeddings(embeddingsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type lib(libSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppMatKNNeighbors(embeddings, lib, k, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppLinearTrendRM
 Rcpp::NumericVector RcppLinearTrendRM(const Rcpp::NumericVector& vec, const Rcpp::NumericVector& xcoord, const Rcpp::NumericVector& ycoord, bool NA_rm);
 RcppExport SEXP _spEDM_RcppLinearTrendRM(SEXP vecSEXP, SEXP xcoordSEXP, SEXP ycoordSEXP, SEXP NA_rmSEXP) {
@@ -1474,6 +1487,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppKNNIndice", (DL_FUNC) &_spEDM_RcppKNNIndice, 4},
     {"_spEDM_RcppDistKNNIndice", (DL_FUNC) &_spEDM_RcppDistKNNIndice, 4},
     {"_spEDM_RcppDistSortedIndice", (DL_FUNC) &_spEDM_RcppDistSortedIndice, 4},
+    {"_spEDM_RcppMatKNNeighbors", (DL_FUNC) &_spEDM_RcppMatKNNeighbors, 4},
     {"_spEDM_RcppLinearTrendRM", (DL_FUNC) &_spEDM_RcppLinearTrendRM, 4},
     {"_spEDM_RcppSVD", (DL_FUNC) &_spEDM_RcppSVD, 1},
     {"_spEDM_RcppDeLongPlacements", (DL_FUNC) &_spEDM_RcppDeLongPlacements, 3},
