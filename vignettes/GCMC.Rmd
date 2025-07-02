@@ -193,7 +193,7 @@ Visualize the result:
 plot_ca_matrix(res1)
 ```
 
-![**Figure 1**. **Causal associations among elevation, temperature, and population density.**](../man/figures/gcmc/fig1-1.png)
+![**Figure 1**. **Causal associations among elevation, temperature, and population density.**](man/figures/gcmc/fig1-1.png)
 
 ### An example of spatial grid data
 
@@ -253,27 +253,27 @@ fnn(npp, "npp", E = 1:20, lib = predindice, pred = predindice,
 ## 0.1146667 0.1093333 0.0900000
 ```
 
-At $E = 17$, the false nearest neighbor ratio drops to 0 and remains at 0 thereafter. Therefore, $E = 17$ is selected for the subsequent GCMC analysis.
+At $E = 18$, the false nearest neighbor ratio stabilizes at 0.10 and remains constant thereafter. Therefore, $E = 18$ is selected for the subsequent GCMC analysis.
 
 
 ``` r
 # precipitation and npp
-g1 = gcmc(npp, "pre", "npp", E = 17, k = 172, lib = predindice, pred = predindice, progressbar = FALSE)
+g1 = gcmc(npp, "pre", "npp", E = 18, k = 165, lib = predindice, pred = predindice, progressbar = FALSE)
 g1
 ##   neighbors  pre->npp  npp->pre
-## 1       172 0.2443551 0.2075446
+## 1       165 0.2397429 0.2060239
 
 # temperature and npp
-g2 = gcmc(npp, "tem", "npp", E = 17, k = 172, lib = predindice, pred = predindice, progressbar = FALSE)
+g2 = gcmc(npp, "tem", "npp", E = 18, k = 165, lib = predindice, pred = predindice, progressbar = FALSE)
 g2
-##   neighbors  tem->npp  npp->tem
-## 1       172 0.4307396 0.4331057
+##   neighbors  tem->npp npp->tem
+## 1       165 0.4287971 0.432213
 
 # precipitation and temperature
-g3 = gcmc(npp, "pre", "tem", E = 17, k = 172, lib = predindice, pred = predindice, progressbar = FALSE)
+g3 = gcmc(npp, "pre", "tem", E = 18, k = 165, lib = predindice, pred = predindice, progressbar = FALSE)
 g3
 ##   neighbors  pre->tem  tem->pre
-## 1       172 0.3267645 0.2765684
+## 1       165 0.3222039 0.2725069
 ```
 
 Organize the results into a long table:
@@ -285,12 +285,12 @@ res2 = list(g1,g2,g3) |>
   purrr::list_rbind()
 res2
 ##   cause effect        ca          sig
-## 1   pre    npp 0.2443551 2.177402e-17
-## 2   npp    pre 0.2075446 1.634524e-25
-## 3   tem    npp 0.4307396 4.852701e-02
-## 4   npp    tem 0.4331057 5.757934e-02
-## 5   pre    tem 0.3267645 1.641604e-07
-## 6   tem    pre 0.2765684 5.939523e-13
+## 1   pre    npp 0.2397429 1.571807e-17
+## 2   npp    pre 0.2060239 6.525044e-25
+## 3   tem    npp 0.4287971 4.706879e-02
+## 4   npp    tem 0.4322130 5.956946e-02
+## 5   pre    tem 0.3222039 1.261609e-07
+## 6   tem    pre 0.2725069 5.041517e-13
 ```
 
 Visualize the result:
@@ -300,4 +300,4 @@ Visualize the result:
 plot_ca_matrix(res2)
 ```
 
-![**Figure 2**. **Causal associations among precipitation, temperature, and NPP.**](../man/figures/gcmc/fig2-1.png)
+![**Figure 2**. **Causal associations among precipitation, temperature, and NPP.**](man/figures/gcmc/fig2-1.png)
