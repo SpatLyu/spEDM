@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <numeric>
 #include <limits>
+#include <utility>
 #include <RcppThread.h>
 
 // [[Rcpp::depends(RcppThread)]]
@@ -434,6 +435,111 @@ std::vector<std::vector<size_t>> CppDistSortedIndice(
 
     sorted_indices[i] = indices;
   }
+
+  return sorted_indices;
+}
+
+/**
+ * @brief Computes the k-nearest neighbors for a subset of points (lib) within the embedding space.
+ *
+ * For each index in 'lib', this function calculates the distance to all other indices in 'lib'
+ * based on their corresponding vectors in 'embedding_space'. It then identifies the k closest
+ * neighbors (excluding the point itself) and returns a vector of neighbors for each point.
+ *
+ * The returned vector has the same number of rows as embedding_space; rows not in 'lib' are
+ * initialized with a vector containing a single invalid index.
+ *
+ * This function uses RcppThread to parallelize the outer loop over the 'lib' indices,
+ * with the number of threads controlled by the 'threads' parameter.
+ *
+ * @param embedding_space The full set of vectors representing the embedding space.
+ * @param lib A vector of indices representing the subset of points to consider for neighbor search.
+ * @param k The number of nearest neighbors to find for each point in 'lib'.
+ * @param threads The number of threads to use for parallel computation.
+ * @return std::vector<std::vector<size_t>> A vector where each row corresponds to an embedding_space
+ *         point and contains the indices of its k nearest neighbors from 'lib', or an invalid index if not in 'lib'.
+ */
+std::vector<std::vector<size_t>> CppMatKNNeighbors(
+    const std::vector<std::vector<double>>& embedding_space,
+    const std::vector<size_t>& lib,
+    size_t k,
+    size_t threads) {
+
+  const size_t n = embedding_space.size();
+  const size_t invalid_index = std::numeric_limits<size_t>::max();
+
+  // Initialize the result vector with a single invalid index per row
+  std::vector<std::vector<size_t>> sorted_indices(n, std::vector<size_t>{invalid_index});
+
+  const size_t lib_size = lib.size();
+
+  // // Iterate over each element in lib
+  // for (size_t idx_i = 0; idx_i < lib_size; ++idx_i) {
+  //   size_t i = lib[idx_i];
+  //
+  //   // Vector to store pairs of (distance, neighbor_index)
+  //   std::vector<std::pair<double, size_t>> dist_idx_pairs;
+  //
+  //   // Compute distances to all other points in lib (excluding self)
+  //   for (size_t idx_j = 0; idx_j < lib_size; ++idx_j) {
+  //     if (idx_i == idx_j) continue;  // Skip distance to self
+  //     size_t j = lib[idx_j];
+  //
+  //     double dist = CppDistance(embedding_space[i], embedding_space[j], false, true);
+  //
+  //     if (std::isnan(dist)) continue; // Skip invalid distances
+  //
+  //     dist_idx_pairs.emplace_back(dist, j);
+  //   }
+  //
+  //   // Determine the number of neighbors to keep (min(k, available neighbors))
+  //   size_t knn = std::min(k, dist_idx_pairs.size());
+  //
+  //   // Partially sort distances to find the k smallest distances efficiently
+  //   std::partial_sort(dist_idx_pairs.begin(), dist_idx_pairs.begin() + knn, dist_idx_pairs.end(),
+  //                     [](const std::pair<double, size_t>& a, const std::pair<double, size_t>& b) {
+  //                       return a.first < b.first || (a.first == b.first && a.second < b.second);
+  //                     });
+  //
+  //   // Fill with neighbor indices
+  //   for (size_t m = 0; m < knn; ++m) {
+  //     sorted_indices[i][m] = dist_idx_pairs[m].second;
+  //   }
+  // }
+
+  // Parallel loop over lib indices using RcppThread
+  RcppThread::parallelFor(0, lib_size, [&](size_t idx_i) {
+    size_t i = lib[idx_i];
+
+    // Vector to store pairs of (distance, neighbor_index)
+    std::vector<std::pair<double, size_t>> dist_idx_pairs;
+
+    // Compute distances to all other points in lib (excluding self)
+    for (size_t idx_j = 0; idx_j < lib_size; ++idx_j) {
+      if (idx_i == idx_j) continue;  // Skip distance to self
+      size_t j = lib[idx_j];
+
+      double dist = CppDistance(embedding_space[i], embedding_space[j], false, true);
+
+      if (std::isnan(dist)) continue; // Skip invalid distances
+
+      dist_idx_pairs.emplace_back(dist, j);
+    }
+
+    // Determine the number of neighbors to keep (min(k, available neighbors))
+    size_t knn = std::min(k, dist_idx_pairs.size());
+
+    // Partially sort distances to find the k smallest distances efficiently
+    std::partial_sort(dist_idx_pairs.begin(), dist_idx_pairs.begin() + knn, dist_idx_pairs.end(),
+                      [](const std::pair<double, size_t>& a, const std::pair<double, size_t>& b) {
+                        return a.first < b.first || (a.first == b.first && a.second < b.second);
+                      });
+
+    // Fill with neighbor indices
+    for (size_t m = 0; m < knn; ++m) {
+      sorted_indices[i][m] = dist_idx_pairs[m].second;
+    }
+  }, threads);
 
   return sorted_indices;
 }
