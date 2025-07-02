@@ -3,6 +3,7 @@
 #include <limits>
 #include <algorithm>
 #include "CppStats.h"
+#include "CppDistances.h"
 #include <RcppThread.h>
 
 // [[Rcpp::depends(RcppThread)]]
