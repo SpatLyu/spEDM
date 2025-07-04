@@ -177,7 +177,7 @@ predindice = nnaindice[indices,]
 Determining optimal embedding dimension:
 
 ```{r fnn_grid_data}
-fnn(npp, "npp", E = 1:20, lib = predindice, pred = predindice,
+fnn(npp, "npp", E = 1:25, lib = predindice, pred = predindice,
     eps = stats::sd(terra::values(npp[["npp"]]),na.rm = TRUE) / 10)
 ```
 
