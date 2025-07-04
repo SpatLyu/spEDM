@@ -1,7 +1,7 @@
 ---
 title: "Geographical Cross Mapping Cardinality (GCMC)"
 author: "Wenbo Lv"
-date: "2025-07-02"
+date: "2025-07-03"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{GCMC}
@@ -243,14 +243,16 @@ Determining optimal embedding dimension:
 
 
 ``` r
-fnn(npp, "npp", E = 1:20, lib = predindice, pred = predindice,
+fnn(npp, "npp", E = 1:25, lib = predindice, pred = predindice,
     eps = stats::sd(terra::values(npp[["npp"]]),na.rm = TRUE) / 10)
-##       E:1       E:2       E:3       E:4       E:5       E:6       E:7       E:8 
-## 0.9406271 0.4326667 0.2953333 0.2820000 0.2413333 0.2306667 0.2306667 0.1973333 
-##       E:9      E:10      E:11      E:12      E:13      E:14      E:15      E:16 
-## 0.1953333 0.1533333 0.1593333 0.1633333 0.1460000 0.1300000 0.1340000 0.1073333 
-##      E:17      E:18      E:19 
-## 0.1146667 0.1093333 0.0900000
+##        E:1        E:2        E:3        E:4        E:5        E:6        E:7 
+## 0.94062708 0.43266667 0.29533333 0.28200000 0.24133333 0.23066667 0.23066667 
+##        E:8        E:9       E:10       E:11       E:12       E:13       E:14 
+## 0.19733333 0.19533333 0.15333333 0.15933333 0.16333333 0.14600000 0.13000000 
+##       E:15       E:16       E:17       E:18       E:19       E:20       E:21 
+## 0.13400000 0.10733333 0.11466667 0.10933333 0.09000000 0.09933333 0.08600000 
+##       E:22       E:23       E:24 
+## 0.09866667 0.10466667 0.10866667
 ```
 
 At $E = 18$, the false nearest neighbor ratio stabilizes at 0.10 and remains constant thereafter. Therefore, $E = 18$ is selected for the subsequent GCMC analysis.
