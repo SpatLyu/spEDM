@@ -129,7 +129,7 @@ Here we define two functions to process the results and plot the causal strength
   return(rbind(g1,g2))
 }
 
-plot_ca_matrix = \(.tbf,legend_title = "Causal Strength"){
+plot_cs_matrix = \(.tbf,legend_title = "Causal Strength"){
   .tbf = .tbf |>
     dplyr::mutate(sig_marker = dplyr::case_when(
         sig > 0.05 ~ sprintf("paste(%.4f^'#')", cs),
@@ -190,7 +190,7 @@ Visualize the result:
 
 
 ``` r
-plot_ca_matrix(res1)
+plot_cs_matrix(res1)
 ```
 
 ![**Figure 1**. **Causal strengths among elevation, temperature, and population density.**](../man/figures/gcmc/fig1-1.png)
@@ -299,7 +299,7 @@ Visualize the result:
 
 
 ``` r
-plot_ca_matrix(res2)
+plot_cs_matrix(res2)
 ```
 
 ![**Figure 2**. **Causal strengths among precipitation, temperature, and NPP.**](../man/figures/gcmc/fig2-1.png)
