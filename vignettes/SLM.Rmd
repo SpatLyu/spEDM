@@ -1,7 +1,7 @@
 ---
 title: "Spatial Logistic Map (SLM)"
 author: "Wenbo Lv"
-date: "2025-07-03"
+date: "2025-07-05"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{SLM}
