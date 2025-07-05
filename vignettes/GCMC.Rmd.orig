@@ -144,7 +144,7 @@ res1
 
 Visualize the result:
 
-```{r fig1,fig.width=3.55,fig.height=4.05,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. **Causal associations among elevation, temperature, and population density.**")}
+```{r fig1,fig.width=3.55,fig.height=4.05,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. **Causal strengths among elevation, temperature, and population density.**")}
 plot_ca_matrix(res1)
 ```
 
@@ -208,6 +208,6 @@ res2
 
 Visualize the result:
 
-```{r fig2,fig.width=3.55,fig.height=4.05,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. **Causal associations among precipitation, temperature, and NPP.**")}
+```{r fig2,fig.width=3.55,fig.height=4.05,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. **Causal strengths among precipitation, temperature, and NPP.**")}
 plot_ca_matrix(res2)
 ```
