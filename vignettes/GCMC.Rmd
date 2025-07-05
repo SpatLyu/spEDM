@@ -1,7 +1,7 @@
 ---
 title: "Geographical Cross Mapping Cardinality (GCMC)"
 author: "Wenbo Lv"
-date: "2025-07-05"
+date: "2025-07-06"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{GCMC}
@@ -17,13 +17,13 @@ The `GCMC` algorithm provided in this package is a research method currently **u
 
 ## Methodological Background
 
-To measure causal associations in spatial cross-sectional data, GCMC (Geographical Convergent Cross Mapping) employs a three-stage procedure:
+To measure causal strengths in spatial cross-sectional data, GCMC (Geographical Cross Mapping Cardinality) employs a three-stage procedure:
 
 **Stage one** involves reconstructing the state space. Given two spatial variables, $x$ and $y$, this step requires determining a suitable embedding dimension $E$ and a spatial lag interval $\tau$. For each spatial location (unit) $i$, the attribute values from its spatial neighbors at lag orders $1, 1+\tau, \dots, 1+(E-1)\tau$ are collected. These values are then summarized—commonly using the mean—to construct an embedding vector for each unit. Aggregating these vectors across all spatial units results in the reconstructed state spaces, denoted as $E_x$ and $E_y$.
 
 **Stage two** constructs the Intersectional Cardinality (IC) curve, which serves to evaluate causal strength. To measure whether $y$ causally affects $x$, one computes, for each $k$, the overlap between the $k$ nearest neighbors of $E_y$ and the corresponding "projected" neighbors traced through $E_x$. Specifically, for each point in $E_x$, its $k$ nearest neighbors are identified, and their mapped neighbors in $E_y$ are compared with the direct neighbors of $E_y$. The IC curve is formed by recording the number of shared neighbors across a range of $k = 1, 2, \dots, n$. This process can also be reversed to test for causality from $x$ to $y$.
 
-**Stage three** involves quantifying and validating the strength of causal associations. The area under the IC curve (AUC) provides a numerical measure of causal strength. To determine whether the observed causal strength is statistically significant, a hypothesis test is performed: the null assumes no causality, while the alternative assumes its presence. The DeLong palcements method is applied to evaluate the difference in AUCs under these hypotheses. It also yields confidence intervals, supporting robust causal inference.
+**Stage three** involves quantifying and validating the causal strengths. The area under the IC curve (AUC) provides a numerical measure of causal strength. To determine whether the observed causal strength is statistically significant, a hypothesis test is performed: the null assumes no causality, while the alternative assumes its presence. The DeLong palcements method is applied to evaluate the difference in AUCs under these hypotheses. It also yields confidence intervals, supporting robust causal inference.
 
 ## Usage examples
 
@@ -106,7 +106,7 @@ g3
 ## 1       200  0.224925    0.4775
 ```
 
-Here we define two functions to process the results and plot the causal association matrix.
+Here we define two functions to process the results and plot the causal strengths matrix.
 
 
 ``` r
@@ -121,24 +121,24 @@ Here we define two functions to process the results and plot the causal associat
 
   g1 = tempdf |>
     dplyr::select(x,y,y_xmap_x_mean,y_xmap_x_sig)|>
-    purrr::set_names(c("cause","effect","ca","sig"))
+    purrr::set_names(c("cause","effect","cs","sig"))
   g2 = tempdf |>
     dplyr::select(y,x,x_xmap_y_mean,x_xmap_y_sig) |>
-    purrr::set_names(c("cause","effect","ca","sig"))
+    purrr::set_names(c("cause","effect","cs","sig"))
 
   return(rbind(g1,g2))
 }
 
-plot_ca_matrix = \(.tbf,legend_title = "Causal Association"){
+plot_ca_matrix = \(.tbf,legend_title = "Causal Strength"){
   .tbf = .tbf |>
     dplyr::mutate(sig_marker = dplyr::case_when(
-      sig > 0.05 ~ paste0(sprintf("%.4f", ca), "^a"),
-      TRUE       ~ sprintf("%.4f", ca)
+        sig > 0.05 ~ sprintf("paste(%.4f^'#')", cs),
+              TRUE ~ sprintf('%.4f', cs)
     ))
 
   fig = ggplot2::ggplot(data = .tbf,
                         ggplot2::aes(x = effect, y = cause)) +
-    ggplot2::geom_tile(color = "black", ggplot2::aes(fill = ca)) +
+    ggplot2::geom_tile(color = "black", ggplot2::aes(fill = cs)) +
     ggplot2::geom_abline(slope = 1, intercept = 0,
                          color = "black", linewidth = 0.25) +
     ggplot2::geom_text(ggplot2::aes(label = sig_marker), parse = TRUE,
@@ -177,7 +177,7 @@ res1 = list(g1,g2,g3) |>
   purrr::map(.process_xmap_result) |>
   purrr::list_rbind()
 res1
-##   cause effect       ca           sig
+##   cause effect       cs           sig
 ## 1   tem   popd 0.575400  1.861243e-02
 ## 2  popd    tem 0.089850 5.082649e-115
 ## 3  elev   popd 0.267500  9.449794e-16
@@ -193,7 +193,7 @@ Visualize the result:
 plot_ca_matrix(res1)
 ```
 
-![**Figure 1**. **Causal associations among elevation, temperature, and population density.**](../man/figures/gcmc/fig1-1.png)
+![**Figure 1**. **Causal strengths among elevation, temperature, and population density.**](../man/figures/gcmc/fig1-1.png)
 
 ### An example of spatial grid data
 
@@ -286,7 +286,7 @@ res2 = list(g1,g2,g3) |>
   purrr::map(.process_xmap_result) |>
   purrr::list_rbind()
 res2
-##   cause effect        ca          sig
+##   cause effect        cs          sig
 ## 1   pre    npp 0.2397429 1.571807e-17
 ## 2   npp    pre 0.2060239 6.525044e-25
 ## 3   tem    npp 0.4287971 4.706879e-02
@@ -302,4 +302,4 @@ Visualize the result:
 plot_ca_matrix(res2)
 ```
 
-![**Figure 2**. **Causal associations among precipitation, temperature, and NPP.**](../man/figures/gcmc/fig2-1.png)
+![**Figure 2**. **Causal strengths among precipitation, temperature, and NPP.**](../man/figures/gcmc/fig2-1.png)
