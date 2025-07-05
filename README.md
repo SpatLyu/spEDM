@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# spEDM <a href="https://stscl.github.io/spEDM/"><img src="man/figures/logo.png" align="right" alt="spEDM website: https://stscl.github.io/spEDM/"/></a>
+# spEDM <a href="https://stscl.github.io/spEDM/"><img src="man/figures/logo.png" align="right" height="120" alt="spEDM website: https://stscl.github.io/spEDM/"/></a>
 
 <!-- badges: start -->
 
