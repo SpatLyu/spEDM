@@ -96,9 +96,9 @@ Here we define two functions to process the results and plot the causal associat
 plot_ca_matrix = \(.tbf,legend_title = "Causal Strength"){
   .tbf = .tbf |>
     dplyr::mutate(sig_marker = dplyr::case_when(
-        sig > 0.05 ~ paste0("paste(", sprintf('%.4f', cs), ", phantom(.)^'#')"),
+        sig > 0.05 ~ sprintf("paste(%.4f^'#')", cs),
               TRUE ~ sprintf('%.4f', cs)
-  ))
+    ))
 
   fig = ggplot2::ggplot(data = .tbf,
                         ggplot2::aes(x = effect, y = cause)) +
