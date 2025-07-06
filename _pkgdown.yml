@@ -13,17 +13,17 @@ navbar:
     articles:
       text: Vignettes
       menu:
-      - text: Introduction to the spEDM package (PkgIntro)
+      - text: Introduction to the spEDM package
         href: articles/PkgIntro.html
-      - text: State Space Reconstruction (SSR)
+      - text: State Space Reconstruction
         href: articles/SSR.html
-      - text: Spatial Logistic Map (SLM)
+      - text: Spatial Logistic Map
         href: articles/SLM.html
-      - text: Geographical Convergent Cross Mapping (GCCM)
+      - text: Geographical Convergent Cross Mapping
         href: articles/GCCM.html
-      - text: Geographical Cross Mapping Cardinality (GCMC)
+      - text: Geographical Cross Mapping Cardinality
         href: articles/GCMC.html
-      - text: Spatial Causality Test (SCT)
+      - text: Spatial Causality Test
         href: articles/SCT.html
 
 home:
