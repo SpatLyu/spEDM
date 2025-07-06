@@ -1,7 +1,9 @@
 ---
-title: "State Space Reconstruction (SSR)"
+title: "State Space Reconstruction"
 author: "Wenbo Lv"
-date: "2025-07-06"
+date: |
+  | Last update: 2025-07-06
+  | Last run: 2025-07-06
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{SSR}
