@@ -3,7 +3,7 @@
 
 # spEDM: Spatial Empirical Dynamic Modeling
 
-<a href="https://stscl.github.io/spEDM/"><img src="man/figures/logo.png" align="right" hspace="10" vspace="0" width="18%" alt="spEDM website: https://stscl.github.io/spEDM/"/></a>
+<a href="https://stscl.github.io/spEDM/"><img src="man/figures/spEDM.png" align="right" hspace="10" vspace="0" width="18%" alt="spEDM website: https://stscl.github.io/spEDM/"/></a>
 
 <!-- badges: start -->
 
