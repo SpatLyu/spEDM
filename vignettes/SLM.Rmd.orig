@@ -1,7 +1,9 @@
 ---
 title: "Spatial Logistic Map"
 author: "Wenbo Lv"
-date: "`r Sys.Date()`"
+date: |
+  | Last update: 2025-07-06
+  | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{SLM}
