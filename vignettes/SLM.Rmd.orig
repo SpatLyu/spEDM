@@ -1,5 +1,5 @@
 ---
-title: "Spatial Logistic Map (SLM)"
+title: "Spatial Logistic Map"
 author: "Wenbo Lv"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
