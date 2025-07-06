@@ -13,6 +13,8 @@ knitr::opts_chunk$set(
 )
 ```
 
+# spEDM
+
 <!-- badges: start -->
 
 [![CRAN](https://www.r-pkg.org/badges/version/spEDM)](https://CRAN.R-project.org/package=spEDM)
@@ -26,8 +28,6 @@ knitr::opts_chunk$set(
 [![R-universe](https://stscl.r-universe.dev/badges/spEDM?color=cyan)](https://stscl.r-universe.dev/spEDM)
 
 <!-- badges: end -->
-
-# spEDM
 
 <a href="https://stscl.github.io/spEDM/"><img src="man/figures/spEDM.png" align="right" hspace="10" vspace="0" width="15%" alt="spEDM website: https://stscl.github.io/spEDM/"/></a>
 
