@@ -1,5 +1,8 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# spEDM
+
 <!-- badges: start -->
 
 [![CRAN](https://www.r-pkg.org/badges/version/spEDM)](https://CRAN.R-project.org/package=spEDM)
@@ -19,7 +22,7 @@ stable](https://img.shields.io/badge/lifecycle-stable-20b2aa.svg)](https://lifec
 
 <a href="https://stscl.github.io/spEDM/"><img src="man/figures/spEDM.png" align="right" hspace="10" vspace="0" width="15%" alt="spEDM website: https://stscl.github.io/spEDM/"/></a>
 
-**spEDM:** ***Sp**atial **E**mpirical **D**ynamic **M**odeling*
+***Sp**atial **E**mpirical **D**ynamic **M**odeling*
 
 `spEDM` is an R package for spatial causal discovery. It extends
 Empirical Dynamic Modeling (EDM) from time series to spatial
