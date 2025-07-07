@@ -113,11 +113,6 @@ std::vector<double> CppCMCTest(const std::vector<double>& cases,
                                double level = 0.05,
                                size_t num_samples = 0);
 
-std::vector<double> CppDeLongTest(const std::vector<double>& cases,
-                                  const std::vector<double>& controls,
-                                  const std::string& direction,
-                                  double level = 0.05);
-
 std::vector<std::vector<std::vector<double>>> CppSVD(const std::vector<std::vector<double>>& X);
 
 std::vector<double> LinearTrendRM(const std::vector<double>& vec,
