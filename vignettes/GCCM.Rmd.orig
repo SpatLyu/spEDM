@@ -2,7 +2,7 @@
 title: "Geographical Convergent Cross Mapping"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-07-06
+  | Last update: 2025-07-22
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -103,8 +103,8 @@ popd_sf
 Determining optimal embedding dimension:
 
 ```{r simplex_lattice}
-simplex(popd_sf, "pre", "pre", E = 1:10, k = 6)
-simplex(popd_sf, "popd", "popd", E = 1:10, k = 6)
+simplex(popd_sf, "pre", "pre", E = 2:10, k = 6)
+simplex(popd_sf, "popd", "popd", E = 2:10, k = 6)
 ```
 
 Run GCCM:
@@ -160,8 +160,8 @@ predindice = nnaindice[indices,]
 Determining optimal embedding dimension:
 
 ```{r simplex_grid}
-simplex(npp, "pre", "pre", E = 1:10, k = 8, lib = nnaindice, pred = predindice)
-simplex(npp, "npp", "npp", E = 1:10, k = 8, lib = nnaindice, pred = predindice)
+simplex(npp, "pre", "pre", E = 2:10, k = 8, lib = nnaindice, pred = predindice)
+simplex(npp, "npp", "npp", E = 2:10, k = 8, lib = nnaindice, pred = predindice)
 ```
 
 Run GCCM:
