@@ -2,6 +2,8 @@
 
 ### enhancements
 
+* Adjust the default `E` range in the `simplex` generic to `2:10` to support more robust reconstruction of state spaces (#739).
+
 * Introduce multithreading in distance-related computations where applicable to improve runtime efficiency (#718).
 
 * Display p-value annotation for maximum library size in cross mapping visualization legend (#710).
