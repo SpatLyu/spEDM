@@ -3,7 +3,7 @@ title: "Introduction to the spEDM package"
 author: "Wenbo Lv"
 date: |
   | Last update: 2025-07-06
-  | Last run: 2025-07-06
+  | Last run: 2025-07-22
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{PkgIntro}

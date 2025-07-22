@@ -2,8 +2,8 @@
 title: "Geographical Convergent Cross Mapping"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-07-06
-  | Last run: 2025-07-06
+  | Last update: 2025-07-22
+  | Last run: 2025-07-22
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{GCCM}
@@ -127,9 +127,9 @@ Determining optimal embedding dimension:
 
 
 ``` r
-simplex(popd_sf, "pre", "pre", E = 1:10, k = 6)
+simplex(popd_sf, "pre", "pre", E = 2:10, k = 6)
 ## The suggested E and k for variable pre is 3 and 6
-simplex(popd_sf, "popd", "popd", E = 1:10, k = 6)
+simplex(popd_sf, "popd", "popd", E = 2:10, k = 6)
 ## The suggested E and k for variable popd is 9 and 6
 ```
 
@@ -148,7 +148,7 @@ pd_res = gccm(data = popd_sf,
               progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 2.859399 mins
+## Time difference of 2.927495 mins
 pd_res
 ##    libsizes pre->popd  popd->pre
 ## 1       100 0.1140592 0.03269659
@@ -225,9 +225,9 @@ Determining optimal embedding dimension:
 
 
 ``` r
-simplex(npp, "pre", "pre", E = 1:10, k = 8, lib = nnaindice, pred = predindice)
+simplex(npp, "pre", "pre", E = 2:10, k = 8, lib = nnaindice, pred = predindice)
 ## The suggested E and k for variable pre is 2 and 8
-simplex(npp, "npp", "npp", E = 1:10, k = 8, lib = nnaindice, pred = predindice)
+simplex(npp, "npp", "npp", E = 2:10, k = 8, lib = nnaindice, pred = predindice)
 ## The suggested E and k for variable npp is 10 and 8
 ```
 
@@ -247,7 +247,7 @@ npp_res = gccm(data = npp,
                progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 1.475412 mins
+## Time difference of 1.525034 mins
 npp_res
 ##   libsizes  pre->npp  npp->pre
 ## 1       10 0.1282926 0.1095679
