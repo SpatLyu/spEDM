@@ -2,7 +2,7 @@
 title: "Geographical Convergent Cross Mapping"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-07-22
+  | Last update: 2025-07-25
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -96,7 +96,7 @@ library(spEDM)
 
 popd_nb = spdep::read.gal(system.file("case/popd_nb.gal",package = "spEDM"))
 popd = readr::read_csv(system.file("case/popd.csv",package = "spEDM"))
-popd_sf = sf::st_as_sf(popd, coords = c("x","y"), crs = 4326)
+popd_sf = sf::st_as_sf(popd, coords = c("lon","lat"), crs = 4326)
 popd_sf
 ```
 
