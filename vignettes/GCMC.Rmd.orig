@@ -51,8 +51,7 @@ popd_sf
 The false nearest neighbours (FNN) method helps identify the appropriate embedding dimension for reconstructing the state space of a time series or spatial cross-sectional data. A low embedding dimension that minimizes false neighbours is considered optimal.
 
 ```{r fnn_lattice_data}
-fnn(popd_sf, "popd", E = 1:15,
-    eps = stats::sd(popd_sf$popd) / 10)
+fnn(popd_sf, "popd", E = 1:15, eps = stats::sd(popd_sf$popd) / 10)
 ```
 
 The false nearest neighbours (FNN) ratio decreased to approximately 0.3 when the embedding dimension E reached 10, and remained relatively stable thereafter. Therefore, we adopted $E = 10$ as the embedding dimension for subsequent GCMC analysis.

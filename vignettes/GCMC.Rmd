@@ -75,8 +75,7 @@ The false nearest neighbours (FNN) method helps identify the appropriate embeddi
 
 
 ``` r
-fnn(popd_sf, "popd", E = 1:15,
-    eps = stats::sd(popd_sf$popd) / 10)
+fnn(popd_sf, "popd", E = 1:15, eps = stats::sd(popd_sf$popd) / 10)
 ##       E:1       E:2       E:3       E:4       E:5       E:6       E:7       E:8 
 ## 0.9707769 0.6404134 0.4885959 0.4012830 0.3346401 0.3296507 0.3260870 0.3150392 
 ##       E:9      E:10      E:11      E:12      E:13      E:14 
