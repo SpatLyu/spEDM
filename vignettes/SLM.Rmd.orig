@@ -2,7 +2,7 @@
 title: "Spatial Logistic Map"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-07-06
+  | Last update: 2025-07-25
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -90,12 +90,12 @@ terra::plot(species, nc = 3,
             legend = FALSE)
 ```
 
-We assume an underlying causal interaction structure among species, where species *a* influences *b*, and *b* in turn influences *c* (i.e., *a* → *b* → *c*). The intrinsic growth rates for species *a*, *b*, and *c* are set to 0.28, 0.25, and 0.22 respectively. The effect of species *a* on *b* is set to 0.625, and the effect of species *b* on *c* is set to 0.77. All other interspecific influence parameters are set to zero. This setup provides a controlled environment to test spatial causality detection methods under known dynamic interactions.
+We assume an underlying causal interaction structure among species, where species *a* influences *b*, and *b* in turn influences *c* (i.e., *a* → *b* → *c*). The intrinsic growth rates of species a, b, and c are uniformly assigned a value of 0.2. Species a exerts an effect of 1 on species b, and species b exerts an effect of 1 on species c. All other interspecific influence parameters are set to 0. This setup provides a controlled environment to test spatial causality detection methods under known dynamic interactions.
 
 ```{r spatial_logistic_map,fig.width=6.55,fig.height=2.60,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. Species distributions following spatiotemporal interaction and evolution after 20 simulation steps with 4-neighbor interactions.")}
 simv = spEDM::slm(species,x = "a", y = "b", z = "c", k = 4, step = 15, transient = 1,
-                  alpha_x = 0.28, alpha_y = 0.25, alpha_z = 0.22,
-                  beta_xy = 0.625, beta_xz = 0, beta_yx = 0, beta_yz = 0.77, beta_zx = 0, beta_zy = 0)
+                  alpha_x = 0.2, alpha_y = 0.2, alpha_z = 0.2,
+                  beta_xy = 1, beta_xz = 0, beta_yx = 0, beta_yz = 1, beta_zx = 0, beta_zy = 0)
 
 species_evolution = species
 terra::values(species_evolution[["a"]]) = simv$x
