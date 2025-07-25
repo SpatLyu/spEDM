@@ -2,8 +2,8 @@
 title: "State Space Reconstruction"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-07-06
-  | Last run: 2025-07-22
+  | Last update: 2025-07-25
+  | Last run: 2025-07-25
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{SSR}
@@ -44,11 +44,11 @@ popd = readr::read_csv(system.file("case/popd.csv",package = "spEDM"))
 ## Rows: 2806 Columns: 7
 ## ── Column specification ────────────────────────────────────────────────────────────────────────────
 ## Delimiter: ","
-## dbl (7): x, y, popd, elev, tem, pre, slope
+## dbl (7): lon, lat, popd, elev, tem, pre, slope
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-popd_sf = sf::st_as_sf(popd, coords = c("x","y"), crs = 4326)
+popd_sf = sf::st_as_sf(popd, coords = c("lon","lat"), crs = 4326)
 popd_sf
 ## Simple feature collection with 2806 features and 5 fields
 ## Geometry type: POINT
