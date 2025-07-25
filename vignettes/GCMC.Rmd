@@ -2,8 +2,8 @@
 title: "Geographical Cross Mapping Cardinality"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-07-06
-  | Last run: 2025-07-22
+  | Last update: 2025-07-25
+  | Last run: 2025-07-25
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{GCMC}
@@ -44,11 +44,11 @@ popd = readr::read_csv(system.file("case/popd.csv",package = "spEDM"))
 ## Rows: 2806 Columns: 7
 ## ── Column specification ────────────────────────────────────────────────────────────────────────────
 ## Delimiter: ","
-## dbl (7): x, y, popd, elev, tem, pre, slope
+## dbl (7): lon, lat, popd, elev, tem, pre, slope
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-popd_sf = sf::st_as_sf(popd, coords = c("x","y"), crs = 4326)
+popd_sf = sf::st_as_sf(popd, coords = c("lon","lat"), crs = 4326)
 popd_sf
 ## Simple feature collection with 2806 features and 5 fields
 ## Geometry type: POINT
@@ -75,8 +75,7 @@ The false nearest neighbours (FNN) method helps identify the appropriate embeddi
 
 
 ``` r
-fnn(popd_sf, "popd", E = 1:15,
-    eps = stats::sd(popd_sf$popd) / 10)
+fnn(popd_sf, "popd", E = 1:15, eps = stats::sd(popd_sf$popd) / 10)
 ##       E:1       E:2       E:3       E:4       E:5       E:6       E:7       E:8 
 ## 0.9707769 0.6404134 0.4885959 0.4012830 0.3346401 0.3296507 0.3260870 0.3150392 
 ##       E:9      E:10      E:11      E:12      E:13      E:14 
