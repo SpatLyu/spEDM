@@ -2,8 +2,8 @@
 title: "Introduction to the spEDM package"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-07-06
-  | Last run: 2025-07-22
+  | Last update: 2025-07-25
+  | Last run: 2025-07-25
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{PkgIntro}
@@ -52,7 +52,7 @@ The *spEDM* package includes four illustrative datasets with well-known causatio
 4. **Farmland NPP and related variables** — A raster dataset capturing net primary productivity (NPP) of farmland, key climatic variables, elevation, and human activity footprints across mainland China, suitable for analyzing the interactions between agricultural productivity, environmental conditions, and human activities.
    *Data files*: `npp.tif`
 
-These datasets can be loaded as shown below, including basic visualization for raster data:
+These datasets can be loaded as shown below:
 
 ### Columbus OH spatial analysis dataset
 
@@ -104,13 +104,13 @@ popd = readr::read_csv(system.file("case/popd.csv",package = "spEDM"))
 ## Rows: 2806 Columns: 7
 ## ── Column specification ─────────────────────────────────────────────────────────
 ## Delimiter: ","
-## dbl (7): x, y, popd, elev, tem, pre, slope
+## dbl (7): lon, lat, popd, elev, tem, pre, slope
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 popd
 ## # A tibble: 2,806 × 7
-##        x     y  popd  elev   tem   pre slope
+##      lon   lat  popd  elev   tem   pre slope
 ##    <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
 ##  1  117.  30.5  780.     8  17.4 1528. 0.452
 ##  2  117.  30.6  395.    48  17.2 1487. 0.842
@@ -124,7 +124,7 @@ popd
 ## 10  116.  30.9  137.   598  13.9 1458. 5.92 
 ## # ℹ 2,796 more rows
 
-popd_sf = sf::st_as_sf(popd, coords = c("x","y"), crs = 4326)
+popd_sf = sf::st_as_sf(popd, coords = c("lon","lat"), crs = 4326)
 popd_sf
 ## Simple feature collection with 2806 features and 5 fields
 ## Geometry type: POINT
@@ -164,16 +164,7 @@ cu
 ## names       :         cu, industry, ntl 
 ## min values  :   1.201607,    0.000,   0 
 ## max values  : 319.599274,    0.615,  63
-
-options(terra.pal = grDevices::terrain.colors(100,rev = T))
-terra::plot(cu, nc = 3,
-            mar = rep(0.1,4),
-            oma = rep(0.1,4),
-            axes = FALSE,
-            legend = FALSE)
 ```
-
-![**Figure 1**. Maps of soil Cu contamination, the density of industrial pollutants and nightlight.](../man/figures/pkgintro/cu-1.png)
 
 ### Farmland NPP and related variables in mainland China
 
@@ -191,39 +182,7 @@ npp
 ## names       :      npp,        pre,      tem,      elev,         hfp 
 ## min values  :   164.00,   384.3409, -47.8194, -122.2004,  0.03390418 
 ## max values  : 16606.33, 23878.3555, 263.6938, 5350.4902, 44.90312195
-
-# directly visualize the raster layer
-options(terra.pal = grDevices::terrain.colors(100,rev = T))
-terra::plot(npp, nc = 2,
-            axes = FALSE,
-            legend = FALSE)
 ```
-
-![**Figure 2**. Maps of farmland NPP and climate factors.](../man/figures/pkgintro/npp-1.png)
-
-
-``` r
-# add China's land borders and the ten-dash line in the South China Sea
-
-# install.packages("geocn",
-#                  repos = c("https://stscl.r-universe.dev",
-#                            "https://cloud.r-project.org"),
-#                  dep = TRUE)
-
-cn_border = geocn::load_cn_border() |>
-  terra::vect() |>
-  terra::project(terra::crs(npp))
-
-par(mfrow = c(3, 2))
-for (i in 1:terra::nlyr(npp)) {
-  terra::plot(cn_border, lwd = 1.5, main = names(npp)[i],
-              col = "grey40", axes = FALSE)
-  terra::plot(npp[[i]], axes = FALSE,
-              legend = FALSE, add = TRUE)
-}
-```
-
-![**Figure 3**. Maps of farmland NPP and climate factors.](../man/figures/pkgintro/npp2-1.png)
 
 ## Usage
 
