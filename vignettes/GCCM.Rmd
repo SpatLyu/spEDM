@@ -2,8 +2,8 @@
 title: "Geographical Convergent Cross Mapping"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-07-22
-  | Last run: 2025-07-22
+  | Last update: 2025-07-25
+  | Last run: 2025-07-25
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{GCCM}
@@ -96,11 +96,11 @@ popd = readr::read_csv(system.file("case/popd.csv",package = "spEDM"))
 ## Rows: 2806 Columns: 7
 ## ── Column specification ────────────────────────────────────────────────────────────────────────────
 ## Delimiter: ","
-## dbl (7): x, y, popd, elev, tem, pre, slope
+## dbl (7): lon, lat, popd, elev, tem, pre, slope
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-popd_sf = sf::st_as_sf(popd, coords = c("x","y"), crs = 4326)
+popd_sf = sf::st_as_sf(popd, coords = c("lon","lat"), crs = 4326)
 popd_sf
 ## Simple feature collection with 2806 features and 5 fields
 ## Geometry type: POINT
@@ -148,7 +148,7 @@ pd_res = gccm(data = popd_sf,
               progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 2.927495 mins
+## Time difference of 2.956636 mins
 pd_res
 ##    libsizes pre->popd  popd->pre
 ## 1       100 0.1140592 0.03269659
@@ -247,7 +247,7 @@ npp_res = gccm(data = npp,
                progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 1.525034 mins
+## Time difference of 1.538506 mins
 npp_res
 ##   libsizes  pre->npp  npp->pre
 ## 1       10 0.1282926 0.1095679
