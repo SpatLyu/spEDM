@@ -10,6 +10,8 @@
 
 ### breaking changes
 
+* Rename coordinate columns in population density case csv to `lon` and `lat` (#741).
+
 * Switch mean-of-rho to full-vector Fisher z-transform for significance and CI calculations (#706).
 
 # spEDM 1.7
