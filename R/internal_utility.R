@@ -199,7 +199,7 @@
   if (is.null(transient)) {
     res = lapply(mat_list, \(.x) apply(.x,1,mean,na.rm = TRUE))
   } else {
-    res = lapply(mat_list, \(.x) apply(.x[,-abs(transient),drop = FALSE],1,mean,na.rm = TRUE))
+    res = lapply(mat_list, \(.x) apply(.x[,-unique(abs(transient)),drop = FALSE],1,mean,na.rm = TRUE))
   }
 
   indices = NULL
