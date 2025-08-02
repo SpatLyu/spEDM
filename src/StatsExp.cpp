@@ -230,7 +230,8 @@ double RcppPartialCor(const Rcpp::NumericVector& y,
                       const Rcpp::NumericVector& y_hat,
                       const Rcpp::NumericMatrix& controls,
                       bool NA_rm = false,
-                      bool linear = false) {
+                      bool linear = false,
+                      double pinv_tol = 1e-10) {
 
   // Convert Rcpp NumericVector to std::vector
   std::vector<double> std_y = Rcpp::as<std::vector<double>>(y);
@@ -252,14 +253,15 @@ double RcppPartialCorTrivar(const Rcpp::NumericVector& y,
                             const Rcpp::NumericVector& y_hat,
                             const Rcpp::NumericVector& control,
                             bool NA_rm = false,
-                            bool linear = false) {
+                            bool linear = false,
+                            double pinv_tol = 1e-10) {
   // Convert Rcpp NumericVector to std::vector
   std::vector<double> std_y = Rcpp::as<std::vector<double>>(y);
   std::vector<double> std_y_hat = Rcpp::as<std::vector<double>>(y_hat);
   std::vector<double> std_control = Rcpp::as<std::vector<double>>(control);
 
   // Call the PartialCorTrivar function
-  return PartialCorTrivar(std_y, std_y_hat, std_control, NA_rm, linear);
+  return PartialCorTrivar(std_y, std_y_hat, std_control, NA_rm, linear, pinv_tol);
 }
 
 // Wrapper function to calculate the significance of a (partial) correlation coefficient
