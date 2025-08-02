@@ -10,22 +10,23 @@
 #include "CppStats.h"
 
 /**
- * @brief Perform S-Map prediction using locally weighted linear regression.
+ * @brief Perform S-Mapping prediction using locally weighted linear regression.
  *
- * This function performs prediction based on a reconstructed state-space (time-delay embedding).
+ * This function performs prediction based on a reconstructed state-space (spatial-lag embedding).
  * For each prediction index, it:
- *   - Finds the nearest neighbors from the library indices.
- *   - Computes distance-based weights using the S-map weighting parameter (theta).
- *   - Constructs a local weighted linear regression model using the nearest neighbors.
+ *   - Finds the nearest neighbors from the library indices, excluding the current prediction index.
+ *   - Computes distance-based weights using the S-mapping weighting parameter (theta).
+ *   - Constructs a locally weighted linear regression model using the valid neighbors.
  *   - Predicts the target value using the derived local model.
  *
  * @param vectors        A 2D matrix where each row is a reconstructed state vector (embedding).
- * @param target         A vector of scalar values to predict (e.g., time series observations).
+ * @param target         A vector of scalar values to predict (e.g., spatial cross sections observations).
  * @param lib_indices    Indices of the vectors used as the library (neighbor candidates).
  * @param pred_indices   Indices of the vectors used for prediction.
  * @param num_neighbors  Number of nearest neighbors to use in local regression.
  * @param theta          Weighting parameter controlling exponential decay of distances.
- * @return std::vector<double> Predicted values corresponding to pred_indices. Other indices contain NaN.
+ * @return std::vector<double> Predicted values aligned with the input target vector.
+ *         Entries at non-prediction indices or with insufficient valid neighbors are NaN.
  */
 std::vector<double> SMapPrediction(
     const std::vector<std::vector<double>>& vectors,
@@ -37,7 +38,7 @@ std::vector<double> SMapPrediction(
 );
 
 /*
- * Computes the Rho value using the 'S-Maps' prediction method.
+ * Computes the Rho value using the 'S-Mapping' prediction method.
  *
  * Parameters:
  *   - vectors: Reconstructed state-space (each row is a separate vector/state).
@@ -59,7 +60,7 @@ double SMap(
 );
 
 /*
- * Computes the S-Map prediction and evaluates prediction performance.
+ * Computes the S-Mapping prediction and evaluates prediction performance.
  *
  * Parameters:
  *   - vectors: Reconstructed state-space (each row is a separate vector/state).
