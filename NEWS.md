@@ -2,6 +2,8 @@
 
 ### enhancements
 
+* Prevent unreliable predictions and potentially alter results when NaNs are present in cross mapping (#747).
+
 * Safeguard transient removal logic in spatial logistic map to prevent index errors (#744).
 
 * Adjust the default `E` range in the `simplex` generic to `2:10` to support more robust reconstruction of state spaces (#739).
