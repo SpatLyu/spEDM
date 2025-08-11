@@ -24,7 +24,10 @@
  *   - E: A vector of embedding dimensions to evaluate.
  *   - b: A vector of nearest neighbor values to evaluate.
  *   - tau: The spatial lag step for constructing lagged state-space vectors.
- *   - threads: Number of threads used from the global pool.
+ *   - style: Embedding style selector (0: includes current state, 1: excludes it).  Default is 1 (excludes current state).
+ *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
+ *   - dist_average: Whether to average distance by the number of valid vector components. Default is true.
+ *   - threads: Number of threads used from the global pool. Default is 8.
  *
  * Returns:
  *   A 2D vector where each row contains [E, b, rho, mae, rmse] for a given combination of E and b.
@@ -37,7 +40,10 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& sour
                                                  const std::vector<int>& E,
                                                  const std::vector<int>& b,
                                                  int tau,
-                                                 int threads);
+                                                 int style = 1,
+                                                 int dist_metric = 2,
+                                                 bool dist_average = true,
+                                                 int threads = 8);
 
 /*
  * Evaluates prediction performance of different theta parameters for lattice data using the s-mapping method.
@@ -52,7 +58,10 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& sour
  *   - E: The embedding dimension to evaluate.
  *   - tau: The spatial lag step for constructing lagged state-space vectors.
  *   - b: Number of nearest neighbors to use for prediction.
- *   - threads: Number of threads used from the global pool.
+ *   - style: Embedding style selector (0: includes current state, 1: excludes it).  Default is 1 (excludes current state).
+ *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
+ *   - dist_average: Whether to average distance by the number of valid vector components. Default is true.
+ *   - threads: Number of threads used from the global pool. Default is 8.
  *
  * Returns:
  *   A 2D vector where each row contains [theta, rho, mae, rmse] for a given theta value.
@@ -66,7 +75,10 @@ std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& source,
                                               int E,
                                               int tau,
                                               int b,
-                                              int threads);
+                                              int style = 1,
+                                              int dist_metric = 2,
+                                              bool dist_average = true,
+                                              int threads = 8);
 
 /**
  * Compute Intersection Cardinality AUC over spatial lattice data.

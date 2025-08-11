@@ -23,7 +23,10 @@
  *   - E: A vector of embedding dimensions to evaluate.
  *   - b: A vector of nearest neighbor values to evaluate.
  *   - tau: The spatial lag step for constructing lagged state-space vectors.
- *   - threads: Number of threads used from the global pool.
+ *   - style: Embedding style selector (0: includes current state, 1: excludes it).  Default is 1 (excludes current state).
+ *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
+ *   - dist_average: Whether to average distance by the number of valid vector components. Default is true.
+ *   - threads: Number of threads used from the global pool. Default is 8.
  *
  * Returns:
  *   A 2D vector where each row contains [E, b, rho, mae, rmse] for a given combination of E and b.
@@ -36,7 +39,10 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& sour
                                                  const std::vector<int>& E,
                                                  const std::vector<int>& b,
                                                  int tau,
-                                                 int threads) {
+                                                 int style = 1,
+                                                 int dist_metric = 2,
+                                                 bool dist_average = true,
+                                                 int threads = 8) {
   // Configure threads
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
@@ -62,8 +68,8 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& sour
     const int Ei = unique_Ebcom[i].first;
     const int bi = unique_Ebcom[i].second;
 
-    auto embeddings = GenLatticeEmbeddings(source, nb_vec, Ei, tau);
-    auto metrics = SimplexBehavior(embeddings, target, lib_indices, pred_indices, bi);
+    auto embeddings = GenLatticeEmbeddings(source, nb_vec, Ei, tau, style);
+    auto metrics = SimplexBehavior(embeddings, target, lib_indices, pred_indices, bi, dist_metric, dist_average);
 
     result[i][0] = Ei;
     result[i][1] = bi;
@@ -88,7 +94,10 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& sour
  *   - E: The embedding dimension to evaluate.
  *   - tau: The spatial lag step for constructing lagged state-space vectors.
  *   - b: Number of nearest neighbors to use for prediction.
- *   - threads: Number of threads used from the global pool.
+ *   - style: Embedding style selector (0: includes current state, 1: excludes it).  Default is 1 (excludes current state).
+ *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
+ *   - dist_average: Whether to average distance by the number of valid vector components. Default is true.
+ *   - threads: Number of threads used from the global pool. Default is 8.
  *
  * Returns:
  *   A 2D vector where each row contains [theta, rho, mae, rmse] for a given theta value.
@@ -102,17 +111,20 @@ std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& source,
                                               int E,
                                               int tau,
                                               int b,
-                                              int threads){
+                                              int style = 1,
+                                              int dist_metric = 2,
+                                              bool dist_average = true,
+                                              int threads = 8){
   // Configure threads
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
   // Generate embeddings
-  auto embeddings = GenLatticeEmbeddings(source, nb_vec, E, tau);
+  auto embeddings = GenLatticeEmbeddings(source, nb_vec, E, tau, style);
   std::vector<std::vector<double>> result(theta.size(), std::vector<double>(4));
 
   RcppThread::parallelFor(0, theta.size(), [&](size_t i) {
-    auto metrics = SMapBehavior(embeddings, target, lib_indices, pred_indices, b, theta[i]);
+    auto metrics = SMapBehavior(embeddings, target, lib_indices, pred_indices, b, theta[i], dist_metric, dist_average);
 
     result[i][0] = theta[i];   // theta
     result[i][1] = metrics[0]; // rho
