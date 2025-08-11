@@ -70,7 +70,7 @@ Rcpp::NumericMatrix RcppLaggedVal4Grid(const Rcpp::NumericMatrix& mat, int lagNu
 // Wrapper function to generate embeddings for spatial grid data
 // [[Rcpp::export(rng = false)]]
 Rcpp::NumericMatrix RcppGenGridEmbeddings(const Rcpp::NumericMatrix& mat,
-                                          int E = 3, int tau = 1) {
+                                          int E = 3, int tau = 1, int style = 1) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = mat.nrow();
   int numCols = mat.ncol();
@@ -83,7 +83,7 @@ Rcpp::NumericMatrix RcppGenGridEmbeddings(const Rcpp::NumericMatrix& mat,
   }
 
   // Call the GenGridEmbeddings function
-  std::vector<std::vector<double>> embeddings = GenGridEmbeddings(cppMat, E, tau);
+  std::vector<std::vector<double>> embeddings = GenGridEmbeddings(cppMat, E, tau, style);
 
   // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
   int rows = embeddings.size();

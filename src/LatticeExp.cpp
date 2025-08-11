@@ -105,7 +105,8 @@ Rcpp::List RcppLaggedVal4Lattice(const Rcpp::NumericVector& vec,
 Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec,
                                              const Rcpp::List& nb,
                                              int E = 3,
-                                             int tau = 1) {
+                                             int tau = 1,
+                                             int style = 1) {
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
 
@@ -113,7 +114,7 @@ Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec,
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
   // Generate embeddings
-  std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(vec_std, nb_vec, E, tau);
+  std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(vec_std, nb_vec, E, tau, style);
 
   // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
   int rows = embeddings.size();
