@@ -455,7 +455,11 @@ Rcpp::NumericVector RcppFNN4Lattice(
  *   - pred: An IntegerVector specifying the prediction indices (1-based in R, converted to 0-based in C++).
  *   - E: An IntegerVector specifying the embedding dimensions to test.
  *   - b: An IntegerVector specifying the numbers of neighbors to use for simplex projection.
- *   - tau: An integer specifying the step of spatial lags for prediction.
+ *   - tau: An integer specifying the step of spatial lags for prediction. Default is 1.
+ *   - style: Embedding style selector (0: includes current state, 1: excludes it).  Default is 1 (excludes current state).
+ *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
+ *   - dist_average: Whether to average distance by the number of valid vector components. Default is true.
+ *   - threads: Number of threads used from the global pool. Default is 8.
  *
  * Returns:
  *   A NumericMatrix where each row contains {E, b, PearsonCor, MAE, RMSE}:
@@ -474,6 +478,9 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& source,
                                         const Rcpp::IntegerVector& E,
                                         const Rcpp::IntegerVector& b,
                                         int tau = 1,
+                                        int style = 1,
+                                        int dist_metric = 2,
+                                        bool dist_average = true,
                                         int threads = 8) {
   // Convert neighborhood list to std::vector<std::vector<int>>
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
@@ -520,6 +527,9 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& source,
     E_std,
     b_std,
     tau,
+    style,
+    dist_metric,
+    dist_average,
     threads);
 
   size_t n_rows = res_std.size();
@@ -548,10 +558,13 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& source,
  *   - lib: An IntegerVector specifying the library indices (1-based in R, converted to 0-based in C++).
  *   - pred: An IntegerVector specifying the prediction indices (1-based in R, converted to 0-based in C++).
  *   - theta: A NumericVector containing the parameter values to be tested for theta.
- *   - E: An integer specifying the embedding dimension to test.
- *   - tau: the step of spatial lags for prediction.
- *   - b: An integer specifying the number of neighbors to use for s-mapping.
- *   - threads: An integer specifying the number of threads to use for parallel computation.
+ *   - E: The embedding dimension to evaluate. Default is 3.
+ *   - tau: The spatial lag step for constructing lagged state-space vectors. Default is 1.
+ *   - b: Number of nearest neighbors to use for prediction. Default is 4.
+ *   - style: Embedding style selector (0: includes current state, 1: excludes it).  Default is 1 (excludes current state).
+ *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
+ *   - dist_average: Whether to average distance by the number of valid vector components. Default is true.
+ *   - threads: Number of threads used from the global pool. Default is 8.
  *
  * Returns:
  *   A NumericMatrix where each row contains {theta, PearsonCor, MAE, RMSE}:
@@ -572,6 +585,9 @@ Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& source,
                                      int E = 3,
                                      int tau = 1,
                                      int b = 5,
+                                     int style = 1,
+                                     int dist_metric = 2,
+                                     bool dist_average = true,
                                      int threads = 8) {
   // Convert neighborhood list to std::vector<std::vector<int>>
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
@@ -616,6 +632,9 @@ Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& source,
     E,
     tau,
     b,
+    style.
+    dist_metric,
+    dist_average,
     threads);
 
   size_t n_rows = res_std.size();
