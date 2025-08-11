@@ -176,23 +176,27 @@ std::vector<std::vector<double>> CppLaggedVal4Grid(
  * a different lagged value or the original element.
  *
  * Parameters:
- *   mat  - A 2D vector representing the grid data.
- *   E    - The number of embedding dimensions (columns in the resulting matrix).
- *   tau  - The spatial lag step for constructing lagged state-space vectors.
+ *   mat   - A 2D vector representing the grid data.
+ *   E     - The number of embedding dimensions (columns in the resulting matrix).
+ *   tau   - The spatial lag step for constructing lagged state-space vectors.
+ *   style - Embedding style selector:
+ *             - style = 0: embedding includes current state as the first dimension.
+ *             - style != 0: embedding excludes current state.
  *
  * Returns:
  *   A 2D vector (matrix) where each row contains the averaged lagged variables for
  *   each embedding dimension (column). Columns where all values are NaN are removed.
  *
  * Note:
- *   When tau = 0, the lagged variables are calculated for lag steps of 0, 1, ..., E-1.
- *   When tau > 0, the lagged variables are calculated for lag steps of tau, 2*tau, ..., E*tau,
- *   and this means the actual lag steps form an arithmetic sequence with a common difference of tau.
+ *   When tau = 0, lagged variables are calculated for lag steps 0, 1, ..., E-1.
+ *   When tau > 0 and style = 0, lagged variables are calculated for lag steps 0, tau, 2*tau, ..., (E-1)*tau.
+ *   When tau > 0 and style != 0, lagged variables are calculated for lag steps tau, 2*tau, ..., E*tau.
  */
 std::vector<std::vector<double>> GenGridEmbeddings(
     const std::vector<std::vector<double>>& mat,
     int E,
-    int tau
+    int tau,
+    int style = 1
 ) {
   int numRows = mat.size();
   int numCols = mat[0].size();
@@ -252,47 +256,102 @@ std::vector<std::vector<double>> GenGridEmbeddings(
       }
     }
   } else {
-    // When tau != 0, calculate lagged variables for tau, 2*tau, ..., E*tau
-    int row = 0;
-    for (int i = 1; i <= E; ++i) {
-      int lagNum = i * tau;  // Calculate the actual lag step
-
-      // Calculate the lagged variables for the current lagNum
-      std::vector<std::vector<double>> lagged_vars = CppLaggedVal4Grid(mat, lagNum);
-
-      // Check if all elements in lagged_vars are NaN
-      bool allNaN = true;
-      for (const auto& subset : lagged_vars) {
-        for (double val : subset) {
-          if (!std::isnan(val)) {
-            allNaN = false;
-            break;
-          }
+    // When tau != 0, calculate lagged variables based on style
+    if (style == 0) {
+      // style == 0: include current state; lag steps 0, tau, 2*tau, ..., (E-1)*tau
+      // Flatten the matrix (mat) into the first column of the result matrix
+      int row = 0;
+      for (const auto& subset : mat) {
+        for (double value : subset) {
+          result[row][0] = value;
+          ++row;
         }
-        if (!allNaN) break;
       }
 
-      // If all elements are NaN, stop further processing for this lagNum
-      if (allNaN) {
-        break;
-      }
+      // Fill the remaining columns (1 to E-1) with the averaged lagged variables
+      for (int i = 1; i < E; ++i) {
+        int lagNum = i * tau;
 
-      // Fill the current column (i-1) with the averaged lagged variables
-      row = 0;
-      for (const auto& subset : lagged_vars) {
-        double sum = 0.0;
-        int count = 0;
-        for (double val : subset) {
-          if (!std::isnan(val)) {
-            sum += val;
-            ++count;
+        // Calculate the lagged variables for the current lagNum
+        std::vector<std::vector<double>> lagged_vars = CppLaggedVal4Grid(mat, lagNum);
+
+        // Check if all elements in lagged_vars are NaN
+        bool allNaN = true;
+        for (const auto& subset : lagged_vars) {
+          for (double val : subset) {
+            if (!std::isnan(val)) {
+              allNaN = false;
+              break;
+            }
           }
+          if (!allNaN) break;
         }
 
-        if (count > 0) {
-          result[row][i - 1] = sum / count; // Average the valid values
+        // If all elements are NaN, stop further processing for this lagNum
+        if (allNaN) {
+          break;
         }
-        ++row;
+
+        // Fill the current column (i) with the averaged lagged variables
+        row = 0;
+        for (const auto& subset : lagged_vars) {
+          double sum = 0.0;
+          int count = 0;
+          for (double val : subset) {
+            if (!std::isnan(val)) {
+              sum += val;
+              ++count;
+            }
+          }
+
+          if (count > 0) {
+            result[row][i] = sum / count; // Average the valid values
+          }
+          ++row;
+        }
+      }
+    } else {
+      // style != 0: lag steps tau, 2*tau, ..., E*tau (exclude current state)
+      for (int i = 1; i <= E; ++i) {
+        int lagNum = i * tau;  // Calculate the actual lag step
+
+        // Calculate the lagged variables for the current lagNum
+        std::vector<std::vector<double>> lagged_vars = CppLaggedVal4Grid(mat, lagNum);
+
+        // Check if all elements in lagged_vars are NaN
+        bool allNaN = true;
+        for (const auto& subset : lagged_vars) {
+          for (double val : subset) {
+            if (!std::isnan(val)) {
+              allNaN = false;
+              break;
+            }
+          }
+          if (!allNaN) break;
+        }
+
+        // If all elements are NaN, stop further processing for this lagNum
+        if (allNaN) {
+          break;
+        }
+
+        // Fill the current column (i-1) with the averaged lagged variables
+        int row = 0;
+        for (const auto& subset : lagged_vars) {
+          double sum = 0.0;
+          int count = 0;
+          for (double val : subset) {
+            if (!std::isnan(val)) {
+              sum += val;
+              ++count;
+            }
+          }
+
+          if (count > 0) {
+            result[row][i - 1] = sum / count; // Average the valid values
+          }
+          ++row;
+        }
       }
     }
   }
