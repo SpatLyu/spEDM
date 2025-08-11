@@ -484,6 +484,9 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
                                      const Rcpp::IntegerVector& E,
                                      const Rcpp::IntegerVector& b,
                                      int tau = 1,
+                                     int style = 1,
+                                     int dist_metric = 2,
+                                     bool dist_average = true,
                                      int threads = 8) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = target.nrow();
@@ -562,6 +565,9 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
     E_std,
     b_std,
     tau,
+    style.
+    dist_metric,
+    dist_average,
     threads);
 
   size_t n_rows = res_std.size();
@@ -592,6 +598,9 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& source,
                                   int E = 3,
                                   int tau = 1,
                                   int b = 5,
+                                  int style = 1,
+                                  int dist_metric = 2,
+                                  bool dist_average = true,
                                   int threads = 8) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = target.nrow();
@@ -670,6 +679,9 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& source,
     E,
     tau,
     b,
+    style.
+    dist_metric,
+    dist_average,
     threads);
 
   size_t n_rows = res_std.size();
