@@ -190,21 +190,30 @@ std::vector<std::vector<double>> CppLaggedVal4Lattice(const std::vector<double>&
  * for each spatial unit, considering both the immediate neighbors and neighbors up to a specified lag number.
  *
  * Parameters:
- *   vec  - A vector of values, one for each spatial unit, to be embedded.
- *   nb   - A 2D matrix where each row represents the neighbors of a spatial unit.
- *   E    - The embedding dimension, specifying how many lags to consider in the embeddings.
- *   tau  - The spatial lag step for constructing lagged state-space vectors.
+ *   vec   - A vector of values, one for each spatial unit, to be embedded.
+ *   nb    - A 2D matrix where each row represents the neighbors of a spatial unit.
+ *   E     - The embedding dimension, specifying how many lags to consider in the embeddings.
+ *   tau   - The spatial lag step for constructing lagged state-space vectors.
+ *   style - Embedding style selector:
+ *             - style = 0: embedding includes current state as the first dimension.
+ *             - style = 1: embedding excludes current state.
  *
  * Returns:
  *   A 2D vector representing the embeddings for each spatial unit, where each spatial unit has a row in the matrix
  *   corresponding to its embedding values for each lag number. If no valid embedding columns remain after removing
  *   columns containing only NaN values, a filtered matrix is returned.
+ *
+ * Note:
+ *   When tau = 0, lagged variables are calculated for lag steps 0, 1, ..., E-1.
+ *   When tau > 0 and style = 0, lagged variables are calculated for lag steps 0, tau, 2*tau, ..., (E-1)*tau.
+ *   When tau > 0 and style != 0, lagged variables are calculated for lag steps tau, 2*tau, ..., E*tau.
  */
 std::vector<std::vector<double>> GenLatticeEmbeddings(
     const std::vector<double>& vec,
     const std::vector<std::vector<int>>& nb,
     int E,
-    int tau)
+    int tau,
+    int style = 1)
 {
   // Get the number of nodes
   int n = vec.size();
@@ -215,9 +224,13 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
   // Precompute lagged neighbor results for all required lagNum values
   std::unordered_map<int, std::vector<std::vector<int>>> laggedResultsMap;
 
-  // Determine the range of lagNum values based on tau
-  int startLagNum = (tau == 0) ? 0 : tau;
-  int endLagNum = (tau == 0) ? E - 1 : E * tau;
+  // Determine the range of lagNum values and lag step based on tau and style
+  int startLagNum = (style == 0) ? 0 : ( (tau == 0) ? 0 : tau );
+
+  int endLagNum = (tau == 0) 
+                  ? (E - 1) 
+                  : (style == 0 ? (E - 1) * tau : E * tau);
+
   int step = (tau == 0) ? 1 : tau;
 
   for (int lagNum = 0; lagNum <= endLagNum; ++lagNum){
