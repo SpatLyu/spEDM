@@ -34,7 +34,7 @@ std::vector<double> MultiViewEmbedding(
     int num_neighbors = 4,
     int top_num = 3,
     int dist_metric = 2,
-    int dist_average = true
+    int dist_average = true,
     int threads = 8
 ) {
   // Configure threads

@@ -685,6 +685,8 @@ Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
                                           int b = 5,
                                           int top = 5,
                                           int nvar = 3,
+                                          int dist_metric = 2,
+                                          int dist_average = true,
                                           int threads = 8){
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> target = Rcpp::as<std::vector<double>>(y);
@@ -786,6 +788,8 @@ Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
     pred_indices,
     b,
     k,
+    dist_metric,
+    dist_average,
     threads);
 
   // Convert the result back to Rcpp::NumericVector
