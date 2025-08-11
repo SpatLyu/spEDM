@@ -19,6 +19,8 @@
  *   - lib: Integer vector of indices (which states to include when searching for neighbors, 1-based indexing).
  *   - pred: Integer vector of indices (which states to predict from, 1-based indexing).
  *   - num_neighbors: Number of neighbors to be used for simplex projection.
+ *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). 
+ *   - dist_average: Whether to average distance by the number of valid vector components.
  *
  * Returns: A Rcpp::NumericVector containing the predicted target values.
  */
@@ -28,7 +30,10 @@ Rcpp::NumericVector RcppSimplexForecast(
     const Rcpp::NumericVector& target,
     const Rcpp::IntegerVector& lib,
     const Rcpp::IntegerVector& pred,
-    const int& num_neighbors = 4){
+    const int& num_neighbors = 4,
+    const int& dist_metric = 2,
+    const bool& dist_average = true
+  ){
   // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
   std::vector<std::vector<double>> embedding_std(embedding.nrow(),
                                                  std::vector<double>(embedding.ncol()));
@@ -66,7 +71,9 @@ Rcpp::NumericVector RcppSimplexForecast(
     target_std,
     lib_indices,
     pred_indices,
-    num_neighbors
+    num_neighbors,
+    dist_metric,
+    dist_average
   );
 
   // Convert the result back to Rcpp::NumericVector
@@ -86,6 +93,8 @@ Rcpp::NumericVector RcppSimplexForecast(
  *   - pred: Integer vector of indices (which states to predict from, 1-based indexing).
  *   - num_neighbors: Number of neighbors to be used for S-Mapping.
  *   - theta: Weighting parameter for distances.
+ *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). 
+ *   - dist_average: Whether to average distance by the number of valid vector components.
  *
  * Returns: A Rcpp::NumericVector containing the predicted target values.
  */
@@ -96,7 +105,9 @@ Rcpp::NumericVector RcppSMapForecast(
     const Rcpp::IntegerVector& lib,
     const Rcpp::IntegerVector& pred,
     const int& num_neighbors = 4,
-    const double& theta = 1.0){
+    const double& theta = 1.0,
+    const int& dist_metric = 2,
+    const bool& dist_average = true){
   // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
   std::vector<std::vector<double>> embedding_std(embedding.nrow(),
                                                  std::vector<double>(embedding.ncol()));
@@ -135,7 +146,9 @@ Rcpp::NumericVector RcppSMapForecast(
     lib_indices,
     pred_indices,
     num_neighbors,
-    theta
+    theta,
+    dist_metric,
+    dist_average
   );
 
   // Convert the result back to Rcpp::NumericVector

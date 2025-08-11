@@ -21,8 +21,11 @@
  *   - pred_indices: A vector of indices indicating the prediction set.
  *   - E: A vector of embedding dimensions to evaluate.
  *   - b: A vector of nearest neighbors to use for prediction.
- *   - tau: The spatial lag step for constructing lagged state-space vectors.
- *   - threads: Number of threads used from the global pool.
+ *   - tau: The spatial lag step for constructing lagged state-space vectors. Default is 1.
+ *   - style: Embedding style selector (0: includes current state, 1: excludes it).  Default is 1 (excludes current state).
+ *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
+ *   - dist_average: Whether to average distance by the number of valid vector components. Default is true.
+ *   - threads: Number of threads used from the global pool. Default is 8.
  *
  * Returns:
  *   A 2D vector where each row contains [E, b, rho, mae, rmse] for a given embedding dimension.
@@ -33,8 +36,11 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
                                               const std::vector<int>& pred_indices,
                                               const std::vector<int>& E,
                                               const std::vector<int>& b,
-                                              int tau,
-                                              int threads) {
+                                              int tau = 1,
+                                              int style = 1,
+                                              int dist_metric = 2,
+                                              bool dist_average = true,
+                                              int threads = 8) {
   // Configure threads
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
@@ -75,10 +81,10 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
     const int cur_b = unique_Ebcom[i].second;
 
     // Generate embedding
-    std::vector<std::vector<double>> embeddings = GenGridEmbeddings(source, cur_E, tau);
+    std::vector<std::vector<double>> embeddings = GenGridEmbeddings(source, cur_E, tau, style);
 
     // Evaluate performance
-    std::vector<double> metrics = SimplexBehavior(embeddings, vec_std, lib_indices, pred_indices, cur_b);
+    std::vector<double> metrics = SimplexBehavior(embeddings, vec_std, lib_indices, pred_indices, cur_b, dist_metric, dist_average);
 
     // Store results
     result[i][0] = cur_E;
@@ -100,10 +106,13 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
  *   - lib_indices: A vector of indices indicating the library (training) set.
  *   - pred_indices: A vector of indices indicating the prediction set.
  *   - theta: A vector of weighting parameters for distance calculation in SMap.
- *   - E: The embedding dimension to evaluate.
- *   - tau: The spatial lag step for constructing lagged state-space vectors.
- *   - b: Number of nearest neighbors to use for prediction.
- *   - threads: Number of threads used from the global pool.
+ *   - E: The embedding dimension to evaluate. Default is 3.
+ *   - tau: The spatial lag step for constructing lagged state-space vectors. Default is 1.
+ *   - b: Number of nearest neighbors to use for prediction. Default is 4.
+ *   - style: Embedding style selector (0: includes current state, 1: excludes it).  Default is 1 (excludes current state).
+ *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
+ *   - dist_average: Whether to average distance by the number of valid vector components. Default is true.
+ *   - threads: Number of threads used from the global pool. Default is 8.
  *
  * Returns:
  *   A 2D vector where each row contains [theta, rho, mae, rmse] for a given theta value.
@@ -113,10 +122,13 @@ std::vector<std::vector<double>> SMap4Grid(const std::vector<std::vector<double>
                                            const std::vector<int>& lib_indices,
                                            const std::vector<int>& pred_indices,
                                            const std::vector<double>& theta,
-                                           int E,
-                                           int tau,
-                                           int b,
-                                           int threads) {
+                                           int E = 3,
+                                           int tau = 1,
+                                           int b = 4,
+                                           int style = 1,
+                                           int dist_metric = 2,
+                                           bool dist_average = true,
+                                           int threads = 8) {
   // Configure threads
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
@@ -132,12 +144,12 @@ std::vector<std::vector<double>> SMap4Grid(const std::vector<std::vector<double>
   }
 
   // Generate embedding once
-  std::vector<std::vector<double>> embeddings = GenGridEmbeddings(source, E, tau);
+  std::vector<std::vector<double>> embeddings = GenGridEmbeddings(source, E, tau, style);
 
   std::vector<std::vector<double>> result(theta.size(), std::vector<double>(4));
 
   RcppThread::parallelFor(0, theta.size(), [&](size_t i) {
-    std::vector<double> metrics = SMapBehavior(embeddings, vec_std, lib_indices, pred_indices, b, theta[i]);
+    std::vector<double> metrics = SMapBehavior(embeddings, vec_std, lib_indices, pred_indices, b, theta[i], dist_average, dist_metric);
 
     result[i][0] = theta[i];
     result[i][1] = metrics[0];
