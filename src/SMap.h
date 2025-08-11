@@ -25,6 +25,8 @@
  * @param pred_indices   Indices of the vectors used for prediction.
  * @param num_neighbors  Number of nearest neighbors to use in local regression.
  * @param theta          Weighting parameter controlling exponential decay of distances.
+ * @param dist_metric    Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
+ * @param dist_average   Whether to average distance by the number of valid vector components. Default is true.
  * @return std::vector<double> Predicted values aligned with the input target vector.
  *         Entries at non-prediction indices or with insufficient valid neighbors are NaN.
  */
@@ -34,7 +36,9 @@ std::vector<double> SMapPrediction(
     const std::vector<int>& lib_indices,
     const std::vector<int>& pred_indices,
     int num_neighbors,
-    double theta
+    double theta,
+    int dist_metric = 2,
+    bool dist_average = true
 );
 
 /*
@@ -47,6 +51,8 @@ std::vector<double> SMapPrediction(
  *   - pred_indices: Vector of integer indices specifying which states to predict.
  *   - num_neighbors: Number of neighbors to use for S-Map.
  *   - theta: Weighting parameter for distances.
+ *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
+ *   - dist_average: Whether to average distance by the number of valid vector components. Default is true.
  *
  * Returns: The Pearson correlation coefficient (Rho) between predicted and actual values.
  */
@@ -56,7 +62,9 @@ double SMap(
     const std::vector<int>& lib_indices,
     const std::vector<int>& pred_indices,
     int num_neighbors,
-    double theta
+    double theta,
+    int dist_metric = 2,
+    bool dist_average = true
 );
 
 /*
@@ -69,6 +77,8 @@ double SMap(
  *   - pred_indices: Vector of integer indices specifying which states to predict.
  *   - num_neighbors: Number of neighbors to use for S-Map.
  *   - theta: Weighting parameter for distances.
+ *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
+ *   - dist_average: Whether to average distance by the number of valid vector components. Default is true.
  *
  * Returns: A vector<double> containing {Pearson correlation, MAE, RMSE}.
  */
@@ -78,7 +88,9 @@ std::vector<double> SMapBehavior(
     const std::vector<int>& lib_indices,
     const std::vector<int>& pred_indices,
     int num_neighbors,
-    double theta
+    double theta,
+    int dist_metric = 2,
+    bool dist_average = true
 );
 
 #endif // SMap_H
