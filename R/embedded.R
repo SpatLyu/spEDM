@@ -15,7 +15,7 @@
 #' @param target name of target variable.
 #' @param E (optional) embedding dimensions.
 #' @param tau (optional) step of spatial lags.
-#' @param style (optional) embedding style (`0`` includes current state, `1` excludes it).
+#' @param style (optional) embedding style (`0` includes current state, `1` excludes it).
 #' @param nb (optional) neighbours list.
 #' @param detrend (optional) whether to remove the linear trend.
 #'

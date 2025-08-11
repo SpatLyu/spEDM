@@ -19,7 +19,7 @@
 
 \item{tau}{(optional) step of spatial lags.}
 
-\item{style}{(optional) embedding style (\verb{0`` includes current state, }1` excludes it).}
+\item{style}{(optional) embedding style (\code{0} includes current state, \code{1} excludes it).}
 
 \item{nb}{(optional) neighbours list.}
 

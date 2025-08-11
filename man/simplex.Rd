@@ -56,7 +56,7 @@
 
 \item{k}{(optional) number of nearest neighbors used.}
 
-\item{style}{(optional) embedding style (\verb{0`` includes current state, }1` excludes it).}
+\item{style}{(optional) embedding style (\code{0} includes current state, \code{1} excludes it).}
 
 \item{dist.metric}{(optional) distance metric (\code{L1}: Manhattan, \code{L2}: Euclidean).}
 
