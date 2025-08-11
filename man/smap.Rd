@@ -15,6 +15,9 @@
   E = 3,
   tau = 1,
   k = E + 2,
+  style = 1,
+  dist.metric = "L2",
+  dist.average = TRUE,
   theta = c(0, 1e-04, 3e-04, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 0.5, 0.75, 1, 1.5, 2, 3,
     4, 6, 8),
   nb = NULL,
@@ -31,6 +34,9 @@
   E = 3,
   tau = 1,
   k = E + 2,
+  style = 1,
+  dist.metric = "L2",
+  dist.average = TRUE,
   theta = c(0, 1e-04, 3e-04, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 0.5, 0.75, 1, 1.5, 2, 3,
     4, 6, 8),
   threads = detectThreads(),
@@ -53,6 +59,12 @@
 \item{tau}{(optional) step of spatial lags.}
 
 \item{k}{(optional) number of nearest neighbors used.}
+
+\item{style}{(optional) embedding style (\verb{0`` includes current state, }1` excludes it).}
+
+\item{dist.metric}{(optional) distance metric (\code{L1}: Manhattan, \code{L2}: Euclidean).}
+
+\item{dist.average}{(optional) whether to average distance.}
 
 \item{theta}{(optional) weighting parameter for distances.}
 
