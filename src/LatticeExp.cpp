@@ -632,7 +632,7 @@ Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& source,
     E,
     tau,
     b,
-    style.
+    style,
     dist_metric,
     dist_average,
     threads);

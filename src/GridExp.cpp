@@ -565,7 +565,7 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
     E_std,
     b_std,
     tau,
-    style.
+    style,
     dist_metric,
     dist_average,
     threads);
@@ -679,7 +679,7 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& source,
     E,
     tau,
     b,
-    style.
+    style,
     dist_metric,
     dist_average,
     threads);
