@@ -33,12 +33,12 @@ RcppConditionalEntropy_Disc <- function(mat, target_columns, conditional_columns
     .Call(`_spEDM_RcppConditionalEntropy_Disc`, mat, target_columns, conditional_columns, base, NA_rm)
 }
 
-RcppSimplexForecast <- function(embedding, target, lib, pred, num_neighbors = 4L) {
-    .Call(`_spEDM_RcppSimplexForecast`, embedding, target, lib, pred, num_neighbors)
+RcppSimplexForecast <- function(embedding, target, lib, pred, num_neighbors = 4L, dist_metric = 2L, dist_average = TRUE) {
+    .Call(`_spEDM_RcppSimplexForecast`, embedding, target, lib, pred, num_neighbors, dist_metric, dist_average)
 }
 
-RcppSMapForecast <- function(embedding, target, lib, pred, num_neighbors = 4L, theta = 1.0) {
-    .Call(`_spEDM_RcppSMapForecast`, embedding, target, lib, pred, num_neighbors, theta)
+RcppSMapForecast <- function(embedding, target, lib, pred, num_neighbors = 4L, theta = 1.0, dist_metric = 2L, dist_average = TRUE) {
+    .Call(`_spEDM_RcppSMapForecast`, embedding, target, lib, pred, num_neighbors, theta, dist_metric, dist_average)
 }
 
 RcppIntersectionCardinality <- function(embedding_x, embedding_y, lib, pred, num_neighbors = 4L, n_excluded = 0L, threads = 8L, parallel_level = 0L) {
@@ -89,12 +89,12 @@ RcppFNN4Grid <- function(mat, rt, eps, lib, pred, E, tau = 1L, threads = 8L, par
     .Call(`_spEDM_RcppFNN4Grid`, mat, rt, eps, lib, pred, E, tau, threads, parallel_level)
 }
 
-RcppSimplex4Grid <- function(source, target, lib, pred, E, b, tau = 1L, threads = 8L) {
-    .Call(`_spEDM_RcppSimplex4Grid`, source, target, lib, pred, E, b, tau, threads)
+RcppSimplex4Grid <- function(source, target, lib, pred, E, b, tau = 1L, style = 1L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
+    .Call(`_spEDM_RcppSimplex4Grid`, source, target, lib, pred, E, b, tau, style, dist_metric, dist_average, threads)
 }
 
-RcppSMap4Grid <- function(source, target, lib, pred, theta, E = 3L, tau = 1L, b = 5L, threads = 8L) {
-    .Call(`_spEDM_RcppSMap4Grid`, source, target, lib, pred, theta, E, tau, b, threads)
+RcppSMap4Grid <- function(source, target, lib, pred, theta, E = 3L, tau = 1L, b = 5L, style = 1L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
+    .Call(`_spEDM_RcppSMap4Grid`, source, target, lib, pred, theta, E, tau, b, style, dist_metric, dist_average, threads)
 }
 
 RcppMultiView4Grid <- function(xMatrix, yMatrix, lib, pred, E = 3L, tau = 1L, b = 5L, top = 5L, nvar = 3L, threads = 8L) {
@@ -185,12 +185,12 @@ RcppFNN4Lattice <- function(vec, nb, rt, eps, lib, pred, E, tau = 1L, threads = 
     .Call(`_spEDM_RcppFNN4Lattice`, vec, nb, rt, eps, lib, pred, E, tau, threads, parallel_level)
 }
 
-RcppSimplex4Lattice <- function(source, target, nb, lib, pred, E, b, tau = 1L, threads = 8L) {
-    .Call(`_spEDM_RcppSimplex4Lattice`, source, target, nb, lib, pred, E, b, tau, threads)
+RcppSimplex4Lattice <- function(source, target, nb, lib, pred, E, b, tau = 1L, style = 1L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
+    .Call(`_spEDM_RcppSimplex4Lattice`, source, target, nb, lib, pred, E, b, tau, style, dist_metric, dist_average, threads)
 }
 
-RcppSMap4Lattice <- function(source, target, nb, lib, pred, theta, E = 3L, tau = 1L, b = 5L, threads = 8L) {
-    .Call(`_spEDM_RcppSMap4Lattice`, source, target, nb, lib, pred, theta, E, tau, b, threads)
+RcppSMap4Lattice <- function(source, target, nb, lib, pred, theta, E = 3L, tau = 1L, b = 5L, style = 1L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
+    .Call(`_spEDM_RcppSMap4Lattice`, source, target, nb, lib, pred, theta, E, tau, b, style, dist_metric, dist_average, threads)
 }
 
 RcppMultiView4Lattice <- function(x, y, nb, lib, pred, E = 3L, tau = 1L, b = 5L, top = 5L, nvar = 3L, threads = 8L) {

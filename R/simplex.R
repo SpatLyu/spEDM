@@ -1,21 +1,27 @@
 .simplex_sf_method = \(data,column,target,lib = NULL,pred = NULL,E = 2:10,tau = 1,
-                       k = E+2, nb = NULL, threads = detectThreads(), detrend = TRUE){
+                       k = E+2, style = 1, dist.metric = "L2", dist.average = TRUE,
+                       nb = NULL, threads = detectThreads(), detrend = TRUE){
   vx = .uni_lattice(data,column,detrend)
   vy = .uni_lattice(data,target,detrend)
   if (is.null(lib)) lib = .internal_library(cbind(vx,vy))
   if (is.null(pred)) pred = lib
   if (is.null(nb)) nb = .internal_lattice_nb(data)
-  res = RcppSimplex4Lattice(vx,vy,nb,lib,pred,E,k,tau,threads)
+  res = RcppSimplex4Lattice(vx,vy,nb,lib,pred,E,k,tau,style,
+                            ifelse(dist.metric == "L2", 2, 1),
+                            dist.average,threads)
   return(.bind_xmapself(res,target,"simplex",tau))
 }
 
 .simplex_spatraster_method = \(data,column,target,lib = NULL,pred = NULL,E = 2:10,tau = 1,
-                               k = E+2, threads = detectThreads(), detrend = TRUE){
+                               k = E+2, style = 1, dist.metric = "L2", dist.average = TRUE,
+                               threads = detectThreads(), detrend = TRUE){
   mx = .uni_grid(data,column,detrend)
   my = .uni_grid(data,target,detrend)
   if (is.null(lib)) lib = which(!(is.na(mx) | is.na(my)), arr.ind = TRUE)
   if (is.null(pred)) pred = lib
-  res = RcppSimplex4Grid(mx,my,lib,pred,E,k,tau,threads)
+  res = RcppSimplex4Grid(mx,my,lib,pred,E,k,tau,style,
+                            ifelse(dist.metric == "L2", 2, 1),
+                            dist.average,threads)
   return(.bind_xmapself(res,target,"simplex",tau))
 }
 
@@ -26,6 +32,8 @@
 #' @param lib (optional) libraries indices.
 #' @param pred (optional) predictions indices.
 #' @param k (optional) number of nearest neighbors used.
+#' @param dist.metric (optional) distance metric (`L1`: Manhattan, `L2`: Euclidean).
+#' @param dist.average (optional) whether to average distance.
 #' @param threads (optional) number of threads to use.
 #'
 #' @return A list
