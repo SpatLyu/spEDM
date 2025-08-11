@@ -197,7 +197,7 @@ double SMap(
   double rho = std::numeric_limits<double>::quiet_NaN();
 
   // Call SMapPrediction to get the prediction results
-  std::vector<double> target_pred = SMapPrediction(vectors, target, lib_indices, pred_indices, num_neighbors, theta);
+  std::vector<double> target_pred = SMapPrediction(vectors, target, lib_indices, pred_indices, num_neighbors, theta, dist_metric, dist_average);
 
   if (checkOneDimVectorNotNanNum(target_pred) >= 3) {
     rho = PearsonCor(target_pred, target, true);
@@ -236,7 +236,7 @@ std::vector<double> SMapBehavior(
   double rmse = std::numeric_limits<double>::quiet_NaN();
 
   // Call SMapPrediction to get the prediction results
-  std::vector<double> target_pred = SMapPrediction(vectors, target, lib_indices, pred_indices, num_neighbors, theta);
+  std::vector<double> target_pred = SMapPrediction(vectors, target, lib_indices, pred_indices, num_neighbors, theta, dist_metric, dist_average);
 
   if (checkOneDimVectorNotNanNum(target_pred) >= 3) {
     // Compute PearsonCor, MAE, and RMSE
