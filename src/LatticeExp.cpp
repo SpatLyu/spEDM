@@ -997,6 +997,9 @@ Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x,
                                       int threads = 8,
                                       int parallel_level = 0,
                                       bool cumulate = false,
+                                      int style = 1,
+                                      int dist_metric = 2,
+                                      bool dist_average = true,
                                       bool progressbar = false) {
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
@@ -1056,6 +1059,9 @@ Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x,
     threads,
     parallel_level,
     cumulate,
+    style,
+    dist_metric,
+    dist_average,
     progressbar);
 
   // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
