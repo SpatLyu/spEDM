@@ -68,7 +68,7 @@ std::vector<double> SimplexProjectionPrediction(
       double count = 0.0;
       for (size_t j = 0; j < vectors[p].size(); ++j) {
         if (!std::isnan(vectors[i][j]) && !std::isnan(vectors[p][j])) {
-          double diff = vectors[i][j] - vectors[p][j]; 
+          double diff = vectors[i][j] - vectors[p][j];
           // sum_sq += (dist_metric == 1) ? std::abs(diff) : diff * diff;
           if (dist_metric == 1) {
             sum_sq += std::abs(diff); // L1
@@ -80,9 +80,9 @@ std::vector<double> SimplexProjectionPrediction(
       }
       if (count > 0) {
         if (dist_metric == 1) {  // L1
-          distances.push_back(sum_sq / (dist_average ? count : 1.0));       
+          distances.push_back(sum_sq / (dist_average ? count : 1.0));
         } else {                 // L2
-          distances.push_back(std::sqrt(sum_sq / (dist_average ? count : 1.0))); 
+          distances.push_back(std::sqrt(sum_sq / (dist_average ? count : 1.0)));
         }
         valid_libs.push_back(i);
       }
