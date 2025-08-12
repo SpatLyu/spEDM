@@ -85,8 +85,8 @@ RcppSLMTri4Grid <- function(mat1, mat2, mat3, k = 4L, step = 20L, alpha_x = 0.62
     .Call(`_spEDM_RcppSLMTri4Grid`, mat1, mat2, mat3, k, step, alpha_x, alpha_y, alpha_z, beta_xy, beta_xz, beta_yx, beta_yz, beta_zx, beta_zy, escape_threshold)
 }
 
-RcppFNN4Grid <- function(mat, rt, eps, lib, pred, E, tau = 1L, threads = 8L, parallel_level = 0L) {
-    .Call(`_spEDM_RcppFNN4Grid`, mat, rt, eps, lib, pred, E, tau, threads, parallel_level)
+RcppFNN4Grid <- function(mat, rt, eps, lib, pred, E, tau = 1L, style = 1L, dist_metric = 2L, threads = 8L, parallel_level = 0L) {
+    .Call(`_spEDM_RcppFNN4Grid`, mat, rt, eps, lib, pred, E, tau, style, dist_metric, threads, parallel_level)
 }
 
 RcppSimplex4Grid <- function(source, target, lib, pred, E, b, tau = 1L, style = 1L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
@@ -181,8 +181,8 @@ RcppSLMTri4Lattice <- function(x, y, z, nb, k = 4L, step = 20L, alpha_x = 0.625,
     .Call(`_spEDM_RcppSLMTri4Lattice`, x, y, z, nb, k, step, alpha_x, alpha_y, alpha_z, beta_xy, beta_xz, beta_yx, beta_yz, beta_zx, beta_zy, escape_threshold)
 }
 
-RcppFNN4Lattice <- function(vec, nb, rt, eps, lib, pred, E, tau = 1L, threads = 8L, parallel_level = 0L) {
-    .Call(`_spEDM_RcppFNN4Lattice`, vec, nb, rt, eps, lib, pred, E, tau, threads, parallel_level)
+RcppFNN4Lattice <- function(vec, nb, rt, eps, lib, pred, E, tau = 1L, style = 1L, dist_metric = 2L, threads = 8L, parallel_level = 0L) {
+    .Call(`_spEDM_RcppFNN4Lattice`, vec, nb, rt, eps, lib, pred, E, tau, style, dist_metric, threads, parallel_level)
 }
 
 RcppSimplex4Lattice <- function(source, target, nb, lib, pred, E, b, tau = 1L, style = 1L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
