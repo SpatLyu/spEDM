@@ -7,7 +7,7 @@
   if (is.null(pred)) pred = lib
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   res = RcppSimplex4Lattice(vx,vy,nb,lib,pred,E,k,tau,style,
-                            ifelse(dist.metric == "L2", 2, 1),
+                            .check_distmetric(dist.metric),
                             dist.average,threads)
   return(.bind_xmapself(res,target,"simplex",tau))
 }
@@ -20,8 +20,8 @@
   if (is.null(lib)) lib = which(!(is.na(mx) | is.na(my)), arr.ind = TRUE)
   if (is.null(pred)) pred = lib
   res = RcppSimplex4Grid(mx,my,lib,pred,E,k,tau,style,
-                            ifelse(dist.metric == "L2", 2, 1),
-                            dist.average,threads)
+                         .check_distmetric(dist.metric),
+                         dist.average,threads)
   return(.bind_xmapself(res,target,"simplex",tau))
 }
 
