@@ -1,5 +1,5 @@
-.fnn_sf_method = \(data, target, lib = NULL, pred = NULL, E = 1:10, tau = 1, nb = NULL,
-                   rt = 10, eps = 2, threads = detectThreads(), detrend = TRUE){
+.fnn_sf_method = \(data, target, lib = NULL, pred = NULL, E = 1:10, tau = 1, style = 1, dist.metric = "L1", 
+                   nb = NULL, rt = 10, eps = 2, threads = detectThreads(), detrend = TRUE){
   vec = .uni_lattice(data,target,detrend)
   rt = .check_inputelementnum(rt,max(E))
   eps = .check_inputelementnum(eps,max(E))
@@ -9,8 +9,8 @@
   return(RcppFNN4Lattice(vec,nb,rt,eps,lib,pred,E,tau,threads))
 }
 
-.fnn_spatraster_method = \(data, target, lib = NULL, pred = NULL, E = 1:10, tau = 1,
-                           rt = 10, eps = 2, threads = detectThreads(), detrend = TRUE){
+.fnn_spatraster_method = \(data, target, lib = NULL, pred = NULL, E = 1:10, tau = 1, style = 1,
+                           dist.metric = "L1", rt = 10, eps = 2, threads = detectThreads(), detrend = TRUE){
   mat = .uni_grid(data,target,detrend)
   rt = .check_inputelementnum(rt,max(E))
   eps = .check_inputelementnum(eps,max(E))
@@ -24,6 +24,7 @@
 #' @inheritParams embedded
 #' @param lib (optional) libraries indices.
 #' @param pred (optional) predictions indices.
+#' @param dist.metric (optional) distance metric (`L1`: Manhattan, `L2`: Euclidean).
 #' @param rt (optional) escape factor.
 #' @param eps (optional) neighborhood diameter.
 #' @param threads (optional) number of threads to use.
