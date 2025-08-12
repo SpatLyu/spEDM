@@ -374,8 +374,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppMultiView4Grid
-Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix, const Rcpp::NumericMatrix& yMatrix, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, int E, int tau, int b, int top, int nvar, int dist_metric, int dist_average, int threads);
-RcppExport SEXP _spEDM_RcppMultiView4Grid(SEXP xMatrixSEXP, SEXP yMatrixSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP topSEXP, SEXP nvarSEXP, SEXP dist_metricSEXP, SEXP dist_averageSEXP, SEXP threadsSEXP) {
+Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix, const Rcpp::NumericMatrix& yMatrix, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, int E, int tau, int b, int top, int nvar, int style, int dist_metric, int dist_average, int threads);
+RcppExport SEXP _spEDM_RcppMultiView4Grid(SEXP xMatrixSEXP, SEXP yMatrixSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP topSEXP, SEXP nvarSEXP, SEXP styleSEXP, SEXP dist_metricSEXP, SEXP dist_averageSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type xMatrix(xMatrixSEXP);
@@ -387,10 +387,11 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type b(bSEXP);
     Rcpp::traits::input_parameter< int >::type top(topSEXP);
     Rcpp::traits::input_parameter< int >::type nvar(nvarSEXP);
+    Rcpp::traits::input_parameter< int >::type style(styleSEXP);
     Rcpp::traits::input_parameter< int >::type dist_metric(dist_metricSEXP);
     Rcpp::traits::input_parameter< int >::type dist_average(dist_averageSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppMultiView4Grid(xMatrix, yMatrix, lib, pred, E, tau, b, top, nvar, dist_metric, dist_average, threads));
+    rcpp_result_gen = Rcpp::wrap(RcppMultiView4Grid(xMatrix, yMatrix, lib, pred, E, tau, b, top, nvar, style, dist_metric, dist_average, threads));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -766,8 +767,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppMultiView4Lattice
-Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, int E, int tau, int b, int top, int nvar, int dist_metric, int dist_average, int threads);
-RcppExport SEXP _spEDM_RcppMultiView4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP topSEXP, SEXP nvarSEXP, SEXP dist_metricSEXP, SEXP dist_averageSEXP, SEXP threadsSEXP) {
+Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, int E, int tau, int b, int top, int nvar, int style, int dist_metric, int dist_average, int threads);
+RcppExport SEXP _spEDM_RcppMultiView4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP topSEXP, SEXP nvarSEXP, SEXP styleSEXP, SEXP dist_metricSEXP, SEXP dist_averageSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type x(xSEXP);
@@ -780,10 +781,11 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type b(bSEXP);
     Rcpp::traits::input_parameter< int >::type top(topSEXP);
     Rcpp::traits::input_parameter< int >::type nvar(nvarSEXP);
+    Rcpp::traits::input_parameter< int >::type style(styleSEXP);
     Rcpp::traits::input_parameter< int >::type dist_metric(dist_metricSEXP);
     Rcpp::traits::input_parameter< int >::type dist_average(dist_averageSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppMultiView4Lattice(x, y, nb, lib, pred, E, tau, b, top, nvar, dist_metric, dist_average, threads));
+    rcpp_result_gen = Rcpp::wrap(RcppMultiView4Lattice(x, y, nb, lib, pred, E, tau, b, top, nvar, style, dist_metric, dist_average, threads));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1445,7 +1447,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppFNN4Grid", (DL_FUNC) &_spEDM_RcppFNN4Grid, 9},
     {"_spEDM_RcppSimplex4Grid", (DL_FUNC) &_spEDM_RcppSimplex4Grid, 11},
     {"_spEDM_RcppSMap4Grid", (DL_FUNC) &_spEDM_RcppSMap4Grid, 12},
-    {"_spEDM_RcppMultiView4Grid", (DL_FUNC) &_spEDM_RcppMultiView4Grid, 12},
+    {"_spEDM_RcppMultiView4Grid", (DL_FUNC) &_spEDM_RcppMultiView4Grid, 13},
     {"_spEDM_RcppIC4Grid", (DL_FUNC) &_spEDM_RcppIC4Grid, 10},
     {"_spEDM_RcppGCCM4Grid", (DL_FUNC) &_spEDM_RcppGCCM4Grid, 13},
     {"_spEDM_RcppSCPCM4Grid", (DL_FUNC) &_spEDM_RcppSCPCM4Grid, 15},
@@ -1469,7 +1471,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppFNN4Lattice", (DL_FUNC) &_spEDM_RcppFNN4Lattice, 10},
     {"_spEDM_RcppSimplex4Lattice", (DL_FUNC) &_spEDM_RcppSimplex4Lattice, 12},
     {"_spEDM_RcppSMap4Lattice", (DL_FUNC) &_spEDM_RcppSMap4Lattice, 13},
-    {"_spEDM_RcppMultiView4Lattice", (DL_FUNC) &_spEDM_RcppMultiView4Lattice, 13},
+    {"_spEDM_RcppMultiView4Lattice", (DL_FUNC) &_spEDM_RcppMultiView4Lattice, 14},
     {"_spEDM_RcppIC4Lattice", (DL_FUNC) &_spEDM_RcppIC4Lattice, 11},
     {"_spEDM_RcppGCCM4Lattice", (DL_FUNC) &_spEDM_RcppGCCM4Lattice, 14},
     {"_spEDM_RcppSCPCM4Lattice", (DL_FUNC) &_spEDM_RcppSCPCM4Lattice, 16},
