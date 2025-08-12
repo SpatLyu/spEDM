@@ -13,6 +13,8 @@
   pred = NULL,
   E = 1:10,
   tau = 1,
+  style = 1,
+  dist.metric = "L1",
   nb = NULL,
   rt = 10,
   eps = 2,
@@ -27,6 +29,8 @@
   pred = NULL,
   E = 1:10,
   tau = 1,
+  style = 1,
+  dist.metric = "L1",
   rt = 10,
   eps = 2,
   threads = detectThreads(),
@@ -45,6 +49,10 @@
 \item{E}{(optional) embedding dimensions.}
 
 \item{tau}{(optional) step of spatial lags.}
+
+\item{style}{(optional) embedding style (\code{0} includes current state, \code{1} excludes it).}
+
+\item{dist.metric}{(optional) distance metric (\code{L1}: Manhattan, \code{L2}: Euclidean).}
 
 \item{nb}{(optional) neighbours list.}
 
