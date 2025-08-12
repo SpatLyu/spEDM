@@ -1420,8 +1420,10 @@ Rcpp::List RcppGCMC4Grid(
     const Rcpp::IntegerMatrix& pred,
     const Rcpp::IntegerVector& E,
     const Rcpp::IntegerVector& tau,
-    int b,
+    int b = 4,
     int r = 0,
+    int style = 1,
+    int dist_metric = 2,
     int threads = 8,
     int parallel_level = 0,
     bool progressbar = false){
@@ -1516,13 +1518,13 @@ Rcpp::List RcppGCMC4Grid(
   }
 
   // Generate embeddings
-  std::vector<std::vector<double>> e1 = GenGridEmbeddings(xMatrix_cpp, E[0], tau_std[0]);
-  std::vector<std::vector<double>> e2 = GenGridEmbeddings(yMatrix_cpp, E[1], tau_std[1]);
+  std::vector<std::vector<double>> e1 = GenGridEmbeddings(xMatrix_cpp, E[0], tau_std[0], style);
+  std::vector<std::vector<double>> e2 = GenGridEmbeddings(yMatrix_cpp, E[1], tau_std[1], style);
 
   // Perform GCMC for spatial grid data
   CMCRes res = CrossMappingCardinality(e1,e2,libsizes_std,lib_std,pred_std,
                                        static_cast<size_t>(b),static_cast<size_t>(r),
-                                       threads,parallel_level,progressbar);
+                                       dist_metric,threads,parallel_level,progressbar);
 
   // Convert mean_aucs to Rcpp::DataFrame
   std::vector<double> libs, aucs;
