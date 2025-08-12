@@ -395,6 +395,8 @@ Rcpp::NumericVector RcppFNN4Grid(
     const Rcpp::IntegerMatrix& pred,
     const Rcpp::IntegerVector& E,
     int tau = 1,
+    int style = 1,
+    int dist_metric = 2,
     int threads = 8,
     int parallel_level = 0){
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
@@ -459,10 +461,13 @@ Rcpp::NumericVector RcppFNN4Grid(
   // Generate embeddings
   std::vector<double> E_std = Rcpp::as<std::vector<double>>(E);
   int max_E = CppMax(E_std, true);
-  std::vector<std::vector<double>> embeddings = GenGridEmbeddings(cppMat, max_E, tau);
+  std::vector<std::vector<double>> embeddings = GenGridEmbeddings(cppMat, max_E, tau, style);
+  
+  // Use L1 norm (Manhattan distance) if dist_metric == 1, else use L2 norm
+  bool L1norm = (dist_metric == 1);
 
   // Perform FNN for spatial grid data
-  std::vector<double> fnn = CppFNN(embeddings,lib_std,pred_std,rt_std,eps_std,true,threads,parallel_level);
+  std::vector<double> fnn = CppFNN(embeddings,lib_std,pred_std,rt_std,eps_std,L1norm,threads,parallel_level);
 
   // Convert the result back to Rcpp::NumericVector and set names as "E:1", "E:2", ..., "E:n"
   Rcpp::NumericVector result = Rcpp::wrap(fnn);
