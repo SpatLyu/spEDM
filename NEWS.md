@@ -1,5 +1,9 @@
 # spEDM 1.8
 
+### new
+
+* Enable different styles of spatial cross-sectional embedding (#755).
+
 ### enhancements
 
 * Prevent unreliable predictions and potentially alter results when NaNs are present in cross mapping (#747).
