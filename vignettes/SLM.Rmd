@@ -2,8 +2,8 @@
 title: "Spatial Logistic Map"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-07-25
-  | Last run: 2025-08-02
+  | Last update: 2025-08-12
+  | Last run: 2025-08-12
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{SLM}
