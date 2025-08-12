@@ -52,7 +52,8 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
     int parallel_level,
     bool row_size_mark,
     int dist_metric,
-    bool dist_average) {
+    bool dist_average
+) {
   // Extract row-wise and column-wise library sizes
   const int lib_size_row = lib_sizes[0];
   const int lib_size_col = lib_sizes[1];
@@ -151,7 +152,8 @@ std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
     size_t threads,
     int parallel_level,
     int dist_metric,
-    bool dist_average) {
+    bool dist_average
+) {
   int max_lib_size = lib_indices.size();
 
   // No possible library variation if using all vectors
