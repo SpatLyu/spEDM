@@ -14,7 +14,7 @@
 
 .multiview_spatraster_method = \(data,column,target,nvar,lib = NULL,pred = NULL,E = 3,tau = 1,
                                  k = E+2, style = 1, dist.metric = "L2", dist.average = TRUE,
-                                 top = NULL,threads = detectThreads(),detrend = TRUE){
+                                 top = NULL, threads = detectThreads(), detrend = TRUE){
   xmat = .multivar_grid(data,column,detrend)
   ymat = .multivar_grid(data,target,detrend)
   if (is.null(lib)) lib = .internal_library(cbind(xmat,ymat),TRUE)
