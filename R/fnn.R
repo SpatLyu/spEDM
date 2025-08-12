@@ -1,4 +1,4 @@
-.fnn_sf_method = \(data, target, lib = NULL, pred = NULL, E = 1:10, tau = 1, style = 1, dist.metric = "L1", 
+.fnn_sf_method = \(data, target, lib = NULL, pred = NULL, E = 1:10, tau = 1, style = 1, dist.metric = "L1",
                    nb = NULL, rt = 10, eps = 2, threads = detectThreads(), detrend = TRUE){
   vec = .uni_lattice(data,target,detrend)
   rt = .check_inputelementnum(rt,max(E))
