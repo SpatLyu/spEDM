@@ -29,7 +29,7 @@
  *   target         - Target values for each spatial unit.
  *   lib_indices    - Indices specifying states used as the library (neighbors).
  *   pred_indices   - Indices specifying states to predict.
- *   num_neighbors  - Number of nearest neighbors considered for prediction.
+ *   num_neighbors  - Number of nearest neighbors considered for prediction. Default is 4.
  *   dist_metric    - Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
  *   dist_average   - Whether to average distance by the number of valid vector components. Default is true.
  *
@@ -42,7 +42,7 @@ std::vector<double> SimplexProjectionPrediction(
     const std::vector<double>& target,
     const std::vector<int>& lib_indices,
     const std::vector<int>& pred_indices,
-    int num_neighbors,
+    int num_neighbors = 4,
     int dist_metric = 2,
     bool dist_average = true
 );
@@ -55,7 +55,7 @@ std::vector<double> SimplexProjectionPrediction(
  *   - target: Spatial cross sectional series used as the target (should align with vectors).
  *   - lib_indices: Vector of indices indicating which states to include when searching for neighbors.
  *   - pred_indices: Vector of indices indicating which states to use for prediction.
- *   - num_neighbors: Number of neighbors to use for simplex projection.
+ *   - num_neighbors: Number of neighbors to use for simplex projection. Default is 4.
  *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
  *   - dist_average: Whether to average distance by the number of valid vector components. Default is true.
  *
@@ -67,7 +67,7 @@ double SimplexProjection(
     const std::vector<double>& target,
     const std::vector<int>& lib_indices,
     const std::vector<int>& pred_indices,
-    int num_neighbors,
+    int num_neighbors = 4,
     int dist_metric = 2,
     bool dist_average = true
 );
@@ -80,7 +80,7 @@ double SimplexProjection(
  *   - target: Spatial cross sectional series to be used as the target (should align with vectors).
  *   - lib_indices: Vector of indices indicating which states to include when searching for neighbors.
  *   - pred_indices: Vector of indices indicating which states to predict from.
- *   - num_neighbors: Number of neighbors to use for simplex projection.
+ *   - num_neighbors: Number of neighbors to use for simplex projection. Default is 4.
  *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
  *   - dist_average: Whether to average distance by the number of valid vector components. Default is true.
  *
@@ -95,7 +95,7 @@ std::vector<double> SimplexBehavior(
     const std::vector<double>& target,
     const std::vector<int>& lib_indices,
     const std::vector<int>& pred_indices,
-    int num_neighbors,
+    int num_neighbors = 4,
     int dist_metric = 2,
     bool dist_average = true
 );
