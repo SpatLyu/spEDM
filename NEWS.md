@@ -2,6 +2,8 @@
 
 ### new
 
+* Introduce multiple distance metrics for cross mapping (#761).
+
 * Enable different styles of spatial cross-sectional embedding (#755).
 
 ### enhancements
