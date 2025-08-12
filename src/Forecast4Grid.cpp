@@ -183,6 +183,8 @@ std::vector<std::vector<double>> SMap4Grid(const std::vector<std::vector<double>
  * @param b Vector of neighbor counts (k) used to compute IC.
  * @param tau Spatial embedding spacing (lag). Determines distance between embedding neighbors.
  * @param exclude Number of nearest neighbors to exclude in IC computation.
+ * @param style Embedding style selector (0: includes current state, 1: excludes it). 
+ * @param dist_metric Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param threads Maximum number of threads to use.
  * @param parallel_level If > 0, enables parallel evaluation of b for each E.
  *
@@ -194,10 +196,12 @@ std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>&
                                          const std::vector<size_t>& pred_indices,
                                          const std::vector<int>& E,
                                          const std::vector<int>& b,
-                                         int tau,
-                                         int exclude,
-                                         int threads,
-                                         int parallel_level) {
+                                         int tau = 1,
+                                         int exclude = 0,
+                                         int style = 1,
+                                         int dist_metric = 2,
+                                         int threads = 8,
+                                         int parallel_level = 0) {
   // Configure threads
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
@@ -230,8 +234,8 @@ std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>&
   if (parallel_level == 0){
     for (size_t i = 0; i < Es.size(); ++i) {
       // Generate embeddings
-      auto embedding_x = GenGridEmbeddings(source, Es[i], tau);
-      auto embedding_y = GenGridEmbeddings(target, Es[i], tau);
+      auto embedding_x = GenGridEmbeddings(source, Es[i], tau, style);
+      auto embedding_y = GenGridEmbeddings(target, Es[i], tau, style);
 
       // Filter valid prediction points (exclude those with all NaN values)
       std::vector<size_t> valid_pred;
@@ -245,13 +249,16 @@ std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>&
         if (!x_nan && !y_nan) valid_pred.push_back(idx);
       }
 
+      // Use L1 norm (Manhattan distance) if dist_metric == 1, else use L2 norm
+      bool L1norm = (dist_metric == 1);
+
       // // Precompute neighbors (The earlier implementation based on a serial version)
-      // auto nx = CppDistSortedIndice(CppMatDistance(embedding_x, false, true),lib_indices,max_num_neighbors);
-      // auto ny = CppDistSortedIndice(CppMatDistance(embedding_y, false, true),lib_indices,max_num_neighbors);
+      // auto nx = CppDistSortedIndice(CppMatDistance(embedding_x, L1norm, true),lib_indices,max_num_neighbors);
+      // auto ny = CppDistSortedIndice(CppMatDistance(embedding_y, L1norm, true),lib_indices,max_num_neighbors);
 
       // Precompute neighbors (parallel computation)
-      auto nx = CppMatKNNeighbors(embedding_x, lib_indices, max_num_neighbors, threads_sizet);
-      auto ny = CppMatKNNeighbors(embedding_y, lib_indices, max_num_neighbors, threads_sizet);
+      auto nx = CppMatKNNeighbors(embedding_x, lib_indices, max_num_neighbors, threads_sizet, L1norm);
+      auto ny = CppMatKNNeighbors(embedding_y, lib_indices, max_num_neighbors, threads_sizet, L1norm);
 
       // Parameter initialization
       const size_t n_excluded_sizet = static_cast<size_t>(exclude);
@@ -276,8 +283,8 @@ std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>&
   } else {
     for (size_t i = 0; i < Es.size(); ++i) {
       // Generate embeddings
-      auto embedding_x = GenGridEmbeddings(source, Es[i], tau);
-      auto embedding_y = GenGridEmbeddings(target, Es[i], tau);
+      auto embedding_x = GenGridEmbeddings(source, Es[i], tau, style);
+      auto embedding_y = GenGridEmbeddings(target, Es[i], tau, style);
 
       // Filter valid prediction points (exclude those with all NaN values)
       std::vector<size_t> valid_pred;
@@ -291,13 +298,16 @@ std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>&
         if (!x_nan && !y_nan) valid_pred.push_back(idx);
       }
 
+      // Use L1 norm (Manhattan distance) if dist_metric == 1, else use L2 norm
+      bool L1norm = (dist_metric == 1);
+
       // // Precompute neighbors (The earlier implementation based on a serial version)
-      // auto nx = CppDistSortedIndice(CppMatDistance(embedding_x, false, true),lib_indices,max_num_neighbors);
-      // auto ny = CppDistSortedIndice(CppMatDistance(embedding_y, false, true),lib_indices,max_num_neighbors);
+      // auto nx = CppDistSortedIndice(CppMatDistance(embedding_x, L1norm, true),lib_indices,max_num_neighbors);
+      // auto ny = CppDistSortedIndice(CppMatDistance(embedding_y, L1norm, true),lib_indices,max_num_neighbors);
 
       // Precompute neighbors (parallel computation)
-      auto nx = CppMatKNNeighbors(embedding_x, lib_indices, max_num_neighbors, threads_sizet);
-      auto ny = CppMatKNNeighbors(embedding_y, lib_indices, max_num_neighbors, threads_sizet);
+      auto nx = CppMatKNNeighbors(embedding_x, lib_indices, max_num_neighbors, threads_sizet, L1norm);
+      auto ny = CppMatKNNeighbors(embedding_y, lib_indices, max_num_neighbors, threads_sizet, L1norm);
 
       // Parameter initialization
       const size_t n_excluded_sizet = static_cast<size_t>(exclude);
