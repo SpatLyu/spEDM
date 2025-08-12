@@ -885,6 +885,8 @@ Rcpp::NumericMatrix RcppIC4Grid(const Rcpp::NumericMatrix& source,
                                 const Rcpp::IntegerVector& b,
                                 int tau = 1,
                                 int exclude = 0,
+                                int style = 1,
+                                int dist_metric = 2,
                                 int threads = 8,
                                 int parallel_level = 0) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
@@ -973,6 +975,8 @@ Rcpp::NumericMatrix RcppIC4Grid(const Rcpp::NumericMatrix& source,
     b_std,
     tau,
     exclude,
+    style,
+    dist_metric,
     threads,
     parallel_level);
 
