@@ -32,6 +32,8 @@
  * @param threads              The number of threads to use for parallel processing.
  * @param parallel_level       Level of parallel computing: 0 for `lower`, 1 for `higher`.
  * @param row_size_mark        If true, use the row-wise libsize to mark the libsize; if false, use col-wise libsize.
+ * @param dist_metric          Distance metric selector (1: Manhattan, 2: Euclidean).
+ * @param dist_average         Whether to average distance by the number of valid vector components.
  *
  * @return  A vector of pairs, where each pair contains the library size and the corresponding cross mapping result.
  */
@@ -48,7 +50,10 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
     double theta,
     size_t threads,
     int parallel_level,
-    bool row_size_mark) {
+    bool row_size_mark,
+    int dist_metric,
+    bool dist_average
+) {
   // Extract row-wise and column-wise library sizes
   const int lib_size_row = lib_sizes[0];
   const int lib_size_col = lib_sizes[1];
@@ -91,9 +96,9 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
     double rho = std::numeric_limits<double>::quiet_NaN();
     // Run cross map and store results
     if (simplex) {
-      rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
+      rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b, dist_metric, dist_average);
     } else {
-      rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
+      rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta, dist_metric, dist_average);
     }
     x_xmap_y[idx] = std::make_pair(libsize, rho);
   };
@@ -128,6 +133,8 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
  * @param theta                Distance weighting parameter for S-mapping
  * @param threads              The number of threads to use for parallel processing
  * @param parallel_level       Level of parallel computing: 0 for `lower`, 1 for `higher`
+ * @param dist_metric          Distance metric selector (1: Manhattan, 2: Euclidean).
+ * @param dist_average         Whether to average distance by the number of valid vector components.
  *
  * @return A vector of pairs, where each pair contains the library size and the corresponding cross mapping result.
  */
@@ -143,7 +150,10 @@ std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
     bool simplex,
     double theta,
     size_t threads,
-    int parallel_level) {
+    int parallel_level,
+    int dist_metric,
+    bool dist_average
+) {
   int max_lib_size = lib_indices.size();
 
   // No possible library variation if using all vectors
@@ -153,9 +163,9 @@ std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
     double rho = std::numeric_limits<double>::quiet_NaN();
     // Run cross map and store results
     if (simplex) {
-      rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b);
+      rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b, dist_metric, dist_average);
     } else {
-      rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta);
+      rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta, dist_metric, dist_average);
     }
     x_xmap_y.emplace_back(lib_size, rho);
     return x_xmap_y;
@@ -189,9 +199,9 @@ std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
       double rho = std::numeric_limits<double>::quiet_NaN();
       // Run cross map and store results
       if (simplex) {
-        rho = SimplexProjection(xEmbedings, yPred, valid_lib_indices[i], pred_indices, b);
+        rho = SimplexProjection(xEmbedings, yPred, valid_lib_indices[i], pred_indices, b, dist_metric, dist_average);
       } else {
-        rho = SMap(xEmbedings, yPred, valid_lib_indices[i], pred_indices, b, theta);
+        rho = SMap(xEmbedings, yPred, valid_lib_indices[i], pred_indices, b, theta, dist_metric, dist_average);
       }
 
       std::pair<int, double> result(lib_size, rho); // Store the product of row and column library sizes
@@ -229,9 +239,9 @@ std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
       double rho = std::numeric_limits<double>::quiet_NaN();
       // Run cross map and store results
       if (simplex) {
-        rho = SimplexProjection(xEmbedings, yPred, valid_lib_indices[i], pred_indices, b);
+        rho = SimplexProjection(xEmbedings, yPred, valid_lib_indices[i], pred_indices, b, dist_metric, dist_average);
       } else {
-        rho = SMap(xEmbedings, yPred, valid_lib_indices[i], pred_indices, b, theta);
+        rho = SMap(xEmbedings, yPred, valid_lib_indices[i], pred_indices, b, theta, dist_metric, dist_average);
       }
 
       std::pair<int, double> result(lib_size, rho); // Store the product of row and column library sizes
@@ -260,6 +270,9 @@ std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
  * @param theta          The distance weighting parameter for S-Mapping (ignored if simplex is true).
  * @param threads        The number of threads to use for parallel processing.
  * @param parallel_level Level of parallel computing: 0 for `lower`, 1 for `higher`.
+ * @param style          Embedding style selector (0: includes current state, 1: excludes it). 
+ * @param dist_metric    Distance metric selector (1: Manhattan, 2: Euclidean).
+ * @param dist_average   Whether to average distance by the number of valid vector components.
  * @param progressbar    If true, display a progress bar during computation.
  *
  * @return A 2D vector where each row contains the library size, mean cross mapping result,
@@ -278,6 +291,9 @@ std::vector<std::vector<double>> GCCM4Grid(
     double theta,
     int threads,
     int parallel_level,
+    int style,
+    int dist_metric,
+    bool dist_average,
     bool progressbar
 ) {
   // If b is not provided correctly, default it to E + 2
@@ -300,7 +316,7 @@ std::vector<std::vector<double>> GCCM4Grid(
   }
 
   // Generate embeddings for xMatrix
-  std::vector<std::vector<double>> xEmbedings = GenGridEmbeddings(xMatrix, E, tau);
+  std::vector<std::vector<double>> xEmbedings = GenGridEmbeddings(xMatrix, E, tau, style);
 
   // Ensure the maximum value does not exceed totalRow or totalCol
   int max_lib_size_row = totalRow;
@@ -394,7 +410,9 @@ std::vector<std::vector<double>> GCCM4Grid(
           theta,
           threads_sizet,
           parallel_level,
-          row_size_mark);
+          row_size_mark,
+          dist_metric,
+          dist_average);
         bar++;
       }
     } else {
@@ -414,7 +432,9 @@ std::vector<std::vector<double>> GCCM4Grid(
           theta,
           threads_sizet,
           parallel_level,
-          row_size_mark);
+          row_size_mark,
+          dist_metric,
+          dist_average);
       }
     }
   } else {
@@ -437,7 +457,9 @@ std::vector<std::vector<double>> GCCM4Grid(
           theta,
           threads_sizet,
           parallel_level,
-          row_size_mark);
+          row_size_mark,
+          dist_metric,
+          dist_average);
         bar++;
       }, threads_sizet);
     } else {
@@ -457,7 +479,9 @@ std::vector<std::vector<double>> GCCM4Grid(
           theta,
           threads_sizet,
           parallel_level,
-          row_size_mark);
+          row_size_mark,
+          dist_metric,
+          dist_average);
       }, threads_sizet);
     }
   }
@@ -540,6 +564,9 @@ std::vector<std::vector<double>> GCCM4Grid(
  * @param theta          The distance weighting parameter for S-Mapping (ignored if simplex is true).
  * @param threads        The number of threads to use for parallel processing.
  * @param parallel_level Level of parallel computing: 0 for `lower`, 1 for `higher`.
+ * @param style          Embedding style selector (0: includes current state, 1: excludes it). 
+ * @param dist_metric    Distance metric selector (1: Manhattan, 2: Euclidean).
+ * @param dist_average   Whether to average distance by the number of valid vector components.
  * @param progressbar    If true, display a progress bar during computation.
  *
  * @return A 2D vector where each row contains the library size, mean cross mapping result,
@@ -558,6 +585,9 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
     double theta,
     int threads,
     int parallel_level,
+    int style,
+    int dist_metric,
+    bool dist_average,
     bool progressbar
 ) {
   // If b is not provided correctly, default it to E + 2
@@ -580,7 +610,7 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
   }
 
   // Generate embeddings for xMatrix
-  std::vector<std::vector<double>> xEmbedings = GenGridEmbeddings(xMatrix, E, tau);
+  std::vector<std::vector<double>> xEmbedings = GenGridEmbeddings(xMatrix, E, tau, style);
 
   int max_lib_size = static_cast<int>(lib.size()); // Maximum lib size
 
@@ -618,7 +648,9 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
           simplex,
           theta,
           threads_sizet,
-          parallel_level
+          parallel_level,
+          dist_metric,
+          dist_average
         );
         bar++;
       }
@@ -636,7 +668,9 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
           simplex,
           theta,
           threads_sizet,
-          parallel_level
+          parallel_level,
+          dist_metric,
+          dist_average
         );
       }
     }
@@ -658,7 +692,9 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
           simplex,
           theta,
           threads_sizet,
-          parallel_level
+          parallel_level,
+          dist_metric,
+          dist_average
         );
         bar++;
       }, threads_sizet);
@@ -677,7 +713,9 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
           simplex,
           theta,
           threads_sizet,
-          parallel_level
+          parallel_level,
+          dist_metric,
+          dist_average
         );
       }, threads_sizet);
     }

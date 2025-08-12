@@ -28,6 +28,8 @@
  *   - theta: Distance weighting parameter for local neighbors in the manifold (used in s-mapping).
  *   - threads: The number of threads to use for parallel processing.
  *   - parallel_level: Level of parallel computing: 0 for `lower`, 1 for `higher`.
+ *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
+ *   - dist_average: Whether to average distance by the number of valid vector components.
  *
  * Returns:
  *   A vector of pairs, where each pair consists of:
@@ -44,7 +46,9 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
     bool simplex,
     double theta,
     size_t threads,
-    int parallel_level
+    int parallel_level,
+    int dist_metric,
+    bool dist_average
 );
 
 /**
@@ -64,6 +68,9 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
  * - theta: Distance weighting parameter used for weighting neighbors in the S-mapping prediction.
  * - threads: Number of threads to use for parallel computation.
  * - parallel_level: Level of parallel computing: 0 for `lower`, 1 for `higher`.
+ * - style: Embedding style selector (0: includes current state, 1: excludes it).
+ * - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
+ * - dist_average: Whether to average distance by the number of valid vector components.
  * - progressbar: Boolean flag to indicate whether to display a progress bar during computation.
  *
  * Returns:
@@ -88,6 +95,9 @@ std::vector<std::vector<double>> GCCM4Lattice(
     double theta,
     int threads,
     int parallel_level,
+    int style,
+    int dist_metric,
+    bool dist_average,
     bool progressbar
 );
 
