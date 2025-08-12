@@ -29,7 +29,7 @@
                                 pl, style, .check_distmetric(dist.metric), dist.average, progressbar)
   }
   y_xmap_x = RcppGCCM4Lattice(effect,cause,nb,libsizes,lib,pred,E[2],tau[2],k[2],simplex,theta,threads,
-                              pl, style, .check_distmetric(dist.metric), dist.average,progressbar)
+                              pl, style, .check_distmetric(dist.metric), dist.average, progressbar)
 
   return(.bind_xmapdf(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
