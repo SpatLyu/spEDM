@@ -713,6 +713,9 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
                                        int b = 5,
                                        int top = 5,
                                        int nvar = 3,
+                                       int style = 1,
+                                       int dist_metric = 2,
+                                       int dist_average = true,
                                        int threads = 8){
   int numRows = yMatrix.nrow();
   int numCols = yMatrix.ncol();
@@ -810,7 +813,7 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
     std::vector<std::vector<double>> unimat = GridVec2Mat(univec,numRows);
 
     // Generate the embedding:
-    std::vector<std::vector<double>> vectors = GenGridEmbeddings(unimat,E,tau);
+    std::vector<std::vector<double>> vectors = GenGridEmbeddings(unimat,E,tau,style);
 
     for (size_t row = 0; row < vectors.size(); ++row) {  // Loop through each row
       for (size_t col = 0; col < vectors[0].size(); ++col) {  // Loop through each column
@@ -855,6 +858,8 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
     pred_indices,
     b,
     k,
+    dist_metric,
+    dist_average,
     threads);
 
   // Initialize a NumericMatrix with the given dimensions

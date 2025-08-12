@@ -561,7 +561,7 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& source,
  *   - E: The embedding dimension to evaluate. Default is 3.
  *   - tau: The spatial lag step for constructing lagged state-space vectors. Default is 1.
  *   - b: Number of nearest neighbors to use for prediction. Default is 4.
- *   - style: Embedding style selector (0: includes current state, 1: excludes it).  Default is 1 (excludes current state).
+ *   - style: Embedding style selector (0: includes current state, 1: excludes it). Default is 1 (excludes current state).
  *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
  *   - dist_average: Whether to average distance by the number of valid vector components. Default is true.
  *   - threads: Number of threads used from the global pool. Default is 8.
@@ -669,6 +669,9 @@ Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& source,
  * - b: An integer specifying the number of neighbors to use for simplex projection.
  * - top: An integer specifying the number of top embeddings to consider; if <= 0, uses sqrt(m) heuristic.
  * - nvar: An integer specifying the number of `nvar`-dimensional variable combinations.
+ * - style: Embedding style selector (0: includes current state, 1: excludes it).
+ * - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). 
+ * - dist_average: Whether to average distance by the number of valid vector components.
  * - threads: An integer indicating the number of threads for parallel processing.
  *
  * Returns:
@@ -685,6 +688,9 @@ Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
                                           int b = 5,
                                           int top = 5,
                                           int nvar = 3,
+                                          int style = 1,
+                                          int dist_metric = 2,
+                                          int dist_average = true,
                                           int threads = 8){
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> target = Rcpp::as<std::vector<double>>(y);
@@ -741,7 +747,7 @@ Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
     }
 
     // Generate the embedding:
-    std::vector<std::vector<double>> vectors = GenLatticeEmbeddings(univec,nb_vec,E,tau);
+    std::vector<std::vector<double>> vectors = GenLatticeEmbeddings(univec,nb_vec,E,tau,style);
 
     for (size_t row = 0; row < vectors.size(); ++row) {  // Loop through each row
       for (size_t col = 0; col < vectors[0].size(); ++col) {  // Loop through each column
@@ -786,6 +792,8 @@ Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
     pred_indices,
     b,
     k,
+    dist_metric,
+    dist_average,
     threads);
 
   // Convert the result back to Rcpp::NumericVector
