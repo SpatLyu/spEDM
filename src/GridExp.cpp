@@ -1214,6 +1214,9 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
     int threads = 8,
     int parallel_level = 0,
     bool cumulate = false,
+    int style = 1,
+    int dist_metric = 2,
+    bool dist_average = true,
     bool progressbar = false) {
   int numRows = yMatrix.nrow();
   int numCols = yMatrix.ncol();
@@ -1371,6 +1374,9 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
       threads,
       parallel_level,
       cumulate,
+      style,
+      dist_metric,
+      dist_average,
       progressbar
     );
   } else{
@@ -1389,6 +1395,9 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
       threads,
       parallel_level,
       cumulate,
+      style,
+      dist_metric,
+      dist_average,
       progressbar
     );
   }
