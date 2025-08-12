@@ -103,6 +103,8 @@ std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& source,
  * @param b              Vector of neighbor sizes to try.
  * @param tau            Embedding delay (usually 1 for lattice).
  * @param exclude        Number of nearest neighbors to exclude (e.g., temporal or spatial proximity).
+ * @param style          Embedding style selector (0: includes current state, 1: excludes it). 
+ * @param dist_metric    Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param threads        Number of threads for parallel computation.
  * @param parallel_level Flag indicating whether to use multi-threading (0: serial, 1: parallel).
  *
@@ -122,9 +124,11 @@ std::vector<std::vector<double>> IC4Lattice(const std::vector<double>& source,
                                             const std::vector<size_t>& pred_indices,
                                             const std::vector<int>& E,
                                             const std::vector<int>& b,
-                                            int tau,
-                                            int exclude,
-                                            int threads,
-                                            int parallel_level);
+                                            int tau = 1,
+                                            int exclude = 0,
+                                            int style = 1,
+                                            int dist_metric = 2,
+                                            int threads = 8,
+                                            int parallel_level = 0);
 
 #endif // Forecast4Lattice_H

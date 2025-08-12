@@ -8,7 +8,7 @@
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   if (is.null(top)) top = 0
   res = RcppMultiView4Lattice(xmat, yvec, nb, lib, pred, E, tau, k, top, nvar, style,
-                              ifelse(dist.metric == "L2", 2, 1), dist.average, threads)
+                              .check_distmetric(dist.metric), dist.average, threads)
   return(res)
 }
 
@@ -21,7 +21,7 @@
   if (is.null(pred)) pred = lib
   if (is.null(top)) top = 0
   res = RcppMultiView4Grid(xmat, ymat, lib, pred, E, tau, k, top, nvar, style,
-                           ifelse(dist.metric == "L2", 2, 1), dist.average, threads)
+                           .check_distmetric(dist.metric), dist.average, threads)
   return(res)
 }
 

@@ -1,5 +1,5 @@
-.gcmc_sf_method = \(data, cause, effect, libsizes = NULL, E = 3, tau = 1, k = pmin(E^2), lib = NULL, pred = NULL, nb = NULL,
-                    threads = detectThreads(), parallel.level = "low", bidirectional = TRUE, detrend = FALSE, progressbar = TRUE){
+.gcmc_sf_method = \(data, cause, effect, libsizes = NULL, E = 3, tau = 1, k = pmin(E^2), lib = NULL, pred = NULL, style = 1, dist.metric = "L2",
+                    nb = NULL, threads = detectThreads(), parallel.level = "low", bidirectional = TRUE, detrend = FALSE, progressbar = TRUE){
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
   tau = .check_inputelementnum(tau,2)
@@ -24,14 +24,16 @@
 
   x_xmap_y = NULL
   if (bidirectional){
-    x_xmap_y = RcppGCMC4Lattice(cause,effect,nb,libsizes,lib,pred,E,tau,k[1],0,threads,pl,progressbar)
+    x_xmap_y = RcppGCMC4Lattice(cause,effect,nb,libsizes,lib,pred,E,tau,k[1],0,style,
+                                .check_distmetric(dist.metric),threads,pl,progressbar)
   }
-  y_xmap_x = RcppGCMC4Lattice(effect,cause,nb,libsizes,lib,pred,rev(E),rev(tau),k[2],0,threads,pl,progressbar)
+  y_xmap_x = RcppGCMC4Lattice(effect,cause,nb,libsizes,lib,pred,rev(E),rev(tau),k[2],0,
+                              style, .check_distmetric(dist.metric),threads,pl,progressbar)
 
   return(.bind_intersectdf(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
 
-.gcmc_spatraster_method = \(data, cause, effect, libsizes = NULL, E = 3, tau = 1, k = pmin(E^2), lib = NULL, pred = NULL,
+.gcmc_spatraster_method = \(data, cause, effect, libsizes = NULL, E = 3, tau = 1, k = pmin(E^2), lib = NULL, pred = NULL, style = 1, dist.metric = "L2",
                             threads = detectThreads(), parallel.level = "low", bidirectional = TRUE, detrend = FALSE, progressbar = TRUE){
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
@@ -55,9 +57,11 @@
 
   x_xmap_y = NULL
   if (bidirectional){
-    x_xmap_y = RcppGCMC4Grid(causemat,effectmat,libsizes,lib,pred,E,tau,k[1],0,threads,pl,progressbar)
+    x_xmap_y = RcppGCMC4Grid(causemat,effectmat,libsizes,lib,pred,E,tau,k[1],0,style,
+                             .check_distmetric(dist.metric),threads,pl,progressbar)
   }
-  y_xmap_x = RcppGCMC4Grid(effectmat,causemat,libsizes,lib,pred,rev(E),rev(tau),k[2],0,threads,pl,progressbar)
+  y_xmap_x = RcppGCMC4Grid(effectmat,causemat,libsizes,lib,pred,rev(E),rev(tau),k[2],0,
+                           style,.check_distmetric(dist.metric),threads,pl,progressbar)
 
   return(.bind_intersectdf(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
@@ -73,6 +77,8 @@
 #' @param k (optional) number of nearest neighbors.
 #' @param lib (optional) libraries indices.
 #' @param pred (optional) predictions indices.
+#' @param style (optional) embedding style (`0` includes current state, `1` excludes it).
+#' @param dist.metric (optional) distance metric (`L1`: Manhattan, `L2`: Euclidean).
 #' @param nb (optional) neighbours list.
 #' @param threads (optional) number of threads to use.
 #' @param parallel.level (optional) level of parallelism, `low` or `high`.

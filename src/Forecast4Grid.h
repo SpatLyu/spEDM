@@ -99,6 +99,8 @@ std::vector<std::vector<double>> SMap4Grid(const std::vector<std::vector<double>
  * @param b Vector of neighbor counts (k) used to compute IC.
  * @param tau Spatial embedding spacing (lag). Determines distance between embedding neighbors.
  * @param exclude Number of nearest neighbors to exclude in IC computation.
+ * @param style Embedding style selector (0: includes current state, 1: excludes it). 
+ * @param dist_metric Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param threads Maximum number of threads to use.
  * @param parallel_level If > 0, enables parallel evaluation of b for each E.
  *
@@ -110,9 +112,11 @@ std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>&
                                          const std::vector<size_t>& pred_indices,
                                          const std::vector<int>& E,
                                          const std::vector<int>& b,
-                                         int tau,
-                                         int exclude,
-                                         int threads,
-                                         int parallel_level);
+                                         int tau = 1,
+                                         int exclude = 0,
+                                         int style = 1,
+                                         int dist_metric = 2,
+                                         int threads = 8,
+                                         int parallel_level = 0);
 
 #endif // Forecast4Grid_H

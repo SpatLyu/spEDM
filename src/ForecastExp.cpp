@@ -170,6 +170,7 @@ Rcpp::NumericVector RcppSMapForecast(
  *   pred: An IntegerVector containing the prediction indices. These are 1-based indices in R, and will be converted to 0-based indices in C++.
  *   num_neighbors: An integer specifying the number of neighbors to use for cross mapping.
  *   n_excluded: An integer indicating the number of neighbors to exclude from the distance matrix.
+ *   dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  *   threads: The number of parallel threads to use for computation.
  *   parallel_level: Whether to use multithreaded (0) or serial (1) mode
  *
@@ -184,6 +185,7 @@ Rcpp::NumericVector RcppIntersectionCardinality(
     const Rcpp::IntegerVector& pred,
     const int& num_neighbors = 4,
     const int& n_excluded = 0,
+    const int& dist_metric = 2,
     const int& threads = 8,
     const int& parallel_level = 0){
   // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
@@ -233,6 +235,7 @@ Rcpp::NumericVector RcppIntersectionCardinality(
     pred_indices,
     static_cast<size_t>(num_neighbors),
     static_cast<size_t>(n_excluded),
+    dist_metric,
     threads,
     parallel_level
   );

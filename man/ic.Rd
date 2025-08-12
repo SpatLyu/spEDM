@@ -15,6 +15,8 @@
   E = 2:10,
   tau = 1,
   k = E + 2,
+  style = 1,
+  dist.metric = "L2",
   nb = NULL,
   threads = detectThreads(),
   parallel.level = "low",
@@ -30,6 +32,8 @@
   E = 2:10,
   tau = 1,
   k = E + 2,
+  style = 1,
+  dist.metric = "L2",
   threads = detectThreads(),
   parallel.level = "low",
   detrend = FALSE
@@ -51,6 +55,10 @@
 \item{tau}{(optional) step of spatial lags.}
 
 \item{k}{(optional) number of nearest neighbors used.}
+
+\item{style}{(optional) embedding style (\code{0} includes current state, \code{1} excludes it).}
+
+\item{dist.metric}{(optional) distance metric (\code{L1}: Manhattan, \code{L2}: Euclidean).}
 
 \item{nb}{(optional) neighbours list.}
 

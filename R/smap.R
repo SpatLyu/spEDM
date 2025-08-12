@@ -9,8 +9,8 @@
   if (is.null(pred)) pred = lib
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   res = RcppSMap4Lattice(vx,vy,nb,lib,pred,theta,E,tau,k,style,
-                         ifelse(dist.metric == "L2", 2, 1),
-                         dist.average,threads)
+                         .check_distmetric(dist.metric), 
+                         dist.average, threads)
   return(.bind_xmapself(res,target,"smap"))
 }
 
@@ -24,7 +24,7 @@
   if (is.null(lib)) lib = which(!(is.na(mx) | is.na(my)), arr.ind = TRUE)
   if (is.null(pred)) pred = lib
   res = RcppSMap4Grid(mx,my,lib,pred,theta,E,tau,k,style,
-                      ifelse(dist.metric == "L2", 2, 1),
+                      .check_distmetric(dist.metric),
                       dist.average,threads)
   return(.bind_xmapself(res,target,"smap"))
 }
