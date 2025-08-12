@@ -549,7 +549,7 @@ std::vector<std::vector<double>> SCPCM4Grid(
   }
 
   // Generate embeddings for xMatrix
-  std::vector<std::vector<double>> xEmbedings = GenGridEmbeddings(xMatrix, Ex, taux);
+  std::vector<std::vector<double>> xEmbedings = GenGridEmbeddings(xMatrix, Ex, taux, style);
 
   size_t n_confounds;
   if (cumulate){
@@ -930,7 +930,7 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
   }
 
   // Generate embeddings for xMatrix
-  std::vector<std::vector<double>> xEmbedings = GenGridEmbeddings(xMatrix, Ex, taux);
+  std::vector<std::vector<double>> xEmbedings = GenGridEmbeddings(xMatrix, Ex, taux, style);
 
   size_t n_confounds;
   if (cumulate){
