@@ -2,8 +2,8 @@
 title: "Spatial Causality Test"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-08-12
-  | Last run: 2025-08-12
+  | Last update: 2025-08-13
+  | Last run: 2025-08-13
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{SCT}
