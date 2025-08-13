@@ -2,8 +2,8 @@
 title: "Geographical Cross Mapping Cardinality"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-08-12
-  | Last run: 2025-08-12
+  | Last update: 2025-08-13
+  | Last run: 2025-08-13
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{GCMC}
@@ -21,7 +21,7 @@ The `GCMC` algorithm provided in this package is a research method currently **u
 
 To measure causal strengths in spatial cross-sectional data, GCMC (Geographical Cross Mapping Cardinality) employs a three-stage procedure:
 
-**Stage one** involves reconstructing the state space. Given two spatial variables, $x$ and $y$, this step requires determining a suitable embedding dimension $E$ and a spatial lag interval $\tau$. For each spatial location (unit) $i$, the attribute values from its spatial neighbors at lag orders $1, 1+\tau, \dots, 1+(E-1)\tau$ are collected. These values are then summarized—commonly using the mean—to construct an embedding vector for each unit. Aggregating these vectors across all spatial units results in the reconstructed state spaces, denoted as $E_x$ and $E_y$.
+**Stage one** involves reconstructing the state space. Given two spatial variables, $x$ and $y$, this step requires determining a suitable embedding dimension $E$ and a spatial lag interval $\tau$. For each spatial location (unit) $i$, the attribute values from its spatial neighbors at lag orders $\tau, 2\tau, \dots, E\tau$ are collected. These values are then summarized—commonly using the mean—to construct an embedding vector for each unit. Aggregating these vectors across all spatial units results in the reconstructed state spaces, denoted as $E_x$ and $E_y$.
 
 **Stage two** constructs the Intersectional Cardinality (IC) curve, which serves to evaluate causal strength. To measure whether $y$ causally affects $x$, one computes, for each $k$, the overlap between the $k$ nearest neighbors of $E_y$ and the corresponding "projected" neighbors traced through $E_x$. Specifically, for each point in $E_x$, its $k$ nearest neighbors are identified, and their mapped neighbors in $E_y$ are compared with the direct neighbors of $E_y$. The IC curve is formed by recording the number of shared neighbors across a range of $k = 1, 2, \dots, n$. This process can also be reversed to test for causality from $x$ to $y$.
 
