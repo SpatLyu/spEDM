@@ -2,8 +2,8 @@
 title: "Geographical Convergent Cross Mapping"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-08-12
-  | Last run: 2025-08-12
+  | Last update: 2025-08-13
+  | Last run: 2025-08-13
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{GCCM}
@@ -19,10 +19,10 @@ Let $Y = \{y_i\}$ and $X = \{x_i\}$ be the two spatial cross sectional variable,
 
 $$
 M_{x} = \begin{bmatrix}
-S_{(1)}(x_1) & S_{(1 + \tau)}(x_1) & \cdots & S_{(1+(E-1)\tau)}(x_1) \\
-S_{(1)}(x_2) & S_{(1 + \tau)}(x_2) & \cdots & S_{(1+(E-1)\tau)}(x_2) \\
+S_{(\tau)}(x_1) & S_{(2\tau)}(x_1) & \cdots & S_{(E\tau)}(x_1) \\
+S_{(\tau)}(x_2) & S_{(2\tau)}(x_2) & \cdots & S_{(E\tau)}(x_2) \\
 \vdots & \vdots & \ddots & \vdots \\
-S_{(1)}(x_n) & S_{(1 + \tau)}(x_n) & \cdots & S_{(1+(E-1)\tau)}(x_n)
+S_{(\tau)}(x_n) & S_{(2\tau)}(x_n) & \cdots & S_{(E\tau)}(x_n)
 \end{bmatrix}
 $$
 
