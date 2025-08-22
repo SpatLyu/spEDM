@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# spEDM
+# [spEDM](https://stscl.github.io/spEDM/)
 
 <!-- badges: start -->
 
@@ -29,6 +29,9 @@ Empirical Dynamic Modeling (EDM) from time series to spatial
 cross-sectional data, supports both vector and raster spatial formats
 via integration with `sf` and `terra`, and enables data-driven causal
 inference from spatial snapshots.
+
+> *Refer to the package documentation <https://stscl.github.io/spEDM/>
+> for more detailed information.*
 
 ## Installation
 
