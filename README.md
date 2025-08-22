@@ -30,6 +30,9 @@ cross-sectional data, supports both vector and raster spatial formats
 via integration with `sf` and `terra`, and enables data-driven causal
 inference from spatial snapshots.
 
+> *Refer to the package documentation <https://stscl.github.io/spEDM/>
+> for more detailed information.*
+
 ## Installation
 
 - Install from [CRAN](https://CRAN.R-project.org/package=spEDM) with:
