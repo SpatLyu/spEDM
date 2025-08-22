@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# [spEDM](https://stscl.github.io/spEDM/)
+# spEDM
 
 <!-- badges: start -->
 
