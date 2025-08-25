@@ -2,8 +2,8 @@
 title: "Geographical Convergent Cross Mapping"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-08-13
-  | Last run: 2025-08-13
+  | Last update: 2025-08-25
+  | Last run: 2025-08-25
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{GCCM}
@@ -94,7 +94,7 @@ popd_nb = spdep::read.gal(system.file("case/popd_nb.gal",package = "spEDM"))
 ## neighbour object has 4 sub-graphs
 popd = readr::read_csv(system.file("case/popd.csv",package = "spEDM"))
 ## Rows: 2806 Columns: 7
-## ── Column specification ────────────────────────────────────────────────────────────────────────────
+## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: ","
 ## dbl (7): lon, lat, popd, elev, tem, pre, slope
 ## 
@@ -148,7 +148,7 @@ pd_res = gccm(data = popd_sf,
               progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 2.64765 mins
+## Time difference of 1.513382 mins
 pd_res
 ##    libsizes pre->popd  popd->pre
 ## 1       100 0.1140592 0.03269659
@@ -247,7 +247,7 @@ npp_res = gccm(data = npp,
                progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 1.514482 mins
+## Time difference of 0.7732776 mins
 npp_res
 ##   libsizes  pre->npp  npp->pre
 ## 1       10 0.1282926 0.1111690
