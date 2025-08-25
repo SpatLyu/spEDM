@@ -2,7 +2,7 @@
 title: "Geographical Cross Mapping Cardinality"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-08-13
+  | Last update: 2025-08-25
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -19,13 +19,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-## 📌 Research Notice
-
-The `GCMC` algorithm provided in this package is a research method currently **under peer review in the *International Journal of Geographical Information Science (IJGIS)* **. We provide early access to its implementation and a detailed vignette for reproducibility. Users should note that **methodological details may evolve** before final publication.
-
 ## Methodological Background
 
-To measure causal strengths in spatial cross-sectional data, GCMC (Geographical Cross Mapping Cardinality) employs a three-stage procedure:
+To measure causal strengths from spatial cross-sectional data, GCMC (Geographical Cross Mapping Cardinality) employs a three-stage procedure:
 
 **Stage one** involves reconstructing the state space. Given two spatial variables, $x$ and $y$, this step requires determining a suitable embedding dimension $E$ and a spatial lag interval $\tau$. For each spatial location (unit) $i$, the attribute values from its spatial neighbors at lag orders $\tau, 2\tau, \dots, E\tau$ are collected. These values are then summarized—commonly using the mean—to construct an embedding vector for each unit. Aggregating these vectors across all spatial units results in the reconstructed state spaces, denoted as $E_x$ and $E_y$.
 
