@@ -274,6 +274,7 @@ Rcpp::List RcppSLMBi4Grid(
     double alpha_y = 0.77,
     double beta_xy = 0.05,
     double beta_yx = 0.4,
+    int interact = 0,
     double escape_threshold = 1e10
 ) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
@@ -291,7 +292,7 @@ Rcpp::List RcppSLMBi4Grid(
 
   // Call the core function
   std::vector<std::vector<std::vector<double>>> result = SLMBi4Grid(
-    cppMat1, cppMat2, k, step, alpha_x, alpha_y, beta_xy, beta_yx, escape_threshold
+    cppMat1, cppMat2, k, step, alpha_x, alpha_y, beta_xy, beta_yx, interact, escape_threshold
   );
 
   // Create NumericMatrix with rows = number of spatial units, cols = number of steps+1
@@ -334,6 +335,7 @@ Rcpp::List RcppSLMTri4Grid(
     double beta_yz = 0.4,
     double beta_zx = 0.65,
     double beta_zy = 0.65,
+    int interact = 0,
     double escape_threshold = 1e10
 ) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
@@ -356,7 +358,7 @@ Rcpp::List RcppSLMTri4Grid(
     cppMat1, cppMat2, cppMat3,
     k, step, alpha_x, alpha_y, alpha_z,
     beta_xy, beta_xz, beta_yx, beta_yz, beta_zx, beta_zy,
-    escape_threshold
+    interact, escape_threshold
   );
 
   // Create NumericMatrix with rows = number of spatial units, cols = number of steps+1
@@ -462,7 +464,7 @@ Rcpp::NumericVector RcppFNN4Grid(
   std::vector<double> E_std = Rcpp::as<std::vector<double>>(E);
   int max_E = CppMax(E_std, true);
   std::vector<std::vector<double>> embeddings = GenGridEmbeddings(cppMat, max_E, tau, style);
-  
+
   // Use L1 norm (Manhattan distance) if dist_metric == 1, else use L2 norm
   bool L1norm = (dist_metric == 1);
 

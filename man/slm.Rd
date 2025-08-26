@@ -24,6 +24,7 @@
   beta_zy = 0.35,
   threshold = Inf,
   transient = 1,
+  interact = "local",
   nb = NULL
 )
 
@@ -44,7 +45,8 @@
   beta_zx = 0.35,
   beta_zy = 0.35,
   threshold = Inf,
-  transient = 1
+  transient = 1,
+  interact = "local"
 )
 }
 \arguments{
@@ -81,6 +83,8 @@
 \item{threshold}{(optional) set to \code{NaN} if the absolute value exceeds this threshold.}
 
 \item{transient}{(optional) transients to be excluded from the results.}
+
+\item{interact}{(optional) type of cross-variable interaction (\code{local} or \code{neighbors}).}
 
 \item{nb}{(optional) neighbours list.}
 }
