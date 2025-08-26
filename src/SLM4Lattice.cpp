@@ -108,8 +108,17 @@ std::vector<std::vector<double>> SLMUni4Lattice(
  * on lattice data, where each of the two spatial variables evolves based on its own previous value,
  * the average of its neighbors' values, and cross-variable interaction from the other variable.
  *
- * For each spatial unit, the evolution of variable 1 is influenced by its own spatial neighbors
- * and an inhibitory term proportional to variable 2 at the same location, and vice versa.
+ * Interaction type is controlled by the parameter `interact`:
+ *   - If interact = 0 (default behavior): the cross-variable term uses the value of the interacting
+ *     variable at the *same spatial unit*.
+ *   - If interact = 1: the cross-variable term uses the *average of the interacting variable in the neighbors*
+ *     instead of the local value, thereby representing direct spatial causation.
+ *
+ * For each spatial unit:
+ *   - Variable 1 evolves based on its neighbors of variable 1 and inhibition from variable 2
+ *     (either local or neighbor-averaged, depending on `interact`).
+ *   - Variable 2 evolves based on its neighbors of variable 2 and inhibition from variable 1
+ *     (local or neighbor-averaged).
  *
  * @param vec1               Initial values of the first spatial variable (e.g., species A density).
  * @param vec2               Initial values of the second spatial variable (e.g., species B density).
@@ -120,6 +129,7 @@ std::vector<std::vector<double>> SLMUni4Lattice(
  * @param alpha2             Growth/interaction parameter for the second variable.
  * @param beta12             Cross-inhibition coefficient from variable 1 to variable 2.
  * @param beta21             Cross-inhibition coefficient from variable 2 to variable 1.
+ * @param interact           Interaction type (0 = local interaction, 1 = neighbor-averaged interaction).
  * @param escape_threshold   Threshold to treat divergent values as invalid (default: 1e10).
  *
  * @return A 3D vector of simulation results:
@@ -137,6 +147,7 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Lattice(
     double alpha2,
     double beta12,
     double beta21,
+    int interact,
     double escape_threshold = 1e10
 ){
   // Initialize result array with NaNs (2, rows: spatial units, cols: time steps)
@@ -154,9 +165,6 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Lattice(
   if (k > 0){
     // Initialize index library for all spatial units
     std::vector<int> lib(vec1.size());
-    // for(size_t i = 0; i < vec1.size(); ++i){
-    //   lib[i] = static_cast<int>(i);
-    // }
     std::iota(lib.begin(), lib.end(), 0); // Fill with 0, 1, ..., vec1.size()-1
 
     // Generate fixed-k neighbors (if possible)
@@ -185,14 +193,34 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Lattice(
           }
         }
 
-        // Apply the spatial logistic map update if neighbors exist
+        // Apply the spatial logistic map update depending on interaction type
         double v_next_1 = std::numeric_limits<double>::quiet_NaN();
         double v_next_2 = std::numeric_limits<double>::quiet_NaN();
+
         if (valid_neighbors_1 > 0){
-          v_next_1 = 1 - alpha1 * res[0][currentIndex][s - 1] * (v_neighbors_1 / valid_neighbors_1 - beta21 * res[1][currentIndex][s - 1]);
+          if (interact == 0){
+            // Local interaction (original)
+            v_next_1 = 1 - alpha1 * res[0][currentIndex][s - 1] *
+              (v_neighbors_1 / valid_neighbors_1 - beta21 * res[1][currentIndex][s - 1]);
+          } else {
+            // Neighbor-averaged interaction
+            double cross_term = (valid_neighbors_2 > 0) ? (v_neighbors_2 / valid_neighbors_2) : 0;
+            v_next_1 = 1 - alpha1 * res[0][currentIndex][s - 1] *
+              (v_neighbors_1 / valid_neighbors_1 - beta21 * cross_term);
+          }
         }
+
         if (valid_neighbors_2 > 0){
-          v_next_2 = 1 - alpha2 * res[1][currentIndex][s - 1] * (v_neighbors_2 / valid_neighbors_2 - beta12 * res[0][currentIndex][s - 1]);
+          if (interact == 0){
+            // Local interaction (original)
+            v_next_2 = 1 - alpha2 * res[1][currentIndex][s - 1] *
+              (v_neighbors_2 / valid_neighbors_2 - beta12 * res[0][currentIndex][s - 1]);
+          } else {
+            // Neighbor-averaged interaction
+            double cross_term = (valid_neighbors_1 > 0) ? (v_neighbors_1 / valid_neighbors_1) : 0;
+            v_next_2 = 1 - alpha2 * res[1][currentIndex][s - 1] *
+              (v_neighbors_2 / valid_neighbors_2 - beta12 * cross_term);
+          }
         }
 
         // Update result only if the value is within the escape threshold
@@ -205,15 +233,17 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Lattice(
       }
     }
   } else {
-    // Time-stepped simulation
+    // Time-stepped simulation without neighbors
     for (size_t s = 1; s <= step; ++s){
       for(size_t currentIndex = 0; currentIndex < vec1.size(); ++currentIndex){
         // Skip if the current value is invalid (NaN)
         if (std::isnan(res[0][currentIndex][s - 1]) && std::isnan(res[1][currentIndex][s - 1])) continue;
 
         // Apply the logistic map update if no neighbors exist
-        double v_next_1 = res[0][currentIndex][s - 1] * (alpha1 - alpha1 * res[0][currentIndex][s - 1] - beta21 * res[1][currentIndex][s - 1]);
-        double v_next_2 = res[1][currentIndex][s - 1] * (alpha2 - alpha2 * res[1][currentIndex][s - 1] - beta12 * res[0][currentIndex][s - 1]);
+        double v_next_1 = res[0][currentIndex][s - 1] *
+          (alpha1 - alpha1 * res[0][currentIndex][s - 1] - beta21 * res[1][currentIndex][s - 1]);
+        double v_next_2 = res[1][currentIndex][s - 1] *
+          (alpha2 - alpha2 * res[1][currentIndex][s - 1] - beta12 * res[0][currentIndex][s - 1]);
 
         // Update result only if the value is within the escape threshold
         if (!std::isinf(v_next_1) && std::abs(v_next_1) <= escape_threshold){

@@ -41,8 +41,17 @@ std::vector<std::vector<double>> SLMUni4Lattice(
  * on lattice data, where each of the two spatial variables evolves based on its own previous value,
  * the average of its neighbors' values, and cross-variable interaction from the other variable.
  *
- * For each spatial unit, the evolution of variable 1 is influenced by its own spatial neighbors
- * and an inhibitory term proportional to variable 2 at the same location, and vice versa.
+ * Interaction type is controlled by the parameter `interact`:
+ *   - If interact = 0 (default behavior): the cross-variable term uses the value of the interacting
+ *     variable at the *same spatial unit*.
+ *   - If interact = 1: the cross-variable term uses the *average of the interacting variable in the neighbors*
+ *     instead of the local value, thereby representing direct spatial causation.
+ *
+ * For each spatial unit:
+ *   - Variable 1 evolves based on its neighbors of variable 1 and inhibition from variable 2
+ *     (either local or neighbor-averaged, depending on `interact`).
+ *   - Variable 2 evolves based on its neighbors of variable 2 and inhibition from variable 1
+ *     (local or neighbor-averaged).
  *
  * @param vec1               Initial values of the first spatial variable (e.g., species A density).
  * @param vec2               Initial values of the second spatial variable (e.g., species B density).
@@ -53,6 +62,7 @@ std::vector<std::vector<double>> SLMUni4Lattice(
  * @param alpha2             Growth/interaction parameter for the second variable.
  * @param beta12             Cross-inhibition coefficient from variable 1 to variable 2.
  * @param beta21             Cross-inhibition coefficient from variable 2 to variable 1.
+ * @param interact           Interaction type (0 = local interaction, 1 = neighbor-averaged interaction).
  * @param escape_threshold   Threshold to treat divergent values as invalid (default: 1e10).
  *
  * @return A 3D vector of simulation results:
@@ -70,6 +80,7 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Lattice(
     double alpha2,
     double beta12,
     double beta21,
+    int interact,
     double escape_threshold = 1e10
 );
 
