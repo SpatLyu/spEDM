@@ -78,13 +78,14 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Grid(
 );
 
 /**
- * @brief Simulate a three-variable spatial logistic map on a 2D grid.
+ * @brief Simulate a three-variable spatial logistic map on a 2D grid with flexible interaction options.
  *
  * This function performs a time-stepped simulation of three interacting spatial variables
- * arranged in grid format. For each cell in the spatial grid, it constructs k-nearest neighbors
- * based on Queen adjacency. At each time step, the function updates each variable's value by applying
- * a coupled logistic map formula that considers the average values of neighboring cells and the influence
- * of the other two variables through specified interaction coefficients.
+ * arranged in grid format. For each cell in the spatial lattice, it constructs k-nearest neighbors
+ * based on Queen adjacency. At each time step, the function updates each variable's value
+ * by applying a coupled logistic map formula that considers the average values of neighboring cells
+ * and the influence of the other two variables. The influence can be either local (self-cell values)
+ * or spatially averaged (neighbor values) based on the `interact` parameter.
  *
  * The simulation proceeds for a specified number of steps, starting from initial input matrices,
  * and stops or skips updates when values become invalid (NaN) or exceed a defined escape threshold.
@@ -103,6 +104,7 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Grid(
  * @param beta23 Interaction coefficient from variable 2 to variable 3.
  * @param beta31 Interaction coefficient from variable 3 to variable 1.
  * @param beta32 Interaction coefficient from variable 3 to variable 2.
+ * @param interact If 0, interactions use self-cell values; if 1, interactions use neighbors' averages.
  * @param escape_threshold Threshold to prevent values from diverging too far.
  *
  * @return A 3D vector containing simulated values for each variable,
@@ -123,6 +125,7 @@ std::vector<std::vector<std::vector<double>>> SLMTri4Grid(
     double beta23,
     double beta31,
     double beta32,
+    int interact = 0,
     double escape_threshold = 1e10
 );
 

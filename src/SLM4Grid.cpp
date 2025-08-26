@@ -257,13 +257,14 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Grid(
 }
 
 /**
- * @brief Simulate a three-variable spatial logistic map on a 2D grid.
+ * @brief Simulate a three-variable spatial logistic map on a 2D grid with flexible interaction options.
  *
  * This function performs a time-stepped simulation of three interacting spatial variables
  * arranged in grid format. For each cell in the spatial lattice, it constructs k-nearest neighbors
- * based on Queen adjacency. At each time step, the function updates each variable's value by applying
- * a coupled logistic map formula that considers the average values of neighboring cells and the influence
- * of the other two variables through specified interaction coefficients.
+ * based on Queen adjacency. At each time step, the function updates each variable's value
+ * by applying a coupled logistic map formula that considers the average values of neighboring cells
+ * and the influence of the other two variables. The influence can be either local (self-cell values)
+ * or spatially averaged (neighbor values) based on the `interact` parameter.
  *
  * The simulation proceeds for a specified number of steps, starting from initial input matrices,
  * and stops or skips updates when values become invalid (NaN) or exceed a defined escape threshold.
@@ -282,6 +283,7 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Grid(
  * @param beta23 Interaction coefficient from variable 2 to variable 3.
  * @param beta31 Interaction coefficient from variable 3 to variable 1.
  * @param beta32 Interaction coefficient from variable 3 to variable 2.
+ * @param interact If 0, interactions use self-cell values; if 1, interactions use neighbors' averages.
  * @param escape_threshold Threshold to prevent values from diverging too far.
  *
  * @return A 3D vector containing simulated values for each variable,
@@ -302,6 +304,7 @@ std::vector<std::vector<std::vector<double>>> SLMTri4Grid(
     double beta23,
     double beta31,
     double beta32,
+    int interact = 0,
     double escape_threshold = 1e10
 ){
   size_t nrow = mat1.size();
@@ -344,18 +347,13 @@ std::vector<std::vector<std::vector<double>>> SLMTri4Grid(
     // Time-stepped simulation
     for (size_t s = 1; s <= step; ++s){
       for (size_t i = 0; i < ncell; ++i){
-        // Skip if the current value is invalid (NaN)
         if (std::isnan(res[0][i][s - 1]) &&
             std::isnan(res[1][i][s - 1]) &&
             std::isnan(res[2][i][s - 1])) continue;
 
         // Compute the average of valid neighboring values
-        double v_neighbors_1 = 0;
-        double v_neighbors_2 = 0;
-        double v_neighbors_3 = 0;
-        double valid_neighbors_1 = 0;
-        double valid_neighbors_2 = 0;
-        double valid_neighbors_3 = 0;
+        double v_neighbors_1 = 0, v_neighbors_2 = 0, v_neighbors_3 = 0;
+        double valid_neighbors_1 = 0, valid_neighbors_2 = 0, valid_neighbors_3 = 0;
         const std::vector<int>& local_neighbors = neighbors[i];
 
         for (size_t j = 0; j < local_neighbors.size(); ++j){
@@ -374,21 +372,40 @@ std::vector<std::vector<std::vector<double>>> SLMTri4Grid(
           }
         }
 
-        // Apply the spatial logistic map update if neighbors exist
         double v_next_1 = std::numeric_limits<double>::quiet_NaN();
         double v_next_2 = std::numeric_limits<double>::quiet_NaN();
         double v_next_3 = std::numeric_limits<double>::quiet_NaN();
+
         if (valid_neighbors_1 > 0){
-          v_next_1 = 1 - alpha1 * res[0][i][s - 1] * (v_neighbors_1 / valid_neighbors_1 - beta21 * res[1][i][s - 1] - beta31 * res[2][i][s - 1]);
-        }
-        if (valid_neighbors_2 > 0){
-          v_next_2 = 1 - alpha2 * res[1][i][s - 1] * (v_neighbors_2 / valid_neighbors_2 - beta12 * res[0][i][s - 1] - beta32 * res[2][i][s - 1]);
-        }
-        if (valid_neighbors_3 > 0){
-          v_next_3 = 1 - alpha3 * res[2][i][s - 1] * (v_neighbors_3 / valid_neighbors_3 - beta13 * res[0][i][s - 1] - beta23 * res[1][i][s - 1]);
+          if (interact == 0){
+            v_next_1 = 1 - alpha1 * res[0][i][s - 1] *
+              (v_neighbors_1 / valid_neighbors_1 - beta21 * res[1][i][s - 1] - beta31 * res[2][i][s - 1]);
+          } else {
+            v_next_1 = 1 - alpha1 * res[0][i][s - 1] *
+              (v_neighbors_1 / valid_neighbors_1 - beta21 * (v_neighbors_2 / valid_neighbors_2) - beta31 * (v_neighbors_3 / valid_neighbors_3));
+          }
         }
 
-        // Update result only if the value is within the escape threshold
+        if (valid_neighbors_2 > 0){
+          if (interact == 0){
+            v_next_2 = 1 - alpha2 * res[1][i][s - 1] *
+              (v_neighbors_2 / valid_neighbors_2 - beta12 * res[0][i][s - 1] - beta32 * res[2][i][s - 1]);
+          } else {
+            v_next_2 = 1 - alpha2 * res[1][i][s - 1] *
+              (v_neighbors_2 / valid_neighbors_2 - beta12 * (v_neighbors_1 / valid_neighbors_1) - beta32 * (v_neighbors_3 / valid_neighbors_3));
+          }
+        }
+
+        if (valid_neighbors_3 > 0){
+          if (interact == 0){
+            v_next_3 = 1 - alpha3 * res[2][i][s - 1] *
+              (v_neighbors_3 / valid_neighbors_3 - beta13 * res[0][i][s - 1] - beta23 * res[1][i][s - 1]);
+          } else {
+            v_next_3 = 1 - alpha3 * res[2][i][s - 1] *
+              (v_neighbors_3 / valid_neighbors_3 - beta13 * (v_neighbors_1 / valid_neighbors_1) - beta23 * (v_neighbors_2 / valid_neighbors_2));
+          }
+        }
+
         if (!std::isinf(v_next_1) && std::abs(v_next_1) <= escape_threshold){
           res[0][i][s] = v_next_1;
         }
@@ -401,20 +418,17 @@ std::vector<std::vector<std::vector<double>>> SLMTri4Grid(
       }
     }
   } else {
-    // Time-stepped simulation
+    // No neighbors: standard logistic map updates
     for (size_t s = 1; s <= step; ++s){
       for (size_t i = 0; i < ncell; ++i){
-        // Skip if the current value is invalid (NaN)
         if (std::isnan(res[0][i][s - 1]) &&
             std::isnan(res[1][i][s - 1]) &&
             std::isnan(res[2][i][s - 1])) continue;
 
-        // Apply the logistic map update if no neighbors exist
         double v_next_1 = res[0][i][s - 1] * (alpha1 - alpha1 * res[0][i][s - 1] - beta21 * res[1][i][s - 1] - beta31 * res[2][i][s - 1]);
         double v_next_2 = res[1][i][s - 1] * (alpha2 - alpha2 * res[1][i][s - 1] - beta12 * res[0][i][s - 1] - beta32 * res[2][i][s - 1]);
         double v_next_3 = res[2][i][s - 1] * (alpha3 - alpha3 * res[2][i][s - 1] - beta13 * res[0][i][s - 1] - beta23 * res[1][i][s - 1]);
 
-        // Update result only if the value is within the escape threshold
         if (!std::isinf(v_next_1) && std::abs(v_next_1) <= escape_threshold){
           res[0][i][s] = v_next_1;
         }
