@@ -2,7 +2,7 @@
 title: "Spatial Logistic Map"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-08-25
+  | Last update: 2025-08-27
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -45,14 +45,27 @@ $$
 
 where $\alpha$ controls the strength of nonlinearity and spatial coupling, $\mathcal{N}(i)$ denotes the set of spatial neighbors (e.g., rook- or queen-connected units), and $k = |\mathcal{N}(i)|$ is the number of neighbors. This form reflects a **local averaging interaction**: the future value of a unit depends on its current value and the average state of its neighbors.
 
-Importantly, when extended to multivariate spatial settings, such as **bivariate or trivariate spatial logistic maps**, each spatial variable evolves not only through its own neighbors but also through inter-variable interactions at the same spatial location. For example, in a bivariate spatial logistic map:
+Importantly, when extended to multivariate spatial settings, such as **bivariate or trivariate spatial logistic maps**, each spatial variable evolves not only through its own neighbors but also through inter-variable interactions. For example, in a **bivariate spatial logistic map**, the update rules may be written as:
+
+- **Local cross-variable interaction (default form):**
 
 $$
 x_{i}^{(t+1)} = 1 - \alpha_1 x_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} x_j^{(t)} - \beta_{21} y_i^{(t)} \right), \\
-y_{i}^{(t+1)} = 1 - \alpha_2 y_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} y_j^{(t)} - \beta_{12} x_i^{(t)} \right),
+y_{i}^{(t+1)} = 1 - \alpha_2 y_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} y_j^{(t)} - \beta_{12} x_i^{(t)} \right).
 $$
 
-with similar expressions for the trivariate case. These models capture **local spatial coupling** and **in-place cross-variable inhibition**, producing spatiotemporal patterns such as waves, kinks, frozen random states, and spatiotemporal chaos.
+Here, the inhibitory (or facilitative) influence between variables is restricted to the same spatial location.
+
+- **Neighbor-averaged cross-variable interaction (extended form):**
+
+$$
+x_{i}^{(t+1)} = 1 - \alpha_1 x_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} x_j^{(t)} - \beta_{21} \frac{1}{k} \sum_{j \in \mathcal{N}(i)} y_j^{(t)} \right), \\
+y_{i}^{(t+1)} = 1 - \alpha_2 y_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} y_j^{(t)} - \beta_{12} \frac{1}{k} \sum_{j \in \mathcal{N}(i)} x_j^{(t)} \right).
+$$
+
+In this alternative form, the inter-variable interactions are mediated through the **neighbor-averaged states**, allowing each variable to be influenced by the spatial context of the other.
+
+Both formulations capture the combination of **local spatial coupling** and **cross-variable inhibition**, but they differ in whether the cross-variable effects are purely local or spatially contextualized. These distinctions lead to different spatiotemporal outcomes, including waves, kinks, frozen random states, and spatiotemporal chaos.
 
 By performing statistical aggregation over the long-run time series values at each spatial unit, one can generate spatial cross-sectional data that reflect different causal scenarios.
 
@@ -92,8 +105,26 @@ terra::plot(species, nc = 3,
 
 We assume an underlying causal interaction structure among species, where species *a* influences *b*, and *b* in turn influences *c* (i.e., *a* → *b* → *c*). The intrinsic growth rates of species a, b, and c are uniformly assigned a value of 0.2. Species a exerts an effect of 1 on species b, and species b exerts an effect of 1 on species c. All other interspecific influence parameters are set to 0. This setup provides a controlled environment to test spatial causality detection methods under known dynamic interactions.
 
-```{r spatial_logistic_map,fig.width=6.55,fig.height=2.60,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. Species distributions following spatiotemporal interaction and evolution after 20 simulation steps with 4-neighbor interactions.")}
-simv = spEDM::slm(species,x = "a", y = "b", z = "c", k = 4, step = 15, transient = 1,
+```{r slm1,fig.width=6.55,fig.height=2.60,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. Species distributions following spatiotemporal interaction and evolution after 20 simulation steps with 4-neighbor interactions.")}
+simv = spEDM::slm(species,x = "a", y = "b", z = "c", k = 4, step = 15, transient = 1, interact = "local",
+                  alpha_x = 0.2, alpha_y = 0.2, alpha_z = 0.2,
+                  beta_xy = 1, beta_xz = 0, beta_yx = 0, beta_yz = 1, beta_zx = 0, beta_zy = 0)
+
+species_evolution = species
+terra::values(species_evolution[["a"]]) = simv$x
+terra::values(species_evolution[["b"]]) = simv$y
+terra::values(species_evolution[["c"]]) = simv$z
+species_evolution
+
+terra::plot(species_evolution, nc = 3,
+            mar = rep(0.1,4),
+            oma = rep(0.1,4),
+            axes = FALSE,
+            legend = FALSE)
+```
+
+```{r slm2,fig.width=6.55,fig.height=2.60,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 3**. Species distributions after 20 simulation steps with 4-neighbor interactions and neighbor-averaged cross-variable dynamics.")}
+simv = spEDM::slm(species,x = "a", y = "b", z = "c", k = 4, step = 15, transient = 1, interact = "neighbors",
                   alpha_x = 0.2, alpha_y = 0.2, alpha_z = 0.2,
                   beta_xy = 1, beta_xz = 0, beta_yx = 0, beta_yz = 1, beta_zx = 0, beta_zy = 0)
 
