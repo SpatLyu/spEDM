@@ -80,7 +80,7 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Lattice(
     double alpha2,
     double beta12,
     double beta21,
-    int interact,
+    int interact = 0,
     double escape_threshold = 1e10
 );
 
@@ -90,7 +90,8 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Lattice(
  * This function simulates the dynamics of a three-variable coupled Spatial Logistic Map
  * across a lattice. Each spatial variable evolves over discrete time steps under the
  * influence of: (1) its own previous value, (2) the mean of its spatial neighbors,
- * and (3) cross-variable interactions from the other two variables at the same location.
+ * and (3) cross-variable interactions from the other two variables at the same location
+ * or from their neighbors depending on the `interact` parameter.
  *
  * For each spatial unit:
  * - Variable 1 is influenced by its own neighbors and is inhibited by Variable 2 and Variable 3.
@@ -112,6 +113,9 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Lattice(
  * @param beta23             Cross-inhibition from variable 2 to variable 3.
  * @param beta31             Cross-inhibition from variable 3 to variable 1.
  * @param beta32             Cross-inhibition from variable 3 to variable 2.
+ * @param interact           Type of cross-variable interaction:
+ *                           0 = use local values (default behavior for k>0),
+ *                           1 = use neighbor averages instead.
  * @param escape_threshold   Threshold beyond which values are treated as divergent (default: 1e10).
  *
  * @return A 3D vector of simulation results:
@@ -135,6 +139,7 @@ std::vector<std::vector<std::vector<double>>> SLMTri4Lattice(
     double beta23,
     double beta31,
     double beta32,
+    int interact = 0,
     double escape_threshold = 1e10
 );
 
