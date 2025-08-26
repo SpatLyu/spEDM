@@ -33,7 +33,7 @@ std::vector<std::vector<double>> SLMUni4Grid(
 );
 
 /**
- * @brief Simulate a bivariate Spatial Logistic Map (SLM) on gridded data.
+ * @brief Simulate a bivariate Spatial Logistic Map (SLM) on gridded data with flexible interaction.
  *
  * This function performs time-stepped simulations of a bivariate Spatial Logistic Map
  * on two input grid-based datasets. Each spatial unit (cell) evolves over time based on
@@ -41,8 +41,9 @@ std::vector<std::vector<double>> SLMUni4Grid(
  * Queen-style adjacency and expanded recursively until k non-NaN neighbors are obtained.
  *
  * The two interacting variables influence each other through cross-inhibition terms
- * (beta12 and beta21), enabling simulation of coupled spatial dynamics (e.g., predator-prey,
- * competing species, or interacting fields).
+ * (beta12 and beta21). The `interact` parameter controls the type of cross-interaction:
+ *   - interact = 0: cross-inhibition uses the local cell values (default behavior for k > 0)
+ *   - interact = 1: cross-inhibition uses the average of neighbors' values
  *
  * The logistic update rule for each cell includes a local term and a spatial term,
  * and diverging values (e.g., explosions) are filtered using an escape threshold.
@@ -55,6 +56,7 @@ std::vector<std::vector<double>> SLMUni4Grid(
  * @param alpha2            Growth/interaction parameter for the second variable.
  * @param beta12            Cross-inhibition from the first variable to the second.
  * @param beta21            Cross-inhibition from the second variable to the first.
+ * @param interact          Type of cross-variable interaction (0 = local, 1 = neighbors).
  * @param escape_threshold  Threshold to treat divergent values as invalid (default: 1e10).
  *
  * @return A 3D vector of simulation results:
@@ -71,6 +73,7 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Grid(
     double alpha2,
     double beta12,
     double beta21,
+    int interact = 0,
     double escape_threshold = 1e10
 );
 
