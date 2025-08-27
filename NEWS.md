@@ -2,6 +2,8 @@
 
 ### new
 
+* Provide new mechanisms for variable interaction in the spatial logistic map (#772).
+
 * Introduce configurable distance metrics for cross mapping (#761).
 
 * Enable alternative styles of spatial cross-sectional embedding 
