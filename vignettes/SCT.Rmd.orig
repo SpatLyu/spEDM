@@ -2,7 +2,7 @@
 title: "Spatial Causality Test"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-08-25
+  | Last update: 2025-08-30
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
