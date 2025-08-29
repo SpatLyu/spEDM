@@ -4,32 +4,28 @@
 
 ## This submission
 
-This release introduces new modeling capabilities, streamlined method infrastructure, and refinements to the package interface and visualization support:
+This update extends the package’s capabilities for spatial empirical dynamic modeling, with a 
+focus on methodological flexibility, computational efficiency, and statistical rigor.
 
-* **New R API and vignette** for the spatial logistic map, enabling simulation and analysis of spatial nonlinear dynamics.
+* **New features**:
+  * Added variable interaction mechanisms in the spatial logistic map for richer coupled 
+    dynamics.
+  * Introduced configurable distance metrics in cross mapping to adapt distance measures 
+    to data characteristics.
+  * Enabled alternative spatial cross-sectional embeddings for more flexible state-space 
+    reconstruction.
 
-* **Enhancements** to method infrastructure, documentation consistency, and plotting functionality:
-
-  * Replaced logical vectors with integer indices for more efficient `lib/pred` indexing in `C++` level forecasting methods.
-
-  * Generic method registration has been made more robust, preventing duplicate registrations and simplifying S4 method management.
-
-  * All parameter descriptions have been standardized to lowercase for improved documentation clarity.
-
-  * Confidence interval ribbons are now supported in the S3 plotting method for cross mapping results.
+* **Enhancements**:
+  * Improved handling of NaNs in cross mapping to ensure robust inference.
+  * Safeguarded transient removal in the spatial logistic map to avoid indexing errors.
+  * Adjusted default embedding dimension range in `simplex()` and `smap` to `2:10` for 
+    stronger attractor reconstruction.
+  * Added multithreading in distance-based computations for faster large-scale analysis.
+  * Cross mapping plots now display p-value annotations for clearer interpretation.
 
 * **Breaking changes**:
+  * Population density dataset coordinates renamed to `lon` and `lat` for consistency.
+  * Switched from mean-of-rho to Fisher z-transform for more rigorous significance and 
+    confidence interval estimation.
 
-  * Refined randomization strategy in spatial causality test.
-
-  * C++ symbolization functions now compute medians using only the `lib` subset, ensuring consistency with library-based inference.
-
-  * The argument `trend.rm` has been renamed to `detrend` for improved naming consistency.
-
-  * The `column` argument is now uniformly supported in `simplex()`, `smap()`, and `multiview()` (renaming `columns` to `column`).
-
-* **Bug fixes**:
-
-  * Corrected a mismatch between legend labels and line colors in plots of cross mapping results.
-
-This is a regular feature update focused on extending support for spatial nonlinear modeling workflows, improving code robustness, and maintaining interface consistency.
+Overall, this release strengthens methodological scope and robustness in spatial EDM workflows.
