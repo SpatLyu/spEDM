@@ -2,7 +2,7 @@
 title: "Geographical Convergent Cross Mapping"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-08-30
+  | Last update: 2025-08-25
   | Last run: 2025-08-30
 output: rmarkdown::html_vignette
 vignette: >
@@ -148,7 +148,7 @@ pd_res = gccm(data = popd_sf,
               progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 1.513382 mins
+## Time difference of 1.722532 mins
 pd_res
 ##    libsizes pre->popd  popd->pre
 ## 1       100 0.1140592 0.03269659
@@ -247,7 +247,7 @@ npp_res = gccm(data = npp,
                progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
-## Time difference of 0.7732776 mins
+## Time difference of 0.8938826 mins
 npp_res
 ##   libsizes  pre->npp  npp->pre
 ## 1       10 0.1282926 0.1111690
