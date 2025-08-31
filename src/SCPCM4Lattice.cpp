@@ -619,10 +619,10 @@ std::vector<std::vector<double>> SCPCM4Lattice(
         mean_third,
         significance_second,
         confidence_interval_second[0],
-                                  confidence_interval_second[1],
-                                                            significance_third,
-                                                            confidence_interval_third[0],
-                                                                                     confidence_interval_third[1]
+        confidence_interval_second[1],
+        significance_third,
+        confidence_interval_third[0],
+        confidence_interval_third[1]
       });
     }
   }

@@ -807,7 +807,6 @@ std::vector<std::vector<double>> SCPCM4Grid(
     }
   } else {
     // For each group, compute the mean of second and third values and calculate significance and confidence intervals using the original vectors
-    std::vector<std::vector<double>> final_results;
     for (const auto& group : grouped_results) {
       std::vector<double> second_values, third_values;
 
@@ -835,10 +834,10 @@ std::vector<std::vector<double>> SCPCM4Grid(
         mean_third,
         significance_second,
         confidence_interval_second[0],
-                                  confidence_interval_second[1],
-                                                            significance_third,
-                                                            confidence_interval_third[0],
-                                                                                     confidence_interval_third[1]
+        confidence_interval_second[1],
+        significance_third,
+        confidence_interval_third[0],
+        confidence_interval_third[1]
       });
     }
   }
@@ -1130,7 +1129,6 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
     }
   } else {
     // For each group, compute the mean of second and third values and calculate significance and confidence intervals using the original vectors
-    std::vector<std::vector<double>> final_results;
     for (const auto& group : grouped_results) {
       std::vector<double> second_values, third_values;
 
@@ -1158,10 +1156,10 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
         mean_third,
         significance_second,
         confidence_interval_second[0],
-                                  confidence_interval_second[1],
-                                                            significance_third,
-                                                            confidence_interval_third[0],
-                                                                                     confidence_interval_third[1]
+        confidence_interval_second[1],
+        significance_third,
+        confidence_interval_third[0],
+        confidence_interval_third[1]
       });
     }
   }

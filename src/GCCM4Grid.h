@@ -114,9 +114,10 @@ std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
  * @param theta          The distance weighting parameter for S-Mapping (ignored if simplex is true).
  * @param threads        The number of threads to use for parallel processing.
  * @param parallel_level Level of parallel computing: 0 for `lower`, 1 for `higher`.
- * @param style          Embedding style selector (0: includes current state, 1: excludes it). 
+ * @param style          Embedding style selector (0: includes current state, 1: excludes it).
  * @param dist_metric    Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param dist_average   Whether to average distance by the number of valid vector components.
+ * @param single_sig     Whether to estimate significance and confidence intervals using a single rho value.
  * @param progressbar    If true, display a progress bar during computation.
  *
  * @return A 2D vector where each row contains the library size, mean cross mapping result,
@@ -138,6 +139,7 @@ std::vector<std::vector<double>> GCCM4Grid(
     int style,
     int dist_metric,
     bool dist_average,
+    bool single_sig,
     bool progressbar
 );
 
@@ -159,9 +161,10 @@ std::vector<std::vector<double>> GCCM4Grid(
  * @param theta          The distance weighting parameter for S-Mapping (ignored if simplex is true).
  * @param threads        The number of threads to use for parallel processing.
  * @param parallel_level Level of parallel computing: 0 for `lower`, 1 for `higher`.
- * @param style          Embedding style selector (0: includes current state, 1: excludes it). 
+ * @param style          Embedding style selector (0: includes current state, 1: excludes it).
  * @param dist_metric    Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param dist_average   Whether to average distance by the number of valid vector components.
+ * @param single_sig     Whether to estimate significance and confidence intervals using a single rho value.
  * @param progressbar    If true, display a progress bar during computation.
  *
  * @return A 2D vector where each row contains the library size, mean cross mapping result,
@@ -183,6 +186,7 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
     int style,
     int dist_metric,
     bool dist_average,
+    bool single_sig,
     bool progressbar
 );
 
