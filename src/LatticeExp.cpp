@@ -1008,6 +1008,7 @@ Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x,
                                       int style = 1,
                                       int dist_metric = 2,
                                       bool dist_average = true,
+                                      bool single_sig = true,
                                       bool progressbar = false) {
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
@@ -1070,6 +1071,7 @@ Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x,
     style,
     dist_metric,
     dist_average,
+    single_sig,
     progressbar);
 
   // Convert std::vector<std::vector<double>> to Rcpp::NumericMatrix
