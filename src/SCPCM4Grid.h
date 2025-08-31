@@ -33,7 +33,7 @@
  * @param num_neighbors: Vector specifying the numbers of neighbors to use for Simplex Projection.
  * @param nrow: Number of rows in the input spatial grid data.
  * @param cumulate: Boolean flag to determine whether to cumulate the partial correlations.
- * @param style: Embedding style selector (0: includes current state, 1: excludes it). 
+ * @param style: Embedding style selector (0: includes current state, 1: excludes it).
  * @param dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param dist_average: Whether to average distance by the number of valid vector components.
  * @return A vector of size 2 containing:
@@ -75,7 +75,7 @@ std::vector<double> PartialSimplex4Grid(
  * @param nrow: Number of rows in the input spatial grid data.
  * @param theta: Weighting parameter for distances in the S-Map method.
  * @param cumulate: Boolean flag to determine whether to cumulate the partial correlations.
- * @param style: Embedding style selector (0: includes current state, 1: excludes it). 
+ * @param style: Embedding style selector (0: includes current state, 1: excludes it).
  * @param dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param dist_average: Whether to average distance by the number of valid vector components.
  * @return A vector of size 2 containing:
@@ -122,7 +122,7 @@ std::vector<double> PartialSMap4Grid(
  * @param parallel_level       Level of parallel computing: 0 for `lower`, 1 for `higher`.
  * @param cumulate             Whether to cumulate the partial correlations.
  * @param row_size_mark        If ture, use the row-wise libsize to mark the libsize; if false, use col-wise libsize.
- * @param style                Embedding style selector (0: includes current state, 1: excludes it). 
+ * @param style                Embedding style selector (0: includes current state, 1: excludes it).
  * @param dist_metric          Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param dist_average         Whether to average distance by the number of valid vector components.
  *
@@ -173,7 +173,7 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
  * @param threads              The number of threads to use for parallel processing
  * @param parallel_level       Level of parallel computing: 0 for `lower`, 1 for `higher`
  * @param cumulate             Enable cumulative partial correlations
- * @param style                Embedding style selector (0: includes current state, 1: excludes it) 
+ * @param style                Embedding style selector (0: includes current state, 1: excludes it)
  * @param dist_metric          Distance metric selector (1: Manhattan, 2: Euclidean)
  * @param dist_average         Whether to average distance by the number of valid vector components
  *
@@ -226,6 +226,7 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
  * - style: Embedding style selector (0: includes current state, 1: excludes it).
  * - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * - dist_average: Whether to average distance by the number of valid vector components.
+ * - single_sig: Whether to estimate significance and confidence intervals using a single rho value.
  * - progressbar: Boolean flag indicating whether to display a progress bar during computation.
  *
  * Returns:
@@ -258,6 +259,7 @@ std::vector<std::vector<double>> SCPCM4Grid(
     int style,                                           // Embedding style selector (0: includes current state, 1: excludes it)
     int dist_metric,                                     // Distance metric selector (1: Manhattan, 2: Euclidean)
     bool dist_average,                                   // Whether to average distance by the number of valid vector components
+    bool single_sig,                                     // Whether to estimate significance and confidence intervals using a single rho value
     bool progressbar                                     // Whether to print the progress bar
 );
 
@@ -282,6 +284,7 @@ std::vector<std::vector<double>> SCPCM4Grid(
  * - style: Embedding style selector (0: includes current state, 1: excludes it).
  * - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * - dist_average: Whether to average distance by the number of valid vector components.
+ * - single_sig: Whether to estimate significance and confidence intervals using a single rho value.
  * - progressbar: Display progress bar during computation
  *
  * Returns:
@@ -314,6 +317,7 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
     int style,
     int dist_metric,
     bool dist_average,
+    bool single_sig,
     bool progressbar
 );
 

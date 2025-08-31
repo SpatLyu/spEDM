@@ -376,7 +376,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
     int style,                                          // Embedding style selector (0: includes current state, 1: excludes it)
     int dist_metric,                                    // Distance metric selector (1: Manhattan, 2: Euclidean)
     bool dist_average,                                  // Whether to average distance by the number of valid vector components
-    bool single_sig,                                    // Whether to estimate significance and confidence intervals using a single rho value.
+    bool single_sig,                                    // Whether to estimate significance and confidence intervals using a single rho value
     bool progressbar                                    // Whether to print the progress bar
 ) {
   // If b is not provided correctly, default it to E + 2
