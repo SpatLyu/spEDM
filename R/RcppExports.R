@@ -105,8 +105,8 @@ RcppIC4Grid <- function(source, target, lib, pred, E, b, tau = 1L, exclude = 0L,
     .Call(`_spEDM_RcppIC4Grid`, source, target, lib, pred, E, b, tau, exclude, style, dist_metric, threads, parallel_level)
 }
 
-RcppGCCM4Grid <- function(xMatrix, yMatrix, libsizes, lib, pred, E = 3L, tau = 1L, b = 5L, simplex = TRUE, theta = 0, threads = 8L, parallel_level = 0L, style = 1L, dist_metric = 2L, dist_average = TRUE, progressbar = FALSE) {
-    .Call(`_spEDM_RcppGCCM4Grid`, xMatrix, yMatrix, libsizes, lib, pred, E, tau, b, simplex, theta, threads, parallel_level, style, dist_metric, dist_average, progressbar)
+RcppGCCM4Grid <- function(xMatrix, yMatrix, libsizes, lib, pred, E = 3L, tau = 1L, b = 5L, simplex = TRUE, theta = 0, threads = 8L, parallel_level = 0L, style = 1L, dist_metric = 2L, dist_average = TRUE, single_sig = TRUE, progressbar = FALSE) {
+    .Call(`_spEDM_RcppGCCM4Grid`, xMatrix, yMatrix, libsizes, lib, pred, E, tau, b, simplex, theta, threads, parallel_level, style, dist_metric, dist_average, single_sig, progressbar)
 }
 
 RcppSCPCM4Grid <- function(xMatrix, yMatrix, zMatrix, libsizes, lib, pred, E, tau, b, simplex = TRUE, theta = 0, threads = 8L, parallel_level = 0L, cumulate = FALSE, style = 1L, dist_metric = 2L, dist_average = TRUE, single_sig = TRUE, progressbar = FALSE) {
@@ -201,8 +201,8 @@ RcppIC4Lattice <- function(source, target, nb, lib, pred, E, b, tau = 1L, exclud
     .Call(`_spEDM_RcppIC4Lattice`, source, target, nb, lib, pred, E, b, tau, exclude, style, dist_metric, threads, parallel_level)
 }
 
-RcppGCCM4Lattice <- function(x, y, nb, libsizes, lib, pred, E = 3L, tau = 1L, b = 5L, simplex = TRUE, theta = 0, threads = 8L, parallel_level = 0L, style = 1L, dist_metric = 2L, dist_average = TRUE, progressbar = FALSE) {
-    .Call(`_spEDM_RcppGCCM4Lattice`, x, y, nb, libsizes, lib, pred, E, tau, b, simplex, theta, threads, parallel_level, style, dist_metric, dist_average, progressbar)
+RcppGCCM4Lattice <- function(x, y, nb, libsizes, lib, pred, E = 3L, tau = 1L, b = 5L, simplex = TRUE, theta = 0, threads = 8L, parallel_level = 0L, style = 1L, dist_metric = 2L, dist_average = TRUE, single_sig = TRUE, progressbar = FALSE) {
+    .Call(`_spEDM_RcppGCCM4Lattice`, x, y, nb, libsizes, lib, pred, E, tau, b, simplex, theta, threads, parallel_level, style, dist_metric, dist_average, single_sig, progressbar)
 }
 
 RcppSCPCM4Lattice <- function(x, y, z, nb, libsizes, lib, pred, E, tau, b, simplex = TRUE, theta = 0, threads = 8L, parallel_level = 0L, cumulate = FALSE, style = 1L, dist_metric = 2L, dist_average = TRUE, single_sig = TRUE, progressbar = FALSE) {
