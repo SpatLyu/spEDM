@@ -26,10 +26,10 @@
   x_xmap_y = NULL
   if (bidirectional){
     x_xmap_y = RcppGCCM4Lattice(cause,effect,nb,libsizes,lib,pred,E[1],tau[1],k[1],simplex,theta,threads,
-                                pl, style, .check_distmetric(dist.metric), dist.average, progressbar)
+                                pl, style, .check_distmetric(dist.metric), dist.average, TRUE, progressbar)
   }
   y_xmap_x = RcppGCCM4Lattice(effect,cause,nb,libsizes,lib,pred,E[2],tau[2],k[2],simplex,theta,threads,
-                              pl, style, .check_distmetric(dist.metric), dist.average, progressbar)
+                              pl, style, .check_distmetric(dist.metric), dist.average, TRUE, progressbar)
 
   return(.bind_xmapdf(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
@@ -60,10 +60,10 @@
   x_xmap_y = NULL
   if (bidirectional){
     x_xmap_y = RcppGCCM4Grid(causemat,effectmat,libsizes,lib,pred,E[1],tau[1],k[1],simplex,theta,threads,
-                             pl, style, .check_distmetric(dist.metric), dist.average, progressbar)
+                             pl, style, .check_distmetric(dist.metric), dist.average, TRUE, progressbar)
   }
   y_xmap_x = RcppGCCM4Grid(effectmat,causemat,libsizes,lib,pred,E[2],tau[2],k[2],simplex,theta,threads,
-                           pl, style, .check_distmetric(dist.metric), dist.average, progressbar)
+                           pl, style, .check_distmetric(dist.metric), dist.average, TRUE, progressbar)
 
   return(.bind_xmapdf(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
