@@ -11,8 +11,6 @@
 
 ### enhancements
 
-* Prevent unreliable predictions and potentially alter results when NaNs are present in cross mapping (#747).
-
 * Safeguard transient removal logic in spatial logistic map to prevent index errors (#744).
 
 * Adjust the default `E` range in the `simplex` generic to `2:10` to support more robust reconstruction of state spaces (#739).
@@ -23,9 +21,9 @@
 
 ### breaking changes
 
-* Rename coordinate columns in population density case csv to `lon` and `lat` (#741).
+* Prevent unreliable predictions and potentially alter results when NaNs are present in cross mapping (#747).
 
-* Switch mean-of-rho to full-vector Fisher z-transform for significance and CI calculations (#706).
+* Rename coordinate columns in population density case csv to `lon` and `lat` (#741).
 
 # spEDM 1.7
 
