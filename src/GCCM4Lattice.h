@@ -71,6 +71,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
  * - style: Embedding style selector (0: includes current state, 1: excludes it).
  * - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * - dist_average: Whether to average distance by the number of valid vector components.
+ * - single_sig: Whether to estimate significance and confidence intervals using a single rho value.
  * - progressbar: Boolean flag to indicate whether to display a progress bar during computation.
  *
  * Returns:
@@ -98,6 +99,7 @@ std::vector<std::vector<double>> GCCM4Lattice(
     int style,
     int dist_metric,
     bool dist_average,
+    bool single_sig,
     bool progressbar
 );
 

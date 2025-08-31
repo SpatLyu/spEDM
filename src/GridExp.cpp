@@ -1023,6 +1023,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
     int style = 1,
     int dist_metric = 2,
     bool dist_average = true,
+    bool single_sig = true,
     bool progressbar = false) {
   int numRows = yMatrix.nrow();
   int numCols = yMatrix.ncol();
@@ -1169,6 +1170,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
       style,
       dist_metric,
       dist_average,
+      single_sig,
       progressbar
     );
   } else{
@@ -1188,6 +1190,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
       style,
       dist_metric,
       dist_average,
+      single_sig,
       progressbar
     );
   }
@@ -1228,6 +1231,7 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
     int style = 1,
     int dist_metric = 2,
     bool dist_average = true,
+    bool single_sig = true,
     bool progressbar = false) {
   int numRows = yMatrix.nrow();
   int numCols = yMatrix.ncol();
@@ -1388,6 +1392,7 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
       style,
       dist_metric,
       dist_average,
+      single_sig,
       progressbar
     );
   } else{
@@ -1409,6 +1414,7 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
       style,
       dist_metric,
       dist_average,
+      single_sig,
       progressbar
     );
   }

@@ -32,7 +32,7 @@
  * @param num_neighbors: Vector specifying the numbers of neighbors to use for Simplex Projection.
  * @param nrow: Number of rows in the input spatial grid data.
  * @param cumulate: Boolean flag to determine whether to cumulate the partial correlations.
- * @param style: Embedding style selector (0: includes current state, 1: excludes it). 
+ * @param style: Embedding style selector (0: includes current state, 1: excludes it).
  * @param dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param dist_average: Whether to average distance by the number of valid vector components.
  * @return A vector of size 2 containing:
@@ -122,7 +122,7 @@ std::vector<double> PartialSimplex4Grid(
  * @param nrow: Number of rows in the input spatial grid data.
  * @param theta: Weighting parameter for distances in the S-Map method.
  * @param cumulate: Boolean flag to determine whether to cumulate the partial correlations.
- * @param style: Embedding style selector (0: includes current state, 1: excludes it). 
+ * @param style: Embedding style selector (0: includes current state, 1: excludes it).
  * @param dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param dist_average: Whether to average distance by the number of valid vector components.
  * @return A vector of size 2 containing:
@@ -217,7 +217,7 @@ std::vector<double> PartialSMap4Grid(
  * @param parallel_level       Level of parallel computing: 0 for `lower`, 1 for `higher`.
  * @param cumulate             Whether to cumulate the partial correlations.
  * @param row_size_mark        If ture, use the row-wise libsize to mark the libsize; if false, use col-wise libsize.
- * @param style                Embedding style selector (0: includes current state, 1: excludes it). 
+ * @param style                Embedding style selector (0: includes current state, 1: excludes it).
  * @param dist_metric          Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param dist_average         Whether to average distance by the number of valid vector components.
  *
@@ -334,7 +334,7 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
  * @param threads              The number of threads to use for parallel processing
  * @param parallel_level       Level of parallel computing: 0 for `lower`, 1 for `higher`
  * @param cumulate             Enable cumulative partial correlations
- * @param style                Embedding style selector (0: includes current state, 1: excludes it) 
+ * @param style                Embedding style selector (0: includes current state, 1: excludes it)
  * @param dist_metric          Distance metric selector (1: Manhattan, 2: Euclidean)
  * @param dist_average         Whether to average distance by the number of valid vector components
  *
@@ -484,6 +484,7 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
  * - style: Embedding style selector (0: includes current state, 1: excludes it).
  * - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * - dist_average: Whether to average distance by the number of valid vector components.
+ * - single_sig: Whether to estimate significance and confidence intervals using a single rho value.
  * - progressbar: Boolean flag indicating whether to display a progress bar during computation.
  *
  * Returns:
@@ -516,6 +517,7 @@ std::vector<std::vector<double>> SCPCM4Grid(
     int style,                                           // Embedding style selector (0: includes current state, 1: excludes it)
     int dist_metric,                                     // Distance metric selector (1: Manhattan, 2: Euclidean)
     bool dist_average,                                   // Whether to average distance by the number of valid vector components
+    bool single_sig,                                     // Whether to estimate significance and confidence intervals using a single rho value
     bool progressbar                                     // Whether to print the progress bar
 ) {
   // If b is not provided correctly, default it to E + 2
@@ -763,82 +765,81 @@ std::vector<std::vector<double>> SCPCM4Grid(
   }
 
   size_t n = pred.size();
-
-  // // Previous implementation calculated significance and confidence intervals using the mean of rho vector only.
-  // // This approach is now deprecated and kept here for comparison purposes.
-  // std::vector<std::vector<double>> final_results;
-  // // Compute the mean of second and third values for each group
-  // for (const auto& group : grouped_results) {
-  //   std::vector<double> second_values, third_values;
-  //
-  //   for (const auto& val : group.second) {
-  //     second_values.push_back(val.first);
-  //     third_values.push_back(val.second);
-  //   }
-  //
-  //   double mean_second = CppMean(second_values, true);
-  //   double mean_third = CppMean(third_values, true);
-  //
-  //   final_results.push_back({static_cast<double>(group.first), mean_second, mean_third});
-  // }
-  //
-  // // Compute significance and confidence intervals for each result
-  // for (size_t i = 0; i < final_results.size(); ++i) {
-  //   double rho_second = final_results[i][1];
-  //   double rho_third = final_results[i][2];
-  //
-  //   // Compute significance and confidence interval for second value
-  //   double significance_second = CppCorSignificance(rho_second, n);
-  //   std::vector<double> confidence_interval_second = CppCorConfidence(rho_second, n);
-  //
-  //   // Compute significance and confidence interval for third value
-  //   double significance_third = CppCorSignificance(rho_third, n, n_confounds);
-  //   std::vector<double> confidence_interval_third = CppCorConfidence(rho_third, n, n_confounds);
-  //
-  //   // Append computed statistical values to the result
-  //   final_results[i].push_back(significance_second);
-  //   final_results[i].push_back(confidence_interval_second[0]);
-  //   final_results[i].push_back(confidence_interval_second[1]);
-  //
-  //   final_results[i].push_back(significance_third);
-  //   final_results[i].push_back(confidence_interval_third[0]);
-  //   final_results[i].push_back(confidence_interval_third[1]);
-  // }
-
-  // For each group, compute the mean of second and third values and calculate significance and confidence intervals using the original vectors
   std::vector<std::vector<double>> final_results;
-  for (const auto& group : grouped_results) {
-    std::vector<double> second_values, third_values;
 
-    // Collect all second and third values from current group
-    for (const auto& val : group.second) {
-      second_values.push_back(val.first);
-      third_values.push_back(val.second);
+  if (single_sig) {
+    // Calculate significance and confidence intervals using the mean of rho vector only.
+    for (const auto& group : grouped_results) { // Compute the mean of second and third values for each group
+      std::vector<double> second_values, third_values;
+
+      for (const auto& val : group.second) {
+        second_values.push_back(val.first);
+        third_values.push_back(val.second);
+      }
+
+      double mean_second = CppMean(second_values, true);
+      double mean_third = CppMean(third_values, true);
+
+      final_results.push_back({static_cast<double>(group.first), mean_second, mean_third});
     }
 
-    // Compute mean values for reporting
-    double mean_second = CppMean(second_values, true);
-    double mean_third = CppMean(third_values, true);
+    // Compute significance and confidence intervals for each result
+    for (size_t i = 0; i < final_results.size(); ++i) {
+      double rho_second = final_results[i][1];
+      double rho_third = final_results[i][2];
 
-    // Compute significance and confidence intervals using the full vector of values (not just mean)
-    double significance_second = CppMeanCorSignificance(second_values, n);
-    std::vector<double> confidence_interval_second = CppMeanCorConfidence(second_values, n);
+      // Compute significance and confidence interval for second value
+      double significance_second = CppCorSignificance(rho_second, n);
+      std::vector<double> confidence_interval_second = CppCorConfidence(rho_second, n);
 
-    double significance_third = CppMeanCorSignificance(third_values, n, n_confounds);
-    std::vector<double> confidence_interval_third = CppMeanCorConfidence(third_values, n, n_confounds);
+      // Compute significance and confidence interval for third value
+      double significance_third = CppCorSignificance(rho_third, n, n_confounds);
+      std::vector<double> confidence_interval_third = CppCorConfidence(rho_third, n, n_confounds);
 
-    // Store group ID, mean values, and corresponding statistical results
-    final_results.push_back({
-      static_cast<double>(group.first),
-      mean_second,
-      mean_third,
-      significance_second,
-      confidence_interval_second[0],
-      confidence_interval_second[1],
-      significance_third,
-      confidence_interval_third[0],
-      confidence_interval_third[1]
-    });
+      // Append computed statistical values to the result
+      final_results[i].push_back(significance_second);
+      final_results[i].push_back(confidence_interval_second[0]);
+      final_results[i].push_back(confidence_interval_second[1]);
+
+      final_results[i].push_back(significance_third);
+      final_results[i].push_back(confidence_interval_third[0]);
+      final_results[i].push_back(confidence_interval_third[1]);
+    }
+  } else {
+    // For each group, compute the mean of second and third values and calculate significance and confidence intervals using the original vectors
+    for (const auto& group : grouped_results) {
+      std::vector<double> second_values, third_values;
+
+      // Collect all second and third values from current group
+      for (const auto& val : group.second) {
+        second_values.push_back(val.first);
+        third_values.push_back(val.second);
+      }
+
+      // Compute mean values for reporting
+      double mean_second = CppMean(second_values, true);
+      double mean_third = CppMean(third_values, true);
+
+      // Compute significance and confidence intervals using the full vector of values (not just mean)
+      double significance_second = CppMeanCorSignificance(second_values, n);
+      std::vector<double> confidence_interval_second = CppMeanCorConfidence(second_values, n);
+
+      double significance_third = CppMeanCorSignificance(third_values, n, n_confounds);
+      std::vector<double> confidence_interval_third = CppMeanCorConfidence(third_values, n, n_confounds);
+
+      // Store group ID, mean values, and corresponding statistical results
+      final_results.push_back({
+        static_cast<double>(group.first),
+        mean_second,
+        mean_third,
+        significance_second,
+        confidence_interval_second[0],
+        confidence_interval_second[1],
+        significance_third,
+        confidence_interval_third[0],
+        confidence_interval_third[1]
+      });
+    }
   }
 
   return final_results;
@@ -865,6 +866,7 @@ std::vector<std::vector<double>> SCPCM4Grid(
  * - style: Embedding style selector (0: includes current state, 1: excludes it).
  * - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * - dist_average: Whether to average distance by the number of valid vector components.
+ * - single_sig: Whether to estimate significance and confidence intervals using a single rho value.
  * - progressbar: Display progress bar during computation
  *
  * Returns:
@@ -897,6 +899,7 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
     int style,
     int dist_metric,
     bool dist_average,
+    bool single_sig,
     bool progressbar
 ) {
   // If b is not provided correctly, default it to E + 2
@@ -1084,82 +1087,81 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
   }
 
   size_t n = pred.size();
-
-  // // Previous implementation calculated significance and confidence intervals using the mean of rho vector only.
-  // // This approach is now deprecated and kept here for comparison purposes.
-  // std::vector<std::vector<double>> final_results;
-  // Compute the mean of second and third values for each group
-  // for (const auto& group : grouped_results) {
-  //   std::vector<double> second_values, third_values;
-  //
-  //   for (const auto& val : group.second) {
-  //     second_values.push_back(val.first);
-  //     third_values.push_back(val.second);
-  //   }
-  //
-  //   double mean_second = CppMean(second_values, true);
-  //   double mean_third = CppMean(third_values, true);
-  //
-  //   final_results.push_back({static_cast<double>(group.first), mean_second, mean_third});
-  // }
-  //
-  // // Compute significance and confidence intervals for each result
-  // for (size_t i = 0; i < final_results.size(); ++i) {
-  //   double rho_second = final_results[i][1];
-  //   double rho_third = final_results[i][2];
-  //
-  //   // Compute significance and confidence interval for second value
-  //   double significance_second = CppCorSignificance(rho_second, n);
-  //   std::vector<double> confidence_interval_second = CppCorConfidence(rho_second, n);
-  //
-  //   // Compute significance and confidence interval for third value
-  //   double significance_third = CppCorSignificance(rho_third, n, n_confounds);
-  //   std::vector<double> confidence_interval_third = CppCorConfidence(rho_third, n, n_confounds);
-  //
-  //   // Append computed statistical values to the result
-  //   final_results[i].push_back(significance_second);
-  //   final_results[i].push_back(confidence_interval_second[0]);
-  //   final_results[i].push_back(confidence_interval_second[1]);
-  //
-  //   final_results[i].push_back(significance_third);
-  //   final_results[i].push_back(confidence_interval_third[0]);
-  //   final_results[i].push_back(confidence_interval_third[1]);
-  // }
-
-  // For each group, compute the mean of second and third values and calculate significance and confidence intervals using the original vectors
   std::vector<std::vector<double>> final_results;
-  for (const auto& group : grouped_results) {
-    std::vector<double> second_values, third_values;
 
-    // Collect all second and third values from current group
-    for (const auto& val : group.second) {
-      second_values.push_back(val.first);
-      third_values.push_back(val.second);
+  if (single_sig) {
+    // Calculate significance and confidence intervals using the mean of rho vector only.
+    for (const auto& group : grouped_results) { // Compute the mean of second and third values for each group
+      std::vector<double> second_values, third_values;
+
+      for (const auto& val : group.second) {
+        second_values.push_back(val.first);
+        third_values.push_back(val.second);
+      }
+
+      double mean_second = CppMean(second_values, true);
+      double mean_third = CppMean(third_values, true);
+
+      final_results.push_back({static_cast<double>(group.first), mean_second, mean_third});
     }
 
-    // Compute mean values for reporting
-    double mean_second = CppMean(second_values, true);
-    double mean_third = CppMean(third_values, true);
+    // Compute significance and confidence intervals for each result
+    for (size_t i = 0; i < final_results.size(); ++i) {
+      double rho_second = final_results[i][1];
+      double rho_third = final_results[i][2];
 
-    // Compute significance and confidence intervals using the full vector of values (not just mean)
-    double significance_second = CppMeanCorSignificance(second_values, n);
-    std::vector<double> confidence_interval_second = CppMeanCorConfidence(second_values, n);
+      // Compute significance and confidence interval for second value
+      double significance_second = CppCorSignificance(rho_second, n);
+      std::vector<double> confidence_interval_second = CppCorConfidence(rho_second, n);
 
-    double significance_third = CppMeanCorSignificance(third_values, n, n_confounds);
-    std::vector<double> confidence_interval_third = CppMeanCorConfidence(third_values, n, n_confounds);
+      // Compute significance and confidence interval for third value
+      double significance_third = CppCorSignificance(rho_third, n, n_confounds);
+      std::vector<double> confidence_interval_third = CppCorConfidence(rho_third, n, n_confounds);
 
-    // Store group ID, mean values, and corresponding statistical results
-    final_results.push_back({
-      static_cast<double>(group.first),
-      mean_second,
-      mean_third,
-      significance_second,
-      confidence_interval_second[0],
-      confidence_interval_second[1],
-      significance_third,
-      confidence_interval_third[0],
-      confidence_interval_third[1]
-    });
+      // Append computed statistical values to the result
+      final_results[i].push_back(significance_second);
+      final_results[i].push_back(confidence_interval_second[0]);
+      final_results[i].push_back(confidence_interval_second[1]);
+
+      final_results[i].push_back(significance_third);
+      final_results[i].push_back(confidence_interval_third[0]);
+      final_results[i].push_back(confidence_interval_third[1]);
+    }
+  } else {
+    // For each group, compute the mean of second and third values and calculate significance and confidence intervals using the original vectors
+    for (const auto& group : grouped_results) {
+      std::vector<double> second_values, third_values;
+
+      // Collect all second and third values from current group
+      for (const auto& val : group.second) {
+        second_values.push_back(val.first);
+        third_values.push_back(val.second);
+      }
+
+      // Compute mean values for reporting
+      double mean_second = CppMean(second_values, true);
+      double mean_third = CppMean(third_values, true);
+
+      // Compute significance and confidence intervals using the full vector of values (not just mean)
+      double significance_second = CppMeanCorSignificance(second_values, n);
+      std::vector<double> confidence_interval_second = CppMeanCorConfidence(second_values, n);
+
+      double significance_third = CppMeanCorSignificance(third_values, n, n_confounds);
+      std::vector<double> confidence_interval_third = CppMeanCorConfidence(third_values, n, n_confounds);
+
+      // Store group ID, mean values, and corresponding statistical results
+      final_results.push_back({
+        static_cast<double>(group.first),
+        mean_second,
+        mean_third,
+        significance_second,
+        confidence_interval_second[0],
+        confidence_interval_second[1],
+        significance_third,
+        confidence_interval_third[0],
+        confidence_interval_third[1]
+      });
+    }
   }
 
   return final_results;
