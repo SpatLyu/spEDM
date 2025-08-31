@@ -29,7 +29,7 @@
  * @param taus: Vector specifying the spatial lag step for constructing lagged state-space vectors with control variables.
  * @param num_neighbors: Vector specifying the numbers of neighbors to use for simplex projection.
  * @param cumulate: Flag indicating whether to cumulatively incorporate control variables.
- * @param style: Embedding style selector (0: includes current state, 1: excludes it). 
+ * @param style: Embedding style selector (0: includes current state, 1: excludes it).
  * @param dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param dist_average: Whether to average distance by the number of valid vector components.
  *
@@ -72,7 +72,7 @@ std::vector<double> PartialSimplex4Lattice(
  * @param num_neighbors: Vector specifying the numbers of neighbors to use for S-Map prediction.
  * @param theta: Weighting parameter for distances in S-Map.
  * @param cumulate: Boolean flag to determine whether to cumulate the partial correlations.
- * @param style: Embedding style selector (0: includes current state, 1: excludes it). 
+ * @param style: Embedding style selector (0: includes current state, 1: excludes it).
  * @param dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param dist_average: Whether to average distance by the number of valid vector components.
  * @return A vector of size 2 containing:
@@ -168,6 +168,7 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
  * - style: Embedding style selector (0: includes current state, 1: excludes it).
  * - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * - dist_average: Whether to average distance by the number of valid vector components.
+ * - single_sig: Whether to estimate significance and confidence intervals using a single rho value.
  * - progressbar: Boolean flag indicating whether to display a progress bar during computation.
  *
  * Returns:
@@ -201,6 +202,7 @@ std::vector<std::vector<double>> SCPCM4Lattice(
     int style,                                          // Embedding style selector (0: includes current state, 1: excludes it)
     int dist_metric,                                    // Distance metric selector (1: Manhattan, 2: Euclidean)
     bool dist_average,                                  // Whether to average distance by the number of valid vector components
+    bool single_sig,                                    // Whether to estimate significance and confidence intervals using a single rho value.
     bool progressbar                                    // Whether to print the progress bar
 );
 
