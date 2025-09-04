@@ -785,7 +785,7 @@ double CppCorSignificance(double r, size_t n, size_t k = 0) {
 
   double pvalue = (1 - R::pt(t, df, true, false)) * 2;
 
-  // Ensure p value is within valid range [-1, 1]
+  // Ensure p value is within valid range [0, 1]
   if (pvalue < 0) pvalue = 0;
   if (pvalue > 1.0) pvalue = 1.0;
 
@@ -812,7 +812,7 @@ double CppCorSignificance(double r, size_t n, size_t k = 0) {
  * @param n The number of observations.
  * @param k The number of control variables (default = 0; use 0 for simple correlation).
  * @param level The significance level α for the confidence interval (default = 0.05).
- * @return A vector containing the upper and lower bounds of the confidence interval.
+ * @return A vector containing the lower and upper bounds of the confidence interval.
  */
 std::vector<double> CppCorConfidence(double r, size_t n, size_t k = 0,
                                      double level = 0.05) {
@@ -845,7 +845,7 @@ std::vector<double> CppCorConfidence(double r, size_t n, size_t k = 0,
   if (r_upper > 1.0) r_upper = 1.0;
 
   // Return the result as a std::vector<double>
-  return {r_upper, r_lower};
+  return {r_lower, r_upper};
 }
 
 /**
@@ -908,7 +908,6 @@ double CppMeanCorSignificance(const std::vector<double>& rho_vec,
 
   return pvalue;
 }
-
 
 /**
  * Computes the confidence interval for correlation or partial correlation coefficients.
@@ -1025,7 +1024,7 @@ std::vector<double> CppDeLongAUCConfidence(const std::vector<double>& cases,
   ci_upper = std::min(1.0, ci_upper);
 
   // Return the results as a three-element vector
-  return {theta, ci_upper, ci_lower};
+  return {theta, ci_lower, ci_upper};
 }
 
 /**
@@ -1104,7 +1103,7 @@ std::vector<double> CppCMCTest(const std::vector<double>& cases,
   ci_upper = std::min(1.0, ci_upper);
 
   // Return the results as a four-element vector
-  return {theta, p_value, ci_upper, ci_lower};
+  return {theta, p_value, ci_lower, ci_upper};
 }
 
 // /**
@@ -1118,8 +1117,8 @@ std::vector<double> CppCMCTest(const std::vector<double>& cases,
 //  * @return A vector of four elements:
 //  *   - area_auc: AUC computed by trapezoidal rule (area method).
 //  *   - p_value: The p-value testing H0: AUC = 0.5 (via DeLong).
-//  *   - ci_upper: Upper bound of 100*(1-level)% confidence interval (via DeLong).
 //  *   - ci_lower: Lower bound of 100*(1-level)% confidence interval (via DeLong).
+//  *   - ci_upper: Upper bound of 100*(1-level)% confidence interval (via DeLong).
 //  */
 // std::vector<double> CppCMCTest(const std::vector<double>& cases,
 //                                const std::string& direction,
@@ -1196,7 +1195,7 @@ std::vector<double> CppCMCTest(const std::vector<double>& cases,
 //   ci_lower = std::max(0.0, ci_lower);
 //   ci_upper = std::min(1.0, ci_upper);
 //
-//   return {area_auc, p_value, ci_upper, ci_lower};
+//   return {area_auc, p_value, ci_lower, ci_upper};
 // }
 
 /*
