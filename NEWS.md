@@ -4,8 +4,6 @@
 
 * Adjust `Makevars` to track latest rcpparmadillo release and armadillo updates improving build integration and forward compatibility (#785).
 
-
-
 # spEDM 1.8
 
 ### new
