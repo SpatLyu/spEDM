@@ -132,7 +132,7 @@
     colnames(y_xmap_x) = c(keyname,"y_xmap_x_mean")
   } else {
     colnames(y_xmap_x) = c(keyname,"y_xmap_x_mean","y_xmap_x_sig",
-                           "y_xmap_x_upper","y_xmap_x_lower")
+                           "y_xmap_x_lower","y_xmap_x_upper")
   }
   y_xmap_x = as.data.frame(y_xmap_x)
 
@@ -141,7 +141,7 @@
       colnames(x_xmap_y) = c(keyname,"x_xmap_y_mean")
     } else {
       colnames(x_xmap_y) = c(keyname,"x_xmap_y_mean","x_xmap_y_sig",
-                             "x_xmap_y_upper","x_xmap_y_lower")
+                             "x_xmap_y_lower","x_xmap_y_upper")
     }
     x_xmap_y = as.data.frame(x_xmap_y)
     resdf = x_xmap_y |>
