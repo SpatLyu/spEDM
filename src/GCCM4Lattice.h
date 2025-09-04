@@ -79,8 +79,8 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
  *      - The library size.
  *      - The mean cross-mapping correlation.
  *      - The statistical significance of the correlation.
- *      - The upper bound of the confidence interval.
  *      - The lower bound of the confidence interval.
+ *      - The upper bound of the confidence interval.
  */
 std::vector<std::vector<double>> GCCM4Lattice(
     const std::vector<double>& x,
