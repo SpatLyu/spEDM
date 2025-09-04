@@ -350,12 +350,12 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
  *      - The library size.
  *      - The mean pearson cross-mapping correlation.
  *      - The statistical significance of the pearson correlation.
- *      - The upper bound of the pearson correlation confidence interval.
  *      - The lower bound of the pearson correlation confidence interval.
+ *      - The upper bound of the pearson correlation confidence interval.
  *      - The mean partial cross-mapping partial correlation.
  *      - The statistical significance of the partial correlation.
- *      - The upper bound of the partial correlation confidence interval.
  *      - The lower bound of the partial correlation confidence interval.
+ *      - The upper bound of the partial correlation confidence interval.
  */
 std::vector<std::vector<double>> SCPCM4Lattice(
     const std::vector<double>& x,                       // Spatial cross-sectional series to cross map from
