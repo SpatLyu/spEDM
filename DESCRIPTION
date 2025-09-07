@@ -10,7 +10,7 @@ Description: Inferring causation from spatial cross-sectional data through empir
 License: GPL-3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 URL: https://stscl.github.io/spEDM/, https://github.com/stscl/spEDM
 BugReports: https://github.com/stscl/spEDM/issues
 Depends: 
