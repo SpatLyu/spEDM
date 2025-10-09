@@ -12,8 +12,7 @@
 
 * Introduce configurable distance metrics for cross mapping (#761).
 
-* Enable alternative styles of spatial cross-sectional embedding 
-(#755).
+* Enable alternative styles of spatial cross-sectional embedding (#755).
 
 ### enhancements
 
@@ -21,7 +20,7 @@
 
 * Adjust the default `E` range in the `simplex` generic to `2:10` to support more robust reconstruction of state spaces (#739).
 
-* Introduce multithreading in distance-related computations where applicable to improve runtime efficiency (#718).
+* Introduce multi-threading in distance-related computations where applicable to improve runtime efficiency (#718).
 
 * Display p-value annotation for maximum library size in cross mapping visualization legend (#710).
 
@@ -179,7 +178,7 @@
 
 ### bug fixes
 
-* Fix the bug where the `gccm` generic returns empty results when input grid data contains `NA` values (#61).
+* Fix the bug where the `gccm` generic returns empty result when input grid data contains `NA` values (#61).
 
 # spEDM 1.1
 
