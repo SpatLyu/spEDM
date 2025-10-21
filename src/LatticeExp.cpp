@@ -145,7 +145,7 @@ Rcpp::List RcppGenLatticeEmbeddingsCom(const Rcpp::NumericVector& vec,
     GenLatticeEmbeddingsCom(vec_std, nb_vec, E, tau, style);
 
   // Convert the 3D std::vector into an Rcpp::List of NumericMatrix
-  Rcpp::List result(embeddings.size());
+  Rcpp::List result;
 
   for (const auto& layer : embeddings) {
     if (layer.empty()) continue; // Skip empty layers (if all NaN subsets were removed)
