@@ -6,9 +6,18 @@
 \alias{embedded,SpatRaster-method}
 \title{embedding spatial cross sectional data}
 \usage{
-\S4method{embedded}{sf}(data, target, E = 3, tau = 1, style = 1, nb = NULL, detrend = FALSE)
+\S4method{embedded}{sf}(
+  data,
+  target,
+  E = 3,
+  tau = 1,
+  style = 1,
+  stack = 0,
+  nb = NULL,
+  detrend = FALSE
+)
 
-\S4method{embedded}{SpatRaster}(data, target, E = 3, tau = 1, style = 1, detrend = FALSE)
+\S4method{embedded}{SpatRaster}(data, target, E = 3, tau = 1, style = 1, stack = 0, detrend = FALSE)
 }
 \arguments{
 \item{data}{observation data.}
@@ -20,6 +29,8 @@
 \item{tau}{(optional) step of spatial lags.}
 
 \item{style}{(optional) embedding style (\code{0} includes current state, \code{1} excludes it).}
+
+\item{stack}{(optional) embedding stack (\code{0} average lags, \code{1} stacks it).}
 
 \item{nb}{(optional) neighbours list.}
 
