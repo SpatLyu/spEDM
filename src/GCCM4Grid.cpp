@@ -115,6 +115,85 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
   return x_xmap_y;
 }
 
+// Perform Grid-based Geographical Convergent Cross Mapping (GCCM) for a single library size and pred indice (composite embeddings version).
+std::vector<std::pair<int, double>> GCCMSingle4Grid(
+    const std::vector<std::vector<std::vector<double>>>& xEmbedings,
+    const std::vector<double>& yPred,
+    const std::vector<int>& lib_sizes,
+    const std::vector<bool>& possible_lib_indices,
+    const std::vector<int>& pred_indices,
+    int totalRow,
+    int totalCol,
+    int b,
+    bool simplex,
+    double theta,
+    size_t threads,
+    int parallel_level,
+    bool row_size_mark,
+    int dist_metric,
+    bool dist_average
+) {
+  // Extract row-wise and column-wise library sizes
+  const int lib_size_row = lib_sizes[0];
+  const int lib_size_col = lib_sizes[1];
+
+  // Determine the marked libsize
+  const int libsize = row_size_mark ? lib_size_row : lib_size_col;
+
+  // Precompute valid (r, c) pairs
+  std::vector<std::pair<int, int>> valid_indices;
+  for (int r = 1; r <= totalRow - lib_size_row + 1; ++r) {
+    for (int c = 1; c <= totalCol - lib_size_col + 1; ++c) {
+      valid_indices.emplace_back(r, c);
+    }
+  }
+
+  // // Initialize the result container with the same size as valid_indices
+  // std::vector<std::pair<int, double>> x_xmap_y;
+  // x_xmap_y.resize(valid_indices.size());
+
+  // Preallocate the result vector to avoid out-of-bounds access
+  std::vector<std::pair<int, double>> x_xmap_y(valid_indices.size());
+
+  // Unified processing logic
+  auto process = [&](size_t idx) {
+    const int r = valid_indices[idx].first;
+    const int c = valid_indices[idx].second;
+
+    // Initialize library indices and count the number of the nan value together
+    std::vector<int> lib_indices;
+
+    for (int ii = r; ii < r + lib_size_row; ++ii) {
+      for (int jj = c; jj < c + lib_size_col; ++jj) {
+        int index = (ii - 1) * totalCol + (jj - 1);
+        if (possible_lib_indices[index]) {
+          lib_indices.emplace_back(index);
+        }
+      }
+    }
+
+    double rho = std::numeric_limits<double>::quiet_NaN();
+    // Run cross map and store results
+    if (simplex) {
+      rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b, dist_metric, dist_average);
+    } else {
+      rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta, dist_metric, dist_average);
+    }
+    x_xmap_y[idx] = std::make_pair(libsize, rho);
+  };
+
+  // Parallel coordination
+  if (parallel_level == 0) {
+    RcppThread::parallelFor(0, valid_indices.size(), process, threads);
+  } else {
+    for (size_t i = 0; i < valid_indices.size(); ++i) {
+      process(i);
+    }
+  }
+
+  return x_xmap_y;
+}
+
 /**
  * Perform Grid-based Geographical Convergent Cross Mapping (GCCM) for a single library size.
  *
@@ -140,6 +219,121 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
  */
 std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
     const std::vector<std::vector<double>>& xEmbedings,
+    const std::vector<double>& yPred,
+    int lib_size,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
+    int totalRow,
+    int totalCol,
+    int b,
+    bool simplex,
+    double theta,
+    size_t threads,
+    int parallel_level,
+    int dist_metric,
+    bool dist_average
+) {
+  int max_lib_size = lib_indices.size();
+
+  // No possible library variation if using all vectors
+  if (lib_size == max_lib_size) {
+    std::vector<std::pair<int, double>> x_xmap_y;
+
+    double rho = std::numeric_limits<double>::quiet_NaN();
+    // Run cross map and store results
+    if (simplex) {
+      rho = SimplexProjection(xEmbedings, yPred, lib_indices, pred_indices, b, dist_metric, dist_average);
+    } else {
+      rho = SMap(xEmbedings, yPred, lib_indices, pred_indices, b, theta, dist_metric, dist_average);
+    }
+    x_xmap_y.emplace_back(lib_size, rho);
+    return x_xmap_y;
+  } else if (parallel_level == 0){
+    // Precompute valid indices for the library
+    std::vector<std::vector<int>> valid_lib_indices;
+    for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
+      std::vector<int> local_lib_indices;
+      // Loop around to beginning of lib indices
+      if (start_lib + lib_size > max_lib_size) {
+        for (int i = start_lib; i < max_lib_size; ++i) {
+          local_lib_indices.emplace_back(lib_indices[i]);
+        }
+        int num_vectors_remaining = lib_size - (max_lib_size - start_lib);
+        for (int i = 0; i < num_vectors_remaining; ++i) {
+          local_lib_indices.emplace_back(lib_indices[i]);
+        }
+      } else {
+        for (int i = start_lib; i < start_lib + lib_size; ++i) {
+          local_lib_indices.emplace_back(lib_indices[i]);
+        }
+      }
+      valid_lib_indices.emplace_back(local_lib_indices);
+    }
+
+    // Preallocate the result vector to avoid out-of-bounds access
+    std::vector<std::pair<int, double>> x_xmap_y(valid_lib_indices.size());
+
+    // Perform the operations using RcppThread
+    RcppThread::parallelFor(0, valid_lib_indices.size(), [&](size_t i) {
+      double rho = std::numeric_limits<double>::quiet_NaN();
+      // Run cross map and store results
+      if (simplex) {
+        rho = SimplexProjection(xEmbedings, yPred, valid_lib_indices[i], pred_indices, b, dist_metric, dist_average);
+      } else {
+        rho = SMap(xEmbedings, yPred, valid_lib_indices[i], pred_indices, b, theta, dist_metric, dist_average);
+      }
+
+      std::pair<int, double> result(lib_size, rho); // Store the product of row and column library sizes
+      x_xmap_y[i] = result;
+    }, threads);
+
+    return x_xmap_y;
+  } else {
+    // Precompute valid indices for the library
+    std::vector<std::vector<int>> valid_lib_indices;
+    for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
+      std::vector<int> local_lib_indices;
+      // Loop around to beginning of lib indices
+      if (start_lib + lib_size > max_lib_size) {
+        for (int i = start_lib; i < max_lib_size; ++i) {
+          local_lib_indices.emplace_back(lib_indices[i]);
+        }
+        int num_vectors_remaining = lib_size - (max_lib_size - start_lib);
+        for (int i = 0; i < num_vectors_remaining; ++i) {
+          local_lib_indices.emplace_back(lib_indices[i]);
+        }
+      } else {
+        for (int i = start_lib; i < start_lib + lib_size; ++i) {
+          local_lib_indices.emplace_back(lib_indices[i]);
+        }
+      }
+      valid_lib_indices.emplace_back(local_lib_indices);
+    }
+
+    // Preallocate the result vector to avoid out-of-bounds access
+    std::vector<std::pair<int, double>> x_xmap_y(valid_lib_indices.size());
+
+    // Iterate through precomputed valid_lib_indices
+    for (size_t i = 0; i < valid_lib_indices.size(); ++i){
+      double rho = std::numeric_limits<double>::quiet_NaN();
+      // Run cross map and store results
+      if (simplex) {
+        rho = SimplexProjection(xEmbedings, yPred, valid_lib_indices[i], pred_indices, b, dist_metric, dist_average);
+      } else {
+        rho = SMap(xEmbedings, yPred, valid_lib_indices[i], pred_indices, b, theta, dist_metric, dist_average);
+      }
+
+      std::pair<int, double> result(lib_size, rho); // Store the product of row and column library sizes
+      x_xmap_y[i] = result;
+    }
+
+    return x_xmap_y;
+  }
+}
+
+// Perform Grid-based Geographical Convergent Cross Mapping (GCCM) for a single library size (composite embeddings version).
+std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
+    const std::vector<std::vector<std::vector<double>>>& xEmbedings,
     const std::vector<double>& yPred,
     int lib_size,
     const std::vector<int>& lib_indices,

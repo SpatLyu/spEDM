@@ -56,6 +56,25 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
     bool dist_average
 );
 
+// Perform Grid-based Geographical Convergent Cross Mapping (GCCM) for a single library size and pred indice (composite embeddings version).
+std::vector<std::pair<int, double>> GCCMSingle4Grid(
+    const std::vector<std::vector<std::vector<double>>>& xEmbedings,
+    const std::vector<double>& yPred,
+    const std::vector<int>& lib_sizes,
+    const std::vector<bool>& possible_lib_indices,
+    const std::vector<int>& pred_indices,
+    int totalRow,
+    int totalCol,
+    int b,
+    bool simplex,
+    double theta,
+    size_t threads,
+    int parallel_level,
+    bool row_size_mark,
+    int dist_metric,
+    bool dist_average
+);
+
 /**
  * Perform Grid-based Geographical Convergent Cross Mapping (GCCM) for a single library size.
  *
@@ -81,6 +100,24 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
  */
 std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
     const std::vector<std::vector<double>>& xEmbedings,
+    const std::vector<double>& yPred,
+    int lib_size,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
+    int totalRow,
+    int totalCol,
+    int b,
+    bool simplex,
+    double theta,
+    size_t threads,
+    int parallel_level,
+    int dist_metric,
+    bool dist_average
+);
+
+// Perform Grid-based Geographical Convergent Cross Mapping (GCCM) for a single library size (composite embeddings version).
+std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
+    const std::vector<std::vector<std::vector<double>>>& xEmbedings,
     const std::vector<double>& yPred,
     int lib_size,
     const std::vector<int>& lib_indices,
