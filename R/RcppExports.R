@@ -69,6 +69,10 @@ RcppGenGridEmbeddings <- function(mat, E = 3L, tau = 1L, style = 1L) {
     .Call(`_spEDM_RcppGenGridEmbeddings`, mat, E, tau, style)
 }
 
+RcppGenGridEmbeddingsCom <- function(mat, E = 3L, tau = 1L, style = 1L) {
+    .Call(`_spEDM_RcppGenGridEmbeddingsCom`, mat, E, tau, style)
+}
+
 RcppGenGridNeighbors <- function(mat, lib, k = 8L) {
     .Call(`_spEDM_RcppGenGridNeighbors`, mat, lib, k)
 }
@@ -163,6 +167,10 @@ RcppLaggedVal4Lattice <- function(vec, nb, lagNum = 1L) {
 
 RcppGenLatticeEmbeddings <- function(vec, nb, E = 3L, tau = 1L, style = 1L) {
     .Call(`_spEDM_RcppGenLatticeEmbeddings`, vec, nb, E, tau, style)
+}
+
+RcppGenLatticeEmbeddingsCom <- function(vec, nb, E = 3L, tau = 1L, style = 1L) {
+    .Call(`_spEDM_RcppGenLatticeEmbeddingsCom`, vec, nb, E, tau, style)
 }
 
 RcppGenLatticeNeighbors <- function(vec, nb, lib, k = 8L) {

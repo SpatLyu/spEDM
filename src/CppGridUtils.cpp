@@ -232,7 +232,8 @@ std::vector<std::vector<double>> GenGridEmbeddings(
         if (!allNaN) break;
       }
 
-      // If all elements are NaN, stop further processing for this lagNum
+      // If all elements are NaN, stop further processing for larger lagNum
+      // (since larger lag distances will only produce more NaN results)
       if (allNaN) {
         break;
       }
@@ -287,7 +288,8 @@ std::vector<std::vector<double>> GenGridEmbeddings(
           if (!allNaN) break;
         }
 
-        // If all elements are NaN, stop further processing for this lagNum
+        // If all elements are NaN, stop further processing for larger lagNum
+        // (since larger lag distances will only produce more NaN results)
         if (allNaN) {
           break;
         }
@@ -330,7 +332,8 @@ std::vector<std::vector<double>> GenGridEmbeddings(
           if (!allNaN) break;
         }
 
-        // If all elements are NaN, stop further processing for this lagNum
+        // If all elements are NaN, stop further processing for larger lagNum
+        // (since larger lag distances will only produce more NaN results)
         if (allNaN) {
           break;
         }
@@ -382,12 +385,14 @@ std::vector<std::vector<double>> GenGridEmbeddings(
 
     // Construct the filtered embeddings matrix
     std::vector<std::vector<double>> filteredEmbeddings;
+    filteredEmbeddings.reserve(validColumns.size());
+
     for (size_t row = 0; row < result.size(); ++row) {
       std::vector<double> filteredRow;
       for (size_t col : validColumns) {
         filteredRow.push_back(result[row][col]);
       }
-      filteredEmbeddings.push_back(filteredRow);
+      filteredEmbeddings.push_back(std::move(filteredRow));
     }
 
     // Return the filtered embeddings matrix
@@ -437,19 +442,26 @@ std::vector<std::vector<std::vector<double>>> GenGridEmbeddingsCom(
     for (int lagNum = 0; lagNum < E; ++lagNum) {
       std::vector<std::vector<double>> lagged_vals = CppLaggedVal4Grid(mat, lagNum);
 
-      // Skip if all elements are NaN
+      // Check if all elements in lagged_vals are NaN
       bool allNaN = true;
       for (const auto& subset : lagged_vals) {
         for (double val : subset) {
-          if (!std::isnan(val)) { allNaN = false; break; }
+          if (!std::isnan(val)) {
+            allNaN = false;
+            break;
+          }
         }
         if (!allNaN) break;
       }
 
-      if (allNaN) break; // Stop if no valid data at this lag step
-      embeddings.push_back(lagged_vals);
-    }
+      // If all elements are NaN, stop further processing for larger lagNum
+      // (since larger lag distances will only produce more NaN results)
+      if (allNaN) {
+        break;
+      }
 
+      embeddings.push_back(std::move(lagged_vals));
+    }
   } else {
     // tau > 0 cases
     if (style == 0) {
@@ -458,69 +470,92 @@ std::vector<std::vector<std::vector<double>>> GenGridEmbeddingsCom(
         int lagNum = i * tau;
         std::vector<std::vector<double>> lagged_vals = CppLaggedVal4Grid(mat, lagNum);
 
-        // Check if all elements are NaN
+        // Check if all elements in lagged_vals are NaN
         bool allNaN = true;
         for (const auto& subset : lagged_vals) {
           for (double val : subset) {
-            if (!std::isnan(val)) { allNaN = false; break; }
+            if (!std::isnan(val)) {
+              allNaN = false;
+              break;
+            }
           }
           if (!allNaN) break;
         }
 
-        if (allNaN) break;
-        embeddings.push_back(lagged_vals);
-      }
+        // If all elements are NaN, stop further processing for larger lagNum
+        // (since larger lag distances will only produce more NaN results)
+        if (allNaN) {
+          break;
+        }
 
+        embeddings.push_back(std::move(lagged_vals));
+      }
     } else {
       // style != 0: exclude current state; lag steps: τ, 2τ, ..., Eτ
       for (int i = 1; i <= E; ++i) {
         int lagNum = i * tau;
         std::vector<std::vector<double>> lagged_vals = CppLaggedVal4Grid(mat, lagNum);
 
-        // Check if all elements are NaN
+        // Check if all elements in lagged_vals are NaN
         bool allNaN = true;
         for (const auto& subset : lagged_vals) {
           for (double val : subset) {
-            if (!std::isnan(val)) { allNaN = false; break; }
+            if (!std::isnan(val)) {
+              allNaN = false;
+              break;
+            }
           }
           if (!allNaN) break;
         }
 
-        if (allNaN) break;
-        embeddings.push_back(lagged_vals);
+        // If all elements are NaN, stop further processing for larger lagNum
+        // (since larger lag distances will only produce more NaN results)
+        if (allNaN) {
+          break;
+        }
+
+        embeddings.push_back(std::move(lagged_vals));
       }
     }
   }
 
-  // Final cleaning step: remove subsets that are all NaN
-  std::vector<std::vector<std::vector<double>>> cleaned_embeddings;
-  cleaned_embeddings.reserve(embeddings.size());
+  // Calculate validSubsets (indices of subsets that are not entirely NaN)
+  std::vector<size_t> validSubsets; // To store indices of valid subsets
 
-  for (auto& layer : embeddings) {
-    std::vector<std::vector<double>> cleaned_layer;
-    cleaned_layer.reserve(layer.size());
-
-    // Remove subsets that are all NaN
-    for (auto& subset : layer) {
-      bool allNaN = true;
-      for (double val : subset) {
-        if (!std::isnan(val)) {
-          allNaN = false;
+  // Iterate over each subset to check if it contains any non-NaN values
+  for (size_t sub = 0; sub < embeddings.size(); ++sub) {
+    bool isAllNaN = true;
+    for (size_t row = 0; row < embeddings[sub].size(); ++row) {
+      for (size_t col = 0; col < embeddings[sub][row].size(); ++col) {
+        if (!std::isnan(embeddings[sub][row][col])) {
+          isAllNaN = false;
           break;
         }
       }
-      if (!allNaN) {
-        cleaned_layer.push_back(std::move(subset));
+      if (!isAllNaN) {
+        break;
       }
     }
 
-    // Keep only layers that have at least one valid subset
-    if (!cleaned_layer.empty()) {
-      cleaned_embeddings.push_back(std::move(cleaned_layer));
+    if (!isAllNaN) {
+      validSubsets.push_back(sub); // Store the index of valid subsets
     }
   }
 
-  return cleaned_embeddings;
+  // If no subsets are removed, return the original embeddings
+  if (validSubsets.size() == embeddings.size()) {
+    return embeddings;
+  } else {
+    // Construct the filtered embeddings
+    std::vector<std::vector<std::vector<double>>> filteredEmbeddings;
+    filteredEmbeddings.reserve(validSubsets.size());
+    for (size_t sub : validSubsets) {
+      filteredEmbeddings.push_back(std::move(embeddings[sub]));
+    }
+
+    // Return the filtered embeddings
+    return filteredEmbeddings;
+  }
 }
 
 /**

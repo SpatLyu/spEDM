@@ -255,6 +255,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppGenGridEmbeddingsCom
+Rcpp::List RcppGenGridEmbeddingsCom(const Rcpp::NumericMatrix& mat, int E, int tau, int style);
+RcppExport SEXP _spEDM_RcppGenGridEmbeddingsCom(SEXP matSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP styleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< int >::type E(ESEXP);
+    Rcpp::traits::input_parameter< int >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< int >::type style(styleSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppGenGridEmbeddingsCom(mat, E, tau, style));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppGenGridNeighbors
 Rcpp::List RcppGenGridNeighbors(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerMatrix& lib, int k);
 RcppExport SEXP _spEDM_RcppGenGridNeighbors(SEXP matSEXP, SEXP libSEXP, SEXP kSEXP) {
@@ -654,6 +667,20 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type tau(tauSEXP);
     Rcpp::traits::input_parameter< int >::type style(styleSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppGenLatticeEmbeddings(vec, nb, E, tau, style));
+    return rcpp_result_gen;
+END_RCPP
+}
+// RcppGenLatticeEmbeddingsCom
+Rcpp::List RcppGenLatticeEmbeddingsCom(const Rcpp::NumericVector& vec, const Rcpp::List& nb, int E, int tau, int style);
+RcppExport SEXP _spEDM_RcppGenLatticeEmbeddingsCom(SEXP vecSEXP, SEXP nbSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP styleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
+    Rcpp::traits::input_parameter< int >::type E(ESEXP);
+    Rcpp::traits::input_parameter< int >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< int >::type style(styleSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppGenLatticeEmbeddingsCom(vec, nb, E, tau, style));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1507,6 +1534,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppRowColFromGrid", (DL_FUNC) &_spEDM_RcppRowColFromGrid, 2},
     {"_spEDM_RcppLaggedVal4Grid", (DL_FUNC) &_spEDM_RcppLaggedVal4Grid, 2},
     {"_spEDM_RcppGenGridEmbeddings", (DL_FUNC) &_spEDM_RcppGenGridEmbeddings, 4},
+    {"_spEDM_RcppGenGridEmbeddingsCom", (DL_FUNC) &_spEDM_RcppGenGridEmbeddingsCom, 4},
     {"_spEDM_RcppGenGridNeighbors", (DL_FUNC) &_spEDM_RcppGenGridNeighbors, 3},
     {"_spEDM_RcppGenGridSymbolization", (DL_FUNC) &_spEDM_RcppGenGridSymbolization, 4},
     {"_spEDM_RcppDivideGrid", (DL_FUNC) &_spEDM_RcppDivideGrid, 3},
@@ -1531,6 +1559,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppLaggedNeighbor4Lattice", (DL_FUNC) &_spEDM_RcppLaggedNeighbor4Lattice, 2},
     {"_spEDM_RcppLaggedVal4Lattice", (DL_FUNC) &_spEDM_RcppLaggedVal4Lattice, 3},
     {"_spEDM_RcppGenLatticeEmbeddings", (DL_FUNC) &_spEDM_RcppGenLatticeEmbeddings, 5},
+    {"_spEDM_RcppGenLatticeEmbeddingsCom", (DL_FUNC) &_spEDM_RcppGenLatticeEmbeddingsCom, 5},
     {"_spEDM_RcppGenLatticeNeighbors", (DL_FUNC) &_spEDM_RcppGenLatticeNeighbors, 4},
     {"_spEDM_RcppGenLatticeSymbolization", (DL_FUNC) &_spEDM_RcppGenLatticeSymbolization, 5},
     {"_spEDM_RcppDivideLattice", (DL_FUNC) &_spEDM_RcppDivideLattice, 2},

@@ -129,6 +129,42 @@ Rcpp::NumericMatrix RcppGenLatticeEmbeddings(const Rcpp::NumericVector& vec,
   return result;
 }
 
+// Wrapper function to generate composite lattice embeddings.
+// [[Rcpp::export(rng = false)]]
+Rcpp::List RcppGenLatticeEmbeddingsCom(const Rcpp::NumericVector& vec,
+                                       const Rcpp::List& nb,
+                                       int E = 3,
+                                       int tau = 1,
+                                       int style = 1) {
+  // Convert R inputs to std::vector equivalents
+  std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
+
+  // Call the core C++ embedding function
+  std::vector<std::vector<std::vector<double>>> embeddings =
+    GenLatticeEmbeddingsCom(vec_std, nb_vec, E, tau, style);
+
+  // Convert the 3D std::vector into an Rcpp::List of NumericMatrix
+  Rcpp::List result;
+
+  for (const auto& layer : embeddings) {
+    if (layer.empty()) continue; // Skip empty layers (if all NaN subsets were removed)
+    int rows = layer.size();
+    int cols = layer[0].size();
+    Rcpp::NumericMatrix mat(rows, cols);
+
+    for (int i = 0; i < rows; ++i) {
+      for (int j = 0; j < cols; ++j) {
+        mat(i, j) = layer[i][j];
+      }
+    }
+
+    result.push_back(mat);
+  }
+
+  return result;
+}
+
 // Wrapper function to generate neighbors for spatial lattice data
 // [[Rcpp::export(rng = false)]]
 Rcpp::List RcppGenLatticeNeighbors(const Rcpp::NumericVector& vec,
