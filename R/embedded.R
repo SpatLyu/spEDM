@@ -32,7 +32,7 @@
 #' @param nb (optional) neighbours list.
 #' @param detrend (optional) whether to remove the linear trend.
 #'
-#' @return A matrix
+#' @return A matrix (`stack` = `0`) or list.
 #' @export
 #' @name embedded
 #' @aliases embedded,sf-method
