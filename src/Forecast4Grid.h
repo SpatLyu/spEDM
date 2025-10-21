@@ -44,7 +44,24 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
                                               int threads = 8);
 
 /*
- * Evaluates prediction performance of different theta parameters for grid data using the S-mapping method.
+ * Evaluates prediction performance of different combinations of embedding dimensions and number of nearest neighbors
+ * for grid data using simplex projection (composite embeddings version).
+ */
+std::vector<std::vector<double>> Simplex4GridCom(const std::vector<std::vector<double>>& source,
+                                                 const std::vector<std::vector<double>>& target,
+                                                 const std::vector<int>& lib_indices,
+                                                 const std::vector<int>& pred_indices,
+                                                 const std::vector<int>& E,
+                                                 const std::vector<int>& b,
+                                                 int tau = 1,
+                                                 int style = 1,
+                                                 int dist_metric = 2,
+                                                 bool dist_average = true,
+                                                 int threads = 8);
+
+/*
+ * Evaluates prediction performance of different theta parameters for grid data
+ * using the S-mapping method.
  *
  * Parameters:
  *   - source: A matrix to be embedded.
@@ -76,6 +93,23 @@ std::vector<std::vector<double>> SMap4Grid(const std::vector<std::vector<double>
                                            bool dist_average = true,
                                            int threads = 8);
 
+/*
+ * Evaluates prediction performance of different theta parameters for grid data
+ * using the S-mapping method (composite embeddings version).
+ */
+std::vector<std::vector<double>> SMap4GridCom(const std::vector<std::vector<double>>& source,
+                                              const std::vector<std::vector<double>>& target,
+                                              const std::vector<int>& lib_indices,
+                                              const std::vector<int>& pred_indices,
+                                              const std::vector<double>& theta,
+                                              int E = 3,
+                                              int tau = 1,
+                                              int b = 4,
+                                              int style = 1,
+                                              int dist_metric = 2,
+                                              bool dist_average = true,
+                                              int threads = 8);
+
 /**
  * @brief Evaluate intersection cardinality (IC) for spatial grid data.
  *
@@ -99,7 +133,7 @@ std::vector<std::vector<double>> SMap4Grid(const std::vector<std::vector<double>
  * @param b Vector of neighbor counts (k) used to compute IC.
  * @param tau Spatial embedding spacing (lag). Determines distance between embedding neighbors.
  * @param exclude Number of nearest neighbors to exclude in IC computation.
- * @param style Embedding style selector (0: includes current state, 1: excludes it). 
+ * @param style Embedding style selector (0: includes current state, 1: excludes it).
  * @param dist_metric Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param threads Maximum number of threads to use.
  * @param parallel_level If > 0, enables parallel evaluation of b for each E.
