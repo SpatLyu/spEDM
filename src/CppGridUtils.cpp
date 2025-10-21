@@ -396,6 +396,134 @@ std::vector<std::vector<double>> GenGridEmbeddings(
 }
 
 /**
+ * Generates multi-level grid embeddings by computing lagged neighbor values
+ * for each embedding dimension and returning all lag results instead of averaging them.
+ *
+ * Each embedding dimension corresponds to a lagged state (τ, 2τ, ... depending on style),
+ * and each lagged state is stored as a separate 2D structure representing the grid's lagged values.
+ *
+ * Parameters:
+ *   mat   - A 2D vector representing the grid data.
+ *   E     - The number of embedding dimensions (number of lag steps to compute).
+ *   tau   - The spatial lag step for constructing lagged state-space vectors.
+ *   style - Embedding style selector:
+ *             - style = 0: embedding includes the current state as the first dimension.
+ *             - style != 0: embedding excludes the current state.
+ *
+ * Returns:
+ *   A 3D vector (std::vector<std::vector<std::vector<double>>>) structured as:
+ *     - Outer level (size E): Each element corresponds to an embedding dimension.
+ *     - Middle level: Each element corresponds to a grid cell (flattened from 2D).
+ *     - Inner level: Contains all lagged neighbor values (may include NaNs).
+ *
+ * Notes:
+ *   - This function differs from GenGridEmbeddings in that it does NOT average lagged values.
+ *     Instead, it preserves the full neighbor value sets for each lag step.
+ *   - When tau = 0, lag steps are sequential (0, 1, 2, ..., E-1).
+ *   - When tau > 0 and style = 0, lag steps are 0, τ, 2τ, ..., (E-1)τ.
+ *   - When tau > 0 and style != 0, lag steps are τ, 2τ, ..., Eτ.
+ */
+std::vector<std::vector<std::vector<double>>> GenGridEmbeddingsCom(
+    const std::vector<std::vector<double>>& mat,
+    int E,
+    int tau,
+    int style = 1
+) {
+  std::vector<std::vector<std::vector<double>>> embeddings; // Final 3D result container
+  embeddings.reserve(E); // Reserve space for E embedding levels
+
+  if (tau == 0) {
+    // tau = 0: lag steps are 0, 1, 2, ..., E-1
+    for (int lagNum = 0; lagNum < E; ++lagNum) {
+      std::vector<std::vector<double>> lagged_vals = CppLaggedVal4Grid(mat, lagNum);
+
+      // Skip if all elements are NaN
+      bool allNaN = true;
+      for (const auto& subset : lagged_vals) {
+        for (double val : subset) {
+          if (!std::isnan(val)) { allNaN = false; break; }
+        }
+        if (!allNaN) break;
+      }
+
+      if (allNaN) break; // Stop if no valid data at this lag step
+      embeddings.push_back(lagged_vals);
+    }
+
+  } else {
+    // tau > 0 cases
+    if (style == 0) {
+      // style == 0: include current state; lag steps: 0, τ, 2τ, ..., (E-1)τ
+      for (int i = 0; i < E; ++i) {
+        int lagNum = i * tau;
+        std::vector<std::vector<double>> lagged_vals = CppLaggedVal4Grid(mat, lagNum);
+
+        // Check if all elements are NaN
+        bool allNaN = true;
+        for (const auto& subset : lagged_vals) {
+          for (double val : subset) {
+            if (!std::isnan(val)) { allNaN = false; break; }
+          }
+          if (!allNaN) break;
+        }
+
+        if (allNaN) break;
+        embeddings.push_back(lagged_vals);
+      }
+
+    } else {
+      // style != 0: exclude current state; lag steps: τ, 2τ, ..., Eτ
+      for (int i = 1; i <= E; ++i) {
+        int lagNum = i * tau;
+        std::vector<std::vector<double>> lagged_vals = CppLaggedVal4Grid(mat, lagNum);
+
+        // Check if all elements are NaN
+        bool allNaN = true;
+        for (const auto& subset : lagged_vals) {
+          for (double val : subset) {
+            if (!std::isnan(val)) { allNaN = false; break; }
+          }
+          if (!allNaN) break;
+        }
+
+        if (allNaN) break;
+        embeddings.push_back(lagged_vals);
+      }
+    }
+  }
+
+  // Final cleaning step: remove subsets that are all NaN
+  std::vector<std::vector<std::vector<double>>> cleaned_embeddings;
+  cleaned_embeddings.reserve(embeddings.size());
+
+  for (auto& layer : embeddings) {
+    std::vector<std::vector<double>> cleaned_layer;
+    cleaned_layer.reserve(layer.size());
+
+    // Remove subsets that are all NaN
+    for (auto& subset : layer) {
+      bool allNaN = true;
+      for (double val : subset) {
+        if (!std::isnan(val)) {
+          allNaN = false;
+          break;
+        }
+      }
+      if (!allNaN) {
+        cleaned_layer.push_back(std::move(subset));
+      }
+    }
+
+    // Keep only layers that have at least one valid subset
+    if (!cleaned_layer.empty()) {
+      cleaned_embeddings.push_back(std::move(cleaned_layer));
+    }
+  }
+
+  return cleaned_embeddings;
+}
+
+/**
  * @brief Generate k nearest neighbors for all cells in a grid,
  *        choosing only from cells listed in lib and using Queen adjacency.
  *

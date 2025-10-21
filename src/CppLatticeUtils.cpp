@@ -227,8 +227,8 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
   // Determine the range of lagNum values and lag step based on tau and style
   int startLagNum = (style == 0) ? 0 : ( (tau == 0) ? 0 : tau );
 
-  int endLagNum = (tau == 0) 
-                  ? (E - 1) 
+  int endLagNum = (tau == 0)
+                  ? (E - 1)
                   : (style == 0 ? (E - 1) * tau : E * tau);
 
   int step = (tau == 0) ? 1 : tau;
@@ -408,6 +408,181 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
     // Return the filtered embeddings matrix
     return filteredEmbeddings;
   }
+}
+
+/**
+ * Constructs composite lattice embeddings by collecting raw neighbor values
+ * (instead of averaging them) for each embedding lag step.
+ *
+ * This function extends the traditional lattice embedding generator by
+ * returning all neighbor values associated with each lag step, organized as a
+ * three-dimensional vector:
+ *
+ *   embeddings[lag_index][unit_index][neighbor_index]
+ *
+ * Each inner 2D matrix corresponds to one lag (embedding dimension),
+ * where rows represent spatial units and columns represent the neighbor
+ * values at that lag. If the number of neighbors varies across spatial units,
+ * the rows are padded with NaN values to match the maximum neighbor count
+ * at that lag step.
+ *
+ * Parameters:
+ *   vec   - A vector of values for each spatial unit.
+ *   nb    - A 2D integer matrix where each row lists the neighbors of a unit.
+ *   E     - Embedding dimension (number of lag steps).
+ *   tau   - Spatial lag step between embedding dimensions.
+ *   style - Embedding style:
+ *             - 0: includes the current state as the first lag (default behavior).
+ *             - 1: excludes the current state.
+ *
+ * Returns:
+ *   A 3D vector (std::vector<std::vector<std::vector<double>>>) representing
+ *   the composite lattice embeddings for all lag steps. The outermost dimension
+ *   corresponds to lag steps (1 to E), the middle to spatial units, and the
+ *   innermost to neighbor values (NaN-padded where needed).
+ *
+ * Note:
+ *   - When tau = 0, lag steps are computed for 0, 1, ..., E-1.
+ *   - When tau > 0 and style = 0, lag steps are computed for 0, tau, 2*tau, ..., (E-1)*tau.
+ *   - When tau > 0 and style != 0, lag steps are computed for tau, 2*tau, ..., E*tau.
+ */
+std::vector<std::vector<std::vector<double>>> GenLatticeEmbeddingsCom(
+    const std::vector<double>& vec,
+    const std::vector<std::vector<int>>& nb,
+    int E,
+    int tau,
+    int style = 1)
+{
+  int n = vec.size();
+  std::unordered_map<int, std::vector<std::vector<int>>> laggedResultsMap;
+
+  // Determine lagNum range and stepping scheme
+  int startLagNum = (style == 0) ? 0 : ((tau == 0) ? 0 : tau);
+  int endLagNum = (tau == 0)
+    ? (E - 1)
+    : (style == 0 ? (E - 1) * tau : E * tau);
+  int step = (tau == 0) ? 1 : tau;
+
+  // Step 1: Build lagged neighbor index maps
+  for (int lagNum = 0; lagNum <= endLagNum; ++lagNum) {
+    if (lagNum == 0) {
+      std::vector<std::vector<int>> result_temp;
+      for (size_t i = 0; i < nb.size(); ++i)
+        result_temp.push_back({static_cast<int>(i)});
+      laggedResultsMap[lagNum] = result_temp;
+    } else {
+      std::vector<std::vector<int>> prevResult = laggedResultsMap[lagNum - 1];
+      std::vector<std::vector<int>> currentResult;
+      currentResult.reserve(n);
+
+      for (int i = 0; i < n; ++i) {
+        std::unordered_set<int> mergedSet;
+
+        for (int elem : prevResult[i])
+          if (elem != std::numeric_limits<int>::min())
+            mergedSet.insert(elem);
+
+          std::unordered_set<int> newElements;
+          for (int j : prevResult[i]) {
+            if (j == std::numeric_limits<int>::min() || j < 0 || j >= n)
+              continue;
+            for (int k : nb[j])
+              newElements.insert(k);
+          }
+
+          mergedSet.insert(newElements.begin(), newElements.end());
+
+          std::vector<int> vecRes(mergedSet.begin(), mergedSet.end());
+          std::sort(vecRes.begin(), vecRes.end());
+          vecRes.erase(std::unique(vecRes.begin(), vecRes.end()), vecRes.end());
+
+          if (vecRes.empty())
+            vecRes.push_back(std::numeric_limits<int>::min());
+
+          currentResult.push_back(vecRes);
+      }
+      laggedResultsMap[lagNum] = currentResult;
+    }
+  }
+
+  // Step 2: Compute embeddings for each lagNum
+  std::vector<std::vector<std::vector<double>>> allLagEmbeddings;
+
+  for (int lagNum = startLagNum; lagNum <= endLagNum; lagNum += step) {
+    std::vector<std::vector<int>> laggedResults = laggedResultsMap[lagNum];
+
+    // Deduplicate with previous lagNum
+    if (lagNum > 0) {
+      std::vector<std::vector<int>> prevLaggedResults = laggedResultsMap[lagNum - 1];
+      for (int i = 0; i < n; ++i) {
+        std::unordered_set<int> prevSet(prevLaggedResults[i].begin(),
+                                        prevLaggedResults[i].end());
+        std::vector<int> newIndices;
+        for (int idx : laggedResults[i])
+          if (prevSet.find(idx) == prevSet.end())
+            newIndices.push_back(idx);
+
+          if (newIndices.empty())
+            newIndices.push_back(std::numeric_limits<int>::min());
+
+          laggedResults[i] = newIndices;
+      }
+    }
+
+    // Step 3: Determine max neighbor count across all spatial units for padding
+    size_t maxNeighborCount = 0;
+    for (const auto& row : laggedResults)
+      maxNeighborCount = std::max(maxNeighborCount, row.size());
+
+    // Step 4: Construct the 2D embedding matrix for this lag
+    std::vector<std::vector<double>> lagMatrix(n,
+                                               std::vector<double>(maxNeighborCount,
+                                                                   std::numeric_limits<double>::quiet_NaN()));
+
+    for (int i = 0; i < n; ++i) {
+      const std::vector<int>& neighbors = laggedResults[i];
+      for (size_t j = 0; j < neighbors.size(); ++j) {
+        int idx = neighbors[j];
+        if (idx >= 0 && idx < n && !std::isnan(vec[idx])) {
+          lagMatrix[i][j] = vec[idx];
+        } else {
+          lagMatrix[i][j] = std::numeric_limits<double>::quiet_NaN();
+        }
+      }
+    }
+
+    allLagEmbeddings.push_back(lagMatrix);
+  }
+
+  // Final cleaning step: remove subsets that are all NaN
+  std::vector<std::vector<std::vector<double>>> cleaned_embeddings;
+  cleaned_embeddings.reserve(allLagEmbeddings.size());
+
+  for (auto& layer : allLagEmbeddings) {
+    std::vector<std::vector<double>> cleaned_layer;
+    cleaned_layer.reserve(layer.size());
+
+    // Remove subsets that are all NaN
+    for (auto& subset : layer) {
+      bool allNaN = true;
+      for (double val : subset) {
+        if (!std::isnan(val)) {
+          allNaN = false;
+          break;
+        }
+      }
+      if (!allNaN) {
+        cleaned_layer.push_back(std::move(subset));
+      }
+    }
+
+    // Keep only layers that have at least one valid subset
+    if (!cleaned_layer.empty()) {
+      cleaned_embeddings.push_back(std::move(cleaned_layer));
+    }
+  }
+
+  return cleaned_embeddings;
 }
 
 /**
