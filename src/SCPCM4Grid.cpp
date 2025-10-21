@@ -830,6 +830,7 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
  * - parallel_level: Level of parallel computing: 0 for `lower`, 1 for `higher`.
  * - cumulate: Boolean flag indicating whether to cumulate partial correlations.
  * - style: Embedding style selector (0: includes current state, 1: excludes it).
+ * - stack: Embedding arrangement selector (0: single - average lags, 1: composite - stack).  Default is 0 (average lags).
  * - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * - dist_average: Whether to average distance by the number of valid vector components.
  * - single_sig: Whether to estimate significance and confidence intervals using a single rho value.
@@ -863,6 +864,7 @@ std::vector<std::vector<double>> SCPCM4Grid(
     int parallel_level,                                  // Level of parallel computing: 0 for `lower`, 1 for `higher`
     bool cumulate,                                       // Whether to cumulate the partial correlations
     int style,                                           // Embedding style selector (0: includes current state, 1: excludes it)
+    int stack,                                          // Embedding arrangement selector (0: single - average lags, 1: composite - stack).  Default is 0 (average lags).
     int dist_metric,                                     // Distance metric selector (1: Manhattan, 2: Euclidean)
     bool dist_average,                                   // Whether to average distance by the number of valid vector components
     bool single_sig,                                     // Whether to estimate significance and confidence intervals using a single rho value
@@ -899,7 +901,13 @@ std::vector<std::vector<double>> SCPCM4Grid(
   }
 
   // Generate embeddings for xMatrix
-  std::vector<std::vector<double>> xEmbedings = GenGridEmbeddings(xMatrix, Ex, taux, style);
+  std::vector<std::vector<double>> Emb2D;
+  std::vector<std::vector<std::vector<double>>> Emb3D;
+  if (stack == 0){
+    Emb2D = GenGridEmbeddings(xMatrix, Ex, taux, style);
+  } else {
+    Emb3D = GenGridEmbeddingsCom(xMatrix, Ex, taux, style);
+  }
 
   size_t n_confounds;
   if (cumulate){
@@ -987,54 +995,102 @@ std::vector<std::vector<double>> SCPCM4Grid(
       for (size_t i = 0; i < unique_lib_size_pairs.size(); ++i) {
         int lib_size_row = unique_lib_size_pairs[i].first;
         int lib_size_col = unique_lib_size_pairs[i].second;
-        local_results[i] = SCPCMSingle4Grid(
-          xEmbedings,
-          yPred,
-          zMatrixs,
-          {lib_size_row, lib_size_col},
-          lib_indices,
-          pred_indices,
-          conEs,
-          contaus,
-          bs,
-          totalRow,
-          totalCol,
-          simplex,
-          theta,
-          threads_sizet,
-          parallel_level,
-          cumulate,
-          row_size_mark,
-          style,
-          dist_metric,
-          dist_average);
+        if (stack == 0) {
+          local_results[i] = SCPCMSingle4Grid(
+            Emb2D,
+            yPred,
+            zMatrixs,
+            {lib_size_row, lib_size_col},
+            lib_indices,
+            pred_indices,
+            conEs,
+            contaus,
+            bs,
+            totalRow,
+            totalCol,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            cumulate,
+            row_size_mark,
+            style,
+            dist_metric,
+            dist_average);
+        } else {
+          local_results[i] = SCPCMSingle4Grid(
+            Emb3D,
+            yPred,
+            zMatrixs,
+            {lib_size_row, lib_size_col},
+            lib_indices,
+            pred_indices,
+            conEs,
+            contaus,
+            bs,
+            totalRow,
+            totalCol,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            cumulate,
+            row_size_mark,
+            style,
+            dist_metric,
+            dist_average);
+        }
         bar++;
       }
     } else {
       for (size_t i = 0; i < unique_lib_size_pairs.size(); ++i) {
         int lib_size_row = unique_lib_size_pairs[i].first;
         int lib_size_col = unique_lib_size_pairs[i].second;
-        local_results[i] = SCPCMSingle4Grid(
-          xEmbedings,
-          yPred,
-          zMatrixs,
-          {lib_size_row, lib_size_col},
-          lib_indices,
-          pred_indices,
-          conEs,
-          contaus,
-          bs,
-          totalRow,
-          totalCol,
-          simplex,
-          theta,
-          threads_sizet,
-          parallel_level,
-          cumulate,
-          row_size_mark,
-          style,
-          dist_metric,
-          dist_average);
+        if (stack == 0) {
+          local_results[i] = SCPCMSingle4Grid(
+            Emb2D,
+            yPred,
+            zMatrixs,
+            {lib_size_row, lib_size_col},
+            lib_indices,
+            pred_indices,
+            conEs,
+            contaus,
+            bs,
+            totalRow,
+            totalCol,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            cumulate,
+            row_size_mark,
+            style,
+            dist_metric,
+            dist_average);
+        } else {
+          local_results[i] = SCPCMSingle4Grid(
+            Emb3D,
+            yPred,
+            zMatrixs,
+            {lib_size_row, lib_size_col},
+            lib_indices,
+            pred_indices,
+            conEs,
+            contaus,
+            bs,
+            totalRow,
+            totalCol,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            cumulate,
+            row_size_mark,
+            style,
+            dist_metric,
+            dist_average);
+        }
       }
     }
   } else {
@@ -1044,27 +1100,51 @@ std::vector<std::vector<double>> SCPCM4Grid(
       RcppThread::parallelFor(0, unique_lib_size_pairs.size(), [&](size_t i) {
         int lib_size_row = unique_lib_size_pairs[i].first;
         int lib_size_col = unique_lib_size_pairs[i].second;
-        local_results[i] = SCPCMSingle4Grid(
-          xEmbedings,
-          yPred,
-          zMatrixs,
-          {lib_size_row, lib_size_col},
-          lib_indices,
-          pred_indices,
-          conEs,
-          contaus,
-          bs,
-          totalRow,
-          totalCol,
-          simplex,
-          theta,
-          threads_sizet,
-          parallel_level,
-          cumulate,
-          row_size_mark,
-          style,
-          dist_metric,
-          dist_average);
+        if (stack == 0) {
+          local_results[i] = SCPCMSingle4Grid(
+            Emb2D,
+            yPred,
+            zMatrixs,
+            {lib_size_row, lib_size_col},
+            lib_indices,
+            pred_indices,
+            conEs,
+            contaus,
+            bs,
+            totalRow,
+            totalCol,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            cumulate,
+            row_size_mark,
+            style,
+            dist_metric,
+            dist_average);
+        } else {
+          local_results[i] = SCPCMSingle4Grid(
+            Emb3D,
+            yPred,
+            zMatrixs,
+            {lib_size_row, lib_size_col},
+            lib_indices,
+            pred_indices,
+            conEs,
+            contaus,
+            bs,
+            totalRow,
+            totalCol,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            cumulate,
+            row_size_mark,
+            style,
+            dist_metric,
+            dist_average);
+        }
         bar++;
       }, threads_sizet);
     } else {
@@ -1072,27 +1152,51 @@ std::vector<std::vector<double>> SCPCM4Grid(
       RcppThread::parallelFor(0, unique_lib_size_pairs.size(), [&](size_t i) {
         int lib_size_row = unique_lib_size_pairs[i].first;
         int lib_size_col = unique_lib_size_pairs[i].second;
-        local_results[i] = SCPCMSingle4Grid(
-          xEmbedings,
-          yPred,
-          zMatrixs,
-          {lib_size_row, lib_size_col},
-          lib_indices,
-          pred_indices,
-          conEs,
-          contaus,
-          bs,
-          totalRow,
-          totalCol,
-          simplex,
-          theta,
-          threads_sizet,
-          parallel_level,
-          cumulate,
-          row_size_mark,
-          style,
-          dist_metric,
-          dist_average);
+        if (stack == 0) {
+          local_results[i] = SCPCMSingle4Grid(
+            Emb2D,
+            yPred,
+            zMatrixs,
+            {lib_size_row, lib_size_col},
+            lib_indices,
+            pred_indices,
+            conEs,
+            contaus,
+            bs,
+            totalRow,
+            totalCol,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            cumulate,
+            row_size_mark,
+            style,
+            dist_metric,
+            dist_average);
+        } else {
+          local_results[i] = SCPCMSingle4Grid(
+            Emb3D,
+            yPred,
+            zMatrixs,
+            {lib_size_row, lib_size_col},
+            lib_indices,
+            pred_indices,
+            conEs,
+            contaus,
+            bs,
+            totalRow,
+            totalCol,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            cumulate,
+            row_size_mark,
+            style,
+            dist_metric,
+            dist_average);
+        }
       }, threads_sizet);
     }
   }
@@ -1212,6 +1316,7 @@ std::vector<std::vector<double>> SCPCM4Grid(
  * - parallel_level: Level of parallel computing: 0 for `lower`, 1 for `higher`.
  * - cumulate: Enable cumulative partial correlations
  * - style: Embedding style selector (0: includes current state, 1: excludes it).
+ * - stack: Embedding arrangement selector (0: single - average lags, 1: composite - stack).  Default is 0 (average lags).
  * - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * - dist_average: Whether to average distance by the number of valid vector components.
  * - single_sig: Whether to estimate significance and confidence intervals using a single rho value.
@@ -1245,6 +1350,7 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
     int parallel_level,
     bool cumulate,
     int style,
+    int stack,
     int dist_metric,
     bool dist_average,
     bool single_sig,
@@ -1281,6 +1387,13 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
   }
 
   // Generate embeddings for xMatrix
+  std::vector<std::vector<double>> Emb2D;
+  std::vector<std::vector<std::vector<double>>> Emb3D;
+  if (stack == 0){
+    Emb2D = GenGridEmbeddings(xMatrix, Ex, taux, style);
+  } else {
+    Emb3D = GenGridEmbeddingsCom(xMatrix, Ex, taux, style);
+  }
   std::vector<std::vector<double>> xEmbedings = GenGridEmbeddings(xMatrix, Ex, taux, style);
 
   size_t n_confounds;
