@@ -392,7 +392,7 @@ std::vector<std::vector<double>> GenGridEmbeddings(
       for (size_t col : validColumns) {
         filteredRow.push_back(result[row][col]);
       }
-      filteredEmbeddings.push_back(filteredRow);
+      filteredEmbeddings.push_back(std::move(filteredRow));
     }
 
     // Return the filtered embeddings matrix
@@ -442,7 +442,7 @@ std::vector<std::vector<std::vector<double>>> GenGridEmbeddingsCom(
     for (int lagNum = 0; lagNum < E; ++lagNum) {
       std::vector<std::vector<double>> lagged_vals = CppLaggedVal4Grid(mat, lagNum);
 
-      // Check if all elements in lagged_vars are NaN
+      // Check if all elements in lagged_vals are NaN
       bool allNaN = true;
       for (const auto& subset : lagged_vals) {
         for (double val : subset) {
@@ -470,7 +470,7 @@ std::vector<std::vector<std::vector<double>>> GenGridEmbeddingsCom(
         int lagNum = i * tau;
         std::vector<std::vector<double>> lagged_vals = CppLaggedVal4Grid(mat, lagNum);
 
-        // Check if all elements in lagged_vars are NaN
+        // Check if all elements in lagged_vals are NaN
         bool allNaN = true;
         for (const auto& subset : lagged_vals) {
           for (double val : subset) {
@@ -496,7 +496,7 @@ std::vector<std::vector<std::vector<double>>> GenGridEmbeddingsCom(
         int lagNum = i * tau;
         std::vector<std::vector<double>> lagged_vals = CppLaggedVal4Grid(mat, lagNum);
 
-        // Check if all elements in lagged_vars are NaN
+        // Check if all elements in lagged_vals are NaN
         bool allNaN = true;
         for (const auto& subset : lagged_vals) {
           for (double val : subset) {

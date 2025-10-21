@@ -403,7 +403,7 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
       for (size_t col : validColumns) {
         filteredRow.push_back(xEmbedings[row][col]);
       }
-      filteredEmbeddings.push_back(filteredRow);
+      filteredEmbeddings.push_back(std::move(filteredRow));
     }
 
     // Return the filtered embeddings matrix
@@ -552,7 +552,7 @@ std::vector<std::vector<std::vector<double>>> GenLatticeEmbeddingsCom(
       }
     }
 
-    allLagEmbeddings.push_back(lagMatrix);
+    allLagEmbeddings.push_back(std::move(lagMatrix));
   }
 
   // Final cleaning step: remove subsets that are all NaN
