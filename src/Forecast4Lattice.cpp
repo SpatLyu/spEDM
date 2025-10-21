@@ -158,7 +158,7 @@ std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& source,
  * @param b              Vector of neighbor sizes to try.
  * @param tau            Embedding delay (usually 1 for lattice).
  * @param exclude        Number of nearest neighbors to exclude (e.g., temporal or spatial proximity).
- * @param style          Embedding style selector (0: includes current state, 1: excludes it). 
+ * @param style          Embedding style selector (0: includes current state, 1: excludes it).
  * @param dist_metric    Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param threads        Number of threads for parallel computation.
  * @param parallel_level Flag indicating whether to use multi-threading (0: serial, 1: parallel).

@@ -86,6 +86,49 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
     int style = 1);
 
 /**
+ * Constructs composite lattice embeddings by collecting raw neighbor values
+ * (instead of averaging them) for each embedding lag step.
+ *
+ * This function extends the traditional lattice embedding generator by
+ * returning all neighbor values associated with each lag step, organized as a
+ * three-dimensional vector:
+ *
+ *   embeddings[lag_index][unit_index][neighbor_index]
+ *
+ * Each inner 2D matrix corresponds to one lag (embedding dimension),
+ * where rows represent spatial units and columns represent the neighbor
+ * values at that lag. If the number of neighbors varies across spatial units,
+ * the rows are padded with NaN values to match the maximum neighbor count
+ * at that lag step.
+ *
+ * Parameters:
+ *   vec   - A vector of values for each spatial unit.
+ *   nb    - A 2D integer matrix where each row lists the neighbors of a unit.
+ *   E     - Embedding dimension (number of lag steps).
+ *   tau   - Spatial lag step between embedding dimensions.
+ *   style - Embedding style:
+ *             - 0: includes the current state as the first lag (default behavior).
+ *             - 1: excludes the current state.
+ *
+ * Returns:
+ *   A 3D vector (std::vector<std::vector<std::vector<double>>>) representing
+ *   the composite lattice embeddings for all lag steps. The outermost dimension
+ *   corresponds to lag steps (1 to E), the middle to spatial units, and the
+ *   innermost to neighbor values (NaN-padded where needed).
+ *
+ * Note:
+ *   - When tau = 0, lag steps are computed for 0, 1, ..., E-1.
+ *   - When tau > 0 and style = 0, lag steps are computed for 0, tau, 2*tau, ..., (E-1)*tau.
+ *   - When tau > 0 and style != 0, lag steps are computed for tau, 2*tau, ..., E*tau.
+ */
+std::vector<std::vector<std::vector<double>>> GenLatticeEmbeddingsCom(
+    const std::vector<double>& vec,
+    const std::vector<std::vector<int>>& nb,
+    int E,
+    int tau,
+    int style = 1);
+
+/**
  * @brief Generate a list of k nearest neighbors for each spatial location based on lattice connectivity.
  *
  * This function constructs neighborhood information for each element in a spatial process
