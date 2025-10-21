@@ -57,6 +57,27 @@ std::vector<double> PartialSimplex4Grid(
 );
 
 /**
+ * Computes the partial correlation between a spatial cross-sectional series and its prediction
+ * using the Simplex Projection method, incorporating control variables in a grid-based spatial
+ * setting (composite embeddings version).
+ */
+std::vector<double> PartialSimplex4Grid(
+    const std::vector<std::vector<std::vector<double>>>& vectors,
+    const std::vector<double>& target,
+    const std::vector<std::vector<double>>& controls,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
+    const std::vector<int>& conEs,
+    const std::vector<int>& taus,
+    const std::vector<int>& num_neighbors,
+    int nrow,
+    bool cumulate = false,
+    int style = 1,
+    int dist_metric = 2,
+    bool dist_average = true
+);
+
+/**
  * @brief Computes the partial correlation between a spatial cross-sectional series and its prediction
  *        using the S-Map method, incorporating control variables in a grid-based spatial setting.
  *
@@ -84,6 +105,27 @@ std::vector<double> PartialSimplex4Grid(
  */
 std::vector<double> PartialSMap4Grid(
     const std::vector<std::vector<double>>& vectors,
+    const std::vector<double>& target,
+    const std::vector<std::vector<double>>& controls,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
+    const std::vector<int>& conEs,
+    const std::vector<int>& taus,
+    const std::vector<int>& num_neighbors,
+    int nrow,
+    double theta = 1.0,
+    bool cumulate = false,
+    int style = 1,
+    int dist_metric = 2,
+    bool dist_average = true
+);
+
+/**
+ * Computes the partial correlation between a spatial cross-sectional series and its prediction
+ * using the S-Map method, incorporating control variables in a grid-based spatial setting (composite embeddings version).
+ */
+std::vector<double> PartialSMap4Grid(
+    const std::vector<std::vector<std::vector<double>>>& vectors,
     const std::vector<double>& target,
     const std::vector<std::vector<double>>& controls,
     const std::vector<int>& lib_indices,
@@ -151,6 +193,30 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
     bool dist_average
 );
 
+// Perform Grid-based Spatially Convergent Partial Cross Mapping (SCPCM) for a single library size (composite embeddings version).
+std::vector<PartialCorRes> SCPCMSingle4Grid(
+    const std::vector<std::vector<std::vector<double>>>& xEmbedings,
+    const std::vector<double>& yPred,
+    const std::vector<std::vector<double>>& controls,
+    const std::vector<int>& lib_sizes,
+    const std::vector<bool>& possible_lib_indices,
+    const std::vector<int>& pred_indices,
+    const std::vector<int>& conEs,
+    const std::vector<int>& taus,
+    const std::vector<int>& b,
+    int totalRow,
+    int totalCol,
+    bool simplex,
+    double theta,
+    size_t threads,
+    int parallel_level,
+    bool cumulate,
+    bool row_size_mark,
+    int style,
+    int dist_metric,
+    bool dist_average
+);
+
 /**
  * Perform Grid-based Spatially Convergent Partial Cross Mapping (SCPCM) for a single library size.
  *
@@ -181,6 +247,29 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
  */
 std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
     const std::vector<std::vector<double>>& xEmbedings,
+    const std::vector<double>& yPred,
+    const std::vector<std::vector<double>>& controls,
+    int lib_size,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
+    const std::vector<int>& conEs,
+    const std::vector<int>& taus,
+    const std::vector<int>& b,
+    int totalRow,
+    int totalCol,
+    bool simplex,
+    double theta,
+    size_t threads,
+    int parallel_level,
+    bool cumulate,
+    int style,
+    int dist_metric,
+    bool dist_average
+);
+
+// Perform Grid-based Spatially Convergent Partial Cross Mapping (SCPCM) for a single library size (composite embeddings version).
+std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
+    const std::vector<std::vector<std::vector<double>>>& xEmbedings,
     const std::vector<double>& yPred,
     const std::vector<std::vector<double>>& controls,
     int lib_size,

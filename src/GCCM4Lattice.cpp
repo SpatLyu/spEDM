@@ -138,6 +138,110 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
   }
 }
 
+// Perform GCCM on a single lib and pred for lattice data (composite embeddings version).
+std::vector<std::pair<int, double>> GCCMSingle4Lattice(
+    const std::vector<std::vector<std::vector<double>>>& x_vectors,
+    const std::vector<double>& y,
+    int lib_size,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
+    int b,
+    bool simplex,
+    double theta,
+    size_t threads,
+    int parallel_level,
+    int dist_metric,
+    bool dist_average
+) {
+  int max_lib_size = lib_indices.size();
+
+  // No possible library variation if using all vectors
+  if (lib_size == max_lib_size) {
+    std::vector<std::pair<int, double>> x_xmap_y;
+
+    // Run cross map and store results
+    double rho = std::numeric_limits<double>::quiet_NaN();
+    if (simplex) {
+      rho = SimplexProjection(x_vectors, y, lib_indices, pred_indices, b, dist_metric, dist_average);
+    } else {
+      rho = SMap(x_vectors, y, lib_indices, pred_indices, b, theta, dist_metric, dist_average);
+    }
+    x_xmap_y.emplace_back(lib_size, rho);
+    return x_xmap_y;
+  } else if (parallel_level == 0){
+    // Precompute valid indices for the library
+    std::vector<std::vector<int>> valid_lib_indices;
+    for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
+      std::vector<int> local_lib_indices;
+      // Loop around to beginning of lib indices
+      if (start_lib + lib_size > max_lib_size) {
+        for (int i = start_lib; i < max_lib_size; ++i) {
+          local_lib_indices.emplace_back(lib_indices[i]);
+        }
+        int num_vectors_remaining = lib_size - (max_lib_size - start_lib);
+        for (int i = 0; i < num_vectors_remaining; ++i) {
+          local_lib_indices.emplace_back(lib_indices[i]);
+        }
+      } else {
+        for (int i = start_lib; i < start_lib + lib_size; ++i) {
+          local_lib_indices.emplace_back(lib_indices[i]);
+        }
+      }
+      valid_lib_indices.emplace_back(local_lib_indices);
+    }
+
+    // Preallocate the result vector to avoid out-of-bounds access
+    std::vector<std::pair<int, double>> x_xmap_y(valid_lib_indices.size());
+
+    // Perform the operations using RcppThread
+    RcppThread::parallelFor(0, valid_lib_indices.size(), [&](size_t i) {
+      // Run cross map and store results
+      double rho = std::numeric_limits<double>::quiet_NaN();
+      if (simplex) {
+        rho = SimplexProjection(x_vectors, y, valid_lib_indices[i], pred_indices, b, dist_metric, dist_average);
+      } else {
+        rho = SMap(x_vectors, y, valid_lib_indices[i], pred_indices, b, theta, dist_metric, dist_average);
+      }
+
+      std::pair<int, double> result(lib_size, rho); // Store the product of row and column library sizes
+      x_xmap_y[i] = result;
+    }, threads);
+
+    return x_xmap_y;
+  } else {
+    std::vector<std::pair<int, double>> x_xmap_y;
+
+    for (int start_lib = 0; start_lib < max_lib_size; ++start_lib) {
+      std::vector<int> local_lib_indices;
+      // Setup changing library
+      if (start_lib + lib_size > max_lib_size) { // Loop around to beginning of lib indices
+        for (int i = start_lib; i < max_lib_size; ++i) {
+          local_lib_indices.emplace_back(lib_indices[i]);
+        }
+        int num_vectors_remaining = lib_size - (max_lib_size - start_lib);
+        for (int i = 0; i < num_vectors_remaining; ++i) {
+          local_lib_indices.emplace_back(lib_indices[i]);
+        }
+      } else {
+        for (int i = start_lib; i < start_lib + lib_size; ++i) {
+          local_lib_indices.emplace_back(lib_indices[i]);
+        }
+      }
+
+      // Run cross map and store results
+      double rho = std::numeric_limits<double>::quiet_NaN();
+      if (simplex) {
+        rho = SimplexProjection(x_vectors, y, local_lib_indices, pred_indices, b, dist_metric, dist_average);
+      } else {
+        rho = SMap(x_vectors, y, local_lib_indices, pred_indices, b, theta, dist_metric, dist_average);
+      }
+      x_xmap_y.emplace_back(lib_size, rho);
+    }
+
+    return x_xmap_y;
+  }
+}
+
 /**
  * Performs GCCM on a spatial lattice data.
  *
