@@ -492,7 +492,35 @@ std::vector<std::vector<std::vector<double>>> GenGridEmbeddingsCom(
     }
   }
 
-  return embeddings;
+  // Final cleaning step: remove subsets that are all NaN
+  std::vector<std::vector<std::vector<double>>> cleaned_embeddings;
+  cleaned_embeddings.reserve(embeddings.size());
+
+  for (auto& layer : embeddings) {
+    std::vector<std::vector<double>> cleaned_layer;
+    cleaned_layer.reserve(layer.size());
+
+    // Remove subsets that are all NaN
+    for (auto& subset : layer) {
+      bool allNaN = true;
+      for (double val : subset) {
+        if (!std::isnan(val)) {
+          allNaN = false;
+          break;
+        }
+      }
+      if (!allNaN) {
+        cleaned_layer.push_back(std::move(subset));
+      }
+    }
+
+    // Keep only layers that have at least one valid subset
+    if (!cleaned_layer.empty()) {
+      cleaned_embeddings.push_back(std::move(cleaned_layer));
+    }
+  }
+
+  return cleaned_embeddings;
 }
 
 /**
