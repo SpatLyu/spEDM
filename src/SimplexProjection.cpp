@@ -328,6 +328,31 @@ double SimplexProjection(
   return rho;
 }
 
+/**
+ * @brief Computes the Pearson correlation coefficient (rho) using the simplex projection prediction method (3D version).
+ *
+ * Each element of vectors is itself a 2D matrix (e.g., multi-component embeddings).
+ * The function averages across sub-embeddings before computing distances and predictions.
+ */
+double SimplexProjection(
+    const std::vector<std::vector<std::vector<double>>>& vectors,
+    const std::vector<double>& target,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
+    int num_neighbors = 4,
+    int dist_metric = 2,
+    bool dist_average = true
+) {
+  double rho = std::numeric_limits<double>::quiet_NaN();
+
+  std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors, dist_metric, dist_average);
+
+  if (checkOneDimVectorNotNanNum(target_pred) >= 3) {
+    rho = PearsonCor(target_pred, target, true);
+  }
+  return rho;
+}
+
 /*
  * Computes the simplex projection and evaluates prediction performance.
  *
@@ -348,6 +373,36 @@ double SimplexProjection(
  */
 std::vector<double> SimplexBehavior(
     const std::vector<std::vector<double>>& vectors,
+    const std::vector<double>& target,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
+    int num_neighbors = 4,
+    int dist_metric = 2,
+    bool dist_average = true
+) {
+  double pearson = std::numeric_limits<double>::quiet_NaN();
+  double mae = std::numeric_limits<double>::quiet_NaN();
+  double rmse = std::numeric_limits<double>::quiet_NaN();
+
+  std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors, dist_metric, dist_average);
+
+  if (checkOneDimVectorNotNanNum(target_pred) >= 3) {
+    pearson = PearsonCor(target_pred, target, true);
+    mae = CppMAE(target_pred, target, true);
+    rmse = CppRMSE(target_pred, target, true);
+  }
+
+  return {pearson, mae, rmse};
+}
+
+/**
+ * @brief Computes the simplex projection and evaluates prediction performance (3D version).
+ *
+ * Each element of vectors is itself a 2D matrix (e.g., multi-component embeddings).
+ * The function averages across sub-embeddings before computing distances and predictions.
+ */
+std::vector<double> SimplexBehavior(
+    const std::vector<std::vector<std::vector<double>>>& vectors,
     const std::vector<double>& target,
     const std::vector<int>& lib_indices,
     const std::vector<int>& pred_indices,
