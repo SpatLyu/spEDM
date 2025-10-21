@@ -48,6 +48,46 @@ std::vector<double> SimplexProjectionPrediction(
 );
 
 /*
+ * Perform composite simplex projection prediction using multi-subset state-space reconstructions.
+ *
+ * This function extends the standard simplex projection method to handle multiple
+ * subsets (embeddings) of reconstructed state-space vectors for each spatial unit.
+ * For each prediction index, distances are computed independently for each subset,
+ * then averaged (excluding NaNs) before applying weight-based prediction.
+ *
+ * Distance calculations exclude NaN components to ensure numerical stability.
+ * Supports two distance metrics and optional averaging of distance by the
+ * number of valid vector components.
+ *
+ * Supported distance metrics:
+ *   dist_metric = 1: L1 (Manhattan) distance
+ *   dist_metric = 2: L2 (Euclidean) distance
+ *
+ * Parameters:
+ *   vectors        - 3D vector of reconstructed state-space vectors;
+ *                    vectors[s][i][j] corresponds to subset s, spatial unit i, and dimension j.
+ *   target         - Target values for each spatial unit.
+ *   lib_indices    - Indices specifying states used as the library (neighbors).
+ *   pred_indices   - Indices specifying states to predict.
+ *   num_neighbors  - Number of nearest neighbors considered for prediction. Default is 4.
+ *   dist_metric    - Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
+ *   dist_average   - Whether to average distance by the number of valid vector components. Default is true.
+ *
+ * Returns:
+ *   A vector<double> of predicted target values aligned with input target size.
+ *   Entries are NaN if prediction is not possible for that index.
+ */
+std::vector<double> SimplexProjectionPrediction(
+    const std::vector<std::vector<std::vector<double>>>& vectors,
+    const std::vector<double>& target,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
+    int num_neighbors = 4,
+    int dist_metric = 2,
+    bool dist_average = true
+);
+
+/*
  * Computes the Pearson correlation coefficient (rho) using the simplex projection prediction method.
  *
  * Parameters:
@@ -64,6 +104,22 @@ std::vector<double> SimplexProjectionPrediction(
  */
 double SimplexProjection(
     const std::vector<std::vector<double>>& vectors,
+    const std::vector<double>& target,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
+    int num_neighbors = 4,
+    int dist_metric = 2,
+    bool dist_average = true
+);
+
+/**
+ * @brief Computes the Pearson correlation coefficient (rho) using the simplex projection prediction method (3D version).
+ *
+ * Each element of vectors is itself a 2D matrix (e.g., multi-component embeddings).
+ * The function averages across sub-embeddings before computing distances and predictions.
+ */
+double SimplexProjection(
+    const std::vector<std::vector<std::vector<double>>>& vectors,
     const std::vector<double>& target,
     const std::vector<int>& lib_indices,
     const std::vector<int>& pred_indices,
@@ -92,6 +148,22 @@ double SimplexProjection(
  */
 std::vector<double> SimplexBehavior(
     const std::vector<std::vector<double>>& vectors,
+    const std::vector<double>& target,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
+    int num_neighbors = 4,
+    int dist_metric = 2,
+    bool dist_average = true
+);
+
+/**
+ * @brief Computes the simplex projection and evaluates prediction performance (3D version).
+ *
+ * Each element of vectors is itself a 2D matrix (e.g., multi-component embeddings).
+ * The function averages across sub-embeddings before computing distances and predictions.
+ */
+std::vector<double> SimplexBehavior(
+    const std::vector<std::vector<std::vector<double>>>& vectors,
     const std::vector<double>& target,
     const std::vector<int>& lib_indices,
     const std::vector<int>& pred_indices,
