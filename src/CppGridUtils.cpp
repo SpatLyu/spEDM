@@ -436,20 +436,8 @@ std::vector<std::vector<std::vector<double>>> GenGridEmbeddingsCom(
     // tau = 0: lag steps are 0, 1, 2, ..., E-1
     for (int lagNum = 0; lagNum < E; ++lagNum) {
       std::vector<std::vector<double>> lagged_vals = CppLaggedVal4Grid(mat, lagNum);
-
-      // Skip if all elements are NaN
-      bool allNaN = true;
-      for (const auto& subset : lagged_vals) {
-        for (double val : subset) {
-          if (!std::isnan(val)) { allNaN = false; break; }
-        }
-        if (!allNaN) break;
-      }
-
-      if (allNaN) break; // Stop if no valid data at this lag step
-      embeddings.push_back(lagged_vals);
+      embeddings.push_back(std::move(lagged_vals));
     }
-
   } else {
     // tau > 0 cases
     if (style == 0) {
@@ -457,37 +445,14 @@ std::vector<std::vector<std::vector<double>>> GenGridEmbeddingsCom(
       for (int i = 0; i < E; ++i) {
         int lagNum = i * tau;
         std::vector<std::vector<double>> lagged_vals = CppLaggedVal4Grid(mat, lagNum);
-
-        // Check if all elements are NaN
-        bool allNaN = true;
-        for (const auto& subset : lagged_vals) {
-          for (double val : subset) {
-            if (!std::isnan(val)) { allNaN = false; break; }
-          }
-          if (!allNaN) break;
-        }
-
-        if (allNaN) break;
-        embeddings.push_back(lagged_vals);
+        embeddings.push_back(std::move(lagged_vals));
       }
-
     } else {
       // style != 0: exclude current state; lag steps: τ, 2τ, ..., Eτ
       for (int i = 1; i <= E; ++i) {
         int lagNum = i * tau;
         std::vector<std::vector<double>> lagged_vals = CppLaggedVal4Grid(mat, lagNum);
-
-        // Check if all elements are NaN
-        bool allNaN = true;
-        for (const auto& subset : lagged_vals) {
-          for (double val : subset) {
-            if (!std::isnan(val)) { allNaN = false; break; }
-          }
-          if (!allNaN) break;
-        }
-
-        if (allNaN) break;
-        embeddings.push_back(lagged_vals);
+        embeddings.push_back(std::move(lagged_vals));
       }
     }
   }
