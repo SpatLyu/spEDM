@@ -82,7 +82,62 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& sour
 }
 
 /*
- * Evaluates prediction performance of different theta parameters for lattice data using the s-mapping method.
+ * Evaluates prediction performance of different combinations of embedding dimensions and number of nearest neighbors
+ * for lattice data using simplex projection (composite embeddings version).
+ */
+std::vector<std::vector<double>> Simplex4LatticeCom(const std::vector<double>& source,
+                                                    const std::vector<double>& target,
+                                                    const std::vector<std::vector<int>>& nb_vec,
+                                                    const std::vector<int>& lib_indices,
+                                                    const std::vector<int>& pred_indices,
+                                                    const std::vector<int>& E,
+                                                    const std::vector<int>& b,
+                                                    int tau = 1,
+                                                    int style = 1,
+                                                    int dist_metric = 2,
+                                                    bool dist_average = true,
+                                                    int threads = 8) {
+  // Configure threads
+  size_t threads_sizet = static_cast<size_t>(std::abs(threads));
+  threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
+
+  // Unique sorted embedding dimensions and neighbor values
+  std::vector<int> Es = E;
+  std::sort(Es.begin(), Es.end());
+  Es.erase(std::unique(Es.begin(), Es.end()), Es.end());
+
+  std::vector<int> bs = b;
+  std::sort(bs.begin(), bs.end());
+  bs.erase(std::unique(bs.begin(), bs.end()), bs.end());
+
+  // Generate unique (E, b) combinations
+  std::vector<std::pair<int, int>> unique_Ebcom;
+  for (int e : Es)
+    for (int bb : bs)
+      unique_Ebcom.emplace_back(e, bb);
+
+  std::vector<std::vector<double>> result(unique_Ebcom.size(), std::vector<double>(5));
+
+  RcppThread::parallelFor(0, unique_Ebcom.size(), [&](size_t i) {
+    const int Ei = unique_Ebcom[i].first;
+    const int bi = unique_Ebcom[i].second;
+
+    auto embeddings = GenLatticeEmbeddingsCom(source, nb_vec, Ei, tau, style);
+    auto metrics = SimplexBehavior(embeddings, target, lib_indices, pred_indices, bi, dist_metric, dist_average);
+
+    result[i][0] = Ei;
+    result[i][1] = bi;
+    result[i][2] = metrics[0]; // rho
+    result[i][3] = metrics[1]; // MAE
+    result[i][4] = metrics[2]; // RMSE
+  }, threads_sizet);
+
+  return result;
+}
+
+/*
+ * Evaluates prediction performance of different theta parameters for lattice data using
+ * the s-mapping method.
  *
  * Parameters:
  *   - source: A vector to be embedded.
@@ -121,6 +176,43 @@ std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& source,
 
   // Generate embeddings
   auto embeddings = GenLatticeEmbeddings(source, nb_vec, E, tau, style);
+  std::vector<std::vector<double>> result(theta.size(), std::vector<double>(4));
+
+  RcppThread::parallelFor(0, theta.size(), [&](size_t i) {
+    auto metrics = SMapBehavior(embeddings, target, lib_indices, pred_indices, b, theta[i], dist_metric, dist_average);
+
+    result[i][0] = theta[i];   // theta
+    result[i][1] = metrics[0]; // rho
+    result[i][2] = metrics[1]; // MAE
+    result[i][3] = metrics[2]; // RMSE
+  }, threads_sizet);
+
+  return result;
+}
+
+/*
+ * Evaluates prediction performance of different theta parameters for lattice data using
+ * the s-mapping method (composite embeddings version).
+ */
+std::vector<std::vector<double>> SMap4LatticeCom(const std::vector<double>& source,
+                                                 const std::vector<double>& target,
+                                                 const std::vector<std::vector<int>>& nb_vec,
+                                                 const std::vector<int>& lib_indices,
+                                                 const std::vector<int>& pred_indices,
+                                                 const std::vector<double>& theta,
+                                                 int E = 3,
+                                                 int tau = 1,
+                                                 int b = 4,
+                                                 int style = 1,
+                                                 int dist_metric = 2,
+                                                 bool dist_average = true,
+                                                 int threads = 8){
+  // Configure threads
+  size_t threads_sizet = static_cast<size_t>(std::abs(threads));
+  threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
+
+  // Generate embeddings
+  auto embeddings = GenLatticeEmbeddingsCom(source, nb_vec, E, tau, style);
   std::vector<std::vector<double>> result(theta.size(), std::vector<double>(4));
 
   RcppThread::parallelFor(0, theta.size(), [&](size_t i) {
