@@ -411,6 +411,33 @@ double SMap(
 }
 
 /*
+ * Computes the Rho value using the 'S-Mapping' prediction method (3D version).
+ *
+ * Each element of vectors is itself a 2D matrix (e.g., multi-component embeddings).
+ * The function averages across sub-embeddings before computing distances and predictions.
+ */
+double SMap(
+    const std::vector<std::vector<std::vector<double>>>& vectors,
+    const std::vector<double>& target,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
+    int num_neighbors = 4,
+    double theta = 1.0,
+    int dist_metric = 2,
+    bool dist_average = true
+) {
+  double rho = std::numeric_limits<double>::quiet_NaN();
+
+  // Call SMapPrediction to get the prediction results
+  std::vector<double> target_pred = SMapPrediction(vectors, target, lib_indices, pred_indices, num_neighbors, theta, dist_metric, dist_average);
+
+  if (checkOneDimVectorNotNanNum(target_pred) >= 3) {
+    rho = PearsonCor(target_pred, target, true);
+  }
+  return rho;
+}
+
+/*
  * Computes the S-Mapping prediction and evaluates prediction performance.
  *
  * Parameters:
@@ -427,6 +454,41 @@ double SMap(
  */
 std::vector<double> SMapBehavior(
     const std::vector<std::vector<double>>& vectors,
+    const std::vector<double>& target,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
+    int num_neighbors = 4,
+    double theta = 1.0,
+    int dist_metric = 2,
+    bool dist_average = true
+) {
+  // Initialize PearsonCor, MAE, and RMSE
+  double pearson = std::numeric_limits<double>::quiet_NaN();
+  double mae = std::numeric_limits<double>::quiet_NaN();
+  double rmse = std::numeric_limits<double>::quiet_NaN();
+
+  // Call SMapPrediction to get the prediction results
+  std::vector<double> target_pred = SMapPrediction(vectors, target, lib_indices, pred_indices, num_neighbors, theta, dist_metric, dist_average);
+
+  if (checkOneDimVectorNotNanNum(target_pred) >= 3) {
+    // Compute PearsonCor, MAE, and RMSE
+    pearson = PearsonCor(target_pred, target, true);
+    mae = CppMAE(target_pred, target, true);
+    rmse = CppRMSE(target_pred, target, true);
+  }
+
+  // Return the three metrics as a vector
+  return {pearson, mae, rmse};
+}
+
+/*
+ * Computes the S-Mapping prediction and evaluates prediction performance (3D version).
+ *
+ * Each element of vectors is itself a 2D matrix (e.g., multi-component embeddings).
+ * The function averages across sub-embeddings before computing distances and predictions.
+ */
+std::vector<double> SMapBehavior(
+    const std::vector<std::vector<std::vector<double>>>& vectors,
     const std::vector<double>& target,
     const std::vector<int>& lib_indices,
     const std::vector<int>& pred_indices,
