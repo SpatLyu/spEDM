@@ -385,7 +385,7 @@ std::vector<std::vector<double>> GenGridEmbeddings(
 
     // Construct the filtered embeddings matrix
     std::vector<std::vector<double>> filteredEmbeddings;
-    filteredEmbeddings.reserve(result.size());
+    filteredEmbeddings.reserve(validColumns.size());
 
     for (size_t row = 0; row < result.size(); ++row) {
       std::vector<double> filteredRow;
@@ -526,7 +526,7 @@ std::vector<std::vector<std::vector<double>>> GenGridEmbeddingsCom(
   for (size_t sub = 0; sub < embeddings.size(); ++sub) {
     bool isAllNaN = true;
     for (size_t row = 0; row < embeddings[sub].size(); ++row) {
-      for (size_t col = 0; col < embeddings[sub][0].size(); ++col) {
+      for (size_t col = 0; col < embeddings[sub][row].size(); ++col) {
         if (!std::isnan(embeddings[sub][row][col])) {
           isAllNaN = false;
           break;
@@ -548,10 +548,9 @@ std::vector<std::vector<std::vector<double>>> GenGridEmbeddingsCom(
   } else {
     // Construct the filtered embeddings
     std::vector<std::vector<std::vector<double>>> filteredEmbeddings;
-    filteredEmbeddings.reserve(embeddings.size());
+    filteredEmbeddings.reserve(validSubsets.size());
     for (size_t sub : validSubsets) {
-      std::vector<std::vector<double>> sub_emb = embeddings[sub];
-      filteredEmbeddings.push_back(std::move(sub_emb));
+      filteredEmbeddings.push_back(std::move(embeddings[sub]));
     }
 
     // Return the filtered embeddings

@@ -397,6 +397,7 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
   } else {
     // Construct the filtered embeddings matrix
     std::vector<std::vector<double>> filteredEmbeddings;
+    filteredEmbeddings.reserve(validColumns.size());
     for (size_t row = 0; row < xEmbedings.size(); ++row) {
       std::vector<double> filteredRow;
       for (size_t col : validColumns) {
@@ -555,34 +556,44 @@ std::vector<std::vector<std::vector<double>>> GenLatticeEmbeddingsCom(
   }
 
   // Final cleaning step: remove subsets that are all NaN
-  std::vector<std::vector<std::vector<double>>> cleaned_embeddings;
-  cleaned_embeddings.reserve(allLagEmbeddings.size());
 
-  for (auto& layer : allLagEmbeddings) {
-    std::vector<std::vector<double>> cleaned_layer;
-    cleaned_layer.reserve(layer.size());
+  // Calculate validSubsets (indices of subsets that are not entirely NaN)
+  std::vector<size_t> validSubsets; // To store indices of valid subsets
 
-    // Remove subsets that are all NaN
-    for (auto& subset : layer) {
-      bool allNaN = true;
-      for (double val : subset) {
-        if (!std::isnan(val)) {
-          allNaN = false;
+  // Iterate over each subset to check if it contains any non-NaN values
+  for (size_t sub = 0; sub < allLagEmbeddings.size(); ++sub) {
+    bool isAllNaN = true;
+    for (size_t row = 0; row < allLagEmbeddings[sub].size(); ++row) {
+      for (size_t col = 0; col < allLagEmbeddings[sub][row].size(); ++col) {
+        if (!std::isnan(allLagEmbeddings[sub][row][col])) {
+          isAllNaN = false;
           break;
         }
       }
-      if (!allNaN) {
-        cleaned_layer.push_back(std::move(subset));
+      if (!isAllNaN) {
+        break;
       }
     }
 
-    // Keep only layers that have at least one valid subset
-    if (!cleaned_layer.empty()) {
-      cleaned_embeddings.push_back(std::move(cleaned_layer));
+    if (!isAllNaN) {
+      validSubsets.push_back(sub); // Store the index of valid subsets
     }
   }
 
-  return cleaned_embeddings;
+  // If no subsets are removed, return the original embeddings
+  if (validSubsets.size() == allLagEmbeddings.size()) {
+    return allLagEmbeddings;
+  } else {
+    // Construct the filtered embeddings
+    std::vector<std::vector<std::vector<double>>> filteredEmbeddings;
+    filteredEmbeddings.reserve(validSubsets.size());
+    for (size_t sub : validSubsets) {
+      filteredEmbeddings.push_back(std::move(allLagEmbeddings[sub]));
+    }
+
+    // Return the filtered embeddings
+    return filteredEmbeddings;
+  }
 }
 
 /**
