@@ -500,6 +500,7 @@ Rcpp::NumericVector RcppFNN4Lattice(
  *   - b: An IntegerVector specifying the numbers of neighbors to use for simplex projection.
  *   - tau: An integer specifying the step of spatial lags for prediction. Default is 1.
  *   - style: Embedding style selector (0: includes current state, 1: excludes it).  Default is 1 (excludes current state).
+ *   - stack: Embedding arrangement selector (0: single - average lags, 1: composite - stack).  Default is 1 (excludes current state).
  *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
  *   - dist_average: Whether to average distance by the number of valid vector components. Default is true.
  *   - threads: Number of threads used from the global pool. Default is 8.
@@ -522,6 +523,7 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& source,
                                         const Rcpp::IntegerVector& b,
                                         int tau = 1,
                                         int style = 1,
+                                        int stack = 0,
                                         int dist_metric = 2,
                                         bool dist_average = true,
                                         int threads = 8) {
@@ -561,19 +563,36 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& source,
     }
   }
 
-  std::vector<std::vector<double>> res_std = Simplex4Lattice(
-    source_std,
-    target_std,
-    nb_vec,
-    lib_indices,
-    pred_indices,
-    E_std,
-    b_std,
-    tau,
-    style,
-    dist_metric,
-    dist_average,
-    threads);
+  std::vector<std::vector<double>> res_std;
+  if (stack == 0){
+    res_std = Simplex4Lattice(
+      source_std,
+      target_std,
+      nb_vec,
+      lib_indices,
+      pred_indices,
+      E_std,
+      b_std,
+      tau,
+      style,
+      dist_metric,
+      dist_average,
+      threads);
+  } else {
+    res_std = Simplex4LatticeCom(
+      source_std,
+      target_std,
+      nb_vec,
+      lib_indices,
+      pred_indices,
+      E_std,
+      b_std,
+      tau,
+      style,
+      dist_metric,
+      dist_average,
+      threads);
+  }
 
   size_t n_rows = res_std.size();
   size_t n_cols = res_std[0].size();
@@ -605,6 +624,7 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& source,
  *   - tau: The spatial lag step for constructing lagged state-space vectors. Default is 1.
  *   - b: Number of nearest neighbors to use for prediction. Default is 4.
  *   - style: Embedding style selector (0: includes current state, 1: excludes it). Default is 1 (excludes current state).
+ *   - stack: Embedding arrangement selector (0: single - average lags, 1: composite - stack).  Default is 1 (excludes current state).
  *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
  *   - dist_average: Whether to average distance by the number of valid vector components. Default is true.
  *   - threads: Number of threads used from the global pool. Default is 8.
@@ -629,6 +649,7 @@ Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& source,
                                      int tau = 1,
                                      int b = 5,
                                      int style = 1,
+                                     int stack = 0,
                                      int dist_metric = 2,
                                      bool dist_average = true,
                                      int threads = 8) {
@@ -665,20 +686,38 @@ Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& source,
     }
   }
 
-  std::vector<std::vector<double>> res_std = SMap4Lattice(
-    source_std,
-    target_std,
-    nb_vec,
-    lib_indices,
-    pred_indices,
-    theta_std,
-    E,
-    tau,
-    b,
-    style,
-    dist_metric,
-    dist_average,
-    threads);
+  std::vector<std::vector<double>> res_std;
+  if (stack == 0){
+    res_std = SMap4Lattice(
+      source_std,
+      target_std,
+      nb_vec,
+      lib_indices,
+      pred_indices,
+      theta_std,
+      E,
+      tau,
+      b,
+      style,
+      dist_metric,
+      dist_average,
+      threads);
+  } else {
+    res_std = SMap4LatticeCom(
+      source_std,
+      target_std,
+      nb_vec,
+      lib_indices,
+      pred_indices,
+      theta_std,
+      E,
+      tau,
+      b,
+      style,
+      dist_metric,
+      dist_average,
+      threads);
+  }
 
   size_t n_rows = res_std.size();
   size_t n_cols = res_std[0].size();

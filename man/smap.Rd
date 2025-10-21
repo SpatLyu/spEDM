@@ -16,6 +16,7 @@
   tau = 1,
   k = E + 2,
   style = 1,
+  stack = 0,
   dist.metric = "L2",
   dist.average = TRUE,
   theta = c(0, 1e-04, 3e-04, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 0.5, 0.75, 1, 1.5, 2, 3,
@@ -35,6 +36,7 @@
   tau = 1,
   k = E + 2,
   style = 1,
+  stack = 0,
   dist.metric = "L2",
   dist.average = TRUE,
   theta = c(0, 1e-04, 3e-04, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 0.5, 0.75, 1, 1.5, 2, 3,
@@ -61,6 +63,8 @@
 \item{k}{(optional) number of nearest neighbors used.}
 
 \item{style}{(optional) embedding style (\code{0} includes current state, \code{1} excludes it).}
+
+\item{stack}{(optional) embedding stack (\code{0} average lags, \code{1} stacks it).}
 
 \item{dist.metric}{(optional) distance metric (\code{L1}: Manhattan, \code{L2}: Euclidean).}
 

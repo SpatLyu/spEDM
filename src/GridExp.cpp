@@ -534,6 +534,7 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
                                      const Rcpp::IntegerVector& b,
                                      int tau = 1,
                                      int style = 1,
+                                     int stack = 0,
                                      int dist_metric = 2,
                                      bool dist_average = true,
                                      int threads = 8) {
@@ -606,18 +607,34 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
   std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
 
-  std::vector<std::vector<double>> res_std = Simplex4Grid(
-    sourceMat,
-    targetMat,
-    lib_indices,
-    pred_indices,
-    E_std,
-    b_std,
-    tau,
-    style,
-    dist_metric,
-    dist_average,
-    threads);
+  std::vector<std::vector<double>> res_std;
+  if (stack == 0){
+    res_std = Simplex4Grid(
+      sourceMat,
+      targetMat,
+      lib_indices,
+      pred_indices,
+      E_std,
+      b_std,
+      tau,
+      style,
+      dist_metric,
+      dist_average,
+      threads);
+  } else {
+    res_std = Simplex4GridCom(
+      sourceMat,
+      targetMat,
+      lib_indices,
+      pred_indices,
+      E_std,
+      b_std,
+      tau,
+      style,
+      dist_metric,
+      dist_average,
+      threads);
+  }
 
   size_t n_rows = res_std.size();
   size_t n_cols = res_std[0].size();
@@ -648,6 +665,7 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& source,
                                   int tau = 1,
                                   int b = 5,
                                   int style = 1,
+                                  int stack = 0,
                                   int dist_metric = 2,
                                   bool dist_average = true,
                                   int threads = 8) {
@@ -719,19 +737,36 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& source,
   // Convert Rcpp::NumericMatrix to std::vector<double>
   std::vector<double> theta_std = Rcpp::as<std::vector<double>>(theta);
 
-  std::vector<std::vector<double>> res_std = SMap4Grid(
-    sourceMat,
-    targetMat,
-    lib_indices,
-    pred_indices,
-    theta_std,
-    E,
-    tau,
-    b,
-    style,
-    dist_metric,
-    dist_average,
-    threads);
+  std::vector<std::vector<double>> res_std;
+  if (stack == 0){
+    res_std = SMap4Grid(
+      sourceMat,
+      targetMat,
+      lib_indices,
+      pred_indices,
+      theta_std,
+      E,
+      tau,
+      b,
+      style,
+      dist_metric,
+      dist_average,
+      threads);
+  } else {
+    res_std = SMap4GridCom(
+      sourceMat,
+      targetMat,
+      lib_indices,
+      pred_indices,
+      theta_std,
+      E,
+      tau,
+      b,
+      style,
+      dist_metric,
+      dist_average,
+      threads);
+  }
 
   size_t n_rows = res_std.size();
   size_t n_cols = res_std[0].size();
