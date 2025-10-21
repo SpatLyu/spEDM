@@ -19,6 +19,7 @@
   lib = NULL,
   pred = NULL,
   style = 1,
+  stack = 0,
   dist.metric = "L2",
   dist.average = TRUE,
   nb = NULL,
@@ -42,6 +43,7 @@
   lib = NULL,
   pred = NULL,
   style = 1,
+  stack = 0,
   dist.metric = "L2",
   dist.average = TRUE,
   threads = detectThreads(),
@@ -75,6 +77,8 @@
 \item{pred}{(optional) predictions indices.}
 
 \item{style}{(optional) embedding style (\code{0} includes current state, \code{1} excludes it).}
+
+\item{stack}{(optional) embedding stack (\code{0} average lags, \code{1} stacks it).}
 
 \item{dist.metric}{(optional) distance metric (\code{L1}: Manhattan, \code{L2}: Euclidean).}
 

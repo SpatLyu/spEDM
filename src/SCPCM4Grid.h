@@ -313,6 +313,7 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
  * - parallel_level: Level of parallel computing: 0 for `lower`, 1 for `higher`.
  * - cumulate: Boolean flag indicating whether to cumulate partial correlations.
  * - style: Embedding style selector (0: includes current state, 1: excludes it).
+ * - stack: Embedding arrangement selector (0: single - average lags, 1: composite - stack).  Default is 0 (average lags).
  * - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * - dist_average: Whether to average distance by the number of valid vector components.
  * - single_sig: Whether to estimate significance and confidence intervals using a single rho value.
@@ -346,6 +347,7 @@ std::vector<std::vector<double>> SCPCM4Grid(
     int parallel_level,                                  // Level of parallel computing: 0 for `lower`, 1 for `higher`
     bool cumulate,                                       // Whether to cumulate the partial correlations
     int style,                                           // Embedding style selector (0: includes current state, 1: excludes it)
+    int stack,                                          // Embedding arrangement selector (0: single - average lags, 1: composite - stack).  Default is 0 (average lags).
     int dist_metric,                                     // Distance metric selector (1: Manhattan, 2: Euclidean)
     bool dist_average,                                   // Whether to average distance by the number of valid vector components
     bool single_sig,                                     // Whether to estimate significance and confidence intervals using a single rho value
@@ -371,6 +373,7 @@ std::vector<std::vector<double>> SCPCM4Grid(
  * - parallel_level: Level of parallel computing: 0 for `lower`, 1 for `higher`.
  * - cumulate: Enable cumulative partial correlations
  * - style: Embedding style selector (0: includes current state, 1: excludes it).
+ * - stack: Embedding arrangement selector (0: single - average lags, 1: composite - stack).  Default is 0 (average lags).
  * - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * - dist_average: Whether to average distance by the number of valid vector components.
  * - single_sig: Whether to estimate significance and confidence intervals using a single rho value.
@@ -404,6 +407,7 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
     int parallel_level,
     bool cumulate,
     int style,
+    int stack,
     int dist_metric,
     bool dist_average,
     bool single_sig,
