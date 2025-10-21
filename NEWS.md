@@ -1,5 +1,9 @@
 # spEDM 1.9
 
+### new
+
+* Extend capabilities to incorporate mean-based and stacked spatial cross-sectional embeddings for cross mapping (#800).
+
 ### enhancements
 
 * Adjust `Makevars` to track latest rcpparmadillo release and armadillo updates improving build integration and forward compatibility (#785).
