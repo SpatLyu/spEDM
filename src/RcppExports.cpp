@@ -139,6 +139,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppSimplexForecastCom
+Rcpp::NumericVector RcppSimplexForecastCom(const Rcpp::List& embeddings, const Rcpp::NumericVector& target, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const int& num_neighbors, const int& dist_metric, const bool& dist_average);
+RcppExport SEXP _spEDM_RcppSimplexForecastCom(SEXP embeddingsSEXP, SEXP targetSEXP, SEXP libSEXP, SEXP predSEXP, SEXP num_neighborsSEXP, SEXP dist_metricSEXP, SEXP dist_averageSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type embeddings(embeddingsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type target(targetSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type lib(libSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type pred(predSEXP);
+    Rcpp::traits::input_parameter< const int& >::type num_neighbors(num_neighborsSEXP);
+    Rcpp::traits::input_parameter< const int& >::type dist_metric(dist_metricSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type dist_average(dist_averageSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSimplexForecastCom(embeddings, target, lib, pred, num_neighbors, dist_metric, dist_average));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppSMapForecast
 Rcpp::NumericVector RcppSMapForecast(const Rcpp::NumericMatrix& embedding, const Rcpp::NumericVector& target, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const int& num_neighbors, const double& theta, const int& dist_metric, const bool& dist_average);
 RcppExport SEXP _spEDM_RcppSMapForecast(SEXP embeddingSEXP, SEXP targetSEXP, SEXP libSEXP, SEXP predSEXP, SEXP num_neighborsSEXP, SEXP thetaSEXP, SEXP dist_metricSEXP, SEXP dist_averageSEXP) {
@@ -153,6 +169,23 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int& >::type dist_metric(dist_metricSEXP);
     Rcpp::traits::input_parameter< const bool& >::type dist_average(dist_averageSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppSMapForecast(embedding, target, lib, pred, num_neighbors, theta, dist_metric, dist_average));
+    return rcpp_result_gen;
+END_RCPP
+}
+// RcppSMapForecastCom
+Rcpp::NumericVector RcppSMapForecastCom(const Rcpp::List& embeddings, const Rcpp::NumericVector& target, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const int& num_neighbors, const double& theta, const int& dist_metric, const bool& dist_average);
+RcppExport SEXP _spEDM_RcppSMapForecastCom(SEXP embeddingsSEXP, SEXP targetSEXP, SEXP libSEXP, SEXP predSEXP, SEXP num_neighborsSEXP, SEXP thetaSEXP, SEXP dist_metricSEXP, SEXP dist_averageSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type embeddings(embeddingsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type target(targetSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type lib(libSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type pred(predSEXP);
+    Rcpp::traits::input_parameter< const int& >::type num_neighbors(num_neighborsSEXP);
+    Rcpp::traits::input_parameter< const double& >::type theta(thetaSEXP);
+    Rcpp::traits::input_parameter< const int& >::type dist_metric(dist_metricSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type dist_average(dist_averageSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSMapForecastCom(embeddings, target, lib, pred, num_neighbors, theta, dist_metric, dist_average));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1466,7 +1499,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppMutualInformation_Disc", (DL_FUNC) &_spEDM_RcppMutualInformation_Disc, 5},
     {"_spEDM_RcppConditionalEntropy_Disc", (DL_FUNC) &_spEDM_RcppConditionalEntropy_Disc, 5},
     {"_spEDM_RcppSimplexForecast", (DL_FUNC) &_spEDM_RcppSimplexForecast, 7},
+    {"_spEDM_RcppSimplexForecastCom", (DL_FUNC) &_spEDM_RcppSimplexForecastCom, 7},
     {"_spEDM_RcppSMapForecast", (DL_FUNC) &_spEDM_RcppSMapForecast, 8},
+    {"_spEDM_RcppSMapForecastCom", (DL_FUNC) &_spEDM_RcppSMapForecastCom, 8},
     {"_spEDM_RcppIntersectionCardinality", (DL_FUNC) &_spEDM_RcppIntersectionCardinality, 9},
     {"_spEDM_RcppLocateGridIndices", (DL_FUNC) &_spEDM_RcppLocateGridIndices, 4},
     {"_spEDM_RcppRowColFromGrid", (DL_FUNC) &_spEDM_RcppRowColFromGrid, 2},

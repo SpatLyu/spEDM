@@ -19,7 +19,7 @@
  *   - lib: Integer vector of indices (which states to include when searching for neighbors, 1-based indexing).
  *   - pred: Integer vector of indices (which states to predict from, 1-based indexing).
  *   - num_neighbors: Number of neighbors to be used for simplex projection.
- *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). 
+ *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  *   - dist_average: Whether to average distance by the number of valid vector components.
  *
  * Returns: A Rcpp::NumericVector containing the predicted target values.
@@ -81,6 +81,87 @@ Rcpp::NumericVector RcppSimplexForecast(
 }
 
 /*
+ * Computes predictions using the simplex projection method
+ * for a collection of embeddings (multi-group combined version).
+ *
+ * This function extends RcppSimplexForecast by allowing the input
+ * embeddings to be a list of matrices. Each matrix represents
+ * one reconstructed state-space (rows = states, columns = embedding dimensions).
+ * Internally, the list of matrices is converted to a 3-level nested
+ * std::vector<std::vector<std::vector<double>>> and passed to
+ * SimplexProjectionPrediction().
+ *
+ * Parameters:
+ *   - embeddings: A list of R matrices, where each matrix represents
+ *                 one reconstructed state-space embedding.
+ *   - target: Numeric vector of target values (must align with embeddings).
+ *   - lib: Integer vector (1-based indices) specifying library points.
+ *   - pred: Integer vector (1-based indices) specifying prediction points.
+ *   - num_neighbors: Number of nearest neighbors for simplex projection.
+ *   - dist_metric: Distance metric (1 = Manhattan, 2 = Euclidean).
+ *   - dist_average: Whether to average distance by valid vector components.
+ *
+ * Returns:
+ *   Rcpp::NumericVector of predicted values (same length as target),
+ *   with NaN entries for unpredicted indices.
+ */
+// [[Rcpp::export(rng = false)]]
+Rcpp::NumericVector RcppSimplexForecastCom(
+    const Rcpp::List& embeddings,
+    const Rcpp::NumericVector& target,
+    const Rcpp::IntegerVector& lib,
+    const Rcpp::IntegerVector& pred,
+    const int& num_neighbors = 4,
+    const int& dist_metric = 2,
+    const bool& dist_average = true
+) {
+  // --- Convert embeddings (R list of matrices) into 3D std::vector
+  std::vector<std::vector<std::vector<double>>> embeddings_std;
+  embeddings_std.reserve(embeddings.size());
+
+  for (int k = 0; k < embeddings.size(); ++k) {
+    Rcpp::NumericMatrix mat = Rcpp::as<Rcpp::NumericMatrix>(embeddings[k]);
+    std::vector<std::vector<double>> one_matrix(mat.nrow(), std::vector<double>(mat.ncol()));
+    for (int i = 0; i < mat.nrow(); ++i) {
+      for (int j = 0; j < mat.ncol(); ++j) {
+        one_matrix[i][j] = mat(i, j);
+      }
+    }
+    embeddings_std.push_back(std::move(one_matrix));
+  }
+
+  // --- Convert other arguments
+  std::vector<double> target_std = Rcpp::as<std::vector<double>>(target);
+  std::vector<int> lib_indices, pred_indices;
+  int n = target_std.size();
+
+  // Convert R 1-based indices to C++ 0-based
+  for (int i = 0; i < lib.size(); ++i) {
+    if (lib[i] < 1 || lib[i] > n)
+      Rcpp::stop("lib index out of range: position %d (value %d)", i + 1, lib[i]);
+    lib_indices.push_back(lib[i] - 1);
+  }
+  for (int i = 0; i < pred.size(); ++i) {
+    if (pred[i] < 1 || pred[i] > n)
+      Rcpp::stop("pred index out of range: position %d (value %d)", i + 1, pred[i]);
+    pred_indices.push_back(pred[i] - 1);
+  }
+
+  // --- Call the C++ simplex projection function for composite embeddings
+  std::vector<double> pred_res = SimplexProjectionPrediction(
+    embeddings_std,
+    target_std,
+    lib_indices,
+    pred_indices,
+    num_neighbors,
+    dist_metric,
+    dist_average
+  );
+
+  return Rcpp::wrap(pred_res);
+}
+
+/*
  * Computes the S-Map forecast.
  *
  * See https://github.com/SpatLyu/simplex-smap-tutorial/blob/master/SimplexSmapFuncs.R for
@@ -93,7 +174,7 @@ Rcpp::NumericVector RcppSimplexForecast(
  *   - pred: Integer vector of indices (which states to predict from, 1-based indexing).
  *   - num_neighbors: Number of neighbors to be used for S-Mapping.
  *   - theta: Weighting parameter for distances.
- *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). 
+ *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  *   - dist_average: Whether to average distance by the number of valid vector components.
  *
  * Returns: A Rcpp::NumericVector containing the predicted target values.
@@ -152,6 +233,90 @@ Rcpp::NumericVector RcppSMapForecast(
   );
 
   // Convert the result back to Rcpp::NumericVector
+  return Rcpp::wrap(pred_res);
+}
+
+/*
+ * Computes predictions using the S-Map method
+ * for a collection of embeddings (multi-group combined version).
+ *
+ * This function extends RcppSMapForecast by allowing the input
+ * embeddings to be a list of matrices. Each matrix represents
+ * one reconstructed state-space (rows = states, columns = embedding dimensions).
+ * Internally, the list of matrices is converted to a 3-level nested
+ * std::vector<std::vector<std::vector<double>>> and passed to
+ * SMapPrediction().
+ *
+ * Parameters:
+ *   - embeddings: A list of R matrices, where each matrix represents
+ *                 one reconstructed state-space embedding.
+ *   - target: Numeric vector of target values (must align with embeddings).
+ *   - lib: Integer vector (1-based indices) specifying library points.
+ *   - pred: Integer vector (1-based indices) specifying prediction points.
+ *   - num_neighbors: Number of nearest neighbors for local linear regression.
+ *   - theta: Weighting parameter controlling exponential decay of distances.
+ *   - dist_metric: Distance metric (1 = Manhattan, 2 = Euclidean).
+ *   - dist_average: Whether to average distance by valid vector components.
+ *
+ * Returns:
+ *   Rcpp::NumericVector of predicted values (same length as target),
+ *   with NaN entries for unpredicted indices.
+ */
+// [[Rcpp::export(rng = false)]]
+Rcpp::NumericVector RcppSMapForecastCom(
+    const Rcpp::List& embeddings,
+    const Rcpp::NumericVector& target,
+    const Rcpp::IntegerVector& lib,
+    const Rcpp::IntegerVector& pred,
+    const int& num_neighbors = 4,
+    const double& theta = 1.0,
+    const int& dist_metric = 2,
+    const bool& dist_average = true
+) {
+  // --- Convert embeddings (R list of matrices) into 3D std::vector
+  std::vector<std::vector<std::vector<double>>> embeddings_std;
+  embeddings_std.reserve(embeddings.size());
+
+  for (int k = 0; k < embeddings.size(); ++k) {
+    Rcpp::NumericMatrix mat = Rcpp::as<Rcpp::NumericMatrix>(embeddings[k]);
+    std::vector<std::vector<double>> one_matrix(mat.nrow(), std::vector<double>(mat.ncol()));
+    for (int i = 0; i < mat.nrow(); ++i) {
+      for (int j = 0; j < mat.ncol(); ++j) {
+        one_matrix[i][j] = mat(i, j);
+      }
+    }
+    embeddings_std.push_back(std::move(one_matrix));
+  }
+
+  // --- Convert other arguments
+  std::vector<double> target_std = Rcpp::as<std::vector<double>>(target);
+  std::vector<int> lib_indices, pred_indices;
+  int n = target_std.size();
+
+  // Convert R 1-based indices to C++ 0-based
+  for (int i = 0; i < lib.size(); ++i) {
+    if (lib[i] < 1 || lib[i] > n)
+      Rcpp::stop("lib index out of range: position %d (value %d)", i + 1, lib[i]);
+    lib_indices.push_back(lib[i] - 1);
+  }
+  for (int i = 0; i < pred.size(); ++i) {
+    if (pred[i] < 1 || pred[i] > n)
+      Rcpp::stop("pred index out of range: position %d (value %d)", i + 1, pred[i]);
+    pred_indices.push_back(pred[i] - 1);
+  }
+
+  // --- Call the C++ S-Map prediction function for composite embeddings
+  std::vector<double> pred_res = SMapPrediction(
+    embeddings_std,
+    target_std,
+    lib_indices,
+    pred_indices,
+    num_neighbors,
+    theta,
+    dist_metric,
+    dist_average
+  );
+
   return Rcpp::wrap(pred_res);
 }
 
