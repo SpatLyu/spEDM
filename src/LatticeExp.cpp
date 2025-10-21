@@ -500,7 +500,7 @@ Rcpp::NumericVector RcppFNN4Lattice(
  *   - b: An IntegerVector specifying the numbers of neighbors to use for simplex projection.
  *   - tau: An integer specifying the step of spatial lags for prediction. Default is 1.
  *   - style: Embedding style selector (0: includes current state, 1: excludes it).  Default is 1 (excludes current state).
- *   - stack: Embedding arrangement selector (0: single - average lags, 1: composite - stack).  Default is 1 (excludes current state).
+ *   - stack: Embedding arrangement selector (0: single - average lags, 1: composite - stack).  Default is 0 (average lags).
  *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
  *   - dist_average: Whether to average distance by the number of valid vector components. Default is true.
  *   - threads: Number of threads used from the global pool. Default is 8.
@@ -624,7 +624,7 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& source,
  *   - tau: The spatial lag step for constructing lagged state-space vectors. Default is 1.
  *   - b: Number of nearest neighbors to use for prediction. Default is 4.
  *   - style: Embedding style selector (0: includes current state, 1: excludes it). Default is 1 (excludes current state).
- *   - stack: Embedding arrangement selector (0: single - average lags, 1: composite - stack).  Default is 1 (excludes current state).
+ *   - stack: Embedding arrangement selector (0: single - average lags, 1: composite - stack).  Default is 0 (average lags).
  *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
  *   - dist_average: Whether to average distance by the number of valid vector components. Default is true.
  *   - threads: Number of threads used from the global pool. Default is 8.
