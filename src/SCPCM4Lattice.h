@@ -54,6 +54,26 @@ std::vector<double> PartialSimplex4Lattice(
 );
 
 /**
+ * Computes the partial correlation between the target variable and its simplex projection,
+ * incorporating control variables using a lattice-based embedding approach (composite embeddings version).
+ */
+std::vector<double> PartialSimplex4Lattice(
+    const std::vector<std::vector<std::vector<double>>>& vectors,
+    const std::vector<double>& target,
+    const std::vector<std::vector<double>>& controls,
+    const std::vector<std::vector<int>>& nb_vec,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
+    const std::vector<int>& conEs,
+    const std::vector<int>& taus,
+    const std::vector<int>& num_neighbors,
+    bool cumulate = false,
+    int style = 1,
+    int dist_metric = 2,
+    bool dist_average = true
+);
+
+/**
  * @brief Computes the partial correlation between a spatial cross-sectional series and its prediction
  *        using the S-Map method, incorporating control variables.
  *
@@ -81,6 +101,27 @@ std::vector<double> PartialSimplex4Lattice(
  */
 std::vector<double> PartialSMap4Lattice(
     const std::vector<std::vector<double>>& vectors,
+    const std::vector<double>& target,
+    const std::vector<std::vector<double>>& controls,
+    const std::vector<std::vector<int>>& nb_vec,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
+    const std::vector<int>& conEs,
+    const std::vector<int>& taus,
+    const std::vector<int>& num_neighbors,
+    double theta = 1.0,
+    bool cumulate = false,
+    int style = 1,
+    int dist_metric = 2,
+    bool dist_average = true
+);
+
+/**
+ * Computes the partial correlation between a spatial cross-sectional series and its prediction
+ * using the S-Map method, incorporating control variables (composite embeddings version).
+ */
+std::vector<double> PartialSMap4Lattice(
+    const std::vector<std::vector<std::vector<double>>>& vectors,
     const std::vector<double>& target,
     const std::vector<std::vector<double>>& controls,
     const std::vector<std::vector<int>>& nb_vec,
@@ -144,6 +185,28 @@ std::vector<PartialCorRes> SCPCMSingle4Lattice(
     int style,                                          // Embedding style selector (0: includes current state, 1: excludes it)
     int dist_metric,                                    // Distance metric selector (1: Manhattan, 2: Euclidean)
     bool dist_average                                   // Whether to average distance by the number of valid vector components
+);
+
+// Perform SCPCM on a single library and prediction set for lattice data (composite embeddings version).
+std::vector<PartialCorRes> SCPCMSingle4Lattice(
+    const std::vector<std::vector<std::vector<double>>>& x_vectors,
+    const std::vector<double>& y,
+    const std::vector<std::vector<double>>& controls,
+    const std::vector<std::vector<int>>& nb_vec,
+    int lib_size,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
+    const std::vector<int>& conEs,
+    const std::vector<int>& taus,
+    const std::vector<int>& b,
+    bool simplex,
+    double theta,
+    size_t threads,
+    int parallel_level,
+    bool cumulate,
+    int style,
+    int dist_metric,
+    bool dist_average
 );
 
 /**
