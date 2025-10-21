@@ -101,12 +101,12 @@ RcppFNN4Grid <- function(mat, rt, eps, lib, pred, E, tau = 1L, style = 1L, dist_
     .Call(`_spEDM_RcppFNN4Grid`, mat, rt, eps, lib, pred, E, tau, style, dist_metric, threads, parallel_level)
 }
 
-RcppSimplex4Grid <- function(source, target, lib, pred, E, b, tau = 1L, style = 1L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
-    .Call(`_spEDM_RcppSimplex4Grid`, source, target, lib, pred, E, b, tau, style, dist_metric, dist_average, threads)
+RcppSimplex4Grid <- function(source, target, lib, pred, E, b, tau = 1L, style = 1L, stack = 0L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
+    .Call(`_spEDM_RcppSimplex4Grid`, source, target, lib, pred, E, b, tau, style, stack, dist_metric, dist_average, threads)
 }
 
-RcppSMap4Grid <- function(source, target, lib, pred, theta, E = 3L, tau = 1L, b = 5L, style = 1L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
-    .Call(`_spEDM_RcppSMap4Grid`, source, target, lib, pred, theta, E, tau, b, style, dist_metric, dist_average, threads)
+RcppSMap4Grid <- function(source, target, lib, pred, theta, E = 3L, tau = 1L, b = 5L, style = 1L, stack = 0L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
+    .Call(`_spEDM_RcppSMap4Grid`, source, target, lib, pred, theta, E, tau, b, style, stack, dist_metric, dist_average, threads)
 }
 
 RcppMultiView4Grid <- function(xMatrix, yMatrix, lib, pred, E = 3L, tau = 1L, b = 5L, top = 5L, nvar = 3L, style = 1L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
@@ -201,12 +201,12 @@ RcppFNN4Lattice <- function(vec, nb, rt, eps, lib, pred, E, tau = 1L, style = 1L
     .Call(`_spEDM_RcppFNN4Lattice`, vec, nb, rt, eps, lib, pred, E, tau, style, dist_metric, threads, parallel_level)
 }
 
-RcppSimplex4Lattice <- function(source, target, nb, lib, pred, E, b, tau = 1L, style = 1L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
-    .Call(`_spEDM_RcppSimplex4Lattice`, source, target, nb, lib, pred, E, b, tau, style, dist_metric, dist_average, threads)
+RcppSimplex4Lattice <- function(source, target, nb, lib, pred, E, b, tau = 1L, style = 1L, stack = 0L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
+    .Call(`_spEDM_RcppSimplex4Lattice`, source, target, nb, lib, pred, E, b, tau, style, stack, dist_metric, dist_average, threads)
 }
 
-RcppSMap4Lattice <- function(source, target, nb, lib, pred, theta, E = 3L, tau = 1L, b = 5L, style = 1L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
-    .Call(`_spEDM_RcppSMap4Lattice`, source, target, nb, lib, pred, theta, E, tau, b, style, dist_metric, dist_average, threads)
+RcppSMap4Lattice <- function(source, target, nb, lib, pred, theta, E = 3L, tau = 1L, b = 5L, style = 1L, stack = 0L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
+    .Call(`_spEDM_RcppSMap4Lattice`, source, target, nb, lib, pred, theta, E, tau, b, style, stack, dist_metric, dist_average, threads)
 }
 
 RcppMultiView4Lattice <- function(x, y, nb, lib, pred, E = 3L, tau = 1L, b = 5L, top = 5L, nvar = 3L, style = 1L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
