@@ -51,6 +51,22 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
     bool dist_average
 );
 
+// Perform GCCM on a single lib and pred for lattice data (composite embeddings version).
+std::vector<std::pair<int, double>> GCCMSingle4Lattice(
+    const std::vector<std::vector<std::vector<double>>>& x_vectors,
+    const std::vector<double>& y,
+    int lib_size,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
+    int b,
+    bool simplex,
+    double theta,
+    size_t threads,
+    int parallel_level,
+    int dist_metric,
+    bool dist_average
+);
+
 /**
  * Performs GCCM on a spatial lattice data.
  *
