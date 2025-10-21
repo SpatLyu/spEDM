@@ -46,7 +46,25 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& sour
                                                  int threads = 8);
 
 /*
- * Evaluates prediction performance of different theta parameters for lattice data using the s-mapping method.
+ * Evaluates prediction performance of different combinations of embedding dimensions and number of nearest neighbors
+ * for lattice data using simplex projection (composite embeddings version).
+ */
+std::vector<std::vector<double>> Simplex4LatticeCom(const std::vector<double>& source,
+                                                    const std::vector<double>& target,
+                                                    const std::vector<std::vector<int>>& nb_vec,
+                                                    const std::vector<int>& lib_indices,
+                                                    const std::vector<int>& pred_indices,
+                                                    const std::vector<int>& E,
+                                                    const std::vector<int>& b,
+                                                    int tau = 1,
+                                                    int style = 1,
+                                                    int dist_metric = 2,
+                                                    bool dist_average = true,
+                                                    int threads = 8);
+
+/*
+ * Evaluates prediction performance of different theta parameters for lattice data using
+ * the s-mapping method.
  *
  * Parameters:
  *   - source: A vector to be embedded.
@@ -80,6 +98,24 @@ std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& source,
                                               bool dist_average = true,
                                               int threads = 8);
 
+/*
+ * Evaluates prediction performance of different theta parameters for lattice data using
+ * the s-mapping method (composite embeddings version).
+ */
+std::vector<std::vector<double>> SMap4LatticeCom(const std::vector<double>& source,
+                                                 const std::vector<double>& target,
+                                                 const std::vector<std::vector<int>>& nb_vec,
+                                                 const std::vector<int>& lib_indices,
+                                                 const std::vector<int>& pred_indices,
+                                                 const std::vector<double>& theta,
+                                                 int E = 3,
+                                                 int tau = 1,
+                                                 int b = 4,
+                                                 int style = 1,
+                                                 int dist_metric = 2,
+                                                 bool dist_average = true,
+                                                 int threads = 8);
+
 /**
  * Compute Intersection Cardinality AUC over spatial lattice data.
  *
@@ -103,7 +139,7 @@ std::vector<std::vector<double>> SMap4Lattice(const std::vector<double>& source,
  * @param b              Vector of neighbor sizes to try.
  * @param tau            Embedding delay (usually 1 for lattice).
  * @param exclude        Number of nearest neighbors to exclude (e.g., temporal or spatial proximity).
- * @param style          Embedding style selector (0: includes current state, 1: excludes it). 
+ * @param style          Embedding style selector (0: includes current state, 1: excludes it).
  * @param dist_metric    Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param threads        Number of threads for parallel computation.
  * @param parallel_level Flag indicating whether to use multi-threading (0: serial, 1: parallel).

@@ -98,7 +98,79 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
 }
 
 /*
- * Evaluates prediction performance of different theta parameters for grid data using the S-mapping method.
+ * Evaluates prediction performance of different combinations of embedding dimensions and number of nearest neighbors
+ * for grid data using simplex projection (composite embeddings version).
+ */
+std::vector<std::vector<double>> Simplex4GridCom(const std::vector<std::vector<double>>& source,
+                                                 const std::vector<std::vector<double>>& target,
+                                                 const std::vector<int>& lib_indices,
+                                                 const std::vector<int>& pred_indices,
+                                                 const std::vector<int>& E,
+                                                 const std::vector<int>& b,
+                                                 int tau = 1,
+                                                 int style = 1,
+                                                 int dist_metric = 2,
+                                                 bool dist_average = true,
+                                                 int threads = 8) {
+  // Configure threads
+  size_t threads_sizet = static_cast<size_t>(std::abs(threads));
+  threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
+
+  const int numRows = target.size();
+  const int numCols = target[0].size();
+
+  // Flatten target matrix
+  std::vector<double> vec_std;
+  vec_std.reserve(numRows * numCols);
+  for (const auto& row : target) {
+    vec_std.insert(vec_std.end(), row.begin(), row.end());
+  }
+
+  // Remove duplicates from E and b
+  std::vector<int> Es = E;
+  std::sort(Es.begin(), Es.end());
+  Es.erase(std::unique(Es.begin(), Es.end()), Es.end());
+
+  std::vector<int> bs = b;
+  std::sort(bs.begin(), bs.end());
+  bs.erase(std::unique(bs.begin(), bs.end()), bs.end());
+
+  // Generate all unique (E, b) pairs
+  std::vector<std::pair<int, int>> unique_Ebcom;
+  unique_Ebcom.reserve(Es.size() * bs.size());
+  for (int e : Es) {
+    for (int bn : bs) {
+      unique_Ebcom.emplace_back(e, bn);
+    }
+  }
+
+  std::vector<std::vector<double>> result(unique_Ebcom.size(), std::vector<double>(5));
+
+  // Parallel loop over combinations
+  RcppThread::parallelFor(0, unique_Ebcom.size(), [&](size_t i) {
+    const int cur_E = unique_Ebcom[i].first;
+    const int cur_b = unique_Ebcom[i].second;
+
+    // Generate embedding
+    std::vector<std::vector<std::vector<double>>> embeddings = GenGridEmbeddingsCom(source, cur_E, tau, style);
+
+    // Evaluate performance
+    std::vector<double> metrics = SimplexBehavior(embeddings, vec_std, lib_indices, pred_indices, cur_b, dist_metric, dist_average);
+
+    // Store results
+    result[i][0] = cur_E;
+    result[i][1] = cur_b;
+    result[i][2] = metrics[0];
+    result[i][3] = metrics[1];
+    result[i][4] = metrics[2];
+  }, threads_sizet);
+
+  return result;
+}
+
+/*
+ * Evaluates prediction performance of different theta parameters for grid data
+ * using the S-mapping method.
  *
  * Parameters:
  *   - source: A matrix to be embedded.
@@ -160,6 +232,53 @@ std::vector<std::vector<double>> SMap4Grid(const std::vector<std::vector<double>
   return result;
 }
 
+/*
+ * Evaluates prediction performance of different theta parameters for grid data
+ * using the S-mapping method (composite embeddings version).
+ */
+std::vector<std::vector<double>> SMap4GridCom(const std::vector<std::vector<double>>& source,
+                                              const std::vector<std::vector<double>>& target,
+                                              const std::vector<int>& lib_indices,
+                                              const std::vector<int>& pred_indices,
+                                              const std::vector<double>& theta,
+                                              int E = 3,
+                                              int tau = 1,
+                                              int b = 4,
+                                              int style = 1,
+                                              int dist_metric = 2,
+                                              bool dist_average = true,
+                                              int threads = 8) {
+  // Configure threads
+  size_t threads_sizet = static_cast<size_t>(std::abs(threads));
+  threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
+
+  const int numRows = target.size();
+  const int numCols = target[0].size();
+
+  // Flatten target matrix
+  std::vector<double> vec_std;
+  vec_std.reserve(numRows * numCols);
+  for (const auto& row : target) {
+    vec_std.insert(vec_std.end(), row.begin(), row.end());
+  }
+
+  // Generate embedding once
+  std::vector<std::vector<std::vector<double>>> embeddings = GenGridEmbeddingsCom(source, E, tau, style);
+
+  std::vector<std::vector<double>> result(theta.size(), std::vector<double>(4));
+
+  RcppThread::parallelFor(0, theta.size(), [&](size_t i) {
+    std::vector<double> metrics = SMapBehavior(embeddings, vec_std, lib_indices, pred_indices, b, theta[i], dist_average, dist_metric);
+
+    result[i][0] = theta[i];
+    result[i][1] = metrics[0];
+    result[i][2] = metrics[1];
+    result[i][3] = metrics[2];
+  }, threads_sizet);
+
+  return result;
+}
+
 /**
  * @brief Evaluate intersection cardinality (IC) for spatial grid data.
  *
@@ -183,7 +302,7 @@ std::vector<std::vector<double>> SMap4Grid(const std::vector<std::vector<double>
  * @param b Vector of neighbor counts (k) used to compute IC.
  * @param tau Spatial embedding spacing (lag). Determines distance between embedding neighbors.
  * @param exclude Number of nearest neighbors to exclude in IC computation.
- * @param style Embedding style selector (0: includes current state, 1: excludes it). 
+ * @param style Embedding style selector (0: includes current state, 1: excludes it).
  * @param dist_metric Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param threads Maximum number of threads to use.
  * @param parallel_level If > 0, enables parallel evaluation of b for each E.
