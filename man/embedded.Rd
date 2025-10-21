@@ -37,7 +37,7 @@
 \item{detrend}{(optional) whether to remove the linear trend.}
 }
 \value{
-A matrix
+A matrix (\code{stack} = \code{0}) or list.
 }
 \description{
 embedding spatial cross sectional data
