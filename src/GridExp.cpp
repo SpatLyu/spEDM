@@ -98,6 +98,48 @@ Rcpp::NumericMatrix RcppGenGridEmbeddings(const Rcpp::NumericMatrix& mat,
   return result;
 }
 
+// Wrapper function to generate composite grid embeddings.
+// [[Rcpp::export(rng = false)]]
+Rcpp::List RcppGenGridEmbeddingsCom(const Rcpp::NumericMatrix& mat,
+                                    int E = 3,
+                                    int tau = 1,
+                                    int style = 1) {
+  // Convert R matrix to std::vector<std::vector<double>>
+  int numRows = mat.nrow();
+  int numCols = mat.ncol();
+  std::vector<std::vector<double>> cppMat(numRows, std::vector<double>(numCols));
+
+  for (int r = 0; r < numRows; ++r) {
+    for (int c = 0; c < numCols; ++c) {
+      cppMat[r][c] = mat(r, c);
+    }
+  }
+
+  // Call the core C++ embedding function
+  std::vector<std::vector<std::vector<double>>> embeddings =
+    GenGridEmbeddingsCom(cppMat, E, tau, style);
+
+  // Convert the 3D std::vector into an Rcpp::List of NumericMatrix
+  Rcpp::List result(embeddings.size());
+
+  for (const auto& layer : embeddings) {
+    if (layer.empty()) continue; // Skip empty layers (if all NaN subsets were removed)
+    int rows = layer.size();
+    int cols = layer[0].size();
+    Rcpp::NumericMatrix mat_layer(rows, cols);
+
+    for (int i = 0; i < rows; ++i) {
+      for (int j = 0; j < cols; ++j) {
+        mat_layer(i, j) = layer[i][j];
+      }
+    }
+
+    result.push_back(mat_layer);
+  }
+
+  return result;
+}
+
 // Wrapper function to generate neighbors for spatial grid data
 // [[Rcpp::export(rng = false)]]
 Rcpp::List RcppGenGridNeighbors(const Rcpp::NumericMatrix& mat,
