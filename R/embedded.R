@@ -1,12 +1,24 @@
-.embedded_sf_method = \(data,target,E = 3,tau = 1,style = 1,nb = NULL,detrend = FALSE){
+.embedded_sf_method = \(data,target,E = 3,tau = 1,style = 1,
+                        stack = 0,nb = NULL,detrend = FALSE){
   vec = .uni_lattice(data,target,detrend)
   if (is.null(nb)) nb = .internal_lattice_nb(data)
-  return(RcppGenLatticeEmbeddings(vec,nb,E,tau,style))
+  if (stack == 0){
+    res = RcppGenLatticeEmbeddings(vec,nb,E,tau,style)
+  } else {
+    res = RcppGenLatticeEmbeddingsCom(vec,nb,E,tau,style)
+  }
+  return(res)
 }
 
-.embedded_spatraster_method = \(data,target,E = 3,tau = 1,style = 1,detrend = FALSE){
+.embedded_spatraster_method = \(data,target,E = 3,tau = 1,style = 1,
+                                stack = 0, detrend = FALSE){
   mat = .uni_grid(data,target,detrend)
-  return(RcppGenGridEmbeddings(mat,E,tau,style))
+  if (stack == 0){
+    res = RcppGenGridEmbeddings(mat,E,tau,style)
+  } else {
+    res = RcppGenGridEmbeddingsCom(mat,E,tau,style)
+  }
+  return(res)
 }
 
 #' embedding spatial cross sectional data
