@@ -1394,7 +1394,6 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
   } else {
     Emb3D = GenGridEmbeddingsCom(xMatrix, Ex, taux, style);
   }
-  std::vector<std::vector<double>> xEmbedings = GenGridEmbeddings(xMatrix, Ex, taux, style);
 
   size_t n_confounds;
   if (cumulate){
@@ -1427,52 +1426,100 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
     if (progressbar) {
       RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
       for (size_t i = 0; i < unique_lib_sizes.size(); ++i) {
-        local_results[i] = SCPCMSingle4GridOneDim(
-          xEmbedings,
-          yPred,
-          zMatrixs,
-          unique_lib_sizes[i],
-          lib,
-          pred,
-          conEs,
-          contaus,
-          bs,
-          totalRow,
-          totalCol,
-          simplex,
-          theta,
-          threads_sizet,
-          parallel_level,
-          cumulate,
-          style,
-          dist_metric,
-          dist_average
-        );
+        if (stack == 0) {
+          local_results[i] = SCPCMSingle4GridOneDim(
+            Emb2D,
+            yPred,
+            zMatrixs,
+            unique_lib_sizes[i],
+            lib,
+            pred,
+            conEs,
+            contaus,
+            bs,
+            totalRow,
+            totalCol,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            cumulate,
+            style,
+            dist_metric,
+            dist_average
+          );
+        } else {
+          local_results[i] = SCPCMSingle4GridOneDim(
+            Emb3D,
+            yPred,
+            zMatrixs,
+            unique_lib_sizes[i],
+            lib,
+            pred,
+            conEs,
+            contaus,
+            bs,
+            totalRow,
+            totalCol,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            cumulate,
+            style,
+            dist_metric,
+            dist_average
+          );
+        }
         bar++;
       }
     } else {
       for (size_t i = 0; i < unique_lib_sizes.size(); ++i) {
-        local_results[i] = SCPCMSingle4GridOneDim(
-          xEmbedings,
-          yPred,
-          zMatrixs,
-          unique_lib_sizes[i],
-          lib,
-          pred,
-          conEs,
-          contaus,
-          bs,
-          totalRow,
-          totalCol,
-          simplex,
-          theta,
-          threads_sizet,
-          parallel_level,
-          cumulate,
-          style,
-          dist_metric,
-          dist_average
-        );
+        if (stack == 0) {
+          local_results[i] = SCPCMSingle4GridOneDim(
+            Emb2D,
+            yPred,
+            zMatrixs,
+            unique_lib_sizes[i],
+            lib,
+            pred,
+            conEs,
+            contaus,
+            bs,
+            totalRow,
+            totalCol,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            cumulate,
+            style,
+            dist_metric,
+            dist_average
+          );
+        } else {
+          local_results[i] = SCPCMSingle4GridOneDim(
+            Emb3D,
+            yPred,
+            zMatrixs,
+            unique_lib_sizes[i],
+            lib,
+            pred,
+            conEs,
+            contaus,
+            bs,
+            totalRow,
+            totalCol,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            cumulate,
+            style,
+            dist_metric,
+            dist_average
+          );
+        }
       }
     }
   } else {
@@ -1481,53 +1528,101 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
       RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
       RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
         int lib_size = unique_lib_sizes[i];
-        local_results[i] = SCPCMSingle4GridOneDim(
-          xEmbedings,
-          yPred,
-          zMatrixs,
-          lib_size,
-          lib,
-          pred,
-          conEs,
-          contaus,
-          bs,
-          totalRow,
-          totalCol,
-          simplex,
-          theta,
-          threads_sizet,
-          parallel_level,
-          cumulate,
-          style,
-          dist_metric,
-          dist_average
-        );
+        if (stack == 0) {
+          local_results[i] = SCPCMSingle4GridOneDim(
+            Emb2D,
+            yPred,
+            zMatrixs,
+            lib_size,
+            lib,
+            pred,
+            conEs,
+            contaus,
+            bs,
+            totalRow,
+            totalCol,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            cumulate,
+            style,
+            dist_metric,
+            dist_average
+          );
+        } else {
+          local_results[i] = SCPCMSingle4GridOneDim(
+            Emb3D,
+            yPred,
+            zMatrixs,
+            lib_size,
+            lib,
+            pred,
+            conEs,
+            contaus,
+            bs,
+            totalRow,
+            totalCol,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            cumulate,
+            style,
+            dist_metric,
+            dist_average
+          );
+        }
         bar++;
       }, threads_sizet);
     } else {
       RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
         int lib_size = unique_lib_sizes[i];
-        local_results[i] = SCPCMSingle4GridOneDim(
-          xEmbedings,
-          yPred,
-          zMatrixs,
-          lib_size,
-          lib,
-          pred,
-          conEs,
-          contaus,
-          bs,
-          totalRow,
-          totalCol,
-          simplex,
-          theta,
-          threads_sizet,
-          parallel_level,
-          cumulate,
-          style,
-          dist_metric,
-          dist_average
-        );
+        if (stack == 0) {
+          local_results[i] = SCPCMSingle4GridOneDim(
+            Emb2D,
+            yPred,
+            zMatrixs,
+            lib_size,
+            lib,
+            pred,
+            conEs,
+            contaus,
+            bs,
+            totalRow,
+            totalCol,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            cumulate,
+            style,
+            dist_metric,
+            dist_average
+          );
+        } else {
+          local_results[i] = SCPCMSingle4GridOneDim(
+            Emb3D,
+            yPred,
+            zMatrixs,
+            lib_size,
+            lib,
+            pred,
+            conEs,
+            contaus,
+            bs,
+            totalRow,
+            totalCol,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            cumulate,
+            style,
+            dist_metric,
+            dist_average
+          );
+        }
       }, threads_sizet);
     }
   }
