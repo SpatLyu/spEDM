@@ -479,28 +479,29 @@ std::vector<std::vector<std::vector<double>>> GenLatticeEmbeddingsCom(
       for (int i = 0; i < n; ++i) {
         std::unordered_set<int> mergedSet;
 
-        for (int elem : prevResult[i])
+        for (int elem : prevResult[i]){
           if (elem != std::numeric_limits<int>::min())
             mergedSet.insert(elem);
+        }
 
-          std::unordered_set<int> newElements;
-          for (int j : prevResult[i]) {
-            if (j == std::numeric_limits<int>::min() || j < 0 || j >= n)
-              continue;
-            for (int k : nb[j])
-              newElements.insert(k);
-          }
+        std::unordered_set<int> newElements;
+        for (int j : prevResult[i]) {
+          if (j == std::numeric_limits<int>::min() || j < 0 || j >= n)
+            continue;
+          for (int k : nb[j])
+            newElements.insert(k);
+        }
 
-          mergedSet.insert(newElements.begin(), newElements.end());
+        mergedSet.insert(newElements.begin(), newElements.end());
 
-          std::vector<int> vecRes(mergedSet.begin(), mergedSet.end());
-          std::sort(vecRes.begin(), vecRes.end());
-          vecRes.erase(std::unique(vecRes.begin(), vecRes.end()), vecRes.end());
+        std::vector<int> vecRes(mergedSet.begin(), mergedSet.end());
+        std::sort(vecRes.begin(), vecRes.end());
+        vecRes.erase(std::unique(vecRes.begin(), vecRes.end()), vecRes.end());
 
-          if (vecRes.empty())
-            vecRes.push_back(std::numeric_limits<int>::min());
+        if (vecRes.empty())
+          vecRes.push_back(std::numeric_limits<int>::min());
 
-          currentResult.push_back(vecRes);
+        currentResult.push_back(std::move(vecRes));
       }
       laggedResultsMap[lagNum] = currentResult;
     }
@@ -519,14 +520,15 @@ std::vector<std::vector<std::vector<double>>> GenLatticeEmbeddingsCom(
         std::unordered_set<int> prevSet(prevLaggedResults[i].begin(),
                                         prevLaggedResults[i].end());
         std::vector<int> newIndices;
-        for (int idx : laggedResults[i])
+        for (int idx : laggedResults[i]){
           if (prevSet.find(idx) == prevSet.end())
             newIndices.push_back(idx);
+        }
 
-          if (newIndices.empty())
-            newIndices.push_back(std::numeric_limits<int>::min());
+        if (newIndices.empty())
+          newIndices.push_back(std::numeric_limits<int>::min());
 
-          laggedResults[i] = newIndices;
+        laggedResults[i] = newIndices;
       }
     }
 
