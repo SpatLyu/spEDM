@@ -144,82 +144,6 @@ std::vector<double> SimplexProjectionPrediction(
 }
 
 /*
- * Computes the Pearson correlation coefficient (rho) using the simplex projection prediction method.
- *
- * Parameters:
- *   - vectors: Reconstructed state-space (each row represents a separate vector/state).
- *   - target: Spatial cross sectional series used as the target (should align with vectors).
- *   - lib_indices: Vector of indices indicating which states to include when searching for neighbors.
- *   - pred_indices: Vector of indices indicating which states to use for prediction.
- *   - num_neighbors: Number of neighbors to use for simplex projection. Default is 4.
- *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
- *   - dist_average: Whether to average distance by the number of valid vector components. Default is true.
- *
- * Returns:
- *   A double representing the Pearson correlation coefficient (rho) between the predicted and actual target values.
- */
-double SimplexProjection(
-    const std::vector<std::vector<double>>& vectors,
-    const std::vector<double>& target,
-    const std::vector<int>& lib_indices,
-    const std::vector<int>& pred_indices,
-    int num_neighbors = 4,
-    int dist_metric = 2,
-    bool dist_average = true
-) {
-  double rho = std::numeric_limits<double>::quiet_NaN();
-
-  std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors, dist_metric, dist_average);
-
-  if (checkOneDimVectorNotNanNum(target_pred) >= 3) {
-    rho = PearsonCor(target_pred, target, true);
-  }
-  return rho;
-}
-
-/*
- * Computes the simplex projection and evaluates prediction performance.
- *
- * Parameters:
- *   - vectors: Reconstructed state-space (each row is a separate vector/state).
- *   - target: Spatial cross sectional series to be used as the target (should align with vectors).
- *   - lib_indices: Vector of indices indicating which states to include when searching for neighbors.
- *   - pred_indices: Vector of indices indicating which states to predict from.
- *   - num_neighbors: Number of neighbors to use for simplex projection. Default is 4.
- *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
- *   - dist_average: Whether to average distance by the number of valid vector components. Default is true.
- *
- * Returns:
- *   A vector<double> containing:
- *     - Pearson correlation coefficient (PearsonCor)
- *     - Mean absolute error (MAE)
- *     - Root mean squared error (RMSE)
- */
-std::vector<double> SimplexBehavior(
-    const std::vector<std::vector<double>>& vectors,
-    const std::vector<double>& target,
-    const std::vector<int>& lib_indices,
-    const std::vector<int>& pred_indices,
-    int num_neighbors = 4,
-    int dist_metric = 2,
-    bool dist_average = true
-) {
-  double pearson = std::numeric_limits<double>::quiet_NaN();
-  double mae = std::numeric_limits<double>::quiet_NaN();
-  double rmse = std::numeric_limits<double>::quiet_NaN();
-
-  std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors, dist_metric, dist_average);
-
-  if (checkOneDimVectorNotNanNum(target_pred) >= 3) {
-    pearson = PearsonCor(target_pred, target, true);
-    mae = CppMAE(target_pred, target, true);
-    rmse = CppRMSE(target_pred, target, true);
-  }
-
-  return {pearson, mae, rmse};
-}
-
-/*
  * Perform composite simplex projection prediction using multi-subset state-space reconstructions.
  *
  * This function extends the standard simplex projection method to handle multiple
@@ -249,7 +173,7 @@ std::vector<double> SimplexBehavior(
  *   A vector<double> of predicted target values aligned with input target size.
  *   Entries are NaN if prediction is not possible for that index.
  */
-std::vector<double> SimplexProjectionPredictionCom(
+std::vector<double> SimplexProjectionPrediction(
     const std::vector<std::vector<std::vector<double>>>& vectors,
     const std::vector<double>& target,
     const std::vector<int>& lib_indices,
@@ -370,3 +294,78 @@ std::vector<double> SimplexProjectionPredictionCom(
   return pred;
 }
 
+/*
+ * Computes the Pearson correlation coefficient (rho) using the simplex projection prediction method.
+ *
+ * Parameters:
+ *   - vectors: Reconstructed state-space (each row represents a separate vector/state).
+ *   - target: Spatial cross sectional series used as the target (should align with vectors).
+ *   - lib_indices: Vector of indices indicating which states to include when searching for neighbors.
+ *   - pred_indices: Vector of indices indicating which states to use for prediction.
+ *   - num_neighbors: Number of neighbors to use for simplex projection. Default is 4.
+ *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
+ *   - dist_average: Whether to average distance by the number of valid vector components. Default is true.
+ *
+ * Returns:
+ *   A double representing the Pearson correlation coefficient (rho) between the predicted and actual target values.
+ */
+double SimplexProjection(
+    const std::vector<std::vector<double>>& vectors,
+    const std::vector<double>& target,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
+    int num_neighbors = 4,
+    int dist_metric = 2,
+    bool dist_average = true
+) {
+  double rho = std::numeric_limits<double>::quiet_NaN();
+
+  std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors, dist_metric, dist_average);
+
+  if (checkOneDimVectorNotNanNum(target_pred) >= 3) {
+    rho = PearsonCor(target_pred, target, true);
+  }
+  return rho;
+}
+
+/*
+ * Computes the simplex projection and evaluates prediction performance.
+ *
+ * Parameters:
+ *   - vectors: Reconstructed state-space (each row is a separate vector/state).
+ *   - target: Spatial cross sectional series to be used as the target (should align with vectors).
+ *   - lib_indices: Vector of indices indicating which states to include when searching for neighbors.
+ *   - pred_indices: Vector of indices indicating which states to predict from.
+ *   - num_neighbors: Number of neighbors to use for simplex projection. Default is 4.
+ *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
+ *   - dist_average: Whether to average distance by the number of valid vector components. Default is true.
+ *
+ * Returns:
+ *   A vector<double> containing:
+ *     - Pearson correlation coefficient (PearsonCor)
+ *     - Mean absolute error (MAE)
+ *     - Root mean squared error (RMSE)
+ */
+std::vector<double> SimplexBehavior(
+    const std::vector<std::vector<double>>& vectors,
+    const std::vector<double>& target,
+    const std::vector<int>& lib_indices,
+    const std::vector<int>& pred_indices,
+    int num_neighbors = 4,
+    int dist_metric = 2,
+    bool dist_average = true
+) {
+  double pearson = std::numeric_limits<double>::quiet_NaN();
+  double mae = std::numeric_limits<double>::quiet_NaN();
+  double rmse = std::numeric_limits<double>::quiet_NaN();
+
+  std::vector<double> target_pred = SimplexProjectionPrediction(vectors, target, lib_indices, pred_indices, num_neighbors, dist_metric, dist_average);
+
+  if (checkOneDimVectorNotNanNum(target_pred) >= 3) {
+    pearson = PearsonCor(target_pred, target, true);
+    mae = CppMAE(target_pred, target, true);
+    rmse = CppRMSE(target_pred, target, true);
+  }
+
+  return {pearson, mae, rmse};
+}
