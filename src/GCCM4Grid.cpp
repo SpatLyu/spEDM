@@ -465,6 +465,7 @@ std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
  * @param threads        The number of threads to use for parallel processing.
  * @param parallel_level Level of parallel computing: 0 for `lower`, 1 for `higher`.
  * @param style          Embedding style selector (0: includes current state, 1: excludes it).
+ * @param stack          Embedding arrangement selector (0: single - average lags, 1: composite - stack).  Default is 0 (average lags).
  * @param dist_metric    Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param dist_average   Whether to average distance by the number of valid vector components.
  * @param single_sig     Whether to estimate significance and confidence intervals using a single rho value.
@@ -487,6 +488,7 @@ std::vector<std::vector<double>> GCCM4Grid(
     int threads,
     int parallel_level,
     int style,
+    int stack,
     int dist_metric,
     bool dist_average,
     bool single_sig,
@@ -512,7 +514,13 @@ std::vector<std::vector<double>> GCCM4Grid(
   }
 
   // Generate embeddings for xMatrix
-  std::vector<std::vector<double>> xEmbedings = GenGridEmbeddings(xMatrix, E, tau, style);
+  std::vector<std::vector<double>> Emb2D;
+  std::vector<std::vector<std::vector<double>>> Emb3D;
+  if (stack == 0){
+    Emb2D = GenGridEmbeddings(xMatrix, E, tau, style);
+  } else {
+    Emb3D = GenGridEmbeddingsCom(xMatrix, E, tau, style);
+  }
 
   // Ensure the maximum value does not exceed totalRow or totalCol
   int max_lib_size_row = totalRow;
@@ -593,44 +601,82 @@ std::vector<std::vector<double>> GCCM4Grid(
       for (size_t i = 0; i < unique_lib_size_pairs.size(); ++i) {
         int lib_size_row = unique_lib_size_pairs[i].first;
         int lib_size_col = unique_lib_size_pairs[i].second;
-        local_results[i] = GCCMSingle4Grid(
-          xEmbedings,
-          yPred,
-          {lib_size_row, lib_size_col},
-          lib_indices,
-          pred_indices,
-          totalRow,
-          totalCol,
-          b,
-          simplex,
-          theta,
-          threads_sizet,
-          parallel_level,
-          row_size_mark,
-          dist_metric,
-          dist_average);
+        if (stack == 0){
+          local_results[i] = GCCMSingle4Grid(
+            Emb2D,
+            yPred,
+            {lib_size_row, lib_size_col},
+            lib_indices,
+            pred_indices,
+            totalRow,
+            totalCol,
+            b,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            row_size_mark,
+            dist_metric,
+            dist_average);
+        } else {
+          local_results[i] = GCCMSingle4Grid(
+            Emb3D,
+            yPred,
+            {lib_size_row, lib_size_col},
+            lib_indices,
+            pred_indices,
+            totalRow,
+            totalCol,
+            b,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            row_size_mark,
+            dist_metric,
+            dist_average);
+        }
         bar++;
       }
     } else {
       for (size_t i = 0; i < unique_lib_size_pairs.size(); ++i) {
         int lib_size_row = unique_lib_size_pairs[i].first;
         int lib_size_col = unique_lib_size_pairs[i].second;
-        local_results[i] = GCCMSingle4Grid(
-          xEmbedings,
-          yPred,
-          {lib_size_row, lib_size_col},
-          lib_indices,
-          pred_indices,
-          totalRow,
-          totalCol,
-          b,
-          simplex,
-          theta,
-          threads_sizet,
-          parallel_level,
-          row_size_mark,
-          dist_metric,
-          dist_average);
+        if (stack == 0){
+          local_results[i] = GCCMSingle4Grid(
+            Emb2D,
+            yPred,
+            {lib_size_row, lib_size_col},
+            lib_indices,
+            pred_indices,
+            totalRow,
+            totalCol,
+            b,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            row_size_mark,
+            dist_metric,
+            dist_average);
+        } else {
+          local_results[i] = GCCMSingle4Grid(
+            Emb3D,
+            yPred,
+            {lib_size_row, lib_size_col},
+            lib_indices,
+            pred_indices,
+            totalRow,
+            totalCol,
+            b,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            row_size_mark,
+            dist_metric,
+            dist_average);
+        }
       }
     }
   } else {
@@ -640,44 +686,82 @@ std::vector<std::vector<double>> GCCM4Grid(
       RcppThread::parallelFor(0, unique_lib_size_pairs.size(), [&](size_t i) {
         int lib_size_row = unique_lib_size_pairs[i].first;
         int lib_size_col = unique_lib_size_pairs[i].second;
-        local_results[i] = GCCMSingle4Grid(
-          xEmbedings,
-          yPred,
-          {lib_size_row, lib_size_col},
-          lib_indices,
-          pred_indices,
-          totalRow,
-          totalCol,
-          b,
-          simplex,
-          theta,
-          threads_sizet,
-          parallel_level,
-          row_size_mark,
-          dist_metric,
-          dist_average);
+        if (stack == 0){
+          local_results[i] = GCCMSingle4Grid(
+            Emb2D,
+            yPred,
+            {lib_size_row, lib_size_col},
+            lib_indices,
+            pred_indices,
+            totalRow,
+            totalCol,
+            b,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            row_size_mark,
+            dist_metric,
+            dist_average);
+        } else {
+          local_results[i] = GCCMSingle4Grid(
+            Emb3D,
+            yPred,
+            {lib_size_row, lib_size_col},
+            lib_indices,
+            pred_indices,
+            totalRow,
+            totalCol,
+            b,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            row_size_mark,
+            dist_metric,
+            dist_average);
+        }
         bar++;
       }, threads_sizet);
     } else {
       RcppThread::parallelFor(0, unique_lib_size_pairs.size(), [&](size_t i) {
         int lib_size_row = unique_lib_size_pairs[i].first;
         int lib_size_col = unique_lib_size_pairs[i].second;
-        local_results[i] = GCCMSingle4Grid(
-          xEmbedings,
-          yPred,
-          {lib_size_row, lib_size_col},
-          lib_indices,
-          pred_indices,
-          totalRow,
-          totalCol,
-          b,
-          simplex,
-          theta,
-          threads_sizet,
-          parallel_level,
-          row_size_mark,
-          dist_metric,
-          dist_average);
+        if (stack == 0){
+          local_results[i] = GCCMSingle4Grid(
+            Emb2D,
+            yPred,
+            {lib_size_row, lib_size_col},
+            lib_indices,
+            pred_indices,
+            totalRow,
+            totalCol,
+            b,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            row_size_mark,
+            dist_metric,
+            dist_average);
+        } else {
+          local_results[i] = GCCMSingle4Grid(
+            Emb3D,
+            yPred,
+            {lib_size_row, lib_size_col},
+            lib_indices,
+            pred_indices,
+            totalRow,
+            totalCol,
+            b,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            row_size_mark,
+            dist_metric,
+            dist_average);
+        }
       }, threads_sizet);
     }
   }
@@ -761,6 +845,7 @@ std::vector<std::vector<double>> GCCM4Grid(
  * @param threads        The number of threads to use for parallel processing.
  * @param parallel_level Level of parallel computing: 0 for `lower`, 1 for `higher`.
  * @param style          Embedding style selector (0: includes current state, 1: excludes it).
+ * @param stack          Embedding arrangement selector (0: single - average lags, 1: composite - stack).  Default is 0 (average lags).
  * @param dist_metric    Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param dist_average   Whether to average distance by the number of valid vector components.
  * @param single_sig     Whether to estimate significance and confidence intervals using a single rho value.
@@ -783,6 +868,7 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
     int threads,
     int parallel_level,
     int style,
+    int stack,
     int dist_metric,
     bool dist_average,
     bool single_sig,
@@ -808,7 +894,13 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
   }
 
   // Generate embeddings for xMatrix
-  std::vector<std::vector<double>> xEmbedings = GenGridEmbeddings(xMatrix, E, tau, style);
+  std::vector<std::vector<double>> Emb2D;
+  std::vector<std::vector<std::vector<double>>> Emb3D;
+  if (stack == 0){
+    Emb2D = GenGridEmbeddings(xMatrix, E, tau, style);
+  } else {
+    Emb3D = GenGridEmbeddingsCom(xMatrix, E, tau, style);
+  }
 
   int max_lib_size = static_cast<int>(lib.size()); // Maximum lib size
 
@@ -834,42 +926,80 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
     if (progressbar) {
       RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
       for (size_t i = 0; i < unique_lib_sizes.size(); ++i) {
-        local_results[i] = GCCMSingle4GridOneDim(
-          xEmbedings,
-          yPred,
-          unique_lib_sizes[i],
-          lib,
-          pred,
-          totalRow,
-          totalCol,
-          b,
-          simplex,
-          theta,
-          threads_sizet,
-          parallel_level,
-          dist_metric,
-          dist_average
-        );
+        if (stack == 0){
+          local_results[i] = GCCMSingle4GridOneDim(
+            Emb2D,
+            yPred,
+            unique_lib_sizes[i],
+            lib,
+            pred,
+            totalRow,
+            totalCol,
+            b,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            dist_metric,
+            dist_average
+          );
+        } else {
+          local_results[i] = GCCMSingle4GridOneDim(
+            Emb3D,
+            yPred,
+            unique_lib_sizes[i],
+            lib,
+            pred,
+            totalRow,
+            totalCol,
+            b,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            dist_metric,
+            dist_average
+          );
+        }
         bar++;
       }
     } else {
       for (size_t i = 0; i < unique_lib_sizes.size(); ++i) {
-        local_results[i] = GCCMSingle4GridOneDim(
-          xEmbedings,
-          yPred,
-          unique_lib_sizes[i],
-          lib,
-          pred,
-          totalRow,
-          totalCol,
-          b,
-          simplex,
-          theta,
-          threads_sizet,
-          parallel_level,
-          dist_metric,
-          dist_average
-        );
+        if (stack == 0){
+          local_results[i] = GCCMSingle4GridOneDim(
+            Emb2D,
+            yPred,
+            unique_lib_sizes[i],
+            lib,
+            pred,
+            totalRow,
+            totalCol,
+            b,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            dist_metric,
+            dist_average
+          );
+        } else {
+          local_results[i] = GCCMSingle4GridOneDim(
+            Emb3D,
+            yPred,
+            unique_lib_sizes[i],
+            lib,
+            pred,
+            totalRow,
+            totalCol,
+            b,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            dist_metric,
+            dist_average
+          );
+        }
       }
     }
   } else {
@@ -878,43 +1008,81 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
       RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
       RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
         int lib_size = unique_lib_sizes[i];
-        local_results[i] = GCCMSingle4GridOneDim(
-          xEmbedings,
-          yPred,
-          lib_size,
-          lib,
-          pred,
-          totalRow,
-          totalCol,
-          b,
-          simplex,
-          theta,
-          threads_sizet,
-          parallel_level,
-          dist_metric,
-          dist_average
-        );
+        if (stack == 0){
+          local_results[i] = GCCMSingle4GridOneDim(
+            Emb2D,
+            yPred,
+            lib_size,
+            lib,
+            pred,
+            totalRow,
+            totalCol,
+            b,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            dist_metric,
+            dist_average
+          );
+        } else {
+          local_results[i] = GCCMSingle4GridOneDim(
+            Emb3D,
+            yPred,
+            lib_size,
+            lib,
+            pred,
+            totalRow,
+            totalCol,
+            b,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            dist_metric,
+            dist_average
+          );
+        }
         bar++;
       }, threads_sizet);
     } else {
       RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
         int lib_size = unique_lib_sizes[i];
-        local_results[i] = GCCMSingle4GridOneDim(
-          xEmbedings,
-          yPred,
-          lib_size,
-          lib,
-          pred,
-          totalRow,
-          totalCol,
-          b,
-          simplex,
-          theta,
-          threads_sizet,
-          parallel_level,
-          dist_metric,
-          dist_average
-        );
+        if (stack == 0){
+          local_results[i] = GCCMSingle4GridOneDim(
+            Emb2D,
+            yPred,
+            lib_size,
+            lib,
+            pred,
+            totalRow,
+            totalCol,
+            b,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            dist_metric,
+            dist_average
+          );
+        } else {
+          local_results[i] = GCCMSingle4GridOneDim(
+            Emb3D,
+            yPred,
+            lib_size,
+            lib,
+            pred,
+            totalRow,
+            totalCol,
+            b,
+            simplex,
+            theta,
+            threads_sizet,
+            parallel_level,
+            dist_metric,
+            dist_average
+          );
+        }
       }, threads_sizet);
     }
   }
