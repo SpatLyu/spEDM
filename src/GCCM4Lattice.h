@@ -85,6 +85,7 @@ std::vector<std::pair<int, double>> GCCMSingle4Lattice(
  * - threads: Number of threads to use for parallel computation.
  * - parallel_level: Level of parallel computing: 0 for `lower`, 1 for `higher`.
  * - style: Embedding style selector (0: includes current state, 1: excludes it).
+ * - stack: Embedding arrangement selector (0: single - average lags, 1: composite - stack).  Default is 0 (average lags).
  * - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * - dist_average: Whether to average distance by the number of valid vector components.
  * - single_sig: Whether to estimate significance and confidence intervals using a single rho value.
@@ -113,6 +114,7 @@ std::vector<std::vector<double>> GCCM4Lattice(
     int threads,
     int parallel_level,
     int style,
+    int stack,
     int dist_metric,
     bool dist_average,
     bool single_sig,
