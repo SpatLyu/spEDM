@@ -2,7 +2,7 @@
 
 ### new
 
-* Extend capabilities to incorporate mean-based and stacked spatial cross-sectional embeddings for cross mapping (#800).
+* Extend capabilities to incorporate mean-based and stacked spatial cross-sectional embeddings in cross mapping (#800).
 
 ### enhancements
 
