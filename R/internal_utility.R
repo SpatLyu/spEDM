@@ -53,15 +53,15 @@
 }
 
 .internal_detrend = \(data,.varname,coords = NULL){
-  if (is.null(coords)){
-    for (i in seq_along(.varname)){
-      data[,.varname[i]] = sdsfun::rm_lineartrend(paste0(.varname[i],"~x+y"), data = data)
-    }
+  if (!is.null(coords)) {
+    data = dplyr::bind_cols(data, coords)
+    formula_suffix = "~X+Y"
   } else {
-    data = dplyr::bind_cols(data,coords)
-    for (i in seq_along(.varname)){
-      data[,.varname[i]] = sdsfun::rm_lineartrend(paste0(.varname[i],"~X+Y"), data = data)
-    }
+    formula_suffix = "~x+y"
+  }
+
+  for (.var in .varname){
+    data[[.var]] = sdsfun::rm_lineartrend(paste0(.var,formula_suffix), data = data)
   }
   return(data)
 }
