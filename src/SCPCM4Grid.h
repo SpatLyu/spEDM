@@ -167,6 +167,7 @@ std::vector<double> PartialSMap4Grid(
  * @param style                Embedding style selector (0: includes current state, 1: excludes it).
  * @param dist_metric          Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param dist_average         Whether to average distance by the number of valid vector components.
+ * @param win_ratios           Scale the sliding window step relative to the matrix width/height to speed up state-space predictions.
  *
  * @return  A vector contains the library size and the corresponding cross mapping and partial cross mapping result.
  */
@@ -190,7 +191,8 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
     bool row_size_mark,
     int style,
     int dist_metric,
-    bool dist_average
+    bool dist_average,
+    const std::vector<double>& win_ratios = {0,0}
 );
 
 // Perform Grid-based Spatially Convergent Partial Cross Mapping (SCPCM) for a single library size (composite embeddings version).
@@ -214,7 +216,8 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
     bool row_size_mark,
     int style,
     int dist_metric,
-    bool dist_average
+    bool dist_average,
+    const std::vector<double>& win_ratios = {0,0}
 );
 
 /**
