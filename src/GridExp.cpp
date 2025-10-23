@@ -1334,7 +1334,7 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
     bool dist_average = true,
     bool single_sig = true,
     const Rcpp::IntegerVector& dir = Rcpp::IntegerVector::create(0),
-    const Rcpp::IntegerVector& win_ratio = Rcpp::IntegerVector::create(0,0),
+    const Rcpp::NumericVector& win_ratio = Rcpp::NumericVector::create(0,0),
     bool progressbar = false) {
   int numRows = yMatrix.nrow();
   int numCols = yMatrix.ncol();
@@ -1473,7 +1473,6 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
   std::vector<int> E_cpp = Rcpp::as<std::vector<int>>(E);
   std::vector<int> tau_cpp = Rcpp::as<std::vector<int>>(tau);
   std::vector<int> b_cpp = Rcpp::as<std::vector<int>>(b);
-  std::vector<int> win_ratio_cpp = Rcpp::as<std::vector<int>>(win_ratio);
 
   // check each element of dir before conversion
   for (int d : dir) {
@@ -1493,6 +1492,8 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
   if (std::find(dir_cpp.begin(), dir_cpp.end(), 0) != dir_cpp.end()) {
     dir_cpp = {0};
   }
+
+  std::vector<double> win_ratio_cpp = Rcpp::as<std::vector<double>>(win_ratio);
 
   // Call the C++ function SCPCM4Grid or SCPCM4GridOneDim
   std::vector<std::vector<double>> result;
