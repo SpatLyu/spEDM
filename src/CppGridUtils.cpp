@@ -532,46 +532,65 @@ std::vector<std::vector<std::vector<double>>> GenGridEmbeddingsCom(
 
   // --- Directional filtering section ---
   if (!(dir.size() == 1 && dir[0] == 0)) {
-    // Define base direction index groups for lag = 1 and lag = 2
-    std::vector<std::vector<int>> baseDirIndices = {
-      {0},          // 1: NW
-      {1},          // 2: N
-      {2},          // 3: NE
-      {3},          // 4: W
-      {4},          // 5: E
-      {5},          // 6: SW
-      {6},          // 7: S
-      {7}           // 8: SE
-    };
 
-    // For lag > 1, we need to expand each direction group proportionally
-    auto getDirIndicesForLag = [&](int lagNum, int totalCols) {
-      // For higher lag, approximate per-direction column groups
-      // assuming each lag step adds 8 * lagNum columns (if consistent)
-      int stepCols = totalCols / 8;
+    // Helper function: compute column indices for each of 8 compass directions
+    // according to the spatial ring pattern around the grid center.
+    //
+    // The grid window is (2*lagNum+1) × (2*lagNum+1).
+    // Only the outer ring (Chebyshev distance == lagNum) is scanned
+    // in row-major order (top-left to bottom-right).
+    //
+    // Directions are assigned by the sign of (row offset, col offset):
+    //   1: NW (dr < 0, dc < 0)
+    //   2: N  (dr < 0, dc == 0)
+    //   3: NE (dr < 0, dc > 0)
+    //   4: W  (dr == 0, dc < 0)
+    //   5: E  (dr == 0, dc > 0)
+    //   6: SW (dr > 0, dc < 0)
+    //   7: S  (dr > 0, dc == 0)
+    //   8: SE (dr > 0, dc > 0)
+    //
+    // For lagNum > 1, diagonal directions (NW, NE, SW, SE)
+    // accumulate multiple indices; N/S/E/W remain single.
+    auto getDirIndicesForLag = [&](int lagNum) {
       std::vector<std::vector<int>> dirGroups(8);
-      for (int d = 0; d < 8; ++d) {
-        for (int k = 0; k < stepCols; ++k) {
-          dirGroups[d].push_back(d * stepCols + k);
+      int idx = 0; // 0-based column index for C++
+      for (int dr = -lagNum; dr <= lagNum; ++dr) {
+        for (int dc = -lagNum; dc <= lagNum; ++dc) {
+          // only take perimeter cells (Chebyshev distance == lagNum)
+          if (std::max(std::abs(dr), std::abs(dc)) != lagNum) continue;
+
+          // assign this position to its directional group
+          if (dr < 0 && dc < 0)       dirGroups[0].push_back(idx); // NW
+          else if (dr < 0 && dc == 0) dirGroups[1].push_back(idx); // N
+          else if (dr < 0 && dc > 0)  dirGroups[2].push_back(idx); // NE
+          else if (dr == 0 && dc < 0) dirGroups[3].push_back(idx); // W
+          else if (dr == 0 && dc > 0) dirGroups[4].push_back(idx); // E
+          else if (dr > 0 && dc < 0)  dirGroups[5].push_back(idx); // SW
+          else if (dr > 0 && dc == 0) dirGroups[6].push_back(idx); // S
+          else if (dr > 0 && dc > 0)  dirGroups[7].push_back(idx); // SE
+
+          ++idx;
         }
       }
       return dirGroups;
     };
 
-    // Filter each embedding layer by direction
+    // --- Apply directional filtering for each embedding level ---
     for (auto& emb : embeddings) {
       if (emb.empty() || emb[0].empty()) continue;
 
-      int totalCols = emb[0].size();
-      if (totalCols <= 1) continue; // skip current-state-only embeddings
+      int totalCols = static_cast<int>(emb[0].size());
+      if (totalCols <= 1) continue; // skip single-column (current-state-only) embeddings
 
-      // Estimate lagNum by column count (8 dirs × lag)
+      // infer lag number by total column count (8 * lagNum)
       int lagNum = totalCols / 8;
       if (lagNum < 1) lagNum = 1;
 
-      auto dirGroups = getDirIndicesForLag(lagNum, totalCols);
+      // compute direction index groups for this lag
+      auto dirGroups = getDirIndicesForLag(lagNum);
 
-      // Collect all columns corresponding to selected directions
+      // collect all column indices belonging to the requested directions
       std::vector<int> selectedCols;
       for (int d : dir) {
         if (d >= 1 && d <= 8) {
@@ -581,11 +600,11 @@ std::vector<std::vector<std::vector<double>>> GenGridEmbeddingsCom(
         }
       }
 
-      // Sort and unique just in case
+      // ensure unique, sorted indices
       std::sort(selectedCols.begin(), selectedCols.end());
       selectedCols.erase(std::unique(selectedCols.begin(), selectedCols.end()), selectedCols.end());
 
-      // Apply subsetting
+      // subset each row of this embedding by selected column indices
       for (auto& row : emb) {
         std::vector<double> filteredRow;
         filteredRow.reserve(selectedCols.size());
