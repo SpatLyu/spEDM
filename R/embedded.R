@@ -1,8 +1,8 @@
-.embedded_sf_method = \(data,target,E = 3,tau = 1,style = 1,
-                        stack = 0,nb = NULL,detrend = FALSE){
+.embedded_sf_method = \(data, target, E = 3, tau = 1, style = 1,
+                        stack = FALSE, nb = NULL,detrend = FALSE){
   vec = .uni_lattice(data,target,detrend)
   if (is.null(nb)) nb = .internal_lattice_nb(data)
-  if (stack == 0){
+  if (stack){
     res = RcppGenLatticeEmbeddings(vec,nb,E,tau,style)
   } else {
     res = RcppGenLatticeEmbeddingsCom(vec,nb,E,tau,style)
@@ -13,7 +13,7 @@
 .embedded_spatraster_method = \(data,target,E = 3,tau = 1,style = 1,
                                 stack = FALSE, detrend = FALSE){
   mat = .uni_grid(data,target,detrend)
-  if (stack == 0){
+  if (stack){
     res = RcppGenGridEmbeddings(mat,E,tau,style)
   } else {
     res = RcppGenGridEmbeddingsCom(mat,E,tau,style)
