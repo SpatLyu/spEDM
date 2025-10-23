@@ -11,7 +11,7 @@
 }
 
 .embedded_spatraster_method = \(data,target,E = 3,tau = 1,style = 1,
-                                stack = 0, detrend = FALSE){
+                                stack = FALSE, detrend = FALSE){
   mat = .uni_grid(data,target,detrend)
   if (stack == 0){
     res = RcppGenGridEmbeddings(mat,E,tau,style)
@@ -28,11 +28,11 @@
 #' @param E (optional) embedding dimensions.
 #' @param tau (optional) step of spatial lags.
 #' @param style (optional) embedding style (`0` includes current state, `1` excludes it).
-#' @param stack (optional) embedding stack (`0` average lags, `1` stacks it).
+#' @param stack (optional) whether to stack embeddings.
 #' @param nb (optional) neighbours list.
 #' @param detrend (optional) whether to remove the linear trend.
 #'
-#' @return A matrix (`stack` = `0`) or list.
+#' @return A matrix (when `stack` is `FALSE`) or list.
 #' @export
 #' @name embedded
 #' @aliases embedded,sf-method
