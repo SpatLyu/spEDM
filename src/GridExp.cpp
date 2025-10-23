@@ -557,6 +557,7 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
                                      int stack = 0,
                                      int dist_metric = 2,
                                      bool dist_average = true,
+                                     const Rcpp::IntegerVector& dir = Rcpp::IntegerVector::create(0),
                                      int threads = 8) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = target.nrow();
@@ -627,6 +628,25 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
   std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
 
+  // check each element of dir before conversion
+  for (int d : dir) {
+    if (d < 0 || d > 8) {
+      Rcpp::stop("direction vector elements must be in 0–8; 0 represents all directions, 1–8 correspond to NW,N,NE,W,E,SW,S,SE");
+    }
+  }
+
+  // convert to std::vector<int>
+  std::vector<int> dir_std = Rcpp::as<std::vector<int>>(dir);
+
+  // remove duplicates
+  std::sort(dir_std.begin(), dir_std.end());
+  dir_std.erase(std::unique(dir_std.begin(), dir_std.end()), dir_std.end());
+
+  // if 0 is present, override all others
+  if (std::find(dir_std.begin(), dir_std.end(), 0) != dir_std.end()) {
+    dir_std = {0};
+  }
+
   std::vector<std::vector<double>> res_std;
   if (stack == 0){
     res_std = Simplex4Grid(
@@ -653,6 +673,7 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
       style,
       dist_metric,
       dist_average,
+      dir_std,
       threads);
   }
 
@@ -688,6 +709,7 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& source,
                                   int stack = 0,
                                   int dist_metric = 2,
                                   bool dist_average = true,
+                                  const Rcpp::IntegerVector& dir = Rcpp::IntegerVector::create(0),
                                   int threads = 8) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
   int numRows = target.nrow();
@@ -757,6 +779,25 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& source,
   // Convert Rcpp::NumericMatrix to std::vector<double>
   std::vector<double> theta_std = Rcpp::as<std::vector<double>>(theta);
 
+  // check each element of dir before conversion
+  for (int d : dir) {
+    if (d < 0 || d > 8) {
+      Rcpp::stop("direction vector elements must be in 0–8; 0 represents all directions, 1–8 correspond to NW,N,NE,W,E,SW,S,SE");
+    }
+  }
+
+  // convert to std::vector<int>
+  std::vector<int> dir_std = Rcpp::as<std::vector<int>>(dir);
+
+  // remove duplicates
+  std::sort(dir_std.begin(), dir_std.end());
+  dir_std.erase(std::unique(dir_std.begin(), dir_std.end()), dir_std.end());
+
+  // if 0 is present, override all others
+  if (std::find(dir_std.begin(), dir_std.end(), 0) != dir_std.end()) {
+    dir_std = {0};
+  }
+
   std::vector<std::vector<double>> res_std;
   if (stack == 0){
     res_std = SMap4Grid(
@@ -785,6 +826,7 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& source,
       style,
       dist_metric,
       dist_average,
+      dir_std,
       threads);
   }
 
