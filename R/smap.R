@@ -17,13 +17,13 @@
                             style = 1, stack = FALSE, dist.metric = "L2", dist.average = TRUE,
                             theta = c(0, 1e-04, 3e-04, 0.001, 0.003, 0.01, 0.03,
                                       0.1, 0.3, 0.5, 0.75, 1, 1.5, 2, 3, 4, 6, 8),
-                            threads = detectThreads(), detrend = TRUE){
+                            embed.direction = 0, threads = detectThreads(), detrend = TRUE){
   mx = .uni_grid(data,column,detrend)
   my = .uni_grid(data,target,detrend)
   if (is.null(lib)) lib = which(!(is.na(mx) | is.na(my)), arr.ind = TRUE)
   if (is.null(pred)) pred = lib
-  res = RcppSMap4Grid(mx,my,lib,pred,theta,E,tau,k,style,stack,
-                      .check_distmetric(dist.metric),dist.average,threads)
+  res = RcppSMap4Grid(mx, my, lib, pred, theta, E, tau, k, style, stack,
+                      .check_distmetric(dist.metric),dist.average,embed.direction,threads)
   return(.bind_xmapself(res,target,"smap"))
 }
 
