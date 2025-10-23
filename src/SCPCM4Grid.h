@@ -36,6 +36,8 @@
  * @param style: Embedding style selector (0: includes current state, 1: excludes it).
  * @param dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param dist_average: Whether to average distance by the number of valid vector components.
+ * @param dir: Direction selector for embeddings where 0 returns all directions, 1–8 correspond to NW, N, NE, W, E, SW, S, SE, and multiple directions can be combined (e.g., {1,2,3} for NW, N, NE).
+ *
  * @return A vector of size 2 containing:
  *         - rho[0]: Pearson correlation between the target and its predicted values.
  *         - rho[1]: Partial correlation between the target and its predicted values, adjusting for control variables.
@@ -74,7 +76,8 @@ std::vector<double> PartialSimplex4Grid(
     bool cumulate = false,
     int style = 1,
     int dist_metric = 2,
-    bool dist_average = true
+    bool dist_average = true,
+    const std::vector<int>& dir = {0}
 );
 
 /**
@@ -99,6 +102,8 @@ std::vector<double> PartialSimplex4Grid(
  * @param style: Embedding style selector (0: includes current state, 1: excludes it).
  * @param dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param dist_average: Whether to average distance by the number of valid vector components.
+ * @param dir: Direction selector for embeddings where 0 returns all directions, 1–8 correspond to NW, N, NE, W, E, SW, S, SE, and multiple directions can be combined (e.g., {1,2,3} for NW, N, NE).
+ *
  * @return A vector of size 2 containing:
  *         - rho[0]: Pearson correlation between the target and its predicted values.
  *         - rho[1]: Partial correlation between the target and its predicted values, adjusting for control variables.
@@ -138,7 +143,8 @@ std::vector<double> PartialSMap4Grid(
     bool cumulate = false,
     int style = 1,
     int dist_metric = 2,
-    bool dist_average = true
+    bool dist_average = true,
+    const std::vector<int>& dir = {0}
 );
 
 /**
@@ -167,6 +173,7 @@ std::vector<double> PartialSMap4Grid(
  * @param style                Embedding style selector (0: includes current state, 1: excludes it).
  * @param dist_metric          Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param dist_average         Whether to average distance by the number of valid vector components.
+ * @param dir                  Direction selector for embeddings where 0 returns all directions, 1–8 correspond to NW, N, NE, W, E, SW, S, SE, and multiple directions can be combined (e.g., {1,2,3} for NW, N, NE).
  * @param win_ratios           Scale the sliding window step relative to the matrix width/height to speed up state-space predictions.
  *
  * @return  A vector contains the library size and the corresponding cross mapping and partial cross mapping result.
@@ -217,6 +224,7 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
     int style,
     int dist_metric,
     bool dist_average,
+    const std::vector<int>& dir = {0},
     const std::vector<double>& win_ratios = {0,0}
 );
 
@@ -320,6 +328,8 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
  * - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * - dist_average: Whether to average distance by the number of valid vector components.
  * - single_sig: Whether to estimate significance and confidence intervals using a single rho value.
+ * - dir: Direction selector for embeddings where 0 returns all directions for embeddings, 1–8 correspond to NW, N, NE, W, E, SW, S, SE, and multiple directions can be combined (e.g., {1,2,3} for NW, N, NE).
+ * - win_rations: Scale the sliding window step relative to the matrix width/height to speed up state-space predictions.
  * - progressbar: Boolean flag indicating whether to display a progress bar during computation.
  *
  * Returns:
@@ -350,11 +360,13 @@ std::vector<std::vector<double>> SCPCM4Grid(
     int parallel_level,                                  // Level of parallel computing: 0 for `lower`, 1 for `higher`
     bool cumulate,                                       // Whether to cumulate the partial correlations
     int style,                                           // Embedding style selector (0: includes current state, 1: excludes it)
-    int stack,                                          // Embedding arrangement selector (0: single - average lags, 1: composite - stack).  Default is 0 (average lags).
+    int stack,                                           // Embedding arrangement selector (0: single - average lags, 1: composite - stack).  Default is 0 (average lags).
     int dist_metric,                                     // Distance metric selector (1: Manhattan, 2: Euclidean)
     bool dist_average,                                   // Whether to average distance by the number of valid vector components
     bool single_sig,                                     // Whether to estimate significance and confidence intervals using a single rho value
-    bool progressbar                                     // Whether to print the progress bar
+    const std::vector<int>& dir = {0},                   // Direction selector for embeddings where 0 returns all directions, 1–8 correspond to NW, N, NE, W, E, SW, S, SE, and multiple directions can be combined (e.g., {1,2,3} for NW, N, NE).
+    const std::vector<double>& win_ratios = {0,0},       // Scale the sliding window step relative to the matrix width/height to speed up state-space predictions.
+    bool progressbar = false                             // Whether to print the progress bar
 );
 
 /**

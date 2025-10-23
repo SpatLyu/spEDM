@@ -35,6 +35,8 @@
  * @param style: Embedding style selector (0: includes current state, 1: excludes it).
  * @param dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param dist_average: Whether to average distance by the number of valid vector components.
+ * @param dir: Direction selector for embeddings where 0 returns all directions, 1–8 correspond to NW, N, NE, W, E, SW, S, SE, and multiple directions can be combined (e.g., {1,2,3} for NW, N, NE).
+ *
  * @return A vector of size 2 containing:
  *         - rho[0]: Pearson correlation between the target and its predicted values.
  *         - rho[1]: Partial correlation between the target and its predicted values, adjusting for control variables.
@@ -121,7 +123,8 @@ std::vector<double> PartialSimplex4Grid(
     bool cumulate = false,
     int style = 1,
     int dist_metric = 2,
-    bool dist_average = true
+    bool dist_average = true,
+    const std::vector<int>& dir = {0}
 ){
   int n_controls = controls.size();
   std::vector<double> rho(2,std::numeric_limits<double>::quiet_NaN());
@@ -138,7 +141,7 @@ std::vector<double> PartialSimplex4Grid(
         temp_pred = SimplexProjectionPrediction(temp_embedding, controls[i], lib_indices, pred_indices, num_neighbors[i], dist_metric, dist_average);
       }
       temp_conmat = GridVec2Mat(temp_pred,nrow);
-      temp_embedding = GenGridEmbeddingsCom(temp_conmat,conEs[i],taus[i],style);
+      temp_embedding = GenGridEmbeddingsCom(temp_conmat,conEs[i],taus[i],style,dir);
     }
 
     std::vector<double> con_pred = SimplexProjectionPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors[n_controls], dist_metric, dist_average);
@@ -157,7 +160,7 @@ std::vector<double> PartialSimplex4Grid(
     for (int i = 0; i < n_controls; ++i) {
       temp_pred = SimplexProjectionPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors[0], dist_metric, dist_average);
       temp_conmat = GridVec2Mat(temp_pred,nrow);
-      temp_embedding = GenGridEmbeddingsCom(temp_conmat,conEs[i],taus[i],style);
+      temp_embedding = GenGridEmbeddingsCom(temp_conmat,conEs[i],taus[i],style,dir);
       temp_pred = SimplexProjectionPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors[i+1], dist_metric, dist_average);
       con_pred[i] = temp_pred;
     }
@@ -194,6 +197,8 @@ std::vector<double> PartialSimplex4Grid(
  * @param style: Embedding style selector (0: includes current state, 1: excludes it).
  * @param dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param dist_average: Whether to average distance by the number of valid vector components.
+ * @param dir: Direction selector for embeddings where 0 returns all directions, 1–8 correspond to NW, N, NE, W, E, SW, S, SE, and multiple directions can be combined (e.g., {1,2,3} for NW, N, NE).
+ *
  * @return A vector of size 2 containing:
  *         - rho[0]: Pearson correlation between the target and its predicted values.
  *         - rho[1]: Partial correlation between the target and its predicted values, adjusting for control variables.
@@ -281,7 +286,8 @@ std::vector<double> PartialSMap4Grid(
     bool cumulate = false,
     int style = 1,
     int dist_metric = 2,
-    bool dist_average = true
+    bool dist_average = true,
+    const std::vector<int>& dir = {0}
 ){
   int n_controls = controls.size();
   std::vector<double> rho(2,std::numeric_limits<double>::quiet_NaN());
@@ -298,7 +304,7 @@ std::vector<double> PartialSMap4Grid(
         temp_pred = SMapPrediction(temp_embedding, controls[i], lib_indices, pred_indices, num_neighbors[i], theta, dist_metric, dist_average);
       }
       temp_conmat = GridVec2Mat(temp_pred,nrow);
-      temp_embedding = GenGridEmbeddingsCom(temp_conmat,conEs[i],taus[i],style);
+      temp_embedding = GenGridEmbeddingsCom(temp_conmat,conEs[i],taus[i],style,dir);
     }
 
     std::vector<double> con_pred = SMapPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors[n_controls], theta, dist_metric, dist_average);
@@ -317,7 +323,7 @@ std::vector<double> PartialSMap4Grid(
     for (int i = 0; i < n_controls; ++i) {
       temp_pred = SMapPrediction(vectors, controls[i], lib_indices, pred_indices, num_neighbors[0], theta, dist_metric, dist_average);
       temp_conmat = GridVec2Mat(temp_pred,nrow);
-      temp_embedding = GenGridEmbeddingsCom(temp_conmat,conEs[i],taus[i],style);
+      temp_embedding = GenGridEmbeddingsCom(temp_conmat,conEs[i],taus[i],style,dir);
       temp_pred = SMapPrediction(temp_embedding, target, lib_indices, pred_indices, num_neighbors[i+1], theta, dist_metric, dist_average);
       con_pred[i] = temp_pred;
     }
@@ -358,6 +364,7 @@ std::vector<double> PartialSMap4Grid(
  * @param style                Embedding style selector (0: includes current state, 1: excludes it).
  * @param dist_metric          Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param dist_average         Whether to average distance by the number of valid vector components.
+ * @param dir                  Direction selector for embeddings where 0 returns all directions, 1–8 correspond to NW, N, NE, W, E, SW, S, SE, and multiple directions can be combined (e.g., {1,2,3} for NW, N, NE).
  * @param win_ratios           Scale the sliding window step relative to the matrix width/height to speed up state-space predictions.
  *
  * @return  A vector contains the library size and the corresponding cross mapping and partial cross mapping result.
@@ -484,6 +491,7 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
     int style,
     int dist_metric,
     bool dist_average,
+    const std::vector<int>& dir = {0},
     const std::vector<double>& win_ratios = {0,0}
 ) {
   // Extract row-wise and column-wise library sizes
@@ -542,9 +550,9 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
 
     // Run partial cross map and store results
     if (simplex) {
-      rho = PartialSimplex4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, cumulate, style, dist_metric, dist_average);
+      rho = PartialSimplex4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, cumulate, style, dist_metric, dist_average, dir);
     } else {
-      rho = PartialSMap4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, theta, cumulate, style, dist_metric, dist_average);
+      rho = PartialSMap4Grid(xEmbedings, yPred, controls, lib_indices, pred_indices, conEs, taus, b, totalRow, theta, cumulate, style, dist_metric, dist_average, dir);
     }
 
     // Directly assign a PartialCorRes struct with the three values
@@ -857,6 +865,8 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
  * - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * - dist_average: Whether to average distance by the number of valid vector components.
  * - single_sig: Whether to estimate significance and confidence intervals using a single rho value.
+ * - dir: Direction selector for embeddings where 0 returns all directions for embeddings, 1–8 correspond to NW, N, NE, W, E, SW, S, SE, and multiple directions can be combined (e.g., {1,2,3} for NW, N, NE).
+ * - win_rations: Scale the sliding window step relative to the matrix width/height to speed up state-space predictions.
  * - progressbar: Boolean flag indicating whether to display a progress bar during computation.
  *
  * Returns:
@@ -887,11 +897,13 @@ std::vector<std::vector<double>> SCPCM4Grid(
     int parallel_level,                                  // Level of parallel computing: 0 for `lower`, 1 for `higher`
     bool cumulate,                                       // Whether to cumulate the partial correlations
     int style,                                           // Embedding style selector (0: includes current state, 1: excludes it)
-    int stack,                                          // Embedding arrangement selector (0: single - average lags, 1: composite - stack).  Default is 0 (average lags).
+    int stack,                                           // Embedding arrangement selector (0: single - average lags, 1: composite - stack).  Default is 0 (average lags).
     int dist_metric,                                     // Distance metric selector (1: Manhattan, 2: Euclidean)
     bool dist_average,                                   // Whether to average distance by the number of valid vector components
     bool single_sig,                                     // Whether to estimate significance and confidence intervals using a single rho value
-    bool progressbar                                     // Whether to print the progress bar
+    const std::vector<int>& dir = {0},                   // Direction selector for embeddings where 0 returns all directions, 1–8 correspond to NW, N, NE, W, E, SW, S, SE, and multiple directions can be combined (e.g., {1,2,3} for NW, N, NE).
+    const std::vector<double>& win_ratios = {0,0},       // Scale the sliding window step relative to the matrix width/height to speed up state-space predictions.
+    bool progressbar = false                             // Whether to print the progress bar
 ) {
   // If b is not provided correctly, default it to E + 2
   std::vector<int> bs = b;
@@ -929,7 +941,7 @@ std::vector<std::vector<double>> SCPCM4Grid(
   if (stack == 0){
     Emb2D = GenGridEmbeddings(xMatrix, Ex, taux, style);
   } else {
-    Emb3D = GenGridEmbeddingsCom(xMatrix, Ex, taux, style);
+    Emb3D = GenGridEmbeddingsCom(xMatrix, Ex, taux, style, dir);
   }
 
   size_t n_confounds;
@@ -1039,7 +1051,8 @@ std::vector<std::vector<double>> SCPCM4Grid(
             row_size_mark,
             style,
             dist_metric,
-            dist_average);
+            dist_average,
+            win_ratios);
         } else {
           local_results[i] = SCPCMSingle4Grid(
             Emb3D,
@@ -1061,7 +1074,9 @@ std::vector<std::vector<double>> SCPCM4Grid(
             row_size_mark,
             style,
             dist_metric,
-            dist_average);
+            dist_average,
+            dir,
+            win_ratios);
         }
         bar++;
       }
@@ -1090,7 +1105,8 @@ std::vector<std::vector<double>> SCPCM4Grid(
             row_size_mark,
             style,
             dist_metric,
-            dist_average);
+            dist_average,
+            win_ratios);
         } else {
           local_results[i] = SCPCMSingle4Grid(
             Emb3D,
@@ -1112,7 +1128,9 @@ std::vector<std::vector<double>> SCPCM4Grid(
             row_size_mark,
             style,
             dist_metric,
-            dist_average);
+            dist_average,
+            dir,
+            win_ratios);
         }
       }
     }
@@ -1144,7 +1162,8 @@ std::vector<std::vector<double>> SCPCM4Grid(
             row_size_mark,
             style,
             dist_metric,
-            dist_average);
+            dist_average,
+            win_ratios);
         } else {
           local_results[i] = SCPCMSingle4Grid(
             Emb3D,
@@ -1166,7 +1185,9 @@ std::vector<std::vector<double>> SCPCM4Grid(
             row_size_mark,
             style,
             dist_metric,
-            dist_average);
+            dist_average,
+            dir,
+            win_ratios);
         }
         bar++;
       }, threads_sizet);
@@ -1196,7 +1217,8 @@ std::vector<std::vector<double>> SCPCM4Grid(
             row_size_mark,
             style,
             dist_metric,
-            dist_average);
+            dist_average,
+            win_ratios);
         } else {
           local_results[i] = SCPCMSingle4Grid(
             Emb3D,
@@ -1218,7 +1240,9 @@ std::vector<std::vector<double>> SCPCM4Grid(
             row_size_mark,
             style,
             dist_metric,
-            dist_average);
+            dist_average,
+            dir,
+            win_ratios);
         }
       }, threads_sizet);
     }
