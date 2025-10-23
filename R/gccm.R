@@ -35,12 +35,12 @@
 }
 
 .gccm_spatraster_method = \(data, cause, effect, libsizes = NULL, E = 3, tau = 1, k = E+2, theta = 1, algorithm = "simplex", lib = NULL, pred = NULL, style = 1, stack = FALSE, dist.metric = "L2",
-                            dist.average = TRUE, embed.direction = 0, window.ratio = 0, threads = detectThreads(), parallel.level = "low", bidirectional = TRUE, detrend = TRUE, progressbar = TRUE){
+                            dist.average = TRUE, embed.direction = 0, win.ratio = 0, threads = detectThreads(), parallel.level = "low", bidirectional = TRUE, detrend = TRUE, progressbar = TRUE){
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
   tau = .check_inputelementnum(tau,2)
   k = .check_inputelementnum(k,2)
-  window.ratio = .check_inputelementnum(window.ratio,2)
+  win.ratio = .check_inputelementnum(win.ratio,2)
   pl = .check_parallellevel(parallel.level)
   .varname = .internal_varname()
   data = data[[varname]]
@@ -61,10 +61,10 @@
   x_xmap_y = NULL
   if (bidirectional){
     x_xmap_y = RcppGCCM4Grid(causemat,effectmat,libsizes,lib,pred,E[1],tau[1],k[1],simplex,theta,threads,pl,style,stack,
-                             .check_distmetric(dist.metric),dist.average,TRUE,embed.direction,window.ratio,progressbar)
+                             .check_distmetric(dist.metric),dist.average,TRUE,embed.direction,win.ratio,progressbar)
   }
   y_xmap_x = RcppGCCM4Grid(effectmat,causemat,libsizes,lib,pred,E[2],tau[2],k[2],simplex,theta,threads,pl,style,stack,
-                           .check_distmetric(dist.metric),dist.average,TRUE,embed.direction,window.ratio,progressbar)
+                           .check_distmetric(dist.metric),dist.average,TRUE,embed.direction,win.ratio,progressbar)
 
   return(.bind_xmapdf(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
@@ -100,5 +100,5 @@ methods::setMethod("gccm", "sf", .gccm_sf_method)
 
 #' @rdname gccm
 #' @param embed.direction (optional) direction selector for embeddings (`0` returns all directions, `1-8` correspond to NW, N, NE, W, E, SW, S, SE).
-#' @param window.ratio (optional) ratio of sliding window scale to speed up state-space predictions.
+#' @param win.ratio (optional) ratio of sliding window scale to speed up state-space predictions.
 methods::setMethod("gccm", "SpatRaster", .gccm_spatraster_method)

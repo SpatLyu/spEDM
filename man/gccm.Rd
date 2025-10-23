@@ -47,7 +47,7 @@
   dist.metric = "L2",
   dist.average = TRUE,
   embed.direction = 0,
-  window.ratio = 0,
+  win.ratio = 0,
   threads = detectThreads(),
   parallel.level = "low",
   bidirectional = TRUE,
@@ -100,7 +100,7 @@
 
 \item{embed.direction}{(optional) direction selector for embeddings (\code{0} returns all directions, \code{1-8} correspond to NW, N, NE, W, E, SW, S, SE).}
 
-\item{window.ratio}{(optional) ratio of sliding window scale to speed up state-space predictions.}
+\item{win.ratio}{(optional) ratio of sliding window scale to speed up state-space predictions.}
 }
 \value{
 A list
