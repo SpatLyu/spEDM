@@ -10,13 +10,13 @@
   return(res)
 }
 
-.embedded_spatraster_method = \(data,target,E = 3,tau = 1,style = 1,
-                                stack = FALSE, detrend = FALSE){
+.embedded_spatraster_method = \(data, target, E = 3, tau = 1, style = 1,
+                                stack = FALSE,embed.direction = 0,detrend = FALSE){
   mat = .uni_grid(data,target,detrend)
   if (!stack) {
     res = RcppGenGridEmbeddings(mat,E,tau,style)
   } else {
-    res = RcppGenGridEmbeddingsCom(mat,E,tau,style)
+    res = RcppGenGridEmbeddingsCom(mat,E,tau,style,embed.direction)
   }
   return(res)
 }
@@ -49,4 +49,5 @@
 methods::setMethod("embedded", "sf", .embedded_sf_method)
 
 #' @rdname embedded
+#' @param embed.direction (optional) direction selector for embeddings (`0` returns all directions, `1-8` correspond to NW, N, NE, W, E, SW, S, SE).
 methods::setMethod("embedded", "SpatRaster", .embedded_spatraster_method)
