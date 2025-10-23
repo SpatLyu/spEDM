@@ -19,7 +19,7 @@
   lib = NULL,
   pred = NULL,
   style = 1,
-  stack = 0,
+  stack = FALSE,
   dist.metric = "L2",
   dist.average = TRUE,
   nb = NULL,
@@ -43,9 +43,11 @@
   lib = NULL,
   pred = NULL,
   style = 1,
-  stack = 0,
+  stack = FALSE,
   dist.metric = "L2",
   dist.average = TRUE,
+  embed.direction = 0,
+  window.ratio = 0,
   threads = detectThreads(),
   parallel.level = "low",
   bidirectional = TRUE,
@@ -78,7 +80,7 @@
 
 \item{style}{(optional) embedding style (\code{0} includes current state, \code{1} excludes it).}
 
-\item{stack}{(optional) embedding stack (\code{0} average lags, \code{1} stacks it).}
+\item{stack}{(optional) whether to stack embeddings.}
 
 \item{dist.metric}{(optional) distance metric (\code{L1}: Manhattan, \code{L2}: Euclidean).}
 
@@ -95,6 +97,10 @@
 \item{detrend}{(optional) whether to remove the linear trend.}
 
 \item{progressbar}{(optional) whether to show the progress bar.}
+
+\item{embed.direction}{(optional) direction selector for embeddings (\code{0} returns all directions, \code{1-8} correspond to NW, N, NE, W, E, SW, S, SE).}
+
+\item{window.ratio}{(optional) ratio of sliding window scale to speed up state-space predictions.}
 }
 \value{
 A list
