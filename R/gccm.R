@@ -76,8 +76,6 @@
 #' @param algorithm (optional) prediction algorithm.
 #' @param stack (optional) whether to stack embeddings.
 #' @param dist.average (optional) whether to average distance.
-#' @param embed.direction (optional) direction selector for embeddings (`0` returns all directions, `1-8` correspond to NW, N, NE, W, E, SW, S, SE).
-#' @param window.ratio (optional) ratio of sliding window scale to speed up state-space predictions.
 #'
 #' @return A list
 #' \describe{
@@ -101,4 +99,6 @@
 methods::setMethod("gccm", "sf", .gccm_sf_method)
 
 #' @rdname gccm
+#' @param embed.direction (optional) direction selector for embeddings (`0` returns all directions, `1-8` correspond to NW, N, NE, W, E, SW, S, SE).
+#' @param window.ratio (optional) ratio of sliding window scale to speed up state-space predictions.
 methods::setMethod("gccm", "SpatRaster", .gccm_spatraster_method)

@@ -32,7 +32,6 @@
 #' @param k (optional) number of nearest neighbors used.
 #' @param dist.metric (optional) distance metric (`L1`: Manhattan, `L2`: Euclidean).
 #' @param dist.average (optional) whether to average distance.
-#' @param embed.direction (optional) direction selector for embeddings (`0` returns all directions, `1-8` correspond to NW, N, NE, W, E, SW, S, SE).
 #' @param threads (optional) number of threads to use.
 #'
 #' @return A list
