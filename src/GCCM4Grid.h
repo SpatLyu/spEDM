@@ -35,6 +35,7 @@
  * @param row_size_mark        If true, use the row-wise libsize to mark the libsize; if false, use col-wise libsize.
  * @param dist_metric          Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param dist_average         Whether to average distance by the number of valid vector components.
+ * @param win_ratios           Scale the sliding window step relative to the matrix width/height to speed up state-space predictions.
  *
  * @return  A vector of pairs, where each pair contains the library size and the corresponding cross mapping result.
  */
@@ -53,7 +54,8 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
     int parallel_level,
     bool row_size_mark,
     int dist_metric,
-    bool dist_average
+    bool dist_average,
+    const std::vector<double>& win_ratios = {0,0}
 );
 
 // Perform Grid-based Geographical Convergent Cross Mapping (GCCM) for a single library size and pred indice (composite embeddings version).
@@ -72,7 +74,8 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
     int parallel_level,
     bool row_size_mark,
     int dist_metric,
-    bool dist_average
+    bool dist_average,
+    const std::vector<double>& win_ratios = {0,0}
 );
 
 /**
