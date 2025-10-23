@@ -34,6 +34,7 @@
  * @param row_size_mark        If true, use the row-wise libsize to mark the libsize; if false, use col-wise libsize.
  * @param dist_metric          Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param dist_average         Whether to average distance by the number of valid vector components.
+ * @param win_ratios            Scale the sliding window step relative to the matrix width/height to speed up state-space predictions.
  *
  * @return  A vector of pairs, where each pair contains the library size and the corresponding cross mapping result.
  */
@@ -52,7 +53,8 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
     int parallel_level,
     bool row_size_mark,
     int dist_metric,
-    bool dist_average
+    bool dist_average,
+    const std::vector<double>& win_ratios = {0,0}
 ) {
   // Extract row-wise and column-wise library sizes
   const int lib_size_row = lib_sizes[0];
@@ -61,10 +63,21 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
   // Determine the marked libsize
   const int libsize = row_size_mark ? lib_size_row : lib_size_col;
 
+  // Computate step of sliding windows
+  const int r_step = std::max(1, static_cast<int>(std::round(1.0 + win_ratios[0] * lib_size_row)));
+  const int c_step = std::max(1, static_cast<int>(std::round(1.0 + win_ratios[1] * lib_size_col)));
+
   // Precompute valid (r, c) pairs
   std::vector<std::pair<int, int>> valid_indices;
-  for (int r = 1; r <= totalRow - lib_size_row + 1; ++r) {
-    for (int c = 1; c <= totalCol - lib_size_col + 1; ++c) {
+  // // Slide the window by 1 row and 1 column
+  // for (int r = 1; r <= totalRow - lib_size_row + 1; ++r) {
+  //   for (int c = 1; c <= totalCol - lib_size_col + 1; ++c) {
+  //     valid_indices.emplace_back(r, c);
+  //   }
+  // }
+  // Slide the window by flexible row and column
+  for (int r = 1; r <= totalRow - lib_size_row + 1; r += r_step) {
+    for (int c = 1; c <= totalCol - lib_size_col + 1; c += c_step) {
       valid_indices.emplace_back(r, c);
     }
   }
@@ -131,7 +144,8 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
     int parallel_level,
     bool row_size_mark,
     int dist_metric,
-    bool dist_average
+    bool dist_average,
+    const std::vector<double>& win_ratios = {0,0}
 ) {
   // Extract row-wise and column-wise library sizes
   const int lib_size_row = lib_sizes[0];
@@ -140,10 +154,21 @@ std::vector<std::pair<int, double>> GCCMSingle4Grid(
   // Determine the marked libsize
   const int libsize = row_size_mark ? lib_size_row : lib_size_col;
 
+  // Computate step of sliding windows
+  const int r_step = std::max(1, static_cast<int>(std::round(1.0 + win_ratios[0] * lib_size_row)));
+  const int c_step = std::max(1, static_cast<int>(std::round(1.0 + win_ratios[1] * lib_size_col)));
+
   // Precompute valid (r, c) pairs
   std::vector<std::pair<int, int>> valid_indices;
-  for (int r = 1; r <= totalRow - lib_size_row + 1; ++r) {
-    for (int c = 1; c <= totalCol - lib_size_col + 1; ++c) {
+  // // Slide the window by 1 row and 1 column
+  // for (int r = 1; r <= totalRow - lib_size_row + 1; ++r) {
+  //   for (int c = 1; c <= totalCol - lib_size_col + 1; ++c) {
+  //     valid_indices.emplace_back(r, c);
+  //   }
+  // }
+  // Slide the window by flexible row and column
+  for (int r = 1; r <= totalRow - lib_size_row + 1; r += r_step) {
+    for (int c = 1; c <= totalCol - lib_size_col + 1; c += c_step) {
       valid_indices.emplace_back(r, c);
     }
   }
