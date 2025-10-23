@@ -57,6 +57,7 @@ std::vector<std::vector<double>> Simplex4GridCom(const std::vector<std::vector<d
                                                  int style = 1,
                                                  int dist_metric = 2,
                                                  bool dist_average = true,
+                                                 const std::vector<int>& dir = {0},
                                                  int threads = 8);
 
 /*
@@ -108,6 +109,7 @@ std::vector<std::vector<double>> SMap4GridCom(const std::vector<std::vector<doub
                                               int style = 1,
                                               int dist_metric = 2,
                                               bool dist_average = true,
+                                              const std::vector<int>& dir = {0},
                                               int threads = 8);
 
 /**

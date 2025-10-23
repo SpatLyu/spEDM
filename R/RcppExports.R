@@ -101,12 +101,12 @@ RcppFNN4Grid <- function(mat, rt, eps, lib, pred, E, tau = 1L, style = 1L, dist_
     .Call(`_spEDM_RcppFNN4Grid`, mat, rt, eps, lib, pred, E, tau, style, dist_metric, threads, parallel_level)
 }
 
-RcppSimplex4Grid <- function(source, target, lib, pred, E, b, tau = 1L, style = 1L, stack = 0L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
-    .Call(`_spEDM_RcppSimplex4Grid`, source, target, lib, pred, E, b, tau, style, stack, dist_metric, dist_average, threads)
+RcppSimplex4Grid <- function(source, target, lib, pred, E, b, tau = 1L, style = 1L, stack = 0L, dist_metric = 2L, dist_average = TRUE, dir = as.integer( c(0)), threads = 8L) {
+    .Call(`_spEDM_RcppSimplex4Grid`, source, target, lib, pred, E, b, tau, style, stack, dist_metric, dist_average, dir, threads)
 }
 
-RcppSMap4Grid <- function(source, target, lib, pred, theta, E = 3L, tau = 1L, b = 5L, style = 1L, stack = 0L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
-    .Call(`_spEDM_RcppSMap4Grid`, source, target, lib, pred, theta, E, tau, b, style, stack, dist_metric, dist_average, threads)
+RcppSMap4Grid <- function(source, target, lib, pred, theta, E = 3L, tau = 1L, b = 5L, style = 1L, stack = 0L, dist_metric = 2L, dist_average = TRUE, dir = as.integer( c(0)), threads = 8L) {
+    .Call(`_spEDM_RcppSMap4Grid`, source, target, lib, pred, theta, E, tau, b, style, stack, dist_metric, dist_average, dir, threads)
 }
 
 RcppMultiView4Grid <- function(xMatrix, yMatrix, lib, pred, E = 3L, tau = 1L, b = 5L, top = 5L, nvar = 3L, style = 1L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {

@@ -41,6 +41,7 @@
   dist.average = TRUE,
   theta = c(0, 1e-04, 3e-04, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 0.5, 0.75, 1, 1.5, 2, 3,
     4, 6, 8),
+  embed.direction = 0,
   threads = detectThreads(),
   detrend = TRUE
 )
@@ -77,6 +78,8 @@
 \item{threads}{(optional) number of threads to use.}
 
 \item{detrend}{(optional) whether to remove the linear trend.}
+
+\item{embed.direction}{(optional) direction selector for embeddings (\code{0} returns all directions, \code{1-8} correspond to NW, N, NE, W, E, SW, S, SE).}
 }
 \value{
 A list

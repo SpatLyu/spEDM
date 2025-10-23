@@ -13,13 +13,13 @@
 
 .simplex_spatraster_method = \(data,column,target,lib = NULL,pred = NULL,E = 2:10,tau = 1,k = E+2,
                                style = 1, stack = FALSE, dist.metric = "L2", dist.average = TRUE,
-                               threads = detectThreads(), detrend = TRUE){
+                               embed.direction = 0, threads = detectThreads(), detrend = TRUE){
   mx = .uni_grid(data,column,detrend)
   my = .uni_grid(data,target,detrend)
   if (is.null(lib)) lib = which(!(is.na(mx) | is.na(my)), arr.ind = TRUE)
   if (is.null(pred)) pred = lib
-  res = RcppSimplex4Grid(mx,my,lib,pred,E,k,tau,style,stack,
-                         .check_distmetric(dist.metric),dist.average,threads)
+  res = RcppSimplex4Grid(mx, my, lib, pred, E, k, tau, style, stack,
+                         .check_distmetric(dist.metric),dist.average,embed.direction,threads)
   return(.bind_xmapself(res,target,"simplex",tau))
 }
 
@@ -32,6 +32,7 @@
 #' @param k (optional) number of nearest neighbors used.
 #' @param dist.metric (optional) distance metric (`L1`: Manhattan, `L2`: Euclidean).
 #' @param dist.average (optional) whether to average distance.
+#' @param embed.direction (optional) direction selector for embeddings (`0` returns all directions, `1-8` correspond to NW, N, NE, W, E, SW, S, SE).
 #' @param threads (optional) number of threads to use.
 #'
 #' @return A list
