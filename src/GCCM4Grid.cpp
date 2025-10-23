@@ -494,6 +494,8 @@ std::vector<std::pair<int, double>> GCCMSingle4GridOneDim(
  * @param dist_metric    Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param dist_average   Whether to average distance by the number of valid vector components.
  * @param single_sig     Whether to estimate significance and confidence intervals using a single rho value.
+ * @param dir            Direction selector for embeddings where 0 returns all directions for embeddings, 1–8 correspond to NW, N, NE, W, E, SW, S, SE, and multiple directions can be combined (e.g., {1,2,3} for NW, N, NE).
+ * @param win_rations    Scale the sliding window step relative to the matrix width/height to speed up state-space predictions.
  * @param progressbar    If true, display a progress bar during computation.
  *
  * @return A 2D vector where each row contains the library size, mean cross mapping result,
@@ -517,7 +519,9 @@ std::vector<std::vector<double>> GCCM4Grid(
     int dist_metric,
     bool dist_average,
     bool single_sig,
-    bool progressbar
+    const std::vector<int>& dir = {0},
+    const std::vector<double>& win_ratios = {0,0},
+    bool progressbar = false
 ) {
   // If b is not provided correctly, default it to E + 2
   if (b <= 0) {
@@ -544,7 +548,7 @@ std::vector<std::vector<double>> GCCM4Grid(
   if (stack == 0){
     Emb2D = GenGridEmbeddings(xMatrix, E, tau, style);
   } else {
-    Emb3D = GenGridEmbeddingsCom(xMatrix, E, tau, style);
+    Emb3D = GenGridEmbeddingsCom(xMatrix, E, tau, style, dir);
   }
 
   // Ensure the maximum value does not exceed totalRow or totalCol
@@ -642,7 +646,8 @@ std::vector<std::vector<double>> GCCM4Grid(
             parallel_level,
             row_size_mark,
             dist_metric,
-            dist_average);
+            dist_average,
+            win_ratios);
         } else {
           local_results[i] = GCCMSingle4Grid(
             Emb3D,
@@ -659,7 +664,8 @@ std::vector<std::vector<double>> GCCM4Grid(
             parallel_level,
             row_size_mark,
             dist_metric,
-            dist_average);
+            dist_average,
+            win_ratios);
         }
         bar++;
       }
@@ -683,7 +689,8 @@ std::vector<std::vector<double>> GCCM4Grid(
             parallel_level,
             row_size_mark,
             dist_metric,
-            dist_average);
+            dist_average,
+            win_ratios);
         } else {
           local_results[i] = GCCMSingle4Grid(
             Emb3D,
@@ -700,7 +707,8 @@ std::vector<std::vector<double>> GCCM4Grid(
             parallel_level,
             row_size_mark,
             dist_metric,
-            dist_average);
+            dist_average,
+            win_ratios);
         }
       }
     }
@@ -727,7 +735,8 @@ std::vector<std::vector<double>> GCCM4Grid(
             parallel_level,
             row_size_mark,
             dist_metric,
-            dist_average);
+            dist_average,
+            win_ratios);
         } else {
           local_results[i] = GCCMSingle4Grid(
             Emb3D,
@@ -744,7 +753,8 @@ std::vector<std::vector<double>> GCCM4Grid(
             parallel_level,
             row_size_mark,
             dist_metric,
-            dist_average);
+            dist_average,
+            win_ratios);
         }
         bar++;
       }, threads_sizet);
@@ -768,7 +778,8 @@ std::vector<std::vector<double>> GCCM4Grid(
             parallel_level,
             row_size_mark,
             dist_metric,
-            dist_average);
+            dist_average,
+            win_ratios);
         } else {
           local_results[i] = GCCMSingle4Grid(
             Emb3D,
@@ -785,7 +796,8 @@ std::vector<std::vector<double>> GCCM4Grid(
             parallel_level,
             row_size_mark,
             dist_metric,
-            dist_average);
+            dist_average,
+            win_ratios);
         }
       }, threads_sizet);
     }
