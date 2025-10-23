@@ -116,8 +116,24 @@ Rcpp::List RcppGenGridEmbeddingsCom(const Rcpp::NumericMatrix& mat,
     }
   }
 
-  // Convert Rcpp::IntegerVector to std::vector<int>
+  // check each element of dir before conversion
+  for (int d : dir) {
+    if (d < 0 || d > 8) {
+      Rcpp::stop("direction vector elements must be in 0–8; 0 represents all directions, 1–8 correspond to NW,N,NE,W,E,SW,S,SE");
+    }
+  }
+
+  // convert to std::vector<int>
   std::vector<int> dir_std = Rcpp::as<std::vector<int>>(dir);
+
+  // remove duplicates
+  std::sort(dir_std.begin(), dir_std.end());
+  dir_std.erase(std::unique(dir_std.begin(), dir_std.end()), dir_std.end());
+
+  // if 0 is present, override all others
+  if (std::find(dir_std.begin(), dir_std.end(), 0) != dir_std.end()) {
+    dir_std = {0};
+  }
 
   // Call the core C++ embedding function
   std::vector<std::vector<std::vector<double>>> embeddings =
