@@ -111,6 +111,7 @@ std::vector<std::vector<double>> Simplex4GridCom(const std::vector<std::vector<d
                                                  int style = 1,
                                                  int dist_metric = 2,
                                                  bool dist_average = true,
+                                                 const std::vector<int>& dir = {0},
                                                  int threads = 8) {
   // Configure threads
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
@@ -152,7 +153,7 @@ std::vector<std::vector<double>> Simplex4GridCom(const std::vector<std::vector<d
     const int cur_b = unique_Ebcom[i].second;
 
     // Generate embedding
-    std::vector<std::vector<std::vector<double>>> embeddings = GenGridEmbeddingsCom(source, cur_E, tau, style);
+    std::vector<std::vector<std::vector<double>>> embeddings = GenGridEmbeddingsCom(source, cur_E, tau, style, dir);
 
     // Evaluate performance
     std::vector<double> metrics = SimplexBehavior(embeddings, vec_std, lib_indices, pred_indices, cur_b, dist_metric, dist_average);
@@ -247,6 +248,7 @@ std::vector<std::vector<double>> SMap4GridCom(const std::vector<std::vector<doub
                                               int style = 1,
                                               int dist_metric = 2,
                                               bool dist_average = true,
+                                              const std::vector<int>& dir = {0},
                                               int threads = 8) {
   // Configure threads
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
@@ -263,7 +265,7 @@ std::vector<std::vector<double>> SMap4GridCom(const std::vector<std::vector<doub
   }
 
   // Generate embedding once
-  std::vector<std::vector<std::vector<double>>> embeddings = GenGridEmbeddingsCom(source, E, tau, style);
+  std::vector<std::vector<std::vector<double>>> embeddings = GenGridEmbeddingsCom(source, E, tau, style, dir);
 
   std::vector<std::vector<double>> result(theta.size(), std::vector<double>(4));
 
