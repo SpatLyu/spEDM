@@ -1333,6 +1333,8 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
     int dist_metric = 2,
     bool dist_average = true,
     bool single_sig = true,
+    const Rcpp::IntegerVector& dir = Rcpp::IntegerVector::create(0),
+    const Rcpp::NumericVector& win_ratio = Rcpp::NumericVector::create(0,0),
     bool progressbar = false) {
   int numRows = yMatrix.nrow();
   int numCols = yMatrix.ncol();
@@ -1472,6 +1474,27 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
   std::vector<int> tau_cpp = Rcpp::as<std::vector<int>>(tau);
   std::vector<int> b_cpp = Rcpp::as<std::vector<int>>(b);
 
+  // check each element of dir before conversion
+  for (int d : dir) {
+    if (d < 0 || d > 8) {
+      Rcpp::stop("direction vector elements must be in 0–8; 0 represents all directions, 1–8 correspond to NW,N,NE,W,E,SW,S,SE");
+    }
+  }
+
+  // convert to std::vector<int>
+  std::vector<int> dir_cpp = Rcpp::as<std::vector<int>>(dir);
+
+  // remove duplicates
+  std::sort(dir_cpp.begin(), dir_cpp.end());
+  dir_cpp.erase(std::unique(dir_cpp.begin(), dir_cpp.end()), dir_cpp.end());
+
+  // if 0 is present, override all others
+  if (std::find(dir_cpp.begin(), dir_cpp.end(), 0) != dir_cpp.end()) {
+    dir_cpp = {0};
+  }
+
+  std::vector<double> win_ratio_cpp = Rcpp::as<std::vector<double>>(win_ratio);
+
   // Call the C++ function SCPCM4Grid or SCPCM4GridOneDim
   std::vector<std::vector<double>> result;
   if (libsizes_dim == 1){
@@ -1518,6 +1541,8 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
       dist_metric,
       dist_average,
       single_sig,
+      dir_cpp,
+      win_ratio_cpp,
       progressbar
     );
   }
