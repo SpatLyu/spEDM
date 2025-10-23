@@ -103,7 +103,8 @@ Rcpp::NumericMatrix RcppGenGridEmbeddings(const Rcpp::NumericMatrix& mat,
 Rcpp::List RcppGenGridEmbeddingsCom(const Rcpp::NumericMatrix& mat,
                                     int E = 3,
                                     int tau = 1,
-                                    int style = 1) {
+                                    int style = 1,
+                                    const Rcpp::IntegerVector& dir = Rcpp::IntegerVector::create(0)) {
   // Convert R matrix to std::vector<std::vector<double>>
   int numRows = mat.nrow();
   int numCols = mat.ncol();
@@ -115,9 +116,12 @@ Rcpp::List RcppGenGridEmbeddingsCom(const Rcpp::NumericMatrix& mat,
     }
   }
 
+  // Convert Rcpp::IntegerVector to std::vector<int>
+  std::vector<int> dir_std = Rcpp::as<std::vector<int>>(dir);
+
   // Call the core C++ embedding function
   std::vector<std::vector<std::vector<double>>> embeddings =
-    GenGridEmbeddingsCom(cppMat, E, tau, style);
+    GenGridEmbeddingsCom(cppMat, E, tau, style, dir_std);
 
   // Convert the 3D std::vector into an Rcpp::List of NumericMatrix
   Rcpp::List result;

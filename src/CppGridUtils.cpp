@@ -414,6 +414,11 @@ std::vector<std::vector<double>> GenGridEmbeddings(
  *   style - Embedding style selector:
  *             - style = 0: embedding includes the current state as the first dimension.
  *             - style != 0: embedding excludes the current state.
+ *   dir   - Direction selector (optional):
+ *             - If dir = {0}, returns all directional lag values (no filtering).
+ *             - If dir ∈ {1,...,8}, keeps only lag values in that direction:
+ *                 1: NW, 2: N, 3: NE, 4: W, 5: E, 6: SW, 7: S, 8: SE
+ *             - Multiple directions can be specified (e.g., {1,2,3} = NW, N, NE).
  *
  * Returns:
  *   A 3D vector (std::vector<std::vector<std::vector<double>>>) structured as:
@@ -424,15 +429,21 @@ std::vector<std::vector<double>> GenGridEmbeddings(
  * Notes:
  *   - This function differs from GenGridEmbeddings in that it does NOT average lagged values.
  *     Instead, it preserves the full neighbor value sets for each lag step.
- *   - When tau = 0, lag steps are sequential (0, 1, 2, ..., E-1).
- *   - When tau > 0 and style = 0, lag steps are 0, τ, 2τ, ..., (E-1)τ.
- *   - When tau > 0 and style != 0, lag steps are τ, 2τ, ..., Eτ.
+ *   - This function also enables direction-based filtering:
+ *      - For example, for a 3x3 window (lag = 1), directions map to indices 0–7:
+ *         1: NW (0), 2: N (1), 3: NE (2), 4: W (3), 5: E (4), 6: SW (5), 7: S (6), 8: SE (7)
+ *      - For larger lags, each direction expands radially; indices are extended accordingly.
+ *   - For tau and style:
+ *      - When tau = 0, lag steps are sequential (0, 1, 2, ..., E-1).
+ *      - When tau > 0 and style = 0, lag steps are 0, τ, 2τ, ..., (E-1)τ.
+ *      - When tau > 0 and style != 0, lag steps are τ, 2τ, ..., Eτ.
  */
 std::vector<std::vector<std::vector<double>>> GenGridEmbeddingsCom(
     const std::vector<std::vector<double>>& mat,
     int E,
     int tau,
-    int style = 1
+    int style = 1,
+    const std::vector<int>& dir = {0}
 ) {
   std::vector<std::vector<std::vector<double>>> embeddings; // Final 3D result container
   embeddings.reserve(E); // Reserve space for E embedding levels
@@ -515,6 +526,75 @@ std::vector<std::vector<std::vector<double>>> GenGridEmbeddingsCom(
         }
 
         embeddings.push_back(std::move(lagged_vals));
+      }
+    }
+  }
+
+  // --- Directional filtering section ---
+  if (!(dir.size() == 1 && dir[0] == 0)) {
+    // Define base direction index groups for lag = 1 and lag = 2
+    std::vector<std::vector<int>> baseDirIndices = {
+      {0},          // 1: NW
+      {1},          // 2: N
+      {2},          // 3: NE
+      {3},          // 4: W
+      {4},          // 5: E
+      {5},          // 6: SW
+      {6},          // 7: S
+      {7}           // 8: SE
+    };
+
+    // For lag > 1, we need to expand each direction group proportionally
+    auto getDirIndicesForLag = [&](int lagNum, int totalCols) {
+      // For higher lag, approximate per-direction column groups
+      // assuming each lag step adds 8 * lagNum columns (if consistent)
+      int stepCols = totalCols / 8;
+      std::vector<std::vector<int>> dirGroups(8);
+      for (int d = 0; d < 8; ++d) {
+        for (int k = 0; k < stepCols; ++k) {
+          dirGroups[d].push_back(d * stepCols + k);
+        }
+      }
+      return dirGroups;
+    };
+
+    // Filter each embedding layer by direction
+    for (auto& emb : embeddings) {
+      if (emb.empty() || emb[0].empty()) continue;
+
+      int totalCols = emb[0].size();
+      if (totalCols <= 1) continue; // skip current-state-only embeddings
+
+      // Estimate lagNum by column count (8 dirs × lag)
+      int lagNum = totalCols / 8;
+      if (lagNum < 1) lagNum = 1;
+
+      auto dirGroups = getDirIndicesForLag(lagNum, totalCols);
+
+      // Collect all columns corresponding to selected directions
+      std::vector<int> selectedCols;
+      for (int d : dir) {
+        if (d >= 1 && d <= 8) {
+          selectedCols.insert(selectedCols.end(),
+                              dirGroups[d - 1].begin(),
+                              dirGroups[d - 1].end());
+        }
+      }
+
+      // Sort and unique just in case
+      std::sort(selectedCols.begin(), selectedCols.end());
+      selectedCols.erase(std::unique(selectedCols.begin(), selectedCols.end()), selectedCols.end());
+
+      // Apply subsetting
+      for (auto& row : emb) {
+        std::vector<double> filteredRow;
+        filteredRow.reserve(selectedCols.size());
+        for (int idx : selectedCols) {
+          if (idx >= 0 && idx < static_cast<int>(row.size())) {
+            filteredRow.push_back(row[idx]);
+          }
+        }
+        row = std::move(filteredRow);
       }
     }
   }

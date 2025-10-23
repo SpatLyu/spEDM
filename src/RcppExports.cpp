@@ -256,15 +256,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppGenGridEmbeddingsCom
-Rcpp::List RcppGenGridEmbeddingsCom(const Rcpp::NumericMatrix& mat, int E, int tau, int style);
-RcppExport SEXP _spEDM_RcppGenGridEmbeddingsCom(SEXP matSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP styleSEXP) {
+Rcpp::List RcppGenGridEmbeddingsCom(const Rcpp::NumericMatrix& mat, int E, int tau, int style, const Rcpp::IntegerVector& dir);
+RcppExport SEXP _spEDM_RcppGenGridEmbeddingsCom(SEXP matSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP styleSEXP, SEXP dirSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< int >::type E(ESEXP);
     Rcpp::traits::input_parameter< int >::type tau(tauSEXP);
     Rcpp::traits::input_parameter< int >::type style(styleSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppGenGridEmbeddingsCom(mat, E, tau, style));
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type dir(dirSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppGenGridEmbeddingsCom(mat, E, tau, style, dir));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1542,7 +1543,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppRowColFromGrid", (DL_FUNC) &_spEDM_RcppRowColFromGrid, 2},
     {"_spEDM_RcppLaggedVal4Grid", (DL_FUNC) &_spEDM_RcppLaggedVal4Grid, 2},
     {"_spEDM_RcppGenGridEmbeddings", (DL_FUNC) &_spEDM_RcppGenGridEmbeddings, 4},
-    {"_spEDM_RcppGenGridEmbeddingsCom", (DL_FUNC) &_spEDM_RcppGenGridEmbeddingsCom, 4},
+    {"_spEDM_RcppGenGridEmbeddingsCom", (DL_FUNC) &_spEDM_RcppGenGridEmbeddingsCom, 5},
     {"_spEDM_RcppGenGridNeighbors", (DL_FUNC) &_spEDM_RcppGenGridNeighbors, 3},
     {"_spEDM_RcppGenGridSymbolization", (DL_FUNC) &_spEDM_RcppGenGridSymbolization, 4},
     {"_spEDM_RcppDivideGrid", (DL_FUNC) &_spEDM_RcppDivideGrid, 3},
