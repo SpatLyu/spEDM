@@ -16,7 +16,7 @@
   tau = 1,
   k = E + 2,
   style = 1,
-  stack = 0,
+  stack = FALSE,
   dist.metric = "L2",
   dist.average = TRUE,
   nb = NULL,
@@ -34,7 +34,7 @@
   tau = 1,
   k = E + 2,
   style = 1,
-  stack = 0,
+  stack = FALSE,
   dist.metric = "L2",
   dist.average = TRUE,
   threads = detectThreads(),
@@ -60,7 +60,7 @@
 
 \item{style}{(optional) embedding style (\code{0} includes current state, \code{1} excludes it).}
 
-\item{stack}{(optional) embedding stack (\code{0} average lags, \code{1} stacks it).}
+\item{stack}{(optional) whether to stack embeddings.}
 
 \item{dist.metric}{(optional) distance metric (\code{L1}: Manhattan, \code{L2}: Euclidean).}
 

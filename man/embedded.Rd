@@ -12,12 +12,20 @@
   E = 3,
   tau = 1,
   style = 1,
-  stack = 0,
+  stack = FALSE,
   nb = NULL,
   detrend = FALSE
 )
 
-\S4method{embedded}{SpatRaster}(data, target, E = 3, tau = 1, style = 1, stack = 0, detrend = FALSE)
+\S4method{embedded}{SpatRaster}(
+  data,
+  target,
+  E = 3,
+  tau = 1,
+  style = 1,
+  stack = FALSE,
+  detrend = FALSE
+)
 }
 \arguments{
 \item{data}{observation data.}
@@ -30,14 +38,14 @@
 
 \item{style}{(optional) embedding style (\code{0} includes current state, \code{1} excludes it).}
 
-\item{stack}{(optional) embedding stack (\code{0} average lags, \code{1} stacks it).}
+\item{stack}{(optional) whether to stack embeddings.}
 
 \item{nb}{(optional) neighbours list.}
 
 \item{detrend}{(optional) whether to remove the linear trend.}
 }
 \value{
-A matrix (\code{stack} = \code{0}) or list.
+A matrix (when \code{stack} is \code{FALSE}) or list.
 }
 \description{
 embedding spatial cross sectional data

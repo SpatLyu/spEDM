@@ -1,5 +1,5 @@
 .simplex_sf_method = \(data,column,target,lib = NULL,pred = NULL,E = 2:10,tau = 1,k = E+2,
-                       style = 1, stack = 0, dist.metric = "L2", dist.average = TRUE,
+                       style = 1, stack = FALSE, dist.metric = "L2", dist.average = TRUE,
                        nb = NULL, threads = detectThreads(), detrend = TRUE){
   vx = .uni_lattice(data,column,detrend)
   vy = .uni_lattice(data,target,detrend)
@@ -12,7 +12,7 @@
 }
 
 .simplex_spatraster_method = \(data,column,target,lib = NULL,pred = NULL,E = 2:10,tau = 1,k = E+2,
-                               style = 1, stack = 0, dist.metric = "L2", dist.average = TRUE,
+                               style = 1, stack = FALSE, dist.metric = "L2", dist.average = TRUE,
                                threads = detectThreads(), detrend = TRUE){
   mx = .uni_grid(data,column,detrend)
   my = .uni_grid(data,target,detrend)
