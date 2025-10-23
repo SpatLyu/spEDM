@@ -37,6 +37,7 @@
   stack = FALSE,
   dist.metric = "L2",
   dist.average = TRUE,
+  embed.direction = 0,
   threads = detectThreads(),
   detrend = TRUE
 )
@@ -71,6 +72,8 @@
 \item{threads}{(optional) number of threads to use.}
 
 \item{detrend}{(optional) whether to remove the linear trend.}
+
+\item{embed.direction}{(optional) direction selector for embeddings (\code{0} returns all directions, \code{1-8} correspond to NW, N, NE, W, E, SW, S, SE).}
 }
 \value{
 A list
