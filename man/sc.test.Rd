@@ -17,11 +17,11 @@
   base = 2,
   lib = NULL,
   pred = NULL,
-  nb = NULL,
   threads = detectThreads(),
   detrend = TRUE,
   normalize = FALSE,
-  progressbar = FALSE
+  progressbar = FALSE,
+  nb = NULL
 )
 
 \S4method{sc.test}{SpatRaster}(
@@ -38,7 +38,8 @@
   threads = detectThreads(),
   detrend = TRUE,
   normalize = FALSE,
-  progressbar = FALSE
+  progressbar = FALSE,
+  grid.coord = TRUE
 )
 }
 \arguments{
@@ -62,8 +63,6 @@
 
 \item{pred}{(optional) predictions indices.}
 
-\item{nb}{(optional) neighbours list.}
-
 \item{threads}{(optional) number of threads to use.}
 
 \item{detrend}{(optional) whether to remove the linear trend.}
@@ -71,6 +70,10 @@
 \item{normalize}{(optional) whether to normalize the result.}
 
 \item{progressbar}{(optional) whether to show the progress bar.}
+
+\item{nb}{(optional) neighbours list.}
+
+\item{grid.coord}{(optional) whether to detrend using cell center coordinates (\code{TRUE}) or row/column numbers (\code{FALSE}).}
 }
 \value{
 A list
