@@ -103,7 +103,7 @@
   target = .check_character(target)
   data = data[[target]]
   names(data) = "target"
-  dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
+  dtf = .internal_grid2df(data)
   if (detrend){
     dtf = .internal_detrend(dtf,"target")
   }
@@ -130,7 +130,7 @@
   data = data[[columns]]
   .varname = paste0("z",seq_along(columns))
   names(data) = .varname
-  dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
+  dtf = .internal_grid2df(data)
   if (detrend){
     dtf = .internal_detrend(dtf,.varname)
   }
