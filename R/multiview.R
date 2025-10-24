@@ -1,6 +1,5 @@
-.multiview_sf_method = \(data,column,target,nvar,lib = NULL,pred = NULL,E = 3,tau = 1,k = E+2,
-                         style = 1, dist.metric = "L2", dist.average = TRUE, nb = NULL, 
-                         top = NULL, threads = detectThreads(), detrend = TRUE){
+.multiview_sf_method = \(data, column, target, nvar, E = 3, k = E+2, tau = 1, style = 1, lib = NULL, pred = NULL, dist.metric = "L2",
+                         dist.average = TRUE, top = NULL, threads = detectThreads(), detrend = TRUE, nb = NULL){
   xmat = .multivar_lattice(data,column,detrend)
   yvec = .uni_lattice(data,target,detrend)
   if (is.null(lib)) lib = .internal_library(cbind(xmat,yvec))
@@ -12,11 +11,10 @@
   return(res)
 }
 
-.multiview_spatraster_method = \(data,column,target,nvar,lib = NULL,pred = NULL,E = 3,tau = 1,
-                                 k = E+2, style = 1, dist.metric = "L2", dist.average = TRUE,
-                                 top = NULL, threads = detectThreads(), detrend = TRUE){
-  xmat = .multivar_grid(data,column,detrend)
-  ymat = .multivar_grid(data,target,detrend)
+.multiview_spatraster_method = \(data, column, target, nvar, E = 3, k = E+2, tau = 1, style = 1, lib = NULL, pred = NULL, dist.metric = "L2",
+                                 dist.average = TRUE, top = NULL, threads = detectThreads(), detrend = TRUE, grid.coord = TRUE){
+  xmat = .multivar_grid(data,column,detrend,grid.coord)
+  ymat = .multivar_grid(data,target,detrend,grid.coord)
   if (is.null(lib)) lib = .internal_library(cbind(xmat,ymat),TRUE)
   if (is.null(pred)) pred = lib
   if (is.null(top)) top = 0
