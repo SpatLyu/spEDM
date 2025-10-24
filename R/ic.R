@@ -12,7 +12,7 @@
 }
 
 .ic_spatraster_method = \(data, column, target, E = 2:10, k = E+2, tau = 1, style = 1, lib = NULL, pred = NULL,
-                          dist.metric = "L2", threads = detectThreads(), detrend = FALSE, parallel.level = "low", gird.coord = TRUE){
+                          dist.metric = "L2", threads = detectThreads(), detrend = FALSE, parallel.level = "low", grid.coord = TRUE){
   mx = .uni_grid(data,column,detrend,grid.coord)
   my = .uni_grid(data,target,detrend,grid.coord)
   if (is.null(lib)) lib = which(!(is.na(mx) | is.na(my)), arr.ind = TRUE)

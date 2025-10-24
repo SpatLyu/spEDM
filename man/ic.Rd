@@ -37,7 +37,7 @@
   threads = detectThreads(),
   detrend = FALSE,
   parallel.level = "low",
-  gird.coord = TRUE
+  grid.coord = TRUE
 )
 }
 \arguments{
@@ -68,6 +68,8 @@
 \item{parallel.level}{(optional) level of parallelism, \code{low} or \code{high}.}
 
 \item{nb}{(optional) neighbours list.}
+
+\item{grid.coord}{(optional) whether to detrend using cell center coordinates (\code{TRUE}) or row/column numbers (\code{FALSE}).}
 }
 \value{
 A list
