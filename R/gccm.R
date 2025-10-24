@@ -46,7 +46,7 @@
   data = data[[varname]]
   names(data) = .varname
 
-  dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
+  dtf = .internal_grid2df(data)
   if (detrend){
     dtf = .internal_detrend(dtf,.varname)
   }

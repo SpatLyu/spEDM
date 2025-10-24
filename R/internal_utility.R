@@ -52,6 +52,18 @@
   return(nb)
 }
 
+.internal_grid2df = \(data, rowcolnum = FALSE){
+  if (rowcolnum) {
+    dtf = terra::as.data.frame(data,xy = FALSE,na.rm = FALSE)
+    cellnum = terra::rowColFromCell(data,seq_len(terra::ncell(data)))
+    colnames(cellnum) = c("x","y")
+    dtf = dplyr::bind_cols(dtf,cellnum)
+  } else {
+    dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
+  }
+  return(dtf)
+}
+
 .internal_detrend = \(data,.varname,coords = NULL){
   if (!is.null(coords)) {
     data = dplyr::bind_cols(data, coords)
@@ -91,7 +103,7 @@
   target = .check_character(target)
   data = data[[target]]
   names(data) = "target"
-  dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
+  dtf = .internal_grid2df(data)
   if (detrend){
     dtf = .internal_detrend(dtf,"target")
   }
@@ -118,7 +130,7 @@
   data = data[[columns]]
   .varname = paste0("z",seq_along(columns))
   names(data) = .varname
-  dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
+  dtf = .internal_grid2df(data)
   if (detrend){
     dtf = .internal_detrend(dtf,.varname)
   }
