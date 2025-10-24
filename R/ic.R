@@ -1,5 +1,5 @@
-.ic_sf_method = \(data, column, target, lib = NULL, pred = NULL, E = 2:10, tau = 1, k = E+2, style = 1, 
-                  dist.metric = "L2", nb = NULL, threads = detectThreads(), parallel.level = "low", detrend = FALSE){
+.ic_sf_method = \(data, column, target, E = 2:10, k = E+2, tau = 1, style = 1, lib = NULL, pred = NULL,
+                  dist.metric = "L2", threads = detectThreads(), detrend = FALSE, parallel.level = "low", nb = NULL){
   vx = .uni_lattice(data,column,detrend)
   vy = .uni_lattice(data,target,detrend)
   if (is.null(lib)) lib = .internal_library(cbind(vx,vy))
@@ -11,10 +11,10 @@
   return(.bind_xmapself(res,target,"ic",tau))
 }
 
-.ic_spatraster_method = \(data, column, target, lib = NULL, pred = NULL, E = 2:10, tau = 1, k = E+2, style = 1, 
-                          dist.metric = "L2", threads = detectThreads(), parallel.level = "low", detrend = FALSE){
-  mx = .uni_grid(data,column,detrend)
-  my = .uni_grid(data,target,detrend)
+.ic_spatraster_method = \(data, column, target, E = 2:10, k = E+2, tau = 1, style = 1, lib = NULL, pred = NULL,
+                          dist.metric = "L2", threads = detectThreads(), detrend = FALSE, parallel.level = "low", grid.coord = TRUE){
+  mx = .uni_grid(data,column,detrend,grid.coord)
+  my = .uni_grid(data,target,detrend,grid.coord)
   if (is.null(lib)) lib = which(!(is.na(mx) | is.na(my)), arr.ind = TRUE)
   if (is.null(pred)) pred = lib
   pl = .check_parallellevel(parallel.level)

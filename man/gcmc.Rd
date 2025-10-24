@@ -12,18 +12,18 @@
   effect,
   libsizes = NULL,
   E = 3,
-  tau = 1,
   k = pmin(E^2),
+  tau = 1,
+  style = 1,
   lib = NULL,
   pred = NULL,
-  style = 1,
   dist.metric = "L2",
-  nb = NULL,
   threads = detectThreads(),
+  detrend = FALSE,
   parallel.level = "low",
   bidirectional = TRUE,
-  detrend = FALSE,
-  progressbar = TRUE
+  progressbar = TRUE,
+  nb = NULL
 )
 
 \S4method{gcmc}{SpatRaster}(
@@ -32,17 +32,18 @@
   effect,
   libsizes = NULL,
   E = 3,
-  tau = 1,
   k = pmin(E^2),
+  tau = 1,
+  style = 1,
   lib = NULL,
   pred = NULL,
-  style = 1,
   dist.metric = "L2",
   threads = detectThreads(),
+  detrend = FALSE,
   parallel.level = "low",
   bidirectional = TRUE,
-  detrend = FALSE,
-  progressbar = TRUE
+  progressbar = TRUE,
+  grid.coord = TRUE
 )
 }
 \arguments{
@@ -56,29 +57,31 @@
 
 \item{E}{(optional) embedding dimensions.}
 
+\item{k}{(optional) number of nearest neighbors.}
+
 \item{tau}{(optional) step of spatial lags.}
 
-\item{k}{(optional) number of nearest neighbors.}
+\item{style}{(optional) embedding style (\code{0} includes current state, \code{1} excludes it).}
 
 \item{lib}{(optional) libraries indices.}
 
 \item{pred}{(optional) predictions indices.}
 
-\item{style}{(optional) embedding style (\code{0} includes current state, \code{1} excludes it).}
-
 \item{dist.metric}{(optional) distance metric (\code{L1}: Manhattan, \code{L2}: Euclidean).}
 
-\item{nb}{(optional) neighbours list.}
-
 \item{threads}{(optional) number of threads to use.}
+
+\item{detrend}{(optional) whether to remove the linear trend.}
 
 \item{parallel.level}{(optional) level of parallelism, \code{low} or \code{high}.}
 
 \item{bidirectional}{(optional) whether to examine bidirectional causality.}
 
-\item{detrend}{(optional) whether to remove the linear trend.}
-
 \item{progressbar}{(optional) whether to show the progress bar.}
+
+\item{nb}{(optional) neighbours list.}
+
+\item{grid.coord}{(optional) whether to detrend using cell center coordinates (\code{TRUE}) or row/column numbers (\code{FALSE}).}
 }
 \value{
 A list

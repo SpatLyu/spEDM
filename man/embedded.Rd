@@ -13,8 +13,8 @@
   tau = 1,
   style = 1,
   stack = FALSE,
-  nb = NULL,
-  detrend = FALSE
+  detrend = FALSE,
+  nb = NULL
 )
 
 \S4method{embedded}{SpatRaster}(
@@ -24,8 +24,9 @@
   tau = 1,
   style = 1,
   stack = FALSE,
-  embed.direction = 0,
-  detrend = FALSE
+  detrend = FALSE,
+  grid.coord = TRUE,
+  embed.direction = 0
 )
 }
 \arguments{
@@ -41,9 +42,11 @@
 
 \item{stack}{(optional) whether to stack embeddings.}
 
+\item{detrend}{(optional) whether to remove the linear trend.}
+
 \item{nb}{(optional) neighbours list.}
 
-\item{detrend}{(optional) whether to remove the linear trend.}
+\item{grid.coord}{(optional) whether to detrend using cell center coordinates (\code{TRUE}) or row/column numbers (\code{FALSE}).}
 
 \item{embed.direction}{(optional) direction selector for embeddings (\code{0} returns all directions, \code{1-8} correspond to NW, N, NE, W, E, SW, S, SE).}
 }

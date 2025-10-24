@@ -10,36 +10,37 @@
   data,
   column,
   target,
-  lib = NULL,
-  pred = NULL,
   E = 2:10,
-  tau = 1,
   k = E + 2,
+  tau = 1,
   style = 1,
   stack = FALSE,
+  lib = NULL,
+  pred = NULL,
   dist.metric = "L2",
   dist.average = TRUE,
-  nb = NULL,
   threads = detectThreads(),
-  detrend = TRUE
+  detrend = TRUE,
+  nb = NULL
 )
 
 \S4method{simplex}{SpatRaster}(
   data,
   column,
   target,
-  lib = NULL,
-  pred = NULL,
   E = 2:10,
-  tau = 1,
   k = E + 2,
+  tau = 1,
   style = 1,
   stack = FALSE,
+  lib = NULL,
+  pred = NULL,
   dist.metric = "L2",
   dist.average = TRUE,
-  embed.direction = 0,
   threads = detectThreads(),
-  detrend = TRUE
+  detrend = TRUE,
+  grid.coord = TRUE,
+  embed.direction = 0
 )
 }
 \arguments{
@@ -49,29 +50,31 @@
 
 \item{target}{name of target variable.}
 
-\item{lib}{(optional) libraries indices.}
-
-\item{pred}{(optional) predictions indices.}
-
 \item{E}{(optional) embedding dimensions.}
 
-\item{tau}{(optional) step of spatial lags.}
-
 \item{k}{(optional) number of nearest neighbors used.}
+
+\item{tau}{(optional) step of spatial lags.}
 
 \item{style}{(optional) embedding style (\code{0} includes current state, \code{1} excludes it).}
 
 \item{stack}{(optional) whether to stack embeddings.}
 
+\item{lib}{(optional) libraries indices.}
+
+\item{pred}{(optional) predictions indices.}
+
 \item{dist.metric}{(optional) distance metric (\code{L1}: Manhattan, \code{L2}: Euclidean).}
 
 \item{dist.average}{(optional) whether to average distance.}
 
-\item{nb}{(optional) neighbours list.}
-
 \item{threads}{(optional) number of threads to use.}
 
 \item{detrend}{(optional) whether to remove the linear trend.}
+
+\item{nb}{(optional) neighbours list.}
+
+\item{grid.coord}{(optional) whether to detrend using cell center coordinates (\code{TRUE}) or row/column numbers (\code{FALSE}).}
 
 \item{embed.direction}{(optional) direction selector for embeddings (\code{0} returns all directions, \code{1-8} correspond to NW, N, NE, W, E, SW, S, SE).}
 }

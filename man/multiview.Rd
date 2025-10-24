@@ -11,18 +11,18 @@
   column,
   target,
   nvar,
+  E = 3,
+  k = E + 2,
+  tau = 1,
+  style = 1,
   lib = NULL,
   pred = NULL,
-  E = 3,
-  tau = 1,
-  k = E + 2,
-  style = 1,
   dist.metric = "L2",
   dist.average = TRUE,
-  nb = NULL,
   top = NULL,
   threads = detectThreads(),
-  detrend = TRUE
+  detrend = TRUE,
+  nb = NULL
 )
 
 \S4method{multiview}{SpatRaster}(
@@ -30,17 +30,18 @@
   column,
   target,
   nvar,
+  E = 3,
+  k = E + 2,
+  tau = 1,
+  style = 1,
   lib = NULL,
   pred = NULL,
-  E = 3,
-  tau = 1,
-  k = E + 2,
-  style = 1,
   dist.metric = "L2",
   dist.average = TRUE,
   top = NULL,
   threads = detectThreads(),
-  detrend = TRUE
+  detrend = TRUE,
+  grid.coord = TRUE
 )
 }
 \arguments{
@@ -52,29 +53,31 @@
 
 \item{nvar}{number of variable combinations.}
 
+\item{E}{(optional) embedding dimensions.}
+
+\item{k}{(optional) number of nearest neighbors used.}
+
+\item{tau}{(optional) step of spatial lags.}
+
+\item{style}{(optional) embedding style (\code{0} includes current state, \code{1} excludes it).}
+
 \item{lib}{(optional) libraries indices.}
 
 \item{pred}{(optional) predictions indices.}
 
-\item{E}{(optional) embedding dimensions.}
-
-\item{tau}{(optional) step of spatial lags.}
-
-\item{k}{(optional) number of nearest neighbors used.}
-
-\item{style}{(optional) embedding style (\code{0} includes current state, \code{1} excludes it).}
-
 \item{dist.metric}{(optional) distance metric (\code{L1}: Manhattan, \code{L2}: Euclidean).}
 
 \item{dist.average}{(optional) whether to average distance.}
-
-\item{nb}{(optional) neighbours list.}
 
 \item{top}{(optional) number of reconstructions used in MVE forecast.}
 
 \item{threads}{(optional) number of threads to use.}
 
 \item{detrend}{(optional) whether to remove the linear trend.}
+
+\item{nb}{(optional) neighbours list.}
+
+\item{grid.coord}{(optional) whether to detrend using cell center coordinates (\code{TRUE}) or row/column numbers (\code{FALSE}).}
 }
 \value{
 A vector (when input is sf object) or matrix

@@ -1,5 +1,5 @@
-.gccm_sf_method = \(data, cause, effect, libsizes = NULL, E = 3, tau = 1, k = E+2, theta = 1, algorithm = "simplex", lib = NULL, pred = NULL, style = 1, stack = FALSE,
-                    dist.metric = "L2",dist.average = TRUE,nb = NULL,threads = detectThreads(),parallel.level = "low",bidirectional = TRUE,detrend = TRUE,progressbar = TRUE){
+.gccm_sf_method = \(data, cause, effect, libsizes = NULL, E = 3, k = E+2, tau = 1, style = 1, stack = FALSE, lib = NULL, pred = NULL, dist.metric = "L2", dist.average = TRUE,
+                    theta = 1, algorithm = "simplex", threads = detectThreads(), detrend = TRUE, parallel.level = "low", bidirectional = TRUE, progressbar = TRUE, nb = NULL){
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
   tau = .check_inputelementnum(tau,2)
@@ -34,8 +34,8 @@
   return(.bind_xmapdf(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
 
-.gccm_spatraster_method = \(data, cause, effect, libsizes = NULL, E = 3, tau = 1, k = E+2, theta = 1, algorithm = "simplex", lib = NULL, pred = NULL, style = 1, stack = FALSE, dist.metric = "L2",
-                            dist.average = TRUE, embed.direction = 0, win.ratio = 0, threads = detectThreads(), parallel.level = "low", bidirectional = TRUE, detrend = TRUE, progressbar = TRUE){
+.gccm_spatraster_method = \(data, cause, effect, libsizes = NULL, E = 3, k = E+2, tau = 1, style = 1, stack = FALSE, lib = NULL, pred = NULL, dist.metric = "L2", dist.average = TRUE, theta = 1, algorithm = "simplex",
+                            threads = detectThreads(), detrend = TRUE, parallel.level = "low", bidirectional = TRUE, progressbar = TRUE, grid.coord = TRUE, embed.direction = 0, win.ratio = 0){
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,2)
   tau = .check_inputelementnum(tau,2)
@@ -46,7 +46,7 @@
   data = data[[varname]]
   names(data) = .varname
 
-  dtf = .internal_grid2df(data)
+  dtf = .internal_grid2df(data,grid.coord)
   if (detrend){
     dtf = .internal_detrend(dtf,.varname)
   }
@@ -72,10 +72,10 @@
 #' geographical convergent cross mapping
 #'
 #' @inheritParams gcmc
-#' @param theta (optional) weighting parameter for distances, useful when `algorithm` is `smap`.
-#' @param algorithm (optional) prediction algorithm.
 #' @param stack (optional) whether to stack embeddings.
 #' @param dist.average (optional) whether to average distance.
+#' @param theta (optional) weighting parameter for distances, useful when `algorithm` is `smap`.
+#' @param algorithm (optional) prediction algorithm.
 #'
 #' @return A list
 #' \describe{

@@ -52,14 +52,14 @@
   return(nb)
 }
 
-.internal_grid2df = \(data, rowcolnum = FALSE){
-  if (rowcolnum) {
+.internal_grid2df = \(data, grid.coord = TRUE){
+  if (grid.coord) {
+    dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
+  } else {
     dtf = terra::as.data.frame(data,xy = FALSE,na.rm = FALSE)
     cellnum = terra::rowColFromCell(data,seq_len(terra::ncell(data)))
     colnames(cellnum) = c("x","y")
     dtf = dplyr::bind_cols(dtf,cellnum)
-  } else {
-    dtf = terra::as.data.frame(data,xy = TRUE,na.rm = FALSE)
   }
   return(dtf)
 }
@@ -98,12 +98,12 @@
   return(res)
 }
 
-.uni_grid = \(data,target,detrend = FALSE){
+.uni_grid = \(data,target,detrend = FALSE,grid.coord = TRUE){
   if (is.null(target)) return(matrix(0,terra::nrow(data),terra::ncol(data)))
   target = .check_character(target)
   data = data[[target]]
   names(data) = "target"
-  dtf = .internal_grid2df(data)
+  dtf = .internal_grid2df(data,grid.coord)
   if (detrend){
     dtf = .internal_detrend(dtf,"target")
   }
@@ -125,12 +125,12 @@
   return(res)
 }
 
-.multivar_grid = \(data,columns,detrend = FALSE){
+.multivar_grid = \(data,columns,detrend = FALSE,grid.coord = TRUE){
   columns = .check_character(columns)
   data = data[[columns]]
   .varname = paste0("z",seq_along(columns))
   names(data) = .varname
-  dtf = .internal_grid2df(data)
+  dtf = .internal_grid2df(data,grid.coord)
   if (detrend){
     dtf = .internal_detrend(dtf,.varname)
   }
