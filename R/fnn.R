@@ -1,5 +1,5 @@
-.fnn_sf_method = \(data, target, lib = NULL, pred = NULL, E = 1:10, tau = 1, style = 1, dist.metric = "L1",
-                   nb = NULL, rt = 10, eps = 2, threads = detectThreads(), detrend = TRUE){
+.fnn_sf_method = \(data, target, E = 1:10, tau = 1, style = 1, lib = NULL, pred = NULL, dist.metric = "L1",
+                   rt = 10, eps = 2, threads = detectThreads(), detrend = TRUE, nb = NULL){
   vec = .uni_lattice(data,target,detrend)
   rt = .check_inputelementnum(rt,max(E))
   eps = .check_inputelementnum(eps,max(E))
@@ -10,9 +10,9 @@
                          .check_distmetric(dist.metric),threads))
 }
 
-.fnn_spatraster_method = \(data, target, lib = NULL, pred = NULL, E = 1:10, tau = 1, style = 1,
-                           dist.metric = "L1", rt = 10, eps = 2, threads = detectThreads(), detrend = TRUE){
-  mat = .uni_grid(data,target,detrend)
+.fnn_spatraster_method = \(data, target, E = 1:10, tau = 1, style = 1, lib = NULL, pred = NULL, dist.metric = "L1",
+                           rt = 10, eps = 2, threads = detectThreads(), detrend = TRUE, grid.coord = TRUE){
+  mat = .uni_grid(data,target,detrend,grid.coord)
   rt = .check_inputelementnum(rt,max(E))
   eps = .check_inputelementnum(eps,max(E))
   if (is.null(lib)) lib = which(!is.na(mat), arr.ind = TRUE)
