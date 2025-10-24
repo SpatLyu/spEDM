@@ -49,6 +49,6 @@
 methods::setMethod("embedded", "sf", .embedded_sf_method)
 
 #' @rdname embedded
-#' @param embed.direction (optional) direction selector for embeddings (`0` returns all directions, `1-8` correspond to NW, N, NE, W, E, SW, S, SE).
 #' @param grid.coord (optional) whether to detrend using cell center coordinates (`TRUE`) or row/column numbers (`FALSE`).
+#' @param embed.direction (optional) direction selector for embeddings (`0` returns all directions, `1-8` correspond to NW, N, NE, W, E, SW, S, SE).
 methods::setMethod("embedded", "SpatRaster", .embedded_spatraster_method)
