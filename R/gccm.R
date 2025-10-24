@@ -46,7 +46,7 @@
   data = data[[varname]]
   names(data) = .varname
 
-  dtf = .internal_grid2df(data)
+  dtf = .internal_grid2df(data,grid.coord)
   if (detrend){
     dtf = .internal_detrend(dtf,.varname)
   }
