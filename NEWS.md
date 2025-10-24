@@ -8,6 +8,8 @@
 
 ### enhancements
 
+* Support spatial grid(raster) data detrending with cell center coordinates or row/column numbers (#815).
+
 * Adjust `Makevars` to track latest rcpparmadillo release and armadillo updates improving build integration and forward compatibility (#785).
 
 # spEDM 1.8
