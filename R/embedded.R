@@ -1,5 +1,5 @@
 .embedded_sf_method = \(data, target, E = 3, tau = 1, style = 1,
-                        stack = FALSE, nb = NULL,detrend = FALSE){
+                        stack = FALSE,detrend = FALSE,nb = NULL){
   vec = .uni_lattice(data,target,detrend)
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   if (!stack) {
@@ -10,9 +10,9 @@
   return(res)
 }
 
-.embedded_spatraster_method = \(data, target, E = 3, tau = 1, style = 1,
-                                stack = FALSE,embed.direction = 0,detrend = FALSE){
-  mat = .uni_grid(data,target,detrend)
+.embedded_spatraster_method = \(data, target, E = 3, tau = 1, style = 1, stack = FALSE,
+                                detrend = FALSE, grid.coord = TRUE, embed.direction = 0){
+  mat = .uni_grid(data,target,detrend,grid.coord)
   if (!stack) {
     res = RcppGenGridEmbeddings(mat,E,tau,style)
   } else {
@@ -29,8 +29,8 @@
 #' @param tau (optional) step of spatial lags.
 #' @param style (optional) embedding style (`0` includes current state, `1` excludes it).
 #' @param stack (optional) whether to stack embeddings.
-#' @param nb (optional) neighbours list.
 #' @param detrend (optional) whether to remove the linear trend.
+#' @param nb (optional) neighbours list.
 #'
 #' @return A matrix (when `stack` is `FALSE`) or list.
 #' @export
@@ -50,4 +50,5 @@ methods::setMethod("embedded", "sf", .embedded_sf_method)
 
 #' @rdname embedded
 #' @param embed.direction (optional) direction selector for embeddings (`0` returns all directions, `1-8` correspond to NW, N, NE, W, E, SW, S, SE).
+#' @param grid.coord (optional) whether to detrend using cell center coordinates (`TRUE`) or row/column numbers (`FALSE`).
 methods::setMethod("embedded", "SpatRaster", .embedded_spatraster_method)
