@@ -1,5 +1,5 @@
 .sc_sf_method = \(data, cause, effect, k, block = 3, boot = 399, seed = 42, base = 2, lib = NULL, pred = NULL,
-                  nb = NULL, threads = detectThreads(), detrend = TRUE, normalize = FALSE, progressbar = FALSE){
+                  threads = detectThreads(), detrend = TRUE, normalize = FALSE, progressbar = FALSE, nb = NULL){
   varname = .check_character(cause, effect)
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   block = RcppDivideLattice(nb,block)
@@ -11,10 +11,10 @@
 }
 
 .sc_spatraster_method = \(data, cause, effect, k, block = 3, boot = 399, seed = 42, base = 2, lib = NULL, pred = NULL,
-                          threads = detectThreads(), detrend = TRUE, normalize = FALSE, progressbar = FALSE){
+                          threads = detectThreads(), detrend = TRUE, normalize = FALSE, progressbar = FALSE, grid.coord = TRUE){
   varname = .check_character(cause, effect)
-  cause = .uni_grid(data,cause,detrend)
-  effect = .uni_grid(data,effect,detrend)
+  cause = .uni_grid(data,cause,detrend,grid.coord)
+  effect = .uni_grid(data,effect,detrend,grid.coord)
   block = matrix(RcppDivideGrid(effect,block),ncol = 1)
   if (is.null(lib)) lib = which(!(is.na(cause) | is.na(effect)), arr.ind = TRUE)
   if (is.null(pred)) pred = lib
@@ -33,11 +33,11 @@
 #' @param base (optional) logarithm base.
 #' @param lib (optional) libraries indices.
 #' @param pred (optional) predictions indices.
-#' @param nb (optional) neighbours list.
 #' @param threads (optional) number of threads to use.
 #' @param detrend (optional) whether to remove the linear trend.
 #' @param normalize (optional) whether to normalize the result.
 #' @param progressbar (optional) whether to show the progress bar.
+#' @param nb (optional) neighbours list.
 #'
 #' @return A list
 #' \describe{
@@ -58,4 +58,5 @@
 methods::setMethod("sc.test", "sf", .sc_sf_method)
 
 #' @rdname sc.test
+#' @param grid.coord (optional) whether to detrend using cell center coordinates (`TRUE`) or row/column numbers (`FALSE`).
 methods::setMethod("sc.test", "SpatRaster", .sc_spatraster_method)
