@@ -12,6 +12,10 @@
 
 * Adjust `Makevars` to track latest rcpparmadillo release and armadillo updates improving build integration and forward compatibility (#785).
 
+### breaking changes
+
+* Harmonize parameter order across s4 generics for spatial vector and raster data (#817).
+
 # spEDM 1.8
 
 ### new
