@@ -1,18 +1,18 @@
-.multiview_sf_method = \(data, column, target, nvar, E = 3, k = E+2, tau = 1, style = 1, lib = NULL, pred = NULL, dist.metric = "L2",
-                         dist.average = TRUE, top = NULL, threads = detectThreads(), detrend = TRUE, nb = NULL){
+.multiview_sf_method = \(data, column, target, nvar, E = 3, k = E+2, tau = 1, style = 1, stack = FALSE, lib = NULL, pred = NULL,
+                         dist.metric = "L2", dist.average = TRUE, top = NULL, threads = detectThreads(), detrend = TRUE, nb = NULL){
   xmat = .multivar_lattice(data,column,detrend)
   yvec = .uni_lattice(data,target,detrend)
   if (is.null(lib)) lib = .internal_library(cbind(xmat,yvec))
   if (is.null(pred)) pred = lib
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   if (is.null(top)) top = 0
-  res = RcppMultiView4Lattice(xmat, yvec, nb, lib, pred, E, tau, k, top, nvar, style,
+  res = RcppMultiView4Lattice(xmat,yvec,nb,lib,pred,E,tau,k,top,nvar,style,stack,
                               .check_distmetric(dist.metric), dist.average, threads)
   return(res)
 }
 
-.multiview_spatraster_method = \(data, column, target, nvar, E = 3, k = E+2, tau = 1, style = 1, lib = NULL, pred = NULL, dist.metric = "L2",
-                                 dist.average = TRUE, top = NULL, threads = detectThreads(), detrend = TRUE, grid.coord = TRUE){
+.multiview_spatraster_method = \(data, column, target, nvar, E = 3, k = E+2, tau = 1, style = 1, stack = FALSE, lib = NULL, pred = NULL,
+                                 dist.metric = "L2", dist.average = TRUE, top = NULL, threads = detectThreads(), detrend = TRUE, grid.coord = TRUE){
   xmat = .multivar_grid(data,column,detrend,grid.coord)
   ymat = .multivar_grid(data,target,detrend,grid.coord)
   if (is.null(lib)) lib = .internal_library(cbind(xmat,ymat),TRUE)
