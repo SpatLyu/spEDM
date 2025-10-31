@@ -209,8 +209,8 @@ RcppSMap4Lattice <- function(source, target, nb, lib, pred, theta, E = 3L, tau =
     .Call(`_spEDM_RcppSMap4Lattice`, source, target, nb, lib, pred, theta, E, tau, b, style, stack, dist_metric, dist_average, threads)
 }
 
-RcppMultiView4Lattice <- function(x, y, nb, lib, pred, E = 3L, tau = 1L, b = 5L, top = 5L, nvar = 3L, style = 1L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
-    .Call(`_spEDM_RcppMultiView4Lattice`, x, y, nb, lib, pred, E, tau, b, top, nvar, style, dist_metric, dist_average, threads)
+RcppMultiView4Lattice <- function(x, y, nb, lib, pred, E = 3L, tau = 1L, b = 5L, top = 5L, nvar = 3L, style = 1L, stack = 0L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
+    .Call(`_spEDM_RcppMultiView4Lattice`, x, y, nb, lib, pred, E, tau, b, top, nvar, style, stack, dist_metric, dist_average, threads)
 }
 
 RcppIC4Lattice <- function(source, target, nb, lib, pred, E, b, tau = 1L, exclude = 0L, style = 1L, dist_metric = 2L, threads = 8L, parallel_level = 0L) {

@@ -194,8 +194,6 @@ std::vector<double> MultiViewEmbedding(
   const size_t num_groups = vectors.size();
   if (num_groups == 0) return {};
 
-  const size_t num_samples = target.size();
-
   // Store performance metrics for each stack (ρ, MAE, RMSE)
   std::vector<std::vector<double>> pred_metrics(num_groups, std::vector<double>(3));
 
