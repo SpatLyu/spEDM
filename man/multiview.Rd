@@ -15,6 +15,7 @@
   k = E + 2,
   tau = 1,
   style = 1,
+  stack = FALSE,
   lib = NULL,
   pred = NULL,
   dist.metric = "L2",
@@ -34,6 +35,7 @@
   k = E + 2,
   tau = 1,
   style = 1,
+  stack = FALSE,
   lib = NULL,
   pred = NULL,
   dist.metric = "L2",
@@ -60,6 +62,8 @@
 \item{tau}{(optional) step of spatial lags.}
 
 \item{style}{(optional) embedding style (\code{0} includes current state, \code{1} excludes it).}
+
+\item{stack}{(optional) whether to stack embeddings.}
 
 \item{lib}{(optional) libraries indices (input needed: \code{vector} - spatial vector, \code{matrix} - spatial raster).}
 
