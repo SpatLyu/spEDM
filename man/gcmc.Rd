@@ -53,7 +53,7 @@
 
 \item{effect}{name of effect variable.}
 
-\item{libsizes}{(optional) number of spatial units used.}
+\item{libsizes}{(optional) number of spatial units used (input needed: \code{vector} - spatial vector, \code{matrix} - spatial raster).}
 
 \item{E}{(optional) embedding dimensions.}
 
@@ -63,9 +63,9 @@
 
 \item{style}{(optional) embedding style (\code{0} includes current state, \code{1} excludes it).}
 
-\item{lib}{(optional) libraries indices.}
+\item{lib}{(optional) libraries indices (input requirement same as \code{libsizes}).}
 
-\item{pred}{(optional) predictions indices.}
+\item{pred}{(optional) predictions indices (input requirement same as \code{libsizes}).}
 
 \item{dist.metric}{(optional) distance metric (\code{L1}: Manhattan, \code{L2}: Euclidean).}
 

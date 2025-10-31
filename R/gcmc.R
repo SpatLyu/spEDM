@@ -71,13 +71,13 @@
 #' @param data observation data.
 #' @param cause name of causal variable.
 #' @param effect name of effect variable.
-#' @param libsizes (optional) number of spatial units used.
+#' @param libsizes (optional) number of spatial units used (input needed: `vector` - spatial vector, `matrix` - spatial raster).
 #' @param E (optional) embedding dimensions.
 #' @param k (optional) number of nearest neighbors.
 #' @param tau (optional) step of spatial lags.
 #' @param style (optional) embedding style (`0` includes current state, `1` excludes it).
-#' @param lib (optional) libraries indices.
-#' @param pred (optional) predictions indices.
+#' @param lib (optional) libraries indices (input requirement same as `libsizes`).
+#' @param pred (optional) predictions indices (input requirement same as `libsizes`).
 #' @param dist.metric (optional) distance metric (`L1`: Manhattan, `L2`: Euclidean).
 #' @param threads (optional) number of threads to use.
 #' @param detrend (optional) whether to remove the linear trend.
