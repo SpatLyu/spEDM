@@ -26,7 +26,7 @@
 #' @inheritParams embedded
 #' @param column name of library variable.
 #' @param k (optional) number of nearest neighbors used.
-#' @param lib (optional) libraries indices (input needed: `vector`-spatial vector, `matrix`-spatial raster).
+#' @param lib (optional) libraries indices (input needed: `vector` - spatial vector, `matrix` - spatial raster).
 #' @param pred (optional) predictions indices (input requirement same as `lib`).
 #' @param dist.metric (optional) distance metric (`L1`: Manhattan, `L2`: Euclidean).
 #' @param dist.average (optional) whether to average distance.
