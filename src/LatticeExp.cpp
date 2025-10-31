@@ -838,12 +838,8 @@ Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
       // Generate embeddings for this variable
       std::vector<std::vector<double>> embedding = GenLatticeEmbeddings(univec, nb_vec, E, tau, style);
 
-      // Check consistent row count
-      if (embedding.size() != num_row)
-        Rcpp::stop("Row count mismatch in embedding for variable %d", n + 1);
-
       // Append columns from embedding into existing rows (column-wise stacking)
-      for (size_t row = 0; row < num_row; ++row) {
+      for (int row = 0; row < num_row; ++row) {
         vec_std[row].insert(vec_std[row].end(),
                             std::make_move_iterator(embedding[row].begin()),
                             std::make_move_iterator(embedding[row].end()));
