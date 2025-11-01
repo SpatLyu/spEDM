@@ -61,8 +61,8 @@ columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 v = embedded(columbus,"crime")
 v[1:5,]
 
-cu = terra::rast(system.file("case/cu.tif", package="spEDM"))
-r = embedded(cu,"cu")
-r[1:5,]
+npp = terra::rast(system.file("case/npp.tif", package="spEDM"))
+r = embedded(npp,"npp")
+r[which(!is.na(r),arr.ind = TRUE)[1:5],]
 
 }
