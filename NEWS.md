@@ -14,6 +14,8 @@
 
 ### breaking changes
 
+* Remove redundant internal case data (`cu.tif`) from the package (#828).
+
 * Harmonize parameter order across s4 generics for spatial vector and raster data (#817).
 
 # spEDM 1.8
