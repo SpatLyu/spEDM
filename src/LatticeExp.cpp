@@ -820,8 +820,7 @@ Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
     k = top;
   }
 
-  // ---- CASE 1: standard 2D embedding (stack == 0) ----
-  if (stack == 0) {
+  if (stack == 0) { // ---- CASE 1: standard 2D embedding (stack == 0) ----
     std::vector<std::vector<double>> vec_std;
     vec_std.reserve(num_row);  // preallocate number of rows
     // Initialize rows with empty vectors

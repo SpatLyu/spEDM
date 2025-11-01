@@ -860,6 +860,7 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
                                        int top = 5,
                                        int nvar = 3,
                                        int style = 1,
+                                       int stack = 0,
                                        int dist_metric = 2,
                                        int dist_average = true,
                                        int threads = 8){
@@ -945,68 +946,85 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
     k = top;
   }
 
-  // Combine all the lags in the embeddings
-  std::vector<std::vector<double>> vec_std(num_row,std::vector<double>(E*num_var,std::numeric_limits<double>::quiet_NaN()));
-  for (int n = 0; n < num_var; ++n) {
-    // Initialize a std::vector to store the column values
-    std::vector<double> univec(num_row);
+  std::vector<double> res;
+  if (stack == 0) { // ---- CASE 1: standard 2D embedding (stack == 0) ----
+    std::vector<std::vector<double>> vec_std;
+    vec_std.reserve(num_row);  // preallocate number of rows
+    // Initialize rows with empty vectors
+    for (int i = 0; i < num_row; ++i)
+      vec_std.emplace_back();  // create num_row empty rows
+    // vec_std.resize(num_row); or using resize
 
-    // Copy the nth column from the matrix to the vector
-    for (int i = 0; i < num_row; ++i) {
-      univec[i] = xMatrix(i, n);  // Access element at (i, n)
-    }
+    for (int n = 0; n < num_var; ++n) {
+      // Extract nth column
+      std::vector<double> univec(num_row);
 
-    std::vector<std::vector<double>> unimat = GridVec2Mat(univec,numRows);
+      // Copy the nth column from the matrix to the vector
+      for (int i = 0; i < num_row; ++i) {
+        univec[i] = xMatrix(i, n);  // Access element at (i, n)
+      }
+      std::vector<std::vector<double>> unimat = GridVec2Mat(univec,numRows);
 
-    // Generate the embedding:
-    std::vector<std::vector<double>> vectors = GenGridEmbeddings(unimat,E,tau,style);
+      // Generate the embedding:
+      std::vector<std::vector<double>> vectors = GenGridEmbeddings(unimat,E,tau,style);
 
-    for (size_t row = 0; row < vectors.size(); ++row) {  // Loop through each row
-      for (size_t col = 0; col < vectors[0].size(); ++col) {  // Loop through each column
-        vec_std[row][n * E + col] = vectors[row][col];  // Copy elements
+      // Append columns from embedding into existing rows (column-wise stacking)
+      for (int row = 0; row < num_row; ++row) {
+        vec_std[row].insert(vec_std[row].end(),
+                            std::make_move_iterator(vectors[row].begin()),
+                            std::make_move_iterator(vectors[row].end()));
       }
     }
-  }
 
-  // Calculate validColumns (indices of columns that are not entirely NaN)
-  std::vector<size_t> validColumns; // To store indices of valid columns
+    // // Filter invalid (NaN) columns
+    // std::vector<size_t> validColumns;
+    // for (size_t col = 0; col < vec_std[0].size(); ++col) {
+    //   bool isAllNaN = true;
+    //   for (size_t row = 0; row < vec_std.size(); ++row) {
+    //     if (!std::isnan(vec_std[row][col])) { isAllNaN = false; break; }
+    //   }
+    //   if (!isAllNaN) validColumns.push_back(col);
+    // }
+    //
+    // if (validColumns.size() != vec_std[0].size()) {
+    //   std::vector<std::vector<double>> filteredEmbeddings;
+    //   filteredEmbeddings.reserve(vec_std.size());
+    //   for (const auto& row : vec_std) {
+    //     std::vector<double> filteredRow;
+    //     for (size_t col : validColumns) filteredRow.push_back(row[col]);
+    //     filteredEmbeddings.push_back(std::move(filteredRow));
+    //   }
+    //   vec_std.swap(filteredEmbeddings);
+    // }
 
-  // Iterate over each column to check if it contains any non-NaN values
-  for (size_t col = 0; col < vec_std[0].size(); ++col) {
-    bool isAllNaN = true;
-    for (size_t row = 0; row < vec_std.size(); ++row) {
-      if (!std::isnan(vec_std[row][col])) {
-        isAllNaN = false;
-        break;
-      }
+    // Perform multi-view embedding (2D version)
+    res = MultiViewEmbedding(
+      vec_std, target, lib_indices, pred_indices,
+      b, k, dist_metric, dist_average, threads);
+
+  } else {  // ---- CASE 2: stacked 3D embedding (stack != 0) ----
+    std::vector<std::vector<std::vector<double>>> stacked_vec;
+    stacked_vec.reserve(num_var);
+
+    for (int n = 0; n < num_var; ++n) {
+      std::vector<double> univec(num_row);
+      for (int i = 0; i < num_row; ++i) univec[i] = xMatrix(i, n);
+      std::vector<std::vector<double>> unimat = GridVec2Mat(univec,numRows);
+
+      // Generate 3D embeddings for this variable
+      std::vector<std::vector<std::vector<double>>> embedding = GenGridEmbeddingsCom(unimat, E, tau, style);
+      stacked_vec.insert(
+        stacked_vec.end(),
+        std::make_move_iterator(embedding.begin()),
+        std::make_move_iterator(embedding.end())
+      );
     }
-    if (!isAllNaN) {
-      validColumns.push_back(col); // Store the index of valid columns
-    }
-  }
 
-  if (validColumns.size() != vec_std[0].size()) {
-    std::vector<std::vector<double>> filteredEmbeddings;
-    for (size_t row = 0; row < vec_std.size(); ++row) {
-      std::vector<double> filteredRow;
-      for (size_t col : validColumns) {
-        filteredRow.push_back(vec_std[row][col]);
-      }
-      filteredEmbeddings.push_back(filteredRow);
-    }
-    vec_std = filteredEmbeddings;
+    // Perform multi-view embedding (3D version)
+    res = MultiViewEmbedding(
+      stacked_vec, target, lib_indices, pred_indices,
+      b, k, dist_metric, dist_average, threads);
   }
-
-  std::vector<double> res = MultiViewEmbedding(
-    vec_std,
-    target,
-    lib_indices,
-    pred_indices,
-    b,
-    k,
-    dist_metric,
-    dist_average,
-    threads);
 
   // Initialize a NumericMatrix with the given dimensions
   Rcpp::NumericMatrix resmat(numRows, numCols);
