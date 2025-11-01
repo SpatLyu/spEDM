@@ -76,7 +76,7 @@ Embedding the variable `npp` from farmland npp data:
 
 ```{r embed_grid_data}
 r = spEDM::embedded(npp,"npp",E = 5,tau = 20)
-r[1.001e4:1.002e4,1:3]
+r[which(!is.na(r),arr.ind = T)[1:5],1:3]
 ```
 
 ```{r fig2,fig.width=4.25,fig.height=4.5,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. The reconstructed shadow manifolds for the variable `npp`.")}
