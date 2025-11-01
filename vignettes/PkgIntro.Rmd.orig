@@ -2,7 +2,7 @@
 title: "Introduction to the spEDM package"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-08-31
+  | Last update: 2025-11-01
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -44,7 +44,7 @@ install.packages("spEDM",
 
 ## Data
 
-The *spEDM* package includes four illustrative datasets with well-known causation to demonstrate key functionalities:
+The *spEDM* package includes three illustrative datasets with well-known causation to demonstrate key functionalities:
 
 1. **Columbus, OH** dataset — A classic spatial dataset widely used in spatial econometrics, included here for benchmarking and demonstration purposes.
    *Data files*: `columbus.gpkg`
@@ -52,10 +52,7 @@ The *spEDM* package includes four illustrative datasets with well-known causatio
 2. **Population density and its potential drivers in mainland China** — A county-level dataset capturing population density alongside relevant socio-environmental drivers.
    *Data files*: `popd.csv`, `popd_nb.gal`
 
-3. **Soil copper (Cu) contamination** — A raster-based dataset representing soil Cu concentrations, with associated layers on nighttime light intensity and industrial density, useful for exploring the influence of human activities on environmental pollution.
-   *Data files*: `cu.tif`
-
-4. **Farmland NPP and related variables** — A raster dataset capturing net primary productivity (NPP) of farmland, key climatic variables, elevation, and human activity footprints across mainland China, suitable for analyzing the interactions between agricultural productivity, environmental conditions, and human activities.
+3. **Farmland NPP and related variables** — A raster dataset capturing net primary productivity (NPP) of farmland, key climatic variables, elevation, and human activity footprints across mainland China, suitable for analyzing the interactions between agricultural productivity, environmental conditions, and human activities.
    *Data files*: `npp.tif`
 
 These datasets can be loaded as shown below:
@@ -82,15 +79,6 @@ popd
 
 popd_sf = sf::st_as_sf(popd, coords = c("lon","lat"), crs = 4326)
 popd_sf
-```
-
-### Soil Cu heavy metal contamination
-
-```{r cu}
-library(spEDM)
-
-cu = terra::rast(system.file("case/cu.tif", package="spEDM"))
-cu
 ```
 
 ### Farmland NPP and related variables in mainland China
