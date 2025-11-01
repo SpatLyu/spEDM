@@ -873,20 +873,42 @@ Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
 
     return Rcpp::wrap(res);
   } else {  // ---- CASE 2: stacked 3D embedding (stack != 0) ----
+    // stacked_vec will store embeddings stacked along the column dimension.
+    // Structure: stacked_vec[embedding_dimension][row][col]
     std::vector<std::vector<std::vector<double>>> stacked_vec;
-    stacked_vec.reserve(num_var);
 
-    for (int n = 0; n < num_var; ++n) {
+    // Initialize stacked_vec based on the first variable's shape
+    {
+      std::vector<double> univec(num_row);
+      for (int i = 0; i < num_row; ++i) univec[i] = x(i, 0);
+
+      auto embedding = GenLatticeEmbeddingsCom(univec, nb_vec, E, tau, style);
+
+      // Initialize stacked_vec with correct shape
+      stacked_vec = std::move(embedding);
+    }
+
+    // Start from variable index 1 since index 0 is initialized
+    for (int n = 1; n < num_var; ++n) {
+      // Extract variable column
       std::vector<double> univec(num_row);
       for (int i = 0; i < num_row; ++i) univec[i] = x(i, n);
 
-      // Generate 3D embeddings for this variable
-      std::vector<std::vector<std::vector<double>>> embedding = GenLatticeEmbeddingsCom(univec, nb_vec, E, tau, style);
-      stacked_vec.insert(
-        stacked_vec.end(),
-        std::make_move_iterator(embedding.begin()),
-        std::make_move_iterator(embedding.end())
-      );
+      // Get embedding for this variable
+      auto embedding = GenLatticeEmbeddingsCom(univec, nb_vec, E, tau, style);
+
+      // Append each embedding block column-wise
+      for (size_t j = 0; j < stacked_vec.size(); ++j) {
+        // Each stacked_vec[j] and embedding[j] must share same row count
+        for (size_t r = 0; r < stacked_vec[j].size(); ++r) {
+          // Append columns from embedding[j][r] to stacked_vec[j][r]
+          stacked_vec[j][r].insert(
+              stacked_vec[j][r].end(),
+              std::make_move_iterator(embedding[j][r].begin()),
+              std::make_move_iterator(embedding[j][r].end())
+          );
+        }
+      }
     }
 
     // Perform multi-view embedding (3D version)
