@@ -42,9 +42,9 @@
 #' v = embedded(columbus,"crime")
 #' v[1:5,]
 #'
-#' cu = terra::rast(system.file("case/cu.tif", package="spEDM"))
-#' r = embedded(cu,"cu")
-#' r[1:5,]
+#' npp = terra::rast(system.file("case/npp.tif", package="spEDM"))
+#' r = embedded(npp,"npp")
+#' r[which(!is.na(r),arr.ind = T)[1:5],]
 #'
 methods::setMethod("embedded", "sf", .embedded_sf_method)
 
