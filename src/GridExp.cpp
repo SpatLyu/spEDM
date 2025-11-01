@@ -1,6 +1,7 @@
 #include <vector>
 #include <cmath>
 #include <string>
+#include <iterator>
 #include <algorithm>
 #include "CppStats.h"
 #include "CppGridUtils.h"
