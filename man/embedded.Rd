@@ -63,6 +63,6 @@ v[1:5,]
 
 npp = terra::rast(system.file("case/npp.tif", package="spEDM"))
 r = embedded(npp,"npp")
-r[which(!is.na(r),arr.ind = T)[1:5],]
+r[which(!is.na(r),arr.ind = TRUE)[1:5],]
 
 }
