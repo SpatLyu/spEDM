@@ -3,7 +3,7 @@ title: "Geographical Cross Mapping Cardinality"
 author: "Wenbo Lv"
 date: |
   | Last update: 2025-08-31
-  | Last run: 2025-08-31
+  | Last run: 2025-11-01
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{GCMC}
