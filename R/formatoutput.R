@@ -23,20 +23,20 @@
   return(resdf)
 }
 
-#' @noRd
 #' @export
+#' @noRd
 print.ccm_res = \(x,significant = FALSE,...){
   print(.internal_xmapdf_print(x,significant = significant))
 }
 
-#' @noRd
 #' @export
+#' @noRd
 print.cmc_res = \(x,significant = FALSE,...){
   print(.internal_xmapdf_print(x,"neighbors",significant = significant))
 }
 
-#' @noRd
 #' @export
+#' @noRd
 print.pcm_res = \(x,significant = FALSE,...){
   pxmap = x[-2]
   xmap = x[-1]
@@ -51,8 +51,8 @@ print.pcm_res = \(x,significant = FALSE,...){
   print(.internal_xmapdf_print(xmap,significant = significant))
 }
 
-#' @noRd
 #' @export
+#' @noRd
 print.xmap_self = \(x,...){
   res = as.matrix(x$xmap)
   if (x$method == "smap"){
@@ -68,8 +68,8 @@ print.xmap_self = \(x,...){
   }
 }
 
-#' @noRd
 #' @export
+#' @noRd
 print.sc_res = \(x,...){
   sc = round(x$sc,3)
   varname = x$varname
@@ -79,8 +79,8 @@ print.sc_res = \(x,...){
       sep = "\n")
 }
 
-#' @noRd
 #' @export
+#' @noRd
 plot.ccm_res = \(x, family = "serif",
                  legend_sig = TRUE, legend_texts = NULL,
                  legend_cols = c("#ed795b","#608dbe"),
@@ -155,8 +155,8 @@ plot.ccm_res = \(x, family = "serif",
   return(fig1)
 }
 
-#' @noRd
 #' @export
+#' @noRd
 plot.cmc_res = \(x, ...){
   xmap = x[-1]
   class(xmap) = "ccm"
@@ -165,8 +165,9 @@ plot.cmc_res = \(x, ...){
   return(fig1)
 }
 
-#' @noRd
+
 #' @export
+#' @noRd
 plot.pcm_res = \(x, partial = TRUE, ...){
   indice = ifelse(partial,-2,-1)
   xmap = x[indice]
