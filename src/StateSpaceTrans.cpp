@@ -19,6 +19,8 @@
  *
  * Special handling ensures:
  * - Input validation (non-empty, at least 2 columns, numeric values)
+ * - When the difference between successive states is exactly zero, the signature value is set to 0.0,
+ *      indicating "no change", even in relative mode (this resolves the 0/0 undefined case for 0 → 0).
  *
  * @param mat A 2D vector representing the state space matrix.
  *            Each inner vector is a row of state coordinates.
@@ -63,11 +65,10 @@ std::vector<std::vector<double>> GenSignatureSpace(
 
     for (size_t j = 0; j < out_cols; ++j) {
       double diff = row[j + 1] - row[j];
-      if (relative) {
-        double denom = row[j];
-        if (denom != 0) { // temporally implement
-          out_row[j] = diff / denom;
-        }
+      if (diff == 0.0) {
+        out_row[j] = 0.0;   // no change, regardless of relative or not
+      } else if (relative) {
+        out_row[j] = diff / row[j];
       } else {
         out_row[j] = diff;
       }
