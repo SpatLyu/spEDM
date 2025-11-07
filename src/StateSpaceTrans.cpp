@@ -2,6 +2,7 @@
 #include <cmath>
 #include <stdexcept>
 #include <limits>
+#include <cstdint> // for uint8_t
 
 /**
  * @brief Computes the Signature Space Matrix from a State Space Matrix.
@@ -79,6 +80,85 @@ std::vector<std::vector<double>> GenSignatureSpace(
 }
 
 
-std::vector<std::vector<double>> GenPatternSpace(
+/**
+ * @brief Transforms a signature space matrix into a discrete pattern space matrix
+ *        for causal pattern analysis and symbolic dynamics encoding.
+ *
+ * This function converts each real-valued element in the input signature matrix
+ * into a categorical symbol based on its sign and magnitude:
+ *   - 0: undefined pattern (input was NaN or mathematically indeterminate)
+ *   - 1: negative change (value < 0)  → "decrease"
+ *   - 2: zero change (value == 0)     → "no-change"
+ *   - 3: positive change (value > 0)  → "increase"
+ *
+ * The mapping is designed to support downstream causal inference workflows
+ * (e.g., pattern causality heatmaps, transition counting, and symbolic dynamics),
+ * where continuous signature values are abstracted into interpretable discrete states.
+ *
+ * Key design choices:
+ *   - **NaN handling**: Input NaN values (e.g., from 0/0 in relative mode) are mapped to 0,
+ *     providing a consistent "invalid/undefined" marker that can be filtered out later.
+ *   - **Exact zero detection**: Only values exactly equal to 0.0 are mapped to "no-change" (2).
+ *     This assumes that the input signature matrix has been preprocessed such that
+ *     true "no-change" states are represented as exact zeros (e.g., via diff == 0 logic
+ *     in GenSignatureSpace). Floating-point noise should be handled upstream if needed.
+ *   - **Memory efficiency**: Uses std::uint8_t (1 byte per element) to minimize memory footprint,
+ *     as only 4 distinct states (0–3) need to be represented. This reduces memory usage
+ *     by 75% compared to int32_t and 87.5% compared to size_t on 64-bit systems.
+ *   - **Type safety**: Avoids floating-point types for categorical data, preventing
+ *     accidental arithmetic on pattern codes and improving code clarity.
+ *
+ * The output matrix has the exact same dimensions as the input:
+ *   - Number of rows: preserved (each row corresponds to a time point or trajectory)
+ *   - Number of columns: preserved (each column corresponds to a lagged difference or embedding dimension)
+ *
+ * This function is typically used after GenSignatureSpace and before:
+ *   - Pattern hashing (e.g., via string conversion or rolling hash)
+ *   - Transition matrix construction
+ *   - Causal pattern matching (e.g., in analyze_pc_causality-style algorithms)
+ *
+ * @param mat A 2D matrix of signature values (output from GenSignatureSpace).
+ *            Expected to be a dense matrix of doubles, possibly containing NaNs.
+ *            Must be non-empty and rectangular (all rows same length).
+ *
+ * @return A 2D matrix of type std::uint8_t with the same shape as input,
+ *         where each element is an integer in {0, 1, 2, 3} representing the
+ *         discrete pattern state as defined above.
+ *
+ * @note Empty input returns empty output (no exception).
+ *
+ * @see GenSignatureSpace
+ */
+std::vector<std::vector<std::uint8_t>> GenPatternSpace(
     const std::vector<std::vector<double>>& mat
-)
+) {
+  if (mat.empty()) return {};
+
+  size_t n_rows = mat.size();
+  size_t n_cols = mat[0].size();
+
+  std::vector<std::vector<std::uint8_t>> result;
+  result.reserve(n_rows);
+
+  for (size_t i = 0; i < n_rows; ++i) {
+    const auto& row = mat[i];
+    std::vector<std::uint8_t> out_row;
+    out_row.reserve(n_cols);
+
+    for (size_t j = 0; j < n_cols; ++j) {
+      double v = row[j];
+      if (std::isnan(v)) {
+        out_row.push_back(0);
+      } else if (v < 0.0) {
+        out_row.push_back(1);
+      } else if (v > 0.0) {
+        out_row.push_back(3);
+      } else {
+        out_row.push_back(2);
+      }
+    }
+    result.push_back(std::move(out_row));
+  }
+
+  return result;
+}
