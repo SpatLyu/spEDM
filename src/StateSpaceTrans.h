@@ -1,3 +1,6 @@
+#ifndef StateSpaceTrans_H
+#define StateSpaceTrans_H
+
 #include <vector>
 #include <cmath>
 #include <stdexcept>
@@ -34,50 +37,7 @@
 std::vector<std::vector<double>> GenSignatureSpace(
     const std::vector<std::vector<double>>& mat,
     bool relative = true
-) {
-  if (mat.empty()) {
-    throw std::invalid_argument("Input matrix must not be empty.");
-  }
-
-  const size_t n_rows = mat.size();
-  const size_t n_cols = mat[0].size();
-
-  if (n_cols < 2) {
-    throw std::invalid_argument("State space matrix must have at least 2 columns.");
-  }
-
-  // // Validate uniform row length
-  // for (size_t i = 0; i < n_rows; ++i) {
-  //   if (mat[i].size() != n_cols) {
-  //     throw std::domain_error("All rows must have identical column count.");
-  //   }
-  // }
-
-  const size_t out_cols = n_cols - 1;
-  const double nan = std::numeric_limits<double>::quiet_NaN();
-
-  // Pre-allocate full output matrix filled with NaN
-  std::vector<std::vector<double>> result(n_rows, std::vector<double>(out_cols, nan));
-
-  // Compute signature for each row
-  for (size_t i = 0; i < n_rows; ++i) {
-    const auto& row = mat[i];
-    auto& out_row = result[i];
-
-    for (size_t j = 0; j < out_cols; ++j) {
-      double diff = row[j + 1] - row[j];
-      if (diff == 0.0) {
-        out_row[j] = 0.0;   // no change, regardless of relative or not
-      } else if (relative) {
-        out_row[j] = diff / row[j];
-      } else {
-        out_row[j] = diff;
-      }
-    }
-  }
-
-  return result;
-}
+);
 
 /**
  * @brief Transforms a signature space matrix into a discrete pattern space matrix
@@ -130,34 +90,6 @@ std::vector<std::vector<double>> GenSignatureSpace(
  */
 std::vector<std::vector<std::uint8_t>> GenPatternSpace(
     const std::vector<std::vector<double>>& mat
-) {
-  if (mat.empty()) return {};
+);
 
-  size_t n_rows = mat.size();
-  size_t n_cols = mat[0].size();
-
-  std::vector<std::vector<std::uint8_t>> result;
-  result.reserve(n_rows);
-
-  for (size_t i = 0; i < n_rows; ++i) {
-    const auto& row = mat[i];
-    std::vector<std::uint8_t> out_row;
-    out_row.reserve(n_cols);
-
-    for (size_t j = 0; j < n_cols; ++j) {
-      double v = row[j];
-      if (std::isnan(v)) {
-        out_row.push_back(0);
-      } else if (v < 0.0) {
-        out_row.push_back(1);
-      } else if (v > 0.0) {
-        out_row.push_back(3);
-      } else {
-        out_row.push_back(2);
-      }
-    }
-    result.push_back(std::move(out_row));
-  }
-
-  return result;
-}
+#endif // StateSpaceTrans_H
