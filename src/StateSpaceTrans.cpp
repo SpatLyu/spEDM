@@ -28,7 +28,7 @@
  *         corresponding input row. The result has dimensions [n_rows] x [n_cols - 1].
  * @throws std::invalid_argument if input is empty or has fewer than 2 columns.
  */
-std::vector<std::vector<double>> signatureSpace(
+std::vector<std::vector<double>> GenSignatureSpace(
     const std::vector<std::vector<double>>& mat,
     bool relative = true
 ) {
@@ -76,3 +76,8 @@ std::vector<std::vector<double>> signatureSpace(
 
   return result;
 }
+
+
+std::vector<std::vector<double>> GenPatternSpace(
+    const std::vector<std::vector<double>>& mat
+)
