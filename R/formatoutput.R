@@ -23,21 +23,18 @@
   return(resdf)
 }
 
-#' print ccm result
 #' @noRd
 #' @export
 print.ccm_res = \(x,significant = FALSE,...){
   print(.internal_xmapdf_print(x,significant = significant))
 }
 
-#' print cmc result
 #' @noRd
 #' @export
 print.cmc_res = \(x,significant = FALSE,...){
   print(.internal_xmapdf_print(x,"neighbors",significant = significant))
 }
 
-#' print pcm result
 #' @noRd
 #' @export
 print.pcm_res = \(x,significant = FALSE,...){
@@ -54,7 +51,6 @@ print.pcm_res = \(x,significant = FALSE,...){
   print(.internal_xmapdf_print(xmap,significant = significant))
 }
 
-#' print xmap_self result
 #' @noRd
 #' @export
 print.xmap_self = \(x,...){
@@ -72,7 +68,6 @@ print.xmap_self = \(x,...){
   }
 }
 
-#' print sc result
 #' @noRd
 #' @export
 print.sc_res = \(x,...){
@@ -84,7 +79,6 @@ print.sc_res = \(x,...){
       sep = "\n")
 }
 
-#' plot ccm result
 #' @noRd
 #' @export
 plot.ccm_res = \(x, family = "serif",
@@ -161,7 +155,6 @@ plot.ccm_res = \(x, family = "serif",
   return(fig1)
 }
 
-#' plot cmc result
 #' @noRd
 #' @export
 plot.cmc_res = \(x, ...){
@@ -172,7 +165,6 @@ plot.cmc_res = \(x, ...){
   return(fig1)
 }
 
-#' plot pcm result
 #' @noRd
 #' @export
 plot.pcm_res = \(x, partial = TRUE, ...){
