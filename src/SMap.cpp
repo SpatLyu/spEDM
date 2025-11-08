@@ -52,6 +52,8 @@ std::vector<double> SMapPrediction(
     // Compute distances only for valid vector pairs with valid target values
     std::vector<double> distances;
     std::vector<int> valid_libs;
+    distances.reserve(lib_indices.size());
+    valid_libs.reserve(lib_indices.size());
 
     for (int i : lib_indices) {
       // // Only use neighbors with valid target
@@ -229,11 +231,14 @@ std::vector<double> SMapPrediction(
     // Compute averaged distances across all subsets
     std::vector<double> distances;
     std::vector<int> valid_libs;
+    distances.reserve(lib_indices.size());
+    valid_libs.reserve(lib_indices.size());
 
     for (int i : lib_indices) {
       if (i == pred_i || i < 0 || static_cast<size_t>(i) >= N) continue;
 
       std::vector<double> subset_distances;
+      subset_distances.reserve(num_subsets);
 
       // Compute distance within each subset separately
       for (size_t s = 0; s < num_subsets; ++s) {

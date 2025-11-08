@@ -60,7 +60,11 @@ std::vector<double> SimplexProjectionPrediction(
 
     // Compute distances only for valid vector pairs (exclude NaNs)
     std::vector<double> distances;
-    std::vector<int> valid_libs;  // keep track of libs corresponding to valid distances
+    distances.reserve(lib_indices.size());
+    // keep track of libs corresponding to valid distances
+    std::vector<int> valid_libs;
+    valid_libs.reserve(lib_indices.size());
+
     for (int i : lib_indices) {
       if (i == p) continue; // Skip self-matching
 
@@ -197,12 +201,15 @@ std::vector<double> SimplexProjectionPrediction(
 
     std::vector<double> distances;
     std::vector<int> valid_libs;
+    distances.reserve(lib_indices.size());
+    valid_libs.reserve(lib_indices.size());
 
     // Compute averaged distances across subsets
     for (int i : lib_indices) {
       if (i == p || i < 0 || static_cast<size_t>(i) >= N) continue;
 
       std::vector<double> subset_distances;
+      subset_distances.reserve(num_subsets);
 
       for (size_t s = 0; s < num_subsets; ++s) {
         if (i >= static_cast<int>(vectors[s].size()) || p >= static_cast<int>(vectors[s].size())) continue;
