@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <cstdint>
+#include <limits>
 #include <utility> // for std::move
 
 struct PartialCorRes {
