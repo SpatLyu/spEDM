@@ -66,12 +66,15 @@ std::vector<std::vector<double>> GenSignatureSpace(
 
     for (size_t j = 0; j < out_cols; ++j) {
       double diff = row[j + 1] - row[j];
-      if (diff == 0.0) {
-        out_row[j] = 0.0;   // no change, regardless of relative or not
-      } else if (relative) {
-        out_row[j] = diff / row[j];
-      } else {
-        out_row[j] = diff;
+      // Note: NaN diff values remain NaN (meaningless pattern)
+      if (!std::isnan(diff)) {
+        if (diff == 0.0) {
+          out_row[j] = 0.0;   // no change, regardless of relative or not
+        } else if (relative) {
+          out_row[j] = diff / row[j];
+        } else {
+          out_row[j] = diff;
+        }
       }
     }
   }
@@ -133,30 +136,30 @@ std::vector<std::vector<std::uint8_t>> GenPatternSpace(
 ) {
   if (mat.empty()) return {};
 
-  size_t n_rows = mat.size();
-  size_t n_cols = mat[0].size();
+  const size_t n_rows = mat.size();
+  const size_t n_cols = mat[0].size();
 
-  std::vector<std::vector<std::uint8_t>> result;
-  result.reserve(n_rows);
+  // Preallocate full matrix with zeros
+  std::vector<std::vector<std::uint8_t>> result(
+      n_rows, std::vector<std::uint8_t>(n_cols, 0));
 
   for (size_t i = 0; i < n_rows; ++i) {
     const auto& row = mat[i];
-    std::vector<std::uint8_t> out_row;
-    out_row.reserve(n_cols);
+    auto& out_row = result[i];  // direct reference to avoid multiple lookups
 
     for (size_t j = 0; j < n_cols; ++j) {
       double v = row[j];
-      if (std::isnan(v)) {
-        out_row.push_back(0);
-      } else if (v < 0.0) {
-        out_row.push_back(1);
-      } else if (v > 0.0) {
-        out_row.push_back(3);
-      } else {
-        out_row.push_back(2);
+      // Note: NaN values remain 0 (undefined pattern)
+      if (!std::isnan(v)){
+        if (v < 0.0) {
+          out_row[j] = 1;   // negative change
+        } else if (v > 0.0) {
+          out_row[j] = 3;   // positive change
+        } else {
+          out_row[j] = 2;   // no change
+        }
       }
     }
-    result.push_back(std::move(out_row));
   }
 
   return result;
