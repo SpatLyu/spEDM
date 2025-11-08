@@ -126,49 +126,46 @@ struct DeLongPlacementsRes {
 };
 
 /**
- * @brief Represents the result of pattern projection from state/signature space.
+ * @brief Represents the result of causal pattern analysis between two signature spaces.
  *
- * This structure stores:
- * - `signature`: The continuous-valued signature space matrix.
- * - `pattern`: The corresponding discrete-valued pattern space matrix.
+ * This structure stores both per-sample and aggregated causality measures derived
+ * from pattern-space interactions. It is designed to capture symbolic dynamics
+ * relationships between real and predicted signals.
  *
- * The move constructor and move assignment are marked `noexcept`
- * to allow efficient transfers in standard containers like `std::vector`.
+ * Fields include:
+ * - **NoCausality, PositiveCausality, NegativeCausality, DarkCausality**:
+ *   Per-sample causal strengths categorized by type.
+ * - **RealLoop**: Index list of valid samples actually processed.
+ * - **PatternTypes**: Encoded causal type for each sample (0=no, 1=pos, 2=neg, 3=dark).
+ * - **matrice**: Final averaged causality heatmap.
+ * - **TotalPos, TotalNeg, TotalDark**: Global mean strengths for each category.
  */
-struct PatternProjectionRes {
-  std::vector<std::vector<double>> signature;   ///< Signature space matrix (continuous features).
-  std::vector<std::vector<std::uint8_t>> pattern; ///< Pattern space matrix (discrete states).
+struct PatternCausalityRes {
+  std::vector<double> NoCausality;         ///< Strengths classified as "no causality".
+  std::vector<double> PositiveCausality;   ///< Strengths classified as "positive causality".
+  std::vector<double> NegativeCausality;   ///< Strengths classified as "negative causality".
+  std::vector<double> DarkCausality;       ///< Strengths classified as "dark causality".
+  std::vector<size_t> RealLoop;            ///< Indices of valid samples actually processed.
+  std::vector<int> PatternTypes;           ///< Encoded pattern types (0–3).
+  std::vector<std::vector<double>> matrice;///< Averaged heatmap (pattern × pattern).
+  double TotalPos = std::numeric_limits<double>::quiet_NaN(); ///< Global mean of diagonal elements.
+  double TotalNeg = std::numeric_limits<double>::quiet_NaN(); ///< Global mean of anti-diagonal elements.
+  double TotalDark = std::numeric_limits<double>::quiet_NaN();///< Global mean of off-diagonal elements.
 
-  /**
-   * @brief Default constructor.
-   * Initializes empty matrices.
-   */
-  PatternProjectionRes() = default;
+  /// Default constructor: initializes empty result with NaN totals.
+  PatternCausalityRes() = default;
 
-  /**
-   * @brief Copy constructor (for lvalues).
-   * Performs deep copies of both matrices.
-   *
-   * @param sig The signature space matrix.
-   * @param pat The pattern space matrix.
-   */
-  PatternProjectionRes(const std::vector<std::vector<double>>& sig,
-                       const std::vector<std::vector<std::uint8_t>>& pat)
-    : signature(sig), pattern(pat) {}
+  /// Copy constructor.
+  PatternCausalityRes(const PatternCausalityRes&) = default;
 
-  /**
-   * @brief Move constructor (for rvalues).
-   * Transfers ownership of matrices without copying.
-   */
-  PatternProjectionRes(std::vector<std::vector<double>>&& sig,
-                       std::vector<std::vector<std::uint8_t>>&& pat) noexcept
-    : signature(std::move(sig)), pattern(std::move(pat)) {}
+  /// Move constructor (noexcept for efficiency in containers).
+  PatternCausalityRes(PatternCausalityRes&&) noexcept = default;
 
-  /// Defaulted copy/move assignment operators.
-  PatternProjectionRes(const PatternProjectionRes&) = default;
-  PatternProjectionRes& operator=(const PatternProjectionRes&) = default;
-  PatternProjectionRes(PatternProjectionRes&&) noexcept = default;
-  PatternProjectionRes& operator=(PatternProjectionRes&&) noexcept = default;
+  /// Copy assignment.
+  PatternCausalityRes& operator=(const PatternCausalityRes&) = default;
+
+  /// Move assignment.
+  PatternCausalityRes& operator=(PatternCausalityRes&&) noexcept = default;
 };
 
 #endif // DataStruct_H

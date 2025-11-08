@@ -3,9 +3,15 @@
 
 #include <vector>
 #include <cmath>
-#include <stdexcept>
 #include <limits>
-#include <cstdint> // for uint8_t
+#include <string>
+#include <utility> // for std::move
+#include <numeric>
+#include <algorithm>
+#include <unordered_map>
+#include <unordered_set>
+#include <stdexcept>
+#include "DataStruct.h"
 
 /**
  * @brief Computes the Signature Space Matrix from a State Space Matrix.
@@ -60,6 +66,41 @@ std::vector<std::vector<double>> GenSignatureSpace(
  */
 std::vector<std::string> GenPatternSpace(
     const std::vector<std::vector<double>>& mat,
+    bool NA_rm = true
+);
+
+/**
+ * @brief Compute pattern-based causality analysis between predicted and real signatures.
+ *
+ * This function automatically generates symbolic patterns (PMx, PMy, pred_PMY)
+ * using GenPatternSpace() from input signature matrices (SMx, SMy, pred_SMY),
+ * then computes a causal strength matrix and per-sample classifications.
+ *
+ * Supports NaN handling through `NA_rm`:
+ *  - If true, samples containing NaN are removed before pattern generation
+ *    → max pattern count ≈ 3^(E-1) + 1 (same as Python).
+ *  - If false, NaN is treated as a valid symbol
+ *    → max pattern count ≈ 4^(E-1).
+ *
+ * Causality classification follows:
+ *  - Positive causality  → pattern(Y_pred) == pattern(Y_real)
+ *  - Negative causality  → symmetric opposite pattern (i + j == N - 1)
+ *  - Dark causality      → other off-diagonal relationships
+ *  - No causality        → zero strength
+ *
+ * @param SMx        X signature matrix (n × d)
+ * @param SMy        Y real signature matrix (n × d)
+ * @param pred_SMY   Y predicted signatures (n × d)
+ * @param weighted   Whether to weight causal strength by erf(norm(pred_Y)/norm(X))
+ * @param NA_rm      Whether to remove NaN samples before pattern generation
+ *
+ * @return PatternCausalityRes containing causal matrices, summary, and classifications.
+ */
+PatternCausalityRes GenPatternCausality(
+    const std::vector<std::vector<double>>& SMx,
+    const std::vector<std::vector<double>>& SMy,
+    const std::vector<std::vector<double>>& pred_SMY,
+    bool weighted = true,
     bool NA_rm = true
 );
 
