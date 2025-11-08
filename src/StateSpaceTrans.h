@@ -78,9 +78,9 @@ std::vector<std::string> GenPatternSpace(
  *
  * Supports NaN handling through `NA_rm`:
  *  - If true, samples containing NaN are removed before pattern generation
- *    → max pattern count ≈ 3^(E-1) + 1 (same as Python).
+ *    → max pattern count = 3^(E-1) + 1 (same as factorial hash style).
  *  - If false, NaN is treated as a valid symbol
- *    → max pattern count ≈ 4^(E-1).
+ *    → max pattern count = 4^(E-1).
  *
  * Causality classification follows:
  *  - Positive causality  → pattern(Y_pred) == pattern(Y_real)
