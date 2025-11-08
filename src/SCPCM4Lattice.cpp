@@ -9,7 +9,7 @@
 #include "CppLatticeUtils.h"
 #include "SimplexProjection.h"
 #include "SMap.h"
-#include "spEDMDataStruct.h"
+#include "DataStruct.h"
 #include <RcppThread.h>
 
 // [[Rcpp::depends(RcppThread)]]

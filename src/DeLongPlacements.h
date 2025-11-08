@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <utility>
 #include <string>
-#include "spEDMDataStruct.h"
+#include "DataStruct.h"
 
 /**
  * @brief Computes DeLong placements for ROC analysis.
