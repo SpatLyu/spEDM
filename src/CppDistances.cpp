@@ -305,7 +305,7 @@ std::vector<size_t> CppKNNIndice(
   std::vector<std::pair<double, size_t>> distances;
 
   // Iterate through the specified library indices to collect valid distances
-  for (std::size_t i : lib) {
+  for (size_t i : lib) {
     if (!include_self && i == target_idx) continue;  // Skip the target index itself if include_self is false
 
     // Check if the entire embedding_space[i] is NaN
@@ -409,7 +409,7 @@ std::vector<std::vector<size_t>> CppDistSortedIndice(
 
     // Collect valid neighbors from lib
     for (size_t j : lib) {
-      if (!include_self && i == j) continue;
+      if (!include_self && i == j) continue; // Skip the target index itself if include_self is false
       double d = row[j];
       if (!std::isnan(d)) {
         valid_neighbors.emplace_back(d, j);
@@ -488,7 +488,7 @@ std::vector<std::vector<size_t>> CppMatKNNeighbors(
   //
   //   // Compute distances to all other points in lib (excluding self)
   //   for (size_t idx_j = 0; idx_j < lib_size; ++idx_j) {
-  //     if (!include_self && idx_i == idx_j) continue;
+  //     if (!include_self && idx_i == idx_j) continue; // Skip the target index itself if include_self is false
   //     size_t j = lib[idx_j];
   //
   //     double dist = CppDistance(embedding_space[i], embedding_space[j], L1norm, true);
@@ -523,7 +523,7 @@ std::vector<std::vector<size_t>> CppMatKNNeighbors(
 
     // Compute distances to all other points in lib (excluding self)
     for (size_t idx_j = 0; idx_j < lib_size; ++idx_j) {
-      if (!include_self && idx_i == idx_j) continue;
+      if (!include_self && idx_i == idx_j) continue; // Skip the target index itself if include_self is false
       size_t j = lib[idx_j];
 
       double dist = CppDistance(embedding_space[i], embedding_space[j], L1norm, true);
