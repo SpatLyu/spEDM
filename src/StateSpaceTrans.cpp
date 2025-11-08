@@ -1,8 +1,8 @@
 #include <vector>
 #include <cmath>
-#include <stdexcept>
 #include <limits>
-#include <cstdint> // for uint8_t
+#include <string>
+#include <stdexcept>
 
 /**
  * @brief Computes the Signature Space Matrix from a State Space Matrix.
@@ -83,84 +83,113 @@ std::vector<std::vector<double>> GenSignatureSpace(
 }
 
 /**
- * @brief Transforms a signature space matrix into a discrete pattern space matrix
- *        for causal pattern analysis and symbolic dynamics encoding.
+ * @brief Converts a continuous signature space matrix into a discrete string-based
+ *        pattern representation for causal pattern analysis.
  *
- * This function converts each real-valued element in the input signature matrix
- * into a categorical symbol based on its sign and magnitude:
- *   - 0: undefined pattern (input was NaN or mathematically indeterminate)
- *   - 1: negative change (value < 0)  → "decrease"
- *   - 2: zero change (value == 0)     → "no-change"
- *   - 3: positive change (value > 0)  → "increase"
+ * This function maps each numerical signature vector (a row of the input matrix)
+ * into a string of categorical symbols, encoding direction and stability of change:
  *
- * The mapping is designed to support downstream causal inference workflows
- * (e.g., pattern causality heatmaps, transition counting, and symbolic dynamics),
- * where continuous signature values are abstracted into interpretable discrete states.
+ *   - '0' → undefined / NaN
+ *   - '1' → negative change  (value < 0)
+ *   - '2' → zero change      (value == 0)
+ *   - '3' → positive change  (value > 0)
  *
- * Key design choices:
- *   - **NaN handling**: Input NaN values (e.g., from 0/0 in relative mode) are mapped to 0,
- *     providing a consistent "invalid/undefined" marker that can be filtered out later.
- *   - **Exact zero detection**: Only values exactly equal to 0.0 are mapped to "no-change" (2).
- *     This assumes that the input signature matrix has been preprocessed such that
- *     true "no-change" states are represented as exact zeros (e.g., via diff == 0 logic
- *     in GenSignatureSpace). Floating-point noise should be handled upstream if needed.
- *   - **Memory efficiency**: Uses std::uint8_t (1 byte per element) to minimize memory footprint,
- *     as only 4 distinct states (0–3) need to be represented. This reduces memory usage
- *     by 75% compared to int32_t and 87.5% compared to size_t on 64-bit systems.
- *   - **Type safety**: Avoids floating-point types for categorical data, preventing
- *     accidental arithmetic on pattern codes and improving code clarity.
  *
- * The output matrix has the exact same dimensions as the input:
- *   - Number of rows: preserved (each row corresponds to a time point or trajectory)
- *   - Number of columns: preserved (each column corresponds to a lagged difference or embedding dimension)
+ * @param mat   Input 2D signature matrix (n × d), real-valued, may contain NaNs.
+ * @param NA_rm If true, skip rows with NaNs entirely (output "0" for those rows);
+ *              if false, include NaNs as '0' symbols in their pattern strings.
  *
- * This function is typically used after GenSignatureSpace and before:
- *   - Pattern hashing (e.g., via string conversion or rolling hash)
- *   - Transition matrix construction
- *   - Causal pattern matching (e.g., in analyze_pc_causality-style algorithms)
+ * @return A vector of strings, where each string encodes one discrete pattern.
  *
- * @param mat A 2D matrix of signature values (output from GenSignatureSpace).
- *            Expected to be a dense matrix of doubles, possibly containing NaNs.
- *            Must be non-empty and rectangular (all rows same length).
+ * @ Behavior controlled by `NA_rm`:
+ * - **NA_rm = true (default)**:
+ *   - If a row contains *any* NaN, that entire row is skipped (output is "0").
+ *   - Only fully valid numeric rows are encoded into symbolic strings.
+ * - **NA_rm = false**:
+ *   - All rows are encoded, even those containing NaNs.
+ *   - NaNs are represented as '0' in the output string.
  *
- * @return A 2D matrix of type std::uint8_t with the same shape as input,
- *         where each element is an integer in {0, 1, 2, 3} representing the
- *         discrete pattern state as defined above.
+ * @ Example
+ * Input:
+ * ```
+ * mat = [
+ *   [0.1, -0.2, 0.0],
+ *   [NaN, 0.3, -0.1]
+ * ]
+ * ```
  *
- * @note Empty input returns empty output (no exception).
+ * Output (NA_rm = true):
+ * ```
+ * ["312", "0"]
+ * ```
  *
- * @see GenSignatureSpace
+ * Output (NA_rm = false):
+ * ```
+ * ["312", "031"]
+ * ```
+ *
+ * @Notes
+ * - Each row of the returned vector corresponds to one pattern instance (time point or spatial unit).
+ * - This encoding is lightweight and directly compatible with downstream
+ *   pattern frequency counting, hashing, or symbolic causal inference pipelines.
+ * - For large-scale symbolic modeling, string concatenation offers simplicity
+ *   and transparency, trading minimal performance overhead for full interpretability.
+ * - Empty input returns an empty vector.
+ *
+ * @ Design decisions
+ * - **NaN handling**: Controlled by `NA_rm`; defaults to safe filtering mode.
+ * - **Compactness**: Each row pattern stored as a single `std::string`, minimizing
+ *   indexing complexity and simplifying hashing.
+ * - **Performance**: Uses `reserve()` to avoid repeated allocations when building strings.
  */
-std::vector<std::vector<std::uint8_t>> GenPatternSpace(
-    const std::vector<std::vector<double>>& mat
+std::vector<std::string> GenPatternSpace(
+    const std::vector<std::vector<double>>& mat,
+    bool NA_rm = true
 ) {
-  if (mat.empty()) return {};
+  std::vector<std::string> patterns;
+  if (mat.empty()) return patterns;
 
   const size_t n_rows = mat.size();
   const size_t n_cols = mat[0].size();
-
-  // Preallocate full matrix with zeros
-  std::vector<std::vector<std::uint8_t>> result(
-      n_rows, std::vector<std::uint8_t>(n_cols, 0));
+  patterns.reserve(n_rows);
 
   for (size_t i = 0; i < n_rows; ++i) {
     const auto& row = mat[i];
-    auto& out_row = result[i];  // direct reference to avoid multiple lookups
+    bool has_nan = false;
+    std::string pat;
+    pat.reserve(n_cols);
 
     for (size_t j = 0; j < n_cols; ++j) {
       double v = row[j];
-      // Note: NaN values remain 0 (undefined pattern)
-      if (!std::isnan(v)){
-        if (v < 0.0) {
-          out_row[j] = 1;   // negative change
-        } else if (v > 0.0) {
-          out_row[j] = 3;   // positive change
-        } else {
-          out_row[j] = 2;   // no change
-        }
+      if (std::isnan(v)) {
+        has_nan = true;
+        pat.push_back('0');
+      } else if (v < 0.0) {
+        pat.push_back('1');
+      } else if (v > 0.0) {
+        pat.push_back('3');
+      } else {
+        pat.push_back('2');
       }
+    }
+
+    // When NA_rm = true and row contains NaN → replace with "0"
+    if (NA_rm && has_nan) {
+      patterns.emplace_back("0");
+    } else {
+      patterns.emplace_back(std::move(pat));
     }
   }
 
-  return result;
+  return patterns;
 }
+
+PatternCausalityRes PatternCausality(
+    const std::vector<std::vector<double>>& SMx,        // X signatures (n, d)
+    const std::vector<std::vector<double>>& SMy,        // Y real signatures (n, d)
+    const std::vector<std::string>& PMx,                // X patterns (n,d)
+    const std::vector<std::string>& PMy,                // Y real patterns (n,d)
+    const std::vector<std::vector<double>>& pred_SMY,   // Y predicted signatures (n, d)
+    const std::vector<std::string>& pred_PMY,           // Y predicted patterns (n,)
+    bool weighted = true
+)

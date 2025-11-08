@@ -40,56 +40,27 @@ std::vector<std::vector<double>> GenSignatureSpace(
 );
 
 /**
- * @brief Transforms a signature space matrix into a discrete pattern space matrix
- *        for causal pattern analysis and symbolic dynamics encoding.
+ * @brief Converts a continuous signature space matrix into a discrete string-based
+ *        pattern representation for causal pattern analysis.
  *
- * This function converts each real-valued element in the input signature matrix
- * into a categorical symbol based on its sign and magnitude:
- *   - 0: undefined pattern (input was NaN or mathematically indeterminate)
- *   - 1: negative change (value < 0)  → "decrease"
- *   - 2: zero change (value == 0)     → "no-change"
- *   - 3: positive change (value > 0)  → "increase"
+ * This function maps each numerical signature vector (a row of the input matrix)
+ * into a string of categorical symbols, encoding direction and stability of change:
  *
- * The mapping is designed to support downstream causal inference workflows
- * (e.g., pattern causality heatmaps, transition counting, and symbolic dynamics),
- * where continuous signature values are abstracted into interpretable discrete states.
+ *   - '0' → undefined / NaN
+ *   - '1' → negative change  (value < 0)
+ *   - '2' → zero change      (value == 0)
+ *   - '3' → positive change  (value > 0)
  *
- * Key design choices:
- *   - **NaN handling**: Input NaN values (e.g., from 0/0 in relative mode) are mapped to 0,
- *     providing a consistent "invalid/undefined" marker that can be filtered out later.
- *   - **Exact zero detection**: Only values exactly equal to 0.0 are mapped to "no-change" (2).
- *     This assumes that the input signature matrix has been preprocessed such that
- *     true "no-change" states are represented as exact zeros (e.g., via diff == 0 logic
- *     in GenSignatureSpace). Floating-point noise should be handled upstream if needed.
- *   - **Memory efficiency**: Uses std::uint8_t (1 byte per element) to minimize memory footprint,
- *     as only 4 distinct states (0–3) need to be represented. This reduces memory usage
- *     by 75% compared to int32_t and 87.5% compared to size_t on 64-bit systems.
- *   - **Type safety**: Avoids floating-point types for categorical data, preventing
- *     accidental arithmetic on pattern codes and improving code clarity.
  *
- * The output matrix has the exact same dimensions as the input:
- *   - Number of rows: preserved (each row corresponds to a time point or trajectory)
- *   - Number of columns: preserved (each column corresponds to a lagged difference or embedding dimension)
+ * @param mat   Input 2D signature matrix (n × d), real-valued, may contain NaNs.
+ * @param NA_rm If true, skip rows with NaNs entirely (output "0" for those rows);
+ *              if false, include NaNs as '0' symbols in their pattern strings.
  *
- * This function is typically used after GenSignatureSpace and before:
- *   - Pattern hashing (e.g., via string conversion or rolling hash)
- *   - Transition matrix construction
- *   - Causal pattern matching (e.g., in analyze_pc_causality-style algorithms)
- *
- * @param mat A 2D matrix of signature values (output from GenSignatureSpace).
- *            Expected to be a dense matrix of doubles, possibly containing NaNs.
- *            Must be non-empty and rectangular (all rows same length).
- *
- * @return A 2D matrix of type std::uint8_t with the same shape as input,
- *         where each element is an integer in {0, 1, 2, 3} representing the
- *         discrete pattern state as defined above.
- *
- * @note Empty input returns empty output (no exception).
- *
- * @see GenSignatureSpace
+ * @return A vector of strings, where each string encodes one discrete pattern.
  */
-std::vector<std::vector<std::uint8_t>> GenPatternSpace(
-    const std::vector<std::vector<double>>& mat
+std::vector<std::string> GenPatternSpace(
+    const std::vector<std::vector<double>>& mat,
+    bool NA_rm = true
 );
 
 #endif // StateSpaceTrans_H
