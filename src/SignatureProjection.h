@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <numeric>
 #include <limits>
+#include <RcppThread.h>
 
 /**
  * @brief Predicts signature vectors for a subset of target points using weighted nearest neighbors.
@@ -21,14 +22,19 @@
  *        - Otherwise, compute a weighted average of valid (non-NaN) neighbor signatures.
  *   4. Predictions are stored and updated only for indices in `pred_indices`; other entries remain undefined (NaN).
  *
+ * Parallelization:
+ *   - Controlled by the parameter `threads`.
+ *   - If `threads <= 1`, computation is serial (standard for-loop).
+ *   - Otherwise, the loop over prediction indices is executed in parallel via RcppThread::parallelFor.
  *
  * @param SMy            Signature space of the target variable Y. Shape: (N_obs, E−1)
  * @param Dx             Distance matrix from prediction points to library points. Shape: (SMy.size(), SMy.size())
  * @param lib_indices    Indices of valid library points used for neighbor search (subset of [0, SMy.size())).
  * @param pred_indices   Indices of points to predict (subset of [0, SMy.size())).
- * @param num_neighbors  Number of nearest neighbors to use. If unspecified (special value 0 or -int), defaults to E+1.
+ * @param num_neighbors  Number of nearest neighbors to use. If <= 0, defaults to E+1.
  * @param zero_tolerance Maximum allowed zero values per dimension before forcing prediction to zero.
- *                       If unspecified (special value 0 or -int), defaults to E−1.
+ *                       If <= 0, defaults to E−1.
+ * @param threads        Number of threads to use. If <= 1, runs serially; otherwise runs parallel.
  *
  * @return A matrix of predicted signature vectors, sized SMy.size() × (E−1).
  */
@@ -37,8 +43,9 @@ std::vector<std::vector<double>> SignatureProjection(
     const std::vector<std::vector<double>>& Dx,
     const std::vector<size_t>& lib_indices,
     const std::vector<size_t>& pred_indices,
-    int num_neighbors = 0,  /* = std::numeric_limits<int>::min() */
-    int zero_tolerance = 0  /* = std::numeric_limits<int>::max() */
+    int num_neighbors = 0,   /* = std::numeric_limits<int>::min() */
+    int zero_tolerance = 0,  /* = std::numeric_limits<int>::max() */
+    size_t threads = 1
 );
 
 #endif // SignatureProjection_H
