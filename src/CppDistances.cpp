@@ -452,11 +452,12 @@ std::vector<std::vector<size_t>> CppDistSortedIndice(
  * This function uses RcppThread to parallelize the outer loop over the 'lib' indices,
  * with the number of threads controlled by the 'threads' parameter.
  *
- * @param embedding_space The full set of vectors representing the embedding space.
- * @param lib A vector of indices representing the subset of points to consider for neighbor search.
- * @param k The number of nearest neighbors to find for each point in 'lib'.
- * @param threads The number of threads to use for parallel computation.
- * @param L1norm Flag to use Manhattan distance (true) or Euclidean distance (false).
+ * @param embedding_space - The full set of vectors representing the embedding space.
+ * @param lib - A vector of indices representing the subset of points to consider for neighbor search.
+ * @param k - The number of nearest neighbors to find for each point in 'lib'.
+ * @param threads - The number of threads to use for parallel computation.
+ * @param L1norm - Flag to use Manhattan distance (true) or Euclidean distance (false).
+ * @param include_self - Whether to include the point itself (i == j) as a valid neighbor.
  * @return std::vector<std::vector<size_t>> A vector where each row corresponds to an embedding_space
  *         point and contains the indices of its k nearest neighbors from 'lib', or an invalid index if not in 'lib'.
  */
@@ -465,7 +466,8 @@ std::vector<std::vector<size_t>> CppMatKNNeighbors(
     const std::vector<size_t>& lib,
     size_t k,
     size_t threads,
-    bool L1norm = false) {
+    bool L1norm = false,
+    bool include_self = false) {
 
   const size_t n = embedding_space.size();
   const size_t invalid_index = std::numeric_limits<size_t>::max();
@@ -484,7 +486,7 @@ std::vector<std::vector<size_t>> CppMatKNNeighbors(
   //
   //   // Compute distances to all other points in lib (excluding self)
   //   for (size_t idx_j = 0; idx_j < lib_size; ++idx_j) {
-  //     if (idx_i == idx_j) continue;  // Skip distance to self
+  //     if (!include_self && idx_i == idx_j) continue;
   //     size_t j = lib[idx_j];
   //
   //     double dist = CppDistance(embedding_space[i], embedding_space[j], L1norm, true);
@@ -519,7 +521,7 @@ std::vector<std::vector<size_t>> CppMatKNNeighbors(
 
     // Compute distances to all other points in lib (excluding self)
     for (size_t idx_j = 0; idx_j < lib_size; ++idx_j) {
-      if (idx_i == idx_j) continue;  // Skip distance to self
+      if (!include_self && idx_i == idx_j) continue;
       size_t j = lib[idx_j];
 
       double dist = CppDistance(embedding_space[i], embedding_space[j], L1norm, true);
