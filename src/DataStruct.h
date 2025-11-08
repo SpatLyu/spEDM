@@ -1,5 +1,5 @@
-#ifndef spEDMDataStruct_H
-#define spEDMDataStruct_H
+#ifndef DataStruct_H
+#define DataStruct_H
 
 #include <vector>
 #include <cstdint>
@@ -153,7 +153,7 @@ struct PatternProjectionRes {
    * @param pat The pattern space matrix.
    */
   PatternProjectionRes(const std::vector<std::vector<double>>& sig,
-                                const std::vector<std::vector<std::uint8_t>>& pat)
+                       const std::vector<std::vector<std::uint8_t>>& pat)
     : signature(sig), pattern(pat) {}
 
   /**
@@ -161,7 +161,7 @@ struct PatternProjectionRes {
    * Transfers ownership of matrices without copying.
    */
   PatternProjectionRes(std::vector<std::vector<double>>&& sig,
-                                std::vector<std::vector<std::uint8_t>>&& pat) noexcept
+                       std::vector<std::vector<std::uint8_t>>&& pat) noexcept
     : signature(std::move(sig)), pattern(std::move(pat)) {}
 
   /// Defaulted copy/move assignment operators.
@@ -171,4 +171,4 @@ struct PatternProjectionRes {
   PatternProjectionRes& operator=(PatternProjectionRes&&) noexcept = default;
 };
 
-#endif // spEDMDataStruct_H
+#endif // DataStruct_H
