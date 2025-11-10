@@ -229,3 +229,16 @@
   if (is.null(indices)) return(res)
   return(res[-indices])
 }
+
+.run_gpc = \(x, y, E, k, tau, style, lib, pred,
+             dist.metric, zero.tolerance,
+             relative, weighted, na.rm, threads,
+             bidirectional = FALSE, varname = NULL, nb = NULL){
+  dist.metric = .check_distmetric(dist.metric)
+  if (is.null(nb)){
+    y_xmap_x = RcppGPC4Grid(y,x,lib,pred,E,tau,style,k,zero.tolerance,dist.metric,relative,weighted,na.rm,threads)
+  } else {
+    y_xmap_x = RcppGPC4Lattice(y,x,nb,lib,pred,E,tau,style,k,zero.tolerance,dist.metric,relative,weighted,na.rm,threads)
+  }
+  return(y_xmap_x)
+}
