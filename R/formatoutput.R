@@ -55,8 +55,8 @@ print.pcm_res = \(x,significant = FALSE,...){
 #' @noRd
 print.pc_res = \(x,...){
   pc = x$summary
-  rownames(pc) = rep(paste0(x$varname[1], " -> ", x$varname[2]),
-                     paste0(x$varname[2], " -> ", x$varname[1]), each = 3)
+  rownames(pc) = rep(c(paste0(x$varname[1], " -> ", x$varname[2]),
+                       paste0(x$varname[2], " -> ", x$varname[1])), each = 3)
   pc$direction = NULL
   cat('-------------------------------- \n')
   cat("***pattern causality analysis*** \n")
