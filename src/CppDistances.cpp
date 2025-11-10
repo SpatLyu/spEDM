@@ -5,6 +5,7 @@
 #include <limits>
 #include <utility>
 #include <stdexcept>
+#include "NumericUtils.h"
 #include <RcppThread.h>
 
 // [[Rcpp::depends(RcppThread)]]
@@ -447,7 +448,7 @@ std::vector<std::vector<size_t>> CppDistSortedIndice(
       valid_neighbors.begin() + num_neighbors,
       valid_neighbors.end(),
       [](const std::pair<double, size_t>& a, const std::pair<double, size_t>& b) {
-        return (a.first < b.first) || (a.first == b.first && a.second < b.second);
+        return (a.first < b.first) || (doubleNearlyEqual(a.first,b.first) && a.second < b.second);
       }
     );
 
@@ -526,7 +527,7 @@ std::vector<std::vector<size_t>> CppMatKNNeighbors(
   //   // Partially sort distances to find the k smallest distances efficiently
   //   std::partial_sort(dist_idx_pairs.begin(), dist_idx_pairs.begin() + knn, dist_idx_pairs.end(),
   //                     [](const std::pair<double, size_t>& a, const std::pair<double, size_t>& b) {
-  //                       return a.first < b.first || (a.first == b.first && a.second < b.second);
+  //                       return a.first < b.first || (doubleNearlyEqual(a.first,b.first) && a.second < b.second);
   //                     });
   //
   //   // Resize the output vector for the current point and fill with neighbor indices
@@ -561,7 +562,7 @@ std::vector<std::vector<size_t>> CppMatKNNeighbors(
     // Partially sort distances to find the k smallest distances efficiently
     std::partial_sort(dist_idx_pairs.begin(), dist_idx_pairs.begin() + knn, dist_idx_pairs.end(),
                       [](const std::pair<double, size_t>& a, const std::pair<double, size_t>& b) {
-                        return a.first < b.first || (a.first == b.first && a.second < b.second);
+                        return a.first < b.first || (doubleNearlyEqual(a.first,b.first) && a.second < b.second);
                       });
 
     // Resize the output vector for the current point and fill with neighbor indices
