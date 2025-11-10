@@ -53,6 +53,19 @@ print.pcm_res = \(x,significant = FALSE,...){
 
 #' @export
 #' @noRd
+print.pc_res = \(x,...){
+  pc = res$summary
+  rownames(pc) = rep(paste0(x$varname[1], " -> ", x$varname[2]),
+                     paste0(x$varname[2], " -> ", x$varname[1]), each = 3)
+  pc$direction = NULL
+  cat('-------------------------------- \n')
+  cat("***pattern causality analysis*** \n")
+  cat('-------------------------------- \n')
+  print(pc)
+}
+
+#' @export
+#' @noRd
 print.xmap_self = \(x,...){
   res = as.matrix(x$xmap)
   if (x$method == "smap"){

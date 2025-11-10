@@ -236,9 +236,32 @@
              bidirectional = FALSE, varname = NULL, nb = NULL){
   dist.metric = .check_distmetric(dist.metric)
   if (is.null(nb)){
-    y_xmap_x = RcppGPC4Grid(y,x,lib,pred,E,tau,style,k,zero.tolerance,dist.metric,relative,weighted,na.rm,threads)
+    res = RcppGPC4Grid(y,x,lib,pred,E,tau,style,k,zero.tolerance,dist.metric,relative,weighted,na.rm,threads)
   } else {
-    y_xmap_x = RcppGPC4Lattice(y,x,nb,lib,pred,E,tau,style,k,zero.tolerance,dist.metric,relative,weighted,na.rm,threads)
+    res = RcppGPC4Lattice(y,x,nb,lib,pred,E,tau,style,k,zero.tolerance,dist.metric,relative,weighted,na.rm,threads)
   }
-  return(y_xmap_x)
+  res$causality$direction = "y_xmap_x"
+  res$summary$direction = "y_xmap_x"
+  dim(res$pattern) = c(dim(res$pattern), 1)
+  dimnames(res$pattern) = list(rownames(res$pattern), colnames(res$pattern), "y_xmap_x")
+  res$varname = varname
+
+  if (bidirectional){
+    res_bi = .run_gpc(x, y, E, k, tau, style, lib, pred,
+                      dist.metric, zero.tolerance,
+                      relative, weighted, na.rm, threads,
+                      FALSE, varname, nb)
+    res_bi$causality$direction = "x_xmap_y"
+    res_bi$summary$direction = "x_xmap_y"
+    res$causality = rbind(res$causality,res_bi$causality)
+    res$summary = rbind(res$summary,res_bi$summary)
+    combined_pattern = array(0, dim = c(dim(res_bi$pattern)[1], dim(res_bi$pattern)[2], 2),
+                             dimnames = list(rownames(res$pattern), colnames(res$pattern), c("y_xmap_x", "x_xmap_y")))
+    combined_pattern[,,1] = res$pattern[,,1]
+    combined_pattern[,,2] = res_bi$pattern[,,1]
+    res$pattern = combined_pattern
+  }
+
+  class(res) = "pc_res"
+  return(res)
 }
