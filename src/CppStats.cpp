@@ -706,12 +706,14 @@ double PartialCor(const std::vector<double>& y,
     }
 
     // // Compute residuals of y and y_hat after regressing on controls
-    // arma::vec residuals_y = arma_y - arma_controls * arma::solve(arma_controls, arma_y);
-    // arma::vec residuals_y_hat = arma_y_hat - arma_controls * arma::solve(arma_controls, arma_y_hat);
+    // arma::mat solve_controls = arma::solve(arma_controls, arma_y);
+    // arma::vec residuals_y = arma_y - arma_controls * solve_controls;
+    // arma::vec residuals_y_hat = arma_y_hat - arma_controls * solve_controls;
 
     // Use a more robust method for solving the linear system, such as arma::pinv (pseudo-inverse):
-    arma::vec residuals_y = arma_y - arma_controls * arma::pinv(arma_controls) * arma_y;
-    arma::vec residuals_y_hat = arma_y_hat - arma_controls * arma::pinv(arma_controls) * arma_y_hat;
+    arma::mat pinv_controls = arma::pinv(arma_controls);
+    arma::vec residuals_y = arma_y - arma_controls * pinv_controls * arma_y;
+    arma::vec residuals_y_hat = arma_y_hat - arma_controls * pinv_controls * arma_y_hat;
 
     // Compute Pearson correlation of the residuals
     partial_corr = arma::as_scalar(arma::cor(residuals_y, residuals_y_hat));
@@ -720,11 +722,23 @@ double PartialCor(const std::vector<double>& y,
     int i = controls.size();
     int j = controls.size() + 1;
     arma::mat data(clean_y.size(), i + 2);
+
+    // for (size_t k = 0; k < controls.size(); ++k) {
+    //   data.col(k) = arma::vec(clean_controls[k]);
+    // }
+    // data.col(i) = arma::vec(clean_y);
+    // data.col(j) = arma::vec(clean_y_hat);
+
     for (size_t k = 0; k < controls.size(); ++k) {
-      data.col(k) = arma::vec(clean_controls[k]);
+      arma::vec view(clean_controls[k].data(),
+                     clean_controls[k].size(),
+                     false);
+      data.col(k) = view;
     }
-    data.col(i) = arma::vec(clean_y);
-    data.col(j) = arma::vec(clean_y_hat);
+    arma::vec y_view(clean_y.data(), clean_y.size(), false);
+    arma::vec yhat_view(clean_y_hat.data(), clean_y_hat.size(), false);
+    data.col(i) = y_view;
+    data.col(j) = yhat_view;
 
     if (data.n_rows < 2 || data.n_cols < 1) {
       return std::numeric_limits<double>::quiet_NaN();
