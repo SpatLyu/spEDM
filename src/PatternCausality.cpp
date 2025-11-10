@@ -250,6 +250,8 @@ PatternCausalityRes GenPatternCausality(
   uniq_set.insert(pred_PMy.begin(), pred_PMy.end());
 
   std::vector<std::string> unique_patterns(uniq_set.begin(), uniq_set.end());
+  res.PatternStrings = unique_patterns;
+
   std::unordered_map<std::string, size_t> pattern_indices;
   pattern_indices.reserve(unique_patterns.size());
   for (size_t i = 0; i < unique_patterns.size(); ++i) {

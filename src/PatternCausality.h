@@ -75,8 +75,8 @@ std::vector<std::string> GenPatternSpace(
 /**
  * @brief Compute pattern-based causality analysis between predicted and real signatures.
  *
- * This function automatically generates symbolic patterns (PMx, PMy, pred_PMY)
- * using GenPatternSpace() from input signature matrices (SMx, SMy, pred_SMY),
+ * This function automatically generates symbolic patterns (PMx, PMy, pred_PMy)
+ * using GenPatternSpace() from input signature matrices (SMx, SMy, pred_SMy),
  * then computes a causal strength matrix and per-sample classifications.
  *
  * Supports NaN handling through `NA_rm`:
@@ -93,7 +93,7 @@ std::vector<std::string> GenPatternSpace(
  *
  * @param SMx        X signature matrix (n × d)
  * @param SMy        Y real signature matrix (n × d)
- * @param pred_SMY   Y predicted signatures (n × d)
+ * @param pred_SMy   Y predicted signatures (n × d)
  * @param weighted   Whether to weight causal strength by erf(norm(pred_Y)/norm(X))
  * @param NA_rm      Whether to remove NaN samples before pattern generation
  *
@@ -102,7 +102,7 @@ std::vector<std::string> GenPatternSpace(
 PatternCausalityRes GenPatternCausality(
     const std::vector<std::vector<double>>& SMx,
     const std::vector<std::vector<double>>& SMy,
-    const std::vector<std::vector<double>>& pred_SMY,
+    const std::vector<std::vector<double>>& pred_SMy,
     bool weighted = true,
     bool NA_rm = true
 );

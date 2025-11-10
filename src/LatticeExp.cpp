@@ -1384,6 +1384,13 @@ Rcpp::List RcppGPC4Lattice(
     }
   }
 
+  // Assign row and column names if available
+  if (!res.PatternStrings.empty() && res.PatternStrings.size() == nrow && res.PatternStrings.size() == ncol) {
+    Rcpp::CharacterVector diffpatternnames(res.PatternStrings.begin(), res.PatternStrings.end());
+    Rcpp::rownames(matrice_mat) = diffpatternnames;
+    Rcpp::colnames(matrice_mat) = diffpatternnames;
+  }
+
   // --- Create DataFrame for per-sample causality ----------------------------
 
   size_t n_samples = res.NoCausality.size();
