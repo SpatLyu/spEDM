@@ -49,6 +49,7 @@ reference:
   - ic
   - gccm
   - gcmc
+  - gpc
 
 - subtitle: Nonlinear forecasting
   contents:

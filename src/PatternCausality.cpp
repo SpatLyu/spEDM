@@ -198,8 +198,8 @@ std::vector<std::string> GenPatternSpace(
 /**
  * @brief Compute pattern-based causality analysis between predicted and real signatures.
  *
- * This function automatically generates symbolic patterns (PMx, PMy, pred_PMY)
- * using GenPatternSpace() from input signature matrices (SMx, SMy, pred_SMY),
+ * This function automatically generates symbolic patterns (PMx, PMy, pred_PMy)
+ * using GenPatternSpace() from input signature matrices (SMx, SMy, pred_SMy),
  * then computes a causal strength matrix and per-sample classifications.
  *
  * Supports NaN handling through `NA_rm`:
@@ -216,7 +216,7 @@ std::vector<std::string> GenPatternSpace(
  *
  * @param SMx        X signature matrix (n × d)
  * @param SMy        Y real signature matrix (n × d)
- * @param pred_SMY   Y predicted signatures (n × d)
+ * @param pred_SMy   Y predicted signatures (n × d)
  * @param weighted   Whether to weight causal strength by erf(norm(pred_Y)/norm(X))
  * @param NA_rm      Whether to remove NaN samples before pattern generation
  *
@@ -225,7 +225,7 @@ std::vector<std::string> GenPatternSpace(
 PatternCausalityRes GenPatternCausality(
     const std::vector<std::vector<double>>& SMx,
     const std::vector<std::vector<double>>& SMy,
-    const std::vector<std::vector<double>>& pred_SMY,
+    const std::vector<std::vector<double>>& pred_SMy,
     bool weighted = true,
     bool NA_rm = true
 ) {
@@ -238,18 +238,20 @@ PatternCausalityRes GenPatternCausality(
   // (e.g., "0321", "1220", etc.), possibly removing or keeping NaN based on NA_rm.
   std::vector<std::string> PMx = GenPatternSpace(SMx, NA_rm);
   std::vector<std::string> PMy = GenPatternSpace(SMy, NA_rm);
-  std::vector<std::string> pred_PMY = GenPatternSpace(pred_SMY, NA_rm);
+  std::vector<std::string> pred_PMy = GenPatternSpace(pred_SMy, NA_rm);
 
   // // Basic consistency check
-  // if (PMx.size() != PMy.size() || PMx.size() != pred_PMY.size()) return res;
+  // if (PMx.size() != PMy.size() || PMx.size() != pred_PMy.size()) return res;
 
   // --- 2. Collect unique pattern strings and mapping ---
   std::unordered_set<std::string> uniq_set;
   uniq_set.insert(PMx.begin(), PMx.end());
   uniq_set.insert(PMy.begin(), PMy.end());
-  uniq_set.insert(pred_PMY.begin(), pred_PMY.end());
+  uniq_set.insert(pred_PMy.begin(), pred_PMy.end());
 
   std::vector<std::string> unique_patterns(uniq_set.begin(), uniq_set.end());
+  res.PatternStrings = unique_patterns;
+
   std::unordered_map<std::string, size_t> pattern_indices;
   pattern_indices.reserve(unique_patterns.size());
   for (size_t i = 0; i < unique_patterns.size(); ++i) {
@@ -297,11 +299,11 @@ PatternCausalityRes GenPatternCausality(
 
   // --- 5. Main causality loop ---
   for (size_t t = 0; t < n; ++t) {
-    // if (SMx[t].empty() || SMy[t].empty() || pred_SMY[t].empty()) continue;
+    // if (SMx[t].empty() || SMy[t].empty() || pred_SMy[t].empty()) continue;
 
     const std::string& pat_x       = PMx[t];
     const std::string& pat_y_real  = PMy[t];
-    const std::string& pat_y_pred  = pred_PMY[t];
+    const std::string& pat_y_pred  = pred_PMy[t];
 
     // --- Skip invalid pattern cases based on NA_rm ---
     if (NA_rm) {
@@ -328,7 +330,7 @@ PatternCausalityRes GenPatternCausality(
     double strength = 0.0;
     if (pat_y_pred == pat_y_real) {
       double norm_sigx = norm_vec_ignore_nan(SMx[t]) + 1e-6;
-      double ratio = norm_vec_ignore_nan(pred_SMY[t]) / norm_sigx;
+      double ratio = norm_vec_ignore_nan(pred_SMy[t]) / norm_sigx;
       strength = weighted ? std::erf(ratio) : 1.0;
     } else {
       strength = 0.0;

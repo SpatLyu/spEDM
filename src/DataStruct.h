@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstdint>
 #include <limits>
+#include <string>
 #include <utility> // for std::move
 
 struct PartialCorRes {
@@ -148,6 +149,7 @@ struct PatternCausalityRes {
   std::vector<double> DarkCausality;       ///< Strengths classified as "dark causality".
   std::vector<size_t> RealLoop;            ///< Indices of valid samples actually processed.
   std::vector<int> PatternTypes;           ///< Encoded pattern types (0–3).
+  std::vector<std::string> PatternStrings; ///< Encoded diff strings ("0","0312",etc).
   std::vector<std::vector<double>> matrice;///< Averaged heatmap (pattern × pattern).
   double TotalPos = std::numeric_limits<double>::quiet_NaN(); ///< Global mean of diagonal elements.
   double TotalNeg = std::numeric_limits<double>::quiet_NaN(); ///< Global mean of anti-diagonal elements.
