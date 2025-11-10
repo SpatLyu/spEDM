@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <stdexcept>
+#include "NumericUtils.h"
 #include "DataStruct.h"
 #include "CppDistances.h"
 #include "SignatureProjection.h"

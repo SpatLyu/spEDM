@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <numeric>
 #include <limits>
+#include "NumericUtils.h"
 #include <RcppThread.h>
 
 // [[Rcpp::depends(RcppThread)]]
@@ -108,7 +109,7 @@ std::vector<std::vector<double>> SignatureProjection(
   //     neighbor_indices.end(),
   //     [&](size_t a, size_t b) {
   //       return (distances[a] < distances[b]) ||
-  //         (distances[a] == distances[b] && a < b);
+  //         (doubleNearlyEqual(distances[a],distances[b]) && a < b);
   //     }
   //   );
   //
@@ -126,7 +127,7 @@ std::vector<std::vector<double>> SignatureProjection(
   //   //   });
   //
   //   std::vector<double> weights(k);
-  //   if (total_dist == 0.0) {
+  //   if (doubleNearlyEqual(total_dist,0.0)) {
   //     // All distances zero → uniform weights
   //     std::fill(weights.begin(), weights.end(), 1.0);
   //   } else {
@@ -157,7 +158,7 @@ std::vector<std::vector<double>> SignatureProjection(
   //       if (std::isnan(val)) {
   //         continue;
   //       }
-  //       if (val == 0.0) {
+  //       if (doubleNearlyEqual(val,0.0)) {
   //         zero_count++;
   //       }
   //       weighted_sum += val * weights[i];
@@ -201,13 +202,13 @@ std::vector<std::vector<double>> SignatureProjection(
       neighbor_indices.end(),
       [&](size_t a, size_t b) {
         return (distances[a] < distances[b]) ||
-          (distances[a] == distances[b] && a < b);
+          (doubleNearlyEqual(distances[a],distances[b]) && a < b);
       });
 
     double total_dist = 0.0;
     for (size_t i = 0; i < k; ++i) total_dist += distances[neighbor_indices[i]];
     std::vector<double> weights(k);
-    if (total_dist == 0.0) {
+    if (doubleNearlyEqual(total_dist,0.0)) {
       std::fill(weights.begin(), weights.end(), 1.0);
     } else {
       for (size_t i = 0; i < k; ++i) {
@@ -228,7 +229,7 @@ std::vector<std::vector<double>> SignatureProjection(
         size_t lib_row = valid_libs[neighbor_indices[i]];
         double val = SMy[lib_row][dim];
         if (std::isnan(val)) continue;
-        if (val == 0.0) zero_count++;
+        if (doubleNearlyEqual(val,0.0)) zero_count++;
         weighted_sum += val * weights[i];
         has_valid = true;
       }

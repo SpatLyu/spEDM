@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <stdexcept>
+#include "NumericUtils.h"
 #include "DataStruct.h"
 #include "CppDistances.h"
 #include "SignatureProjection.h"
@@ -79,7 +80,7 @@ std::vector<std::vector<double>> GenSignatureSpace(
       double diff = row[j + 1] - row[j];
       // Note: NaN diff values remain NaN (meaningless pattern)
       if (!std::isnan(diff)) {
-        if (diff == 0.0) {
+        if (doubleNearlyEqual(diff,0.0)) {
           out_row[j] = 0.0;   // no change, regardless of relative or not
         } else if (relative) {
           out_row[j] = diff / row[j];
@@ -332,8 +333,6 @@ PatternCausalityRes GenPatternCausality(
       double norm_sigx = norm_vec_ignore_nan(SMx[t]) + 1e-6;
       double ratio = norm_vec_ignore_nan(pred_SMy[t]) / norm_sigx;
       strength = weighted ? std::erf(ratio) : 1.0;
-    } else {
-      strength = 0.0;
     }
 
     // Accumulate to heatmap
@@ -346,15 +345,15 @@ PatternCausalityRes GenPatternCausality(
     }
 
     // --- 6. Classification of per-sample causality type ---
-    if (strength == 0.0) {
+    if (doubleNearlyEqual(strength,0.0)) {
       res.NoCausality[t] = 1.0;
       res.PatternTypes.push_back(0);
     } else {
       double midpoint = static_cast<double>(hashed_num - 1) / 2.0;
-      if (i == j && static_cast<double>(i) != midpoint) {
+      if (i == j && !doubleNearlyEqual(static_cast<double>(i), midpoint)) {
         res.PositiveCausality[t] = strength;
         res.PatternTypes.push_back(1);
-      } else if ((i + j) == (hashed_num - 1) && static_cast<double>(i) != midpoint) {
+      } else if ((i + j) == (hashed_num - 1) && !doubleNearlyEqual(static_cast<double>(i), midpoint)) {
         res.NegativeCausality[t] = strength;
         res.PatternTypes.push_back(2);
       } else {

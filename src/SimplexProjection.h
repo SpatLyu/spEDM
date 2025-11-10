@@ -7,6 +7,7 @@
 #include <numeric>
 #include <utility>
 #include <limits>
+#include "NumericUtils.h"
 #include "CppStats.h"
 
 /*

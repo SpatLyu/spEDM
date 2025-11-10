@@ -8,6 +8,8 @@
 
 ### enhancements
 
+* Maintain consistent double precision floating-point comparisons across cpp sources (#850).
+
 * Unify font specification in S3 plotting method for cross-mapping results (#830).
 
 * Support spatial grid(raster) data detrending with cell center coordinates or row/column numbers (#815).
