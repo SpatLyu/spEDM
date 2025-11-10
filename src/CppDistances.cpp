@@ -18,10 +18,10 @@
  * @param NA_rm    If true → ignore NaNs; if false → return NaN if any NaN present
  * @return double  Distance value (NaN if invalid or all-NaN)
  */
-inline double CppDistance(const std::vector<double>& vec1,
-                          const std::vector<double>& vec2,
-                          bool L1norm = false,
-                          bool NA_rm = false)
+double CppDistance(const std::vector<double>& vec1,
+                   const std::vector<double>& vec2,
+                   bool L1norm = false,
+                   bool NA_rm = false)
 {
   const size_t n = vec1.size();
   // if (n != vec2.size()) throw std::invalid_argument("CppChebyshevDistance: Input vectors must have the same length.");
@@ -72,9 +72,9 @@ inline double CppDistance(const std::vector<double>& vec1,
  *
  * @return Chebyshev distance (double). Returns NaN if no valid pairs or NA_rm=false with NaN present.
  */
-inline double CppChebyshevDistance(const std::vector<double>& vec1,
-                                   const std::vector<double>& vec2,
-                                   bool NA_rm = false)
+double CppChebyshevDistance(const std::vector<double>& vec1,
+                            const std::vector<double>& vec2,
+                            bool NA_rm = false)
 {
   // if (vec1.size() != vec2.size()) {
   //   throw std::invalid_argument("CppChebyshevDistance: Input vectors must have the same length.");
