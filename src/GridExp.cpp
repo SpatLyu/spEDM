@@ -1740,6 +1740,7 @@ Rcpp::List RcppGCMC4Grid(
   }
 
   std::vector<size_t> lib_std;
+  lib_std.reserve(lib.nrow());
   if (n_libcol == 1){
     for (int i = 0; i < lib.nrow(); ++i) {
       // disallow lib indices to point to vectors with NaN
@@ -1761,6 +1762,7 @@ Rcpp::List RcppGCMC4Grid(
   }
 
   std::vector<size_t> pred_std;
+  pred_std.reserve(pred.nrow());
   if (n_predcol == 1){
     for (int i = 0; i < pred.nrow(); ++i) {
       // disallow pred indices to point to vectors with NaN
@@ -1837,7 +1839,6 @@ Rcpp::List RcppGPC4Grid(
     bool relative = true,
     bool weighted = true,
     bool NA_rm = true,
-    const Rcpp::IntegerVector& dir = Rcpp::IntegerVector::create(0),
     int threads = 8){
   // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
   std::vector<std::vector<double>> xMatrix_cpp(xMatrix.nrow(), std::vector<double>(xMatrix.ncol()));
