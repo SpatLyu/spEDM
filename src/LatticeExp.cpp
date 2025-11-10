@@ -1310,7 +1310,7 @@ Rcpp::List RcppGCMC4Lattice(
   );
 }
 
-// Wrapper function to perform GPC for spatial lattice data
+// Wrapper function to perform Geographical Pattern Causality (GPC) for spatial lattice data
 // [[Rcpp::export(rng = false)]]
 Rcpp::List RcppGPC4Lattice(
     const Rcpp::NumericVector& x,
