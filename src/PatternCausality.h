@@ -1,5 +1,5 @@
-#ifndef StateSpaceTrans_H
-#define StateSpaceTrans_H
+#ifndef PatternCausality_H
+#define PatternCausality_H
 
 #include <vector>
 #include <cmath>
@@ -12,6 +12,9 @@
 #include <unordered_set>
 #include <stdexcept>
 #include "DataStruct.h"
+#include "CppDistances.h"
+#include "SignatureProjection.h"
+#include <RcppThread.h>
 
 /**
  * @brief Computes the Signature Space Matrix from a State Space Matrix.
@@ -104,4 +107,69 @@ PatternCausalityRes GenPatternCausality(
     bool NA_rm = true
 );
 
-#endif // StateSpaceTrans_H
+/**
+ * @brief Compute pattern-based causality from shadow manifolds using signature and distance-based projection.
+ *
+ * This function performs causality analysis between two reconstructed manifolds (`Mx`, `My`)
+ * based on local neighbor projection and symbolic pattern comparison. It automates the following steps:
+ *
+ * 1. **Distance Computation (Dx):**
+ *    - Computes pairwise distances between prediction indices (`pred_indices`)
+ *      and library indices (`lib_indices`) using the chosen distance metric (`L1` or `L2`).
+ *    - Parallelized with `RcppThread::parallelFor` for efficiency.
+ *
+ * 2. **Signature Space Generation:**
+ *    - Converts the manifolds `Mx` and `My` into continuous signature spaces (`SMx`, `SMy`)
+ *      via `GenSignatureSpace()`.
+ *    - Supports relative embedding normalization if `relative = true`.
+ *
+ * 3. **Signature Projection:**
+ *    - Predicts target signatures (`PredSMy`) by projecting `SMy` through local neighbors in `Dx`
+ *      using `SignatureProjection()`.
+ *    - Neighbors are selected by `num_neighbors`, and invalid distances (NaN) are ignored.
+ *
+ * 4. **Causality Computation:**
+ *    - Invokes `GenPatternCausality()` to compute symbolic pattern relationships between:
+ *        - real X (`SMx`), real Y (`SMy`), and predicted Y (`PredSMy`)
+ *    - Produces pattern-level causality metrics, classifications, and summary matrices.
+ *
+ * ### Parameters
+ * @param Mx             Shadow manifold for variable X (n × E)
+ * @param My             Shadow manifold for variable Y (n × E)
+ * @param lib_indices    Indices of library samples (used for neighbor search)
+ * @param pred_indices   Indices of prediction samples (to be evaluated)
+ * @param num_neighbors  Number of nearest neighbors for local projection (default = 0 → auto)
+ * @param zero_tolerance Maximum number of zeros tolerated in Y signatures before truncation
+ * @param dist_metric    Distance metric: 1 = L1 norm (Manhattan), 2 = L2 norm (Euclidean)
+ * @param relative       Whether to normalize embedding distances relative to their local mean
+ * @param weighted       Whether to weight causal strength by erf(norm(pred_Y)/norm(X))
+ * @param NA_rm          Whether to remove NaN samples before symbolic pattern generation
+ * @param threads        Number of threads to use (default = 1; automatically capped by hardware limit)
+ *
+ * ### Returns
+ * @return `PatternCausalityRes` containing:
+ *   - Per-pattern causality strengths (positive, negative, dark, no causality)
+ *   - Causality classification summary
+ *   - Heatmap-like matrix representation for downstream visualization
+ *
+ * ### Notes
+ * - Parallelization via `RcppThread` ensures thread-safe computation of pairwise distances.
+ * - Distance matrix `Dx` is asymmetric (computed only for required prediction-library pairs).
+ * - This function serves as the *higher-level orchestration* combining distance, projection,
+ *   and pattern causality in one pipeline.
+ */
+PatternCausalityRes PatternCausality(
+    const std::vector<std::vector<double>>& Mx,
+    const std::vector<std::vector<double>>& My,
+    const std::vector<size_t>& lib_indices,
+    const std::vector<size_t>& pred_indices,
+    int num_neighbors = 0,
+    int zero_tolerance = 0,
+    int dist_metric = 2,
+    bool relative = true,
+    bool weighted = true,
+    bool NA_rm = true,
+    int threads = 1
+);
+
+#endif // PatternCausality_H
