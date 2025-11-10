@@ -21,8 +21,7 @@
 double CppDistance(const std::vector<double>& vec1,
                    const std::vector<double>& vec2,
                    bool L1norm = false,
-                   bool NA_rm = false)
-{
+                   bool NA_rm = false){
   const size_t n = vec1.size();
   // if (n != vec2.size()) throw std::invalid_argument("CppChebyshevDistance: Input vectors must have the same length.");
 
@@ -74,8 +73,7 @@ double CppDistance(const std::vector<double>& vec1,
  */
 double CppChebyshevDistance(const std::vector<double>& vec1,
                             const std::vector<double>& vec2,
-                            bool NA_rm = false)
-{
+                            bool NA_rm = false){
   // if (vec1.size() != vec2.size()) {
   //   throw std::invalid_argument("CppChebyshevDistance: Input vectors must have the same length.");
   // }
