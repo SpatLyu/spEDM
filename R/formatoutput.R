@@ -55,9 +55,8 @@ print.pcm_res = \(x,significant = FALSE,...){
 #' @noRd
 print.pc_res = \(x,...){
   pc = x$summary
-  rownames(pc) = rep(c(paste0(x$varname[1], " -> ", x$varname[2]),
+  pc$direction = rep(c(paste0(x$varname[1], " -> ", x$varname[2]),
                        paste0(x$varname[2], " -> ", x$varname[1])), each = 3)
-  pc$direction = NULL
   cat('-------------------------------- \n')
   cat("***pattern causality analysis*** \n")
   cat('-------------------------------- \n')
@@ -85,7 +84,6 @@ print.xmap_self = \(x,...){
 #' @noRd
 print.sc_res = \(x,...){
   sc = round(x$sc,3)
-  varname = x$varname
   cat(c("spatial causality test",
         paste0(paste0(x$varname[1], " -> ", x$varname[2],": statistic = "), sc[1], ", p value = ", sc[2]),
         paste0(paste0(x$varname[2], " -> ", x$varname[1],": statistic = "), sc[3], ", p value = ", sc[4])),
