@@ -256,7 +256,8 @@
     res$causality = rbind(res$causality,res_bi$causality)
     res$summary = rbind(res$summary,res_bi$summary)
     combined_pattern = array(0, dim = c(dim(res_bi$pattern)[1], dim(res_bi$pattern)[2], 2),
-                             dimnames = list(rownames(res$pattern), colnames(res$pattern), c("y_xmap_x", "x_xmap_y")))
+                             dimnames = list(rownames(res$pattern), colnames(res$pattern),
+                                             c("y_xmap_x", "x_xmap_y")))
     combined_pattern[,,1] = res$pattern[,,1]
     combined_pattern[,,2] = res_bi$pattern[,,1]
     res$pattern = combined_pattern
