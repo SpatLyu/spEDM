@@ -886,6 +886,7 @@ std::vector<std::vector<double>> GCCM4Grid(
  * @param dist_metric    Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param dist_average   Whether to average distance by the number of valid vector components.
  * @param single_sig     Whether to estimate significance and confidence intervals using a single rho value.
+ * @param dir            Direction selector for embeddings where 0 returns all directions, 1–8 correspond to NW, N, NE, W, E, SW, S, SE, and multiple directions can be combined (e.g., {1,2,3} for NW, N, NE).
  * @param progressbar    If true, display a progress bar during computation.
  *
  * @return A 2D vector where each row contains the library size, mean cross mapping result,
@@ -909,7 +910,8 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
     int dist_metric,
     bool dist_average,
     bool single_sig,
-    bool progressbar
+    const std::vector<int>& dir = {0},
+    bool progressbar = false
 ) {
   // If b is not provided correctly, default it to E + 2
   if (b <= 0) {
@@ -936,7 +938,7 @@ std::vector<std::vector<double>> GCCM4GridOneDim(
   if (stack == 0){
     Emb2D = GenGridEmbeddings(xMatrix, E, tau, style);
   } else {
-    Emb3D = GenGridEmbeddingsCom(xMatrix, E, tau, style);
+    Emb3D = GenGridEmbeddingsCom(xMatrix, E, tau, style, dir);
   }
 
   int max_lib_size = static_cast<int>(lib.size()); // Maximum lib size
