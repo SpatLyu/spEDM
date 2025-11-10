@@ -247,7 +247,7 @@
   res$varname = varname
 
   if (bidirectional){
-    res_bi = .run_gpc(x, y, E, k, tau, style, lib, pred,
+    res_bi = .run_gpc(y, x, E, k, tau, style, lib, pred,
                       dist.metric, zero.tolerance,
                       relative, weighted, na.rm, threads,
                       FALSE, varname, nb)
