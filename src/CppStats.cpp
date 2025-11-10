@@ -706,9 +706,8 @@ double PartialCor(const std::vector<double>& y,
     }
 
     // // Compute residuals of y and y_hat after regressing on controls
-    // arma::mat solve_controls = arma::solve(arma_controls, arma_y);
-    // arma::vec residuals_y = arma_y - arma_controls * solve_controls;
-    // arma::vec residuals_y_hat = arma_y_hat - arma_controls * solve_controls;
+    // arma::vec residuals_y = arma_y - arma_controls * arma::solve(arma_controls, arma_y);
+    // arma::vec residuals_y_hat = arma_y_hat - arma_controls * arma::solve(arma_controls, arma_y_hat);
 
     // Use a more robust method for solving the linear system, such as arma::pinv (pseudo-inverse):
     arma::mat pinv_controls = arma::pinv(arma_controls);
