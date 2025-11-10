@@ -7,6 +7,7 @@
 #include <numeric>
 #include <limits>
 #include <utility>
+#include <stdexcept>
 #include <RcppThread.h>
 
 double CppDistance(const std::vector<double>& vec1,

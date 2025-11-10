@@ -4,80 +4,102 @@
 #include <numeric>
 #include <limits>
 #include <utility>
+#include <stdexcept>
 #include <RcppThread.h>
 
 // [[Rcpp::depends(RcppThread)]]
 
-// Function to compute distance between two vectors:
+/**
+ * @brief Compute L1 or L2 distance between two numeric vectors with NaN handling.
+ *
+ * @param vec1     First input vector
+ * @param vec2     Second input vector
+ * @param L1norm   If true → Manhattan (L1) distance, else → Euclidean (L2)
+ * @param NA_rm    If true → ignore NaNs; if false → return NaN if any NaN present
+ * @return double  Distance value (NaN if invalid or all-NaN)
+ */
 double CppDistance(const std::vector<double>& vec1,
                    const std::vector<double>& vec2,
                    bool L1norm = false,
                    bool NA_rm = false){
-  // Handle NA values
-  std::vector<double> clean_v1, clean_v2;
-  for (size_t i = 0; i < vec1.size(); ++i) {
-    bool is_na = std::isnan(vec1[i]) || std::isnan(vec2[i]);
-    if (is_na) {
-      if (!NA_rm) {
-        return std::numeric_limits<double>::quiet_NaN(); // Return NaN if NA_rm is false
-      }
-    } else {
-      clean_v1.push_back(vec1[i]);
-      clean_v2.push_back(vec2[i]);
-    }
-  }
+  const size_t n = vec1.size();
+  // if (n != vec2.size()) throw std::invalid_argument("CppChebyshevDistance: Input vectors must have the same length.");
 
-  // If no valid data, return NaN
-  if (clean_v1.empty()) {
-    return std::numeric_limits<double>::quiet_NaN();
-  }
+  double dist = 0.0;
+  bool has_valid = false;
 
-  double dist_res = 0.0;
   if (L1norm) {
-    for (size_t i = 0; i < clean_v1.size(); ++i) {
-      dist_res += std::abs(clean_v1[i] - clean_v2[i]);
+    // --- L1 (Manhattan) distance ---
+    for (size_t i = 0; i < n; ++i) {
+      double a = vec1[i], b = vec2[i];
+      if (std::isnan(a) || std::isnan(b)) {
+        if (!NA_rm) return std::numeric_limits<double>::quiet_NaN();
+        else continue;
+      }
+      dist += std::abs(a - b);
+      has_valid = true;
     }
   } else {
-    for (size_t i = 0; i < clean_v1.size(); ++i) {
-      dist_res += (clean_v1[i] - clean_v2[i]) * (clean_v1[i] - clean_v2[i]);
+    // --- L2 (Euclidean) distance ---
+    for (size_t i = 0; i < n; ++i) {
+      double a = vec1[i], b = vec2[i];
+      if (std::isnan(a) || std::isnan(b)) {
+        if (!NA_rm) return std::numeric_limits<double>::quiet_NaN();
+        else continue;
+      }
+      double diff = a - b;
+      dist += diff * diff;
+      has_valid = true;
     }
-    dist_res = std::sqrt(dist_res);
+    dist = std::sqrt(dist);
   }
 
-  return dist_res;
+  return has_valid ? dist : std::numeric_limits<double>::quiet_NaN();
 }
 
-// Function to compute the chebyshev distance between two vectors:
+/**
+ * @brief Compute the Chebyshev (L∞) distance between two numeric vectors.
+ *
+ * The Chebyshev distance is defined as:
+ * \f[
+ *    d(x, y) = \max_i |x_i - y_i|
+ * \f]
+ *
+ * @param vec1   First numeric vector.
+ * @param vec2   Second numeric vector (must have the same length as vec1).
+ * @param NA_rm  Whether to remove NaN pairs before computing distance.
+ *
+ * @return Chebyshev distance (double). Returns NaN if no valid pairs or NA_rm=false with NaN present.
+ */
 double CppChebyshevDistance(const std::vector<double>& vec1,
                             const std::vector<double>& vec2,
                             bool NA_rm = false){
-  // Handle NA values
-  std::vector<double> clean_v1, clean_v2;
-  for (size_t i = 0; i < vec1.size(); ++i) {
-    bool is_na = std::isnan(vec1[i]) || std::isnan(vec2[i]);
-    if (is_na) {
-      if (!NA_rm) {
-        return std::numeric_limits<double>::quiet_NaN(); // Return NaN if NA_rm is false
-      }
-    } else {
-      clean_v1.push_back(vec1[i]);
-      clean_v2.push_back(vec2[i]);
+  // if (vec1.size() != vec2.size()) {
+  //   throw std::invalid_argument("CppChebyshevDistance: Input vectors must have the same length.");
+  // }
+
+  double max_diff = 0.0;
+  bool has_valid = false;
+
+  const size_t n = vec1.size();
+  for (size_t i = 0; i < n; ++i) {
+    double a = vec1[i];
+    double b = vec2[i];
+
+    // Handle missing values
+    if (std::isnan(a) || std::isnan(b)) {
+      if (!NA_rm) return std::numeric_limits<double>::quiet_NaN();
+      continue;
     }
+
+    double diff = std::abs(a - b);
+    if (diff > max_diff) max_diff = diff;
+    has_valid = true;
   }
 
-  // If no valid data, return NaN
-  if (clean_v1.empty()) {
-    return std::numeric_limits<double>::quiet_NaN();
-  }
-
-  double dist_res = 0.0;
-  for (size_t i = 0; i < clean_v1.size(); ++i){
-    if (dist_res < std::abs(clean_v1[i] - clean_v2[i])){
-      dist_res = std::abs(clean_v1[i] - clean_v2[i]);
-    }
-  }
-
-  return dist_res;
+  // Return NaN if all pairs invalid
+  if (!has_valid) return std::numeric_limits<double>::quiet_NaN();
+  return max_diff;
 }
 
 // Function to compute the k-th nearest distance for a vector.
