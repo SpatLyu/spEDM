@@ -31,8 +31,8 @@
 #' @param boot (optional) number of bootstraps to perform.
 #' @param seed (optional) random seed.
 #' @param base (optional) logarithm base.
-#' @param lib (optional) libraries indices.
-#' @param pred (optional) predictions indices.
+#' @param lib (optional) libraries indices (input needed: `vector` - spatial vector, `matrix` - spatial raster).
+#' @param pred (optional) predictions indices (input requirement same as `lib`).
 #' @param threads (optional) number of threads to use.
 #' @param detrend (optional) whether to remove the linear trend.
 #' @param normalize (optional) whether to normalize the result.
