@@ -2,6 +2,8 @@
 #define HelperFuns_H
 
 #include <vector>
+#include <limits>
+#include "NumericUtils.h"
 #include <RcppThread.h>
 #include <RcppArmadillo.h>
 

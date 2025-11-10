@@ -1,5 +1,6 @@
 #include <vector>
 #include <limits>
+#include "NumericUtils.h"
 #include <RcppThread.h>
 #include <RcppArmadillo.h>
 
@@ -31,7 +32,6 @@ Rcpp::IntegerVector OptEmbedDim(Rcpp::NumericMatrix Emat) {
     Rcpp::stop("Input matrix must have exactly 5 columns: E, k, rho, mae, and rmse.");
   }
 
-  const double tol = 1e-10;
   int n = Emat.nrow();
   int opt_row = 0;
 
@@ -50,12 +50,12 @@ Rcpp::IntegerVector OptEmbedDim(Rcpp::NumericMatrix Emat) {
     int k = static_cast<int>(Emat(i, 1));
     int E = static_cast<int>(Emat(i, 0));
 
-    bool rho_better = (rho - best_rho) > tol;
-    bool rho_equal = std::abs(rho - best_rho) <= tol;
-    bool rmse_better = (best_rmse - rmse) > tol;
-    bool rmse_equal = std::abs(rmse - best_rmse) <= tol;
-    bool mae_better = (best_mae - mae) > tol;
-    bool mae_equal = std::abs(mae - best_mae) <= tol;
+    bool rho_better = rho - best_rho;
+    bool rho_equal = doubleNearlyEqual(rho,best_rho);
+    bool rmse_better = best_rmse - rmse;
+    bool rmse_equal = doubleNearlyEqual(rmse,best_rmse);
+    bool mae_better = best_mae - mae;
+    bool mae_equal = doubleNearlyEqual(mae,best_mae);
 
     if (rho_better ||
         (rho_equal && rmse_better) ||
@@ -115,7 +115,6 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
   double best_rho = Thetamat(0, 1);
   double best_rmse = Thetamat(0, 3);
   double best_mae = Thetamat(0, 2);
-  const double tol = 1e-10;
 
   best_rows.push_back(0);
 
@@ -124,12 +123,12 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
     double rmse = Thetamat(i, 3);
     double mae = Thetamat(i, 2);
 
-    bool rho_better = (rho - best_rho) > tol;
-    bool rho_equal = std::abs(rho - best_rho) <= tol;
-    bool rmse_better = (best_rmse - rmse) > tol;
-    bool rmse_equal = std::abs(rmse - best_rmse) <= tol;
-    bool mae_better = (best_mae - mae) > tol;
-    bool mae_equal = std::abs(mae - best_mae) <= tol;
+    bool rho_better = rho - best_rho;
+    bool rho_equal = doubleNearlyEqual(rho,best_rho);
+    bool rmse_better = best_rmse - rmse;
+    bool rmse_equal = doubleNearlyEqual(rmse,best_rmse);
+    bool mae_better = best_mae - mae;
+    bool mae_equal = doubleNearlyEqual(mae,best_mae);
 
     if (rho_better ||
         (rho_equal && rmse_better) ||
@@ -154,9 +153,9 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
   for (size_t i = 1; i < best_rows.size(); ++i) {
     int r0 = best_rows[0];
     int r1 = best_rows[i];
-    if (std::abs(Thetamat(r0, 1) - Thetamat(r1, 1)) > tol ||
-        std::abs(Thetamat(r0, 2) - Thetamat(r1, 2)) > tol ||
-        std::abs(Thetamat(r0, 3) - Thetamat(r1, 3)) > tol) {
+    if (doubleNearlyEqual(Thetamat(r0, 1),Thetamat(r1, 1)) ||
+        doubleNearlyEqual(Thetamat(r0, 2),Thetamat(r1, 2)) ||
+        doubleNearlyEqual(Thetamat(r0, 3),Thetamat(r1, 3))) {
       all_equal = false;
       break;
     }
@@ -168,7 +167,7 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
 
   for (int i : best_rows) {
     double theta = Thetamat(i, 0);
-    if (std::abs(theta - 1.0) <= tol) {
+    if (doubleNearlyEqual(theta,1)) {
       selected_theta = theta;
       break;
     } else {
@@ -213,11 +212,6 @@ Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat) {
     Rcpp::stop("Input matrix must have exactly 4 columns: E, k, metric, and p-value.");
   }
 
-  // Helper: check if two doubles are nearly equal (relative + absolute tolerance)
-  auto nearlyEqual = [](double a, double b, double rel_tol = 1e-6, double abs_tol = 1e-12) -> bool {
-    return std::abs(a - b) <= std::max(rel_tol * std::max(std::abs(a), std::abs(b)), abs_tol);
-  };
-
   std::vector<int> valid_rows;
   for (int i = 0; i < Emat.nrow(); ++i) {
     if (Emat(i, 3) <= 0.05) {
@@ -241,13 +235,13 @@ Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat) {
     int current_k = static_cast<int>(Emat(row, 1));
     int current_E = static_cast<int>(Emat(row, 0));
 
-    if (current_metric > best_metric && !nearlyEqual(current_metric, best_metric)) {
+    if (current_metric > best_metric && !doubleNearlyEqual(current_metric, best_metric)) {
       optimal_row = row;
       best_metric = current_metric;
       best_k = current_k;
       best_E = current_E;
       tie_count = 1;
-    } else if (nearlyEqual(current_metric, best_metric)) {
+    } else if (doubleNearlyEqual(current_metric, best_metric)) {
       ++tie_count;
       if (current_k < best_k || (current_k == best_k && current_E < best_E)) {
         optimal_row = row;
