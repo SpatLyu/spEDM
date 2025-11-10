@@ -1377,6 +1377,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
       dist_metric,
       dist_average,
       single_sig,
+      dir_cpp,
       progressbar
     );
   } else{
