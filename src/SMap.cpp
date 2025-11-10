@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <numeric>
 #include <limits>
+#include "NumericUtils.h"
 #include "CppStats.h"
 
 /**
@@ -112,7 +113,7 @@ std::vector<double> SMapPrediction(
       neighbor_indices.end(),
       [&](size_t a, size_t b) {
         return (distances[a] < distances[b]) ||
-          (distances[a] == distances[b] && a < b);
+          (doubleNearlyEqual(distances[a],distances[b]) && a < b);
       }
     );
 
@@ -305,7 +306,7 @@ std::vector<double> SMapPrediction(
       neighbor_indices.end(),
       [&](size_t a, size_t b) {
         return (distances[a] < distances[b]) ||
-          (distances[a] == distances[b] && a < b);
+          (doubleNearlyEqual(distances[a],distances[b]) && a < b);
       }
     );
 

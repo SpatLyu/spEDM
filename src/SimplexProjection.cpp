@@ -4,6 +4,7 @@
 #include <numeric>
 #include <utility>
 #include <limits>
+#include "NumericUtils.h"
 #include "CppStats.h"
 
 /*
@@ -109,17 +110,17 @@ std::vector<double> SimplexProjectionPrediction(
       neighbors.begin(), neighbors.begin() + k, neighbors.end(),
       [&](size_t a, size_t b) {
         return (distances[a] < distances[b]) ||
-          (distances[a] == distances[b] && a < b);
+          (doubleNearlyEqual(distances[a],distances[b]) && a < b);
       });
 
     double min_distance = distances[neighbors[0]];
 
     // Compute weights for neighbors
     std::vector<double> weights(k);
-    if (min_distance == 0.0) {  // Perfect match found
+    if (doubleNearlyEqual(min_distance,0.0)) { // Perfect match found
       std::fill(weights.begin(), weights.end(), 0.000001);
       for (size_t i = 0; i < k; ++i) {
-        if (distances[neighbors[i]] == 0.0) {
+        if (doubleNearlyEqual(distances[neighbors[i]],0.0)) {
           weights[i] = 1.0;
         }
       }
@@ -264,17 +265,17 @@ std::vector<double> SimplexProjectionPrediction(
       neighbors.begin(), neighbors.begin() + k, neighbors.end(),
       [&](size_t a, size_t b) {
         return (distances[a] < distances[b]) ||
-          (distances[a] == distances[b] && a < b);
+          (doubleNearlyEqual(distances[a],distances[b]) && a < b);
       });
 
     double min_distance = distances[neighbors[0]];
 
     // Compute exponential weights
     std::vector<double> weights(k);
-    if (min_distance == 0.0) {
+    if (doubleNearlyEqual(min_distance,0.0)) {
       std::fill(weights.begin(), weights.end(), 0.000001);
       for (size_t i = 0; i < k; ++i) {
-        if (distances[neighbors[i]] == 0.0) {
+        if (doubleNearlyEqual(distances[neighbors[i]],0.0)) {
           weights[i] = 1.0;
         }
       }
