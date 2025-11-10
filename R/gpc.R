@@ -49,9 +49,9 @@
 #'
 #' @return A list
 #' \describe{
-#' \item{\code{causality}}{statistic for spatial causality}
-#' \item{\code{summary}}{statistic for spatial causality}
-#' \item{\code{pattern}}{statistic for spatial causality}
+#' \item{\code{causality}}{per-sample causality statistics}
+#' \item{\code{summary}}{overall causal strength}
+#' \item{\code{pattern}}{pairwise pattern relationships}
 #' \item{\code{varname}}{names of causal and effect variable}
 #' }
 #' @export
