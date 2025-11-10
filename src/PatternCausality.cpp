@@ -518,5 +518,3 @@ PatternCausalityRes PatternCausality(
 
   return res;
 }
-
-
