@@ -439,8 +439,11 @@ double PearsonCor(const std::vector<double>& y,
 
   // Handle NA values
   std::vector<double> clean_y, clean_y_hat;
+  clean_y.reserve(y.size());
+  clean_y_hat.reserve(y_hat.size());
+
   for (size_t i = 0; i < y.size(); ++i) {
-    bool is_na = isNA(y[i]) || isNA(y_hat[i]);
+    bool is_na = std::isnan(y[i]) || std::isnan(y_hat[i]);
     if (is_na) {
       if (!NA_rm) {
         return std::numeric_limits<double>::quiet_NaN(); // Return NaN if NA_rm is false
@@ -456,9 +459,13 @@ double PearsonCor(const std::vector<double>& y,
     return std::numeric_limits<double>::quiet_NaN();
   }
 
-  // Convert cleaned vectors to Armadillo vectors
-  arma::vec arma_y(clean_y);
-  arma::vec arma_y_hat(clean_y_hat);
+  // // Convert cleaned vectors to Armadillo vectors
+  // arma::vec arma_y(clean_y);
+  // arma::vec arma_y_hat(clean_y_hat);
+
+  // Safe zero-copy view (valid while clean_y is alive)
+  arma::vec arma_y(clean_y.data(), clean_y.size(), false);
+  arma::vec arma_y_hat(clean_y_hat.data(), clean_y_hat.size(), false);
 
   // Compute Pearson correlation using Armadillo
   double corr = arma::as_scalar(arma::cor(arma_y, arma_y_hat));
@@ -531,8 +538,11 @@ double SpearmanCor(const std::vector<double>& y,
   }
 
   std::vector<double> clean_y, clean_y_hat;
+  clean_y.reserve(y.size());
+  clean_y_hat.reserve(y_hat.size());
+
   for (size_t i = 0; i < y.size(); ++i) {
-    bool is_na = isNA(y[i]) || isNA(y_hat[i]);
+    bool is_na = std::isnan(y[i]) || std::isnan(y_hat[i]);
     if (is_na) {
       if (!NA_rm) {
         return std::numeric_limits<double>::quiet_NaN();
@@ -547,8 +557,9 @@ double SpearmanCor(const std::vector<double>& y,
     return std::numeric_limits<double>::quiet_NaN();
   }
 
-  arma::vec arma_y(clean_y);
-  arma::vec arma_y_hat(clean_y_hat);
+  // Safe zero-copy view (valid while clean_y is alive)
+  arma::vec arma_y(clean_y.data(), clean_y.size(), false);
+  arma::vec arma_y_hat(clean_y_hat.data(), clean_y_hat.size(), false);
 
   // Rank-transform both vectors
   arma::vec rank_y = arma::conv_to<arma::vec>::from(arma::sort_index(arma::sort_index(arma_y))) + 1;
@@ -568,6 +579,9 @@ double KendallCor(const std::vector<double>& y,
   }
 
   std::vector<double> clean_y, clean_y_hat;
+  clean_y.reserve(y.size());
+  clean_y_hat.reserve(y_hat.size());
+
   for (size_t i = 0; i < y.size(); ++i) {
     bool is_na = isNA(y[i]) || isNA(y_hat[i]);
     if (is_na) {
@@ -645,7 +659,10 @@ double PartialCor(const std::vector<double>& y,
 
   // Handle NA values
   std::vector<double> clean_y, clean_y_hat;
+  clean_y.reserve(y.size());
+  clean_y_hat.reserve(y_hat.size());
   std::vector<std::vector<double>> clean_controls(controls.size());
+  for (auto& c : clean_controls) c.reserve(y.size());
 
   for (size_t i = 0; i < y.size(); ++i) {
     bool is_na = isNA(y[i]) || isNA(y_hat[i]);
@@ -693,8 +710,9 @@ double PartialCor(const std::vector<double>& y,
     // arma::vec residuals_y_hat = arma_y_hat - arma_controls * arma::solve(arma_controls, arma_y_hat);
 
     // Use a more robust method for solving the linear system, such as arma::pinv (pseudo-inverse):
-    arma::vec residuals_y = arma_y - arma_controls * arma::pinv(arma_controls) * arma_y;
-    arma::vec residuals_y_hat = arma_y_hat - arma_controls * arma::pinv(arma_controls) * arma_y_hat;
+    arma::mat pinv_controls = arma::pinv(arma_controls);
+    arma::vec residuals_y = arma_y - arma_controls * pinv_controls * arma_y;
+    arma::vec residuals_y_hat = arma_y_hat - arma_controls * pinv_controls * arma_y_hat;
 
     // Compute Pearson correlation of the residuals
     partial_corr = arma::as_scalar(arma::cor(residuals_y, residuals_y_hat));
@@ -703,11 +721,23 @@ double PartialCor(const std::vector<double>& y,
     int i = controls.size();
     int j = controls.size() + 1;
     arma::mat data(clean_y.size(), i + 2);
+
+    // for (size_t k = 0; k < controls.size(); ++k) {
+    //   data.col(k) = arma::vec(clean_controls[k]);
+    // }
+    // data.col(i) = arma::vec(clean_y);
+    // data.col(j) = arma::vec(clean_y_hat);
+
     for (size_t k = 0; k < controls.size(); ++k) {
-      data.col(k) = arma::vec(clean_controls[k]);
+      arma::vec view(clean_controls[k].data(),
+                     clean_controls[k].size(),
+                     false);
+      data.col(k) = view;
     }
-    data.col(i) = arma::vec(clean_y);
-    data.col(j) = arma::vec(clean_y_hat);
+    arma::vec y_view(clean_y.data(), clean_y.size(), false);
+    arma::vec yhat_view(clean_y_hat.data(), clean_y_hat.size(), false);
+    data.col(i) = y_view;
+    data.col(j) = yhat_view;
 
     if (data.n_rows < 2 || data.n_cols < 1) {
       return std::numeric_limits<double>::quiet_NaN();
