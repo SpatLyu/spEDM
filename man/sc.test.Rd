@@ -59,9 +59,9 @@
 
 \item{base}{(optional) logarithm base.}
 
-\item{lib}{(optional) libraries indices.}
+\item{lib}{(optional) libraries indices (input needed: \code{vector} - spatial vector, \code{matrix} - spatial raster).}
 
-\item{pred}{(optional) predictions indices.}
+\item{pred}{(optional) predictions indices (input requirement same as \code{lib}).}
 
 \item{threads}{(optional) number of threads to use.}
 
