@@ -1946,10 +1946,10 @@ Rcpp::List RcppGPC4Grid(
 
   for (size_t i = 0; i < n_samples; ++i) {
     switch (res.PatternTypes[i]) {
-    case 0: pattern_labels[i] = "no_causality"; break;
-    case 1: pattern_labels[i] = "positive_causality"; break;
-    case 2: pattern_labels[i] = "negative_causality"; break;
-    case 3: pattern_labels[i] = "dark_causality"; break;
+    case 0: pattern_labels[i] = "no"; break;
+    case 1: pattern_labels[i] = "positive"; break;
+    case 2: pattern_labels[i] = "negative"; break;
+    case 3: pattern_labels[i] = "dark"; break;
     default: pattern_labels[i] = "unknown"; break;
     }
   }
@@ -1971,7 +1971,7 @@ Rcpp::List RcppGPC4Grid(
   );
 
   Rcpp::DataFrame summary_df = Rcpp::DataFrame::create(
-    Rcpp::Named("type") = Rcpp::CharacterVector::create("total_pos", "total_neg", "total_dark"),
+    Rcpp::Named("type") = Rcpp::CharacterVector::create("positive", "negative", "dark"),
     Rcpp::Named("strength") = Rcpp::NumericVector::create(res.TotalPos, res.TotalNeg, res.TotalDark)
   );
 
