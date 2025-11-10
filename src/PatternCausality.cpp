@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <stdexcept>
+#include "NumericUtils.h"
 #include "DataStruct.h"
 #include "CppDistances.h"
 #include "SignatureProjection.h"
@@ -79,7 +80,7 @@ std::vector<std::vector<double>> GenSignatureSpace(
       double diff = row[j + 1] - row[j];
       // Note: NaN diff values remain NaN (meaningless pattern)
       if (!std::isnan(diff)) {
-        if (diff == 0.0) {
+        if (doubleNearlyEqual(diff,0.0)) {
           out_row[j] = 0.0;   // no change, regardless of relative or not
         } else if (relative) {
           out_row[j] = diff / row[j];
