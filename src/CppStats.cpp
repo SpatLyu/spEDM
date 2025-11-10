@@ -439,8 +439,11 @@ double PearsonCor(const std::vector<double>& y,
 
   // Handle NA values
   std::vector<double> clean_y, clean_y_hat;
+  clean_y.reserve(y.size());
+  clean_y_hat.reserve(y_hat.size());
+
   for (size_t i = 0; i < y.size(); ++i) {
-    bool is_na = isNA(y[i]) || isNA(y_hat[i]);
+    bool is_na = std::isnan(y[i]) || std::isnan(y_hat[i]);
     if (is_na) {
       if (!NA_rm) {
         return std::numeric_limits<double>::quiet_NaN(); // Return NaN if NA_rm is false
@@ -456,9 +459,13 @@ double PearsonCor(const std::vector<double>& y,
     return std::numeric_limits<double>::quiet_NaN();
   }
 
-  // Convert cleaned vectors to Armadillo vectors
-  arma::vec arma_y(clean_y);
-  arma::vec arma_y_hat(clean_y_hat);
+  // // Convert cleaned vectors to Armadillo vectors
+  // arma::vec arma_y(clean_y);
+  // arma::vec arma_y_hat(clean_y_hat);
+
+  // Safe zero-copy view (valid while clean_y is alive)
+  arma::vec arma_y(clean_y.data(), clean_y.size(), false);
+  arma::vec arma_y_hat(clean_y_hat.data(), clean_y_hat.size(), false);
 
   // Compute Pearson correlation using Armadillo
   double corr = arma::as_scalar(arma::cor(arma_y, arma_y_hat));
@@ -531,8 +538,11 @@ double SpearmanCor(const std::vector<double>& y,
   }
 
   std::vector<double> clean_y, clean_y_hat;
+  clean_y.reserve(y.size());
+  clean_y_hat.reserve(y_hat.size());
+
   for (size_t i = 0; i < y.size(); ++i) {
-    bool is_na = isNA(y[i]) || isNA(y_hat[i]);
+    bool is_na = std::isnan(y[i]) || std::isnan(y_hat[i]);
     if (is_na) {
       if (!NA_rm) {
         return std::numeric_limits<double>::quiet_NaN();
@@ -547,8 +557,9 @@ double SpearmanCor(const std::vector<double>& y,
     return std::numeric_limits<double>::quiet_NaN();
   }
 
-  arma::vec arma_y(clean_y);
-  arma::vec arma_y_hat(clean_y_hat);
+  // Safe zero-copy view (valid while clean_y is alive)
+  arma::vec arma_y(clean_y.data(), clean_y.size(), false);
+  arma::vec arma_y_hat(clean_y_hat.data(), clean_y_hat.size(), false);
 
   // Rank-transform both vectors
   arma::vec rank_y = arma::conv_to<arma::vec>::from(arma::sort_index(arma::sort_index(arma_y))) + 1;
@@ -568,6 +579,9 @@ double KendallCor(const std::vector<double>& y,
   }
 
   std::vector<double> clean_y, clean_y_hat;
+  clean_y.reserve(y.size());
+  clean_y_hat.reserve(y_hat.size());
+
   for (size_t i = 0; i < y.size(); ++i) {
     bool is_na = isNA(y[i]) || isNA(y_hat[i]);
     if (is_na) {
@@ -645,7 +659,10 @@ double PartialCor(const std::vector<double>& y,
 
   // Handle NA values
   std::vector<double> clean_y, clean_y_hat;
+  clean_y.reserve(y.size());
+  clean_y_hat.reserve(y_hat.size());
   std::vector<std::vector<double>> clean_controls(controls.size());
+  for (auto& c : clean_controls) c.reserve(y.size());
 
   for (size_t i = 0; i < y.size(); ++i) {
     bool is_na = isNA(y[i]) || isNA(y_hat[i]);
