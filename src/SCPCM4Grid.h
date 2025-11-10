@@ -253,6 +253,7 @@ std::vector<PartialCorRes> SCPCMSingle4Grid(
  * @param style                Embedding style selector (0: includes current state, 1: excludes it)
  * @param dist_metric          Distance metric selector (1: Manhattan, 2: Euclidean)
  * @param dist_average         Whether to average distance by the number of valid vector components
+ * @param dir                  Direction selector for embeddings where 0 returns all directions, 1–8 correspond to NW, N, NE, W, E, SW, S, SE, and multiple directions can be combined (e.g., {1,2,3} for NW, N, NE).
  *
  * @return Vector of PartialCorRes containing mapping results for each library configuration
  */
@@ -298,7 +299,8 @@ std::vector<PartialCorRes> SCPCMSingle4GridOneDim(
     bool cumulate,
     int style,
     int dist_metric,
-    bool dist_average
+    bool dist_average,
+    const std::vector<int>& dir = {0}
 );
 
 /**
@@ -392,6 +394,7 @@ std::vector<std::vector<double>> SCPCM4Grid(
  * - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean).
  * - dist_average: Whether to average distance by the number of valid vector components.
  * - single_sig: Whether to estimate significance and confidence intervals using a single rho value.
+ * - dir: Direction selector for embeddings where 0 returns all directions, 1–8 correspond to NW, N, NE, W, E, SW, S, SE, and multiple directions can be combined (e.g., {1,2,3} for NW, N, NE).
  * - progressbar: Display progress bar during computation
  *
  * Returns:
@@ -426,7 +429,8 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
     int dist_metric,
     bool dist_average,
     bool single_sig,
-    bool progressbar
+    const std::vector<int>& dir = {0},
+    bool progressbar = false
 );
 
 #endif // SCPCM4Grid_H
