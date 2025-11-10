@@ -54,7 +54,7 @@ print.pcm_res = \(x,significant = FALSE,...){
 #' @export
 #' @noRd
 print.pc_res = \(x,...){
-  pc = res$summary
+  pc = x$summary
   rownames(pc) = rep(paste0(x$varname[1], " -> ", x$varname[2]),
                      paste0(x$varname[2], " -> ", x$varname[1]), each = 3)
   pc$direction = NULL
