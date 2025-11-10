@@ -10,6 +10,7 @@
 #include "GCCM4Lattice.h"
 #include "SCPCM4Lattice.h"
 #include "CrossMappingCardinality.h"
+#include "PatternCausality.h"
 #include "FalseNearestNeighbors.h"
 #include "SLM4Lattice.h"
 #include "SGC4Lattice.h"
@@ -1306,6 +1307,95 @@ Rcpp::List RcppGCMC4Lattice(
   return Rcpp::List::create(
     Rcpp::Named("xmap") = xmap_df,
     Rcpp::Named("cs") = cs_df
+  );
+}
+
+// Wrapper function to perform GPC for spatial lattice data
+// [[Rcpp::export(rng = false)]]
+Rcpp::List RcppGPC4Lattice(
+    const Rcpp::NumericVector& x,
+    const Rcpp::NumericVector& y,
+    const Rcpp::List& nb,
+    const Rcpp::IntegerVector& lib,
+    const Rcpp::IntegerVector& pred,
+    int E = 3,
+    int tau = 0,
+    int style = 1,
+    int b = 0,
+    int zero_tolerance = 0,
+    int dist_metric = 2,
+    bool relative = true,
+    bool weighted = true,
+    bool NA_rm = true,
+    int threads = 8){
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
+  std::vector<double> y_std = Rcpp::as<std::vector<double>>(y);
+
+  // Convert Rcpp::List to std::vector<std::vector<int>>
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
+
+  int validSampleNum = x_std.size();
+
+  // Convert and check that lib and pred indices are within bounds & convert R based 1 index to C++ based 0 index
+  std::vector<size_t> lib_std;
+  lib_std.reserve(lib.size());
+  for (int i = 0; i < lib.size(); ++i) {
+    if (lib[i] < 1 || lib[i] > validSampleNum) {
+      Rcpp::stop("lib contains out-of-bounds index at position %d (value: %d)", i + 1, lib[i]);
+    }
+    if (!std::isnan(x_std[lib[i] - 1]) && !std::isnan(y_std[lib[i] - 1])) {
+      lib_std.push_back(static_cast<size_t>(lib[i] - 1));
+    }
+  }
+
+  std::vector<size_t> pred_std;
+  pred_std.reserve(pred.size());
+  for (int i = 0; i < pred.size(); ++i) {
+    if (pred[i] < 1 || pred[i] > validSampleNum) {
+      Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
+    }
+    if (!std::isnan(x_std[pred[i] - 1]) && !std::isnan(y_std[pred[i] - 1])) {
+      pred_std.push_back(static_cast<size_t>(pred[i] - 1));
+    }
+  }
+
+  // check b that are greater than validSampleNum or less than or equal to 3
+  if (b < 2 || b > validSampleNum) {
+    Rcpp::stop("k cannot be less than or equal to 2 or greater than the number of non-NA values.");
+  } else if (b + 1 > static_cast<int>(lib_std.size())){
+    Rcpp::stop("Please check `libsizes` or `lib`; no valid libraries available for running GCMC.");
+  }
+
+  // Generate embeddings
+  std::vector<std::vector<double>> Mx = GenLatticeEmbeddings(x_std, nb_vec, E, tau, style);
+  std::vector<std::vector<double>> My = GenLatticeEmbeddings(y_std, nb_vec, E, tau, style);
+
+  // Perform GPC for spatial lattice data
+  PatternCausalityRes res = PatternCausality(
+    Mx,My,lib_std,pred_std,b,zero_tolerance,dist_metric,relative,weighted,NA_rm,threads);
+
+  // Convert results
+  size_t nrow = res.matrice.size();
+  size_t ncol = nrow > 0 ? res.matrice[0].size() : 0;
+  Rcpp::NumericMatrix matrice_mat(nrow, ncol);
+  for (size_t i = 0; i < nrow; ++i) {
+    for (size_t j = 0; j < ncol; ++j) {
+      matrice_mat(i, j) = res.matrice[i][j];
+    }
+  }
+
+  return Rcpp::List::create(
+    Rcpp::Named("no_causality") = Rcpp::NumericVector(res.NoCausality.begin(), res.NoCausality.end()),
+    Rcpp::Named("positive_causality") = Rcpp::NumericVector(res.PositiveCausality.begin(), res.PositiveCausality.end()),
+    Rcpp::Named("negative_causality") = Rcpp::NumericVector(res.NegativeCausality.begin(), res.NegativeCausality.end()),
+    Rcpp::Named("dark_causality") = Rcpp::NumericVector(res.DarkCausality.begin(), res.DarkCausality.end()),
+    Rcpp::Named("real_loop") = Rcpp::IntegerVector(res.RealLoop.begin(), res.RealLoop.end()),
+    Rcpp::Named("pattern_types") = Rcpp::IntegerVector(res.PatternTypes.begin(), res.PatternTypes.end()),
+    Rcpp::Named("matrice") = matrice_mat,
+    Rcpp::Named("total_pos") = res.TotalPos,
+    Rcpp::Named("total_neg") = res.TotalNeg,
+    Rcpp::Named("total_dark") = res.TotalDark
   );
 }
 

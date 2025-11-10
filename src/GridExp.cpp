@@ -10,6 +10,7 @@
 #include "GCCM4Grid.h"
 #include "SCPCM4Grid.h"
 #include "CrossMappingCardinality.h"
+#include "PatternCausality.h"
 #include "FalseNearestNeighbors.h"
 #include "SLM4Grid.h"
 #include "SGC4Grid.h"
@@ -1739,6 +1740,7 @@ Rcpp::List RcppGCMC4Grid(
   }
 
   std::vector<size_t> lib_std;
+  lib_std.reserve(lib.nrow());
   if (n_libcol == 1){
     for (int i = 0; i < lib.nrow(); ++i) {
       // disallow lib indices to point to vectors with NaN
@@ -1760,6 +1762,7 @@ Rcpp::List RcppGCMC4Grid(
   }
 
   std::vector<size_t> pred_std;
+  pred_std.reserve(pred.nrow());
   if (n_predcol == 1){
     for (int i = 0; i < pred.nrow(); ++i) {
       // disallow pred indices to point to vectors with NaN
@@ -1817,6 +1820,129 @@ Rcpp::List RcppGCMC4Grid(
   return Rcpp::List::create(
     Rcpp::Named("xmap") = xmap_df,
     Rcpp::Named("cs") = cs_df
+  );
+}
+
+// Wrapper function to perform GPC for spatial grid data
+// [[Rcpp::export(rng = false)]]
+Rcpp::List RcppGPC4Grid(
+    const Rcpp::NumericMatrix& xMatrix,
+    const Rcpp::NumericMatrix& yMatrix,
+    const Rcpp::IntegerMatrix& lib,
+    const Rcpp::IntegerMatrix& pred,
+    int E = 3,
+    int tau = 1,
+    int style = 1,
+    int b = 4,
+    int zero_tolerance = 0,
+    int dist_metric = 2,
+    bool relative = true,
+    bool weighted = true,
+    bool NA_rm = true,
+    int threads = 8){
+  // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
+  std::vector<std::vector<double>> xMatrix_cpp(xMatrix.nrow(), std::vector<double>(xMatrix.ncol()));
+  for (int i = 0; i < xMatrix.nrow(); ++i) {
+    for (int j = 0; j < xMatrix.ncol(); ++j) {
+      xMatrix_cpp[i][j] = xMatrix(i, j);
+    }
+  }
+
+  // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
+  double validCellNum = 0;
+  std::vector<std::vector<double>> yMatrix_cpp(yMatrix.nrow(), std::vector<double>(yMatrix.ncol()));
+  for (int i = 0; i < yMatrix.nrow(); ++i) {
+    for (int j = 0; j < yMatrix.ncol(); ++j) {
+      if (!std::isnan(yMatrix(i, j))){
+        validCellNum += 1;
+      }
+      yMatrix_cpp[i][j] = yMatrix(i, j);
+    }
+  }
+
+  // Convert Rcpp IntegerMatrix to std::vector<int>
+  int n_libcol = lib.ncol();
+  int n_predcol = pred.ncol();
+  int numRows = yMatrix.nrow();
+  int numCols = yMatrix.ncol();
+
+  std::vector<size_t> lib_std;
+  lib_std.reserve(lib.nrow());
+  if (n_libcol == 1){
+    for (int i = 0; i < lib.nrow(); ++i) {
+      // disallow lib indices to point to vectors with NaN
+      if (!std::isnan(xMatrix_cpp[(pred(i,0)-1) / numCols][(pred(i,0)-1) % numCols]) &&
+          !std::isnan(yMatrix_cpp[(pred(i,0)-1) / numCols][(pred(i,0)-1) % numCols])){
+          lib_std.push_back(static_cast<size_t>(lib(i,0) - 1));
+      }
+    }
+  } else {
+    for (int i = 0; i < lib.nrow(); ++i) {
+      int rowLibIndice = lib(i,0);
+      int colLibIndice = lib(i,1);
+      // disallow lib indices to point to vectors with NaN
+      if (!std::isnan(xMatrix_cpp[rowLibIndice-1][colLibIndice-1]) &&
+          !std::isnan(yMatrix_cpp[rowLibIndice-1][colLibIndice-1])){
+          lib_std.push_back(static_cast<size_t>(LocateGridIndices(rowLibIndice, colLibIndice, numRows, numCols)));
+      }
+    }
+  }
+
+  std::vector<size_t> pred_std;
+  pred_std.reserve(pred.nrow());
+  if (n_predcol == 1){
+    for (int i = 0; i < pred.nrow(); ++i) {
+      // disallow pred indices to point to vectors with NaN
+      if (!std::isnan(xMatrix_cpp[(pred(i,0)-1) / numCols][(pred(i,0)-1) % numCols]) &&
+          !std::isnan(yMatrix_cpp[(pred(i,0)-1) / numCols][(pred(i,0)-1) % numCols])){
+          pred_std.push_back(static_cast<size_t>(pred(i, 0) - 1));
+      }
+    }
+  } else {
+    for (int i = 0; i < pred.nrow(); ++i) {
+      int rowPredIndice = pred(i,0);
+      int colPredIndice = pred(i,1);
+      // disallow pred indices to point to vectors with NaN
+      if (!std::isnan(xMatrix_cpp[rowPredIndice-1][colPredIndice-1]) &&
+          !std::isnan(yMatrix_cpp[rowPredIndice-1][colPredIndice-1])){
+          pred_std.push_back(static_cast<size_t>(LocateGridIndices(rowPredIndice, colPredIndice, numRows, numCols)));
+      }
+    }
+  }
+
+  if (b < 2 || b > validCellNum) {
+    Rcpp::stop("k cannot be less than or equal to 2 or greater than the number of non-NA values.");
+  }
+
+  // Generate embeddings
+  std::vector<std::vector<double>> Mx = GenGridEmbeddings(xMatrix_cpp, E, tau, style);
+  std::vector<std::vector<double>> My = GenGridEmbeddings(yMatrix_cpp, E, tau, style);
+
+  // Perform GPC for spatial grid data
+  PatternCausalityRes res = PatternCausality(
+    Mx,My,lib_std,pred_std,b,zero_tolerance,dist_metric,relative,weighted,NA_rm,threads);
+
+  // Convert results
+  size_t nrow = res.matrice.size();
+  size_t ncol = nrow > 0 ? res.matrice[0].size() : 0;
+  Rcpp::NumericMatrix matrice_mat(nrow, ncol);
+  for (size_t i = 0; i < nrow; ++i) {
+    for (size_t j = 0; j < ncol; ++j) {
+      matrice_mat(i, j) = res.matrice[i][j];
+    }
+  }
+
+  return Rcpp::List::create(
+    Rcpp::Named("no_causality") = Rcpp::NumericVector(res.NoCausality.begin(), res.NoCausality.end()),
+    Rcpp::Named("positive_causality") = Rcpp::NumericVector(res.PositiveCausality.begin(), res.PositiveCausality.end()),
+    Rcpp::Named("negative_causality") = Rcpp::NumericVector(res.NegativeCausality.begin(), res.NegativeCausality.end()),
+    Rcpp::Named("dark_causality") = Rcpp::NumericVector(res.DarkCausality.begin(), res.DarkCausality.end()),
+    Rcpp::Named("real_loop") = Rcpp::IntegerVector(res.RealLoop.begin(), res.RealLoop.end()),
+    Rcpp::Named("pattern_types") = Rcpp::IntegerVector(res.PatternTypes.begin(), res.PatternTypes.end()),
+    Rcpp::Named("matrice") = matrice_mat,
+    Rcpp::Named("total_pos") = res.TotalPos,
+    Rcpp::Named("total_neg") = res.TotalNeg,
+    Rcpp::Named("total_dark") = res.TotalDark
   );
 }
 
