@@ -242,8 +242,9 @@
   }
   res$causality$direction = "y_xmap_x"
   res$summary$direction = "y_xmap_x"
+  arrname = list(rownames(res$pattern), colnames(res$pattern), "y_xmap_x")
   dim(res$pattern) = c(dim(res$pattern), 1)
-  dimnames(res$pattern) = list(rownames(res$pattern), colnames(res$pattern), "y_xmap_x")
+  dimnames(res$pattern) = arrname
   res$varname = varname
 
   if (bidirectional){
