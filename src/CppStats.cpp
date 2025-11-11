@@ -32,13 +32,13 @@ bool checkOneDimVectorHasNaN(const std::vector<double>& vec) {
 
 // Function to count the number of non-NaN values in a one-dimensional vector
 int checkOneDimVectorNotNanNum(const std::vector<double>& vec) {
-  int count = 0; // Initialize the counter for non-NaN values
+  size_t count = 0; // Initialize the counter for non-NaN values
   for (double val : vec) {
     if (!std::isnan(val)) {
       ++count; // Increment the counter if the value is not NaN
     }
   }
-  return count; // Return the count of non-NaN values
+  return static_cast<int>(count); // Return the count of non-NaN values
 }
 
 /**
