@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <limits>
+#include <cmath>
 #include "NumericUtils.h"
 #include <RcppThread.h>
 #include <RcppArmadillo.h>

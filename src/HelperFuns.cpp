@@ -1,5 +1,6 @@
 #include <vector>
 #include <limits>
+#include <cmath>
 #include "NumericUtils.h"
 #include <RcppThread.h>
 #include <RcppArmadillo.h>
@@ -59,12 +60,13 @@ Rcpp::IntegerVector OptEmbedDim(Rcpp::NumericMatrix Emat) {
     int k = static_cast<int>(Emat(i, 1));
     int E = static_cast<int>(Emat(i, 0));
 
-    bool rho_better  = rho > best.rho;
     bool rho_equal   = doubleNearlyEqual(rho, best.rho);
-    bool rmse_better = rmse < best.rmse; // smaller is better
     bool rmse_equal  = doubleNearlyEqual(rmse, best.rmse);
-    bool mae_better  = mae < best.mae;   // smaller is better
     bool mae_equal   = doubleNearlyEqual(mae, best.mae);
+    // Prevents false positives caused by minimal floating-point deviations
+    bool rho_better  = !rho_equal && rho > best.rho;
+    bool rmse_better = !rmse_equal && rmse < best.rmse; // smaller is better
+    bool mae_better  = !mae_equal && mae < best.mae;    // smaller is better
 
     if (rho_better ||
         (rho_equal && rmse_better) ||
@@ -131,12 +133,13 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
     double mae  = Thetamat(i, 2);
     double rmse = Thetamat(i, 3);
 
-    bool rho_better  = rho > best_rho;
     bool rho_equal   = doubleNearlyEqual(rho, best_rho);
-    bool rmse_better = rmse < best_rmse;  // smaller is better
     bool rmse_equal  = doubleNearlyEqual(rmse, best_rmse);
-    bool mae_better  = mae < best_mae;    // smaller is better
     bool mae_equal   = doubleNearlyEqual(mae, best_mae);
+    // Prevents false positives caused by minimal floating-point deviations
+    bool rho_better  = !rho_equal && rho > best_rho;
+    bool rmse_better = !rmse_equal && rmse < best_rmse; // smaller is better
+    bool mae_better  = !mae_equal && mae < best_mae;    // smaller is better
 
     if (rho_better ||
         (rho_equal && rmse_better) ||
@@ -162,24 +165,20 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
     int r0 = best_rows[0];
     int r1 = best_rows[i];
     if (!(doubleNearlyEqual(Thetamat(r0, 1), Thetamat(r1, 1)) &&
-        doubleNearlyEqual(Thetamat(r0, 2), Thetamat(r1, 2)) &&
-        doubleNearlyEqual(Thetamat(r0, 3), Thetamat(r1, 3)))) {
+          doubleNearlyEqual(Thetamat(r0, 2), Thetamat(r1, 2)) &&
+          doubleNearlyEqual(Thetamat(r0, 3), Thetamat(r1, 3)))) {
       all_equal = false;
       break;
     }
   }
 
-  // Select theta == 1 if exists, else closest to 1
+  // if *all* metrics are identical, select closest to 1
   double selected_theta = std::numeric_limits<double>::quiet_NaN();
   double min_dist_to_1 = std::numeric_limits<double>::max();
 
   for (int i : best_rows) {
     double theta = Thetamat(i, 0);
-    if (doubleNearlyEqual(theta, 1.0)) {
-      selected_theta = theta;
-      break;
-    }
-    double dist = std::abs(theta - 1.0);
+    double dist = std::fabs(theta - 1.0);
     if (dist < min_dist_to_1) {
       min_dist_to_1 = dist;
       selected_theta = theta;
@@ -250,13 +249,16 @@ Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat) {
     int current_k = static_cast<int>(Emat(row, 1));
     int current_E = static_cast<int>(Emat(row, 0));
 
-    if (current_metric > best_metric) {
+    bool metric_equal  = doubleNearlyEqual(current_metric, best_metric);
+    bool metric_better = !metric_equal && current_metric > best_metric;
+
+    if (metric_better) {
       optimal_row = row;
       best_metric = current_metric;
       best_k = current_k;
       best_E = current_E;
       tie_count = 1;
-    } else if (doubleNearlyEqual(current_metric, best_metric)) {
+    } else if (metric_equal) {
       ++tie_count;
       bool tie_better = (current_k < best_k) ||
       (current_k == best_k && current_E < best_E);
