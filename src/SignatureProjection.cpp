@@ -201,8 +201,11 @@ std::vector<std::vector<double>> SignatureProjection(
       neighbor_indices.begin() + k,
       neighbor_indices.end(),
       [&](size_t a, size_t b) {
-        return (distances[a] < distances[b]) ||
-          (doubleNearlyEqual(distances[a],distances[b]) && a < b);
+        if (!doubleNearlyEqual(distances[a], distances[b])) {
+          return distances[a] < distances[b];
+        } else {
+          return a < b;
+        }
       });
 
     double total_dist = 0.0;
