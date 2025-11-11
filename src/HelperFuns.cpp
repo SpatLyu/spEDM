@@ -31,61 +31,66 @@ Rcpp::IntegerVector OptEmbedDim(Rcpp::NumericMatrix Emat) {
   if (Emat.ncol() != 5) {
     Rcpp::stop("Input matrix must have exactly 5 columns: E, k, rho, mae, and rmse.");
   }
+  if (Emat.nrow() == 0) {
+    Rcpp::stop("Input matrix must not be empty.");
+  }
 
   int n = Emat.nrow();
   int opt_row = 0;
-
-  double best_rho = Emat(0, 2);
-  double best_rmse = Emat(0, 4);
-  double best_mae = Emat(0, 3);
-  int best_k = static_cast<int>(Emat(0, 1));
-  int best_E = static_cast<int>(Emat(0, 0));
-
   bool used_kE_tiebreak = false;
 
+  struct OptRecord {
+    double rho, rmse, mae;
+    int k, E;
+  };
+
+  OptRecord best{
+    Emat(0, 2), // rho
+    Emat(0, 4), // rmse
+    Emat(0, 3), // mae
+    static_cast<int>(Emat(0, 1)), // k
+    static_cast<int>(Emat(0, 0))  // E
+  };
+
   for (int i = 1; i < n; ++i) {
-    double rho = Emat(i, 2);
+    double rho  = Emat(i, 2);
+    double mae  = Emat(i, 3);
     double rmse = Emat(i, 4);
-    double mae = Emat(i, 3);
     int k = static_cast<int>(Emat(i, 1));
     int E = static_cast<int>(Emat(i, 0));
 
-    bool rho_better = rho - best_rho;
-    bool rho_equal = doubleNearlyEqual(rho,best_rho);
-    bool rmse_better = best_rmse - rmse;
-    bool rmse_equal = doubleNearlyEqual(rmse,best_rmse);
-    bool mae_better = best_mae - mae;
-    bool mae_equal = doubleNearlyEqual(mae,best_mae);
+    bool rho_better  = rho > best.rho;
+    bool rho_equal   = doubleNearlyEqual(rho, best.rho);
+    bool rmse_better = rmse < best.rmse; // smaller is better
+    bool rmse_equal  = doubleNearlyEqual(rmse, best.rmse);
+    bool mae_better  = mae < best.mae;   // smaller is better
+    bool mae_equal   = doubleNearlyEqual(mae, best.mae);
 
     if (rho_better ||
         (rho_equal && rmse_better) ||
         (rho_equal && rmse_equal && mae_better)) {
+      best = {rho, rmse, mae, k, E};
       opt_row = i;
-      best_rho = rho;
-      best_rmse = rmse;
-      best_mae = mae;
-      best_k = k;
-      best_E = E;
       used_kE_tiebreak = false;
     } else if (rho_equal && rmse_equal && mae_equal) {
-      // Tie on all three metrics: resolve using k then E
-      if (k < best_k || (k == best_k && E < best_E)) {
+      bool tie_better = (k < best.k) || (k == best.k && E < best.E);
+      if (tie_better) {
+        best.k = k;
+        best.E = E;
         opt_row = i;
-        best_k = k;
-        best_E = E;
         used_kE_tiebreak = true;
       }
     }
   }
 
   if (used_kE_tiebreak) {
-    Rcpp::warning("Ties in evaluation metrics resolved by selecting the smallest k, then smallest E.");
+    Rcpp::warning("Tie in evaluation metrics resolved by selecting smallest k, then smallest E.");
   }
 
-  Rcpp::IntegerVector result(2);
-  result[0] = static_cast<int>(Emat(opt_row, 0)); // E
-  result[1] = static_cast<int>(Emat(opt_row, 1)); // k
-  return result;
+  return Rcpp::IntegerVector::create(
+    static_cast<int>(Emat(opt_row, 0)), // E
+    static_cast<int>(Emat(opt_row, 1))  // k
+  );
 }
 
 /**
@@ -111,77 +116,79 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
   }
 
   int n = Thetamat.nrow();
-  std::vector<int> best_rows;
-  double best_rho = Thetamat(0, 1);
-  double best_rmse = Thetamat(0, 3);
-  double best_mae = Thetamat(0, 2);
+  if (n == 0) {
+    Rcpp::stop("Input matrix must not be empty.");
+  }
 
+  std::vector<int> best_rows;
+  double best_rho  = Thetamat(0, 1);
+  double best_mae  = Thetamat(0, 2);
+  double best_rmse = Thetamat(0, 3);
   best_rows.push_back(0);
 
   for (int i = 1; i < n; ++i) {
-    double rho = Thetamat(i, 1);
+    double rho  = Thetamat(i, 1);
+    double mae  = Thetamat(i, 2);
     double rmse = Thetamat(i, 3);
-    double mae = Thetamat(i, 2);
 
-    bool rho_better = rho - best_rho;
-    bool rho_equal = doubleNearlyEqual(rho,best_rho);
-    bool rmse_better = best_rmse - rmse;
-    bool rmse_equal = doubleNearlyEqual(rmse,best_rmse);
-    bool mae_better = best_mae - mae;
-    bool mae_equal = doubleNearlyEqual(mae,best_mae);
+    bool rho_better  = rho > best_rho;
+    bool rho_equal   = doubleNearlyEqual(rho, best_rho);
+    bool rmse_better = rmse < best_rmse;  // smaller is better
+    bool rmse_equal  = doubleNearlyEqual(rmse, best_rmse);
+    bool mae_better  = mae < best_mae;    // smaller is better
+    bool mae_equal   = doubleNearlyEqual(mae, best_mae);
 
     if (rho_better ||
         (rho_equal && rmse_better) ||
         (rho_equal && rmse_equal && mae_better)) {
       best_rows.clear();
       best_rows.push_back(i);
-      best_rho = rho;
+      best_rho  = rho;
       best_rmse = rmse;
-      best_mae = mae;
+      best_mae  = mae;
     } else if (rho_equal && rmse_equal && mae_equal) {
       best_rows.push_back(i);
     }
   }
 
-  // If only one best row, return its theta
+  // If only one best row, return directly
   if (best_rows.size() == 1) {
     return Thetamat(best_rows[0], 0);
   }
 
-  // Check if all metrics are identical (within tolerance)
+  // Check if *all* metrics are identical (within tolerance)
   bool all_equal = true;
   for (size_t i = 1; i < best_rows.size(); ++i) {
     int r0 = best_rows[0];
     int r1 = best_rows[i];
-    if (doubleNearlyEqual(Thetamat(r0, 1),Thetamat(r1, 1)) ||
-        doubleNearlyEqual(Thetamat(r0, 2),Thetamat(r1, 2)) ||
-        doubleNearlyEqual(Thetamat(r0, 3),Thetamat(r1, 3))) {
+    if (!(doubleNearlyEqual(Thetamat(r0, 1), Thetamat(r1, 1)) &&
+        doubleNearlyEqual(Thetamat(r0, 2), Thetamat(r1, 2)) &&
+        doubleNearlyEqual(Thetamat(r0, 3), Thetamat(r1, 3)))) {
       all_equal = false;
       break;
     }
   }
 
-  // Select theta == 1 if exists, else theta closest to 1
+  // Select theta == 1 if exists, else closest to 1
   double selected_theta = std::numeric_limits<double>::quiet_NaN();
   double min_dist_to_1 = std::numeric_limits<double>::max();
 
   for (int i : best_rows) {
     double theta = Thetamat(i, 0);
-    if (doubleNearlyEqual(theta,1)) {
+    if (doubleNearlyEqual(theta, 1.0)) {
       selected_theta = theta;
       break;
-    } else {
-      double dist = std::abs(theta - 1.0);
-      if (dist < min_dist_to_1) {
-        min_dist_to_1 = dist;
-        selected_theta = theta;
-      }
+    }
+    double dist = std::abs(theta - 1.0);
+    if (dist < min_dist_to_1) {
+      min_dist_to_1 = dist;
+      selected_theta = theta;
     }
   }
 
   if (all_equal) {
     Rcpp::warning("All evaluation metrics are identical within tolerance; choosing theta == 1 if available, otherwise closest to 1.");
-  } else if (best_rows.size() > 1) {
+  } else {
     Rcpp::warning("Tied best evaluation metrics within tolerance; choosing theta == 1 if available, otherwise closest to 1.");
   }
 
@@ -212,9 +219,17 @@ Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat) {
     Rcpp::stop("Input matrix must have exactly 4 columns: E, k, metric, and p-value.");
   }
 
+  int n = Emat.nrow();
+  if (n == 0) {
+    Rcpp::stop("Input matrix must not be empty.");
+  }
+
+  // Filter valid rows with p <= 0.05
   std::vector<int> valid_rows;
-  for (int i = 0; i < Emat.nrow(); ++i) {
-    if (Emat(i, 3) <= 0.05) {
+  valid_rows.reserve(n);
+  for (int i = 0; i < n; ++i) {
+    double p = Emat(i, 3);
+    if (p < 0.05 || doubleNearlyEqual(p, 0.05)) {
       valid_rows.push_back(i);
     }
   }
@@ -235,7 +250,7 @@ Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat) {
     int current_k = static_cast<int>(Emat(row, 1));
     int current_E = static_cast<int>(Emat(row, 0));
 
-    if (current_metric > best_metric && !doubleNearlyEqual(current_metric, best_metric)) {
+    if (current_metric > best_metric) {
       optimal_row = row;
       best_metric = current_metric;
       best_k = current_k;
@@ -243,7 +258,9 @@ Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat) {
       tie_count = 1;
     } else if (doubleNearlyEqual(current_metric, best_metric)) {
       ++tie_count;
-      if (current_k < best_k || (current_k == best_k && current_E < best_E)) {
+      bool tie_better = (current_k < best_k) ||
+      (current_k == best_k && current_E < best_E);
+      if (tie_better) {
         optimal_row = row;
         best_k = current_k;
         best_E = current_E;
@@ -252,13 +269,10 @@ Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat) {
   }
 
   if (tie_count > 1) {
-    Rcpp::warning("Multiple parameter combinations have identical optimal metric (within tolerance); selected one with smallest k and E.");
+    Rcpp::warning("Multiple parameter sets have equal optimal metric; using smallest k and E.");
   }
 
-  Rcpp::IntegerVector result(2);
-  result[0] = best_E;
-  result[1] = best_k;
-  return result;
+  return Rcpp::IntegerVector::create(best_E, best_k);
 }
 
 /**
