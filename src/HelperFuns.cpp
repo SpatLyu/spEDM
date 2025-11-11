@@ -104,8 +104,8 @@ Rcpp::IntegerVector OptEmbedDim(Rcpp::NumericMatrix Emat) {
  *  - Maximize "rho"
  *  - Minimize "rmse" if "rho" ties
  *  - Minimize "mae" if "rho" and "rmse" tie
- * If multiple rows tie on these metrics (within a tolerance of 1e-10),
- * preference is given to theta == 1, or else to the theta closest to 1.
+ * If multiple rows tie on these metrics (within a tolerance),
+ * preference is given to the theta closest to 1.
  * Warnings are issued when tie-breaking occurs or when all metrics are identical.
  *
  * @param Thetamat A NumericMatrix with four columns: theta, rho, mae, and rmse.
