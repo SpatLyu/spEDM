@@ -304,9 +304,9 @@ std::vector<int> CppMatNeighborsNum(
       if (i != j) { // Skip self-comparison
         double distance = dist[i][j];
         // Check neighbor condition based on the 'equal' flag
-        if (!equal && distance < radius[i]) {
+        if (!equal && !doubleNearlyEqual(distance,radius[i]) && distance < radius[i]) {
           NAx[i]++;
-        } else if (equal && distance <= radius[i]) {
+        } else if (equal && doubleNearlyEqual(distance,radius[i]) && distance <= radius[i]) {
           NAx[i]++;
         }
       }
@@ -447,8 +447,13 @@ std::vector<std::vector<size_t>> CppDistSortedIndice(
       valid_neighbors.begin(),
       valid_neighbors.begin() + num_neighbors,
       valid_neighbors.end(),
-      [](const std::pair<double, size_t>& a, const std::pair<double, size_t>& b) {
-        return (a.first < b.first) || (doubleNearlyEqual(a.first,b.first) && a.second < b.second);
+      [](const std::pair<double, size_t>& a,
+         const std::pair<double, size_t>& b) {
+        if (!doubleNearlyEqual(a.first,b.first)) {
+          return a.first < b.first;
+        } else {
+          return a.second < b.second;
+        }
       }
     );
 
@@ -526,9 +531,14 @@ std::vector<std::vector<size_t>> CppMatKNNeighbors(
   //
   //   // Partially sort distances to find the k smallest distances efficiently
   //   std::partial_sort(dist_idx_pairs.begin(), dist_idx_pairs.begin() + knn, dist_idx_pairs.end(),
-  //                     [](const std::pair<double, size_t>& a, const std::pair<double, size_t>& b) {
-  //                       return a.first < b.first || (doubleNearlyEqual(a.first,b.first) && a.second < b.second);
-  //                     });
+  //                    [](const std::pair<double, size_t>& a,
+  //                       const std::pair<double, size_t>& b) {
+  //                      if (!doubleNearlyEqual(a.first,b.first)) {
+  //                        return a.first < b.first;
+  //                      } else {
+  //                       return a.second < b.second;
+  //                      }
+  //                    });
   //
   //   // Resize the output vector for the current point and fill with neighbor indices
   //   sorted_indices[i].resize(knn);
@@ -561,8 +571,13 @@ std::vector<std::vector<size_t>> CppMatKNNeighbors(
 
     // Partially sort distances to find the k smallest distances efficiently
     std::partial_sort(dist_idx_pairs.begin(), dist_idx_pairs.begin() + knn, dist_idx_pairs.end(),
-                      [](const std::pair<double, size_t>& a, const std::pair<double, size_t>& b) {
-                        return a.first < b.first || (doubleNearlyEqual(a.first,b.first) && a.second < b.second);
+                      [](const std::pair<double, size_t>& a,
+                         const std::pair<double, size_t>& b) {
+                        if (!doubleNearlyEqual(a.first,b.first)) {
+                          return a.first < b.first;
+                        } else {
+                          return a.second < b.second;
+                        }
                       });
 
     // Resize the output vector for the current point and fill with neighbor indices

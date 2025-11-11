@@ -63,7 +63,7 @@ std::vector<double> SMapPrediction(
       if (i == pred_i) continue; // Skip self-matching
 
       double sum_sq = 0.0;
-      double count = 0.0;
+      size_t count = 0;
       for (size_t j = 0; j < vectors[pred_i].size(); ++j) {
         double vi = vectors[i][j];
         double vj = vectors[pred_i][j];
@@ -75,15 +75,15 @@ std::vector<double> SMapPrediction(
           } else {
             sum_sq += diff * diff;    // L2
           }
-          count += 1.0;
+          ++count;
         }
       }
 
       if (count > 0) {
         if (dist_metric == 1) {  // L1
-          distances.push_back(sum_sq / (dist_average ? count : 1.0));
+          distances.push_back(sum_sq / (dist_average ? static_cast<double>(count) : 1.0));
         } else {                 // L2
-          distances.push_back(std::sqrt(sum_sq / (dist_average ? count : 1.0)));
+          distances.push_back(std::sqrt(sum_sq / (dist_average ? static_cast<double>(count) : 1.0)));
         }
         valid_libs.push_back(i);
       }
@@ -112,10 +112,12 @@ std::vector<double> SMapPrediction(
       neighbor_indices.begin() + actual_neighbors,
       neighbor_indices.end(),
       [&](size_t a, size_t b) {
-        return (distances[a] < distances[b]) ||
-          (doubleNearlyEqual(distances[a],distances[b]) && a < b);
-      }
-    );
+        if (!doubleNearlyEqual(distances[a], distances[b])) {
+          return distances[a] < distances[b];
+        } else {
+          return a < b;
+        }
+      });
 
     // Construct weighted linear system A * coeff = b
     size_t dim = vectors[pred_i].size();
@@ -250,7 +252,7 @@ std::vector<double> SMapPrediction(
         const auto& vec_p = vectors[s][pred_i];
 
         double sum_sq = 0.0;
-        double count = 0.0;
+        size_t count = 0;
 
         for (size_t j = 0; j < vec_p.size(); ++j) {
           if (j < vec_i.size() && !std::isnan(vec_i[j]) && !std::isnan(vec_p[j])) {
@@ -260,15 +262,15 @@ std::vector<double> SMapPrediction(
             } else {
               sum_sq += diff * diff;    // L2
             }
-            count += 1.0;
+            ++count;
           }
         }
 
         if (count > 0) {
           if (dist_metric == 1) {
-            subset_distances.push_back(sum_sq / (dist_average ? count : 1.0));
+            subset_distances.push_back(sum_sq / (dist_average ? static_cast<double>(count) : 1.0));
           } else {
-            subset_distances.push_back(std::sqrt(sum_sq / (dist_average ? count : 1.0)));
+            subset_distances.push_back(std::sqrt(sum_sq / (dist_average ? static_cast<double>(count) : 1.0)));
           }
         }
       }
@@ -305,10 +307,12 @@ std::vector<double> SMapPrediction(
       neighbor_indices.begin() + actual_neighbors,
       neighbor_indices.end(),
       [&](size_t a, size_t b) {
-        return (distances[a] < distances[b]) ||
-          (doubleNearlyEqual(distances[a],distances[b]) && a < b);
-      }
-    );
+        if (!doubleNearlyEqual(distances[a], distances[b])) {
+          return distances[a] < distances[b];
+        } else {
+          return a < b;
+        }
+      });
 
     // Build weighted linear regression system
     // Concatenate embeddings from all subsets for each vector
