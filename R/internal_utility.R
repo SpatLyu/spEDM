@@ -254,7 +254,7 @@
     res_bi$summary$direction = "x_xmap_y"
     res$causality = rbind(res$causality,res_bi$causality)
     res$summary = rbind(res$summary,res_bi$summary)
-    res$pattern$x_xmap_y = as.data.frame(res_bi$pattern)
+    res$pattern$x_xmap_y = res_bi$pattern$y_xmap_x
   }
 
   class(res) = "pc_res"
