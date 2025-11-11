@@ -176,12 +176,12 @@ std::vector<std::string> GenPatternSpace(
       if (std::isnan(v)) {
         has_nan = true;
         pat.push_back('0');
-      } else if (v < 0.0) {
-        pat.push_back('1');
+      } else if (doubleNearlyEqual(v,0.0)) {
+        pat.push_back('2');
       } else if (v > 0.0) {
         pat.push_back('3');
       } else {
-        pat.push_back('2');
+        pat.push_back('1');
       }
     }
 
