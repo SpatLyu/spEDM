@@ -70,7 +70,7 @@ std::vector<double> SimplexProjectionPrediction(
       if (i == p) continue; // Skip self-matching
 
       double sum_sq = 0.0;
-      double count = 0.0;
+      std::size_t count = 0;
       for (size_t j = 0; j < vectors[p].size(); ++j) {
         if (!std::isnan(vectors[i][j]) && !std::isnan(vectors[p][j])) {
           double diff = vectors[i][j] - vectors[p][j];
@@ -80,14 +80,14 @@ std::vector<double> SimplexProjectionPrediction(
           } else {
             sum_sq += diff * diff;    // L2
           }
-          count += 1.0;
+          ++count;
         }
       }
       if (count > 0) {
         if (dist_metric == 1) {  // L1
-          distances.push_back(sum_sq / (dist_average ? count : 1.0));
+          distances.push_back(sum_sq / (dist_average ? static_cast<double>(count) : 1.0));
         } else {                 // L2
-          distances.push_back(std::sqrt(sum_sq / (dist_average ? count : 1.0)));
+          distances.push_back(std::sqrt(sum_sq / (dist_average ? static_cast<double>(count) : 1.0)));
         }
         valid_libs.push_back(i);
       }
@@ -109,8 +109,11 @@ std::vector<double> SimplexProjectionPrediction(
     std::partial_sort(
       neighbors.begin(), neighbors.begin() + k, neighbors.end(),
       [&](size_t a, size_t b) {
-        return (distances[a] < distances[b]) ||
-          (doubleNearlyEqual(distances[a],distances[b]) && a < b);
+        if (!doubleNearlyEqual(distances[a], distances[b])) {
+          return distances[a] < distances[b];
+        } else {
+          return a < b;
+        }
       });
 
     double min_distance = distances[neighbors[0]];
@@ -219,7 +222,7 @@ std::vector<double> SimplexProjectionPrediction(
         const auto& vec_p = vectors[s][p];
 
         double sum_sq = 0.0;
-        double count = 0.0;
+        size_t count = 0;
 
         for (size_t j = 0; j < vec_p.size(); ++j) {
           if (j < vec_i.size() && !std::isnan(vec_i[j]) && !std::isnan(vec_p[j])) {
@@ -229,15 +232,15 @@ std::vector<double> SimplexProjectionPrediction(
             } else {
               sum_sq += diff * diff;    // L2
             }
-            count += 1.0;
+            ++count;
           }
         }
 
         if (count > 0) {
           if (dist_metric == 1) {
-            subset_distances.push_back(sum_sq / (dist_average ? count : 1.0));
+            subset_distances.push_back(sum_sq / (dist_average ? static_cast<double>(count) : 1.0));
           } else {
-            subset_distances.push_back(std::sqrt(sum_sq / (dist_average ? count : 1.0)));
+            subset_distances.push_back(std::sqrt(sum_sq / (dist_average ? static_cast<double>(count) : 1.0)));
           }
         }
       }
@@ -264,8 +267,11 @@ std::vector<double> SimplexProjectionPrediction(
     std::partial_sort(
       neighbors.begin(), neighbors.begin() + k, neighbors.end(),
       [&](size_t a, size_t b) {
-        return (distances[a] < distances[b]) ||
-          (doubleNearlyEqual(distances[a],distances[b]) && a < b);
+        if (!doubleNearlyEqual(distances[a], distances[b])) {
+          return distances[a] < distances[b];
+        } else {
+          return a < b;
+        }
       });
 
     double min_distance = distances[neighbors[0]];
