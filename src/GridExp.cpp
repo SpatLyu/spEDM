@@ -2144,6 +2144,7 @@ Rcpp::DataFrame RcppGPCRobust4Grid(
       for (int l = 0; l < n_libsizes; ++l) {
         df_libsizes.push_back(valid_libsizes[l]);
         df_type.push_back(types[t]);
+        if(std::isnan(res[t][l][0])) res[t][l][0] = 0; // replace nan causal strength with 0
         df_causality.push_back(res[t][l][0]);
       }
     }
@@ -2167,6 +2168,12 @@ Rcpp::DataFrame RcppGPCRobust4Grid(
         const std::vector<double>& boot_vals = res[t][l];
         double mean_val = CppMean(boot_vals, true);
         std::vector<double> qs = CppQuantile(boot_vals, {0.05, 0.5, 0.95}, true);
+
+        // replace nan causal strength with 0
+        if(std::isnan(mean_val)) mean_val = 0;
+        for(double& q : qs){
+          if(std::isnan(q)) q = 0;
+        }
 
         df_libsizes.push_back(valid_libsizes[l]);
         df_type.push_back(types[t]);
