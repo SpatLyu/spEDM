@@ -11,6 +11,10 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <stdexcept>
+#include <cstdint>
+#include <iterator>
+#include <random> // for std::mt19937_64, std::seed_seq
+#include <memory> // for std::unique_ptr, std::make_unique
 #include "NumericUtils.h"
 #include "DataStruct.h"
 #include "CppDistances.h"
@@ -171,6 +175,94 @@ PatternCausalityRes PatternCausality(
     bool weighted = true,
     bool NA_rm = true,
     int threads = 1
+);
+
+/**
+ * @brief Perform robust (bootstrapped) pattern-based causality analysis across multiple library sizes.
+ *
+ * This function extends `PatternCausality()` by introducing both random and systematic
+ * sampling strategies for robustness evaluation. It performs repeated causality
+ * estimations across different library sizes (`libsizes`) and returns results organized
+ * as `[3][libsizes][boot]`:
+ *
+ * - Dimension 0 → metric index (0=TotalPos, 1=TotalNeg, 2=TotalDark)
+ * - Dimension 1 → library size
+ * - Dimension 2 → bootstrap replicate
+ *
+ * ### Workflow
+ *
+ * 1. **Input Validation**
+ *    - Filters out invalid `libsizes` (< `num_neighbors` or > `lib_indices.size()`).
+ *    - Removes duplicates and sorts in increasing order.
+ *
+ * 2. **Distance Matrix Computation**
+ *    - Computes pairwise distances between `pred_indices` and `lib_indices` once,
+ *      using L1 or L2 norm (depending on `dist_metric`).
+ *    - Parallelized via `RcppThread::parallelFor`.
+ *    - The resulting distance matrix `Dx` is reused across all bootstraps.
+ *
+ * 3. **Signature Space Generation**
+ *    - Builds continuous signature spaces `SMx` and `SMy` for both variables
+ *      using `GenSignatureSpace()`.
+ *
+ * 4. **Sampling & Bootstrapping**
+ *    - For each valid library size:
+ *        - If `random_sample = true`: draw `boot` random subsets (size = L)
+ *          from `lib_indices` using RNG.
+ *        - If `random_sample = false`: perform deterministic slicing
+ *          and **force `boot = 1`** for reproducibility.
+ *
+ * 5. **Causality Computation**
+ *    - Projects `SMy` → `PredSMy` via `SignatureProjection()`.
+ *    - Computes symbolic causality with `GenPatternCausality()`.
+ *    - Extracts only the metrics `TotalPos`, `TotalNeg`, and `TotalDark`.
+ *
+ * 6. **Output Structure**
+ *    - Returns `[3][libsizes][boot]`:
+ *        - Metric index 0 → TotalPos
+ *        - Metric index 1 → TotalNeg
+ *        - Metric index 2 → TotalDark
+ *
+ * ### Parameters
+ * @param Mx             Shadow manifold for variable X
+ * @param My             Shadow manifold for variable Y
+ * @param libsizes       Candidate library sizes
+ * @param lib_indices    Indices for library samples
+ * @param pred_indices   Indices for prediction samples
+ * @param num_neighbors  Number of nearest neighbors for projection
+ * @param boot           Number of bootstrap replicates per library size
+ * @param random_sample  Whether to use random bootstrap (true) or deterministic (false)
+ * @param seed           Random seed for reproducibility
+ * @param zero_tolerance Max zeros allowed in signatures
+ * @param dist_metric    Distance metric (1 = L1, 2 = L2)
+ * @param relative       Normalize embeddings relative to local mean
+ * @param weighted       Weight causality by erf(norm(pred_Y)/norm(X))
+ * @param NA_rm          Remove NaN samples before symbolic generation
+ * @param threads        Number of threads for distance/projection
+ * @param parallel_level Parallelism level across boot iterations
+ * @param progressbar    Whether to show progress (optional)
+ *
+ * @return 3D vector `[3][libsizes][boot]`
+ * @throws std::runtime_error if no valid libsizes remain after filtering
+ */
+std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
+    const std::vector<std::vector<double>>& Mx,
+    const std::vector<std::vector<double>>& My,
+    const std::vector<size_t>& libsizes,
+    const std::vector<size_t>& lib_indices,
+    const std::vector<size_t>& pred_indices,
+    int num_neighbors = 0,
+    int boot = 99,
+    bool random_sample = true,
+    unsigned int seed = 42,
+    int zero_tolerance = 0,
+    int dist_metric = 2,
+    bool relative = true,
+    bool weighted = true,
+    bool NA_rm = true,
+    int threads = 1,
+    int parallel_level = 1,
+    bool progressbar = false
 );
 
 #endif // PatternCausality_H
