@@ -210,7 +210,7 @@ plot.pcm_res = \(x, partial = TRUE, ...){
 
 #' @export
 #' @noRd
-plot.rpc_res = \(x,family = "serif",
+plot.rpc_res = \(x, family = "serif",
                  xbreaks = NULL, xlimits = NULL,
                  ybreaks = seq(0, 1, by = 0.1),
                  ylimits = c(-0.05, 1), ...){
