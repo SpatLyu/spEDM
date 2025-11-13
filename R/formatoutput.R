@@ -55,8 +55,29 @@ print.pcm_res = \(x,significant = FALSE,...){
 #' @noRd
 print.pc_res = \(x,...){
   pc = x$summary
-  pc$direction = rep(c(paste0(x$varname[1], " -> ", x$varname[2]),
-                       paste0(x$varname[2], " -> ", x$varname[1])), each = 3)
+  if (x$bidirectional){
+    pc$direction = rep(c(paste0(x$varname[1], " -> ", x$varname[2]),
+                         paste0(x$varname[2], " -> ", x$varname[1])), each = 3)
+  } else {
+    pc$direction = paste0(x$varname[1], " -> ", x$varname[2])
+  }
+  cat('-------------------------------- \n')
+  cat("***pattern causality analysis*** \n")
+  cat('-------------------------------- \n')
+  print(pc)
+}
+
+#' @export
+#' @noRd
+print.rpc_res = \(x,...){
+  pc = x$xamp
+  if (x$bidirectional){
+    pc$direction = rep(c(paste0(x$varname[1], " -> ", x$varname[2]),
+                         paste0(x$varname[2], " -> ", x$varname[1])),
+                       each = (nrow(pc) / 2))
+  } else {
+    pc$direction = paste0(x$varname[1], " -> ", x$varname[2])
+  }
   cat('-------------------------------- \n')
   cat("***pattern causality analysis*** \n")
   cat('-------------------------------- \n')

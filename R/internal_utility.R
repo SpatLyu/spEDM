@@ -245,6 +245,7 @@
     res$summary$direction = "y_xmap_x"
     res$pattern = list("y_xmap_x" = as.data.frame(res$pattern))
     res$varname = varname
+    res$bidirectional = FALSE
 
     if (bidirectional){
       res_bi = .run_gpc(y, x, E, k, tau, style, lib, pred,
@@ -256,6 +257,7 @@
       res$causality = rbind(res$causality,res_bi$causality)
       res$summary = rbind(res$summary,res_bi$summary)
       res$pattern$x_xmap_y = res_bi$pattern$y_xmap_x
+      res$bidirectional = TRUE
     }
 
     class(res) = "pc_res"
@@ -269,7 +271,7 @@
       res = RcppGPCRobust4Lattice(y,x,nb,libsizes,lib,pred,E,tau,style,k,boot,random,seed,zero.tolerance,
                                   dist.metric, relative, weighted, na.rm, threads, pl, progressbar)
     }
-    res$xmap$direction = "y_xmap_x"
+    res$direction = "y_xmap_x"
 
     if (bidirectional){
       res_bi = .run_gpc(y, x, E, k, tau, style, lib, pred, dist.metric,
@@ -279,7 +281,8 @@
       res$xmap = rbind(res$xmap,res_bi$xmap)
     }
 
-    return(structure(list(xmap = res, varname = varname),
+    return(structure(list(xmap = res, varname = varname,
+                          bidirectional = bidirectional),
                      class = "rpc_res"))
   }
 }
