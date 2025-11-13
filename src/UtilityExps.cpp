@@ -278,6 +278,112 @@ Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat) {
 }
 
 /**
+ * @title Select Optimal Parameters Based on Causality Metrics
+ *
+ * @description
+ * This function identifies the optimal parameter combination (E, k, tau)
+ * from a matrix of evaluation results containing causality measures.
+ * The selection is performed hierarchically based on the following criteria:
+ *
+ * 1. Highest positive causality (`pos`)
+ * 2. Highest negative causality (`neg`) when positive causality is equal
+ * 3. Highest dark causality (`dark`) when both above are equal
+ * 4. In case of complete ties, the smallest E, then smallest tau, then smallest k are chosen.
+ *
+ * @param Emat A numeric matrix with exactly 6 columns in the order:
+ *   E, k, tau, pos, neg, and dark.
+ *   Each row represents one evaluation record.
+ *
+ * @return An integer vector of length 3: the optimal (E, k, tau).
+ *
+ * @details
+ * If multiple parameter sets yield identical causality values (within floating-point tolerance),
+ * the function applies a deterministic tie-breaking rule favoring simpler embeddings
+ * (smaller E, tau, and k).
+ *
+ * @note
+ * If a tie-break occurs, a warning is issued indicating the decision criteria.
+ *
+ * @examples
+ * \dontrun{
+ *   result <- OptPCparms(Emat)
+ * }
+ */
+// [[Rcpp::export(rng = false)]]
+Rcpp::IntegerVector OptPCparms(Rcpp::NumericMatrix Emat) {
+  if (Emat.ncol() != 6) {
+    Rcpp::stop("Input matrix must have exactly 6 columns: E, k, tau, pos, neg, and dark.");
+  }
+  if (Emat.nrow() == 0) {
+    Rcpp::stop("Input matrix must not be empty.");
+  }
+
+  int n = Emat.nrow();
+  int opt_row = 0;
+  bool used_kE_tiebreak = false;
+
+  struct OptRecord {
+    int E, k, tau;
+    double pos, neg, dark;
+  };
+
+  OptRecord best{
+    static_cast<int>(Emat(0, 0)),  // E
+    static_cast<int>(Emat(0, 1)),  // k
+    static_cast<int>(Emat(0, 2)),  // tau
+    Emat(0, 3),                    // pos
+    Emat(0, 4),                    // neg
+    Emat(0, 5)                     // dark
+  };
+
+  for (int i = 1; i < n; ++i) {
+    int E = static_cast<int>(Emat(i, 0));
+    int k = static_cast<int>(Emat(i, 1));
+    int tau = static_cast<int>(Emat(i, 2));
+    double pos  = Emat(i, 3);
+    double neg  = Emat(i, 4);
+    double dark = Emat(i, 5);
+
+    bool pos_equal  = doubleNearlyEqual(pos, best.pos);
+    bool neg_equal  = doubleNearlyEqual(neg, best.neg);
+    bool dark_equal = doubleNearlyEqual(dark, best.dark);
+
+    bool pos_better  = !pos_equal  && pos  > best.pos;
+    bool neg_better  = !neg_equal  && neg  > best.neg;
+    bool dark_better = !dark_equal && dark > best.dark;
+
+    if (pos_better ||
+        (pos_equal && neg_better) ||
+        (pos_equal && neg_equal && dark_better)) {
+      best = {E, k, tau, pos, neg, dark};
+      opt_row = i;
+      used_kE_tiebreak = false;
+    } else if (pos_equal && neg_equal && dark_equal) {
+      bool tie_better = (E < best.E) ||
+        (E == best.E && tau < best.tau) ||
+        (E == best.E && tau == best.tau && k < best.k);
+      if (tie_better) {
+        best.E = E;
+        best.tau = tau;
+        best.k = k;
+        opt_row = i;
+        used_kE_tiebreak = true;
+      }
+    }
+  }
+
+  if (used_kE_tiebreak) {
+    Rcpp::warning("Tie in evaluation metrics resolved by selecting smallest E, then smallest tau, finally smallest k.");
+  }
+
+  return Rcpp::IntegerVector::create(
+    static_cast<int>(Emat(opt_row, 0)),  // E
+    static_cast<int>(Emat(opt_row, 1)),  // k
+    static_cast<int>(Emat(opt_row, 2))   // tau
+  );
+}
+
+/**
  * This function takes a NumericMatrix as input and returns a matrix
  * containing the row and column indices of all non-NA elements in the input matrix.
  *

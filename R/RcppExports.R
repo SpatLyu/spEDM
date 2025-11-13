@@ -161,6 +161,10 @@ OptICparm <- function(Emat) {
     .Call(`_spEDM_OptICparm`, Emat)
 }
 
+OptPCparms <- function(Emat) {
+    .Call(`_spEDM_OptPCparms`, Emat)
+}
+
 MatNotNAIndice <- function(mat, byrow = TRUE) {
     .Call(`_spEDM_MatNotNAIndice`, mat, byrow)
 }
