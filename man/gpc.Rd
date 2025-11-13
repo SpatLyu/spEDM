@@ -129,6 +129,10 @@ geographical pattern causality
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 \donttest{
 gpc(columbus,"hoval","crime", E = 3)
+
+# convergence diagnostics
+g = gpc(columbus,"hoval","crime",libsizes = seq(5,45,5),E = 3)
+g
 }
 }
 \references{

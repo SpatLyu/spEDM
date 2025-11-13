@@ -272,6 +272,7 @@
                                   dist.metric, relative, weighted, na.rm, threads, pl, progressbar)
     }
     res$direction = "y_xmap_x"
+    res = list(xmap = res)
 
     if (bidirectional){
       res_bi = .run_gpc(y, x, E, k, tau, style, lib, pred, dist.metric,
@@ -281,7 +282,7 @@
       res$xmap = rbind(res$xmap,res_bi$xmap)
     }
 
-    return(structure(list(xmap = res, varname = varname,
+    return(structure(list(xmap = res$xmap, varname = varname,
                           bidirectional = bidirectional),
                      class = "rpc_res"))
   }
