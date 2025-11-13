@@ -8,6 +8,10 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <stdexcept>
+#include <cstdint>
+#include <iterator>
+#include <random> // for std::mt19937_64, std::seed_seq
+#include <memory> // for std::unique_ptr, std::make_unique
 #include "NumericUtils.h"
 #include "DataStruct.h"
 #include "CppDistances.h"
@@ -518,4 +522,206 @@ PatternCausalityRes PatternCausality(
   PatternCausalityRes res = GenPatternCausality(SMx, SMy, PredSMy, weighted, NA_rm);
 
   return res;
+}
+
+/**
+ * @brief Perform robust (bootstrapped) pattern-based causality analysis across multiple library sizes.
+ *
+ * This function extends `PatternCausality()` by introducing both random and systematic
+ * sampling strategies for robustness evaluation. It performs repeated causality
+ * estimations across different library sizes (`libsizes`) and returns results organized
+ * as `[3][libsizes][boot]`:
+ *
+ * - Dimension 0 → metric index (0=TotalPos, 1=TotalNeg, 2=TotalDark)
+ * - Dimension 1 → library size
+ * - Dimension 2 → bootstrap replicate
+ *
+ * ### Workflow
+ *
+ * 1. **Input Validation**
+ *    - Filters out invalid `libsizes` (< `num_neighbors` or > `lib_indices.size()`).
+ *    - Removes duplicates and sorts in increasing order.
+ *
+ * 2. **Distance Matrix Computation**
+ *    - Computes pairwise distances between `pred_indices` and `lib_indices` once,
+ *      using L1 or L2 norm (depending on `dist_metric`).
+ *    - Parallelized via `RcppThread::parallelFor`.
+ *    - The resulting distance matrix `Dx` is reused across all bootstraps.
+ *
+ * 3. **Signature Space Generation**
+ *    - Builds continuous signature spaces `SMx` and `SMy` for both variables
+ *      using `GenSignatureSpace()`.
+ *
+ * 4. **Sampling & Bootstrapping**
+ *    - For each valid library size:
+ *        - If `random_sample = true`: draw `boot` random subsets (size = L)
+ *          from `lib_indices` using RNG.
+ *        - If `random_sample = false`: perform deterministic slicing
+ *          and **force `boot = 1`** for reproducibility.
+ *
+ * 5. **Causality Computation**
+ *    - Projects `SMy` → `PredSMy` via `SignatureProjection()`.
+ *    - Computes symbolic causality with `GenPatternCausality()`.
+ *    - Extracts only the metrics `TotalPos`, `TotalNeg`, and `TotalDark`.
+ *
+ * 6. **Output Structure**
+ *    - Returns `[3][libsizes][boot]`:
+ *        - Metric index 0 → TotalPos
+ *        - Metric index 1 → TotalNeg
+ *        - Metric index 2 → TotalDark
+ *
+ * ### Parameters
+ * @param Mx             Shadow manifold for variable X
+ * @param My             Shadow manifold for variable Y
+ * @param libsizes       Candidate library sizes
+ * @param lib_indices    Indices for library samples
+ * @param pred_indices   Indices for prediction samples
+ * @param num_neighbors  Number of nearest neighbors for projection
+ * @param boot           Number of bootstrap replicates per library size
+ * @param random_sample  Whether to use random bootstrap (true) or deterministic (false)
+ * @param seed           Random seed for reproducibility
+ * @param zero_tolerance Max zeros allowed in signatures
+ * @param dist_metric    Distance metric (1 = L1, 2 = L2)
+ * @param relative       Normalize embeddings relative to local mean
+ * @param weighted       Weight causality by erf(norm(pred_Y)/norm(X))
+ * @param NA_rm          Remove NaN samples before symbolic generation
+ * @param threads        Number of threads for distance/projection
+ * @param parallel_level Parallelism level across boot iterations
+ * @param progressbar    Whether to show progress (optional)
+ *
+ * @return 3D vector `[3][libsizes][boot]`
+ * @throws std::runtime_error if no valid libsizes remain after filtering
+ */
+std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
+    const std::vector<std::vector<double>>& Mx,
+    const std::vector<std::vector<double>>& My,
+    const std::vector<size_t>& libsizes,
+    const std::vector<size_t>& lib_indices,
+    const std::vector<size_t>& pred_indices,
+    int num_neighbors = 0,
+    int boot = 99,
+    bool random_sample = true,
+    unsigned int seed = 42,
+    int zero_tolerance = 0,
+    int dist_metric = 2,
+    bool relative = true,
+    bool weighted = true,
+    bool NA_rm = true,
+    int threads = 1,
+    int parallel_level = 1,
+    bool progressbar = false
+){
+  // --------------------------------------------------------------------------
+  // Step 0: Validate and preprocess library sizes
+  // --------------------------------------------------------------------------
+  std::vector<size_t> valid_libsizes;
+  for (auto s : libsizes) {
+    if (s >= static_cast<size_t>(num_neighbors) && s <= lib_indices.size())
+      valid_libsizes.push_back(s);
+  }
+
+  std::sort(valid_libsizes.begin(), valid_libsizes.end());
+  valid_libsizes.erase(std::unique(valid_libsizes.begin(), valid_libsizes.end()), valid_libsizes.end());
+
+  if (valid_libsizes.empty()) {
+    throw std::runtime_error("[Error] No valid libsizes after filtering. Aborting computation.");
+  }
+
+  // --------------------------------------------------------------------------
+  // Step 1: Configure threads and random generators
+  // --------------------------------------------------------------------------
+  size_t threads_sizet = static_cast<size_t>(std::abs(threads));
+  threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
+
+  // Enforce boot = 1 for deterministic sampling
+  if (!random_sample) boot = 1;
+
+  // Prebuild 64-bit RNG pool for reproducibility
+  std::vector<std::mt19937_64> rng_pool(boot);
+  for (int i = 0; i < boot; ++i) {
+    std::seed_seq seq{static_cast<uint64_t>(seed), static_cast<uint64_t>(i)};
+    rng_pool[i] = std::mt19937_64(seq);
+  }
+
+  // --------------------------------------------------------------------------
+  // Step 2: Compute pairwise distances once
+  // --------------------------------------------------------------------------
+  const size_t n_obs = Mx.size();
+  std::vector<std::vector<double>> Dx(
+      n_obs, std::vector<double>(n_obs, std::numeric_limits<double>::quiet_NaN()));
+
+  bool L1norm = (dist_metric == 1);
+
+  auto compute_distance = [&](size_t p) {
+    size_t pi = pred_indices[p];
+    for (size_t li : lib_indices) {
+      double dist = CppDistance(Mx[pi], Mx[li], L1norm, true);
+      if (!std::isnan(dist)) Dx[pi][li] = dist;
+    }
+  };
+
+  if (threads_sizet != 1)
+    for (size_t p = 0; p < pred_indices.size(); ++p) compute_distance(p);
+  else
+    RcppThread::parallelFor(0, pred_indices.size(), compute_distance, threads_sizet);
+
+  // --------------------------------------------------------------------------
+  // Step 3: Generate signature spaces
+  // --------------------------------------------------------------------------
+  std::vector<std::vector<double>> SMx = GenSignatureSpace(Mx, relative);
+  std::vector<std::vector<double>> SMy = GenSignatureSpace(My, relative);
+
+  // --------------------------------------------------------------------------
+  // Step 4: Initialize results container [3][libsizes][boot]
+  // --------------------------------------------------------------------------
+  const size_t n_libsizes = valid_libsizes.size();
+  std::vector<std::vector<std::vector<double>>> all_results(
+      3, std::vector<std::vector<double>>(n_libsizes, std::vector<double>(boot, std::numeric_limits<double>::quiet_NaN())));
+
+  // Optional progress bar
+  std::unique_ptr<RcppThread::ProgressBar> bar;
+  if (progressbar)
+    bar = std::make_unique<RcppThread::ProgressBar>(n_libsizes, 1);
+
+  // --------------------------------------------------------------------------
+  // Step 5: Iterate over library sizes
+  // --------------------------------------------------------------------------
+  for (size_t li = 0; li < n_libsizes; ++li) {
+    size_t L = valid_libsizes[li];
+
+    auto process_boot = [&](int b) {
+      std::vector<size_t> sampled_lib, sampled_pred;
+
+      if (random_sample) {
+        std::vector<size_t> shuffled_lib = lib_indices;
+        std::shuffle(shuffled_lib.begin(), shuffled_lib.end(), rng_pool[b]);
+        sampled_lib.assign(shuffled_lib.begin(), shuffled_lib.begin() + L);
+        sampled_pred = sampled_lib;
+      } else {
+        sampled_lib.assign(lib_indices.begin(), lib_indices.begin() + L);
+        sampled_pred = sampled_lib;
+      }
+
+      std::vector<std::vector<double>> PredSMy;
+      if (parallel_level == 1)
+        PredSMy = SignatureProjection(SMy, Dx, sampled_lib, sampled_pred, num_neighbors, zero_tolerance, threads_sizet);
+      else
+        PredSMy = SignatureProjection(SMy, Dx, sampled_lib, sampled_pred, num_neighbors, zero_tolerance, 1);
+
+      PatternCausalityRes res = GenPatternCausality(SMx, SMy, PredSMy, weighted, NA_rm);
+
+      all_results[0][li][b] = res.TotalPos;
+      all_results[1][li][b] = res.TotalNeg;
+      all_results[2][li][b] = res.TotalDark;
+    };
+
+    if (parallel_level != 1)
+      RcppThread::parallelFor(0, boot, process_boot, threads_sizet);
+    else
+      for (int b = 0; b < boot; ++b) process_boot(b);
+
+    if (progressbar) (*bar)++;
+  }
+
+  return all_results;
 }
