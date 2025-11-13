@@ -34,7 +34,7 @@ std::vector<int> SpatialBlockBootstrap(
   }
 
   // Step 3: Random sampling of block IDs with replacement
-  std::mt19937 rng(seed); // Random number generator with fixed seed
+  std::mt19937_64 rng(seed); // Random number generator with fixed seed
   std::uniform_int_distribution<> dist(0, block_ids.size() - 1);
 
   // Step 4: Generate bootstrap sample by sampling blocks
