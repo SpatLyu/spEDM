@@ -10,20 +10,26 @@
   data,
   cause,
   effect,
+  libsizes = NULL,
   E = 3,
   k = E + 2,
   tau = 1,
   style = 1,
   lib = NULL,
   pred = NULL,
+  boot = 9,
+  random = TRUE,
+  seed = 42,
   dist.metric = "L2",
-  zero.tolerance = E + 2,
+  zero.tolerance = k,
   relative = TRUE,
   weighted = TRUE,
   na.rm = TRUE,
   threads = detectThreads(),
   detrend = FALSE,
+  parallel.level = "low",
   bidirectional = TRUE,
+  progressbar = TRUE,
   nb = NULL
 )
 
@@ -31,20 +37,26 @@
   data,
   cause,
   effect,
+  libsizes = NULL,
   E = 3,
   k = E + 2,
   tau = 1,
   style = 1,
   lib = NULL,
   pred = NULL,
+  boot = 9,
+  random = TRUE,
+  seed = 42,
   dist.metric = "L2",
-  zero.tolerance = E + 2,
+  zero.tolerance = k,
   relative = TRUE,
   weighted = TRUE,
   na.rm = TRUE,
   threads = detectThreads(),
   detrend = FALSE,
+  parallel.level = "low",
   bidirectional = TRUE,
+  progressbar = TRUE,
   grid.coord = TRUE
 )
 }
@@ -55,17 +67,25 @@
 
 \item{effect}{name of effect variable.}
 
-\item{E}{(optional) embedding dimension.}
+\item{libsizes}{(optional) number of spatial units used (input needed: \code{vector} - spatial vector, \code{matrix} - spatial raster).}
 
-\item{k}{(optional) number of nearest neighbors used in cross mapping.}
+\item{E}{(optional) embedding dimensions.}
 
-\item{tau}{(optional) step of spatial lag.}
+\item{k}{(optional) number of nearest neighbors.}
+
+\item{tau}{(optional) step of spatial lags.}
 
 \item{style}{(optional) embedding style (\code{0} includes current state, \code{1} excludes it).}
 
-\item{lib}{(optional) libraries indices (input needed: \code{vector} - spatial vector, \code{matrix} - spatial raster).}
+\item{lib}{(optional) libraries indices (input requirement same as \code{libsizes}).}
 
-\item{pred}{(optional) predictions indices (input requirement same as \code{lib}).}
+\item{pred}{(optional) predictions indices (input requirement same as \code{libsizes}).}
+
+\item{boot}{(optional) number of bootstraps to perform.}
+
+\item{random}{(optional) whether to use random sampling.}
+
+\item{seed}{(optional) random seed.}
 
 \item{dist.metric}{(optional) distance metric (\code{L1}: Manhattan, \code{L2}: Euclidean).}
 
@@ -81,7 +101,11 @@
 
 \item{detrend}{(optional) whether to remove the linear trend.}
 
+\item{parallel.level}{(optional) level of parallelism, \code{low} or \code{high}.}
+
 \item{bidirectional}{(optional) whether to examine bidirectional causality.}
+
+\item{progressbar}{(optional) whether to show the progress bar.}
 
 \item{nb}{(optional) neighbours list.}
 
@@ -90,10 +114,12 @@
 \value{
 A list
 \describe{
-\item{\code{causality}}{per-sample causality statistics}
-\item{\code{summary}}{overall causal strength}
-\item{\code{pattern}}{pairwise pattern relationships}
+\item{\code{xmap}}{cross mapping results (only present if \code{libsizes} is not \code{NULL})}
+\item{\code{causality}}{per-sample causality statistics(present if \code{libsizes} is \code{NULL})}
+\item{\code{summary}}{overall causal strength(present if \code{libsizes} is \code{NULL})}
+\item{\code{pattern}}{pairwise pattern relationships(present if \code{libsizes} is \code{NULL})}
 \item{\code{varname}}{names of causal and effect variable}
+\item{\code{bidirectional}}{whether to examine bidirectional causality}
 }
 }
 \description{
