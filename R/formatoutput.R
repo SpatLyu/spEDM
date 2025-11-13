@@ -172,7 +172,7 @@ plot.ccm_res = \(x, family = "serif",
 
   fig1 = fig1 +
     ggplot2::scale_x_continuous(breaks = xbreaks, limits = xlimits,
-                                expand = c(0, 0), name = "Library size") +
+                                expand = c(0, 0), name = "Library Size") +
     ggplot2::scale_y_continuous(breaks = ybreaks, limits = ylimits,
                                 expand = c(0, 0), name = ylabel) +
     ggplot2::scale_color_manual(values = legend_cols,
@@ -206,4 +206,42 @@ plot.pcm_res = \(x, partial = TRUE, ...){
   class(xmap) = "ccm"
   fig1 = plot.ccm_res(xmap,...)
   return(fig1)
+}
+
+#' @export
+#' @noRd
+plot.rpc_res = \(x, family = "serif",
+                 xbreaks = NULL, xlimits = NULL,
+                 ybreaks = seq(0, 1, by = 0.1),
+                 ylimits = c(-0.05, 1), ...){
+  xmapdf = x$xmap
+  if("q50" %in% names(xmapdf)) xmapdf = dplyr::rename(xmapdf,causality = q50)
+  if (x$bidirectional){
+    xmapdf$direction = rep(c(paste0(x$varname[1], " %->% ", x$varname[2]),
+                             paste0(x$varname[2], " %->% ", x$varname[1])),
+                             each = (nrow(xmapdf) / 2))
+  } else {
+    xmapdf$direction = paste0(x$varname[1], " %->% ", x$varname[2])
+  }
+  if(is.null(xbreaks)) xbreaks = xmapdf$libsizes
+  if(is.null(xlimits)) xlimits = c(min(xbreaks)-1,max(xbreaks)+1)
+
+  ggplot2::ggplot(xmapdf, ggplot2::aes(x = libsizes, y = causality, color = type)) +
+    ggplot2::geom_line(linewidth = 1.25) +
+    ggplot2::facet_wrap(~ direction, scales = "fixed", ncol = 2,
+                        labeller = ggplot2::label_parsed) +
+    ggplot2::scale_color_manual(name = NULL,
+                                values = c("dark" = "#6A0DAD", "negative" = "#FF4136", "positive" = "#0074D9")) +
+    ggplot2::scale_x_continuous(breaks = xbreaks, limits = xlimits,
+                                expand = c(0, 0), name = "Library Size") +
+    ggplot2::scale_y_continuous(breaks = ybreaks, limits = ylimits,
+                                expand = c(0, 0), name = "Causal Strength") +
+    ggplot2::theme_bw(base_family = family) +
+    ggplot2::theme(
+      legend.position = "bottom",
+      legend.box = "horizontal",
+      panel.grid.minor = ggplot2::element_blank(),
+      axis.text.x = ggplot2::element_text(angle = 30),
+      strip.text = ggplot2::element_text(face = "bold")
+    )
 }

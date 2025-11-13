@@ -57,7 +57,7 @@
 #'
 #' # convergence diagnostics
 #' g = gpc(columbus,"hoval","crime",libsizes = seq(5,45,5),E = 3)
-#' g
+#' plot(g)
 #' }
 methods::setMethod("gpc", "sf", .gpc_sf_method)
 
