@@ -62,6 +62,41 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat);
 Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat);
 
 /**
+ * @title Select Optimal Parameters Based on Causality Metrics
+ *
+ * @description
+ * This function identifies the optimal parameter combination (E, k, tau)
+ * from a matrix of evaluation results containing causality measures.
+ * The selection is performed hierarchically based on the following criteria:
+ *
+ * 1. Highest positive causality (`pos`)
+ * 2. Highest negative causality (`neg`) when positive causality is equal
+ * 3. Highest dark causality (`dark`) when both above are equal
+ * 4. In case of complete ties, the smallest E, then smallest tau, then smallest k are chosen.
+ *
+ * @param Emat A numeric matrix with exactly 6 columns in the order:
+ *   E, k, tau, pos, neg, and dark.
+ *   Each row represents one evaluation record.
+ *
+ * @return An integer vector of length 3: the optimal (E, k, tau).
+ *
+ * @details
+ * If multiple parameter sets yield identical causality values (within floating-point tolerance),
+ * the function applies a deterministic tie-breaking rule favoring simpler embeddings
+ * (smaller E, tau, and k).
+ *
+ * @note
+ * If a tie-break occurs, a warning is issued indicating the decision criteria.
+ *
+ * @examples
+ * \dontrun{
+ *   result <- OptPCparms(Emat)
+ * }
+ */
+// [[Rcpp::export(rng = false)]]
+Rcpp::IntegerVector OptPCparms(Rcpp::NumericMatrix Emat)
+
+/**
  * This function takes a NumericMatrix as input and returns a matrix
  * containing the row and column indices of all non-NA elements in the input matrix.
  *
