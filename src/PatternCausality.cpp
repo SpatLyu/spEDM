@@ -538,33 +538,29 @@ PatternCausalityRes PatternCausality(
  *
  * ### Workflow
  *
- * 1. **Input Validation**
- *    - Filters out invalid `libsizes` (< `num_neighbors` or > `lib_indices.size()`).
- *    - Removes duplicates and sorts in increasing order.
- *
- * 2. **Distance Matrix Computation**
+ * 1. **Distance Matrix Computation**
  *    - Computes pairwise distances between `pred_indices` and `lib_indices` once,
  *      using L1 or L2 norm (depending on `dist_metric`).
  *    - Parallelized via `RcppThread::parallelFor`.
  *    - The resulting distance matrix `Dx` is reused across all bootstraps.
  *
- * 3. **Signature Space Generation**
+ * 2. **Signature Space Generation**
  *    - Builds continuous signature spaces `SMx` and `SMy` for both variables
  *      using `GenSignatureSpace()`.
  *
- * 4. **Sampling & Bootstrapping**
- *    - For each valid library size:
+ * 3. **Sampling & Bootstrapping**
+ *    - For each library size:
  *        - If `random_sample = true`: draw `boot` random subsets (size = L)
  *          from `lib_indices` using RNG.
  *        - If `random_sample = false`: perform deterministic slicing
  *          and **force `boot = 1`** for reproducibility.
  *
- * 5. **Causality Computation**
+ * 4. **Causality Computation**
  *    - Projects `SMy` → `PredSMy` via `SignatureProjection()`.
  *    - Computes symbolic causality with `GenPatternCausality()`.
  *    - Extracts only the metrics `TotalPos`, `TotalNeg`, and `TotalDark`.
  *
- * 6. **Output Structure**
+ * 5. **Output Structure**
  *    - Returns `[3][libsizes][boot]`:
  *        - Metric index 0 → TotalPos
  *        - Metric index 1 → TotalNeg
@@ -590,7 +586,6 @@ PatternCausalityRes PatternCausality(
  * @param progressbar    Whether to show progress (optional)
  *
  * @return 3D vector `[3][libsizes][boot]`
- * @throws std::runtime_error if no valid libsizes remain after filtering
  */
 std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
     const std::vector<std::vector<double>>& Mx,
@@ -608,25 +603,9 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
     bool weighted = true,
     bool NA_rm = true,
     int threads = 1,
-    int parallel_level = 1,
+    int parallel_level = 0,
     bool progressbar = false
 ){
-  // --------------------------------------------------------------------------
-  // Step 0: Validate and preprocess library sizes
-  // --------------------------------------------------------------------------
-  std::vector<size_t> valid_libsizes;
-  for (auto s : libsizes) {
-    if (s >= static_cast<size_t>(num_neighbors) && s <= lib_indices.size())
-      valid_libsizes.push_back(s);
-  }
-
-  std::sort(valid_libsizes.begin(), valid_libsizes.end());
-  valid_libsizes.erase(std::unique(valid_libsizes.begin(), valid_libsizes.end()), valid_libsizes.end());
-
-  if (valid_libsizes.empty()) {
-    throw std::runtime_error("[Error] No valid libsizes after filtering. Aborting computation.");
-  }
-
   // --------------------------------------------------------------------------
   // Step 1: Configure threads and random generators
   // --------------------------------------------------------------------------
@@ -674,7 +653,7 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
   // --------------------------------------------------------------------------
   // Step 4: Initialize results container [3][libsizes][boot]
   // --------------------------------------------------------------------------
-  const size_t n_libsizes = valid_libsizes.size();
+  const size_t n_libsizes = libsizes.size();
   std::vector<std::vector<std::vector<double>>> all_results(
       3, std::vector<std::vector<double>>(n_libsizes, std::vector<double>(boot, std::numeric_limits<double>::quiet_NaN())));
 
@@ -687,7 +666,7 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
   // Step 5: Iterate over library sizes
   // --------------------------------------------------------------------------
   for (size_t li = 0; li < n_libsizes; ++li) {
-    size_t L = valid_libsizes[li];
+    size_t L = libsizes[li];
 
     auto process_boot = [&](int b) {
       std::vector<size_t> sampled_lib, sampled_pred;
@@ -703,7 +682,7 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
       }
 
       std::vector<std::vector<double>> PredSMy;
-      if (parallel_level == 1)
+      if (parallel_level == 0)
         PredSMy = SignatureProjection(SMy, Dx, sampled_lib, sampled_pred, num_neighbors, zero_tolerance, threads_sizet);
       else
         PredSMy = SignatureProjection(SMy, Dx, sampled_lib, sampled_pred, num_neighbors, zero_tolerance, 1);
@@ -715,7 +694,7 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
       all_results[2][li][b] = res.TotalDark;
     };
 
-    if (parallel_level != 1)
+    if (parallel_level != 0)
       RcppThread::parallelFor(0, boot, process_boot, threads_sizet);
     else
       for (int b = 0; b < boot; ++b) process_boot(b);

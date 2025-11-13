@@ -1439,6 +1439,165 @@ Rcpp::List RcppGPC4Lattice(
   );
 }
 
+// Wrapper function to perform Robust Geographical Pattern Causality for spatial lattice data
+// [[Rcpp::export(rng = false)]]
+Rcpp::DataFrame RcppGPCRobust4Lattice(
+    const Rcpp::NumericVector& x,
+    const Rcpp::NumericVector& y,
+    const Rcpp::List& nb,
+    const Rcpp::IntegerVector& libsizes,
+    const Rcpp::IntegerVector& lib,
+    const Rcpp::IntegerVector& pred,
+    int E = 3,
+    int tau = 0,
+    int style = 1,
+    int b = 0,
+    int boot = 99,
+    bool random = true,
+    unsigned int seed = 42,
+    int zero_tolerance = 0,
+    int dist_metric = 2,
+    bool relative = true,
+    bool weighted = true,
+    bool NA_rm = true,
+    int threads = 8,
+    int parallel_level = 0,
+    bool progressbar = false) {
+
+  // --- Input Conversion and Validation --------------------------------------
+
+  std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
+  std::vector<double> y_std = Rcpp::as<std::vector<double>>(y);
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
+  int validSampleNum = x_std.size();
+
+  // Convert library indices (R 1-based → C++ 0-based)
+  std::vector<size_t> lib_std;
+  lib_std.reserve(lib.size());
+  for (int i = 0; i < lib.size(); ++i) {
+    if (lib[i] < 1 || lib[i] > validSampleNum)
+      Rcpp::stop("lib contains out-of-bounds index at position %d (value: %d)", i + 1, lib[i]);
+    if (!std::isnan(x_std[lib[i] - 1]) && !std::isnan(y_std[lib[i] - 1]))
+      lib_std.push_back(static_cast<size_t>(lib[i] - 1));
+  }
+
+  // Convert prediction indices (R 1-based → C++ 0-based)
+  std::vector<size_t> pred_std;
+  pred_std.reserve(pred.size());
+  for (int i = 0; i < pred.size(); ++i) {
+    if (pred[i] < 1 || pred[i] > validSampleNum)
+      Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
+    if (!std::isnan(x_std[pred[i] - 1]) && !std::isnan(y_std[pred[i] - 1]))
+      pred_std.push_back(static_cast<size_t>(pred[i] - 1));
+  }
+
+  // Check neighbor and embedding parameters
+  if (b < 2 || b > validSampleNum)
+    Rcpp::stop("k cannot be less than or equal to 2 or greater than the number of non-NA values.");
+  else if (b + 1 > static_cast<int>(lib_std.size()))
+    Rcpp::stop("Please check `libsizes` or `lib`; no valid libraries available for running GPCM.");
+
+  // Validate and preprocess library sizes
+  std::vector<size_t> libsizes_std = Rcpp::as<std::vector<size_t>>(libsizes);
+  std::vector<size_t> valid_libsizes;
+  valid_libsizes.reserve(libsizes_std.size());
+  for (size_t s : libsizes_std) {
+    if (s >= static_cast<size_t>(b) && s <= lib_std.size())
+      valid_libsizes.push_back(s);
+  }
+
+  std::sort(valid_libsizes.begin(), valid_libsizes.end());
+  valid_libsizes.erase(std::unique(valid_libsizes.begin(), valid_libsizes.end()), valid_libsizes.end());
+
+  if (valid_libsizes.empty()) {
+    Rcpp::stop("[Error] No valid libsizes after filtering. Aborting computation.");
+  }
+
+  // --- Embedding Construction ------------------------------------------------
+
+  std::vector<std::vector<double>> Mx = GenLatticeEmbeddings(x_std, nb_vec, E, tau, style);
+  std::vector<std::vector<double>> My = GenLatticeEmbeddings(y_std, nb_vec, E, tau, style);
+
+  // --- Perform Robust Geographical Pattern Causality -------------------------
+
+  std::vector<std::vector<std::vector<double>>> res = RobustPatternCausality(
+    Mx, My, valid_libsizes, lib_std, pred_std, b, boot, random, seed, zero_tolerance,
+    dist_metric, relative, weighted, NA_rm, threads, parallel_level, progressbar);
+
+  // --- Result Processing -----------------------------------------------------
+
+  // res structure: [3][valid_libsizes][boot]
+  // dimension 0: metric type (0=TotalPos,1=TotalNeg,2=TotalDark)
+  // dimension 1: libsizes index
+  // dimension 2: bootstrap replicates
+
+  int n_types = 3;
+  int n_libsizes = static_cast<int>(valid_libsizes.size());
+  int n_boot = static_cast<int>(res[0][0].size());
+
+  // Prepare vectors to hold dataframe columns
+  std::vector<size_t> df_libsizes;
+  std::vector<std::string> df_type;
+  std::vector<double> df_causality;
+  std::vector<double> df_q05, df_q50, df_q95;  // For quantiles if boot > 1
+
+  bool has_bootstrap = (n_boot > 1);
+  const std::string types[3] = {"positive", "negative", "dark"};
+
+  if (!has_bootstrap) {
+    // boot == 1, simple long format: columns = libsizes, type, causality
+    df_libsizes.reserve(n_types * n_libsizes);
+    df_type.reserve(n_types * n_libsizes);
+    df_causality.reserve(n_types * n_libsizes);
+
+    for (int t = 0; t < n_types; ++t) {
+      for (int l = 0; l < n_libsizes; ++l) {
+        df_libsizes.push_back(valid_libsizes[l]);
+        df_type.push_back(types[t]);
+        df_causality.push_back(res[t][l][0]);
+      }
+    }
+
+    return Rcpp::DataFrame::create(
+      Rcpp::Named("libsizes") = df_libsizes,
+      Rcpp::Named("type") = df_type,
+      Rcpp::Named("causality") = df_causality
+    );
+  } else {
+    // boot > 1, summary with mean and quantiles
+    df_libsizes.reserve(n_types * n_libsizes);
+    df_type.reserve(n_types * n_libsizes);
+    df_causality.reserve(n_types * n_libsizes);
+    df_q05.reserve(n_types * n_libsizes);
+    df_q50.reserve(n_types * n_libsizes);
+    df_q95.reserve(n_types * n_libsizes);
+
+    for (int t = 0; t < n_types; ++t) {
+      for (int l = 0; l < n_libsizes; ++l) {
+        const std::vector<double>& boot_vals = res[t][l];
+        double mean_val = CppMean(boot_vals, true);
+        std::vector<double> qs = CppQuantile(boot_vals, {0.05, 0.5, 0.95}, true);
+
+        df_libsizes.push_back(valid_libsizes[l]);
+        df_type.push_back(types[t]);
+        df_causality.push_back(mean_val);
+        df_q05.push_back(qs[0]);
+        df_q50.push_back(qs[1]);
+        df_q95.push_back(qs[2]);
+      }
+    }
+
+    return Rcpp::DataFrame::create(
+      Rcpp::Named("libsizes") = df_libsizes,
+      Rcpp::Named("type") = df_type,
+      Rcpp::Named("mean") = df_causality,
+      Rcpp::Named("q05") = df_q05,
+      Rcpp::Named("q50") = df_q50,
+      Rcpp::Named("q95") = df_q95
+    );
+  }
+}
+
 // Wrapper function to perform SGC for spatial lattice data without bootstrapped significance
 // [[Rcpp::export(rng = false)]]
 Rcpp::NumericVector RcppSGCSingle4Lattice(const Rcpp::NumericVector& x,

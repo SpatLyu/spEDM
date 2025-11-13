@@ -189,6 +189,21 @@ Rcpp::NumericVector RcppArithmeticSeq(double from, double to, int length_out) {
 }
 
 // [[Rcpp::export(rng = false)]]
+Rcpp::NumericVector RcppQuantile(const Rcpp::NumericVector& vec,
+                                 const Rcpp::NumericVector& probs,
+                                 bool NA_rm = true) {
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
+  std::vector<double> probs_std = Rcpp::as<std::vector<double>>(probs);
+
+  // Call the CppQuantilefunction
+  std::vector<double> result = CppQuantile(vec_std, probs_std, NA_rm);
+
+  // Convert the result back to Rcpp::NumericVector
+  return Rcpp::wrap(result);
+}
+
+// [[Rcpp::export(rng = false)]]
 double RcppPearsonCor(const Rcpp::NumericVector& y,
                       const Rcpp::NumericVector& y_hat,
                       bool NA_rm = false) {

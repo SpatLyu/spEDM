@@ -133,6 +133,10 @@ RcppGPC4Grid <- function(xMatrix, yMatrix, lib, pred, E = 3L, tau = 1L, style = 
     .Call(`_spEDM_RcppGPC4Grid`, xMatrix, yMatrix, lib, pred, E, tau, style, b, zero_tolerance, dist_metric, relative, weighted, NA_rm, threads)
 }
 
+RcppGPCRobust4Grid <- function(xMatrix, yMatrix, libsizes, lib, pred, E = 3L, tau = 1L, style = 1L, b = 4L, boot = 99L, random = TRUE, seed = 42L, zero_tolerance = 0L, dist_metric = 2L, relative = TRUE, weighted = TRUE, NA_rm = TRUE, threads = 8L, parallel_level = 0L, progressbar = FALSE) {
+    .Call(`_spEDM_RcppGPCRobust4Grid`, xMatrix, yMatrix, libsizes, lib, pred, E, tau, style, b, boot, random, seed, zero_tolerance, dist_metric, relative, weighted, NA_rm, threads, parallel_level, progressbar)
+}
+
 RcppSGCSingle4Grid <- function(x, y, lib, pred, k, base = 2, symbolize = TRUE, normalize = FALSE) {
     .Call(`_spEDM_RcppSGCSingle4Grid`, x, y, lib, pred, k, base, symbolize, normalize)
 }
@@ -237,6 +241,10 @@ RcppGPC4Lattice <- function(x, y, nb, lib, pred, E = 3L, tau = 0L, style = 1L, b
     .Call(`_spEDM_RcppGPC4Lattice`, x, y, nb, lib, pred, E, tau, style, b, zero_tolerance, dist_metric, relative, weighted, NA_rm, threads)
 }
 
+RcppGPCRobust4Lattice <- function(x, y, nb, libsizes, lib, pred, E = 3L, tau = 0L, style = 1L, b = 0L, boot = 99L, random = TRUE, seed = 42L, zero_tolerance = 0L, dist_metric = 2L, relative = TRUE, weighted = TRUE, NA_rm = TRUE, threads = 8L, parallel_level = 0L, progressbar = FALSE) {
+    .Call(`_spEDM_RcppGPCRobust4Lattice`, x, y, nb, libsizes, lib, pred, E, tau, style, b, boot, random, seed, zero_tolerance, dist_metric, relative, weighted, NA_rm, threads, parallel_level, progressbar)
+}
+
 RcppSGCSingle4Lattice <- function(x, y, nb, lib, pred, k, base = 2, symbolize = TRUE, normalize = FALSE) {
     .Call(`_spEDM_RcppSGCSingle4Lattice`, x, y, nb, lib, pred, k, base, symbolize, normalize)
 }
@@ -319,6 +327,10 @@ RcppSumNormalize <- function(vec, NA_rm = FALSE) {
 
 RcppArithmeticSeq <- function(from, to, length_out) {
     .Call(`_spEDM_RcppArithmeticSeq`, from, to, length_out)
+}
+
+RcppQuantile <- function(vec, probs, NA_rm = TRUE) {
+    .Call(`_spEDM_RcppQuantile`, vec, probs, NA_rm)
 }
 
 RcppPearsonCor <- function(y, y_hat, NA_rm = FALSE) {
