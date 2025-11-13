@@ -409,7 +409,7 @@ std::vector<double> CppArithmeticSeq(double from, double to, size_t length_out) 
  * @param probs   Vector of probabilities in [0,1] at which to compute quantiles.
  *                Default is {0.05, 0.5, 0.95}.
  * @param NA_rm   Whether to remove NaN values from `vec` before quantile calculation.
- *                Default is false.
+ *                Default is true.
  *
  * @return A vector of doubles containing quantile values corresponding to `probs`.
  *
@@ -418,7 +418,7 @@ std::vector<double> CppArithmeticSeq(double from, double to, size_t length_out) 
  */
 std::vector<double> CppQuantile(const std::vector<double>& vec,
                                 const std::vector<double>& probs = {0.05, 0.5, 0.95},
-                                bool NA_rm = false) {
+                                bool NA_rm = true) {
   // Filter input vector if NA_rm == true (remove NaNs)
   std::vector<double> clean_vec;
   if (NA_rm) {
