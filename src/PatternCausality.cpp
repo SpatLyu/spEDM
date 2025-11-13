@@ -675,17 +675,17 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
         std::vector<size_t> shuffled_lib = lib_indices;
         std::shuffle(shuffled_lib.begin(), shuffled_lib.end(), rng_pool[b]);
         sampled_lib.assign(shuffled_lib.begin(), shuffled_lib.begin() + L);
-        sampled_pred = sampled_lib;
+        // sampled_pred = sampled_lib;
       } else {
         sampled_lib.assign(lib_indices.begin(), lib_indices.begin() + L);
-        sampled_pred = sampled_lib;
+        // sampled_pred = sampled_lib;
       }
 
       std::vector<std::vector<double>> PredSMy;
       if (parallel_level == 0)
-        PredSMy = SignatureProjection(SMy, Dx, sampled_lib, sampled_pred, num_neighbors, zero_tolerance, threads_sizet);
+        PredSMy = SignatureProjection(SMy, Dx, sampled_lib, pred_indices, num_neighbors, zero_tolerance, threads_sizet);
       else
-        PredSMy = SignatureProjection(SMy, Dx, sampled_lib, sampled_pred, num_neighbors, zero_tolerance, 1);
+        PredSMy = SignatureProjection(SMy, Dx, sampled_lib, pred_indices, num_neighbors, zero_tolerance, 1);
 
       PatternCausalityRes res = GenPatternCausality(SMx, SMy, PredSMy, weighted, NA_rm);
 
