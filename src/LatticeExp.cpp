@@ -1439,6 +1439,153 @@ Rcpp::List RcppGPC4Lattice(
   );
 }
 
+// Wrapper function to perform Robust Geographical Pattern Causality (GPC) for spatial lattice data
+// [[Rcpp::export(rng = false)]]
+Rcpp::List RcppGPCRobust4Lattice(
+    const Rcpp::NumericVector& x,
+    const Rcpp::NumericVector& y,
+    const Rcpp::List& nb,
+    const Rcpp::IntegerVector& libsizes,
+    const Rcpp::IntegerVector& lib,
+    const Rcpp::IntegerVector& pred,
+    int E = 3,
+    int tau = 0,
+    int style = 1,
+    int b = 0,
+    int boot = 99,
+    bool random = true,
+    unsigned int seed = 42,
+    int zero_tolerance = 0,
+    int dist_metric = 2,
+    bool relative = true,
+    bool weighted = true,
+    bool NA_rm = true,
+    int threads = 8) {
+
+  // --- Input Conversion and Validation --------------------------------------
+
+  std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
+  std::vector<double> y_std = Rcpp::as<std::vector<double>>(y);
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
+  int validSampleNum = x_std.size();
+
+  // Convert library indices (R 1-based → C++ 0-based)
+  std::vector<size_t> lib_std;
+  lib_std.reserve(lib.size());
+  for (int i = 0; i < lib.size(); ++i) {
+    if (lib[i] < 1 || lib[i] > validSampleNum)
+      Rcpp::stop("lib contains out-of-bounds index at position %d (value: %d)", i + 1, lib[i]);
+    if (!std::isnan(x_std[lib[i] - 1]) && !std::isnan(y_std[lib[i] - 1]))
+      lib_std.push_back(static_cast<size_t>(lib[i] - 1));
+  }
+
+  // Convert prediction indices (R 1-based → C++ 0-based)
+  std::vector<size_t> pred_std;
+  pred_std.reserve(pred.size());
+  for (int i = 0; i < pred.size(); ++i) {
+    if (pred[i] < 1 || pred[i] > validSampleNum)
+      Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
+    if (!std::isnan(x_std[pred[i] - 1]) && !std::isnan(y_std[pred[i] - 1]))
+      pred_std.push_back(static_cast<size_t>(pred[i] - 1));
+  }
+
+  // Check neighbor and embedding parameters
+  if (b < 2 || b > validSampleNum)
+    Rcpp::stop("k cannot be less than or equal to 2 or greater than the number of non-NA values.");
+  else if (b + 1 > static_cast<int>(lib_std.size()))
+    Rcpp::stop("Please check `libsizes` or `lib`; no valid libraries available for running GPCM.");
+
+  // Validate and preprocess library sizes
+  std::vector<size_t> valid_libsizes;
+  for (auto s : libsizes) {
+    if (s >= static_cast<size_t>(b) && s <= lib_std.size())
+      valid_libsizes.push_back(s);
+  }
+
+  std::sort(valid_libsizes.begin(), valid_libsizes.end());
+  valid_libsizes.erase(std::unique(valid_libsizes.begin(), valid_libsizes.end()), valid_libsizes.end());
+
+  if (valid_libsizes.empty()) {
+    Rcpp::stop("[Error] No valid libsizes after filtering. Aborting computation.");
+  }
+
+  // --- Embedding Construction ------------------------------------------------
+
+  std::vector<std::vector<double>> Mx = GenLatticeEmbeddings(x_std, nb_vec, E, tau, style);
+  std::vector<std::vector<double>> My = GenLatticeEmbeddings(y_std, nb_vec, E, tau, style);
+
+  // --- Perform Robust Geographical Pattern Causality -------------------------
+
+  PatternCausalityRes res = PatternCausality(
+    Mx, My, lib_std, pred_std, b, zero_tolerance,
+    dist_metric, relative, weighted, NA_rm, threads);
+
+  // --- Convert result.matrice to Rcpp::NumericMatrix ------------------------
+
+  size_t nrow = res.matrice.size();
+  size_t ncol = nrow > 0 ? res.matrice[0].size() : 0;
+  Rcpp::NumericMatrix matrice_mat(nrow, ncol);
+  for (size_t i = 0; i < nrow; ++i) {
+    for (size_t j = 0; j < ncol; ++j) {
+      matrice_mat(i, j) = res.matrice[i][j];
+    }
+  }
+
+  // Assign row and column names if available
+  if (!res.PatternStrings.empty() && res.PatternStrings.size() == nrow && res.PatternStrings.size() == ncol) {
+    Rcpp::CharacterVector diffpatternnames(res.PatternStrings.begin(), res.PatternStrings.end());
+    Rcpp::rownames(matrice_mat) = diffpatternnames;
+    Rcpp::colnames(matrice_mat) = diffpatternnames;
+  }
+
+  // --- Create DataFrame for per-sample causality ----------------------------
+
+  size_t n_samples = res.NoCausality.size();
+  Rcpp::LogicalVector real_loop(n_samples, false);
+  for (size_t idx : res.RealLoop) {
+    if (idx < n_samples) real_loop[idx] = true;
+  }
+
+  // Map pattern_types (0–3) → descriptive string labels
+  Rcpp::CharacterVector pattern_labels(n_samples);
+  for (size_t i = 0; i < n_samples; ++i) {
+    switch (res.PatternTypes[i]) {
+    case 0: pattern_labels[i] = "no"; break;
+    case 1: pattern_labels[i] = "positive"; break;
+    case 2: pattern_labels[i] = "negative"; break;
+    case 3: pattern_labels[i] = "dark"; break;
+    default: pattern_labels[i] = "unknown"; break;
+    }
+  }
+
+  Rcpp::DataFrame causality_df = Rcpp::DataFrame::create(
+    Rcpp::Named("no") = Rcpp::NumericVector(res.NoCausality.begin(), res.NoCausality.end()),
+    Rcpp::Named("positive") = Rcpp::NumericVector(res.PositiveCausality.begin(), res.PositiveCausality.end()),
+    Rcpp::Named("negative") = Rcpp::NumericVector(res.NegativeCausality.begin(), res.NegativeCausality.end()),
+    Rcpp::Named("dark") = Rcpp::NumericVector(res.DarkCausality.begin(), res.DarkCausality.end()),
+    Rcpp::Named("type") = pattern_labels,
+    Rcpp::Named("valid") = real_loop
+  );
+
+  // --- Create summary DataFrame for causal strengths ------------------------
+
+  Rcpp::CharacterVector causal_type = Rcpp::CharacterVector::create("positive", "negative", "dark");
+  Rcpp::NumericVector causal_strength = Rcpp::NumericVector::create(res.TotalPos, res.TotalNeg, res.TotalDark);
+
+  Rcpp::DataFrame summary_df = Rcpp::DataFrame::create(
+    Rcpp::Named("type") = causal_type,
+    Rcpp::Named("strength") = causal_strength
+  );
+
+  // --- Return structured results --------------------------------------------
+
+  return Rcpp::List::create(
+    Rcpp::Named("causality") = causality_df,
+    Rcpp::Named("summary") = summary_df,
+    Rcpp::Named("pattern") = matrice_mat
+  );
+}
+
 // Wrapper function to perform SGC for spatial lattice data without bootstrapped significance
 // [[Rcpp::export(rng = false)]]
 Rcpp::NumericVector RcppSGCSingle4Lattice(const Rcpp::NumericVector& x,

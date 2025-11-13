@@ -191,33 +191,29 @@ PatternCausalityRes PatternCausality(
  *
  * ### Workflow
  *
- * 1. **Input Validation**
- *    - Filters out invalid `libsizes` (< `num_neighbors` or > `lib_indices.size()`).
- *    - Removes duplicates and sorts in increasing order.
- *
- * 2. **Distance Matrix Computation**
+ * 1. **Distance Matrix Computation**
  *    - Computes pairwise distances between `pred_indices` and `lib_indices` once,
  *      using L1 or L2 norm (depending on `dist_metric`).
  *    - Parallelized via `RcppThread::parallelFor`.
  *    - The resulting distance matrix `Dx` is reused across all bootstraps.
  *
- * 3. **Signature Space Generation**
+ * 2. **Signature Space Generation**
  *    - Builds continuous signature spaces `SMx` and `SMy` for both variables
  *      using `GenSignatureSpace()`.
  *
- * 4. **Sampling & Bootstrapping**
- *    - For each valid library size:
+ * 3. **Sampling & Bootstrapping**
+ *    - For each library size:
  *        - If `random_sample = true`: draw `boot` random subsets (size = L)
  *          from `lib_indices` using RNG.
  *        - If `random_sample = false`: perform deterministic slicing
  *          and **force `boot = 1`** for reproducibility.
  *
- * 5. **Causality Computation**
+ * 4. **Causality Computation**
  *    - Projects `SMy` → `PredSMy` via `SignatureProjection()`.
  *    - Computes symbolic causality with `GenPatternCausality()`.
  *    - Extracts only the metrics `TotalPos`, `TotalNeg`, and `TotalDark`.
  *
- * 6. **Output Structure**
+ * 5. **Output Structure**
  *    - Returns `[3][libsizes][boot]`:
  *        - Metric index 0 → TotalPos
  *        - Metric index 1 → TotalNeg
@@ -243,7 +239,6 @@ PatternCausalityRes PatternCausality(
  * @param progressbar    Whether to show progress (optional)
  *
  * @return 3D vector `[3][libsizes][boot]`
- * @throws std::runtime_error if no valid libsizes remain after filtering
  */
 std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
     const std::vector<std::vector<double>>& Mx,
