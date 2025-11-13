@@ -2084,10 +2084,17 @@ Rcpp::DataFrame RcppGPCRobust4Grid(
     }
   }
 
-  std::sort(libsizes_std.begin(), libsizes_std.end());
-  libsizes_std.erase(std::unique(libsizes_std.begin(), libsizes_std.end()), libsizes_std.end());
+  std::vector<size_t> valid_libsizes;
+  valid_libsizes.reserve(libsizes_std.size());
+  for (size_t s : libsizes_std) {
+    if (s >= static_cast<size_t>(b) && s <= lib_std.size())
+      valid_libsizes.push_back(s);
+  }
 
-  if (libsizes_std.empty()) {
+  std::sort(valid_libsizes.begin(), valid_libsizes.end());
+  valid_libsizes.erase(std::unique(valid_libsizes.begin(), valid_libsizes.end()), valid_libsizes.end());
+
+  if (valid_libsizes.empty()) {
     Rcpp::stop("[Error] No valid libsizes after filtering. Aborting computation.");
   }
 
@@ -2104,7 +2111,7 @@ Rcpp::DataFrame RcppGPCRobust4Grid(
   // --- Perform Robust GPC analysis -------------------------------------------
 
   std::vector<std::vector<std::vector<double>>> res = RobustPatternCausality(
-    Mx, My, libsizes_std, lib_std, pred_std, b, boot, random, seed, zero_tolerance,
+    Mx, My, valid_libsizes, lib_std, pred_std, b, boot, random, seed, zero_tolerance,
     dist_metric, relative, weighted, NA_rm, threads, parallel_level, progressbar);
 
   // --- Result Processing -----------------------------------------------------
@@ -2115,7 +2122,7 @@ Rcpp::DataFrame RcppGPCRobust4Grid(
   // dimension 2: bootstrap replicates
 
   int n_types = 3;
-  int n_libsizes = static_cast<int>(libsizes_std.size());
+  int n_libsizes = static_cast<int>(valid_libsizes.size());
   int n_boot = static_cast<int>(res[0][0].size());
 
   // Prepare vectors to hold dataframe columns
@@ -2135,7 +2142,7 @@ Rcpp::DataFrame RcppGPCRobust4Grid(
 
     for (int t = 0; t < n_types; ++t) {
       for (int l = 0; l < n_libsizes; ++l) {
-        df_libsizes.push_back(libsizes_std[l]);
+        df_libsizes.push_back(valid_libsizes[l]);
         df_type.push_back(types[t]);
         df_causality.push_back(res[t][l][0]);
       }
@@ -2161,7 +2168,7 @@ Rcpp::DataFrame RcppGPCRobust4Grid(
         double mean_val = CppMean(boot_vals, true);
         std::vector<double> qs = CppQuantile(boot_vals, {0.05, 0.5, 0.95}, true);
 
-        df_libsizes.push_back(libsizes_std[l]);
+        df_libsizes.push_back(valid_libsizes[l]);
         df_type.push_back(types[t]);
         df_causality.push_back(mean_val);
         df_q05.push_back(qs[0]);
