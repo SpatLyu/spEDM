@@ -128,85 +128,6 @@ double CppDigamma(double x) {
   return (a + std::log(x) - 0.5 / x + c);
 }
 
-/**
- * @brief Compute quantiles of a numeric vector at specified probabilities.
- *
- * This function calculates the quantiles of a given vector of doubles `vec` at
- * user-defined probability levels specified in `probs` (defaulting to 0.05, 0.5, 0.95).
- * The quantiles are computed using linear interpolation between sorted values.
- *
- * Optionally, the function can remove NaN values before calculation if `NA_rm` is true,
- * ensuring robust quantile estimates in the presence of missing data.
- *
- * @param vec     Input vector of double values.
- * @param probs   Vector of probabilities in [0,1] at which to compute quantiles.
- *                Default is {0.05, 0.5, 0.95}.
- * @param NA_rm   Whether to remove NaN values from `vec` before quantile calculation.
- *                Default is false.
- *
- * @return A vector of doubles containing quantile values corresponding to `probs`.
- *
- * @note If `NA_rm` is false and `vec` contains NaNs, the result may be undefined or contain NaNs.
- *       It is recommended to set `NA_rm` to true when input may have missing values.
- */
-std::vector<double> CppQuantile(const std::vector<double>& vec,
-                                const std::vector<double>& probs = {0.05, 0.5, 0.95},
-                                bool NA_rm = false) {
-  // Filter input vector if NA_rm == true (remove NaNs)
-  std::vector<double> clean_vec;
-  if (NA_rm) {
-    clean_vec.reserve(vec.size());
-    for (auto v : vec) {
-      if (!std::isnan(v)) {
-        clean_vec.push_back(v);
-      }
-    }
-  } else {
-    clean_vec = vec;
-  }
-
-  if (clean_vec.empty()) {
-    // If no data after removing NaNs, return vector of NaNs of same size as probs
-    return std::vector<double>(probs.size(), std::numeric_limits<double>::quiet_NaN());
-  }
-
-  // Sort the data
-  std::sort(clean_vec.begin(), clean_vec.end());
-
-  std::vector<double> results;
-  results.reserve(probs.size());
-
-  // Compute quantiles using linear interpolation (Type 7 method like R's quantile default)
-  // h = 1 + (n - 1) * p
-  // quantile = (1 - gamma) * x[j] + gamma * x[j+1]
-  size_t n = clean_vec.size();
-
-  for (double p : probs) {
-    if (p < 0.0 || p > 1.0) {
-      throw std::out_of_range("probabilities must be between 0 and 1");
-    }
-
-    if (n == 1) {
-      // Only one element
-      results.push_back(clean_vec[0]);
-      continue;
-    }
-
-    double h = 1 + (n - 1) * p;
-    size_t h_floor = static_cast<size_t>(std::floor(h));
-    double gamma = h - h_floor;
-
-    // Indices adjusted for 0-based indexing in C++
-    size_t idx_lower = (h_floor == 0) ? 0 : h_floor - 1;
-    size_t idx_upper = (h_floor >= n) ? n - 1 : h_floor;
-
-    double q = (1 - gamma) * clean_vec[idx_lower] + gamma * clean_vec[idx_upper];
-    results.push_back(q);
-  }
-
-  return results;
-}
-
 // Function to calculate the logarithm of x with the specified base
 double CppLog(double x, double base = 10) {
   return std::log(x) / std::log(base);
@@ -472,6 +393,85 @@ std::vector<double> CppArithmeticSeq(double from, double to, size_t length_out) 
   }
 
   return res;
+}
+
+/**
+ * @brief Compute quantiles of a numeric vector at specified probabilities.
+ *
+ * This function calculates the quantiles of a given vector of doubles `vec` at
+ * user-defined probability levels specified in `probs` (defaulting to 0.05, 0.5, 0.95).
+ * The quantiles are computed using linear interpolation between sorted values.
+ *
+ * Optionally, the function can remove NaN values before calculation if `NA_rm` is true,
+ * ensuring robust quantile estimates in the presence of missing data.
+ *
+ * @param vec     Input vector of double values.
+ * @param probs   Vector of probabilities in [0,1] at which to compute quantiles.
+ *                Default is {0.05, 0.5, 0.95}.
+ * @param NA_rm   Whether to remove NaN values from `vec` before quantile calculation.
+ *                Default is false.
+ *
+ * @return A vector of doubles containing quantile values corresponding to `probs`.
+ *
+ * @note If `NA_rm` is false and `vec` contains NaNs, the result may be undefined or contain NaNs.
+ *       It is recommended to set `NA_rm` to true when input may have missing values.
+ */
+std::vector<double> CppQuantile(const std::vector<double>& vec,
+                                const std::vector<double>& probs = {0.05, 0.5, 0.95},
+                                bool NA_rm = false) {
+  // Filter input vector if NA_rm == true (remove NaNs)
+  std::vector<double> clean_vec;
+  if (NA_rm) {
+    clean_vec.reserve(vec.size());
+    for (auto v : vec) {
+      if (!std::isnan(v)) {
+        clean_vec.push_back(v);
+      }
+    }
+  } else {
+    clean_vec = vec;
+  }
+
+  if (clean_vec.empty()) {
+    // If no data after removing NaNs, return vector of NaNs of same size as probs
+    return std::vector<double>(probs.size(), std::numeric_limits<double>::quiet_NaN());
+  }
+
+  // Sort the data
+  std::sort(clean_vec.begin(), clean_vec.end());
+
+  std::vector<double> results;
+  results.reserve(probs.size());
+
+  // Compute quantiles using linear interpolation (Type 7 method like R's quantile default)
+  // h = 1 + (n - 1) * p
+  // quantile = (1 - gamma) * x[j] + gamma * x[j+1]
+  size_t n = clean_vec.size();
+
+  for (double p : probs) {
+    if (p < 0.0 || p > 1.0) {
+      throw std::out_of_range("probabilities must be between 0 and 1");
+    }
+
+    if (n == 1) {
+      // Only one element
+      results.push_back(clean_vec[0]);
+      continue;
+    }
+
+    double h = 1 + (n - 1) * p;
+    size_t h_floor = static_cast<size_t>(std::floor(h));
+    double gamma = h - h_floor;
+
+    // Indices adjusted for 0-based indexing in C++
+    size_t idx_lower = (h_floor == 0) ? 0 : h_floor - 1;
+    size_t idx_upper = (h_floor >= n) ? n - 1 : h_floor;
+
+    double q = (1 - gamma) * clean_vec[idx_lower] + gamma * clean_vec[idx_upper];
+    results.push_back(q);
+  }
+
+  return results;
 }
 
 // Function to calculate the variance of a vector, ignoring NA values
