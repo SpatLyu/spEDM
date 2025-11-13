@@ -230,33 +230,60 @@
   return(res[-indices])
 }
 
-.run_gpc = \(x, y, E, k, tau, style, lib, pred,
-             dist.metric, zero.tolerance,
-             relative, weighted, na.rm, threads,
-             bidirectional = FALSE, varname = NULL, nb = NULL){
+.run_gpc = \(x, y, E, k, tau, style, lib, pred, dist.metric, zero.tolerance, relative,
+             weighted, na.rm, threads, bidirectional = FALSE, varname = NULL, nb = NULL,
+             libsizes = NULL, boot = 9, random = TRUE, seed = 42, parallel.level = "low",
+             progressbar = FALSE){
   dist.metric = .check_distmetric(dist.metric)
-  if (is.null(nb)){
-    res = RcppGPC4Grid(y,x,lib,pred,E,tau,style,k,zero.tolerance,dist.metric,relative,weighted,na.rm,threads)
+  if (is.null(libsizes)){
+    if (is.null(nb)){
+      res = RcppGPC4Grid(y,x,lib,pred,E,tau,style,k,zero.tolerance,dist.metric,relative,weighted,na.rm,threads)
+    } else {
+      res = RcppGPC4Lattice(y,x,nb,lib,pred,E,tau,style,k,zero.tolerance,dist.metric,relative,weighted,na.rm,threads)
+    }
+    res$causality$direction = "y_xmap_x"
+    res$summary$direction = "y_xmap_x"
+    res$pattern = list("y_xmap_x" = as.data.frame(res$pattern))
+    res$varname = varname
+    res$bidirectional = FALSE
+
+    if (bidirectional){
+      res_bi = .run_gpc(y, x, E, k, tau, style, lib, pred,
+                        dist.metric, zero.tolerance,
+                        relative, weighted, na.rm, threads,
+                        FALSE, varname, nb)
+      res_bi$causality$direction = "x_xmap_y"
+      res_bi$summary$direction = "x_xmap_y"
+      res$causality = rbind(res$causality,res_bi$causality)
+      res$summary = rbind(res$summary,res_bi$summary)
+      res$pattern$x_xmap_y = res_bi$pattern$y_xmap_x
+      res$bidirectional = TRUE
+    }
+
+    class(res) = "pc_res"
+    return(res)
   } else {
-    res = RcppGPC4Lattice(y,x,nb,lib,pred,E,tau,style,k,zero.tolerance,dist.metric,relative,weighted,na.rm,threads)
-  }
-  res$causality$direction = "y_xmap_x"
-  res$summary$direction = "y_xmap_x"
-  res$pattern = list("y_xmap_x" = as.data.frame(res$pattern))
-  res$varname = varname
+    pl = .check_parallellevel(parallel.level)
+    if (is.null(nb)){
+      res = RcppGPCRobust4Grid(y,x,libsizes,lib,pred,E,tau,style,k,boot,random,seed,zero.tolerance,
+                               dist.metric, relative, weighted, na.rm, threads, pl, progressbar)
+    } else {
+      res = RcppGPCRobust4Lattice(y,x,nb,libsizes,lib,pred,E,tau,style,k,boot,random,seed,zero.tolerance,
+                                  dist.metric, relative, weighted, na.rm, threads, pl, progressbar)
+    }
+    res$direction = "y_xmap_x"
+    res = list(xmap = res)
 
-  if (bidirectional){
-    res_bi = .run_gpc(y, x, E, k, tau, style, lib, pred,
-                      dist.metric, zero.tolerance,
-                      relative, weighted, na.rm, threads,
-                      FALSE, varname, nb)
-    res_bi$causality$direction = "x_xmap_y"
-    res_bi$summary$direction = "x_xmap_y"
-    res$causality = rbind(res$causality,res_bi$causality)
-    res$summary = rbind(res$summary,res_bi$summary)
-    res$pattern$x_xmap_y = res_bi$pattern$y_xmap_x
-  }
+    if (bidirectional){
+      res_bi = .run_gpc(y, x, E, k, tau, style, lib, pred, dist.metric,
+                        zero.tolerance, relative, weighted, na.rm, threads, FALSE,
+                        varname, nb, libsizes, boot, random, seed, pl, progressbar)
+      res_bi$xmap$direction = "x_xmap_y"
+      res$xmap = rbind(res$xmap,res_bi$xmap)
+    }
 
-  class(res) = "pc_res"
-  return(res)
+    return(structure(list(xmap = res$xmap, varname = varname,
+                          bidirectional = bidirectional),
+                     class = "rpc_res"))
+  }
 }
