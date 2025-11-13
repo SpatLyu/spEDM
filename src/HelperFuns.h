@@ -93,7 +93,6 @@ Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat);
  *   result <- OptPCparms(Emat)
  * }
  */
-// [[Rcpp::export(rng = false)]]
 Rcpp::IntegerVector OptPCparms(Rcpp::NumericMatrix Emat);
 
 /**

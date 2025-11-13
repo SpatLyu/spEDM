@@ -707,16 +707,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// OptPCparms
-Rcpp::IntegerVector OptPCparms(Rcpp::NumericMatrix Emat);
-RcppExport SEXP _spEDM_OptPCparms(SEXP EmatSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Emat(EmatSEXP);
-    rcpp_result_gen = Rcpp::wrap(OptPCparms(Emat));
-    return rcpp_result_gen;
-END_RCPP
-}
 // RcppLaggedNeighbor4Lattice
 Rcpp::List RcppLaggedNeighbor4Lattice(const Rcpp::List& nb, int lagNum);
 RcppExport SEXP _spEDM_RcppLaggedNeighbor4Lattice(SEXP nbSEXP, SEXP lagNumSEXP) {
@@ -1714,7 +1704,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_OptICparm", (DL_FUNC) &_spEDM_OptICparm, 1},
     {"_spEDM_OptPCparms", (DL_FUNC) &_spEDM_OptPCparms, 1},
     {"_spEDM_MatNotNAIndice", (DL_FUNC) &_spEDM_MatNotNAIndice, 2},
-    {"_spEDM_OptPCparms", (DL_FUNC) &_spEDM_OptPCparms, 1},
     {"_spEDM_RcppLaggedNeighbor4Lattice", (DL_FUNC) &_spEDM_RcppLaggedNeighbor4Lattice, 2},
     {"_spEDM_RcppLaggedVal4Lattice", (DL_FUNC) &_spEDM_RcppLaggedVal4Lattice, 3},
     {"_spEDM_RcppGenLatticeEmbeddings", (DL_FUNC) &_spEDM_RcppGenLatticeEmbeddings, 5},
