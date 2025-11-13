@@ -1441,7 +1441,7 @@ Rcpp::List RcppGPC4Lattice(
 
 // Wrapper function to perform Robust Geographical Pattern Causality (GPC) for spatial lattice data
 // [[Rcpp::export(rng = false)]]
-Rcpp::List RcppGPCRobust4Lattice(
+Rcpp::DataFrame RcppGPCRobust4Lattice(
     const Rcpp::NumericVector& x,
     const Rcpp::NumericVector& y,
     const Rcpp::List& nb,
@@ -1516,74 +1516,82 @@ Rcpp::List RcppGPCRobust4Lattice(
 
   // --- Perform Robust Geographical Pattern Causality -------------------------
 
-  PatternCausalityRes res = PatternCausality(
-    Mx, My, lib_std, pred_std, b, zero_tolerance,
-    dist_metric, relative, weighted, NA_rm, threads);
+  std::vector<std::vector<std::vector<double>>> res = RobustPatternCausality(
+    Mx, My, valid_libsizes, lib_std, pred_std, b, boot, random, seed,
+    zero_tolerance, dist_metric, relative, weighted, NA_rm, threads);
 
-  // --- Convert result.matrice to Rcpp::NumericMatrix ------------------------
+  // --- Result Processing -----------------------------------------------------
 
-  size_t nrow = res.matrice.size();
-  size_t ncol = nrow > 0 ? res.matrice[0].size() : 0;
-  Rcpp::NumericMatrix matrice_mat(nrow, ncol);
-  for (size_t i = 0; i < nrow; ++i) {
-    for (size_t j = 0; j < ncol; ++j) {
-      matrice_mat(i, j) = res.matrice[i][j];
+  // res structure: [3][valid_libsizes][boot]
+  // dimension 0: metric type (0=TotalPos,1=TotalNeg,2=TotalDark)
+  // dimension 1: libsizes index
+  // dimension 2: bootstrap replicates
+
+  int n_types = 3;
+  int n_libsizes = static_cast<int>(valid_libsizes.size());
+  int n_boot = static_cast<int>(res[0][0].size());
+
+  // Prepare vectors to hold dataframe columns
+  std::vector<size_t> df_libsizes;
+  std::vector<std::string> df_type;
+  std::vector<double> df_causality;
+  std::vector<double> df_q05, df_q50, df_q95;  // For quantiles if boot > 1
+
+  bool has_bootstrap = (n_boot > 1);
+  const std::string types[3] = {"positive", "negative", "dark"};
+
+  if (!has_bootstrap) {
+    // boot == 1, simple long format: columns = libsizes, type, causality
+    df_libsizes.reserve(n_types * n_libsizes);
+    df_type.reserve(n_types * n_libsizes);
+    df_causality.reserve(n_types * n_libsizes);
+
+    for (int t = 0; t < n_types; ++t) {
+      for (int l = 0; l < n_libsizes; ++l) {
+        df_libsizes.push_back(valid_libsizes[l]);
+        df_type.push_back(types[t]);
+        df_causality.push_back(res[t][l][0]);
+      }
     }
-  }
 
-  // Assign row and column names if available
-  if (!res.PatternStrings.empty() && res.PatternStrings.size() == nrow && res.PatternStrings.size() == ncol) {
-    Rcpp::CharacterVector diffpatternnames(res.PatternStrings.begin(), res.PatternStrings.end());
-    Rcpp::rownames(matrice_mat) = diffpatternnames;
-    Rcpp::colnames(matrice_mat) = diffpatternnames;
-  }
+    return Rcpp::DataFrame::create(
+      Rcpp::Named("libsizes") = df_libsizes,
+      Rcpp::Named("type") = df_type,
+      Rcpp::Named("causality") = df_causality
+    );
+  } else {
+    // boot > 1, summary with mean and quantiles
+    df_libsizes.reserve(n_types * n_libsizes);
+    df_type.reserve(n_types * n_libsizes);
+    df_causality.reserve(n_types * n_libsizes);
+    df_q05.reserve(n_types * n_libsizes);
+    df_q50.reserve(n_types * n_libsizes);
+    df_q95.reserve(n_types * n_libsizes);
 
-  // --- Create DataFrame for per-sample causality ----------------------------
+    for (int t = 0; t < n_types; ++t) {
+      for (int l = 0; l < n_libsizes; ++l) {
+        const std::vector<double>& boot_vals = res[t][l];
+        double mean_val = CppMean(boot_vals, true);
+        std::vector<double> qs = CppQuantile(boot_vals, {0.05, 0.5, 0.95}, true);
 
-  size_t n_samples = res.NoCausality.size();
-  Rcpp::LogicalVector real_loop(n_samples, false);
-  for (size_t idx : res.RealLoop) {
-    if (idx < n_samples) real_loop[idx] = true;
-  }
-
-  // Map pattern_types (0–3) → descriptive string labels
-  Rcpp::CharacterVector pattern_labels(n_samples);
-  for (size_t i = 0; i < n_samples; ++i) {
-    switch (res.PatternTypes[i]) {
-    case 0: pattern_labels[i] = "no"; break;
-    case 1: pattern_labels[i] = "positive"; break;
-    case 2: pattern_labels[i] = "negative"; break;
-    case 3: pattern_labels[i] = "dark"; break;
-    default: pattern_labels[i] = "unknown"; break;
+        df_libsizes.push_back(valid_libsizes[l]);
+        df_type.push_back(types[t]);
+        df_causality.push_back(mean_val);
+        df_q05.push_back(qs[0]);
+        df_q50.push_back(qs[1]);
+        df_q95.push_back(qs[2]);
+      }
     }
+
+    return Rcpp::DataFrame::create(
+      Rcpp::Named("libsizes") = df_libsizes,
+      Rcpp::Named("type") = df_type,
+      Rcpp::Named("mean") = df_causality,
+      Rcpp::Named("q05") = df_q05,
+      Rcpp::Named("q50") = df_q50,
+      Rcpp::Named("q95") = df_q95
+    );
   }
-
-  Rcpp::DataFrame causality_df = Rcpp::DataFrame::create(
-    Rcpp::Named("no") = Rcpp::NumericVector(res.NoCausality.begin(), res.NoCausality.end()),
-    Rcpp::Named("positive") = Rcpp::NumericVector(res.PositiveCausality.begin(), res.PositiveCausality.end()),
-    Rcpp::Named("negative") = Rcpp::NumericVector(res.NegativeCausality.begin(), res.NegativeCausality.end()),
-    Rcpp::Named("dark") = Rcpp::NumericVector(res.DarkCausality.begin(), res.DarkCausality.end()),
-    Rcpp::Named("type") = pattern_labels,
-    Rcpp::Named("valid") = real_loop
-  );
-
-  // --- Create summary DataFrame for causal strengths ------------------------
-
-  Rcpp::CharacterVector causal_type = Rcpp::CharacterVector::create("positive", "negative", "dark");
-  Rcpp::NumericVector causal_strength = Rcpp::NumericVector::create(res.TotalPos, res.TotalNeg, res.TotalDark);
-
-  Rcpp::DataFrame summary_df = Rcpp::DataFrame::create(
-    Rcpp::Named("type") = causal_type,
-    Rcpp::Named("strength") = causal_strength
-  );
-
-  // --- Return structured results --------------------------------------------
-
-  return Rcpp::List::create(
-    Rcpp::Named("causality") = causality_df,
-    Rcpp::Named("summary") = summary_df,
-    Rcpp::Named("pattern") = matrice_mat
-  );
 }
 
 // Wrapper function to perform SGC for spatial lattice data without bootstrapped significance
