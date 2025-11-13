@@ -214,7 +214,8 @@ plot.rpc_res = \(x, family = "serif",
                  xbreaks = NULL, xlimits = NULL,
                  ybreaks = seq(0, 1, by = 0.1),
                  ylimits = c(-0.05, 1), ...){
-  xmapdf = dplyr::rename(x$xmap,causality = q50)
+  xmapdf = x$xmap
+  if("q50" %in% names(xmapdf)) xmapdf = dplyr::rename(xmapdf,causality = q50)
   if (x$bidirectional){
     xmapdf$direction = rep(c(paste0(x$varname[1], " %->% ", x$varname[2]),
                              paste0(x$varname[2], " %->% ", x$varname[1])),
