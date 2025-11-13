@@ -70,7 +70,7 @@ print.pc_res = \(x,...){
 #' @export
 #' @noRd
 print.rpc_res = \(x,...){
-  pc = x$xamp
+  pc = x$xmap
   if (x$bidirectional){
     pc$direction = rep(c(paste0(x$varname[1], " -> ", x$varname[2]),
                          paste0(x$varname[2], " -> ", x$varname[1])),
