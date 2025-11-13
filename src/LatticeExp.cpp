@@ -1498,8 +1498,10 @@ Rcpp::DataFrame RcppGPCRobust4Lattice(
     Rcpp::stop("Please check `libsizes` or `lib`; no valid libraries available for running GPCM.");
 
   // Validate and preprocess library sizes
+  std::vector<size_t> libsizes_std = Rcpp::as<std::vector<size_t>>(libsizes);
   std::vector<size_t> valid_libsizes;
-  for (auto s : libsizes) {
+  valid_libsizes.reserve(libsizes_std.size());
+  for (size_t s : libsizes_std) {
     if (s >= static_cast<size_t>(b) && s <= lib_std.size())
       valid_libsizes.push_back(s);
   }

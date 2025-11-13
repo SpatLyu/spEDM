@@ -2072,6 +2072,7 @@ Rcpp::DataFrame RcppGPCRobust4Grid(
   // -- Convert libsizes --------------------------------------------------
   int libsizes_dim = libsizes.ncol();
   std::vector<size_t> libsizes_std;
+  libsizes_std.reserve(libsizes.nrow());
   if (libsizes_dim == 1){
     for (int i = 0; i < libsizes.nrow(); ++i) {
       libsizes_std.push_back(static_cast<size_t>(libsizes(i, 0)));
