@@ -686,6 +686,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// OptPCparms
+Rcpp::IntegerVector OptPCparms(Rcpp::NumericMatrix Emat);
+RcppExport SEXP _spEDM_OptPCparms(SEXP EmatSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Emat(EmatSEXP);
+    rcpp_result_gen = Rcpp::wrap(OptPCparms(Emat));
+    return rcpp_result_gen;
+END_RCPP
+}
 // MatNotNAIndice
 Rcpp::NumericMatrix MatNotNAIndice(Rcpp::NumericMatrix mat, bool byrow);
 RcppExport SEXP _spEDM_MatNotNAIndice(SEXP matSEXP, SEXP byrowSEXP) {
@@ -694,6 +704,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type mat(matSEXP);
     Rcpp::traits::input_parameter< bool >::type byrow(byrowSEXP);
     rcpp_result_gen = Rcpp::wrap(MatNotNAIndice(mat, byrow));
+    return rcpp_result_gen;
+END_RCPP
+}
+// OptPCparms
+Rcpp::IntegerVector OptPCparms(Rcpp::NumericMatrix Emat);
+RcppExport SEXP _spEDM_OptPCparms(SEXP EmatSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Emat(EmatSEXP);
+    rcpp_result_gen = Rcpp::wrap(OptPCparms(Emat));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1692,7 +1712,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_OptEmbedDim", (DL_FUNC) &_spEDM_OptEmbedDim, 1},
     {"_spEDM_OptThetaParm", (DL_FUNC) &_spEDM_OptThetaParm, 1},
     {"_spEDM_OptICparm", (DL_FUNC) &_spEDM_OptICparm, 1},
+    {"_spEDM_OptPCparms", (DL_FUNC) &_spEDM_OptPCparms, 1},
     {"_spEDM_MatNotNAIndice", (DL_FUNC) &_spEDM_MatNotNAIndice, 2},
+    {"_spEDM_OptPCparms", (DL_FUNC) &_spEDM_OptPCparms, 1},
     {"_spEDM_RcppLaggedNeighbor4Lattice", (DL_FUNC) &_spEDM_RcppLaggedNeighbor4Lattice, 2},
     {"_spEDM_RcppLaggedVal4Lattice", (DL_FUNC) &_spEDM_RcppLaggedVal4Lattice, 3},
     {"_spEDM_RcppGenLatticeEmbeddings", (DL_FUNC) &_spEDM_RcppGenLatticeEmbeddings, 5},

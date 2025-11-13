@@ -94,7 +94,7 @@ Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat);
  * }
  */
 // [[Rcpp::export(rng = false)]]
-Rcpp::IntegerVector OptPCparms(Rcpp::NumericMatrix Emat)
+Rcpp::IntegerVector OptPCparms(Rcpp::NumericMatrix Emat);
 
 /**
  * This function takes a NumericMatrix as input and returns a matrix
