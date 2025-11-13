@@ -2084,6 +2084,13 @@ Rcpp::DataFrame RcppGPCRobust4Grid(
     }
   }
 
+  std::sort(libsizes_std.begin(), libsizes_std.end());
+  libsizes_std.erase(std::unique(libsizes_std.begin(), libsizes_std.end()), libsizes_std.end());
+
+  if (libsizes_std.empty()) {
+    Rcpp::stop("[Error] No valid libsizes after filtering. Aborting computation.");
+  }
+
   // --- Validate parameters --------------------------------------------------
 
   if (b < 2 || b > validCellNum)
