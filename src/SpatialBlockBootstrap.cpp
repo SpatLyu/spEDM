@@ -77,7 +77,7 @@ std::vector<int> SpatialBlockBootstrap(
  */
 std::vector<int> SpatialBlockBootstrapRNG(
     const std::vector<int>& block,
-    std::mt19937& rng
+    std::mt19937_64& rng
 ) {
   size_t N = block.size();
 

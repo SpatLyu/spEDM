@@ -212,11 +212,11 @@ std::vector<double> SGC4Grid(
   //   sc_bootstraps[n] = SGCSingle4Grid(x_boot,y_boot,lib,pred,static_cast<size_t>(std::abs(k)),base,symbolize,normalize);
   // };
 
-  // Prebuild RNG pool with seed sequence
-  std::vector<std::mt19937> rng_pool(boot);
+  // Prebuild 64-bit RNG pool with seed sequence
+  std::vector<std::mt19937_64> rng_pool(boot);
   for (int i = 0; i < boot; ++i) {
-    std::seed_seq seq{static_cast<uint32_t>(seed), static_cast<uint32_t>(i)};
-    rng_pool[i] = std::mt19937(seq);
+    std::seed_seq seq{static_cast<uint64_t>(seed), static_cast<uint64_t>(i)};
+    rng_pool[i] = std::mt19937_64(seq);
   }
 
   auto monte_boots = [&](int n){
