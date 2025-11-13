@@ -1439,7 +1439,7 @@ Rcpp::List RcppGPC4Lattice(
   );
 }
 
-// Wrapper function to perform Robust Geographical Pattern Causality (GPC) for spatial lattice data
+// Wrapper function to perform Robust Geographical Pattern Causality for spatial lattice data
 // [[Rcpp::export(rng = false)]]
 Rcpp::DataFrame RcppGPCRobust4Lattice(
     const Rcpp::NumericVector& x,
@@ -1460,7 +1460,9 @@ Rcpp::DataFrame RcppGPCRobust4Lattice(
     bool relative = true,
     bool weighted = true,
     bool NA_rm = true,
-    int threads = 8) {
+    int threads = 8,
+    int parallel_level = 0,
+    bool progressbar = false) {
 
   // --- Input Conversion and Validation --------------------------------------
 
@@ -1517,8 +1519,8 @@ Rcpp::DataFrame RcppGPCRobust4Lattice(
   // --- Perform Robust Geographical Pattern Causality -------------------------
 
   std::vector<std::vector<std::vector<double>>> res = RobustPatternCausality(
-    Mx, My, valid_libsizes, lib_std, pred_std, b, boot, random, seed,
-    zero_tolerance, dist_metric, relative, weighted, NA_rm, threads);
+    Mx, My, valid_libsizes, lib_std, pred_std, b, boot, random, seed, zero_tolerance,
+    dist_metric, relative, weighted, NA_rm, threads, parallel_level, progressbar);
 
   // --- Result Processing -----------------------------------------------------
 

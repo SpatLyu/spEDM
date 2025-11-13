@@ -603,7 +603,7 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
     bool weighted = true,
     bool NA_rm = true,
     int threads = 1,
-    int parallel_level = 1,
+    int parallel_level = 0,
     bool progressbar = false
 ){
   // --------------------------------------------------------------------------
@@ -682,7 +682,7 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
       }
 
       std::vector<std::vector<double>> PredSMy;
-      if (parallel_level == 1)
+      if (parallel_level == 0)
         PredSMy = SignatureProjection(SMy, Dx, sampled_lib, sampled_pred, num_neighbors, zero_tolerance, threads_sizet);
       else
         PredSMy = SignatureProjection(SMy, Dx, sampled_lib, sampled_pred, num_neighbors, zero_tolerance, 1);
@@ -694,7 +694,7 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
       all_results[2][li][b] = res.TotalDark;
     };
 
-    if (parallel_level != 1)
+    if (parallel_level != 0)
       RcppThread::parallelFor(0, boot, process_boot, threads_sizet);
     else
       for (int b = 0; b < boot; ++b) process_boot(b);

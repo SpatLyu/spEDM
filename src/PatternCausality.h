@@ -256,7 +256,7 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
     bool weighted = true,
     bool NA_rm = true,
     int threads = 1,
-    int parallel_level = 1,
+    int parallel_level = 0,
     bool progressbar = false
 );
 

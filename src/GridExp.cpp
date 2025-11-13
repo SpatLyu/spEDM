@@ -1984,6 +1984,195 @@ Rcpp::List RcppGPC4Grid(
   );
 }
 
+// Wrapper function to perform Robust Geographical Pattern Causality for spatial grid data
+// [[Rcpp::export(rng = false)]]
+Rcpp::DataFrame RcppGPCRobust4Grid(
+    const Rcpp::NumericMatrix& xMatrix,
+    const Rcpp::NumericMatrix& yMatrix,
+    const Rcpp::IntegerMatrix& libsizes,
+    const Rcpp::IntegerMatrix& lib,
+    const Rcpp::IntegerMatrix& pred,
+    int E = 3,
+    int tau = 1,
+    int style = 1,
+    int b = 4,
+    int boot = 99,
+    bool random = true,
+    unsigned int seed = 42,
+    int zero_tolerance = 0,
+    int dist_metric = 2,
+    bool relative = true,
+    bool weighted = true,
+    bool NA_rm = true,
+    int threads = 8,
+    int parallel_level = 0,
+    bool progressbar = false) {
+
+  // --- Convert inputs to C++ types ------------------------------------------
+
+  std::vector<std::vector<double>> xMatrix_cpp(xMatrix.nrow(), std::vector<double>(xMatrix.ncol()));
+  std::vector<std::vector<double>> yMatrix_cpp(yMatrix.nrow(), std::vector<double>(yMatrix.ncol()));
+  double validCellNum = 0;
+
+  for (int i = 0; i < yMatrix.nrow(); ++i) {
+    for (int j = 0; j < yMatrix.ncol(); ++j) {
+      xMatrix_cpp[i][j] = xMatrix(i, j);
+      yMatrix_cpp[i][j] = yMatrix(i, j);
+      if (!std::isnan(yMatrix(i, j))) validCellNum += 1;
+    }
+  }
+
+  int numRows = yMatrix.nrow();
+  int numCols = yMatrix.ncol();
+  int n_libcol = lib.ncol();
+  int n_predcol = pred.ncol();
+
+  // --- Convert library and prediction indices -------------------------------
+
+  std::vector<size_t> lib_std;
+  lib_std.reserve(lib.nrow());
+
+  if (n_libcol == 1) {
+    for (int i = 0; i < lib.nrow(); ++i) {
+      int idx = lib(i, 0) - 1;
+      int r = idx / numCols, c = idx % numCols;
+      if (!std::isnan(xMatrix_cpp[r][c]) && !std::isnan(yMatrix_cpp[r][c])) {
+        lib_std.push_back(static_cast<size_t>(idx));
+      }
+    }
+  } else {
+    for (int i = 0; i < lib.nrow(); ++i) {
+      int r = lib(i, 0) - 1, c = lib(i, 1) - 1;
+      if (!std::isnan(xMatrix_cpp[r][c]) && !std::isnan(yMatrix_cpp[r][c])) {
+        lib_std.push_back(static_cast<size_t>(LocateGridIndices(r + 1, c + 1, numRows, numCols)));
+      }
+    }
+  }
+
+  std::vector<size_t> pred_std;
+  pred_std.reserve(pred.nrow());
+
+  if (n_predcol == 1) {
+    for (int i = 0; i < pred.nrow(); ++i) {
+      int idx = pred(i, 0) - 1;
+      int r = idx / numCols, c = idx % numCols;
+      if (!std::isnan(xMatrix_cpp[r][c]) && !std::isnan(yMatrix_cpp[r][c])) {
+        pred_std.push_back(static_cast<size_t>(idx));
+      }
+    }
+  } else {
+    for (int i = 0; i < pred.nrow(); ++i) {
+      int r = pred(i, 0) - 1, c = pred(i, 1) - 1;
+      if (!std::isnan(xMatrix_cpp[r][c]) && !std::isnan(yMatrix_cpp[r][c])) {
+        pred_std.push_back(static_cast<size_t>(LocateGridIndices(r + 1, c + 1, numRows, numCols)));
+      }
+    }
+  }
+
+  // -- Convert libsizes --------------------------------------------------
+  int libsizes_dim = libsizes.ncol();
+  std::vector<size_t> libsizes_std;
+  if (libsizes_dim == 1){
+    for (int i = 0; i < libsizes.nrow(); ++i) {
+      libsizes_std.push_back(static_cast<size_t>(libsizes(i, 0)));
+    }
+  } else {
+    for (int i = 0; i < libsizes.nrow(); ++i) { // Fill all the sub-vector
+      libsizes_std.push_back(static_cast<size_t>(LocateGridIndices(libsizes(i, 0),libsizes(i, 1),
+                                                                   numRows, numCols)));
+    }
+  }
+
+  // --- Validate parameters --------------------------------------------------
+
+  if (b < 2 || b > validCellNum)
+    Rcpp::stop("k cannot be less than or equal to 2 or greater than the number of non-NA values.");
+
+  // --- Generate embeddings --------------------------------------------------
+
+  std::vector<std::vector<double>> Mx = GenGridEmbeddings(xMatrix_cpp, E, tau, style);
+  std::vector<std::vector<double>> My = GenGridEmbeddings(yMatrix_cpp, E, tau, style);
+
+  // --- Perform Robust GPC analysis -------------------------------------------
+
+  std::vector<std::vector<std::vector<double>>> res = RobustPatternCausality(
+    Mx, My, libsizes_std, lib_std, pred_std, b, boot, random, seed, zero_tolerance,
+    dist_metric, relative, weighted, NA_rm, threads, parallel_level, progressbar);
+
+  // --- Result Processing -----------------------------------------------------
+
+  // res structure: [3][libsizes][boot]
+  // dimension 0: metric type (0=Positive,1=Negative,2=Dark)
+  // dimension 1: libsizes index
+  // dimension 2: bootstrap replicates
+
+  int n_types = 3;
+  int n_libsizes = static_cast<int>(libsizes_std.size());
+  int n_boot = static_cast<int>(res[0][0].size());
+
+  // Prepare vectors to hold dataframe columns
+  std::vector<size_t> df_libsizes;
+  std::vector<std::string> df_type;
+  std::vector<double> df_causality;
+  std::vector<double> df_q05, df_q50, df_q95;  // For quantiles if boot > 1
+
+  bool has_bootstrap = (n_boot > 1);
+  const std::string types[3] = {"positive", "negative", "dark"};
+
+  if (!has_bootstrap) {
+    // boot == 1, simple long format: columns = libsizes, type, causality
+    df_libsizes.reserve(n_types * n_libsizes);
+    df_type.reserve(n_types * n_libsizes);
+    df_causality.reserve(n_types * n_libsizes);
+
+    for (int t = 0; t < n_types; ++t) {
+      for (int l = 0; l < n_libsizes; ++l) {
+        df_libsizes.push_back(libsizes_std[l]);
+        df_type.push_back(types[t]);
+        df_causality.push_back(res[t][l][0]);
+      }
+    }
+
+    return Rcpp::DataFrame::create(
+      Rcpp::Named("libsizes") = df_libsizes,
+      Rcpp::Named("type") = df_type,
+      Rcpp::Named("causality") = df_causality
+    );
+  } else {
+    // boot > 1, summary with mean and quantiles
+    df_libsizes.reserve(n_types * n_libsizes);
+    df_type.reserve(n_types * n_libsizes);
+    df_causality.reserve(n_types * n_libsizes);
+    df_q05.reserve(n_types * n_libsizes);
+    df_q50.reserve(n_types * n_libsizes);
+    df_q95.reserve(n_types * n_libsizes);
+
+    for (int t = 0; t < n_types; ++t) {
+      for (int l = 0; l < n_libsizes; ++l) {
+        const std::vector<double>& boot_vals = res[t][l];
+        double mean_val = CppMean(boot_vals, true);
+        std::vector<double> qs = CppQuantile(boot_vals, {0.05, 0.5, 0.95}, true);
+
+        df_libsizes.push_back(libsizes_std[l]);
+        df_type.push_back(types[t]);
+        df_causality.push_back(mean_val);
+        df_q05.push_back(qs[0]);
+        df_q50.push_back(qs[1]);
+        df_q95.push_back(qs[2]);
+      }
+    }
+
+    return Rcpp::DataFrame::create(
+      Rcpp::Named("libsizes") = df_libsizes,
+      Rcpp::Named("type") = df_type,
+      Rcpp::Named("mean") = df_causality,
+      Rcpp::Named("q05") = df_q05,
+      Rcpp::Named("q50") = df_q50,
+      Rcpp::Named("q95") = df_q95
+    );
+  }
+}
+
 // Wrapper function to perform SGC for spatial grid data without bootstrapped significance
 // [[Rcpp::export(rng = false)]]
 Rcpp::NumericVector RcppSGCSingle4Grid(const Rcpp::NumericMatrix& x,
