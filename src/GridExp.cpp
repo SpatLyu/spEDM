@@ -1857,20 +1857,6 @@ Rcpp::List RcppGCMC4Grid(
   int numRows = yMatrix.nrow();
   int numCols = yMatrix.ncol();
 
-  // Convert libsizes to a fundamental C++ data type
-  int libsizes_dim = libsizes.ncol();
-  std::vector<size_t> libsizes_std;
-  if (libsizes_dim == 1){
-    for (int i = 0; i < libsizes.nrow(); ++i) {
-      libsizes_std.push_back(static_cast<size_t>(libsizes(i, 0)));
-    }
-  } else {
-    for (int i = 0; i < libsizes.nrow(); ++i) { // Fill all the sub-vector
-      libsizes_std.push_back(static_cast<size_t>(LocateGridIndices(libsizes(i, 0),libsizes(i, 1),
-                                                                   numRows, numCols)));
-    }
-  }
-
   std::vector<size_t> lib_std;
   lib_std.reserve(lib.nrow());
   if (n_libcol == 1){
@@ -1917,6 +1903,36 @@ Rcpp::List RcppGCMC4Grid(
 
   if (b < 3 || b > validCellNum) {
     Rcpp::stop("k cannot be less than or equal to 3 or greater than the number of non-NA values.");
+  }
+
+  // -- Convert libsizes --------------------------------------------------
+
+  int libsizes_dim = libsizes.ncol();
+  std::vector<size_t> libsizes_std;
+  libsizes_std.reserve(libsizes.nrow());
+  if (libsizes_dim == 1){
+    for (int i = 0; i < libsizes.nrow(); ++i) {
+      size_t valid_libsize = static_cast<size_t>(libsizes(i, 0));
+      if (valid_libsize >= static_cast<size_t>(b) &&
+          valid_libsize <= lib_std.size()){
+        libsizes_std.push_back(valid_libsize);
+      }
+    }
+  } else {
+    for (int i = 0; i < libsizes.nrow(); ++i) { // Fill all the sub-vector
+      size_t valid_libsize = static_cast<size_t>(libsizes(i, 0) * libsizes(i, 1));
+      if (valid_libsize >= static_cast<size_t>(b) &&
+          valid_libsize <= lib_std.size()){
+        libsizes_std.push_back(valid_libsize);
+      }
+    }
+  }
+
+  std::sort(libsizes_std.begin(), libsizes_std.end());
+  libsizes_std.erase(std::unique(libsizes_std.begin(), libsizes_std.end()), libsizes_std.end());
+
+  if (libsizes_std.empty()) {
+    Rcpp::stop("[Error] No valid libsizes after filtering. Aborting computation.");
   }
 
   // Generate embeddings
@@ -2200,6 +2216,7 @@ Rcpp::DataFrame RcppGPCRobust4Grid(
   }
 
   // -- Convert libsizes --------------------------------------------------
+
   int libsizes_dim = libsizes.ncol();
   std::vector<size_t> libsizes_std;
   libsizes_std.reserve(libsizes.nrow());
@@ -2209,8 +2226,7 @@ Rcpp::DataFrame RcppGPCRobust4Grid(
     }
   } else {
     for (int i = 0; i < libsizes.nrow(); ++i) { // Fill all the sub-vector
-      libsizes_std.push_back(static_cast<size_t>(LocateGridIndices(libsizes(i, 0),libsizes(i, 1),
-                                                                   numRows, numCols)));
+      libsizes_std.push_back(static_cast<size_t>(libsizes(i, 0) * libsizes(i, 1)));
     }
   }
 
