@@ -1921,13 +1921,14 @@ Rcpp::List RcppGCMC4Grid(
   }
 
   for (size_t& libsize : libsizes_std){
-    if (libsize <= static_cast<size_t>(b+r) || libsize > lib_std.size()) libsize = lib_std.size();
+    if (libsize < static_cast<size_t>(b+r) || libsize > lib_std.size()) libsize = lib_std.size();
   }
   std::sort(libsizes_std.begin(), libsizes_std.end());
   libsizes_std.erase(std::unique(libsizes_std.begin(), libsizes_std.end()), libsizes_std.end());
 
   if (libsizes_std.empty()) {
-    Rcpp::stop("[Error] No valid libsizes after filtering. Aborting computation.");
+    Rcpp::warning("[Warning] No valid libsizes after filtering. Using full library size as fallback.");
+    libsizes_std.push_back(lib_std.size());
   }
 
   // Generate embeddings
