@@ -2,10 +2,12 @@
 #include <cmath>
 #include <algorithm>
 #include <utility>
+#include <tuple>
 #include "CppGridUtils.h"
 #include "SimplexProjection.h"
 #include "SMap.h"
 #include "IntersectionCardinality.h"
+#include "PatternCausality.h"
 #include <RcppThread.h>
 
 // [[Rcpp::depends(RcppThread)]]
@@ -450,6 +452,167 @@ std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>&
         result[j + bs.size() * i][3] = cs[1];  // P value
       }, threads_sizet);
     }
+  }
+
+  return result;
+}
+
+/**
+ * @brief Search for optimal embedding parameters in geographical Pattern Causality analysis on regular grids.
+ *
+ * @param source
+ *   A 2D matrix (vector of vectors) representing the source spatiotemporal field
+ *   on a regular grid. Each inner vector corresponds to a spatial location’s time series.
+ *
+ * @param target
+ *   A 2D matrix representing the target field, aligned with `source` in both
+ *   spatial index and temporal length.
+ *
+ * @param lib_indices
+ *   Indices used as the "library set" for neighbor searching and pattern estimation.
+ *   Typically corresponds to time indices used for model fitting.
+ *
+ * @param pred_indices
+ *   Indices used as the "prediction set", where causality is evaluated.
+ *
+ * @param E
+ *   Candidate embedding dimensions. Each E defines the number of delay coordinates
+ *   used to reconstruct state vectors in the grid embedding.
+ *
+ * @param b
+ *   Candidate neighbor counts. Each b specifies how many nearest neighbors are used
+ *   in the pattern similarity / causality computation.
+ *
+ * @param tau
+ *   Candidate spatial lags (lag steps) used when constructing delay embeddings.
+ *
+ * @param style
+ *   Embedding style for grid reconstruction:
+ *   (See GenGridEmbeddings() for supported styles.)
+ *
+ * @param zero_tolerance
+ *   Threshold for treating small distances or weights as zero.
+ *   Useful for avoiding numerical instability.
+ *
+ * @param dist_metric
+ *   Distance metric used for neighbor searching:
+ *     - 1: Manhattan distance
+ *     - 2: Euclidean distance (default)
+ *
+ * @param relative
+ *   Whether to normalize distances relative to local scale (relative = true),
+ *   or treat them as absolute values.
+ *
+ * @param weighted
+ *   Whether to weight causal strength.
+ *
+ * @param NA_rm
+ *   Whether to remove NaN samples before symbolic pattern generation.
+ *
+ * @param threads
+ *   Maximum number of threads to use for parallel computation.
+ *   If negative, absolute value is used. If larger than hardware limit,
+ *   it is automatically capped.
+ *
+ * @param parallel_level
+ *   Controls whether computation is parallelized.
+ *
+ * @return
+ *   A 2D matrix where each row corresponds to one (E, b, tau) parameter triplet:
+ *
+ *     [0] E
+ *     [1] b
+ *     [2] tau
+ *     [3] TotalPos   — Strength of positive-pattern causality
+ *     [4] TotalNeg   — Strength of negative-pattern causality
+ *     [5] TotalDark  — Strength of ambiguous / non-directional causality
+ *
+ *   This table enables searching for optimal embedding parameters in
+ *   geographical Pattern Causality studies.
+ */
+std::vector<std::vector<double>> PC4Grid(const std::vector<std::vector<double>>& source,
+                                         const std::vector<std::vector<double>>& target,
+                                         const std::vector<size_t>& lib_indices,
+                                         const std::vector<size_t>& pred_indices,
+                                         const std::vector<int>& E,
+                                         const std::vector<int>& b,
+                                         const std::vector<int>& tau,
+                                         int style = 1,
+                                         int zero_tolerance = 0,
+                                         int dist_metric = 2,
+                                         bool relative = true,
+                                         bool weighted = true,
+                                         bool NA_rm = true,
+                                         int threads = 8,
+                                         int parallel_level = 0) {
+  // Unique sorted embedding dimensions, neighbor values, and tau values
+  std::vector<int> Es = E;
+  std::sort(Es.begin(), Es.end());
+  Es.erase(std::unique(Es.begin(), Es.end()), Es.end());
+
+  std::vector<int> bs = b;
+  std::sort(bs.begin(), bs.end());
+  bs.erase(std::unique(bs.begin(), bs.end()), bs.end());
+
+  std::vector<int> taus = tau;
+  std::sort(taus.begin(), taus.end());
+  taus.erase(std::unique(taus.begin(), taus.end()), taus.end());
+
+  // Generate unique (E, b, tau) combinations
+  std::vector<std::tuple<int, int, int>> unique_EbTau;
+  for (int e : Es)
+    for (int bb : bs)
+      for (int t : taus)
+        unique_EbTau.emplace_back(e, bb, t);
+
+  std::vector<std::vector<double>> result(unique_EbTau.size(), std::vector<double>(6));
+
+  if (parallel_level == 0){
+    for (size_t i = 0; i < unique_EbTau.size(); ++i) {
+      const int Ei   = std::get<0>(unique_EbTau[i]);
+      const int bi   = std::get<1>(unique_EbTau[i]);
+      const int taui = std::get<2>(unique_EbTau[i]);
+      // auto [Ei, bi, taui] = unique_EbTau[i]; // C++17 structured binding
+
+      auto Mx = GenGridEmbeddings(source, Ei, taui, style);
+      auto My = GenGridEmbeddings(target, Ei, taui, style);
+
+      PatternCausalityRes res = PatternCausality(
+        Mx, My, lib_indices, pred_indices, bi, zero_tolerance,
+        dist_metric, relative, weighted, NA_rm, threads);
+
+      result[i][0] = Ei;
+      result[i][1] = bi;
+      result[i][2] = bi;
+      result[i][3] = res.TotalPos;
+      result[i][4] = res.TotalNeg;
+      result[i][5] = res.TotalDark;
+    }
+  } else {
+    // Configure threads
+    size_t threads_sizet = static_cast<size_t>(std::abs(threads));
+    threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
+
+    RcppThread::parallelFor(0, unique_EbTau.size(), [&](size_t i) {
+      const int Ei   = std::get<0>(unique_EbTau[i]);
+      const int bi   = std::get<1>(unique_EbTau[i]);
+      const int taui = std::get<2>(unique_EbTau[i]);
+      // auto [Ei, bi, taui] = unique_EbTau[i]; // C++17 structured binding
+
+      auto Mx = GenGridEmbeddings(source, Ei, taui, style);
+      auto My = GenGridEmbeddings(target, Ei, taui, style);
+
+      PatternCausalityRes res = PatternCausality(
+        Mx, My, lib_indices, pred_indices, bi, zero_tolerance,
+        dist_metric, relative, weighted, NA_rm, 1);
+
+      result[i][0] = Ei;
+      result[i][1] = bi;
+      result[i][2] = taui;
+      result[i][3] = res.TotalPos;
+      result[i][4] = res.TotalNeg;
+      result[i][5] = res.TotalDark;
+    }, threads_sizet);
   }
 
   return result;
