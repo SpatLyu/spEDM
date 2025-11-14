@@ -19,7 +19,6 @@
   dist.metric = "L2",
   threads = detectThreads(),
   detrend = FALSE,
-  parallel.level = "low",
   nb = NULL
 )
 
@@ -36,7 +35,6 @@
   dist.metric = "L2",
   threads = detectThreads(),
   detrend = FALSE,
-  parallel.level = "low",
   grid.coord = TRUE
 )
 }
@@ -64,8 +62,6 @@
 \item{threads}{(optional) number of threads to use.}
 
 \item{detrend}{(optional) whether to remove the linear trend.}
-
-\item{parallel.level}{(optional) level of parallelism, \code{low} or \code{high}.}
 
 \item{nb}{(optional) neighbours list.}
 
