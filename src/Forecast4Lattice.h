@@ -5,10 +5,12 @@
 #include <cmath>
 #include <algorithm>
 #include <utility>
+#include <tuple>
 #include "CppLatticeUtils.h"
 #include "SimplexProjection.h"
 #include "SMap.h"
 #include "IntersectionCardinality.h"
+#include "PatternCausality.h"
 #include <RcppThread.h>
 
 /*
