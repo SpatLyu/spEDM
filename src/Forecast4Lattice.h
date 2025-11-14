@@ -5,10 +5,12 @@
 #include <cmath>
 #include <algorithm>
 #include <utility>
+#include <tuple>
 #include "CppLatticeUtils.h"
 #include "SimplexProjection.h"
 #include "SMap.h"
 #include "IntersectionCardinality.h"
+#include "PatternCausality.h"
 #include <RcppThread.h>
 
 /*
@@ -164,6 +166,63 @@ std::vector<std::vector<double>> IC4Lattice(const std::vector<double>& source,
                                             int exclude = 0,
                                             int style = 1,
                                             int dist_metric = 2,
+                                            int threads = 8,
+                                            int parallel_level = 0);
+
+/**
+ * @brief Compute pattern-based causality across a parameter lattice of embedding dimension (E),
+ *        neighbor count (b), and time lag (tau).
+ *
+ * This function builds lattice embeddings from two time series (or lattice signals) `source`
+ * and `target` for every unique combination of E, b, and tau, runs pattern-based causality
+ * analysis for each combination, and returns a numeric summary for all combinations.
+ *
+ * Steps:
+ * 1. Deduplicate and sort the input parameter lists E, b, tau to obtain unique values.
+ * 2. Form the Cartesian product (E, b, tau) as the search lattice.
+ * 3. For each lattice node:
+ *    - Generate lattice embeddings (shadow manifolds) for source and target using
+ *      `GenLatticeEmbeddings(source, nb_vec, E, tau, style)`.
+ *    - Call `PatternCausality(Mx, My, lib_indices, pred_indices, b, ...)` to compute
+ *      pattern-level causality metrics for that node.
+ * 4. Collect and return a 2D numeric matrix where each row corresponds to one lattice node
+ *    and columns summarize the lattice parameters and causality metrics (e.g. TotalPos,
+ *    TotalNeg, TotalDark).
+ *
+ * Concurrency:
+ * - The function supports optional parallel execution over the lattice nodes via
+ *   `RcppThread::parallelFor`. When running nodes in parallel, the inner `PatternCausality`
+ *   call is forced to single-threaded to avoid nested parallelism (unless you specifically
+ *   want otherwise).
+ *
+ * Parameters (short):
+ * - source, target: raw vectors to embed.
+ * - nb_vec: neighborhood structure used by the lattice embedding generator.
+ * - lib_indices, pred_indices: indices used by PatternCausality for library/prediction.
+ * - E, b, tau: vectors of candidate embedding dims, neighbor counts, and lags.
+ * - style: embedding style passed to GenLatticeEmbeddings.
+ * - zero_tolerance, dist_metric, relative, weighted, NA_rm: forwarded to PatternCausality.
+ * - threads: hint for internal multi-threading (used in PatternCausality or parallelFor).
+ * - parallel_level: 0 = serial run, non-zero = parallel over lattice nodes.
+ *
+ * Return:
+ * - matrix (std::vector<std::vector<double>>) with one row per (E,b,tau) and columns:
+ *   [E, b, tau, TotalPos, TotalNeg, TotalDark]
+ */
+std::vector<std::vector<double>> PC4Lattice(const std::vector<double>& source,
+                                            const std::vector<double>& target,
+                                            const std::vector<std::vector<int>>& nb_vec,
+                                            const std::vector<size_t>& lib_indices,
+                                            const std::vector<size_t>& pred_indices,
+                                            const std::vector<int>& E,
+                                            const std::vector<int>& b,
+                                            const std::vector<int>& tau,
+                                            int style = 1,
+                                            int zero_tolerance = 0,
+                                            int dist_metric = 2,
+                                            bool relative = true,
+                                            bool weighted = true,
+                                            bool NA_rm = true,
                                             int threads = 8,
                                             int parallel_level = 0);
 

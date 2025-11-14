@@ -5,10 +5,12 @@
 #include <cmath>
 #include <algorithm>
 #include <utility>
+#include <tuple>
 #include "CppGridUtils.h"
 #include "SimplexProjection.h"
 #include "SMap.h"
 #include "IntersectionCardinality.h"
+#include "PatternCausality.h"
 #include <RcppThread.h>
 
 /*
@@ -152,6 +154,95 @@ std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>&
                                          int exclude = 0,
                                          int style = 1,
                                          int dist_metric = 2,
+                                         int threads = 8,
+                                         int parallel_level = 0);
+
+/**
+ * @brief Search for optimal embedding parameters in geographical Pattern Causality analysis on regular grids.
+ *
+ * @param source
+ *   A 2D matrix (vector of vectors) representing the source spatiotemporal field
+ *   on a regular grid. Each inner vector corresponds to a spatial location’s time series.
+ *
+ * @param target
+ *   A 2D matrix representing the target field, aligned with `source` in both
+ *   spatial index and temporal length.
+ *
+ * @param lib_indices
+ *   Indices used as the "library set" for neighbor searching and pattern estimation.
+ *   Typically corresponds to time indices used for model fitting.
+ *
+ * @param pred_indices
+ *   Indices used as the "prediction set", where causality is evaluated.
+ *
+ * @param E
+ *   Candidate embedding dimensions. Each E defines the number of delay coordinates
+ *   used to reconstruct state vectors in the grid embedding.
+ *
+ * @param b
+ *   Candidate neighbor counts. Each b specifies how many nearest neighbors are used
+ *   in the pattern similarity / causality computation.
+ *
+ * @param tau
+ *   Candidate spatial lags (lag steps) used when constructing delay embeddings.
+ *
+ * @param style
+ *   Embedding style for grid reconstruction:
+ *   (See GenGridEmbeddings() for supported styles.)
+ *
+ * @param zero_tolerance
+ *   Threshold for treating small distances or weights as zero.
+ *   Useful for avoiding numerical instability.
+ *
+ * @param dist_metric
+ *   Distance metric used for neighbor searching:
+ *     - 1: Manhattan distance
+ *     - 2: Euclidean distance (default)
+ *
+ * @param relative
+ *   Whether to normalize distances relative to local scale (relative = true),
+ *   or treat them as absolute values.
+ *
+ * @param weighted
+ *   Whether to weight causal strength.
+ *
+ * @param NA_rm
+ *   Whether to remove NaN samples before symbolic pattern generation.
+ *
+ * @param threads
+ *   Maximum number of threads to use for parallel computation.
+ *   If negative, absolute value is used. If larger than hardware limit,
+ *   it is automatically capped.
+ *
+ * @param parallel_level
+ *   Controls whether computation is parallelized.
+ *
+ * @return
+ *   A 2D matrix where each row corresponds to one (E, b, tau) parameter triplet:
+ *
+ *     [0] E
+ *     [1] b
+ *     [2] tau
+ *     [3] TotalPos   — Strength of positive-pattern causality
+ *     [4] TotalNeg   — Strength of negative-pattern causality
+ *     [5] TotalDark  — Strength of ambiguous / non-directional causality
+ *
+ *   This table enables searching for optimal embedding parameters in
+ *   geographical Pattern Causality studies.
+ */
+std::vector<std::vector<double>> PC4Grid(const std::vector<std::vector<double>>& source,
+                                         const std::vector<std::vector<double>>& target,
+                                         const std::vector<size_t>& lib_indices,
+                                         const std::vector<size_t>& pred_indices,
+                                         const std::vector<int>& E,
+                                         const std::vector<int>& b,
+                                         const std::vector<int>& tau,
+                                         int style = 1,
+                                         int zero_tolerance = 0,
+                                         int dist_metric = 2,
+                                         bool relative = true,
+                                         bool weighted = true,
+                                         bool NA_rm = true,
                                          int threads = 8,
                                          int parallel_level = 0);
 
