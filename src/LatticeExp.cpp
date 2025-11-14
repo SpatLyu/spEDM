@@ -1038,10 +1038,6 @@ Rcpp::NumericMatrix RcppPC4Lattice(const Rcpp::NumericVector& source,
   std::vector<double> source_std = Rcpp::as<std::vector<double>>(source);
   std::vector<double> target_std = Rcpp::as<std::vector<double>>(target);
 
-  // Convert Rcpp::IntegerVector to std::vector<int>
-  std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
-  std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
-
   // Initialize lib_indices and pred_indices
   std::vector<size_t> lib_indices;
   std::vector<size_t> pred_indices;
@@ -1066,6 +1062,10 @@ Rcpp::NumericMatrix RcppPC4Lattice(const Rcpp::NumericVector& source,
       pred_indices.push_back(static_cast<size_t>(pred[i] - 1)); // Convert to 0-based index
     }
   }
+
+  // Convert Rcpp::IntegerVector to std::vector<int>
+  std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
+  std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
 
   // Check the validity of the neignbor numbers
   std::vector<int> b_std;
