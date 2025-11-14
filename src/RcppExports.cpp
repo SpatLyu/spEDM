@@ -1688,13 +1688,13 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// OptPCparms
-Rcpp::IntegerVector OptPCparms(Rcpp::NumericMatrix Emat);
-RcppExport SEXP _spEDM_OptPCparms(SEXP EmatSEXP) {
+// OptPCparm
+Rcpp::IntegerVector OptPCparm(Rcpp::NumericMatrix Emat);
+RcppExport SEXP _spEDM_OptPCparm(SEXP EmatSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Emat(EmatSEXP);
-    rcpp_result_gen = Rcpp::wrap(OptPCparms(Emat));
+    rcpp_result_gen = Rcpp::wrap(OptPCparm(Emat));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1818,7 +1818,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_OptEmbedDim", (DL_FUNC) &_spEDM_OptEmbedDim, 1},
     {"_spEDM_OptThetaParm", (DL_FUNC) &_spEDM_OptThetaParm, 1},
     {"_spEDM_OptICparm", (DL_FUNC) &_spEDM_OptICparm, 1},
-    {"_spEDM_OptPCparms", (DL_FUNC) &_spEDM_OptPCparms, 1},
+    {"_spEDM_OptPCparm", (DL_FUNC) &_spEDM_OptPCparm, 1},
     {"_spEDM_MatNotNAIndice", (DL_FUNC) &_spEDM_MatNotNAIndice, 2},
     {NULL, NULL, 0}
 };
