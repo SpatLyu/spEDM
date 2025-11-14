@@ -473,6 +473,30 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// RcppPC4Grid
+Rcpp::NumericMatrix RcppPC4Grid(const Rcpp::NumericMatrix& source, const Rcpp::NumericMatrix& target, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& b, const Rcpp::IntegerVector& tau, int style, int zero_tolerance, int dist_metric, bool relative, bool weighted, bool NA_rm, int threads, int parallel_level);
+RcppExport SEXP _spEDM_RcppPC4Grid(SEXP sourceSEXP, SEXP targetSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP bSEXP, SEXP tauSEXP, SEXP styleSEXP, SEXP zero_toleranceSEXP, SEXP dist_metricSEXP, SEXP relativeSEXP, SEXP weightedSEXP, SEXP NA_rmSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type source(sourceSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type target(targetSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type lib(libSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type pred(predSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type E(ESEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type b(bSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< int >::type style(styleSEXP);
+    Rcpp::traits::input_parameter< int >::type zero_tolerance(zero_toleranceSEXP);
+    Rcpp::traits::input_parameter< int >::type dist_metric(dist_metricSEXP);
+    Rcpp::traits::input_parameter< bool >::type relative(relativeSEXP);
+    Rcpp::traits::input_parameter< bool >::type weighted(weightedSEXP);
+    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
+    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< int >::type parallel_level(parallel_levelSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppPC4Grid(source, target, lib, pred, E, b, tau, style, zero_tolerance, dist_metric, relative, weighted, NA_rm, threads, parallel_level));
+    return rcpp_result_gen;
+END_RCPP
+}
 // RcppGCCM4Grid
 Rcpp::NumericMatrix RcppGCCM4Grid(const Rcpp::NumericMatrix& xMatrix, const Rcpp::NumericMatrix& yMatrix, const Rcpp::IntegerMatrix& libsizes, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, int E, int tau, int b, bool simplex, double theta, int threads, int parallel_level, int style, int stack, int dist_metric, bool dist_average, bool single_sig, const Rcpp::IntegerVector& dir, const Rcpp::NumericVector& win_ratio, bool progressbar);
 RcppExport SEXP _spEDM_RcppGCCM4Grid(SEXP xMatrixSEXP, SEXP yMatrixSEXP, SEXP libsizesSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP bSEXP, SEXP simplexSEXP, SEXP thetaSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP, SEXP styleSEXP, SEXP stackSEXP, SEXP dist_metricSEXP, SEXP dist_averageSEXP, SEXP single_sigSEXP, SEXP dirSEXP, SEXP win_ratioSEXP, SEXP progressbarSEXP) {
@@ -906,6 +930,31 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< int >::type parallel_level(parallel_levelSEXP);
     rcpp_result_gen = Rcpp::wrap(RcppIC4Lattice(source, target, nb, lib, pred, E, b, tau, exclude, style, dist_metric, threads, parallel_level));
+    return rcpp_result_gen;
+END_RCPP
+}
+// RcppPC4Lattice
+Rcpp::NumericMatrix RcppPC4Lattice(const Rcpp::NumericVector& source, const Rcpp::NumericVector& target, const Rcpp::List& nb, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& b, const Rcpp::IntegerVector& tau, int style, int zero_tolerance, int dist_metric, bool relative, bool weighted, bool NA_rm, int threads, int parallel_level);
+RcppExport SEXP _spEDM_RcppPC4Lattice(SEXP sourceSEXP, SEXP targetSEXP, SEXP nbSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP bSEXP, SEXP tauSEXP, SEXP styleSEXP, SEXP zero_toleranceSEXP, SEXP dist_metricSEXP, SEXP relativeSEXP, SEXP weightedSEXP, SEXP NA_rmSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type source(sourceSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type target(targetSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type nb(nbSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type lib(libSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type pred(predSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type E(ESEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type b(bSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< int >::type style(styleSEXP);
+    Rcpp::traits::input_parameter< int >::type zero_tolerance(zero_toleranceSEXP);
+    Rcpp::traits::input_parameter< int >::type dist_metric(dist_metricSEXP);
+    Rcpp::traits::input_parameter< bool >::type relative(relativeSEXP);
+    Rcpp::traits::input_parameter< bool >::type weighted(weightedSEXP);
+    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
+    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< int >::type parallel_level(parallel_levelSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppPC4Lattice(source, target, nb, lib, pred, E, b, tau, style, zero_tolerance, dist_metric, relative, weighted, NA_rm, threads, parallel_level));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1691,6 +1740,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppSMap4Grid", (DL_FUNC) &_spEDM_RcppSMap4Grid, 14},
     {"_spEDM_RcppMultiView4Grid", (DL_FUNC) &_spEDM_RcppMultiView4Grid, 14},
     {"_spEDM_RcppIC4Grid", (DL_FUNC) &_spEDM_RcppIC4Grid, 12},
+    {"_spEDM_RcppPC4Grid", (DL_FUNC) &_spEDM_RcppPC4Grid, 15},
     {"_spEDM_RcppGCCM4Grid", (DL_FUNC) &_spEDM_RcppGCCM4Grid, 20},
     {"_spEDM_RcppSCPCM4Grid", (DL_FUNC) &_spEDM_RcppSCPCM4Grid, 22},
     {"_spEDM_RcppGCMC4Grid", (DL_FUNC) &_spEDM_RcppGCMC4Grid, 14},
@@ -1713,6 +1763,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppSMap4Lattice", (DL_FUNC) &_spEDM_RcppSMap4Lattice, 14},
     {"_spEDM_RcppMultiView4Lattice", (DL_FUNC) &_spEDM_RcppMultiView4Lattice, 15},
     {"_spEDM_RcppIC4Lattice", (DL_FUNC) &_spEDM_RcppIC4Lattice, 13},
+    {"_spEDM_RcppPC4Lattice", (DL_FUNC) &_spEDM_RcppPC4Lattice, 16},
     {"_spEDM_RcppGCCM4Lattice", (DL_FUNC) &_spEDM_RcppGCCM4Lattice, 19},
     {"_spEDM_RcppSCPCM4Lattice", (DL_FUNC) &_spEDM_RcppSCPCM4Lattice, 21},
     {"_spEDM_RcppGCMC4Lattice", (DL_FUNC) &_spEDM_RcppGCMC4Lattice, 15},

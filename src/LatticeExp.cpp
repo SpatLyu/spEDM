@@ -1013,6 +1013,105 @@ Rcpp::NumericMatrix RcppIC4Lattice(const Rcpp::NumericVector& source,
   return result;
 }
 
+// Wrapper function to compute pattern causality for spatial lattice data
+// [[Rcpp::export(rng = false)]]
+Rcpp::NumericMatrix RcppPC4Lattice(const Rcpp::NumericVector& source,
+                                   const Rcpp::NumericVector& target,
+                                   const Rcpp::List& nb,
+                                   const Rcpp::IntegerVector& lib,
+                                   const Rcpp::IntegerVector& pred,
+                                   const Rcpp::IntegerVector& E,
+                                   const Rcpp::IntegerVector& b,
+                                   const Rcpp::IntegerVector& tau,
+                                   int style = 1,
+                                   int zero_tolerance = 0,
+                                   int dist_metric = 2,
+                                   bool relative = true,
+                                   bool weighted = true,
+                                   bool NA_rm = true,
+                                   int threads = 8,
+                                   int parallel_level = 0) {
+  // Convert neighborhood list to std::vector<std::vector<int>>
+  std::vector<std::vector<int>> nb_vec = nb2vec(nb);
+
+  // Convert Rcpp::NumericVector to std::vector<double>
+  std::vector<double> source_std = Rcpp::as<std::vector<double>>(source);
+  std::vector<double> target_std = Rcpp::as<std::vector<double>>(target);
+
+  // Initialize lib_indices and pred_indices
+  std::vector<size_t> lib_indices;
+  std::vector<size_t> pred_indices;
+
+  int target_len = target_std.size();
+  // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
+  size_t n_libsize = lib.size();   // convert R R_xlen_t to C++ size_t
+  for (size_t i = 0; i < n_libsize; ++i) {
+    if (lib[i] < 1 || lib[i] > target_len) {
+      Rcpp::stop("lib contains out-of-bounds index at position %d (value: %d)", i + 1, lib[i]);
+    }
+    if (!std::isnan(source_std[lib[i] - 1]) && !std::isnan(target_std[lib[i] - 1])) {
+      lib_indices.push_back(static_cast<size_t>(lib[i] - 1)); // Convert to 0-based index
+    }
+  }
+  size_t n_predsize = pred.size();   // convert R R_xlen_t to C++ size_t
+  for (size_t i = 0; i < n_predsize; ++i) {
+    if (pred[i] < 1 || pred[i] > target_len) {
+      Rcpp::stop("pred contains out-of-bounds index at position %d (value: %d)", i + 1, pred[i]);
+    }
+    if (!std::isnan(source_std[pred[i] - 1]) && !std::isnan(target_std[pred[i] - 1])) {
+      pred_indices.push_back(static_cast<size_t>(pred[i] - 1)); // Convert to 0-based index
+    }
+  }
+
+  // Convert Rcpp::IntegerVector to std::vector<int>
+  std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
+  std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
+
+  // Check the validity of the neignbor numbers
+  std::vector<int> b_std;
+  for (int i = 0; i < b.size(); ++i){
+    if (b[i] > static_cast<int>(lib_indices.size())) {
+      Rcpp::stop("Neighbor numbers count out of acceptable range at position %d (value: %d)", i + 1, b[i]);
+    }
+    b_std.push_back(b[i]);
+  }
+
+  std::vector<std::vector<double>> res_std = PC4Lattice(
+    source_std,
+    target_std,
+    nb_vec,
+    lib_indices,
+    pred_indices,
+    E_std,
+    b_std,
+    tau_std,
+    style,
+    zero_tolerance,
+    dist_metric,
+    relative,
+    weighted,
+    NA_rm,
+    threads,
+    parallel_level);
+
+  size_t n_rows = res_std.size();
+  size_t n_cols = res_std[0].size();
+
+  // Create an Rcpp::NumericMatrix with the same dimensions
+  Rcpp::NumericMatrix result(n_rows, n_cols);
+
+  // Fill the Rcpp::NumericMatrix with data from res_std
+  for (size_t i = 0; i < n_rows; ++i) {
+    for (size_t j = 0; j < n_cols; ++j) {
+      result(i, j) = res_std[i][j];
+    }
+  }
+
+  // Set column names for the result matrix
+  Rcpp::colnames(result) = Rcpp::CharacterVector::create("E", "k", "tau", "positive", "negative", "dark");
+  return result;
+}
+
 // Wrapper function to perform GCCM for spatial lattice data
 // predict y based on x ====> x xmap y ====> y causes x
 // [[Rcpp::export(rng = false)]]
