@@ -647,66 +647,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// DetectMaxNumThreads
-unsigned int DetectMaxNumThreads();
-RcppExport SEXP _spEDM_DetectMaxNumThreads() {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    rcpp_result_gen = Rcpp::wrap(DetectMaxNumThreads());
-    return rcpp_result_gen;
-END_RCPP
-}
-// OptEmbedDim
-Rcpp::IntegerVector OptEmbedDim(Rcpp::NumericMatrix Emat);
-RcppExport SEXP _spEDM_OptEmbedDim(SEXP EmatSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Emat(EmatSEXP);
-    rcpp_result_gen = Rcpp::wrap(OptEmbedDim(Emat));
-    return rcpp_result_gen;
-END_RCPP
-}
-// OptThetaParm
-double OptThetaParm(Rcpp::NumericMatrix Thetamat);
-RcppExport SEXP _spEDM_OptThetaParm(SEXP ThetamatSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Thetamat(ThetamatSEXP);
-    rcpp_result_gen = Rcpp::wrap(OptThetaParm(Thetamat));
-    return rcpp_result_gen;
-END_RCPP
-}
-// OptICparm
-Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat);
-RcppExport SEXP _spEDM_OptICparm(SEXP EmatSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Emat(EmatSEXP);
-    rcpp_result_gen = Rcpp::wrap(OptICparm(Emat));
-    return rcpp_result_gen;
-END_RCPP
-}
-// OptPCparms
-Rcpp::IntegerVector OptPCparms(Rcpp::NumericMatrix Emat);
-RcppExport SEXP _spEDM_OptPCparms(SEXP EmatSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Emat(EmatSEXP);
-    rcpp_result_gen = Rcpp::wrap(OptPCparms(Emat));
-    return rcpp_result_gen;
-END_RCPP
-}
-// MatNotNAIndice
-Rcpp::NumericMatrix MatNotNAIndice(Rcpp::NumericMatrix mat, bool byrow);
-RcppExport SEXP _spEDM_MatNotNAIndice(SEXP matSEXP, SEXP byrowSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type mat(matSEXP);
-    Rcpp::traits::input_parameter< bool >::type byrow(byrowSEXP);
-    rcpp_result_gen = Rcpp::wrap(MatNotNAIndice(mat, byrow));
-    return rcpp_result_gen;
-END_RCPP
-}
 // RcppLaggedNeighbor4Lattice
 Rcpp::List RcppLaggedNeighbor4Lattice(const Rcpp::List& nb, int lagNum);
 RcppExport SEXP _spEDM_RcppLaggedNeighbor4Lattice(SEXP nbSEXP, SEXP lagNumSEXP) {
@@ -1660,6 +1600,66 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// DetectMaxNumThreads
+unsigned int DetectMaxNumThreads();
+RcppExport SEXP _spEDM_DetectMaxNumThreads() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    rcpp_result_gen = Rcpp::wrap(DetectMaxNumThreads());
+    return rcpp_result_gen;
+END_RCPP
+}
+// OptEmbedDim
+Rcpp::IntegerVector OptEmbedDim(Rcpp::NumericMatrix Emat);
+RcppExport SEXP _spEDM_OptEmbedDim(SEXP EmatSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Emat(EmatSEXP);
+    rcpp_result_gen = Rcpp::wrap(OptEmbedDim(Emat));
+    return rcpp_result_gen;
+END_RCPP
+}
+// OptThetaParm
+double OptThetaParm(Rcpp::NumericMatrix Thetamat);
+RcppExport SEXP _spEDM_OptThetaParm(SEXP ThetamatSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Thetamat(ThetamatSEXP);
+    rcpp_result_gen = Rcpp::wrap(OptThetaParm(Thetamat));
+    return rcpp_result_gen;
+END_RCPP
+}
+// OptICparm
+Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat);
+RcppExport SEXP _spEDM_OptICparm(SEXP EmatSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Emat(EmatSEXP);
+    rcpp_result_gen = Rcpp::wrap(OptICparm(Emat));
+    return rcpp_result_gen;
+END_RCPP
+}
+// OptPCparms
+Rcpp::IntegerVector OptPCparms(Rcpp::NumericMatrix Emat);
+RcppExport SEXP _spEDM_OptPCparms(SEXP EmatSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Emat(EmatSEXP);
+    rcpp_result_gen = Rcpp::wrap(OptPCparms(Emat));
+    return rcpp_result_gen;
+END_RCPP
+}
+// MatNotNAIndice
+Rcpp::NumericMatrix MatNotNAIndice(Rcpp::NumericMatrix mat, bool byrow);
+RcppExport SEXP _spEDM_MatNotNAIndice(SEXP matSEXP, SEXP byrowSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< bool >::type byrow(byrowSEXP);
+    rcpp_result_gen = Rcpp::wrap(MatNotNAIndice(mat, byrow));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppEntropy_Cont", (DL_FUNC) &_spEDM_RcppEntropy_Cont, 4},
@@ -1698,12 +1698,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppGPCRobust4Grid", (DL_FUNC) &_spEDM_RcppGPCRobust4Grid, 20},
     {"_spEDM_RcppSGCSingle4Grid", (DL_FUNC) &_spEDM_RcppSGCSingle4Grid, 8},
     {"_spEDM_RcppSGC4Grid", (DL_FUNC) &_spEDM_RcppSGC4Grid, 13},
-    {"_spEDM_DetectMaxNumThreads", (DL_FUNC) &_spEDM_DetectMaxNumThreads, 0},
-    {"_spEDM_OptEmbedDim", (DL_FUNC) &_spEDM_OptEmbedDim, 1},
-    {"_spEDM_OptThetaParm", (DL_FUNC) &_spEDM_OptThetaParm, 1},
-    {"_spEDM_OptICparm", (DL_FUNC) &_spEDM_OptICparm, 1},
-    {"_spEDM_OptPCparms", (DL_FUNC) &_spEDM_OptPCparms, 1},
-    {"_spEDM_MatNotNAIndice", (DL_FUNC) &_spEDM_MatNotNAIndice, 2},
     {"_spEDM_RcppLaggedNeighbor4Lattice", (DL_FUNC) &_spEDM_RcppLaggedNeighbor4Lattice, 2},
     {"_spEDM_RcppLaggedVal4Lattice", (DL_FUNC) &_spEDM_RcppLaggedVal4Lattice, 3},
     {"_spEDM_RcppGenLatticeEmbeddings", (DL_FUNC) &_spEDM_RcppGenLatticeEmbeddings, 5},
@@ -1769,6 +1763,12 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppSVD", (DL_FUNC) &_spEDM_RcppSVD, 1},
     {"_spEDM_RcppDeLongPlacements", (DL_FUNC) &_spEDM_RcppDeLongPlacements, 3},
     {"_spEDM_RcppSpatialBlockBootstrap", (DL_FUNC) &_spEDM_RcppSpatialBlockBootstrap, 2},
+    {"_spEDM_DetectMaxNumThreads", (DL_FUNC) &_spEDM_DetectMaxNumThreads, 0},
+    {"_spEDM_OptEmbedDim", (DL_FUNC) &_spEDM_OptEmbedDim, 1},
+    {"_spEDM_OptThetaParm", (DL_FUNC) &_spEDM_OptThetaParm, 1},
+    {"_spEDM_OptICparm", (DL_FUNC) &_spEDM_OptICparm, 1},
+    {"_spEDM_OptPCparms", (DL_FUNC) &_spEDM_OptPCparms, 1},
+    {"_spEDM_MatNotNAIndice", (DL_FUNC) &_spEDM_MatNotNAIndice, 2},
     {NULL, NULL, 0}
 };
 

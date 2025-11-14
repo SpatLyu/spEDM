@@ -145,30 +145,6 @@ RcppSGC4Grid <- function(x, y, lib, pred, block, k, threads = 8L, boot = 399L, b
     .Call(`_spEDM_RcppSGC4Grid`, x, y, lib, pred, block, k, threads, boot, base, seed, symbolize, normalize, progressbar)
 }
 
-DetectMaxNumThreads <- function() {
-    .Call(`_spEDM_DetectMaxNumThreads`)
-}
-
-OptEmbedDim <- function(Emat) {
-    .Call(`_spEDM_OptEmbedDim`, Emat)
-}
-
-OptThetaParm <- function(Thetamat) {
-    .Call(`_spEDM_OptThetaParm`, Thetamat)
-}
-
-OptICparm <- function(Emat) {
-    .Call(`_spEDM_OptICparm`, Emat)
-}
-
-OptPCparms <- function(Emat) {
-    .Call(`_spEDM_OptPCparms`, Emat)
-}
-
-MatNotNAIndice <- function(mat, byrow = TRUE) {
-    .Call(`_spEDM_MatNotNAIndice`, mat, byrow)
-}
-
 RcppLaggedNeighbor4Lattice <- function(nb, lagNum = 1L) {
     .Call(`_spEDM_RcppLaggedNeighbor4Lattice`, nb, lagNum)
 }
@@ -427,5 +403,29 @@ RcppDeLongPlacements <- function(cases, controls, direction) {
 
 RcppSpatialBlockBootstrap <- function(block, seed = 42L) {
     .Call(`_spEDM_RcppSpatialBlockBootstrap`, block, seed)
+}
+
+DetectMaxNumThreads <- function() {
+    .Call(`_spEDM_DetectMaxNumThreads`)
+}
+
+OptEmbedDim <- function(Emat) {
+    .Call(`_spEDM_OptEmbedDim`, Emat)
+}
+
+OptThetaParm <- function(Thetamat) {
+    .Call(`_spEDM_OptThetaParm`, Thetamat)
+}
+
+OptICparm <- function(Emat) {
+    .Call(`_spEDM_OptICparm`, Emat)
+}
+
+OptPCparms <- function(Emat) {
+    .Call(`_spEDM_OptPCparms`, Emat)
+}
+
+MatNotNAIndice <- function(mat, byrow = TRUE) {
+    .Call(`_spEDM_MatNotNAIndice`, mat, byrow)
 }
 

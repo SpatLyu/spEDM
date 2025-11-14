@@ -1,32 +1,29 @@
 .ic_sf_method = \(data, column, target, E = 2:10, k = E+2, tau = 1, style = 1, lib = NULL, pred = NULL,
-                  dist.metric = "L2", threads = detectThreads(), detrend = FALSE, parallel.level = "low", nb = NULL){
+                  dist.metric = "L2", threads = detectThreads(), detrend = FALSE, nb = NULL){
   vx = .uni_lattice(data,column,detrend)
   vy = .uni_lattice(data,target,detrend)
   if (is.null(lib)) lib = .internal_library(cbind(vx,vy))
   if (is.null(pred)) pred = lib
   if (is.null(nb)) nb = .internal_lattice_nb(data)
-  pl = .check_parallellevel(parallel.level)
   res = RcppIC4Lattice(vx, vy, nb, lib, pred, E, k, tau, 0, style,
-                       .check_distmetric(dist.metric),threads,pl)
+                       .check_distmetric(dist.metric),threads,0)
   return(.bind_xmapself(res,target,"ic",tau))
 }
 
 .ic_spatraster_method = \(data, column, target, E = 2:10, k = E+2, tau = 1, style = 1, lib = NULL, pred = NULL,
-                          dist.metric = "L2", threads = detectThreads(), detrend = FALSE, parallel.level = "low", grid.coord = TRUE){
+                          dist.metric = "L2", threads = detectThreads(), detrend = FALSE, grid.coord = TRUE){
   mx = .uni_grid(data,column,detrend,grid.coord)
   my = .uni_grid(data,target,detrend,grid.coord)
   if (is.null(lib)) lib = which(!(is.na(mx) | is.na(my)), arr.ind = TRUE)
   if (is.null(pred)) pred = lib
-  pl = .check_parallellevel(parallel.level)
   res = RcppIC4Grid(mx, my, lib, pred, E, k, tau, 0, style,
-                    .check_distmetric(dist.metric),threads,pl)
+                    .check_distmetric(dist.metric),threads,0)
   return(.bind_xmapself(res,target,"ic",tau))
 }
 
 #' intersection cardinality
 #'
 #' @inheritParams simplex
-#' @param parallel.level (optional) level of parallelism, `low` or `high`.
 #'
 #' @return A list
 #' \describe{
