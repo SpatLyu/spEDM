@@ -1312,7 +1312,7 @@ Rcpp::NumericMatrix RcppPC4Grid(const Rcpp::NumericMatrix& source,
   }
 
   // Set column names for the result matrix
-  Rcpp::colnames(result) = Rcpp::CharacterVector::create("E", "k", "CausalScore", "Significance");
+  Rcpp::colnames(result) = Rcpp::CharacterVector::create("E", "k", "tau", "positive", "negative", "dark");
   return result;
 }
 
