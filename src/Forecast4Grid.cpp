@@ -515,7 +515,7 @@ std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>&
  *   it is automatically capped.
  *
  * @param parallel_level
- *   Controls whether computation is parallelized.
+ *   Controls the parallel level of computation.
  *
  * @return
  *   A 2D matrix where each row corresponds to one (E, b, tau) parameter triplet:
@@ -584,9 +584,9 @@ std::vector<std::vector<double>> PC4Grid(const std::vector<std::vector<double>>&
       result[i][0] = Ei;
       result[i][1] = bi;
       result[i][2] = taui;
-      result[i][3] = res.TotalPos;
-      result[i][4] = res.TotalNeg;
-      result[i][5] = res.TotalDark;
+      result[i][3] = std::isnan(res.TotalPos) ? 0.0 : res.TotalPos;
+      result[i][4] = std::isnan(res.TotalNeg) ? 0.0 : res.TotalNeg;
+      result[i][5] = std::isnan(res.TotalDark) ? 0.0 : res.TotalDark;
     }
   } else {
     // Configure threads
@@ -609,9 +609,9 @@ std::vector<std::vector<double>> PC4Grid(const std::vector<std::vector<double>>&
       result[i][0] = Ei;
       result[i][1] = bi;
       result[i][2] = taui;
-      result[i][3] = res.TotalPos;
-      result[i][4] = res.TotalNeg;
-      result[i][5] = res.TotalDark;
+      result[i][3] = std::isnan(res.TotalPos) ? 0.0 : res.TotalPos;
+      result[i][4] = std::isnan(res.TotalNeg) ? 0.0 : res.TotalNeg;
+      result[i][5] = std::isnan(res.TotalDark) ? 0.0 : res.TotalDark;
     }, threads_sizet);
   }
 
