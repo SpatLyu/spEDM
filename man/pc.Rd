@@ -67,6 +67,14 @@
 
 \item{dist.metric}{(optional) distance metric (\code{L1}: Manhattan, \code{L2}: Euclidean).}
 
+\item{zero.tolerance}{(optional) maximum number of zeros tolerated in signature space.}
+
+\item{relative}{(optional) whether to calculate relative changes in embeddings.}
+
+\item{weighted}{(optional) whether to weight causal strength.}
+
+\item{na.rm}{(optional) whether to remove \code{NA} samples in symbolic pattern generation.}
+
 \item{threads}{(optional) number of threads to use.}
 
 \item{detrend}{(optional) whether to remove the linear trend.}
