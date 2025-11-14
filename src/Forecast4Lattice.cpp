@@ -442,7 +442,7 @@ std::vector<std::vector<double>> IC4Lattice(const std::vector<double>& source,
  * - style: embedding style passed to GenLatticeEmbeddings.
  * - zero_tolerance, dist_metric, relative, weighted, NA_rm: forwarded to PatternCausality.
  * - threads: hint for internal multi-threading (used in PatternCausality or parallelFor).
- * - parallel_level: 0 = serial run, non-zero = parallel over lattice nodes.
+ * - parallel_level: 0 = low-level parallel, non-zero = high-level parallel.
  *
  * Return:
  * - matrix (std::vector<std::vector<double>>) with one row per (E,b,tau) and columns:
@@ -503,9 +503,9 @@ std::vector<std::vector<double>> PC4Lattice(const std::vector<double>& source,
       result[i][0] = Ei;
       result[i][1] = bi;
       result[i][2] = taui;
-      result[i][3] = res.TotalPos;
-      result[i][4] = res.TotalNeg;
-      result[i][5] = res.TotalDark;
+      result[i][3] = std::isnan(res.TotalPos) ? 0.0 : res.TotalPos;
+      result[i][4] = std::isnan(res.TotalNeg) ? 0.0 : res.TotalNeg;
+      result[i][5] = std::isnan(res.TotalDark) ? 0.0 : res.TotalDark;
     }
   } else {
     // Configure threads
@@ -528,9 +528,9 @@ std::vector<std::vector<double>> PC4Lattice(const std::vector<double>& source,
       result[i][0] = Ei;
       result[i][1] = bi;
       result[i][2] = taui;
-      result[i][3] = res.TotalPos;
-      result[i][4] = res.TotalNeg;
-      result[i][5] = res.TotalDark;
+      result[i][3] = std::isnan(res.TotalPos) ? 0.0 : res.TotalPos;
+      result[i][4] = std::isnan(res.TotalNeg) ? 0.0 : res.TotalNeg;
+      result[i][5] = std::isnan(res.TotalDark) ? 0.0 : res.TotalDark;
     }, threads_sizet);
   }
 

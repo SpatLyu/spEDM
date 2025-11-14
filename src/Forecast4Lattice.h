@@ -203,7 +203,7 @@ std::vector<std::vector<double>> IC4Lattice(const std::vector<double>& source,
  * - style: embedding style passed to GenLatticeEmbeddings.
  * - zero_tolerance, dist_metric, relative, weighted, NA_rm: forwarded to PatternCausality.
  * - threads: hint for internal multi-threading (used in PatternCausality or parallelFor).
- * - parallel_level: 0 = serial run, non-zero = parallel over lattice nodes.
+ * - parallel_level: 0 = low-level parallel, non-zero = high-level parallel.
  *
  * Return:
  * - matrix (std::vector<std::vector<double>>) with one row per (E,b,tau) and columns:

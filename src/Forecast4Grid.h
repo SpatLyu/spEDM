@@ -215,7 +215,7 @@ std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>&
  *   it is automatically capped.
  *
  * @param parallel_level
- *   Controls whether computation is parallelized.
+ *   Controls the parallel level of computation.
  *
  * @return
  *   A 2D matrix where each row corresponds to one (E, b, tau) parameter triplet:
