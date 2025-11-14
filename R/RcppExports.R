@@ -117,6 +117,10 @@ RcppIC4Grid <- function(source, target, lib, pred, E, b, tau = 1L, exclude = 0L,
     .Call(`_spEDM_RcppIC4Grid`, source, target, lib, pred, E, b, tau, exclude, style, dist_metric, threads, parallel_level)
 }
 
+RcppPC4Grid <- function(source, target, lib, pred, E, b, tau, style = 1L, zero_tolerance = 0L, dist_metric = 2L, relative = TRUE, weighted = TRUE, NA_rm = TRUE, threads = 8L, parallel_level = 0L) {
+    .Call(`_spEDM_RcppPC4Grid`, source, target, lib, pred, E, b, tau, style, zero_tolerance, dist_metric, relative, weighted, NA_rm, threads, parallel_level)
+}
+
 RcppGCCM4Grid <- function(xMatrix, yMatrix, libsizes, lib, pred, E = 3L, tau = 1L, b = 5L, simplex = TRUE, theta = 0, threads = 8L, parallel_level = 0L, style = 1L, stack = 0L, dist_metric = 2L, dist_average = TRUE, single_sig = TRUE, dir = as.integer( c(0)), win_ratio = as.numeric( c(0,0)), progressbar = FALSE) {
     .Call(`_spEDM_RcppGCCM4Grid`, xMatrix, yMatrix, libsizes, lib, pred, E, tau, b, simplex, theta, threads, parallel_level, style, stack, dist_metric, dist_average, single_sig, dir, win_ratio, progressbar)
 }
@@ -203,6 +207,10 @@ RcppMultiView4Lattice <- function(x, y, nb, lib, pred, E = 3L, tau = 1L, b = 5L,
 
 RcppIC4Lattice <- function(source, target, nb, lib, pred, E, b, tau = 1L, exclude = 0L, style = 1L, dist_metric = 2L, threads = 8L, parallel_level = 0L) {
     .Call(`_spEDM_RcppIC4Lattice`, source, target, nb, lib, pred, E, b, tau, exclude, style, dist_metric, threads, parallel_level)
+}
+
+RcppPC4Lattice <- function(source, target, nb, lib, pred, E, b, tau, style = 1L, zero_tolerance = 0L, dist_metric = 2L, relative = TRUE, weighted = TRUE, NA_rm = TRUE, threads = 8L, parallel_level = 0L) {
+    .Call(`_spEDM_RcppPC4Lattice`, source, target, nb, lib, pred, E, b, tau, style, zero_tolerance, dist_metric, relative, weighted, NA_rm, threads, parallel_level)
 }
 
 RcppGCCM4Lattice <- function(x, y, nb, libsizes, lib, pred, E = 3L, tau = 1L, b = 5L, simplex = TRUE, theta = 0, threads = 8L, parallel_level = 0L, style = 1L, stack = 0L, dist_metric = 2L, dist_average = TRUE, single_sig = TRUE, progressbar = FALSE) {
