@@ -24,6 +24,10 @@
 #' pattern causality
 #'
 #' @inheritParams simplex
+#' @param zero.tolerance (optional) maximum number of zeros tolerated in signature space.
+#' @param relative (optional) whether to calculate relative changes in embeddings.
+#' @param weighted (optional) whether to weight causal strength.
+#' @param na.rm (optional) whether to remove `NA` samples in symbolic pattern generation.
 #'
 #' @return A list
 #' \describe{
