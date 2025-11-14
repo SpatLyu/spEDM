@@ -1601,7 +1601,7 @@ Rcpp::DataFrame RcppGPCRobust4Lattice(
   std::vector<size_t> valid_libsizes;
   valid_libsizes.reserve(libsizes_std.size());
   for (size_t s : libsizes_std) {
-    if (s >= static_cast<size_t>(b) && s <= lib_std.size())
+    if (s > static_cast<size_t>(b) && s <= lib_std.size())
       valid_libsizes.push_back(s);
   }
 
@@ -1609,7 +1609,8 @@ Rcpp::DataFrame RcppGPCRobust4Lattice(
   valid_libsizes.erase(std::unique(valid_libsizes.begin(), valid_libsizes.end()), valid_libsizes.end());
 
   if (valid_libsizes.empty()) {
-    Rcpp::stop("[Error] No valid libsizes after filtering. Aborting computation.");
+    Rcpp::warning("[Warning] No valid libsizes after filtering. Using full library size as fallback.");
+    valid_libsizes.push_back(lib_std.size());
   }
 
   // --- Embedding Construction ------------------------------------------------
