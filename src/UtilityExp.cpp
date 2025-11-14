@@ -306,11 +306,11 @@ Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat) {
  *
  * @examples
  * \dontrun{
- *   result <- OptPCparms(Emat)
+ *   result <- OptPCparm(Emat)
  * }
  */
 // [[Rcpp::export(rng = false)]]
-Rcpp::IntegerVector OptPCparms(Rcpp::NumericMatrix Emat) {
+Rcpp::IntegerVector OptPCparm(Rcpp::NumericMatrix Emat) {
   if (Emat.ncol() != 6) {
     Rcpp::stop("Input matrix must have exactly 6 columns: E, k, tau, pos, neg, and dark.");
   }

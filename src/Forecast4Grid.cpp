@@ -583,7 +583,7 @@ std::vector<std::vector<double>> PC4Grid(const std::vector<std::vector<double>>&
 
       result[i][0] = Ei;
       result[i][1] = bi;
-      result[i][2] = bi;
+      result[i][2] = taui;
       result[i][3] = res.TotalPos;
       result[i][4] = res.TotalNeg;
       result[i][5] = res.TotalDark;
