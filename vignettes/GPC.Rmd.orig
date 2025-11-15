@@ -90,7 +90,7 @@ spEDM::pc(columbus, "hoval", "crime", E = 5:10, k = 6:12)
 
 Run geographical pattern causality analysis
 
-```{r gpc_grid}
+```{r gpc_lattice}
 spEDM::gpc(columbus, "hoval", "crime", E = 5, k = 6)
 ```
 
