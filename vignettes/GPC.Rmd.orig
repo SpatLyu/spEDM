@@ -1,0 +1,157 @@
+---
+title: "Geographical Pattern Causality"
+author: "Wenbo Lv"
+date: |
+  | Last update: 2025-11-15
+  | Last run: `r Sys.Date()`
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{GPC}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "##",
+  fig.path = "man/figures/gpc/"
+)
+```
+
+## Methodological Background
+
+Geographical Pattern Causality (GPC) infers causal relations from spatial cross-sectional data by reconstructing a symbolic approximation of the underlying spatial dynamical system.
+
+Let ( x(s) ) and ( y(s) ) denote two spatial fields over locations ( s \in \mathcal{S} ).
+
+**(1) Spatial Embedding.**
+For each location ( s_i ), GPC constructs an embedding vector
+[
+\mathbf{E}*x(s_i) = \big( x(s*{i}^{(1)}), x(s_{i}^{(2)}), \dots, x(s_{i}^{(E\tau)}) \big),
+]
+where ( s_{i}^{(k)} ) denotes the (k)-th spatially lagged value, determined by embedding dimension (E) and lag (\tau).
+This yields two reconstructed state spaces ( \mathcal{M}_x, \mathcal{M}_y \subset \mathbb{R}^E ).
+
+**(2) Symbolic Pattern Extraction.**
+Local geometric transitions in each manifold are mapped to symbols
+[
+\sigma_x(s_i),; \sigma_y(s_i) \in \mathcal{A},
+]
+encoding increasing, decreasing, or complex spatial modes. These symbolic trajectories summarize local pattern evolution.
+
+**(3) Cross-Pattern Mapping.**
+Causality from (x \to y) is assessed by predicting
+[
+\hat{\sigma}_y(s_i) = F\big( \sigma_x(s_j): s_j \in \mathcal{N}_k(s_i) \big),
+]
+where (\mathcal{N}_k) denotes the set of (k) nearest neighbors in (\mathcal{M}_x).
+The agreement structure between (\hat{\sigma}_y(s_i)) and (\sigma_y(s_i)) determines the causal mode:
+
+* Positive: ( \hat{\sigma}_y = \sigma_y )
+* Negative: ( \hat{\sigma}_y = -\sigma_y )
+* Dark: neither agreement nor opposition
+
+**(4) Causal Strength.**
+The global causal strength is the normalized consistency of symbol matches:
+[
+C_{x \to y} = \frac{1}{|\mathcal{S}|} \sum_{s_i \in \mathcal{S}} \mathbb{I}\big[ \hat{\sigma}_y(s_i) \bowtie \sigma_y(s_i) \big],
+]
+where ( \bowtie ) encodes positive, negative, or dark matching rules.
+
+Through this embedding–symbolization–mapping sequence, GPC provides a compact, dynamical, and nonlinear framework for detecting directional causal structures in spatial systems.
+
+## Usage examples
+
+### An example of spatial lattice data
+
+Load the `spEDM` package and its columbus spatial analysis data:
+
+```{r load_lattice_data}
+library(spEDM)
+
+columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
+columbus
+```
+
+The false nearest neighbours (FNN) method helps identify the appropriate minimal embedding dimension for reconstructing the state space of a time series or spatial cross-sectional data.
+
+```{r fnn_lattice}
+spEDM::fnn(columbus, "crime", E = 1:10, eps = stats::sd(columbus$crime))
+```
+
+The false nearest neighbours (FNN) ratio decreased to approximately 0.001 when the embedding dimension E reached 7, and remained relatively stable thereafter. Therefore, we adopted $E = 7$ as the minimal embedding dimension for subsequent parameter search.
+
+Then, search optimal parameters:
+
+```{r pc_lattice}
+spEDM::pc(columbus, "hoval", "crime", E = 5:10, k = 6:12)
+```
+
+Run geographical pattern causality analysis
+
+```{r gpc_grid}
+spEDM::gpc(columbus, "hoval", "crime", E = 5, k = 6)
+```
+
+Convergence diagnostics
+
+```{r fig1,fig.width=5.55,fig.height=3.05,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. **Convergence curves of causal strengths among house value and crime.**")}
+crime_convergence = spEDM::gpc(columbus, "hoval", "crime",
+                               libsizes = seq(5, 45, by = 5),
+                               E = 5, k = 6)
+crime_convergence
+plot(crime_convergence, ylimits = c(-0.01,1),
+     xlimits = c(9,46), xbreaks = seq(10, 45, 10))
+```
+
+### An example of spatial grid data
+
+Load the `spEDM` package and its farmland NPP data:
+
+```{r load_grid_data}
+library(spEDM)
+
+npp = terra::rast(system.file("case/npp.tif", package = "spEDM"))
+# To save the computation time, we will aggregate the data by 3 times
+npp = terra::aggregate(npp, fact = 3, na.rm = TRUE)
+npp
+
+# Check the validated cell number
+nnamat = terra::as.matrix(npp[[1]], wide = TRUE)
+nnaindice = which(!is.na(nnamat), arr.ind = TRUE)
+dim(nnaindice)
+```
+
+Determining minimal embedding dimension:
+
+```{r fnn_grid}
+fnn(npp, "npp", E = 1:15,
+    eps = stats::sd(terra::values(npp[["npp"]]),na.rm = TRUE))
+```
+
+At $E = 6$, the false nearest neighbor ratio stabilizes approximately at 0.0001 and remains constant thereafter. Therefore, $E = 6$ is selected as minimal embedding dimension for the subsequent GPC analysis.
+
+Then, search optimal parameters:
+
+```{r pc_grid}
+g1 = spEDM::pc(npp, "npp", "pre", E = 6:10, k = 7:12)
+g1
+```
+
+Run geographical pattern causality analysis
+
+```{r gpc_grid}
+spEDM::gpc(npp, "pre", "npp", E = 10, k = 8)
+```
+
+Convergence diagnostics
+
+```{r fig2,fig.width=5.55,fig.height=3.05,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. **Convergence curves of causal strengths among precipitation and NPP.**")}
+npp_convergence = spEDM::gpc(npp, "pre", "npp", 
+                             libsizes = matrix(rep(seq(10,80,10),2),ncol = 2), 
+                             E = 10, k = 8)
+npp_convergence
+plot(npp_convergence, ylimits = c(-0.01,0.35),
+     xlimits = c(0,6500), xbreaks = seq(100, 6400, 500))
+```
