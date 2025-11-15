@@ -2,6 +2,8 @@
 
 ### new
 
+* Provide R-level API and vignette for geographical pattern causality (#868).
+
 * Introduce cross mapping of raster data with anisotropic embedding and variable sliding window steps (#812).
 
 * Extend capabilities to incorporate mean-based and stacked spatial cross-sectional embeddings in cross mapping (#800).
