@@ -132,11 +132,7 @@ Convergence diagnostics
 ``` r
 crime_convergence = spEDM::gpc(columbus, "hoval", "crime",
                                libsizes = seq(5, 45, by = 5),
-                               E = 5, k = 6)
-## 
-Computing: [========================================] 100% (done)                         
-## 
-Computing: [========================================] 100% (done)
+                               E = 5, k = 6, progressbar = FALSE)
 crime_convergence
 ## -------------------------------- 
 ## ***pattern causality analysis*** 
@@ -271,23 +267,9 @@ Convergence diagnostics
 
 
 ``` r
-npp_convergence = spEDM::gpc(npp, "pre", "npp", 
-                             libsizes = matrix(rep(seq(10,80,10),2),ncol = 2), 
-                             E = 10, k = 8)
-## 
-Computing: [==========                              ] 25%  (~4s remaining)       
-Computing: [================                        ] 38%  (~3s remaining)       
-Computing: [====================                    ] 50%  (~3s remaining)       
-Computing: [==========================              ] 63%  (~2s remaining)       
-Computing: [==============================          ] 75%  (~1s remaining)       
-Computing: [====================================    ] 88%  (~1s remaining)       
-Computing: [========================================] 100% (done)                         
-## 
-Computing: [======                                  ] 13%  (~15s remaining)       
-Computing: [==========                              ] 25%  (~7s remaining)       
-Computing: [====================                    ] 50%  (~3s remaining)       
-Computing: [==============================          ] 75%  (~1s remaining)       
-Computing: [========================================] 100% (done)
+npp_convergence = spEDM::gpc(npp, "pre", "npp",
+                             libsizes = matrix(rep(seq(10,80,10),2),ncol = 2),
+                             E = 10, k = 8, progressbar = FALSE)
 npp_convergence
 ## -------------------------------- 
 ## ***pattern causality analysis*** 
