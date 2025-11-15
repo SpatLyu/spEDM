@@ -23,43 +23,51 @@ knitr::opts_chunk$set(
 
 Geographical Pattern Causality (GPC) infers causal relations from spatial cross-sectional data by reconstructing a symbolic approximation of the underlying spatial dynamical system.
 
-Let ( x(s) ) and ( y(s) ) denote two spatial fields over locations ( s \in \mathcal{S} ).
+Let $x(s)$ and $y(s)$ denote two spatial cross-sections over locations $s \in \mathcal{S}$.
 
-**(1) Spatial Embedding.**
-For each location ( s_i ), GPC constructs an embedding vector
-[
+**(1) Spatial Embedding**
+For each location $s_i$, GPC constructs an embedding vector
+
+$$
 \mathbf{E}*x(s_i) = \big( x(s*{i}^{(1)}), x(s_{i}^{(2)}), \dots, x(s_{i}^{(E\tau)}) \big),
-]
-where ( s_{i}^{(k)} ) denotes the (k)-th spatially lagged value, determined by embedding dimension (E) and lag (\tau).
-This yields two reconstructed state spaces ( \mathcal{M}_x, \mathcal{M}_y \subset \mathbb{R}^E ).
+$$
 
-**(2) Symbolic Pattern Extraction.**
+where $s_{i}^{(k)}$ denotes the $k$-th spatially lagged value, determined by embedding dimension $E$ and lag $\tau$.
+This yields two reconstructed state spaces $\mathcal{M}_x, \mathcal{M}_y \subset \mathbb{R}^E$.
+
+**(2) Symbolic Pattern Extraction**
 Local geometric transitions in each manifold are mapped to symbols
-[
+
+$$
 \sigma_x(s_i),; \sigma_y(s_i) \in \mathcal{A},
-]
-encoding increasing, decreasing, or complex spatial modes. These symbolic trajectories summarize local pattern evolution.
+$$
 
-**(3) Cross-Pattern Mapping.**
-Causality from (x \to y) is assessed by predicting
-[
+encoding increasing, decreasing, or non-changing modes. These symbolic trajectories summarize local pattern evolution.
+
+**(3) Cross-Pattern Mapping**
+
+Causality from $x \to y$ is assessed by predicting:
+
+$$
 \hat{\sigma}_y(s_i) = F\big( \sigma_x(s_j): s_j \in \mathcal{N}_k(s_i) \big),
-]
-where (\mathcal{N}_k) denotes the set of (k) nearest neighbors in (\mathcal{M}_x).
-The agreement structure between (\hat{\sigma}_y(s_i)) and (\sigma_y(s_i)) determines the causal mode:
+$$
 
-* Positive: ( \hat{\sigma}_y = \sigma_y )
-* Negative: ( \hat{\sigma}_y = -\sigma_y )
+where $\mathcal{N}_k$ denotes the set of $k$ nearest neighbors in $\mathcal{M}_x$.
+The agreement structure between $\hat{\sigma}_y(s_i)$ and $\sigma_y(s_i)$ determines the causal mode:
+
+* Positive: $\hat{\sigma}_y = \sigma_y$
+* Negative: $\hat{\sigma}_y = -\sigma_y$
 * Dark: neither agreement nor opposition
 
-**(4) Causal Strength.**
-The global causal strength is the normalized consistency of symbol matches:
-[
-C_{x \to y} = \frac{1}{|\mathcal{S}|} \sum_{s_i \in \mathcal{S}} \mathbb{I}\big[ \hat{\sigma}_y(s_i) \bowtie \sigma_y(s_i) \big],
-]
-where ( \bowtie ) encodes positive, negative, or dark matching rules.
+**(4) Causal Strength**
 
-Through this embedding–symbolization–mapping sequence, GPC provides a compact, dynamical, and nonlinear framework for detecting directional causal structures in spatial systems.
+The global causal strength is the normalized consistency of symbol matches:
+
+$$
+C_{x \to y} = \frac{1}{|\mathcal{S}|} \sum_{s_i \in \mathcal{S}} \mathbb{I}\big[ \hat{\sigma}_y(s_i) \bowtie \sigma_y(s_i) \big],
+$$
+
+where $\bowtie$ encodes positive, negative, or dark matching rules.
 
 ## Usage examples
 
@@ -99,7 +107,7 @@ Convergence diagnostics
 ```{r fig1,fig.width=5.55,fig.height=3.05,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. **Convergence curves of causal strengths among house value and crime.**")}
 crime_convergence = spEDM::gpc(columbus, "hoval", "crime",
                                libsizes = seq(5, 45, by = 5),
-                               E = 5, k = 6)
+                               E = 5, k = 6, progressbar = FALSE)
 crime_convergence
 plot(crime_convergence, ylimits = c(-0.01,1),
      xlimits = c(9,46), xbreaks = seq(10, 45, 10))
@@ -148,9 +156,9 @@ spEDM::gpc(npp, "pre", "npp", E = 10, k = 8)
 Convergence diagnostics
 
 ```{r fig2,fig.width=5.55,fig.height=3.05,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. **Convergence curves of causal strengths among precipitation and NPP.**")}
-npp_convergence = spEDM::gpc(npp, "pre", "npp", 
-                             libsizes = matrix(rep(seq(10,80,10),2),ncol = 2), 
-                             E = 10, k = 8)
+npp_convergence = spEDM::gpc(npp, "pre", "npp",
+                             libsizes = matrix(rep(seq(10,80,10),2),ncol = 2),
+                             E = 10, k = 8, progressbar = FALSE)
 npp_convergence
 plot(npp_convergence, ylimits = c(-0.01,0.35),
      xlimits = c(0,6500), xbreaks = seq(100, 6400, 500))
