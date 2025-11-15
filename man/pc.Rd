@@ -97,7 +97,7 @@ pattern causality
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 \donttest{
-pc(columbus,"hoval","crime", E = 6:8, k = 7:10)
+pc(columbus,"hoval","crime", E = 5:10)
 }
 }
 \references{
