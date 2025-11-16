@@ -3,7 +3,7 @@ title: "State Space Reconstruction"
 author: "Wenbo Lv"
 date: |
   | Last update: 2025-11-01
-  | Last run: 2025-11-15
+  | Last run: 2025-11-16
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{SSR}
