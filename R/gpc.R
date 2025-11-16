@@ -4,7 +4,6 @@
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   cause = .uni_lattice(data,cause,detrend)
   effect = .uni_lattice(data,effect,detrend)
-  dist.metric = .check_distmetric(dist.metric)
   if (is.null(lib)) lib = which(!(is.na(cause) | is.na(effect)))
   if (is.null(pred)) pred = lib
   return(.run_gpc(cause, effect, E, k, tau, style, lib, pred, dist.metric,
