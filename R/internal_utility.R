@@ -235,7 +235,6 @@
              weighted, na.rm, threads, bidirectional = FALSE, varname = NULL, nb = NULL,
              libsizes = NULL, boot = 9, random = TRUE, seed = 42, parallel.level = "low",
              progressbar = FALSE){
-  dist.metric = .check_distmetric(dist.metric)
   if (is.null(libsizes)){
     if (is.null(nb)){
       res = RcppGPC4Grid(y,x,lib,pred,E,tau,style,k,zero.tolerance,dist.metric,relative,weighted,na.rm,threads)

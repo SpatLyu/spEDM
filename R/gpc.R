@@ -4,10 +4,9 @@
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   cause = .uni_lattice(data,cause,detrend)
   effect = .uni_lattice(data,effect,detrend)
-  dist.metric = .check_distmetric(dist.metric)
   if (is.null(lib)) lib = which(!(is.na(cause) | is.na(effect)))
   if (is.null(pred)) pred = lib
-  return(.run_gpc(cause, effect, E, k, tau, style, lib, pred, dist.metric,
+  return(.run_gpc(cause, effect, E, k, tau, style, lib, pred, .check_distmetric(dist.metric),
                   zero.tolerance, relative, weighted, na.rm, threads, bidirectional,
                   varname, nb, libsizes, boot, random, seed, parallel.level, progressbar))
 }
@@ -19,7 +18,7 @@
   effect = .uni_grid(data,effect,detrend,grid.coord)
   if (is.null(lib)) lib = which(!(is.na(cause) | is.na(effect)), arr.ind = TRUE)
   if (is.null(pred)) pred = lib
-  return(.run_gpc(cause, effect, E, k, tau, style, lib, pred, dist.metric,
+  return(.run_gpc(cause, effect, E, k, tau, style, lib, pred, .check_distmetric(dist.metric),
                   zero.tolerance, relative, weighted, na.rm, threads, bidirectional,
                   varname, NULL, libsizes, boot, random, seed, parallel.level, progressbar))
 }
