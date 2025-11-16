@@ -91,7 +91,7 @@ print.xmap_self = \(x,...){
   if (x$method == "smap") {
     cat(paste0("The suggested theta for variable ", x$varname, " is ", OptThetaParm(res)), "\n")
   } else if (x$method == "pc") {
-    res = OptPCparm(res)
+    res = OptPCparm(res,x$maximize)
     cat(paste0("The suggested E,k,tau for variable ", x$varname, " is ", res[1], ", ", res[2], " and ", res[3]), "\n")
     if (res[1] == 1 && res[3] == 0) warning("When tau = 0, E should not be 1")
   } else {

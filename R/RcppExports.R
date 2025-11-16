@@ -429,8 +429,8 @@ OptICparm <- function(Emat) {
     .Call(`_spEDM_OptICparm`, Emat)
 }
 
-OptPCparm <- function(Emat) {
-    .Call(`_spEDM_OptPCparm`, Emat)
+OptPCparm <- function(Emat, maximize = "positive") {
+    .Call(`_spEDM_OptPCparm`, Emat, maximize)
 }
 
 MatNotNAIndice <- function(mat, byrow = TRUE) {
