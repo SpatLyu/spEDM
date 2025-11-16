@@ -4,7 +4,7 @@
 \alias{pc}
 \alias{pc,sf-method}
 \alias{pc,SpatRaster-method}
-\title{pattern causality}
+\title{optimal parameter search for pattern causality}
 \usage{
 \S4method{pc}{sf}(
   data,
@@ -21,6 +21,7 @@
   relative = TRUE,
   weighted = TRUE,
   na.rm = TRUE,
+  maximize = "positive",
   threads = detectThreads(),
   detrend = FALSE,
   nb = NULL
@@ -41,6 +42,7 @@
   relative = TRUE,
   weighted = TRUE,
   na.rm = TRUE,
+  maximize = "positive",
   threads = detectThreads(),
   detrend = FALSE,
   grid.coord = TRUE
@@ -75,6 +77,8 @@
 
 \item{na.rm}{(optional) whether to remove \code{NA} samples in symbolic pattern generation.}
 
+\item{maximize}{(optional) causality metric to maximize: one of "positive", "negative", or "dark".}
+
 \item{threads}{(optional) number of threads to use.}
 
 \item{detrend}{(optional) whether to remove the linear trend.}
@@ -89,10 +93,11 @@ A list
 \item{\code{xmap}}{cross mapping performance}
 \item{\code{varname}}{name of target variable}
 \item{\code{method}}{method of cross mapping}
+\item{\code{maximize}}{maximized causality metric}
 }
 }
 \description{
-pattern causality
+optimal parameter search for pattern causality
 }
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
