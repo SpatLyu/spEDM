@@ -4,7 +4,7 @@
 \alias{ic}
 \alias{ic,sf-method}
 \alias{ic,SpatRaster-method}
-\title{intersection cardinality}
+\title{optimal parameter search for intersection cardinality}
 \usage{
 \S4method{ic}{sf}(
   data,
@@ -77,7 +77,7 @@ A list
 }
 }
 \description{
-intersection cardinality
+optimal parameter search for intersection cardinality
 }
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
