@@ -21,7 +21,7 @@
   return(.bind_xmapself(res,target,"simplex",tau))
 }
 
-#' simplex forecast
+#' optimal parameter search for simplex forecasting
 #'
 #' @inheritParams embedded
 #' @param column name of library variable.
