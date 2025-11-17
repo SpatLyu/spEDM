@@ -1028,7 +1028,6 @@ Rcpp::NumericMatrix RcppPC4Lattice(const Rcpp::NumericVector& source,
                                    int dist_metric = 2,
                                    bool relative = true,
                                    bool weighted = true,
-                                   bool NA_rm = true,
                                    int threads = 8,
                                    int parallel_level = 0) {
   // Convert neighborhood list to std::vector<std::vector<int>>
@@ -1090,7 +1089,6 @@ Rcpp::NumericMatrix RcppPC4Lattice(const Rcpp::NumericVector& source,
     dist_metric,
     relative,
     weighted,
-    NA_rm,
     threads,
     parallel_level);
 
@@ -1425,7 +1423,6 @@ Rcpp::List RcppGPC4Lattice(
     int dist_metric = 2,
     bool relative = true,
     bool weighted = true,
-    bool NA_rm = true,
     int threads = 8) {
 
   // --- Input Conversion and Validation --------------------------------------
@@ -1470,7 +1467,7 @@ Rcpp::List RcppGPC4Lattice(
 
   PatternCausalityRes res = PatternCausality(
     Mx, My, lib_std, pred_std, b, zero_tolerance,
-    dist_metric, relative, weighted, NA_rm, true, threads);
+    dist_metric, relative, weighted, threads);
 
   // --- Convert result.matrice to Rcpp::NumericMatrix ------------------------
 
@@ -1560,7 +1557,6 @@ Rcpp::DataFrame RcppGPCRobust4Lattice(
     int dist_metric = 2,
     bool relative = true,
     bool weighted = true,
-    bool NA_rm = true,
     int threads = 8,
     int parallel_level = 0,
     bool progressbar = false) {
@@ -1624,7 +1620,7 @@ Rcpp::DataFrame RcppGPCRobust4Lattice(
 
   std::vector<std::vector<std::vector<double>>> res = RobustPatternCausality(
     Mx, My, valid_libsizes, lib_std, pred_std, b, boot, random, seed, zero_tolerance,
-    dist_metric, relative, weighted, NA_rm, threads, parallel_level, progressbar);
+    dist_metric, relative, weighted, threads, parallel_level, progressbar);
 
   // --- Result Processing -----------------------------------------------------
 
