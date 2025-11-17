@@ -2087,12 +2087,13 @@ Rcpp::List RcppGPC4Grid(
   Rcpp::CharacterVector pattern_labels(n_samples, "no");
   Rcpp::LogicalVector real_loop(n_samples, false);
 
-  for (size_t idx : res.RealLoop) {
+  for (size_t rl = 0; rl < res.RealLoop.size(); ++rl) {
+    size_t idx = res.RealLoop[rl];
     if (idx < n_samples) {
       // Record validated samples
       real_loop[idx] = true;
       // Map pattern types
-      switch (res.PatternTypes[idx]) {
+      switch (res.PatternTypes[rl]) {
         case 0: pattern_labels[idx]  = "no"; break;
         case 1: pattern_labels[idx]  = "positive"; break;
         case 2: pattern_labels[idx]  = "negative"; break;
