@@ -1470,7 +1470,7 @@ Rcpp::List RcppGPC4Lattice(
 
   PatternCausalityRes res = PatternCausality(
     Mx, My, lib_std, pred_std, b, zero_tolerance,
-    dist_metric, relative, weighted, NA_rm, threads);
+    dist_metric, relative, weighted, NA_rm, true, threads);
 
   // --- Convert result.matrice to Rcpp::NumericMatrix ------------------------
 
