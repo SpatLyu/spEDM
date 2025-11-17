@@ -224,6 +224,7 @@ std::vector<std::string> GenPatternSpace(
  * @param pred_SMy   Y predicted signatures (n × d)
  * @param weighted   Whether to weight causal strength by erf(norm(pred_Y)/norm(X))
  * @param NA_rm      Whether to remove NaN samples before pattern generation
+ * @param sorted     Whther to sort unique pattern strings for deterministic ordering
  *
  * @return PatternCausalityRes containing causal matrices, summary, and classifications.
  */
@@ -232,7 +233,8 @@ PatternCausalityRes GenPatternCausality(
     const std::vector<std::vector<double>>& SMy,
     const std::vector<std::vector<double>>& pred_SMy,
     bool weighted = true,
-    bool NA_rm = true
+    bool NA_rm = true,
+    bool sorted = false
 ) {
   PatternCausalityRes res;
   const size_t n = SMx.size();
@@ -255,8 +257,11 @@ PatternCausalityRes GenPatternCausality(
   uniq_set.insert(pred_PMy.begin(), pred_PMy.end());
 
   std::vector<std::string> unique_patterns(uniq_set.begin(), uniq_set.end());
-  // Sort unique pattern strings for deterministic ordering
-  std::sort(unique_patterns.begin(), unique_patterns.end()); 
+  // Optional deterministic ordering
+  if (sorted) {
+    // Sort unique pattern strings for deterministic ordering
+    std::sort(unique_patterns.begin(), unique_patterns.end()); 
+  }
   res.PatternStrings = unique_patterns;
 
   std::unordered_map<std::string, size_t> pattern_indices;
