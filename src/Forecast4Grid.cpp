@@ -458,7 +458,7 @@ std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>&
 }
 
 /**
- * @brief Search for optimal embedding parameters in geographical Pattern Causality analysis on regular grids.
+ * @brief Search for optimal embedding parameters in geographical pattern causality analysis on regular grids.
  *
  * @param source
  *   A 2D matrix (vector of vectors) representing the source spatiotemporal field
@@ -506,9 +506,6 @@ std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>&
  * @param weighted
  *   Whether to weight causal strength.
  *
- * @param NA_rm
- *   Whether to remove NaN samples before symbolic pattern generation.
- *
  * @param threads
  *   Maximum number of threads to use for parallel computation.
  *   If negative, absolute value is used. If larger than hardware limit,
@@ -542,7 +539,6 @@ std::vector<std::vector<double>> PC4Grid(const std::vector<std::vector<double>>&
                                          int dist_metric = 2,
                                          bool relative = true,
                                          bool weighted = true,
-                                         bool NA_rm = true,
                                          int threads = 8,
                                          int parallel_level = 0) {
   // Unique sorted embedding dimensions, neighbor values, and tau values
@@ -579,7 +575,7 @@ std::vector<std::vector<double>> PC4Grid(const std::vector<std::vector<double>>&
 
       PatternCausalityRes res = PatternCausality(
         Mx, My, lib_indices, pred_indices, bi, zero_tolerance,
-        dist_metric, relative, weighted, NA_rm, false, threads);
+        dist_metric, relative, weighted, threads);
 
       result[i][0] = Ei;
       result[i][1] = bi;
@@ -604,7 +600,7 @@ std::vector<std::vector<double>> PC4Grid(const std::vector<std::vector<double>>&
 
       PatternCausalityRes res = PatternCausality(
         Mx, My, lib_indices, pred_indices, bi, zero_tolerance,
-        dist_metric, relative, weighted, NA_rm, false, 1);
+        dist_metric, relative, weighted, 1);
 
       result[i][0] = Ei;
       result[i][1] = bi;
