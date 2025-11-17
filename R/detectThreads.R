@@ -4,9 +4,8 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
 #' detectThreads()
-#' }
+#' 
 detectThreads = \() {
   return(DetectMaxNumThreads())
 }
