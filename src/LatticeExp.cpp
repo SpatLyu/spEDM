@@ -1494,20 +1494,21 @@ Rcpp::List RcppGPC4Lattice(
 
   size_t n_samples = res.NoCausality.size();
   Rcpp::LogicalVector real_loop(n_samples, false);
+  Rcpp::CharacterVector pattern_labels(n_samples, "no");
+  
   for (size_t idx : res.RealLoop) {
-    if (idx < n_samples) real_loop[idx] = true;
-  }
-
-  // Map pattern_types (0–3) → descriptive string labels
-  Rcpp::CharacterVector pattern_labels(n_samples);
-  for (size_t i = 0; i < n_samples; ++i) {
-    switch (res.PatternTypes[i]) {
-    case 0: pattern_labels[i] = "no"; break;
-    case 1: pattern_labels[i] = "positive"; break;
-    case 2: pattern_labels[i] = "negative"; break;
-    case 3: pattern_labels[i] = "dark"; break;
-    default: pattern_labels[i] = "unknown"; break;
-    }
+    if (idx < n_samples) {
+      // Record validated samples
+      real_loop[idx] = true;
+      // Map pattern_types (0–3) → descriptive string labels
+      switch (res.PatternTypes[idx]) {
+        case 0: pattern_labels[idx]  = "no"; break;
+        case 1: pattern_labels[idx]  = "positive"; break;
+        case 2: pattern_labels[idx]  = "negative"; break;
+        case 3: pattern_labels[idx]  = "dark"; break;
+        default: pattern_labels[idx] = "unknown"; break;
+      }
+    } 
   }
 
   Rcpp::DataFrame causality_df = Rcpp::DataFrame::create(

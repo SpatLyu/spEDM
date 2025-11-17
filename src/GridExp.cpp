@@ -2089,7 +2089,9 @@ Rcpp::List RcppGPC4Grid(
 
   for (size_t idx : res.RealLoop) {
     if (idx < n_samples) {
+      // Record validated samples
       real_loop[idx] = true;
+      // Map pattern types
       switch (res.PatternTypes[idx]) {
         case 0: pattern_labels[idx]  = "no"; break;
         case 1: pattern_labels[idx]  = "positive"; break;
