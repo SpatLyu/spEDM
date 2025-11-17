@@ -40,7 +40,7 @@
 #' Sugihara G. 1994. Nonlinear forecasting for the classification of natural time series. Philosophical Transactions: Physical Sciences and Engineering, 348 (1688):477-495.
 #'
 #' @examples
-#' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
+#' columbus = sf::read_sf(system.file("case/columbus.gpkg",package="spEDM"))
 #' \donttest{
 #' smap(columbus,"inc","crime",E = 5,k = 6)
 #' }

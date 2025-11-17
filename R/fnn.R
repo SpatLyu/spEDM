@@ -39,7 +39,7 @@
 #' Kennel M. B., Brown R. and Abarbanel H. D. I., Determining embedding dimension for phase-space reconstruction using a geometrical construction, Phys. Rev. A, Volume 45, 3403 (1992).
 #'
 #' @examples
-#' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
+#' columbus = sf::read_sf(system.file("case/columbus.gpkg",package="spEDM"))
 #' \donttest{
 #' fnn(columbus,"crime")
 #' }

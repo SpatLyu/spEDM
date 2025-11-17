@@ -39,9 +39,9 @@
 #' Tao, P., Wang, Q., Shi, J., Hao, X., Liu, X., Min, B., Zhang, Y., Li, C., Cui, H., Chen, L., 2023. Detecting dynamical causality by intersection cardinal concavity. Fundamental Research.
 #'
 #' @examples
-#' columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
+#' columbus = sf::read_sf(system.file("case/columbus.gpkg",package="spEDM"))
 #' \donttest{
-#' ic(columbus,"hoval","crime", E = 7, k = 15:25)
+#' ic(columbus,"hoval","crime",E = 7,k = 15:25)
 #' }
 methods::setMethod("ic", "sf", .ic_sf_method)
 
