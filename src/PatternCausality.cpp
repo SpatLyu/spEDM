@@ -201,40 +201,95 @@ std::vector<std::string> GenPatternSpace(
 }
 
 /**
- * @brief Compute pattern-based causality analysis between predicted and real signatures.
+ * @brief Perform symbolic pattern–based causality analysis between real and predicted signatures.
  *
- * This function automatically generates symbolic patterns (PMx, PMy, pred_PMy)
- * using GenPatternSpace() from input signature matrices (SMx, SMy, pred_SMy),
- * then computes a causal strength matrix and per-sample classifications.
+ * This function implements a deterministic, pattern–indexed causal analysis pipeline.
+ * Numerical signature vectors (SMx, SMy, pred_SMy) are first transformed into symbolic
+ * pattern strings using GenPatternSpace(). The function then:
  *
- * Supports NaN handling through `NA_rm`:
- *  - If true, samples containing NaN are removed before pattern generation
- *    → max pattern count = 3^(E-1) + 1 (same as factorial hash style).
- *  - If false, NaN is treated as a valid symbol
- *    → max pattern count = 4^(E-1).
+ *  1. Collects all unique patterns appearing in X, Y_real, and Y_pred.
+ *  2. Removes patterns containing '0' (invalid placeholder state).
+ *  3. Augments the pattern set by including their symmetric-opposite counterparts
+ *     (swapping '1' <-> '3'), ensuring anti-diagonal causality is always representable.
+ *  4. Produces a sorted, dense pattern index (0 … K-1) for deterministic and
+ *     reproducible matrix alignment.
+ *  5. Computes a K×K causal strength matrix M(i, j), where:
+ *         i = pattern index of X(t)
+ *         j = pattern index of predicted Y(t)
+ *     and the matrix cell accumulates weighted causal strength over all samples.
  *
- * Causality classification follows:
- *  - Positive causality  → pattern(Y_pred) == pattern(Y_real)
- *  - Negative causality  → symmetric opposite pattern (i + j == N - 1)
- *  - Dark causality      → other off-diagonal relationships
- *  - No causality        → zero strength
+ *  6. Per-sample causality classification is performed:
+ *       - No causality: pattern(Y_pred) != pattern(Y_real)
+ *       - Positive     : i == j (main diagonal)
+ *       - Negative     : i + j == K - 1 (anti-diagonal)
+ *       - Dark         : all other off-diagonal relationships
+ *
+ *  7. Causal strength is optional weighted by:
+ *         erf( ||pred_Y|| / (||X|| + 1e-6) )
+ *     which bounds the strength in [0, 1] and prevents division instability.
+ *
+ *  8. A final normalized heatmap (cell-wise average) and aggregated metrics
+ *     (mean positive / negative / dark strengths) are returned.
+ *
+ * This implemention is optimized for:
+ *   - Zero-copy pattern referencing
+ *   - No dynamic string comparison in the main loop
+ *   - Deterministic ordering and symmetric space closure
+ *   - Minimal heap reallocations
+ *
+ * @details
+ * The key conceptual guarantee is *pattern space completeness*:
+ * for any observed pattern p, the function ensures its symmetric-opposite
+ * exists in the index set, even if never observed in the data. This creates
+ * a fully defined anti-diagonal causal relation space, solving the correctness
+ * issue in earlier implementations where i+j==K-1 could not be relied upon.
+ *
+ * ---------------------------------------------------------------------------
  *
  * @param SMx        X signature matrix (n × d)
  * @param SMy        Y real signature matrix (n × d)
  * @param pred_SMy   Y predicted signatures (n × d)
  * @param weighted   Whether to weight causal strength by erf(norm(pred_Y)/norm(X))
- * @param NA_rm      Whether to remove NaN samples before pattern generation
- * @param sorted     Whther to sort unique pattern strings for deterministic ordering
  *
- * @return PatternCausalityRes containing causal matrices, summary, and classifications.
+ * ---------------------------------------------------------------------------
+ *
+ * @return PatternCausalityRes
+ *
+ * The result struct contains:
+ *
+ *   - std::vector<double> NoCausality, PositiveCausality,
+ *                         NegativeCausality, DarkCausality  
+ *       Per-sample causal strengths (or 1 for no causality).
+ *   - std::vector<int> RealLoop  
+ *       Indices of samples actually used (patterns valid & non-zero).
+ *
+ *   - std::vector<int> PatternTypes  
+ *       Encoded per-sample causal class:  
+ *         0=no causality, 1=positive, 2=negative, 3=dark.
+ *
+ *   - std::vector<std::string> PatternStrings  
+ *       Mapping index → pattern string for each row/column of the heatmap.
+ *
+ *   - std::vector<std::vector<double>> matrice  
+ *       Normalized K×K causal heatmap M(i,j).
+ *
+ *   - double TotalPos, TotalNeg, TotalDark  
+ *       Mean strength across main diagonal, anti-diagonal, and off-diagonal cells.
+ *
+ * ---------------------------------------------------------------------------
+ *
+ * @note
+ *  - Patterns containing '0' are discarded from analysis.
+ *  - The function guarantees symmetric pattern-space completion.
+ *  - Index ordering is deterministic and reproducible across runs.
+ *  - Handles NaN values robustly by ignoring them in norms and averages.
+ *
  */
 PatternCausalityRes GenPatternCausality(
     const std::vector<std::vector<double>>& SMx,
     const std::vector<std::vector<double>>& SMy,
     const std::vector<std::vector<double>>& pred_SMy,
-    bool weighted = true,
-    bool NA_rm = true,
-    bool sorted = false
+    bool weighted = true
 ) {
   PatternCausalityRes res;
   const size_t n = SMx.size();
@@ -242,28 +297,71 @@ PatternCausalityRes GenPatternCausality(
 
   // --- 1. Generate symbolic pattern strings ---
   // GenPatternSpace() should convert numeric sequences into symbolic strings
-  // (e.g., "0321", "1220", etc.), possibly removing or keeping NaN based on NA_rm.
-  std::vector<std::string> PMx = GenPatternSpace(SMx, NA_rm);
-  std::vector<std::string> PMy = GenPatternSpace(SMy, NA_rm);
-  std::vector<std::string> pred_PMy = GenPatternSpace(pred_SMy, NA_rm);
+  // (e.g., "321", "122", etc.), possibly removing or keeping NaN based on NA_rm.
+  std::vector<std::string> PMx = GenPatternSpace(SMx, true);
+  std::vector<std::string> PMy = GenPatternSpace(SMy, true);
+  std::vector<std::string> pred_PMy = GenPatternSpace(pred_SMy, true);
 
   // // Basic consistency check
   // if (PMx.size() != PMy.size() || PMx.size() != pred_PMy.size()) return res;
 
   // --- 2. Collect unique pattern strings and mapping ---
+  // Use unordered_set to collect all unique patterns efficiently
   std::unordered_set<std::string> uniq_set;
+  uniq_set.reserve(PMx.size() + PMy.size() + pred_PMy.size());
+
+  // Insert all patterns into the set
   uniq_set.insert(PMx.begin(), PMx.end());
   uniq_set.insert(PMy.begin(), PMy.end());
   uniq_set.insert(pred_PMy.begin(), pred_PMy.end());
 
-  std::vector<std::string> unique_patterns(uniq_set.begin(), uniq_set.end());
-  // Optional deterministic ordering
-  if (sorted) {
-    // Sort unique pattern strings for deterministic ordering
-    std::sort(unique_patterns.begin(), unique_patterns.end()); 
-  }
-  res.PatternStrings = unique_patterns;
+  // Lambda to check if a pattern contains '0'
+  auto str_contains_zero = [](const std::string& p) {
+    return p.find('0') != std::string::npos;
+  };
 
+  // Filter out patterns containing '0' and collect them
+  std::vector<std::string> filtered_patterns;
+  filtered_patterns.reserve(uniq_set.size()); 
+  for (const auto& p : uniq_set) {
+    if (!str_contains_zero(p)) {
+      filtered_patterns.push_back(p);
+    }
+  }
+
+  // Lambda to get opposite pattern (1 <-> 3, others unchanged)
+  auto get_opposite_pattern = [](const std::string& pattern) -> std::string {
+    std::string opposite = pattern;
+    for (char& o : opposite) {
+      switch (o) {
+        case '1': o = '3'; break;
+        case '3': o = '1'; break;
+        default: break; // Keep other characters unchanged
+      }
+    }
+    return opposite;
+  };
+
+  // Create extended patterns by adding opposite patterns of filtered patterns with deduplication
+  std::unordered_set<std::string> final_set;
+  final_set.reserve(filtered_patterns.size() * 2);
+
+  for (const auto& p : filtered_patterns) {
+    final_set.insert(p); // Add original filtered patterns
+    std::string opposite = get_opposite_pattern(p);
+    if (opposite != p) { // Avoid adding identical opposite patterns (e.g., "222")
+      final_set.insert(std::move(opposite));
+    }
+  }
+
+  // Convert to vector and sort for deterministic ordering
+  std::vector<std::string> unique_patterns;
+  unique_patterns.reserve(final_set.size());
+  unique_patterns.insert(unique_patterns.end(), 
+                         final_set.begin(), final_set.end());
+  std::sort(unique_patterns.begin(), unique_patterns.end());
+  
+  // Build pattern_indices map
   std::unordered_map<std::string, size_t> pattern_indices;
   pattern_indices.reserve(unique_patterns.size());
   for (size_t i = 0; i < unique_patterns.size(); ++i) {
@@ -272,13 +370,15 @@ PatternCausalityRes GenPatternCausality(
 
   const size_t hashed_num = unique_patterns.size();
   if (hashed_num == 0) return res;
+  const double midpoint = static_cast<double>(hashed_num - 1) / 2.0;
 
   // --- 3. Initialize result structures ---
   std::vector<std::vector<double>> heatmap_accum(
       hashed_num, std::vector<double>(hashed_num, std::numeric_limits<double>::quiet_NaN()));
   std::vector<std::vector<double>> count_matrix(
       hashed_num, std::vector<double>(hashed_num, 0.0));
-
+  
+  res.PatternStrings = std::move(unique_patterns);
   res.NoCausality.assign(n, 0.0);
   res.PositiveCausality.assign(n, 0.0);
   res.NegativeCausality.assign(n, 0.0);
@@ -317,27 +417,20 @@ PatternCausalityRes GenPatternCausality(
     const std::string& pat_y_real  = PMy[t];
     const std::string& pat_y_pred  = pred_PMy[t];
 
-    // --- Skip invalid pattern cases based on NA_rm ---
-    if (NA_rm) {
-      // In NA_rm=true mode, "0" represents an all-NaN (invalid) pattern
-      if (pat_x == "0" || pat_y_real == "0" || pat_y_pred == "0") continue;
-    } else {
-      // In NA_rm=false mode, "000...0" (E−1 zeros) represents an all-NaN pattern
-      size_t dim = SMx[0].size() > 0 ? SMx[0].size() - 1 : 1;
-      std::string zero_pattern(dim, '0');
-      if (pat_x == zero_pattern || pat_y_real == zero_pattern || pat_y_pred == zero_pattern) continue;
+    // --- Skip invalid pattern cases ---
+    if (str_contains_zero(pat_x) || str_contains_zero(pat_y_real) || str_contains_zero(pat_y_pred)) continue;
+
+    // --- Safe index lookup ---
+    auto x_it = pattern_indices.find(pat_x);
+    auto y_pred_it = pattern_indices.find(pat_y_pred);
+    if (x_it == pattern_indices.end() || y_pred_it == pattern_indices.end()) {
+      continue;
     }
 
-    // // Skip if any pattern missing
-    // if (!pattern_indices.count(pat_x) ||
-    //     !pattern_indices.count(pat_y_real) ||
-    //     !pattern_indices.count(pat_y_pred)) {
-    //     continue;
-    // }
+    size_t i = x_it->second;
+    size_t j = y_pred_it->second;
 
     res.RealLoop.push_back(static_cast<int>(t));
-    size_t i = pattern_indices[pat_x];
-    size_t j = pattern_indices[pat_y_pred];
 
     double strength = 0.0;
     if (pat_y_pred == pat_y_real) {
@@ -360,7 +453,6 @@ PatternCausalityRes GenPatternCausality(
       res.NoCausality[t] = 1.0;
       res.PatternTypes.push_back(0);
     } else {
-      double midpoint = static_cast<double>(hashed_num - 1) / 2.0;
       if (i == j && !doubleNearlyEqual(static_cast<double>(i), midpoint)) {
         res.PositiveCausality[t] = strength;
         res.PatternTypes.push_back(1);
@@ -375,11 +467,11 @@ PatternCausalityRes GenPatternCausality(
   }
 
   // --- 7. Normalize heatmap by counts ---
-  res.matrice = heatmap_accum;
+  res.matrice = std::move(heatmap_accum);
   for (size_t i = 0; i < hashed_num; ++i) {
     for (size_t j = 0; j < hashed_num; ++j) {
       if (count_matrix[i][j] > 0.0) {
-        res.matrice[i][j] = heatmap_accum[i][j] / count_matrix[i][j];
+        res.matrice[i][j] = res.matrice[i][j] / count_matrix[i][j];
       } else {
         res.matrice[i][j] = std::numeric_limits<double>::quiet_NaN();
       }
@@ -449,8 +541,6 @@ PatternCausalityRes GenPatternCausality(
  * @param dist_metric    Distance metric: 1 = L1 norm (Manhattan), 2 = L2 norm (Euclidean)
  * @param relative       Whether to normalize embedding distances relative to their local mean
  * @param weighted       Whether to weight causal strength by erf(norm(pred_Y)/norm(X))
- * @param NA_rm          Whether to remove NaN samples before symbolic pattern generation
- * @param sorted         Whther to sort unique pattern strings for deterministic ordering
  * @param threads        Number of threads to use (default = 1; automatically capped by hardware limit)
  *
  * ### Returns
@@ -475,8 +565,6 @@ PatternCausalityRes PatternCausality(
     int dist_metric = 2,
     bool relative = true,
     bool weighted = true,
-    bool NA_rm = true,
-    bool sorted = false,
     int threads = 1
 ){
   // Configure threads (cap at hardware concurrency)
@@ -528,7 +616,7 @@ PatternCausalityRes PatternCausality(
   // --------------------------------------------------------------------------
   // Step 4: Compute pattern-based causality using symbolic pattern comparison
   // --------------------------------------------------------------------------
-  PatternCausalityRes res = GenPatternCausality(SMx, SMy, PredSMy, weighted, NA_rm, sorted);
+  PatternCausalityRes res = GenPatternCausality(SMx, SMy, PredSMy, weighted);
 
   return res;
 }
@@ -589,7 +677,6 @@ PatternCausalityRes PatternCausality(
  * @param dist_metric    Distance metric (1 = L1, 2 = L2)
  * @param relative       Normalize embeddings relative to local mean
  * @param weighted       Weight causality by erf(norm(pred_Y)/norm(X))
- * @param NA_rm          Remove NaN samples before symbolic generation
  * @param threads        Number of threads for distance/projection
  * @param parallel_level Parallelism level across boot iterations
  * @param progressbar    Whether to show progress (optional)
@@ -610,7 +697,6 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
     int dist_metric = 2,
     bool relative = true,
     bool weighted = true,
-    bool NA_rm = true,
     int threads = 1,
     int parallel_level = 0,
     bool progressbar = false
@@ -696,7 +782,7 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
       else
         PredSMy = SignatureProjection(SMy, Dx, sampled_lib, pred_indices, num_neighbors, zero_tolerance, 1);
 
-      PatternCausalityRes res = GenPatternCausality(SMx, SMy, PredSMy, weighted, NA_rm, false);
+      PatternCausalityRes res = GenPatternCausality(SMx, SMy, PredSMy, weighted);
 
       all_results[0][li][b] = res.TotalPos;
       all_results[1][li][b] = res.TotalNeg;

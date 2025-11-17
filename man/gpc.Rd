@@ -24,7 +24,6 @@
   zero.tolerance = k,
   relative = TRUE,
   weighted = TRUE,
-  na.rm = TRUE,
   threads = detectThreads(),
   detrend = FALSE,
   parallel.level = "low",
@@ -51,7 +50,6 @@
   zero.tolerance = k,
   relative = TRUE,
   weighted = TRUE,
-  na.rm = TRUE,
   threads = detectThreads(),
   detrend = FALSE,
   parallel.level = "low",
@@ -95,8 +93,6 @@
 
 \item{weighted}{(optional) whether to weight causal strength.}
 
-\item{na.rm}{(optional) whether to remove \code{NA} samples in symbolic pattern generation.}
-
 \item{threads}{(optional) number of threads to use.}
 
 \item{detrend}{(optional) whether to remove the linear trend.}
@@ -128,10 +124,10 @@ geographical pattern causality
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 \donttest{
-gpc(columbus,"hoval","crime", E = 5)
+gpc(columbus,"hoval","crime",E = 6,k = 9)
 
 # convergence diagnostics
-g = gpc(columbus,"hoval","crime",libsizes = seq(5,45,5),E = 5)
+g = gpc(columbus,"hoval","crime",libsizes = seq(5,45,5),E = 6,k = 9)
 plot(g)
 }
 }

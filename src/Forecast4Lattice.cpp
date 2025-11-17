@@ -440,7 +440,7 @@ std::vector<std::vector<double>> IC4Lattice(const std::vector<double>& source,
  * - lib_indices, pred_indices: indices used by PatternCausality for library/prediction.
  * - E, b, tau: vectors of candidate embedding dims, neighbor counts, and lags.
  * - style: embedding style passed to GenLatticeEmbeddings.
- * - zero_tolerance, dist_metric, relative, weighted, NA_rm: forwarded to PatternCausality.
+ * - zero_tolerance, dist_metric, relative, weighted: forwarded to PatternCausality.
  * - threads: hint for internal multi-threading (used in PatternCausality or parallelFor).
  * - parallel_level: 0 = low-level parallel, non-zero = high-level parallel.
  *
@@ -461,7 +461,6 @@ std::vector<std::vector<double>> PC4Lattice(const std::vector<double>& source,
                                             int dist_metric = 2,
                                             bool relative = true,
                                             bool weighted = true,
-                                            bool NA_rm = true,
                                             int threads = 8,
                                             int parallel_level = 0) {
   // Unique sorted embedding dimensions, neighbor values, and tau values
@@ -498,7 +497,7 @@ std::vector<std::vector<double>> PC4Lattice(const std::vector<double>& source,
 
       PatternCausalityRes res = PatternCausality(
         Mx, My, lib_indices, pred_indices, bi, zero_tolerance,
-        dist_metric, relative, weighted, NA_rm, false, threads);
+        dist_metric, relative, weighted, threads);
 
       result[i][0] = Ei;
       result[i][1] = bi;
@@ -523,7 +522,7 @@ std::vector<std::vector<double>> PC4Lattice(const std::vector<double>& source,
 
       PatternCausalityRes res = PatternCausality(
         Mx, My, lib_indices, pred_indices, bi, zero_tolerance,
-        dist_metric, relative, weighted, NA_rm, false, 1);
+        dist_metric, relative, weighted, 1);
 
       result[i][0] = Ei;
       result[i][1] = bi;

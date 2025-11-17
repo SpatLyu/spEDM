@@ -1200,7 +1200,6 @@ Rcpp::NumericMatrix RcppPC4Grid(const Rcpp::NumericMatrix& source,
                                 int dist_metric = 2,
                                 bool relative = true,
                                 bool weighted = true,
-                                bool NA_rm = true,
                                 int threads = 8,
                                 int parallel_level = 0) {
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
@@ -1294,7 +1293,6 @@ Rcpp::NumericMatrix RcppPC4Grid(const Rcpp::NumericMatrix& source,
     dist_metric,
     relative,
     weighted,
-    NA_rm,
     threads,
     parallel_level);
 
@@ -1982,7 +1980,6 @@ Rcpp::List RcppGPC4Grid(
     int dist_metric = 2,
     bool relative = true,
     bool weighted = true,
-    bool NA_rm = true,
     int threads = 8) {
 
   // --- Convert inputs to C++ types ------------------------------------------
@@ -2060,7 +2057,7 @@ Rcpp::List RcppGPC4Grid(
 
   PatternCausalityRes res = PatternCausality(
     Mx, My, lib_std, pred_std, b, zero_tolerance,
-    dist_metric, relative, weighted, NA_rm, true, threads);
+    dist_metric, relative, weighted, threads);
 
   // --- Convert pattern matrix to Rcpp::NumericMatrix ------------------------
 
@@ -2147,7 +2144,6 @@ Rcpp::DataFrame RcppGPCRobust4Grid(
     int dist_metric = 2,
     bool relative = true,
     bool weighted = true,
-    bool NA_rm = true,
     int threads = 8,
     int parallel_level = 0,
     bool progressbar = false) {
@@ -2257,7 +2253,7 @@ Rcpp::DataFrame RcppGPCRobust4Grid(
 
   std::vector<std::vector<std::vector<double>>> res = RobustPatternCausality(
     Mx, My, valid_libsizes, lib_std, pred_std, b, boot, random, seed, zero_tolerance,
-    dist_metric, relative, weighted, NA_rm, threads, parallel_level, progressbar);
+    dist_metric, relative, weighted, threads, parallel_level, progressbar);
 
   // --- Result Processing -----------------------------------------------------
 
