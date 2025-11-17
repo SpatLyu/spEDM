@@ -328,7 +328,7 @@ PatternCausalityRes GenPatternCausality(
     //     continue;
     // }
 
-    res.RealLoop.push_back(t);
+    res.RealLoop.push_back(static_cast<int>(t));
     size_t i = pattern_indices[pat_x];
     size_t j = pattern_indices[pat_y_pred];
 

@@ -2084,21 +2084,22 @@ Rcpp::List RcppGPC4Grid(
   // --- Map pattern types (0–3) → descriptive labels -------------------------
 
   size_t n_samples = res.NoCausality.size();
-  Rcpp::CharacterVector pattern_labels(n_samples);
-
-  for (size_t i = 0; i < n_samples; ++i) {
-    switch (res.PatternTypes[i]) {
-    case 0: pattern_labels[i] = "no"; break;
-    case 1: pattern_labels[i] = "positive"; break;
-    case 2: pattern_labels[i] = "negative"; break;
-    case 3: pattern_labels[i] = "dark"; break;
-    default: pattern_labels[i] = "unknown"; break;
-    }
-  }
-
+  Rcpp::CharacterVector pattern_labels(n_samples, "no");
   Rcpp::LogicalVector real_loop(n_samples, false);
+
   for (size_t idx : res.RealLoop) {
-    if (idx < n_samples) real_loop[idx] = true;
+    if (idx < n_samples) {
+      // Record validated samples
+      real_loop[idx] = true;
+      // Map pattern types
+      switch (res.PatternTypes[idx]) {
+        case 0: pattern_labels[idx]  = "no"; break;
+        case 1: pattern_labels[idx]  = "positive"; break;
+        case 2: pattern_labels[idx]  = "negative"; break;
+        case 3: pattern_labels[idx]  = "dark"; break;
+        default: pattern_labels[idx] = "unknown"; break;
+      }
+    } 
   }
 
   // --- Build DataFrame outputs ---------------------------------------------
