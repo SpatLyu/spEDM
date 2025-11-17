@@ -24,7 +24,6 @@
   zero.tolerance = k,
   relative = TRUE,
   weighted = TRUE,
-  na.rm = TRUE,
   threads = detectThreads(),
   detrend = FALSE,
   parallel.level = "low",
@@ -51,7 +50,6 @@
   zero.tolerance = k,
   relative = TRUE,
   weighted = TRUE,
-  na.rm = TRUE,
   threads = detectThreads(),
   detrend = FALSE,
   parallel.level = "low",
@@ -94,8 +92,6 @@
 \item{relative}{(optional) whether to calculate relative changes in embeddings.}
 
 \item{weighted}{(optional) whether to weight causal strength.}
-
-\item{na.rm}{(optional) whether to remove \code{NA} samples in symbolic pattern generation.}
 
 \item{threads}{(optional) number of threads to use.}
 

@@ -20,7 +20,6 @@
   zero.tolerance = max(k),
   relative = TRUE,
   weighted = TRUE,
-  na.rm = TRUE,
   maximize = "positive",
   threads = detectThreads(),
   detrend = FALSE,
@@ -41,7 +40,6 @@
   zero.tolerance = max(k),
   relative = TRUE,
   weighted = TRUE,
-  na.rm = TRUE,
   maximize = "positive",
   threads = detectThreads(),
   detrend = FALSE,
@@ -74,8 +72,6 @@
 \item{relative}{(optional) whether to calculate relative changes in embeddings.}
 
 \item{weighted}{(optional) whether to weight causal strength.}
-
-\item{na.rm}{(optional) whether to remove \code{NA} samples in symbolic pattern generation.}
 
 \item{maximize}{(optional) causality metric to maximize: one of "positive", "negative", or "dark".}
 
