@@ -579,7 +579,7 @@ std::vector<std::vector<double>> PC4Grid(const std::vector<std::vector<double>>&
 
       PatternCausalityRes res = PatternCausality(
         Mx, My, lib_indices, pred_indices, bi, zero_tolerance,
-        dist_metric, relative, weighted, NA_rm, threads);
+        dist_metric, relative, weighted, NA_rm, false, threads);
 
       result[i][0] = Ei;
       result[i][1] = bi;
@@ -604,7 +604,7 @@ std::vector<std::vector<double>> PC4Grid(const std::vector<std::vector<double>>&
 
       PatternCausalityRes res = PatternCausality(
         Mx, My, lib_indices, pred_indices, bi, zero_tolerance,
-        dist_metric, relative, weighted, NA_rm, 1);
+        dist_metric, relative, weighted, NA_rm, false, 1);
 
       result[i][0] = Ei;
       result[i][1] = bi;
