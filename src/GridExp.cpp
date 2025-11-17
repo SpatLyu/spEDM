@@ -2087,19 +2087,17 @@ Rcpp::List RcppGPC4Grid(
   Rcpp::CharacterVector pattern_labels(n_samples, "no");
   Rcpp::LogicalVector real_loop(n_samples, false);
 
-  for (size_t i = 0; i < n_samples; ++i) {
-    for (size_t idx : res.RealLoop) {
-      if (idx < n_samples) {
-        real_loop[idx] = true;
-        switch (res.PatternTypes[idx]) {
-          case 0: pattern_labels[idx]  = "no"; break;
-          case 1: pattern_labels[idx]  = "positive"; break;
-          case 2: pattern_labels[idx]  = "negative"; break;
-          case 3: pattern_labels[idx]  = "dark"; break;
-          default: pattern_labels[idx] = "unknown"; break;
-        }
-      } 
-    }
+  for (size_t idx : res.RealLoop) {
+    if (idx < n_samples) {
+      real_loop[idx] = true;
+      switch (res.PatternTypes[idx]) {
+        case 0: pattern_labels[idx]  = "no"; break;
+        case 1: pattern_labels[idx]  = "positive"; break;
+        case 2: pattern_labels[idx]  = "negative"; break;
+        case 3: pattern_labels[idx]  = "dark"; break;
+        default: pattern_labels[idx] = "unknown"; break;
+      }
+    } 
   }
 
   // --- Build DataFrame outputs ---------------------------------------------
