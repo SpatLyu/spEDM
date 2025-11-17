@@ -90,7 +90,7 @@ A vector (when input is sf object) or matrix
 multiview embedding forecast
 }
 \examples{
-columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
+columbus = sf::read_sf(system.file("case/columbus.gpkg",package="spEDM"))
 \donttest{
 multiview(columbus,
           column = c("inc","crime","open","plumb","discbd"),

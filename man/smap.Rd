@@ -96,7 +96,7 @@ A list
 optimal parameter search for smap forecasting
 }
 \examples{
-columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
+columbus = sf::read_sf(system.file("case/columbus.gpkg",package="spEDM"))
 \donttest{
 smap(columbus,"inc","crime",E = 5,k = 6)
 }

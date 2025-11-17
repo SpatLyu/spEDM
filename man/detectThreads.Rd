@@ -13,7 +13,6 @@ An integer
 detect the number of available threads
 }
 \examples{
-\donttest{
 detectThreads()
-}
+
 }
