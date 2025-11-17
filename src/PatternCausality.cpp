@@ -677,7 +677,6 @@ PatternCausalityRes PatternCausality(
  * @param dist_metric    Distance metric (1 = L1, 2 = L2)
  * @param relative       Normalize embeddings relative to local mean
  * @param weighted       Weight causality by erf(norm(pred_Y)/norm(X))
- * @param NA_rm          Remove NaN samples before symbolic generation
  * @param threads        Number of threads for distance/projection
  * @param parallel_level Parallelism level across boot iterations
  * @param progressbar    Whether to show progress (optional)
@@ -698,7 +697,6 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
     int dist_metric = 2,
     bool relative = true,
     bool weighted = true,
-    bool NA_rm = true,
     int threads = 1,
     int parallel_level = 0,
     bool progressbar = false
@@ -784,7 +782,7 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
       else
         PredSMy = SignatureProjection(SMy, Dx, sampled_lib, pred_indices, num_neighbors, zero_tolerance, 1);
 
-      PatternCausalityRes res = GenPatternCausality(SMx, SMy, PredSMy, weighted, NA_rm, false);
+      PatternCausalityRes res = GenPatternCausality(SMx, SMy, PredSMy, weighted);
 
       all_results[0][li][b] = res.TotalPos;
       all_results[1][li][b] = res.TotalNeg;
