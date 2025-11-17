@@ -1,5 +1,5 @@
 .gpc_sf_method = \(data, cause, effect, libsizes = NULL, E = 3, k = E+2, tau = 1, style = 1, lib = NULL, pred = NULL, boot = 99, random = TRUE, seed = 42, dist.metric = "L2", zero.tolerance = k,
-                   relative = TRUE, weighted = TRUE, na.rm = TRUE, threads = detectThreads(), detrend = FALSE, parallel.level = "low", bidirectional = TRUE, progressbar = TRUE, nb = NULL){
+                   relative = TRUE, weighted = TRUE, threads = detectThreads(), detrend = FALSE, parallel.level = "low", bidirectional = TRUE, progressbar = TRUE, nb = NULL){
   varname = .check_character(cause, effect)
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   cause = .uni_lattice(data,cause,detrend)
@@ -7,20 +7,20 @@
   if (is.null(lib)) lib = which(!(is.na(cause) | is.na(effect)))
   if (is.null(pred)) pred = lib
   return(.run_gpc(cause, effect, E, k, tau, style, lib, pred, .check_distmetric(dist.metric),
-                  zero.tolerance, relative, weighted, na.rm, threads, bidirectional,
-                  varname, nb, libsizes, boot, random, seed, parallel.level, progressbar))
+                  zero.tolerance, relative, weighted, threads, bidirectional, varname, nb, 
+                  libsizes, boot, random, seed, parallel.level, progressbar))
 }
 
 .gpc_spatraster_method = \(data, cause, effect, libsizes = NULL, E = 3, k = E+2, tau = 1, style = 1, lib = NULL, pred = NULL, boot = 99, random = TRUE, seed = 42, dist.metric = "L2", zero.tolerance = k,
-                           relative = TRUE, weighted = TRUE, na.rm = TRUE, threads = detectThreads(), detrend = FALSE, parallel.level = "low", bidirectional = TRUE, progressbar = TRUE, grid.coord = TRUE){
+                           relative = TRUE, weighted = TRUE, threads = detectThreads(), detrend = FALSE, parallel.level = "low", bidirectional = TRUE, progressbar = TRUE, grid.coord = TRUE){
   varname = .check_character(cause, effect)
   cause = .uni_grid(data,cause,detrend,grid.coord)
   effect = .uni_grid(data,effect,detrend,grid.coord)
   if (is.null(lib)) lib = which(!(is.na(cause) | is.na(effect)), arr.ind = TRUE)
   if (is.null(pred)) pred = lib
   return(.run_gpc(cause, effect, E, k, tau, style, lib, pred, .check_distmetric(dist.metric),
-                  zero.tolerance, relative, weighted, na.rm, threads, bidirectional,
-                  varname, NULL, libsizes, boot, random, seed, parallel.level, progressbar))
+                  zero.tolerance, relative, weighted, threads, bidirectional, varname, NULL, 
+                  libsizes, boot, random, seed, parallel.level, progressbar))
 }
 
 #' geographical pattern causality
@@ -32,7 +32,6 @@
 #' @param zero.tolerance (optional) maximum number of zeros tolerated in signature space.
 #' @param relative (optional) whether to calculate relative changes in embeddings.
 #' @param weighted (optional) whether to weight causal strength.
-#' @param na.rm (optional) whether to remove `NA` samples in symbolic pattern generation.
 #'
 #' @return A list
 #' \describe{

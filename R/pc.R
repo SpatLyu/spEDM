@@ -1,23 +1,23 @@
 .pc_sf_method = \(data, column, target, E = 2:10, k = E+2, tau = 1, style = 1, lib = NULL, pred = NULL, dist.metric = "L2", zero.tolerance = max(k),
-                  relative = TRUE, weighted = TRUE, na.rm = TRUE, maximize = "positive", threads = detectThreads(), detrend = FALSE, nb = NULL){
+                  relative = TRUE, weighted = TRUE, maximize = "positive", threads = detectThreads(), detrend = FALSE, nb = NULL){
   vx = .uni_lattice(data,column,detrend)
   vy = .uni_lattice(data,target,detrend)
   if (is.null(lib)) lib = .internal_library(cbind(vx,vy))
   if (is.null(pred)) pred = lib
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   res = RcppPC4Lattice(vx, vy, nb, lib, pred, E, k, tau, style, zero.tolerance,
-                       .check_distmetric(dist.metric),relative,weighted,na.rm,threads)
+                       .check_distmetric(dist.metric),relative,weighted,threads)
   return(.bind_xmapself(res,target,"pc",maximize = maximize))
 }
 
 .pc_spatraster_method = \(data, column, target, E = 2:10, k = E+2, tau = 1, style = 1, lib = NULL, pred = NULL, dist.metric = "L2", zero.tolerance = max(k),
-                          relative = TRUE, weighted = TRUE, na.rm = TRUE, maximize = "positive", threads = detectThreads(), detrend = FALSE, grid.coord = TRUE){
+                          relative = TRUE, weighted = TRUE, maximize = "positive", threads = detectThreads(), detrend = FALSE, grid.coord = TRUE){
   mx = .uni_grid(data,column,detrend,grid.coord)
   my = .uni_grid(data,target,detrend,grid.coord)
   if (is.null(lib)) lib = which(!(is.na(mx) | is.na(my)), arr.ind = TRUE)
   if (is.null(pred)) pred = lib
   res = RcppPC4Grid(mx, my, lib, pred, E, k, tau, style, zero.tolerance,
-                    .check_distmetric(dist.metric),relative,weighted,na.rm,threads)
+                    .check_distmetric(dist.metric),relative,weighted,threads)
   return(.bind_xmapself(res,target,"pc",maximize = maximize))
 }
 
@@ -27,7 +27,6 @@
 #' @param zero.tolerance (optional) maximum number of zeros tolerated in signature space.
 #' @param relative (optional) whether to calculate relative changes in embeddings.
 #' @param weighted (optional) whether to weight causal strength.
-#' @param na.rm (optional) whether to remove `NA` samples in symbolic pattern generation.
 #' @param maximize (optional) causality metric to maximize: one of "positive", "negative", or "dark".
 #'
 #' @return A list
