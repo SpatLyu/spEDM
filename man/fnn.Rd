@@ -74,7 +74,7 @@ A vector
 false nearest neighbours
 }
 \examples{
-columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
+columbus = sf::read_sf(system.file("case/columbus.gpkg",package="spEDM"))
 \donttest{
 fnn(columbus,"crime")
 }

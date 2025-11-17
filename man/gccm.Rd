@@ -117,7 +117,7 @@ A list
 geographical convergent cross mapping
 }
 \examples{
-columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
+columbus = sf::read_sf(system.file("case/columbus.gpkg",package="spEDM"))
 \donttest{
 g = gccm(columbus,"hoval","crime",libsizes = seq(5,45,5),E = 6)
 g

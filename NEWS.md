@@ -10,6 +10,8 @@
 
 ### enhancements
 
+* Calibrate spacing conventions and enable real execution of available-thread detection (#885).
+
 * Maintain consistent double precision floating-point comparisons across cpp sources (#850).
 
 * Unify font specification in S3 plotting method for cross-mapping results (#830).
