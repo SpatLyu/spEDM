@@ -151,6 +151,7 @@ PatternCausalityRes GenPatternCausality(
  * @param relative       Whether to normalize embedding distances relative to their local mean
  * @param weighted       Whether to weight causal strength by erf(norm(pred_Y)/norm(X))
  * @param NA_rm          Whether to remove NaN samples before symbolic pattern generation
+ * @param sorted         Whther to sort unique pattern strings for deterministic ordering
  * @param threads        Number of threads to use (default = 1; automatically capped by hardware limit)
  *
  * ### Returns
@@ -176,6 +177,7 @@ PatternCausalityRes PatternCausality(
     bool relative = true,
     bool weighted = true,
     bool NA_rm = true,
+    bool sorted = false,
     int threads = 1
 );
 
