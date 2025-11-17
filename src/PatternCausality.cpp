@@ -255,6 +255,8 @@ PatternCausalityRes GenPatternCausality(
   uniq_set.insert(pred_PMy.begin(), pred_PMy.end());
 
   std::vector<std::string> unique_patterns(uniq_set.begin(), uniq_set.end());
+  // Sort unique pattern strings for deterministic ordering
+  std::sort(unique_patterns.begin(), unique_patterns.end()); 
   res.PatternStrings = unique_patterns;
 
   std::unordered_map<std::string, size_t> pattern_indices;
