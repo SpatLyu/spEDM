@@ -78,40 +78,95 @@ std::vector<std::string> GenPatternSpace(
 );
 
 /**
- * @brief Compute pattern-based causality analysis between predicted and real signatures.
+ * @brief Perform symbolic pattern–based causality analysis between real and predicted signatures.
  *
- * This function automatically generates symbolic patterns (PMx, PMy, pred_PMy)
- * using GenPatternSpace() from input signature matrices (SMx, SMy, pred_SMy),
- * then computes a causal strength matrix and per-sample classifications.
+ * This function implements a deterministic, pattern–indexed causal analysis pipeline.
+ * Numerical signature vectors (SMx, SMy, pred_SMy) are first transformed into symbolic
+ * pattern strings using GenPatternSpace(). The function then:
  *
- * Supports NaN handling through `NA_rm`:
- *  - If true, samples containing NaN are removed before pattern generation
- *    → max pattern count = 3^(E-1) + 1 (same as factorial hash style).
- *  - If false, NaN is treated as a valid symbol
- *    → max pattern count = 4^(E-1).
+ *  1. Collects all unique patterns appearing in X, Y_real, and Y_pred.
+ *  2. Removes patterns containing '0' (invalid placeholder state).
+ *  3. Augments the pattern set by including their symmetric-opposite counterparts
+ *     (swapping '1' <-> '3'), ensuring anti-diagonal causality is always representable.
+ *  4. Produces a sorted, dense pattern index (0 … K-1) for deterministic and
+ *     reproducible matrix alignment.
+ *  5. Computes a K×K causal strength matrix M(i, j), where:
+ *         i = pattern index of X(t)
+ *         j = pattern index of predicted Y(t)
+ *     and the matrix cell accumulates weighted causal strength over all samples.
  *
- * Causality classification follows:
- *  - Positive causality  → pattern(Y_pred) == pattern(Y_real)
- *  - Negative causality  → symmetric opposite pattern (i + j == N - 1)
- *  - Dark causality      → other off-diagonal relationships
- *  - No causality        → zero strength
+ *  6. Per-sample causality classification is performed:
+ *       - No causality: pattern(Y_pred) != pattern(Y_real)
+ *       - Positive     : i == j (main diagonal)
+ *       - Negative     : i + j == K - 1 (anti-diagonal)
+ *       - Dark         : all other off-diagonal relationships
+ *
+ *  7. Causal strength is optional weighted by:
+ *         erf( ||pred_Y|| / (||X|| + 1e-6) )
+ *     which bounds the strength in [0, 1] and prevents division instability.
+ *
+ *  8. A final normalized heatmap (cell-wise average) and aggregated metrics
+ *     (mean positive / negative / dark strengths) are returned.
+ *
+ * This implemention is optimized for:
+ *   - Zero-copy pattern referencing
+ *   - No dynamic string comparison in the main loop
+ *   - Deterministic ordering and symmetric space closure
+ *   - Minimal heap reallocations
+ *
+ * @details
+ * The key conceptual guarantee is *pattern space completeness*:
+ * for any observed pattern p, the function ensures its symmetric-opposite
+ * exists in the index set, even if never observed in the data. This creates
+ * a fully defined anti-diagonal causal relation space, solving the correctness
+ * issue in earlier implementations where i+j==K-1 could not be relied upon.
+ *
+ * ---------------------------------------------------------------------------
  *
  * @param SMx        X signature matrix (n × d)
  * @param SMy        Y real signature matrix (n × d)
  * @param pred_SMy   Y predicted signatures (n × d)
  * @param weighted   Whether to weight causal strength by erf(norm(pred_Y)/norm(X))
- * @param NA_rm      Whether to remove NaN samples before pattern generation
- * @param sorted     Whther to sort unique pattern strings for deterministic ordering
  *
- * @return PatternCausalityRes containing causal matrices, summary, and classifications.
+ * ---------------------------------------------------------------------------
+ *
+ * @return PatternCausalityRes
+ *
+ * The result struct contains:
+ *
+ *   - std::vector<double> NoCausality, PositiveCausality,
+ *                         NegativeCausality, DarkCausality  
+ *       Per-sample causal strengths (or 1 for no causality).
+ *   - std::vector<int> RealLoop  
+ *       Indices of samples actually used (patterns valid & non-zero).
+ *
+ *   - std::vector<int> PatternTypes  
+ *       Encoded per-sample causal class:  
+ *         0=no causality, 1=positive, 2=negative, 3=dark.
+ *
+ *   - std::vector<std::string> PatternStrings  
+ *       Mapping index → pattern string for each row/column of the heatmap.
+ *
+ *   - std::vector<std::vector<double>> matrice  
+ *       Normalized K×K causal heatmap M(i,j).
+ *
+ *   - double TotalPos, TotalNeg, TotalDark  
+ *       Mean strength across main diagonal, anti-diagonal, and off-diagonal cells.
+ *
+ * ---------------------------------------------------------------------------
+ *
+ * @note
+ *  - Patterns containing '0' are discarded from analysis.
+ *  - The function guarantees symmetric pattern-space completion.
+ *  - Index ordering is deterministic and reproducible across runs.
+ *  - Handles NaN values robustly by ignoring them in norms and averages.
+ *
  */
 PatternCausalityRes GenPatternCausality(
     const std::vector<std::vector<double>>& SMx,
     const std::vector<std::vector<double>>& SMy,
     const std::vector<std::vector<double>>& pred_SMy,
-    bool weighted = true,
-    bool NA_rm = true,
-    bool sorted = false
+    bool weighted = true
 );
 
 /**

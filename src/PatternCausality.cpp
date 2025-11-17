@@ -207,24 +207,16 @@ std::vector<std::string> GenPatternSpace(
  * using GenPatternSpace() from input signature matrices (SMx, SMy, pred_SMy),
  * then computes a causal strength matrix and per-sample classifications.
  *
- * Supports NaN handling through `NA_rm`:
- *  - If true, samples containing NaN are removed before pattern generation
- *    → max pattern count = 3^(E-1) + 1 (same as factorial hash style).
- *  - If false, NaN is treated as a valid symbol
- *    → max pattern count = 4^(E-1).
- *
  * Causality classification follows:
- *  - Positive causality  → pattern(Y_pred) == pattern(Y_real)
+ *  - No causality        → pattern(Y_pred) != pattern(Y_real) → zero strength
+ *  - Positive causality  → pattern(Y_pred) == pattern(Y_real) == pattern(X)
  *  - Negative causality  → symmetric opposite pattern (i + j == N - 1)
  *  - Dark causality      → other off-diagonal relationships
- *  - No causality        → zero strength
  *
  * @param SMx        X signature matrix (n × d)
  * @param SMy        Y real signature matrix (n × d)
  * @param pred_SMy   Y predicted signatures (n × d)
  * @param weighted   Whether to weight causal strength by erf(norm(pred_Y)/norm(X))
- * @param NA_rm      Whether to remove NaN samples before pattern generation
- * @param sorted     Whther to sort unique pattern strings for deterministic ordering
  *
  * @return PatternCausalityRes containing causal matrices, summary, and classifications.
  */
@@ -232,9 +224,7 @@ PatternCausalityRes GenPatternCausality(
     const std::vector<std::vector<double>>& SMx,
     const std::vector<std::vector<double>>& SMy,
     const std::vector<std::vector<double>>& pred_SMy,
-    bool weighted = true,
-    bool NA_rm = true,
-    bool sorted = false
+    bool weighted = true
 ) {
   PatternCausalityRes res;
   const size_t n = SMx.size();
@@ -242,7 +232,7 @@ PatternCausalityRes GenPatternCausality(
 
   // --- 1. Generate symbolic pattern strings ---
   // GenPatternSpace() should convert numeric sequences into symbolic strings
-  // (e.g., "0321", "1220", etc.), possibly removing or keeping NaN based on NA_rm.
+  // (e.g., "321", "122", etc.), possibly removing or keeping NaN based on NA_rm.
   std::vector<std::string> PMx = GenPatternSpace(SMx, NA_rm);
   std::vector<std::string> PMy = GenPatternSpace(SMy, NA_rm);
   std::vector<std::string> pred_PMy = GenPatternSpace(pred_SMy, NA_rm);
@@ -251,19 +241,62 @@ PatternCausalityRes GenPatternCausality(
   // if (PMx.size() != PMy.size() || PMx.size() != pred_PMy.size()) return res;
 
   // --- 2. Collect unique pattern strings and mapping ---
+  // Use unordered_set to collect all unique patterns efficiently
   std::unordered_set<std::string> uniq_set;
+  uniq_set.reserve(PMx.size() + PMy.size() + pred_PMy.size());
+
+  // Insert all patterns into the set
   uniq_set.insert(PMx.begin(), PMx.end());
   uniq_set.insert(PMy.begin(), PMy.end());
   uniq_set.insert(pred_PMy.begin(), pred_PMy.end());
 
-  std::vector<std::string> unique_patterns(uniq_set.begin(), uniq_set.end());
-  // Optional deterministic ordering
-  if (sorted) {
-    // Sort unique pattern strings for deterministic ordering
-    std::sort(unique_patterns.begin(), unique_patterns.end()); 
-  }
-  res.PatternStrings = unique_patterns;
+  // Lambda to check if a pattern contains '0'
+  auto str_contains_zero = [](const std::string& p) {
+    return p.find('0') != std::string::npos;
+  };
 
+  // Filter out patterns containing '0' and collect them
+  std::vector<std::string> filtered_patterns;
+  filtered_patterns.reserve(uniq_set.size()); 
+  for (const auto& p : uniq_set) {
+    if (!str_contains_zero(p)) {
+      filtered_patterns.push_back(p);
+    }
+  }
+
+  // Lambda to get opposite pattern (1 <-> 3, others unchanged)
+  auto get_opposite_pattern = [](const std::string& pattern) -> std::string {
+    std::string opposite = pattern;
+    for (char& o : opposite) {
+      switch (o) {
+        case '1': o = '3'; break;
+        case '3': o = '1'; break;
+        default: break; // Keep other characters unchanged
+      }
+    }
+    return opposite;
+  };
+
+  // Create extended patterns by adding opposite patterns of filtered patterns with deduplication
+  std::unordered_set<std::string> final_set;
+  final_set.reserve(filtered_patterns.size() * 2);
+
+  for (const auto& p : filtered_patterns) {
+    final_set.insert(p); // Add original filtered patterns
+    std::string opposite = get_opposite_pattern(p);
+    if (opposite != p) { // Avoid adding identical opposite patterns (e.g., "222")
+      final_set.insert(std::move(opposite));
+    }
+  }
+
+  // Convert to vector and sort for deterministic ordering
+  std::vector<std::string> unique_patterns;
+  unique_patterns.reserve(final_set.size());
+  unique_patterns.insert(unique_patterns.end(), 
+                         final_set.begin(), final_set.end());
+  std::sort(unique_patterns.begin(), unique_patterns.end());
+  
+  // Build pattern_indices map
   std::unordered_map<std::string, size_t> pattern_indices;
   pattern_indices.reserve(unique_patterns.size());
   for (size_t i = 0; i < unique_patterns.size(); ++i) {
@@ -272,13 +305,15 @@ PatternCausalityRes GenPatternCausality(
 
   const size_t hashed_num = unique_patterns.size();
   if (hashed_num == 0) return res;
+  const double midpoint = static_cast<double>(hashed_num - 1) / 2.0;
 
   // --- 3. Initialize result structures ---
   std::vector<std::vector<double>> heatmap_accum(
       hashed_num, std::vector<double>(hashed_num, std::numeric_limits<double>::quiet_NaN()));
   std::vector<std::vector<double>> count_matrix(
       hashed_num, std::vector<double>(hashed_num, 0.0));
-
+  
+  res.PatternStrings = std::move(unique_patterns);
   res.NoCausality.assign(n, 0.0);
   res.PositiveCausality.assign(n, 0.0);
   res.NegativeCausality.assign(n, 0.0);
@@ -317,27 +352,20 @@ PatternCausalityRes GenPatternCausality(
     const std::string& pat_y_real  = PMy[t];
     const std::string& pat_y_pred  = pred_PMy[t];
 
-    // --- Skip invalid pattern cases based on NA_rm ---
-    if (NA_rm) {
-      // In NA_rm=true mode, "0" represents an all-NaN (invalid) pattern
-      if (pat_x == "0" || pat_y_real == "0" || pat_y_pred == "0") continue;
-    } else {
-      // In NA_rm=false mode, "000...0" (E−1 zeros) represents an all-NaN pattern
-      size_t dim = SMx[0].size() > 0 ? SMx[0].size() - 1 : 1;
-      std::string zero_pattern(dim, '0');
-      if (pat_x == zero_pattern || pat_y_real == zero_pattern || pat_y_pred == zero_pattern) continue;
+    // --- Skip invalid pattern cases ---
+    if (str_contains_zero(pat_x) || str_contains_zero(pat_y_real) || str_contains_zero(pat_y_pred)) continue;
+
+    // --- Safe index lookup ---
+    auto x_it = pattern_indices.find(pat_x);
+    auto y_pred_it = pattern_indices.find(pat_y_pred);
+    if (x_it == pattern_indices.end() || y_pred_it == pattern_indices.end()) {
+      continue;
     }
 
-    // // Skip if any pattern missing
-    // if (!pattern_indices.count(pat_x) ||
-    //     !pattern_indices.count(pat_y_real) ||
-    //     !pattern_indices.count(pat_y_pred)) {
-    //     continue;
-    // }
+    size_t i = x_it->second;
+    size_t j = y_pred_it->second;
 
     res.RealLoop.push_back(static_cast<int>(t));
-    size_t i = pattern_indices[pat_x];
-    size_t j = pattern_indices[pat_y_pred];
 
     double strength = 0.0;
     if (pat_y_pred == pat_y_real) {
@@ -360,7 +388,6 @@ PatternCausalityRes GenPatternCausality(
       res.NoCausality[t] = 1.0;
       res.PatternTypes.push_back(0);
     } else {
-      double midpoint = static_cast<double>(hashed_num - 1) / 2.0;
       if (i == j && !doubleNearlyEqual(static_cast<double>(i), midpoint)) {
         res.PositiveCausality[t] = strength;
         res.PatternTypes.push_back(1);
@@ -375,11 +402,11 @@ PatternCausalityRes GenPatternCausality(
   }
 
   // --- 7. Normalize heatmap by counts ---
-  res.matrice = heatmap_accum;
+  res.matrice = std::move(heatmap_accum);
   for (size_t i = 0; i < hashed_num; ++i) {
     for (size_t j = 0; j < hashed_num; ++j) {
       if (count_matrix[i][j] > 0.0) {
-        res.matrice[i][j] = heatmap_accum[i][j] / count_matrix[i][j];
+        res.matrice[i][j] = res.matrice[i][j] / count_matrix[i][j];
       } else {
         res.matrice[i][j] = std::numeric_limits<double>::quiet_NaN();
       }
