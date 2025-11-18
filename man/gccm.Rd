@@ -121,7 +121,7 @@ columbus = sf::read_sf(system.file("case/columbus.gpkg",package="spEDM"))
 \donttest{
 g = gccm(columbus,"hoval","crime",libsizes = seq(5,45,5),E = 6)
 g
-plot(g, ylimits = c(0,0.85))
+plot(g,ylimits = c(0,0.85))
 }
 }
 \references{
