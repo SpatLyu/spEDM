@@ -2,7 +2,7 @@
 title: "State Space Reconstruction"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-11-01
+  | Last update: 2025-11-18
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -60,6 +60,8 @@ plot3D::scatter3D(v[,4], v[,5], v[,10], colvar = NULL, pch = 19,
                   col = "red", theta = 45, phi = 10, cex = 0.35,
                   bty = "f", clab = NA, tickmarks = FALSE)
 ```
+
+<br>
 
 ### An example of spatial grid data
 
