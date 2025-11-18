@@ -119,6 +119,8 @@ plot(crime_convergence, ylimits = c(-0.01,1),
      xlimits = c(9,46), xbreaks = seq(10, 45, 10))
 ```
 
+<br>
+
 ### An example of spatial grid data
 
 Load the `spEDM` package and its farmland NPP data:
