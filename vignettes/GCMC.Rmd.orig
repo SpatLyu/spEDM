@@ -2,7 +2,7 @@
 title: "Geographical Cross Mapping Cardinality"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-08-31
+  | Last update: 2025-11-18
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -144,6 +144,8 @@ Visualize the result:
 ```{r fig1,fig.width=3.55,fig.height=4.05,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. **Causal strengths among elevation, temperature, and population density.**")}
 plot_cs_matrix(res1)
 ```
+
+<br>
 
 ### An example of spatial grid data
 
