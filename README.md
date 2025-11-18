@@ -24,13 +24,13 @@ stable](https://img.shields.io/badge/lifecycle-stable-20b2aa.svg)](https://lifec
 
 ***Sp**atial **E**mpirical **D**ynamic **M**odeling*
 
-[`spEDM`](https://CRAN.R-project.org/package=spEDM) is an R package for
+[*spEDM*](https://CRAN.R-project.org/package=spEDM) is an R package for
 spatial causal discovery. It extends Empirical Dynamic Modeling (EDM)
 from time series to spatial cross-sectional data, provides seamless
 support for vector and raster spatial data via tight integration with
-[`sf`](https://CRAN.R-project.org/package=sf) and
-[`terra`](https://CRAN.R-project.org/package=terra), and enables
-data-driven causal inference from spatial snapshots.
+the [*sf*](https://CRAN.R-project.org/package=sf) and
+[*terra*](https://CRAN.R-project.org/package=terra) packages, and
+enables data-driven causal inference from spatial snapshots.
 
 > *Refer to the package documentation <https://stscl.github.io/spEDM/>
 > for more detailed information.*
