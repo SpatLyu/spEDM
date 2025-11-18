@@ -2,7 +2,7 @@
 title: "Introduction to the spEDM package"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-11-01
+  | Last update: 2025-11-18
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -119,3 +119,7 @@ Willeboordse, F.H., 2003. The spatial logistic map as a simple prototype for spa
 Herrera, M., Mur, J., & Ruiz, M. (2016). Detecting causal relationships between spatial processes. Papers in Regional Science, 95(3), 577–595. https://doi.org/10.1111/pirs.12144
 
 Gao, B., Yang, J., Chen, Z., Sugihara, G., Li, M., Stein, A., Kwan, M.-P., & Wang, J. (2023). Causal inference from cross-sectional earth system data with geographical convergent cross mapping. Nature Communications, 14(1). https://doi.org/10.1038/s41467-023-41619-6
+
+Zhang, Z., Wang, J., 2025. A model to identify causality for geographic patterns. International Journal of Geographical Information Science 1–21. https://doi.org/10.1080/13658816.2025.2581207
+
+<br>
