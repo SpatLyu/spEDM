@@ -50,8 +50,10 @@ Importantly, when extended to multivariate spatial settings, such as **bivariate
 - **Local cross-variable interaction (default form):**
 
 $$
-x_{i}^{(t+1)} = 1 - \alpha_x x_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} x_j^{(t)} - \beta_{yx} y_i^{(t)} \right), \\
-y_{i}^{(t+1)} = 1 - \alpha_y y_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} y_j^{(t)} - \beta_{xy} x_i^{(t)} \right).
+\begin{aligned}
+x_{i}^{(t+1)} &= 1 - \alpha_x x_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} x_j^{(t)} - \beta_{yx} y_i^{(t)} \right), \\
+y_{i}^{(t+1)} &= 1 - \alpha_y y_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} y_j^{(t)} - \beta_{xy} x_i^{(t)} \right).
+\end{aligned}
 $$
 
 Here, the inhibitory (or facilitative) influence between variables is restricted to the same spatial location.
@@ -59,8 +61,10 @@ Here, the inhibitory (or facilitative) influence between variables is restricted
 - **Neighbor-averaged cross-variable interaction (extended form):**
 
 $$
+\begin{aligned}
 x_{i}^{(t+1)} = 1 - \alpha_x x_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} x_j^{(t)} - \beta_{yx} \frac{1}{k} \sum_{j \in \mathcal{N}(i)} y_j^{(t)} \right), \\
 y_{i}^{(t+1)} = 1 - \alpha_y y_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} y_j^{(t)} - \beta_{xy} \frac{1}{k} \sum_{j \in \mathcal{N}(i)} x_j^{(t)} \right).
+\end{aligned}
 $$
 
 In this alternative form, the inter-variable interactions are mediated through the **neighbor-averaged states**, allowing each variable to be influenced by the spatial context of the other.
