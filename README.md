@@ -20,7 +20,7 @@ stable](https://img.shields.io/badge/lifecycle-stable-20b2aa.svg)](https://lifec
 
 <!-- badges: end -->
 
-<a href="https://stscl.github.io/spEDM/"><img src="man/figures/spEDM.png" align="right" hspace="10" vspace="0" width="15%" alt="spEDM website: https://stscl.github.io/spEDM/"/></a>
+<a href="https://stscl.github.io/spEDM/"><img src="man/figures/spEDM.png" align="right" hspace="12" vspace="0" width="15%" alt="spEDM website: https://stscl.github.io/spEDM/"/></a>
 
 ***Sp**atial **E**mpirical **D**ynamic **M**odeling*
 
