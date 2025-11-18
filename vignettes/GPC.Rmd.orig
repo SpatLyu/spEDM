@@ -2,7 +2,7 @@
 title: "Geographical Pattern Causality"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-11-16
+  | Last update: 2025-11-18
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -105,7 +105,7 @@ spEDM::pc(columbus, "hoval", "crime", E = 5:10, k = 6:12, maximize = "negative")
 Run geographical pattern causality analysis
 
 ```{r gpc_lattice}
-spEDM::gpc(columbus, "hoval", "crime", E = 5, k = 6)
+spEDM::gpc(columbus, "hoval", "crime", E = 6, k = 9)
 ```
 
 Convergence diagnostics
@@ -113,7 +113,7 @@ Convergence diagnostics
 ```{r fig1,fig.width=5.55,fig.height=3.05,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. **Convergence curves of causal strengths among house value and crime.**")}
 crime_convergence = spEDM::gpc(columbus, "hoval", "crime",
                                libsizes = seq(5, 45, by = 5),
-                               E = 5, k = 6, progressbar = FALSE)
+                               E = 6, k = 9, progressbar = FALSE)
 crime_convergence
 plot(crime_convergence, ylimits = c(-0.01,1),
      xlimits = c(9,46), xbreaks = seq(10, 45, 10))
@@ -140,8 +140,8 @@ dim(nnaindice)
 Determining minimal embedding dimension:
 
 ```{r fnn_grid}
-fnn(npp, "npp", E = 1:15,
-    eps = stats::sd(terra::values(npp[["npp"]]),na.rm = TRUE))
+spEDM::fnn(npp, "npp", E = 1:15,
+           eps = stats::sd(terra::values(npp[["npp"]]),na.rm = TRUE))
 ```
 
 At $E = 6$, the false nearest neighbor ratio stabilizes approximately at 0.0001 and remains constant thereafter. Therefore, $E = 6$ is selected as minimal embedding dimension for the subsequent GPC analysis.
