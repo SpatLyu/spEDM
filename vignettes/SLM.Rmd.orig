@@ -2,7 +2,7 @@
 title: "Spatial Logistic Map"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-08-31
+  | Last update: 2025-11-18
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -32,12 +32,12 @@ where $x_t \in [0,1]$ is the state of the system at time $t$, and $r$ is a growt
 In multivariate extensions of the logistic map, such as coupled logistic systems, each variable evolves under its own logistic rule but is also influenced by the states of other variables. A common form is:
 
 $$
-x_{t+1}^{(i)} = r_i x_t^{(i)} \left(1 - x_t^{(i)} - \sum_{j \neq i} \beta_{ij} x_t^{(j)} \right),
+x_{t+1}^{(i)} = r_i x_t^{(i)} \left(1 - x_t^{(i)} - \sum_{j \neq i} \beta_{ji} x_t^{(j)} \right),
 $$
 
-where $\beta_{ij}$ denotes the inhibitory (or facilitative) effect of variable $j$ on variable $i$. These multivariate systems allow the study of interaction-driven complexity, including predator-prey dynamics, interspecies competition, and coevolutionary processes.
+where $\beta_{ji}$ denotes the inhibitory (or facilitative) effect of variable $j$ on variable $i$. These multivariate systems allow the study of interaction-driven complexity, including predator-prey dynamics, interspecies competition, and coevolutionary processes.
 
-This framework can be further extended to **spatial domains** to account for interactions among neighboring spatial units. The resulting system, known as the **Spatial Logistic Map (SLM)**, distributes the logistic dynamics over a spatial lattice. In the simplest case, each location $i$ on the lattice updates according to:
+This framework can be further extended to **spatial domains** to account for interactions among neighboring spatial units. The resulting system, known as the **Spatial Logistic Map (SLM)**, distributes the logistic dynamics over a spatial cross section. In the simplest case, each location $i$ on the cross section updates according to:
 
 $$
 x_{i}^{(t+1)} = 1 - \alpha x_i^{(t)} \cdot \frac{1}{k} \sum_{j \in \mathcal{N}(i)} x_j^{(t)},
@@ -50,8 +50,8 @@ Importantly, when extended to multivariate spatial settings, such as **bivariate
 - **Local cross-variable interaction (default form):**
 
 $$
-x_{i}^{(t+1)} = 1 - \alpha_1 x_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} x_j^{(t)} - \beta_{21} y_i^{(t)} \right), \\
-y_{i}^{(t+1)} = 1 - \alpha_2 y_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} y_j^{(t)} - \beta_{12} x_i^{(t)} \right).
+x_{i}^{(t+1)} = 1 - \alpha_x x_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} x_j^{(t)} - \beta_{yx} y_i^{(t)} \right), \\
+y_{i}^{(t+1)} = 1 - \alpha_y y_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} y_j^{(t)} - \beta_{xy} x_i^{(t)} \right).
 $$
 
 Here, the inhibitory (or facilitative) influence between variables is restricted to the same spatial location.
@@ -59,8 +59,8 @@ Here, the inhibitory (or facilitative) influence between variables is restricted
 - **Neighbor-averaged cross-variable interaction (extended form):**
 
 $$
-x_{i}^{(t+1)} = 1 - \alpha_1 x_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} x_j^{(t)} - \beta_{21} \frac{1}{k} \sum_{j \in \mathcal{N}(i)} y_j^{(t)} \right), \\
-y_{i}^{(t+1)} = 1 - \alpha_2 y_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} y_j^{(t)} - \beta_{12} \frac{1}{k} \sum_{j \in \mathcal{N}(i)} x_j^{(t)} \right).
+x_{i}^{(t+1)} = 1 - \alpha_x x_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} x_j^{(t)} - \beta_{yx} \frac{1}{k} \sum_{j \in \mathcal{N}(i)} y_j^{(t)} \right), \\
+y_{i}^{(t+1)} = 1 - \alpha_y y_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} y_j^{(t)} - \beta_{xy} \frac{1}{k} \sum_{j \in \mathcal{N}(i)} x_j^{(t)} \right).
 $$
 
 In this alternative form, the inter-variable interactions are mediated through the **neighbor-averaged states**, allowing each variable to be influenced by the spatial context of the other.
@@ -103,6 +103,8 @@ terra::plot(species, nc = 3,
             legend = FALSE)
 ```
 
+<br>
+
 We assume an underlying causal interaction structure among species, where species *a* influences *b*, and *b* in turn influences *c* (i.e., *a* → *b* → *c*). The intrinsic growth rates of species a, b, and c are uniformly assigned a value of 0.2. Species a exerts an effect of 1 on species b, and species b exerts an effect of 1 on species c. All other interspecific influence parameters are set to 0. This setup provides a controlled environment to test spatial causality detection methods under known dynamic interactions.
 
 ```{r slm1,fig.width=6.55,fig.height=2.60,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. Species distributions following spatiotemporal interaction and evolution after 20 simulation steps with 4-neighbor interactions.")}
@@ -122,6 +124,8 @@ terra::plot(species_evolution, nc = 3,
             axes = FALSE,
             legend = FALSE)
 ```
+
+<br>
 
 ```{r slm2,fig.width=6.55,fig.height=2.60,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 3**. Species distributions after 20 simulation steps with 4-neighbor interactions and neighbor-averaged cross-variable dynamics.")}
 simv = spEDM::slm(species, x = "a", y = "b", z = "c", k = 4, step = 15, transient = 1, interact = "neighbors",
