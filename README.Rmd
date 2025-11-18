@@ -29,7 +29,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: end -->
 
-<a href="https://stscl.github.io/spEDM/"><img src="man/figures/spEDM.png" align="right" hspace="15" vspace="0" width="15%" alt="spEDM website: https://stscl.github.io/spEDM/"/></a>
+<a href="https://stscl.github.io/spEDM/"><img src="man/figures/spEDM.png" align="right" hspace="10" vspace="0" width="20%" alt="spEDM website: https://stscl.github.io/spEDM/"/></a>
 
 ***Sp**atial **E**mpirical **D**ynamic **M**odeling*
 
