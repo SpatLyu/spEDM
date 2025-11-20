@@ -2,11 +2,11 @@
 title: "Geographical Cross Mapping Cardinality"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-11-18
+  | Last update: 2025-11-20
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{GCMC}
+  %\VignetteIndexEntry{5. Geographical Cross Mapping Cardinality}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

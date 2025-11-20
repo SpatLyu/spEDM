@@ -2,11 +2,11 @@
 title: "State Space Reconstruction"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-11-18
-  | Last run: 2025-11-18
+  | Last update: 2025-11-20
+  | Last run: 2025-11-20
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{SSR}
+  %\VignetteIndexEntry{2. State Space Reconstruction}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

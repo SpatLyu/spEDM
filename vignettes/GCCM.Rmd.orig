@@ -2,11 +2,11 @@
 title: "Geographical Convergent Cross Mapping"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-11-18
+  | Last update: 2025-11-20
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{GCCM}
+  %\VignetteIndexEntry{3. Geographical Convergent Cross Mapping}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
