@@ -351,147 +351,144 @@ Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat) {
 }
 
 /**
- * @title Select Optimal Parameters Based on Causality Metrics for Pattern Causality
+ * Select optimal embedding parameters (E k tau) for pattern causality metrics
+ * using a global scan and full tie tracking across three causality measures.
  *
- * @description
- * This function identifies the optimal parameter combination (E, k, tau)
- * from a matrix of evaluation results containing causality measures.
- * Users may choose which causality metric to prioritize using the `maximize`
- * argument. The hierarchical selection rules follow:
+ * The input matrix must contain six columns in the following order:
+ *   1. E      embedding dimension
+ *   2. k      number of nearest neighbors
+ *   3. tau    lag parameter
+ *   4. pos    positive causality score
+ *   5. neg    negative causality score
+ *   6. dark   dark causality score
  *
- * - maximize = "positive":  pos → dark → neg
- * - maximize = "negative":  neg → dark → pos
- * - maximize = "dark":      dark → pos → neg
+ * The argument `maximize` specifies which causality metric should be given
+ * primary priority. The three metrics are compared in a hierarchical order:
  *
- * When all three metrics are tied (within floating-point tolerance),
- * the function applies deterministic tie-breaking based on the smallest
- * E, then tau, then k. A warning is issued when tie-breaking occurs.
+ *   maximize = "positive":  pos then dark then neg
+ *   maximize = "negative":  neg then dark then pos
+ *   maximize = "dark":      dark then pos then neg
  *
- * @param Emat A numeric matrix with 6 columns in the order:
- *   E, k, tau, pos, neg, dark.
- * @param maximize A character string specifying which metric to maximize:
- *   one of "positive", "negative", or "dark".
+ * The function performs a single pass global scan. During the scan it collects
+ * all rows that achieve the joint optimum across the three prioritized metrics
+ * within numerical tolerance. When multiple rows tie for the optimum a final
+ * deterministic choice is made by selecting the smallest E then the smallest
+ * tau then the smallest k. A warning is issued when this final tie breaking
+ * procedure is required.
  *
- * @return An integer vector (E, k, tau) giving the optimal parameters.
- *
- * @examples
- * \dontrun{
- *   OptPCparm(Emat, maximize = "dark")
- * }
+ * @param Emat A numeric matrix with columns: E k tau pos neg dark.
+ * @param maximize A string specifying which metric to prioritize.
+ * @return IntegerVector containing E k tau in this order.
  */
 // [[Rcpp::export(rng = false)]]
 Rcpp::IntegerVector OptPCparm(Rcpp::NumericMatrix Emat,
                               std::string maximize = "positive") {
 
   if (Emat.ncol() != 6) {
-    Rcpp::stop("Input matrix must have exactly 6 columns: E, k, tau, pos, neg, dark.");
+    Rcpp::stop("Input matrix must have exactly six columns: E k tau pos neg dark.");
   }
-  if (Emat.nrow() == 0) {
+  int n = Emat.nrow();
+  if (n == 0) {
     Rcpp::stop("Input matrix must not be empty.");
   }
 
-  // Validate maximize argument
   if (maximize != "positive" && maximize != "negative" && maximize != "dark") {
-    Rcpp::stop("maximize must be one of: 'positive', 'negative', 'dark'.");
+    Rcpp::stop("maximize must be one of positive negative or dark.");
   }
 
-  // Determine metric priority order
-  // Column indices: pos = 3, neg = 4, dark = 5
+  // establish metric priority order
   std::vector<int> priority(3);
   if (maximize == "positive") {
-    // pos → dark → neg
-    priority = {3, 5, 4};
+    priority = {3, 5, 4};  // pos dark neg
   } else if (maximize == "negative") {
-    // neg → dark → pos
-    priority = {4, 5, 3};
+    priority = {4, 5, 3};  // neg dark pos
   } else {
-    // maximize == "dark": dark → pos → neg
-    priority = {5, 3, 4};
+    priority = {5, 3, 4};  // dark pos neg
   }
 
-  int n = Emat.nrow();
-  int opt_row = 0;
-  bool used_tiebreak = false;
-
-  struct OptRecord {
-    int E, k, tau;
-    double pos, neg, dark;
+  // helper to get metric value
+  auto get_metric = [&](int row, int idx) {
+    return Emat(row, idx);
   };
 
-  // Initialize best record with the first row
-  OptRecord best{
-    (int)Emat(0, 0),
-    (int)Emat(0, 1),
-    (int)Emat(0, 2),
-    Emat(0, 3),
-    Emat(0, 4),
-    Emat(0, 5)
-  };
+  // record of the best metrics for comparison
+  std::vector<double> best_vals(3);
+  for (int j = 0; j < 3; ++j) {
+    best_vals[j] = get_metric(0, priority[j]);
+  }
 
-  // Helper to map metric index to value
-  auto get_metric = [&](const OptRecord &r, int idx) {
-    if (idx == 3) return r.pos;
-    if (idx == 4) return r.neg;
-    return r.dark;  // idx == 5
-  };
+  std::vector<int> best_rows;
+  best_rows.push_back(0);
 
+  // global scan
   for (int i = 1; i < n; ++i) {
-    OptRecord cur{
-      (int)Emat(i, 0),
-      (int)Emat(i, 1),
-      (int)Emat(i, 2),
-      Emat(i, 3),
-      Emat(i, 4),
-      Emat(i, 5)
-    };
 
     bool better = false;
     bool equal_all = true;
 
-    // Hierarchical metric comparison
     for (int p = 0; p < 3; ++p) {
-      int idx = priority[p];
-      double a = get_metric(cur, idx);
-      double b = get_metric(best, idx);
+      double a = get_metric(i, priority[p]);
+      double b = best_vals[p];
 
       if (!doubleNearlyEqual(a, b)) {
-        if (a > b) better = true;
+        if (a > b) {
+          better = true;
+        }
         equal_all = false;
         break;
       }
     }
 
     if (better) {
-      best = cur;
-      opt_row = i;
-      used_tiebreak = false;
-      continue;
-    }
-
-    // Complete tie across all three metrics → deterministic tie-breaking
-    if (equal_all) {
-      bool tie_better =
-        (cur.E < best.E) ||
-        (cur.E == best.E && cur.tau < best.tau) ||
-        (cur.E == best.E && cur.tau == best.tau && cur.k < best.k);
-
-      if (tie_better) {
-        best = cur;
-        opt_row = i;
-        used_tiebreak = true;
+      best_rows.clear();
+      best_rows.push_back(i);
+      for (int p = 0; p < 3; ++p) {
+        best_vals[p] = get_metric(i, priority[p]);
       }
     }
+    else if (equal_all) {
+      best_rows.push_back(i);
+    }
   }
 
-  if (used_tiebreak) {
-    Rcpp::warning("Tie in evaluation metrics resolved by selecting smallest E, then tau, then k.");
+  // if only one globally optimal row return directly
+  if (best_rows.size() == 1) {
+    int row = best_rows[0];
+    return Rcpp::IntegerVector::create(
+      static_cast<int>(Emat(row, 0)),
+      static_cast<int>(Emat(row, 1)),
+      static_cast<int>(Emat(row, 2))
+    );
   }
 
-  return Rcpp::IntegerVector::create(
-    (int)Emat(opt_row, 0),
-    (int)Emat(opt_row, 1),
-    (int)Emat(opt_row, 2)
-  );
+  // issue tie warning
+  Rcpp::warning("Multiple parameter sets share the global optimum. The final choice is determined by smallest E then tau then k.");
+
+  // tie break by E then tau then k
+  int best_idx = best_rows[0];
+  int bestE = Emat(best_idx, 0);
+  int bestTau = Emat(best_idx, 2);
+  int bestK = Emat(best_idx, 1);
+
+  for (int idx : best_rows) {
+    int E = Emat(idx, 0);
+    int tau = Emat(idx, 2);
+    int k = Emat(idx, 1);
+
+    bool better =
+      (E < bestE) ||
+      (E == bestE && tau < bestTau) ||
+      (E == bestE && tau == bestTau && k < bestK);
+
+    if (better) {
+      best_idx = idx;
+      bestE = E;
+      bestTau = tau;
+      bestK = k;
+    }
+  }
+
+  return Rcpp::IntegerVector::create(bestE, bestK, bestTau);
 }
 
 /**
