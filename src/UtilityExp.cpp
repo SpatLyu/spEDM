@@ -229,7 +229,8 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
 }
 
 /**
- * Select the optimal embedding parameters (E k tau) from intersection cardinality result.
+ * Select the optimal embedding parameters (E k tau) from an intersection
+ * cardinality evaluation matrix using a global scan and full tie tracking.
  *
  * The input matrix must contain the following columns in this order:
  *   1. E      embedding dimension
@@ -239,27 +240,31 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
  *   5. p      p value used for significance screening
  *
  * Only rows with p value less than or equal to 0.05 are considered valid.
- * Among the valid rows the selection follows these rules:
- *   1. Maximize metric with relative tolerance comparison
- *   2. If metric is equal within tolerance choose smallest E
- *   3. If E is equal choose smallest tau
- *   4. If tau is equal choose smallest k
  *
- * A warning is issued if multiple rows tie on the metric and the final
- * choice is determined by E tau and k.
+ * The selection procedure uses a single pass global scan. During the scan
+ * the algorithm keeps a list of all rows that jointly achieve the best
+ * metric value within numerical tolerance. The comparison rules are:
+ *   1. A row is better if its metric is strictly larger within tolerance
+ *   2. If the metric is equal a row is appended to the list of best rows
  *
- * If no valid rows exist the function stops with an error message.
+ * After the scan:
+ *   If one row is optimal its parameters are returned.
+ *   If more than one row is optimal a warning is issued and the final
+ *   choice is determined by selecting the smallest E then the smallest tau
+ *   then the smallest k.
  *
- * @param Emat NumericMatrix with columns: E k tau metric p.
+ * This design prevents misleading warnings that can arise when a local tie
+ * appears during the scan but does not correspond to a true global tie.
+ *
+ * @param Emat A NumericMatrix with columns: E k tau metric p.
  * @return IntegerVector containing E k tau in this order.
  */
 // [[Rcpp::export(rng = false)]]
 Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat) {
 
   if (Emat.ncol() != 5) {
-    Rcpp::stop("Input matrix must have exactly five columns: E k tau metric and p value.");
+    Rcpp::stop("Input matrix must have exactly five columns: E k tau metric p.");
   }
-
   int n = Emat.nrow();
   if (n == 0) {
     Rcpp::stop("Input matrix must not be empty.");
@@ -268,6 +273,7 @@ Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat) {
   std::vector<int> valid_rows;
   valid_rows.reserve(n);
 
+  // filter rows based on p value
   for (int i = 0; i < n; ++i) {
     double p = Emat(i, 4);
     if (p < 0.05 || doubleNearlyEqual(p, 0.05)) {
@@ -276,57 +282,72 @@ Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat) {
   }
 
   if (valid_rows.empty()) {
-    Rcpp::stop("No valid rows with p value less than or equal to 0.05. The chosen neighborhood parameter may be unreasonable or there may be no causal relationship. Consider resetting.");
+    Rcpp::stop("No valid rows with p value less than or equal to 0.05. The neighborhood parameter may be unreasonable or there may be no causal relationship.");
   }
 
-  int opt_row = valid_rows[0];
-  double best_metric = Emat(opt_row, 3);
-  int best_E   = static_cast<int>(Emat(opt_row, 0));
-  int best_k   = static_cast<int>(Emat(opt_row, 1));
-  int best_tau = static_cast<int>(Emat(opt_row, 2));
-  int tie_count = 1;
+  // initialize best set using the first valid row
+  int first = valid_rows[0];
+  double best_metric = Emat(first, 3);
 
+  std::vector<int> best_rows;
+  best_rows.push_back(first);
+
+  // global scan across valid rows
   for (size_t i = 1; i < valid_rows.size(); ++i) {
     int row = valid_rows[i];
-
     double metric = Emat(row, 3);
-    int E   = static_cast<int>(Emat(row, 0));
-    int k   = static_cast<int>(Emat(row, 1));
-    int tau = static_cast<int>(Emat(row, 2));
 
     bool metric_equal  = doubleNearlyEqual(metric, best_metric);
-    bool metric_better = !metric_equal && metric > best_metric;
+    bool metric_better = (!metric_equal && metric > best_metric);
 
     if (metric_better) {
-      opt_row = row;
+      best_rows.clear();
+      best_rows.push_back(row);
       best_metric = metric;
-      best_E = E;
-      best_tau = tau;
-      best_k = k;
-      tie_count = 1;
     }
     else if (metric_equal) {
-      tie_count++;
-
-      bool tie_better =
-        (E < best_E) ||
-        (E == best_E && tau < best_tau) ||
-        (E == best_E && tau == best_tau && k < best_k);
-
-      if (tie_better) {
-        opt_row = row;
-        best_E = E;
-        best_tau = tau;
-        best_k = k;
-      }
+      best_rows.push_back(row);
     }
   }
 
-  if (tie_count > 1) {
-    Rcpp::warning("Multiple parameter sets share the best metric. The final choice was determined by smallest E then smallest tau then smallest k.");
+  // if only one row is globally optimal return directly
+  if (best_rows.size() == 1) {
+    int row = best_rows[0];
+    return Rcpp::IntegerVector::create(
+      static_cast<int>(Emat(row, 0)),
+      static_cast<int>(Emat(row, 1)),
+      static_cast<int>(Emat(row, 2))
+    );
   }
 
-  return Rcpp::IntegerVector::create(best_E, best_k, best_tau);
+  // issue tie warning
+  Rcpp::warning("Multiple parameter sets share the best metric. The final choice is determined by smallest E then smallest tau then smallest k.");
+
+  // tie breaking: smallest E then tau then k
+  int best_idx = best_rows[0];
+  int bestE = Emat(best_idx, 0);
+  int bestTau = Emat(best_idx, 2);
+  int bestK = Emat(best_idx, 1);
+
+  for (int idx : best_rows) {
+    int E = Emat(idx, 0);
+    int tau = Emat(idx, 2);
+    int k = Emat(idx, 1);
+
+    bool better =
+      (E < bestE) ||
+      (E == bestE && tau < bestTau) ||
+      (E == bestE && tau == bestTau && k < bestK);
+
+    if (better) {
+      best_idx = idx;
+      bestE = E;
+      bestTau = tau;
+      bestK = k;
+    }
+  }
+
+  return Rcpp::IntegerVector::create(bestE, bestK, bestTau);
 }
 
 /**
