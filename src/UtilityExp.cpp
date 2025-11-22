@@ -217,27 +217,35 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
 }
 
 /**
- * Select the optimal embedding dimension (E) and number of nearest neighbors (k)
- * from a 4-column matrix: E, k, performance metric, and p-value.
+ * Select the optimal embedding parameters (E k tau) from intersection cardinality result.
  *
- * Only rows with p-value <= 0.05 are considered.
- * Among them, select the row with:
- *   1. Highest metric (compared using relative tolerance for robustness),
- *   2. If tie, smallest k,
- *   3. If still tie, smallest E.
+ * The input matrix must contain the following columns in this order:
+ *   1. E      embedding dimension
+ *   2. k      number of nearest neighbors
+ *   3. tau    lag parameter
+ *   4. metric performance score to be maximized
+ *   5. p      p value used for significance screening
  *
- * If multiple rows tie on the best metric (within tolerance), a warning is issued
- * and the combination with the smallest k and E is chosen.
+ * Only rows with p value less than or equal to 0.05 are considered valid.
+ * Among the valid rows the selection follows these rules:
+ *   1. Maximize metric with relative tolerance comparison
+ *   2. If metric is equal within tolerance choose smallest E
+ *   3. If E is equal choose smallest tau
+ *   4. If tau is equal choose smallest k
  *
- * If no valid rows (p <= 0.05) exist, the function stops with an error.
+ * A warning is issued if multiple rows tie on the metric and the final
+ * choice is determined by E tau and k.
  *
- * @param Emat NumericMatrix with columns: E, k, metric, and p-value.
- * @return IntegerVector of length 2: optimal E and k.
+ * If no valid rows exist the function stops with an error message.
+ *
+ * @param Emat NumericMatrix with columns: E k tau metric p.
+ * @return IntegerVector containing E k tau in this order.
  */
 // [[Rcpp::export(rng = false)]]
 Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat) {
-  if (Emat.ncol() != 4) {
-    Rcpp::stop("Input matrix must have exactly 4 columns: E, k, metric, and p-value.");
+
+  if (Emat.ncol() != 5) {
+    Rcpp::stop("Input matrix must have exactly five columns: E k tau metric and p value.");
   }
 
   int n = Emat.nrow();
@@ -245,62 +253,72 @@ Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat) {
     Rcpp::stop("Input matrix must not be empty.");
   }
 
-  // Filter valid rows with p <= 0.05
   std::vector<int> valid_rows;
   valid_rows.reserve(n);
+
   for (int i = 0; i < n; ++i) {
-    double p = Emat(i, 3);
+    double p = Emat(i, 4);
     if (p < 0.05 || doubleNearlyEqual(p, 0.05)) {
       valid_rows.push_back(i);
     }
   }
 
   if (valid_rows.empty()) {
-    Rcpp::stop("No valid rows with p-value <= 0.05. The chosen neighborhood parameter may be unreasonable or there's no causal relationship. Please consider resetting.");
+    Rcpp::stop("No valid rows with p value less than or equal to 0.05. The chosen neighborhood parameter may be unreasonable or there may be no causal relationship. Consider resetting.");
   }
 
-  int optimal_row = valid_rows[0];
-  double best_metric = Emat(optimal_row, 2);
-  int best_k = static_cast<int>(Emat(optimal_row, 1));
-  int best_E = static_cast<int>(Emat(optimal_row, 0));
+  int opt_row = valid_rows[0];
+  double best_metric = Emat(opt_row, 3);
+  int best_E   = static_cast<int>(Emat(opt_row, 0));
+  int best_k   = static_cast<int>(Emat(opt_row, 1));
+  int best_tau = static_cast<int>(Emat(opt_row, 2));
   int tie_count = 1;
 
   for (size_t i = 1; i < valid_rows.size(); ++i) {
     int row = valid_rows[i];
-    double current_metric = Emat(row, 2);
-    int current_k = static_cast<int>(Emat(row, 1));
-    int current_E = static_cast<int>(Emat(row, 0));
 
-    bool metric_equal  = doubleNearlyEqual(current_metric, best_metric);
-    bool metric_better = !metric_equal && current_metric > best_metric;
+    double metric = Emat(row, 3);
+    int E   = static_cast<int>(Emat(row, 0));
+    int k   = static_cast<int>(Emat(row, 1));
+    int tau = static_cast<int>(Emat(row, 2));
+
+    bool metric_equal  = doubleNearlyEqual(metric, best_metric);
+    bool metric_better = !metric_equal && metric > best_metric;
 
     if (metric_better) {
-      optimal_row = row;
-      best_metric = current_metric;
-      best_k = current_k;
-      best_E = current_E;
+      opt_row = row;
+      best_metric = metric;
+      best_E = E;
+      best_tau = tau;
+      best_k = k;
       tie_count = 1;
-    } else if (metric_equal) {
-      ++tie_count;
-      bool tie_better = (current_k < best_k) ||
-      (current_k == best_k && current_E < best_E);
+    }
+    else if (metric_equal) {
+      tie_count++;
+
+      bool tie_better =
+        (E < best_E) ||
+        (E == best_E && tau < best_tau) ||
+        (E == best_E && tau == best_tau && k < best_k);
+
       if (tie_better) {
-        optimal_row = row;
-        best_k = current_k;
-        best_E = current_E;
+        opt_row = row;
+        best_E = E;
+        best_tau = tau;
+        best_k = k;
       }
     }
   }
 
   if (tie_count > 1) {
-    Rcpp::warning("Multiple parameter sets have equal optimal metric; using smallest k and E.");
+    Rcpp::warning("Multiple parameter sets share the best metric. The final choice was determined by smallest E then smallest tau then smallest k.");
   }
 
-  return Rcpp::IntegerVector::create(best_E, best_k);
+  return Rcpp::IntegerVector::create(best_E, best_k, best_tau);
 }
 
 /**
- * @title Select Optimal Parameters Based on Causality Metrics
+ * @title Select Optimal Parameters Based on Causality Metrics for Pattern Causality
  *
  * @description
  * This function identifies the optimal parameter combination (E, k, tau)
