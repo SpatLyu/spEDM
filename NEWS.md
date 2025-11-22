@@ -10,6 +10,8 @@
 
 ### enhancements
 
+* Permit `simplex` and `ic` generics to accept varying E, k, and tau inputs (#900).
+
 * Calibrate spacing conventions and enable real execution of available-thread detection (#885).
 
 * Maintain consistent double precision floating-point comparisons across cpp sources (#850).
