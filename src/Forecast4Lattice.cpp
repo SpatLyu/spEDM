@@ -133,7 +133,7 @@ std::vector<std::vector<double>> Simplex4LatticeCom(const std::vector<double>& s
 
   std::vector<std::vector<double>> result(unique_EbTau.size(), std::vector<double>(6));
 
-  RcppThread::parallelFor(0, unique_Ebcom.size(), [&](size_t i) {
+  RcppThread::parallelFor(0, unique_EbTau.size(), [&](size_t i) {
     const int Ei   = std::get<0>(unique_EbTau[i]);
     const int bi   = std::get<1>(unique_EbTau[i]);
     const int taui = std::get<2>(unique_EbTau[i]);
