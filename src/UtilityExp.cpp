@@ -140,15 +140,16 @@ Rcpp::IntegerVector OptSimplexParm(Rcpp::NumericMatrix Emat) {
  *  - Minimize "mae" if "rho" and "rmse" tie
  * If multiple rows tie on these metrics (within a tolerance),
  * preference is given to the theta closest to 1.
- * Warnings are issued when tie-breaking occurs or when all metrics are identical.
+ * Warnings are issued when tie-breaking occurs.
  *
  * @param Thetamat A NumericMatrix with four columns: theta, rho, mae, and rmse.
  * @return The optimal theta parameter as a double.
  */
 // [[Rcpp::export(rng = false)]]
 double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
+
   if (Thetamat.ncol() != 4) {
-    Rcpp::stop("Input matrix must have exactly 4 columns: theta, rho, mae, and rmse.");
+    Rcpp::stop("Input matrix must have exactly four columns: theta rho mae rmse.");
   }
 
   int n = Thetamat.nrow();
@@ -156,74 +157,61 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
     Rcpp::stop("Input matrix must not be empty.");
   }
 
+  // initialize best metrics using first row
   std::vector<int> best_rows;
-  double best_rho  = Thetamat(0, 1);
-  double best_mae  = Thetamat(0, 2);
-  double best_rmse = Thetamat(0, 3);
   best_rows.push_back(0);
 
+  double best_rho  = Thetamat(0, 1);
+  double best_rmse = Thetamat(0, 3);
+  double best_mae  = Thetamat(0, 2);
+
+  // global scan through all rows
   for (int i = 1; i < n; ++i) {
+
     double rho  = Thetamat(i, 1);
-    double mae  = Thetamat(i, 2);
     double rmse = Thetamat(i, 3);
+    double mae  = Thetamat(i, 2);
 
     bool rho_equal   = doubleNearlyEqual(rho, best_rho);
     bool rmse_equal  = doubleNearlyEqual(rmse, best_rmse);
     bool mae_equal   = doubleNearlyEqual(mae, best_mae);
-    // Prevents false positives caused by minimal floating-point deviations
-    bool rho_better  = !rho_equal && rho > best_rho;
-    bool rmse_better = !rmse_equal && rmse < best_rmse; // smaller is better
-    bool mae_better  = !mae_equal && mae < best_mae;    // smaller is better
 
-    if (rho_better ||
-        (rho_equal && rmse_better) ||
-        (rho_equal && rmse_equal && mae_better)) {
+    bool rho_better  = (!rho_equal && rho > best_rho);
+    bool rmse_better = (rho_equal && !rmse_equal && rmse < best_rmse);
+    bool mae_better  = (rho_equal && rmse_equal && !mae_equal && mae < best_mae);
+
+    if (rho_better || rmse_better || mae_better) {
       best_rows.clear();
       best_rows.push_back(i);
       best_rho  = rho;
       best_rmse = rmse;
       best_mae  = mae;
-    } else if (rho_equal && rmse_equal && mae_equal) {
+    }
+    else if (rho_equal && rmse_equal && mae_equal) {
       best_rows.push_back(i);
     }
   }
 
-  // If only one best row, return directly
+  // if only one globally optimal row return directly
   if (best_rows.size() == 1) {
     return Thetamat(best_rows[0], 0);
   }
 
-  // Check if *all* metrics are identical (within tolerance)
-  bool all_equal = true;
-  for (size_t i = 1; i < best_rows.size(); ++i) {
-    int r0 = best_rows[0];
-    int r1 = best_rows[i];
-    if (!(doubleNearlyEqual(Thetamat(r0, 1), Thetamat(r1, 1)) &&
-          doubleNearlyEqual(Thetamat(r0, 2), Thetamat(r1, 2)) &&
-          doubleNearlyEqual(Thetamat(r0, 3), Thetamat(r1, 3)))) {
-      all_equal = false;
-      break;
-    }
-  }
-
-  // if *all* metrics are identical, select closest to 1
+  // tie exists: choose theta closest to one
   double selected_theta = std::numeric_limits<double>::quiet_NaN();
-  double min_dist_to_1 = std::numeric_limits<double>::max();
+  double min_dist = std::numeric_limits<double>::max();
 
-  for (int i : best_rows) {
-    double theta = Thetamat(i, 0);
+  for (int idx : best_rows) {
+    double theta = Thetamat(idx, 0);
     double dist = std::fabs(theta - 1.0);
-    if (dist < min_dist_to_1) {
-      min_dist_to_1 = dist;
+
+    if (dist < min_dist) {
+      min_dist = dist;
       selected_theta = theta;
     }
   }
 
-  if (all_equal) {
-    Rcpp::warning("All evaluation metrics are identical within tolerance; choosing theta == 1 if available, otherwise closest to 1.");
-  } else {
-    Rcpp::warning("Tied best evaluation metrics within tolerance; choosing theta == 1 if available, otherwise closest to 1.");
-  }
+  Rcpp::warning("Multiple parameter sets share the best evaluation metrics. The final choice is the theta value closest to one.");
 
   return selected_theta;
 }
