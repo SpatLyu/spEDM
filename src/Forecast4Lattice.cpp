@@ -315,6 +315,7 @@ std::vector<std::vector<double>> IC4Lattice(const std::vector<double>& source,
 
   // Generate unique (E, tau) combinations
   std::vector<std::pair<int, int>> unique_ETau;
+  unique_ETau.reserve(Es.size() * taus.size());
   for (int e : Es)
     for (int t : taus)
       unique_ETau.emplace_back(e, t);
