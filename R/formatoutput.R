@@ -90,13 +90,11 @@ print.xmap_self = \(x,...){
   res = as.matrix(x$xmap)
   if (x$method == "smap") {
     cat(paste0("The suggested theta for variable ", x$varname, " is ", OptThetaParm(res)), "\n")
-  } else if (x$method == "ic") {
-    res = OptICparm(res)
-    cat(paste0("The suggested E and k for variable ", x$varname, " is ", res[1], " and ", res[2]), "\n")
-    if (res[1] == 1 && x$tau == 0) warning("When tau = 0, E should not be 1")
   } else {
       if (x$method == "simplex") {
         res = OptSimplexParm(res)
+      } else if (x$method == "ic") {
+        res = OptICparm(res)
       } else if (x$method == "pc") {
         res = OptPCparm(res,x$maximize)
       }
