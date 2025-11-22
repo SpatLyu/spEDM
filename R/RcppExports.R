@@ -113,7 +113,7 @@ RcppMultiView4Grid <- function(xMatrix, yMatrix, lib, pred, E = 3L, tau = 1L, b 
     .Call(`_spEDM_RcppMultiView4Grid`, xMatrix, yMatrix, lib, pred, E, tau, b, top, nvar, style, stack, dist_metric, dist_average, threads)
 }
 
-RcppIC4Grid <- function(source, target, lib, pred, E, b, tau = 1L, exclude = 0L, style = 1L, dist_metric = 2L, threads = 8L, parallel_level = 0L) {
+RcppIC4Grid <- function(source, target, lib, pred, E, b, tau, exclude = 0L, style = 1L, dist_metric = 2L, threads = 8L, parallel_level = 0L) {
     .Call(`_spEDM_RcppIC4Grid`, source, target, lib, pred, E, b, tau, exclude, style, dist_metric, threads, parallel_level)
 }
 
@@ -205,7 +205,7 @@ RcppMultiView4Lattice <- function(x, y, nb, lib, pred, E = 3L, tau = 1L, b = 5L,
     .Call(`_spEDM_RcppMultiView4Lattice`, x, y, nb, lib, pred, E, tau, b, top, nvar, style, stack, dist_metric, dist_average, threads)
 }
 
-RcppIC4Lattice <- function(source, target, nb, lib, pred, E, b, tau = 1L, exclude = 0L, style = 1L, dist_metric = 2L, threads = 8L, parallel_level = 0L) {
+RcppIC4Lattice <- function(source, target, nb, lib, pred, E, b, tau, exclude = 0L, style = 1L, dist_metric = 2L, threads = 8L, parallel_level = 0L) {
     .Call(`_spEDM_RcppIC4Lattice`, source, target, nb, lib, pred, E, b, tau, exclude, style, dist_metric, threads, parallel_level)
 }
 

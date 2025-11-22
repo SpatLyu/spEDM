@@ -297,9 +297,10 @@ std::vector<std::vector<double>> SMap4GridCom(const std::vector<std::vector<doub
  * @brief Evaluate intersection cardinality (IC) for spatial grid data.
  *
  * This function computes the intersection cardinality between the k-nearest neighbors
- * of grid-embedded source and target spatial variables, across a range of embedding dimensions (E)
- * and neighborhood sizes (b). The result is an AUC (Area Under the Curve) score for each (E, b) pair
- * that quantifies the directional similarity or interaction between the spatial fields.
+ * of grid-embedded source and target spatial variables, across a range of embedding dimensions (E),
+ * neighborhood sizes (b) and spatial lag step (tau). The result is an AUC (Area Under the Curve) 
+ * score for each (E, tau) pair that quantifies the directional similarity or interaction between
+ * the spatial fields.
  *
  * The method constructs delay-like embeddings over grid cells using spatial neighborhoods,
  * filters out invalid prediction locations (e.g., with all NaN values), computes nearest neighbors
@@ -314,14 +315,14 @@ std::vector<std::vector<double>> SMap4GridCom(const std::vector<std::vector<doub
  * @param pred_indices Indices of spatial locations used as the prediction set (evaluation).
  * @param E Vector of spatial embedding dimensions to evaluate (e.g., neighborhood sizes).
  * @param b Vector of neighbor counts (k) used to compute IC.
- * @param tau Spatial embedding spacing (lag). Determines distance between embedding neighbors.
+ * @param tau Vector of spatial embedding spacing (lag). Determines step between spatial lag.
  * @param exclude Number of nearest neighbors to exclude in IC computation.
  * @param style Embedding style selector (0: includes current state, 1: excludes it).
  * @param dist_metric Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param threads Maximum number of threads to use.
  * @param parallel_level If > 0, enables parallel evaluation of b for each E.
  *
- * @return A matrix of size (|E| × |b|) × 4 with rows: [E, b, AUC, P-value]
+ * @return A matrix of size (|E| × |b| × |tau|) × 5 with rows: [E, b, tau, AUC, P-value]
  */
 std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>& source,
                                          const std::vector<std::vector<double>>& target,
@@ -329,7 +330,7 @@ std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>&
                                          const std::vector<size_t>& pred_indices,
                                          const std::vector<int>& E,
                                          const std::vector<int>& b,
-                                         int tau = 1,
+                                         const std::vector<int>& tau,
                                          int exclude = 0,
                                          int style = 1,
                                          int dist_metric = 2,
@@ -348,16 +349,19 @@ std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>&
   std::sort(bs.begin(), bs.end());
   bs.erase(std::unique(bs.begin(), bs.end()), bs.end());
 
-  // Generate all unique (E, b) pairs
-  std::vector<std::pair<int, int>> unique_Ebcom;
-  unique_Ebcom.reserve(Es.size() * bs.size());
-  for (int e : Es) {
-    for (int bn : bs) {
-      unique_Ebcom.emplace_back(e, bn);
-    }
-  }
+  std::vector<int> taus = tau;
+  std::sort(taus.begin(), taus.end());
+  taus.erase(std::unique(taus.begin(), taus.end()), taus.end());
 
-  std::vector<std::vector<double>> result(unique_Ebcom.size(), std::vector<double>(4));
+  // Generate unique (E, tau) combinations
+  std::vector<std::pair<int, int>> unique_ETau;
+  unique_ETau.reserve(Es.size() * taus.size());
+  for (int e : Es)
+    for (int t : taus)
+      unique_ETau.emplace_back(e, t);
+
+  std::vector<std::vector<double>> result(unique_ETau.size() * bs.size(), 
+                                          std::vector<double>(5));
 
   size_t max_num_neighbors = 0;
   if (!bs.empty()) {
@@ -365,10 +369,13 @@ std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>&
   }
 
   if (parallel_level == 0){
-    for (size_t i = 0; i < Es.size(); ++i) {
+    for (size_t i = 0; i < unique_ETau.size(); ++i) {
+      const int Ei = unique_ETau[i].first;
+      const int taui = unique_ETau[i].second;
+
       // Generate embeddings
-      auto embedding_x = GenGridEmbeddings(source, Es[i], tau, style);
-      auto embedding_y = GenGridEmbeddings(target, Es[i], tau, style);
+      auto embedding_x = GenGridEmbeddings(source, Ei, taui, style);
+      auto embedding_y = GenGridEmbeddings(target, Ei, taui, style);
 
       // Filter valid prediction points (exclude those with all NaN values)
       std::vector<size_t> valid_pred;
@@ -407,17 +414,21 @@ std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>&
         std::vector<double> cs = {0,1};
         if (!res.empty())  cs = CppCMCTest(res[0].Intersection,">");
 
-        result[j + bs.size() * i][0] = Es[i];  // E
+        result[j + bs.size() * i][0] = Ei;     // E
         result[j + bs.size() * i][1] = bs[j];  // k
-        result[j + bs.size() * i][2] = cs[0];  // AUC
-        result[j + bs.size() * i][3] = cs[1];  // P value
+        result[j + bs.size() * i][2] = taui;   // tau
+        result[j + bs.size() * i][3] = cs[0];  // AUC
+        result[j + bs.size() * i][4] = cs[1];  // P value
       }
     }
   } else {
-    for (size_t i = 0; i < Es.size(); ++i) {
+    for (size_t i = 0; i < unique_ETau.size(); ++i) {
+      const int Ei = unique_ETau[i].first;
+      const int taui = unique_ETau[i].second;
+
       // Generate embeddings
-      auto embedding_x = GenGridEmbeddings(source, Es[i], tau, style);
-      auto embedding_y = GenGridEmbeddings(target, Es[i], tau, style);
+      auto embedding_x = GenGridEmbeddings(source, Ei, taui, style);
+      auto embedding_y = GenGridEmbeddings(target, Ei, taui, style);
 
       // Filter valid prediction points (exclude those with all NaN values)
       std::vector<size_t> valid_pred;
@@ -456,10 +467,11 @@ std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>&
         std::vector<double> cs = {0,1};
         if (!res.empty())  cs = CppCMCTest(res[0].Intersection,">");
 
-        result[j + bs.size() * i][0] = Es[i];  // E
+        result[j + bs.size() * i][0] = Ei;     // E
         result[j + bs.size() * i][1] = bs[j];  // k
-        result[j + bs.size() * i][2] = cs[0];  // AUC
-        result[j + bs.size() * i][3] = cs[1];  // P value
+        result[j + bs.size() * i][2] = taui;   // tau
+        result[j + bs.size() * i][3] = cs[0];  // AUC
+        result[j + bs.size() * i][4] = cs[1];  // P value
       }, threads_sizet);
     }
   }
