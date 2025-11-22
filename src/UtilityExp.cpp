@@ -15,22 +15,34 @@ unsigned int DetectMaxNumThreads(){
 }
 
 /**
- * Determine the optimal embedding dimension (E) and number of nearest neighbors (k).
+ * Select the optimal embedding parameters (E, k, tau) based on multiple 
+ * criteria for simplex projection forecasting.
  *
- * This function selects the best (E, k) combination based on:
- *   1. Maximizing rho
- *   2. Minimizing rmse
- *   3. Minimizing mae
- *   4. If still tied, choosing smallest k, then smallest E
- * A warning is issued when tie-breaking by k and E is used.
+ * The input matrix must contain six columns in the following order:
+ *   1. E      (embedding dimension)
+ *   2. k      (number of nearest neighbors)
+ *   3. tau    (time or spatial lag)
+ *   4. rho    (cross mapping skill, larger is better)
+ *   5. mae    (mean absolute error, smaller is better)
+ *   6. rmse   (root mean squared error, smaller is better)
  *
- * @param Emat A NumericMatrix with 5 columns: E, k, rho, mae, rmse.
- * @return IntegerVector with optimal E and k.
+ * Selection rules are evaluated in the following order:
+ *   1. Maximize rho
+ *   2. Minimize rmse
+ *   3. Minimize mae
+ *   4. If all three metrics are equal within numerical tolerance, resolve ties
+ *      by selecting the smallest E, then the smallest tau, then the smallest k.
+ *
+ * A warning is issued if tie breaking by E, tau, and k is used.
+ *
+ * @param Emat A NumericMatrix with six columns: E, k, tau, rho, mae, rmse.
+ * @return IntegerVector of length three with optimal E, k, and tau in this order.
  */
 // [[Rcpp::export(rng = false)]]
-Rcpp::IntegerVector OptEmbedDim(Rcpp::NumericMatrix Emat) {
-  if (Emat.ncol() != 5) {
-    Rcpp::stop("Input matrix must have exactly 5 columns: E, k, rho, mae, and rmse.");
+Rcpp::IntegerVector OptSimplexParm(Rcpp::NumericMatrix Emat) {
+
+  if (Emat.ncol() != 6) {
+    Rcpp::stop("Input matrix must have exactly six columns: E, k, tau, rho, mae, rmse.");
   }
   if (Emat.nrow() == 0) {
     Rcpp::stop("Input matrix must not be empty.");
@@ -38,60 +50,70 @@ Rcpp::IntegerVector OptEmbedDim(Rcpp::NumericMatrix Emat) {
 
   int n = Emat.nrow();
   int opt_row = 0;
-  bool used_kE_tiebreak = false;
+  bool used_tiebreak = false;
 
   struct OptRecord {
     double rho, rmse, mae;
-    int k, E;
+    int E, tau, k;
   };
 
   OptRecord best{
-    Emat(0, 2), // rho
-    Emat(0, 4), // rmse
-    Emat(0, 3), // mae
-    static_cast<int>(Emat(0, 1)), // k
-    static_cast<int>(Emat(0, 0))  // E
+    Emat(0, 3),                     // rho
+    Emat(0, 5),                     // rmse
+    Emat(0, 4),                     // mae
+    static_cast<int>(Emat(0, 0)),   // E
+    static_cast<int>(Emat(0, 2)),   // tau
+    static_cast<int>(Emat(0, 1))    // k
   };
 
   for (int i = 1; i < n; ++i) {
-    double rho  = Emat(i, 2);
-    double mae  = Emat(i, 3);
-    double rmse = Emat(i, 4);
-    int k = static_cast<int>(Emat(i, 1));
-    int E = static_cast<int>(Emat(i, 0));
 
-    bool rho_equal   = doubleNearlyEqual(rho, best.rho);
-    bool rmse_equal  = doubleNearlyEqual(rmse, best.rmse);
-    bool mae_equal   = doubleNearlyEqual(mae, best.mae);
-    // Prevents false positives caused by minimal floating-point deviations
+    double rho  = Emat(i, 3);
+    double mae  = Emat(i, 4);
+    double rmse = Emat(i, 5);
+
+    int E   = static_cast<int>(Emat(i, 0));
+    int k   = static_cast<int>(Emat(i, 1));
+    int tau = static_cast<int>(Emat(i, 2));
+
+    bool rho_equal  = doubleNearlyEqual(rho, best.rho);
+    bool rmse_equal = doubleNearlyEqual(rmse, best.rmse);
+    bool mae_equal  = doubleNearlyEqual(mae, best.mae);
+
     bool rho_better  = !rho_equal && rho > best.rho;
-    bool rmse_better = !rmse_equal && rmse < best.rmse; // smaller is better
-    bool mae_better  = !mae_equal && mae < best.mae;    // smaller is better
+    bool rmse_better = rho_equal && !rmse_equal && rmse < best.rmse;
+    bool mae_better  = rho_equal && rmse_equal && !mae_equal && mae < best.mae;
 
-    if (rho_better ||
-        (rho_equal && rmse_better) ||
-        (rho_equal && rmse_equal && mae_better)) {
-      best = {rho, rmse, mae, k, E};
+    if (rho_better || rmse_better || mae_better) {
+      best = {rho, rmse, mae, E, tau, k};
       opt_row = i;
-      used_kE_tiebreak = false;
-    } else if (rho_equal && rmse_equal && mae_equal) {
-      bool tie_better = (k < best.k) || (k == best.k && E < best.E);
+      used_tiebreak = false;
+    }
+    else if (rho_equal && rmse_equal && mae_equal) {
+
+      bool tie_better =
+        (E < best.E) ||
+        (E == best.E && tau < best.tau) ||
+        (E == best.E && tau == best.tau && k < best.k);
+
       if (tie_better) {
-        best.k = k;
         best.E = E;
+        best.tau = tau;
+        best.k = k;
         opt_row = i;
-        used_kE_tiebreak = true;
+        used_tiebreak = true;
       }
     }
   }
 
-  if (used_kE_tiebreak) {
-    Rcpp::warning("Tie in evaluation metrics resolved by selecting smallest k, then smallest E.");
+  if (used_tiebreak) {
+    Rcpp::warning("Tie in evaluation metrics was resolved by selecting smallest E, then smallest tau, then smallest k.");
   }
 
   return Rcpp::IntegerVector::create(
-    static_cast<int>(Emat(opt_row, 0)), // E
-    static_cast<int>(Emat(opt_row, 1))  // k
+    static_cast<int>(Emat(opt_row, 0)),   // E
+    static_cast<int>(Emat(opt_row, 1)),   // k
+    static_cast<int>(Emat(opt_row, 2))    // tau
   );
 }
 

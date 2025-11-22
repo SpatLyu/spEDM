@@ -13,8 +13,8 @@
 // [[Rcpp::depends(RcppThread)]]
 
 /*
- * Evaluates prediction performance of different combinations of embedding dimensions and number of nearest neighbors
- * for grid data using simplex projection.
+ * Evaluates prediction performance of different combinations of embedding dimensions, number of nearest neighbors and 
+ * tau values for grid data using simplex projection forecasting.
  *
  * Parameters:
  *   - source: A matrix to be embedded.
@@ -23,14 +23,14 @@
  *   - pred_indices: A vector of indices indicating the prediction set.
  *   - E: A vector of embedding dimensions to evaluate.
  *   - b: A vector of nearest neighbors to use for prediction.
- *   - tau: The spatial lag step for constructing lagged state-space vectors. Default is 1.
+ *   - tau: A vector of spatial lag steps for constructing lagged state-space vectors.
  *   - style: Embedding style selector (0: includes current state, 1: excludes it).  Default is 1 (excludes current state).
  *   - dist_metric: Distance metric selector (1: Manhattan, 2: Euclidean). Default is 2 (Euclidean).
  *   - dist_average: Whether to average distance by the number of valid vector components. Default is true.
  *   - threads: Number of threads used from the global pool. Default is 8.
  *
  * Returns:
- *   A 2D vector where each row contains [E, b, rho, mae, rmse] for a given embedding dimension.
+ *   A 2D vector where each row contains [E, b, tau, rho, mae, rmse] for a given embedding dimension.
  */
 std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<double>>& source,
                                               const std::vector<std::vector<double>>& target,
@@ -38,7 +38,7 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
                                               const std::vector<int>& pred_indices,
                                               const std::vector<int>& E,
                                               const std::vector<int>& b,
-                                              int tau = 1,
+                                              const std::vector<int>& tau,
                                               int style = 1,
                                               int dist_metric = 2,
                                               bool dist_average = true,
@@ -57,7 +57,7 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
     vec_std.insert(vec_std.end(), row.begin(), row.end());
   }
 
-  // Remove duplicates from E and b
+  // Unique sorted embedding dimensions, neighbor values, and tau values
   std::vector<int> Es = E;
   std::sort(Es.begin(), Es.end());
   Es.erase(std::unique(Es.begin(), Es.end()), Es.end());
@@ -66,24 +66,28 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
   std::sort(bs.begin(), bs.end());
   bs.erase(std::unique(bs.begin(), bs.end()), bs.end());
 
-  // Generate all unique (E, b) pairs
-  std::vector<std::pair<int, int>> unique_Ebcom;
-  unique_Ebcom.reserve(Es.size() * bs.size());
-  for (int e : Es) {
-    for (int bn : bs) {
-      unique_Ebcom.emplace_back(e, bn);
-    }
-  }
+  std::vector<int> taus = tau;
+  std::sort(taus.begin(), taus.end());
+  taus.erase(std::unique(taus.begin(), taus.end()), taus.end());
 
-  std::vector<std::vector<double>> result(unique_Ebcom.size(), std::vector<double>(5));
+  // Generate unique (E, b, tau) combinations
+  std::vector<std::tuple<int, int, int>> unique_EbTau;
+  for (int e : Es)
+    for (int bb : bs)
+      for (int t : taus)
+        unique_EbTau.emplace_back(e, bb, t);
+
+  std::vector<std::vector<double>> result(unique_EbTau.size(), std::vector<double>(6));
 
   // Parallel loop over combinations
-  RcppThread::parallelFor(0, unique_Ebcom.size(), [&](size_t i) {
-    const int cur_E = unique_Ebcom[i].first;
-    const int cur_b = unique_Ebcom[i].second;
+  RcppThread::parallelFor(0, unique_EbTau.size(), [&](size_t i) {
+    const int cur_E = std::get<0>(unique_EbTau[i]);
+    const int cur_b = std::get<1>(unique_EbTau[i]);
+    const int cur_tau = std::get<2>(unique_EbTau[i]);
+    // auto [cur_E, cur_b, cur_tau] = unique_EbTau[i]; // C++17 structured binding
 
     // Generate embedding
-    std::vector<std::vector<double>> embeddings = GenGridEmbeddings(source, cur_E, tau, style);
+    std::vector<std::vector<double>> embeddings = GenGridEmbeddings(source, cur_E, cur_tau, style);
 
     // Evaluate performance
     std::vector<double> metrics = SimplexBehavior(embeddings, vec_std, lib_indices, pred_indices, cur_b, dist_metric, dist_average);
@@ -91,17 +95,18 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
     // Store results
     result[i][0] = cur_E;
     result[i][1] = cur_b;
-    result[i][2] = metrics[0];
-    result[i][3] = metrics[1];
-    result[i][4] = metrics[2];
+    result[i][2] = cur_tau;
+    result[i][3] = metrics[0];
+    result[i][4] = metrics[1];
+    result[i][5] = metrics[2];
   }, threads_sizet);
 
   return result;
 }
 
 /*
- * Evaluates prediction performance of different combinations of embedding dimensions and number of nearest neighbors
- * for grid data using simplex projection (composite embeddings version).
+ * Evaluates prediction performance of different combinations of embedding dimensions, number of nearest neighbors and 
+ * tau values for grid data using simplex projection forecasting (composite embeddings version).
  */
 std::vector<std::vector<double>> Simplex4GridCom(const std::vector<std::vector<double>>& source,
                                                  const std::vector<std::vector<double>>& target,
@@ -109,7 +114,7 @@ std::vector<std::vector<double>> Simplex4GridCom(const std::vector<std::vector<d
                                                  const std::vector<int>& pred_indices,
                                                  const std::vector<int>& E,
                                                  const std::vector<int>& b,
-                                                 int tau = 1,
+                                                 const std::vector<int>& tau,
                                                  int style = 1,
                                                  int dist_metric = 2,
                                                  bool dist_average = true,
@@ -129,7 +134,7 @@ std::vector<std::vector<double>> Simplex4GridCom(const std::vector<std::vector<d
     vec_std.insert(vec_std.end(), row.begin(), row.end());
   }
 
-  // Remove duplicates from E and b
+  // Unique sorted embedding dimensions, neighbor values, and tau values
   std::vector<int> Es = E;
   std::sort(Es.begin(), Es.end());
   Es.erase(std::unique(Es.begin(), Es.end()), Es.end());
@@ -138,24 +143,28 @@ std::vector<std::vector<double>> Simplex4GridCom(const std::vector<std::vector<d
   std::sort(bs.begin(), bs.end());
   bs.erase(std::unique(bs.begin(), bs.end()), bs.end());
 
-  // Generate all unique (E, b) pairs
-  std::vector<std::pair<int, int>> unique_Ebcom;
-  unique_Ebcom.reserve(Es.size() * bs.size());
-  for (int e : Es) {
-    for (int bn : bs) {
-      unique_Ebcom.emplace_back(e, bn);
-    }
-  }
+  std::vector<int> taus = tau;
+  std::sort(taus.begin(), taus.end());
+  taus.erase(std::unique(taus.begin(), taus.end()), taus.end());
 
-  std::vector<std::vector<double>> result(unique_Ebcom.size(), std::vector<double>(5));
+  // Generate unique (E, b, tau) combinations
+  std::vector<std::tuple<int, int, int>> unique_EbTau;
+  for (int e : Es)
+    for (int bb : bs)
+      for (int t : taus)
+        unique_EbTau.emplace_back(e, bb, t);
+
+  std::vector<std::vector<double>> result(unique_EbTau.size(), std::vector<double>(6));
 
   // Parallel loop over combinations
-  RcppThread::parallelFor(0, unique_Ebcom.size(), [&](size_t i) {
-    const int cur_E = unique_Ebcom[i].first;
-    const int cur_b = unique_Ebcom[i].second;
+  RcppThread::parallelFor(0, unique_EbTau.size(), [&](size_t i) {
+    const int cur_E = std::get<0>(unique_EbTau[i]);
+    const int cur_b = std::get<1>(unique_EbTau[i]);
+    const int cur_tau = std::get<2>(unique_EbTau[i]);
+    // auto [cur_E, cur_b, cur_tau] = unique_EbTau[i]; // C++17 structured binding
 
     // Generate embedding
-    std::vector<std::vector<std::vector<double>>> embeddings = GenGridEmbeddingsCom(source, cur_E, tau, style, dir);
+    std::vector<std::vector<std::vector<double>>> embeddings = GenGridEmbeddingsCom(source, cur_E, cur_tau, style, dir);
 
     // Evaluate performance
     std::vector<double> metrics = SimplexBehavior(embeddings, vec_std, lib_indices, pred_indices, cur_b, dist_metric, dist_average);
@@ -163,9 +172,10 @@ std::vector<std::vector<double>> Simplex4GridCom(const std::vector<std::vector<d
     // Store results
     result[i][0] = cur_E;
     result[i][1] = cur_b;
-    result[i][2] = metrics[0];
-    result[i][3] = metrics[1];
-    result[i][4] = metrics[2];
+    result[i][2] = cur_tau;
+    result[i][3] = metrics[0];
+    result[i][4] = metrics[1];
+    result[i][5] = metrics[2];
   }, threads_sizet);
 
   return result;
