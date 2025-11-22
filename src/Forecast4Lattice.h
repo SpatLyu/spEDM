@@ -58,7 +58,7 @@ std::vector<std::vector<double>> Simplex4LatticeCom(const std::vector<double>& s
                                                     const std::vector<int>& pred_indices,
                                                     const std::vector<int>& E,
                                                     const std::vector<int>& b,
-                                                    int tau = 1,
+                                                    const std::vector<int>& tau,
                                                     int style = 1,
                                                     int dist_metric = 2,
                                                     bool dist_average = true,
