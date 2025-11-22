@@ -523,7 +523,7 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& source,
                                         const Rcpp::IntegerVector& pred,
                                         const Rcpp::IntegerVector& E,
                                         const Rcpp::IntegerVector& b,
-                                        int tau = 1,
+                                        const Rcpp::IntegerVector& tau,
                                         int style = 1,
                                         int stack = 0,
                                         int dist_metric = 2,
@@ -539,6 +539,7 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& source,
   // Convert Rcpp::IntegerVector to std::vector<int>
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
   std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
+  std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
 
   // Initialize lib_indices and pred_indices
   std::vector<int> lib_indices;
@@ -575,7 +576,7 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& source,
       pred_indices,
       E_std,
       b_std,
-      tau,
+      tau_std,
       style,
       dist_metric,
       dist_average,
@@ -589,7 +590,7 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& source,
       pred_indices,
       E_std,
       b_std,
-      tau,
+      tau_std,
       style,
       dist_metric,
       dist_average,
