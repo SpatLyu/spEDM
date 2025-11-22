@@ -101,7 +101,7 @@ RcppFNN4Grid <- function(mat, rt, eps, lib, pred, E, tau = 1L, style = 1L, dist_
     .Call(`_spEDM_RcppFNN4Grid`, mat, rt, eps, lib, pred, E, tau, style, dist_metric, threads, parallel_level)
 }
 
-RcppSimplex4Grid <- function(source, target, lib, pred, E, b, tau = 1L, style = 1L, stack = 0L, dist_metric = 2L, dist_average = TRUE, dir = as.integer( c(0)), threads = 8L) {
+RcppSimplex4Grid <- function(source, target, lib, pred, E, b, tau, style = 1L, stack = 0L, dist_metric = 2L, dist_average = TRUE, dir = as.integer( c(0)), threads = 8L) {
     .Call(`_spEDM_RcppSimplex4Grid`, source, target, lib, pred, E, b, tau, style, stack, dist_metric, dist_average, dir, threads)
 }
 
@@ -193,7 +193,7 @@ RcppFNN4Lattice <- function(vec, nb, rt, eps, lib, pred, E, tau = 1L, style = 1L
     .Call(`_spEDM_RcppFNN4Lattice`, vec, nb, rt, eps, lib, pred, E, tau, style, dist_metric, threads, parallel_level)
 }
 
-RcppSimplex4Lattice <- function(source, target, nb, lib, pred, E, b, tau = 1L, style = 1L, stack = 0L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
+RcppSimplex4Lattice <- function(source, target, nb, lib, pred, E, b, tau, style = 1L, stack = 0L, dist_metric = 2L, dist_average = TRUE, threads = 8L) {
     .Call(`_spEDM_RcppSimplex4Lattice`, source, target, nb, lib, pred, E, b, tau, style, stack, dist_metric, dist_average, threads)
 }
 
@@ -417,8 +417,8 @@ DetectMaxNumThreads <- function() {
     .Call(`_spEDM_DetectMaxNumThreads`)
 }
 
-OptEmbedDim <- function(Emat) {
-    .Call(`_spEDM_OptEmbedDim`, Emat)
+OptSimplexParm <- function(Emat) {
+    .Call(`_spEDM_OptSimplexParm`, Emat)
 }
 
 OptThetaParm <- function(Thetamat) {

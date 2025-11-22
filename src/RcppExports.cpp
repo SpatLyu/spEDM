@@ -385,7 +385,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppSimplex4Grid
-Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source, const Rcpp::NumericMatrix& target, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& b, int tau, int style, int stack, int dist_metric, bool dist_average, const Rcpp::IntegerVector& dir, int threads);
+Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source, const Rcpp::NumericMatrix& target, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& b, const Rcpp::IntegerVector& tau, int style, int stack, int dist_metric, bool dist_average, const Rcpp::IntegerVector& dir, int threads);
 RcppExport SEXP _spEDM_RcppSimplex4Grid(SEXP sourceSEXP, SEXP targetSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP bSEXP, SEXP tauSEXP, SEXP styleSEXP, SEXP stackSEXP, SEXP dist_metricSEXP, SEXP dist_averageSEXP, SEXP dirSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -395,7 +395,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type pred(predSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type E(ESEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type b(bSEXP);
-    Rcpp::traits::input_parameter< int >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type tau(tauSEXP);
     Rcpp::traits::input_parameter< int >::type style(styleSEXP);
     Rcpp::traits::input_parameter< int >::type stack(stackSEXP);
     Rcpp::traits::input_parameter< int >::type dist_metric(dist_metricSEXP);
@@ -840,7 +840,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppSimplex4Lattice
-Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& source, const Rcpp::NumericVector& target, const Rcpp::List& nb, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& b, int tau, int style, int stack, int dist_metric, bool dist_average, int threads);
+Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& source, const Rcpp::NumericVector& target, const Rcpp::List& nb, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& b, const Rcpp::IntegerVector& tau, int style, int stack, int dist_metric, bool dist_average, int threads);
 RcppExport SEXP _spEDM_RcppSimplex4Lattice(SEXP sourceSEXP, SEXP targetSEXP, SEXP nbSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP bSEXP, SEXP tauSEXP, SEXP styleSEXP, SEXP stackSEXP, SEXP dist_metricSEXP, SEXP dist_averageSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -851,7 +851,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type pred(predSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type E(ESEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type b(bSEXP);
-    Rcpp::traits::input_parameter< int >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type tau(tauSEXP);
     Rcpp::traits::input_parameter< int >::type style(styleSEXP);
     Rcpp::traits::input_parameter< int >::type stack(stackSEXP);
     Rcpp::traits::input_parameter< int >::type dist_metric(dist_metricSEXP);
@@ -1652,13 +1652,13 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// OptEmbedDim
-Rcpp::IntegerVector OptEmbedDim(Rcpp::NumericMatrix Emat);
-RcppExport SEXP _spEDM_OptEmbedDim(SEXP EmatSEXP) {
+// OptSimplexParm
+Rcpp::IntegerVector OptSimplexParm(Rcpp::NumericMatrix Emat);
+RcppExport SEXP _spEDM_OptSimplexParm(SEXP EmatSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Emat(EmatSEXP);
-    rcpp_result_gen = Rcpp::wrap(OptEmbedDim(Emat));
+    rcpp_result_gen = Rcpp::wrap(OptSimplexParm(Emat));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1810,7 +1810,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppDeLongPlacements", (DL_FUNC) &_spEDM_RcppDeLongPlacements, 3},
     {"_spEDM_RcppSpatialBlockBootstrap", (DL_FUNC) &_spEDM_RcppSpatialBlockBootstrap, 2},
     {"_spEDM_DetectMaxNumThreads", (DL_FUNC) &_spEDM_DetectMaxNumThreads, 0},
-    {"_spEDM_OptEmbedDim", (DL_FUNC) &_spEDM_OptEmbedDim, 1},
+    {"_spEDM_OptSimplexParm", (DL_FUNC) &_spEDM_OptSimplexParm, 1},
     {"_spEDM_OptThetaParm", (DL_FUNC) &_spEDM_OptThetaParm, 1},
     {"_spEDM_OptICparm", (DL_FUNC) &_spEDM_OptICparm, 1},
     {"_spEDM_OptPCparm", (DL_FUNC) &_spEDM_OptPCparm, 2},
