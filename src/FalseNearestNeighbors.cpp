@@ -2,6 +2,7 @@
 #include <cmath>
 #include <limits>
 #include <algorithm>
+#include "NumericUtils.h"
 #include "CppStats.h"
 #include "CppDistances.h"
 #include <RcppThread.h>
@@ -55,28 +56,9 @@ double CppSingleFNN(const std::vector<std::vector<double>>& embedding,
 
   size_t N = embedding.size();
 
-  if (parallel_level >= 1){
-    std::vector<std::vector<double>> distmat(N, std::vector<double>(N, std::numeric_limits<double>::quiet_NaN()));
-
-    std::vector<int> merged = lib;
-    merged.insert(merged.end(), pred.begin(), pred.end());
-    std::sort(merged.begin(), merged.end());
-    merged.erase(std::unique(merged.begin(), merged.end()), merged.end());
-
-    // Compute distance between every pair of merged
-    for (size_t i = 0; i < merged.size(); ++i) {
-      for (size_t j = i+1; j < merged.size(); ++j) {
-        std::vector<double> xi_E1(embedding[merged[i]].begin(), embedding[merged[i]].begin() + E1);
-        std::vector<double> xj_E1(embedding[merged[j]].begin(), embedding[merged[j]].begin() + E1);
-        double distv = CppDistance(xi_E1, xj_E1, L1norm, true);
-        distmat[merged[i]][merged[j]] = distv;  // Correctly assign distance to upper triangle
-        distmat[merged[j]][merged[i]] = distv;  // Mirror the value to the lower triangle
-        // distmat[merged[i]][merged[j]] = distmat[merged[j]][merged[i]] = CppDistance(xi_E1, xj_E1, L1norm, true);
-      }
-    }
-
-    int false_count = 0;
-    int total = 0;
+  if (parallel_level != 0){
+    size_t false_count = 0;
+    size_t total = 0;
 
     // Brute-force linear search
     for (size_t i = 0; i < pred.size(); ++i) {
@@ -90,8 +72,11 @@ double CppSingleFNN(const std::vector<std::vector<double>>& embedding,
       // Find nearest neighbor of i in E1-dimensional space
       for (size_t j = 0; j < lib.size(); ++j) {
         if (pred[i] == lib[j] || checkOneDimVectorNotNanNum(embedding[lib[j]]) == 0) continue;
-
-        double dist = distmat[pred[i]][lib[j]];
+        
+        // Compute distance in E1-dimensional space
+        std::vector<double> xi(embedding[pred[i]].begin(), embedding[pred[i]].begin() + E1);
+        std::vector<double> xj(embedding[lib[j]].begin(), embedding[lib[j]].begin() + E1);
+        double dist = CppDistance(xi, xj, L1norm, true);
 
         if (dist < min_dist) {
           min_dist = dist;
@@ -99,7 +84,7 @@ double CppSingleFNN(const std::vector<std::vector<double>>& embedding,
         }
       }
 
-      if (nn_idx == N || min_dist == 0.0) continue;  // skip degenerate cases
+      if (nn_idx == N || doubleNearlyEqual(min_dist,0.0)) continue;  // skip degenerate cases
 
       // Compare E2-th coordinate difference (new dimension)
       double diff = std::abs(embedding[pred[i]][E2 - 1] - embedding[nn_idx][E2 - 1]);
@@ -111,7 +96,7 @@ double CppSingleFNN(const std::vector<std::vector<double>>& embedding,
       ++total;
     }
 
-    return total > 0 ? static_cast<double>(false_count) / total
+    return total > 0 ? static_cast<double>(false_count) / static_cast<double>(total)
     : std::numeric_limits<double>::quiet_NaN();
   } else {
     // Parallel version: allocate one slot for each pred[i], thread-safe without locks
@@ -140,7 +125,7 @@ double CppSingleFNN(const std::vector<std::vector<double>>& embedding,
       }
 
       // Skip if no neighbor found or minimum distance is zero
-      if (nn_idx == -1 || min_dist == 0.0) return;
+      if (nn_idx == -1 || doubleNearlyEqual(min_dist,0.0)) return;
 
       // Compare the E2-th dimension to check for false neighbors
       double diff = std::abs(embedding[pidx][E2 - 1] - embedding[nn_idx][E2 - 1]);
@@ -155,7 +140,7 @@ double CppSingleFNN(const std::vector<std::vector<double>>& embedding,
     }, threads); // use specified number of threads
 
     // After parallel section, aggregate results
-    int false_count = 0, total = 0;
+    size_t false_count = 0, total = 0;
     for (int flag : false_flags) {
       if (flag >= 0) {
         total++;
@@ -164,7 +149,7 @@ double CppSingleFNN(const std::vector<std::vector<double>>& embedding,
     }
 
     if (total > 0) {
-      return static_cast<double>(false_count) / total;
+      return static_cast<double>(false_count) / static_cast<double>(total);
     } else {
       return std::numeric_limits<double>::quiet_NaN();
     }
