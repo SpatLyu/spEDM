@@ -31,7 +31,7 @@
  *   - threads: Number of threads used from the global pool. Default is 8.
  *
  * Returns:
- *   A 2D vector where each row contains [E, b, rho, mae, rmse] for a given combination of E and b.
+ *   A 2D vector where each row contains [E, b, tau, rho, mae, rmse] for a given combination of E and b.
  */
 std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& source,
                                                  const std::vector<double>& target,
