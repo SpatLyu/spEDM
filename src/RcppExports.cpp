@@ -453,7 +453,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppIC4Grid
-Rcpp::NumericMatrix RcppIC4Grid(const Rcpp::NumericMatrix& source, const Rcpp::NumericMatrix& target, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& b, int tau, int exclude, int style, int dist_metric, int threads, int parallel_level);
+Rcpp::NumericMatrix RcppIC4Grid(const Rcpp::NumericMatrix& source, const Rcpp::NumericMatrix& target, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& b, const Rcpp::IntegerVector& tau, int exclude, int style, int dist_metric, int threads, int parallel_level);
 RcppExport SEXP _spEDM_RcppIC4Grid(SEXP sourceSEXP, SEXP targetSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP bSEXP, SEXP tauSEXP, SEXP excludeSEXP, SEXP styleSEXP, SEXP dist_metricSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -463,7 +463,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::IntegerMatrix& >::type pred(predSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type E(ESEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type b(bSEXP);
-    Rcpp::traits::input_parameter< int >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type tau(tauSEXP);
     Rcpp::traits::input_parameter< int >::type exclude(excludeSEXP);
     Rcpp::traits::input_parameter< int >::type style(styleSEXP);
     Rcpp::traits::input_parameter< int >::type dist_metric(dist_metricSEXP);
@@ -909,7 +909,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppIC4Lattice
-Rcpp::NumericMatrix RcppIC4Lattice(const Rcpp::NumericVector& source, const Rcpp::NumericVector& target, const Rcpp::List& nb, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& b, int tau, int exclude, int style, int dist_metric, int threads, int parallel_level);
+Rcpp::NumericMatrix RcppIC4Lattice(const Rcpp::NumericVector& source, const Rcpp::NumericVector& target, const Rcpp::List& nb, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& b, const Rcpp::IntegerVector& tau, int exclude, int style, int dist_metric, int threads, int parallel_level);
 RcppExport SEXP _spEDM_RcppIC4Lattice(SEXP sourceSEXP, SEXP targetSEXP, SEXP nbSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP bSEXP, SEXP tauSEXP, SEXP excludeSEXP, SEXP styleSEXP, SEXP dist_metricSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -920,7 +920,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type pred(predSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type E(ESEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type b(bSEXP);
-    Rcpp::traits::input_parameter< int >::type tau(tauSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type tau(tauSEXP);
     Rcpp::traits::input_parameter< int >::type exclude(excludeSEXP);
     Rcpp::traits::input_parameter< int >::type style(styleSEXP);
     Rcpp::traits::input_parameter< int >::type dist_metric(dist_metricSEXP);
