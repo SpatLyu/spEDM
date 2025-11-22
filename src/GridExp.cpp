@@ -554,7 +554,7 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
                                      const Rcpp::IntegerMatrix& pred,
                                      const Rcpp::IntegerVector& E,
                                      const Rcpp::IntegerVector& b,
-                                     int tau = 1,
+                                     const Rcpp::IntegerVector& tau,
                                      int style = 1,
                                      int stack = 0,
                                      int dist_metric = 2,
@@ -629,6 +629,7 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
   // Convert Rcpp::IntegerVector to std::vector<int>
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
   std::vector<int> b_std = Rcpp::as<std::vector<int>>(b);
+  std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
 
   // check each element of dir before conversion
   for (int d : dir) {
@@ -658,7 +659,7 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
       pred_indices,
       E_std,
       b_std,
-      tau,
+      tau_std,
       style,
       dist_metric,
       dist_average,
@@ -671,7 +672,7 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
       pred_indices,
       E_std,
       b_std,
-      tau,
+      tau_std,
       style,
       dist_metric,
       dist_average,
