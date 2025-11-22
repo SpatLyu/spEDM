@@ -121,11 +121,12 @@ std::vector<std::vector<double>> SMap4LatticeCom(const std::vector<double>& sour
 /**
  * Compute Intersection Cardinality AUC over spatial lattice data.
  *
- * This function computes the causal strength between two lattice-structured time series
- * (`source` and `target`) by evaluating the Intersection Cardinality (IC) curve, and
- * summarizing it using the Area Under the Curve (AUC) metric.
+ * This function computes the causal strength between two lattice-structured spatial 
+ * cross-sections (`source` and `target`) by evaluating the Intersection Cardinality 
+ * (IC) curve, and summarizing it using the Area Under the Curve (AUC) metric.
  *
- * For each combination of embedding dimension `E` and neighbor size `b`, the function:
+ * For each combination of embedding dimension `E`, neighbor size `b` and spatial lag
+ * step `tau`, the function:
  *  - Generates state-space embeddings based on lattice neighborhood topology.
  *  - Filters out prediction points with missing (NaN) values.
  *  - Computes neighbor structures and evaluates intersection sizes between the mapped
@@ -139,15 +140,15 @@ std::vector<std::vector<double>> SMap4LatticeCom(const std::vector<double>& sour
  * @param pred_indices   Indices used for prediction (testing) data.
  * @param E              Vector of embedding dimensions to try.
  * @param b              Vector of neighbor sizes to try.
- * @param tau            Embedding delay (usually 1 for lattice).
+ * @param tau            Vector of Embedding delay (usually 1 for lattice).
  * @param exclude        Number of nearest neighbors to exclude (e.g., temporal or spatial proximity).
  * @param style          Embedding style selector (0: includes current state, 1: excludes it).
  * @param dist_metric    Distance metric selector (1: Manhattan, 2: Euclidean).
  * @param threads        Number of threads for parallel computation.
  * @param parallel_level Flag indicating whether to use multi-threading (0: serial, 1: parallel).
  *
- * @return A vector of size `E.size() * b.size()`, each element is a vector:
- *         [embedding_dimension, neighbor_size, auc_value, p value].
+ * @return A vector of size `E.size() * b.size() * tau.size()`, each element is a vector:
+ *         [embedding_dimension, neighbor_size, delay step, auc_value, p value].
  *         If inputs are invalid or no prediction point is valid, the AUC value is NaN.
  *
  * @note
@@ -162,7 +163,7 @@ std::vector<std::vector<double>> IC4Lattice(const std::vector<double>& source,
                                             const std::vector<size_t>& pred_indices,
                                             const std::vector<int>& E,
                                             const std::vector<int>& b,
-                                            int tau = 1,
+                                            const std::vector<int>& tau,
                                             int exclude = 0,
                                             int style = 1,
                                             int dist_metric = 2,
