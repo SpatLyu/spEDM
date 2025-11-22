@@ -15,106 +15,118 @@ unsigned int DetectMaxNumThreads(){
 }
 
 /**
- * Select the optimal embedding parameters (E, k, tau) based on multiple 
- * criteria for simplex projection forecasting.
+ * Select the optimal embedding parameters (E k tau) for simplex projection
+ * using a single pass global scan with full tie tracking.
  *
  * The input matrix must contain six columns in the following order:
- *   1. E      (embedding dimension)
- *   2. k      (number of nearest neighbors)
- *   3. tau    (time or spatial lag)
- *   4. rho    (cross mapping skill, larger is better)
- *   5. mae    (mean absolute error, smaller is better)
- *   6. rmse   (root mean squared error, smaller is better)
+ *   1. E      embedding dimension
+ *   2. k      number of nearest neighbors
+ *   3. tau    time or spatial lag
+ *   4. rho    cross mapping skill which is maximized
+ *   5. mae    mean absolute error which is minimized
+ *   6. rmse   root mean squared error which is minimized
  *
- * Selection rules are evaluated in the following order:
- *   1. Maximize rho
- *   2. Minimize rmse
- *   3. Minimize mae
- *   4. If all three metrics are equal within numerical tolerance, resolve ties
- *      by selecting the smallest E, then the smallest tau, then the smallest k.
+ * During the scan the algorithm keeps a list of all globally optimal rows.
+ * For each row the evaluation rules are:
+ *   1. A row is better if its rho is strictly larger within tolerance
+ *   2. If rho is equal a row is better if rmse is smaller within tolerance
+ *   3. If rho and rmse are equal a row is better if mae is smaller within tolerance
+ *   4. If all three metrics are equal the row is appended to the set of best rows
  *
- * A warning is issued if tie breaking by E, tau, and k is used.
+ * After scanning:
+ *   If only one row is optimal its parameters are returned.
+ *   If multiple rows are optimal a warning is issued and the final choice is
+ *   determined by selecting the smallest E, then the smallest tau, then the smallest k.
  *
- * @param Emat A NumericMatrix with six columns: E, k, tau, rho, mae, rmse.
- * @return IntegerVector of length three with optimal E, k, and tau in this order.
+ * @param Emat A NumericMatrix with columns: E k tau rho mae rmse.
+ * @return IntegerVector of length three that contains E k tau in this order.
  */
 // [[Rcpp::export(rng = false)]]
 Rcpp::IntegerVector OptSimplexParm(Rcpp::NumericMatrix Emat) {
 
   if (Emat.ncol() != 6) {
-    Rcpp::stop("Input matrix must have exactly six columns: E, k, tau, rho, mae, rmse.");
+    Rcpp::stop("Input matrix must have exactly six columns: E k tau rho mae rmse.");
   }
-  if (Emat.nrow() == 0) {
+  int n = Emat.nrow();
+  if (n == 0) {
     Rcpp::stop("Input matrix must not be empty.");
   }
 
-  int n = Emat.nrow();
-  int opt_row = 0;
-  bool used_tiebreak = false;
+  // initialize best record using row 0
+  double best_rho  = Emat(0, 3);
+  double best_rmse = Emat(0, 5);
+  double best_mae  = Emat(0, 4);
 
-  struct OptRecord {
-    double rho, rmse, mae;
-    int E, tau, k;
-  };
-
-  OptRecord best{
-    Emat(0, 3),                     // rho
-    Emat(0, 5),                     // rmse
-    Emat(0, 4),                     // mae
-    static_cast<int>(Emat(0, 0)),   // E
-    static_cast<int>(Emat(0, 2)),   // tau
-    static_cast<int>(Emat(0, 1))    // k
-  };
+  std::vector<int> best_rows;
+  best_rows.reserve(n);
+  best_rows.push_back(0);
 
   for (int i = 1; i < n; ++i) {
 
     double rho  = Emat(i, 3);
-    double mae  = Emat(i, 4);
     double rmse = Emat(i, 5);
+    double mae  = Emat(i, 4);
 
-    int E   = static_cast<int>(Emat(i, 0));
-    int k   = static_cast<int>(Emat(i, 1));
-    int tau = static_cast<int>(Emat(i, 2));
+    bool rho_equal   = doubleNearlyEqual(rho, best_rho);
+    bool rmse_equal  = doubleNearlyEqual(rmse, best_rmse);
+    bool mae_equal   = doubleNearlyEqual(mae, best_mae);
+    // Prevents false positives caused by minimal floating-point deviations
+    bool rho_better  = !rho_equal && rho > best_rho;
+    bool rmse_better = !rmse_equal && rmse < best_rmse; // smaller is better
+    bool mae_better  = !mae_equal && mae < best_mae;    // smaller is better
 
-    bool rho_equal  = doubleNearlyEqual(rho, best.rho);
-    bool rmse_equal = doubleNearlyEqual(rmse, best.rmse);
-    bool mae_equal  = doubleNearlyEqual(mae, best.mae);
-
-    bool rho_better  = !rho_equal && rho > best.rho;
-    bool rmse_better = rho_equal && !rmse_equal && rmse < best.rmse;
-    bool mae_better  = rho_equal && rmse_equal && !mae_equal && mae < best.mae;
-
-    if (rho_better || rmse_better || mae_better) {
-      best = {rho, rmse, mae, E, tau, k};
-      opt_row = i;
-      used_tiebreak = false;
+    if (rho_better ||
+        (rho_equal && rmse_better) ||
+        (rho_equal && rmse_equal && mae_better)) {
+      best_rows.clear();
+      best_rows.push_back(i);
+      best_rho  = rho;
+      best_rmse = rmse;
+      best_mae  = mae;
     }
     else if (rho_equal && rmse_equal && mae_equal) {
-
-      bool tie_better =
-        (E < best.E) ||
-        (E == best.E && tau < best.tau) ||
-        (E == best.E && tau == best.tau && k < best.k);
-
-      if (tie_better) {
-        best.E = E;
-        best.tau = tau;
-        best.k = k;
-        opt_row = i;
-        used_tiebreak = true;
-      }
+      best_rows.push_back(i);
     }
   }
 
-  if (used_tiebreak) {
-    Rcpp::warning("Tie in evaluation metrics was resolved by selecting smallest E, then smallest tau, then smallest k.");
+  // if only one best row return directly
+  if (best_rows.size() == 1) {
+    int row = best_rows[0];
+    return Rcpp::IntegerVector::create(
+      static_cast<int>(Emat(row, 0)),
+      static_cast<int>(Emat(row, 1)),
+      static_cast<int>(Emat(row, 2))
+    );
   }
 
-  return Rcpp::IntegerVector::create(
-    static_cast<int>(Emat(opt_row, 0)),   // E
-    static_cast<int>(Emat(opt_row, 1)),   // k
-    static_cast<int>(Emat(opt_row, 2))    // tau
-  );
+  // issue tie warning
+  Rcpp::warning("Multiple parameter sets share the global optimum for rho rmse and mae. The final choice was determined by smallest E then tau then k.");
+
+  // apply tie breaking rule
+  int best_idx = best_rows[0];
+  int bestE = Emat(best_idx, 0);
+  int bestTau = Emat(best_idx, 2);
+  int bestK = Emat(best_idx, 1);
+
+  for (int idx : best_rows) {
+    int E = Emat(idx, 0);
+    int tau = Emat(idx, 2);
+    int k = Emat(idx, 1);
+
+    bool better =
+      (E < bestE) ||
+      (E == bestE && tau < bestTau) ||
+      (E == bestE && tau == bestTau && k < bestK);
+
+    if (better) {
+      best_idx = idx;
+      bestE = E;
+      bestTau = tau;
+      bestK = k;
+    }
+  }
+
+  return Rcpp::IntegerVector::create(bestE, bestK, bestTau);
 }
 
 /**
