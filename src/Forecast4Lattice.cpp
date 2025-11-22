@@ -40,7 +40,7 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& sour
                                                  const std::vector<int>& pred_indices,
                                                  const std::vector<int>& E,
                                                  const std::vector<int>& b,
-                                                 int tau = 1,
+                                                 const std::vector<int>& tau,
                                                  int style = 1,
                                                  int dist_metric = 2,
                                                  bool dist_average = true,
@@ -49,7 +49,7 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& sour
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
-  // Unique sorted embedding dimensions and neighbor values
+  // Unique sorted embedding dimensions, neighbor values, and tau values
   std::vector<int> Es = E;
   std::sort(Es.begin(), Es.end());
   Es.erase(std::unique(Es.begin(), Es.end()), Es.end());
@@ -58,26 +58,34 @@ std::vector<std::vector<double>> Simplex4Lattice(const std::vector<double>& sour
   std::sort(bs.begin(), bs.end());
   bs.erase(std::unique(bs.begin(), bs.end()), bs.end());
 
-  // Generate unique (E, b) combinations
-  std::vector<std::pair<int, int>> unique_Ebcom;
+  std::vector<int> taus = tau;
+  std::sort(taus.begin(), taus.end());
+  taus.erase(std::unique(taus.begin(), taus.end()), taus.end());
+
+  // Generate unique (E, b, tau) combinations
+  std::vector<std::tuple<int, int, int>> unique_EbTau;
   for (int e : Es)
     for (int bb : bs)
-      unique_Ebcom.emplace_back(e, bb);
+      for (int t : taus)
+        unique_EbTau.emplace_back(e, bb, t);
 
-  std::vector<std::vector<double>> result(unique_Ebcom.size(), std::vector<double>(5));
+  std::vector<std::vector<double>> result(unique_EbTau.size(), std::vector<double>(6));
 
-  RcppThread::parallelFor(0, unique_Ebcom.size(), [&](size_t i) {
-    const int Ei = unique_Ebcom[i].first;
-    const int bi = unique_Ebcom[i].second;
+  RcppThread::parallelFor(0, unique_EbTau.size(), [&](size_t i) {
+    const int Ei   = std::get<0>(unique_EbTau[i]);
+    const int bi   = std::get<1>(unique_EbTau[i]);
+    const int taui = std::get<2>(unique_EbTau[i]);
+    // auto [Ei, bi, taui] = unique_EbTau[i]; // C++17 structured binding
 
-    auto embeddings = GenLatticeEmbeddings(source, nb_vec, Ei, tau, style);
+    auto embeddings = GenLatticeEmbeddings(source, nb_vec, Ei, taui, style);
     auto metrics = SimplexBehavior(embeddings, target, lib_indices, pred_indices, bi, dist_metric, dist_average);
 
-    result[i][0] = Ei;
-    result[i][1] = bi;
-    result[i][2] = metrics[0]; // rho
-    result[i][3] = metrics[1]; // MAE
-    result[i][4] = metrics[2]; // RMSE
+    result[i][0] = Ei; // E
+    result[i][1] = bi; // k
+    result[i][2] = taui; // tau
+    result[i][3] = metrics[0]; // rho
+    result[i][4] = metrics[1]; // MAE
+    result[i][5] = metrics[2]; // RMSE
   }, threads_sizet);
 
   return result;
@@ -94,7 +102,7 @@ std::vector<std::vector<double>> Simplex4LatticeCom(const std::vector<double>& s
                                                     const std::vector<int>& pred_indices,
                                                     const std::vector<int>& E,
                                                     const std::vector<int>& b,
-                                                    int tau = 1,
+                                                    const std::vector<int>& tau,
                                                     int style = 1,
                                                     int dist_metric = 2,
                                                     bool dist_average = true,
@@ -103,7 +111,7 @@ std::vector<std::vector<double>> Simplex4LatticeCom(const std::vector<double>& s
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
-  // Unique sorted embedding dimensions and neighbor values
+  // Unique sorted embedding dimensions, neighbor values, and tau values
   std::vector<int> Es = E;
   std::sort(Es.begin(), Es.end());
   Es.erase(std::unique(Es.begin(), Es.end()), Es.end());
@@ -112,26 +120,34 @@ std::vector<std::vector<double>> Simplex4LatticeCom(const std::vector<double>& s
   std::sort(bs.begin(), bs.end());
   bs.erase(std::unique(bs.begin(), bs.end()), bs.end());
 
-  // Generate unique (E, b) combinations
-  std::vector<std::pair<int, int>> unique_Ebcom;
+  std::vector<int> taus = tau;
+  std::sort(taus.begin(), taus.end());
+  taus.erase(std::unique(taus.begin(), taus.end()), taus.end());
+
+  // Generate unique (E, b, tau) combinations
+  std::vector<std::tuple<int, int, int>> unique_EbTau;
   for (int e : Es)
     for (int bb : bs)
-      unique_Ebcom.emplace_back(e, bb);
+      for (int t : taus)
+        unique_EbTau.emplace_back(e, bb, t);
 
-  std::vector<std::vector<double>> result(unique_Ebcom.size(), std::vector<double>(5));
+  std::vector<std::vector<double>> result(unique_EbTau.size(), std::vector<double>(6));
 
   RcppThread::parallelFor(0, unique_Ebcom.size(), [&](size_t i) {
-    const int Ei = unique_Ebcom[i].first;
-    const int bi = unique_Ebcom[i].second;
+    const int Ei   = std::get<0>(unique_EbTau[i]);
+    const int bi   = std::get<1>(unique_EbTau[i]);
+    const int taui = std::get<2>(unique_EbTau[i]);
+    // auto [Ei, bi, taui] = unique_EbTau[i]; // C++17 structured binding
 
-    auto embeddings = GenLatticeEmbeddingsCom(source, nb_vec, Ei, tau, style);
+    auto embeddings = GenLatticeEmbeddingsCom(source, nb_vec, Ei, taui, style);
     auto metrics = SimplexBehavior(embeddings, target, lib_indices, pred_indices, bi, dist_metric, dist_average);
 
-    result[i][0] = Ei;
-    result[i][1] = bi;
-    result[i][2] = metrics[0]; // rho
-    result[i][3] = metrics[1]; // MAE
-    result[i][4] = metrics[2]; // RMSE
+    result[i][0] = Ei; // E
+    result[i][1] = bi; // k
+    result[i][2] = taui; // tau
+    result[i][3] = metrics[0]; // rho
+    result[i][4] = metrics[1]; // MAE
+    result[i][5] = metrics[2]; // RMSE
   }, threads_sizet);
 
   return result;
