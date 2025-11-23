@@ -365,8 +365,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppFNN4Grid
-Rcpp::NumericVector RcppFNN4Grid(const Rcpp::NumericMatrix& mat, const Rcpp::NumericVector& rt, const Rcpp::NumericVector& eps, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, const Rcpp::IntegerVector& E, int tau, int style, int dist_metric, int threads, int parallel_level);
-RcppExport SEXP _spEDM_RcppFNN4Grid(SEXP matSEXP, SEXP rtSEXP, SEXP epsSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP styleSEXP, SEXP dist_metricSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP) {
+Rcpp::NumericVector RcppFNN4Grid(const Rcpp::NumericMatrix& mat, const Rcpp::NumericVector& rt, const Rcpp::NumericVector& eps, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, const Rcpp::IntegerVector& E, int tau, int style, int stack, int dist_metric, const Rcpp::IntegerVector& dir, int threads, int parallel_level);
+RcppExport SEXP _spEDM_RcppFNN4Grid(SEXP matSEXP, SEXP rtSEXP, SEXP epsSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP styleSEXP, SEXP stackSEXP, SEXP dist_metricSEXP, SEXP dirSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
@@ -377,10 +377,12 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type E(ESEXP);
     Rcpp::traits::input_parameter< int >::type tau(tauSEXP);
     Rcpp::traits::input_parameter< int >::type style(styleSEXP);
+    Rcpp::traits::input_parameter< int >::type stack(stackSEXP);
     Rcpp::traits::input_parameter< int >::type dist_metric(dist_metricSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type dir(dirSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< int >::type parallel_level(parallel_levelSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppFNN4Grid(mat, rt, eps, lib, pred, E, tau, style, dist_metric, threads, parallel_level));
+    rcpp_result_gen = Rcpp::wrap(RcppFNN4Grid(mat, rt, eps, lib, pred, E, tau, style, stack, dist_metric, dir, threads, parallel_level));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -819,8 +821,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppFNN4Lattice
-Rcpp::NumericVector RcppFNN4Lattice(const Rcpp::NumericVector& vec, const Rcpp::List& nb, const Rcpp::NumericVector& rt, const Rcpp::NumericVector& eps, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, int tau, int style, int dist_metric, int threads, int parallel_level);
-RcppExport SEXP _spEDM_RcppFNN4Lattice(SEXP vecSEXP, SEXP nbSEXP, SEXP rtSEXP, SEXP epsSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP styleSEXP, SEXP dist_metricSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP) {
+Rcpp::NumericVector RcppFNN4Lattice(const Rcpp::NumericVector& vec, const Rcpp::List& nb, const Rcpp::NumericVector& rt, const Rcpp::NumericVector& eps, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, int tau, int style, int stack, int dist_metric, int threads, int parallel_level);
+RcppExport SEXP _spEDM_RcppFNN4Lattice(SEXP vecSEXP, SEXP nbSEXP, SEXP rtSEXP, SEXP epsSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP styleSEXP, SEXP stackSEXP, SEXP dist_metricSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
@@ -832,10 +834,11 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type E(ESEXP);
     Rcpp::traits::input_parameter< int >::type tau(tauSEXP);
     Rcpp::traits::input_parameter< int >::type style(styleSEXP);
+    Rcpp::traits::input_parameter< int >::type stack(stackSEXP);
     Rcpp::traits::input_parameter< int >::type dist_metric(dist_metricSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< int >::type parallel_level(parallel_levelSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppFNN4Lattice(vec, nb, rt, eps, lib, pred, E, tau, style, dist_metric, threads, parallel_level));
+    rcpp_result_gen = Rcpp::wrap(RcppFNN4Lattice(vec, nb, rt, eps, lib, pred, E, tau, style, stack, dist_metric, threads, parallel_level));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1730,7 +1733,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppSLMUni4Grid", (DL_FUNC) &_spEDM_RcppSLMUni4Grid, 5},
     {"_spEDM_RcppSLMBi4Grid", (DL_FUNC) &_spEDM_RcppSLMBi4Grid, 10},
     {"_spEDM_RcppSLMTri4Grid", (DL_FUNC) &_spEDM_RcppSLMTri4Grid, 16},
-    {"_spEDM_RcppFNN4Grid", (DL_FUNC) &_spEDM_RcppFNN4Grid, 11},
+    {"_spEDM_RcppFNN4Grid", (DL_FUNC) &_spEDM_RcppFNN4Grid, 13},
     {"_spEDM_RcppSimplex4Grid", (DL_FUNC) &_spEDM_RcppSimplex4Grid, 13},
     {"_spEDM_RcppSMap4Grid", (DL_FUNC) &_spEDM_RcppSMap4Grid, 14},
     {"_spEDM_RcppMultiView4Grid", (DL_FUNC) &_spEDM_RcppMultiView4Grid, 14},
@@ -1753,7 +1756,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppSLMUni4Lattice", (DL_FUNC) &_spEDM_RcppSLMUni4Lattice, 6},
     {"_spEDM_RcppSLMBi4Lattice", (DL_FUNC) &_spEDM_RcppSLMBi4Lattice, 11},
     {"_spEDM_RcppSLMTri4Lattice", (DL_FUNC) &_spEDM_RcppSLMTri4Lattice, 17},
-    {"_spEDM_RcppFNN4Lattice", (DL_FUNC) &_spEDM_RcppFNN4Lattice, 12},
+    {"_spEDM_RcppFNN4Lattice", (DL_FUNC) &_spEDM_RcppFNN4Lattice, 13},
     {"_spEDM_RcppSimplex4Lattice", (DL_FUNC) &_spEDM_RcppSimplex4Lattice, 13},
     {"_spEDM_RcppSMap4Lattice", (DL_FUNC) &_spEDM_RcppSMap4Lattice, 14},
     {"_spEDM_RcppMultiView4Lattice", (DL_FUNC) &_spEDM_RcppMultiView4Lattice, 15},
