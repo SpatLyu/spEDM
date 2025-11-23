@@ -41,8 +41,8 @@
  *   If no valid pairs are found, returns NaN.
  */
 double CppSingleFNN(const std::vector<std::vector<double>>& embedding,
-                    const std::vector<int>& lib,
-                    const std::vector<int>& pred,
+                    const std::vector<size_t>& lib,
+                    const std::vector<size_t>& pred,
                     size_t E1,
                     size_t E2,
                     size_t threads,
@@ -177,8 +177,8 @@ double CppSingleFNN(const std::vector<std::vector<double>>& embedding,
  * Parameters:
  * - embedding: A vector of vectors where each row is a spatial unit’s embedding.
  *              Must have at least 2 columns (dimensions).
- * - lib: A vector of integer indices indicating the library set (0-based).
- * - pred: A vector of integer indices indicating the prediction set (0-based).
+ * - lib: A vector of indices indicating the library set (0-based).
+ * - pred: A vector of indices indicating the prediction set (0-based).
  * - Rtol: A vector of relative distance thresholds (one per E1).
  * - Atol: A vector of absolute distance thresholds (one per E1).
  * - L1norm: If true, use L1 (Manhattan) distance; otherwise, use L2 (Euclidean).
@@ -190,8 +190,8 @@ double CppSingleFNN(const std::vector<std::vector<double>>& embedding,
  *   If not computable for a given E1, NaN is returned at that position.
  */
 std::vector<double> CppFNN(const std::vector<std::vector<double>>& embedding,
-                           const std::vector<int>& lib,
-                           const std::vector<int>& pred,
+                           const std::vector<size_t>& lib,
+                           const std::vector<size_t>& pred,
                            const std::vector<double>& Rtol,
                            const std::vector<double>& Atol,
                            bool L1norm = false,
