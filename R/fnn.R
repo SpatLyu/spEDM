@@ -1,5 +1,5 @@
-.fnn_sf_method = \(data, target, E = 1:10, tau = 1, style = 1, lib = NULL, pred = NULL, dist.metric = "L1",
-                   rt = 10, eps = 2, threads = detectThreads(), detrend = TRUE, nb = NULL){
+.fnn_sf_method = \(data, target, E = 1:10, tau = 1, style = 1, stack = FALSE, lib = NULL, pred = NULL, 
+                   dist.metric = "L1", rt = 10, eps = 2, threads = detectThreads(), detrend = TRUE, nb = NULL){
   vec = .uni_lattice(data,target,detrend)
   rt = .check_inputelementnum(rt,max(E))
   eps = .check_inputelementnum(eps,max(E))
@@ -7,18 +7,18 @@
   if (is.null(pred)) pred = lib
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   return(RcppFNN4Lattice(vec, nb, rt, eps, lib, pred, E, tau, style,
-                         .check_distmetric(dist.metric),threads))
+                         stack, .check_distmetric(dist.metric), threads))
 }
 
-.fnn_spatraster_method = \(data, target, E = 1:10, tau = 1, style = 1, lib = NULL, pred = NULL, dist.metric = "L1",
-                           rt = 10, eps = 2, threads = detectThreads(), detrend = TRUE, grid.coord = TRUE){
+.fnn_spatraster_method = \(data, target, E = 1:10, tau = 1, style = 1, stack = FALSE, lib = NULL, pred = NULL, dist.metric = "L1", 
+                           rt = 10, eps = 2, threads = detectThreads(), detrend = TRUE, grid.coord = TRUE, embed.direction = 0){
   mat = .uni_grid(data,target,detrend,grid.coord)
   rt = .check_inputelementnum(rt,max(E))
   eps = .check_inputelementnum(eps,max(E))
   if (is.null(lib)) lib = which(!is.na(mat), arr.ind = TRUE)
   if (is.null(pred)) pred = lib
-  return(RcppFNN4Grid(mat,rt,eps,lib, pred, E, tau, style,
-                      .check_distmetric(dist.metric),threads))
+  return(RcppFNN4Grid(mat, rt, eps, lib, pred, E, tau, style, stack,
+                      .check_distmetric(dist.metric),embed.direction,threads))
 }
 
 #' false nearest neighbours

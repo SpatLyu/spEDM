@@ -430,6 +430,7 @@ Rcpp::NumericVector RcppFNN4Lattice(
     const Rcpp::IntegerVector& E,
     int tau = 1,
     int style = 1,
+    int stack = 0,
     int dist_metric = 2,
     int threads = 8,
     int parallel_level = 0){
@@ -464,16 +465,21 @@ Rcpp::NumericVector RcppFNN4Lattice(
     }
   }
 
-  // Generate embeddings
-  std::vector<double> E_std = Rcpp::as<std::vector<double>>(E);
-  int max_E = CppMax(E_std, true);
-  std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(vec_std, nb_vec, max_E, tau, style);
-
   // Use L1 norm (Manhattan distance) if dist_metric == 1, else use L2 norm
   bool L1norm = (dist_metric == 1);
 
-  // Perform FNN for spatial lattice data
-  std::vector<double> fnn = CppFNN(embeddings,lib_std,pred_std,rt_std,eps_std,L1norm,threads,parallel_level);
+  // Generate embeddings and perform FNN for spatial lattice data
+  std::vector<double> E_std = Rcpp::as<std::vector<double>>(E);
+  int max_E = CppMax(E_std, true);
+
+  std::vector<double> fnn;
+  if (stack == 0){
+    std::vector<std::vector<double>> embeddings = GenLatticeEmbeddings(vec_std, nb_vec, max_E, tau, style);
+    fnn = CppFNN(embeddings,lib_std,pred_std,rt_std,eps_std,L1norm,threads,parallel_level);
+  } else {
+    std::vector<std::vector<std::vector<double>>> embeddings = GenLatticeEmbeddingsCom(vec_std, nb_vec, max_E, tau, style);
+    fnn = CppFNN(embeddings,lib_std,pred_std,rt_std,eps_std,L1norm,threads,parallel_level);
+  }
 
   // Convert the result back to Rcpp::NumericVector and set names as "E:1", "E:2", ..., "E:n"
   Rcpp::NumericVector result = Rcpp::wrap(fnn);

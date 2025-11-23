@@ -12,6 +12,7 @@
   E = 1:10,
   tau = 1,
   style = 1,
+  stack = FALSE,
   lib = NULL,
   pred = NULL,
   dist.metric = "L1",
@@ -28,6 +29,7 @@
   E = 1:10,
   tau = 1,
   style = 1,
+  stack = FALSE,
   lib = NULL,
   pred = NULL,
   dist.metric = "L1",
@@ -35,7 +37,8 @@
   eps = 2,
   threads = detectThreads(),
   detrend = TRUE,
-  grid.coord = TRUE
+  grid.coord = TRUE,
+  embed.direction = 0
 )
 }
 \arguments{
@@ -48,6 +51,8 @@
 \item{tau}{(optional) step of spatial lags.}
 
 \item{style}{(optional) embedding style (\code{0} includes current state, \code{1} excludes it).}
+
+\item{stack}{(optional) whether to stack embeddings.}
 
 \item{lib}{(optional) libraries indices.}
 
@@ -66,6 +71,8 @@
 \item{nb}{(optional) neighbours list.}
 
 \item{grid.coord}{(optional) whether to detrend using cell center coordinates (\code{TRUE}) or row/column numbers (\code{FALSE}).}
+
+\item{embed.direction}{(optional) direction selector for embeddings (\code{0} returns all directions, \code{1-8} correspond to NW, N, NE, W, E, SW, S, SE).}
 }
 \value{
 A vector
