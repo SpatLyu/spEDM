@@ -462,7 +462,9 @@ Rcpp::NumericVector RcppFNN4Grid(
     const Rcpp::IntegerVector& E,
     int tau = 1,
     int style = 1,
+    int stack = 0,
     int dist_metric = 2,
+    const Rcpp::IntegerVector& dir = Rcpp::IntegerVector::create(0),
     int threads = 8,
     int parallel_level = 0){
   // Convert Rcpp::NumericMatrix to std::vector<std::vector<double>>
@@ -524,16 +526,40 @@ Rcpp::NumericVector RcppFNN4Grid(
     }
   }
 
-  // Generate embeddings
-  std::vector<double> E_std = Rcpp::as<std::vector<double>>(E);
-  int max_E = CppMax(E_std, true);
-  std::vector<std::vector<double>> embeddings = GenGridEmbeddings(cppMat, max_E, tau, style);
-
   // Use L1 norm (Manhattan distance) if dist_metric == 1, else use L2 norm
   bool L1norm = (dist_metric == 1);
 
-  // Perform FNN for spatial grid data
-  std::vector<double> fnn = CppFNN(embeddings,lib_std,pred_std,rt_std,eps_std,L1norm,threads,parallel_level);
+  // check each element of dir before conversion
+  for (int d : dir) {
+    if (d < 0 || d > 8) {
+      Rcpp::stop("direction vector elements must be in 0–8; 0 represents all directions, 1–8 correspond to NW,N,NE,W,E,SW,S,SE");
+    }
+  }
+
+  // convert to std::vector<int>
+  std::vector<int> dir_std = Rcpp::as<std::vector<int>>(dir);
+
+  // remove duplicates
+  std::sort(dir_std.begin(), dir_std.end());
+  dir_std.erase(std::unique(dir_std.begin(), dir_std.end()), dir_std.end());
+
+  // if 0 is present, override all others
+  if (std::find(dir_std.begin(), dir_std.end(), 0) != dir_std.end()) {
+    dir_std = {0};
+  }
+
+  // Generate embeddings and perform FNN for spatial grid data
+  std::vector<double> E_std = Rcpp::as<std::vector<double>>(E);
+  int max_E = CppMax(E_std, true);
+
+  std::vector<double> fnn;
+  if (stack == 0){
+    std::vector<std::vector<double>> embeddings = GenGridEmbeddings(cppMat, max_E, tau, style);
+    fnn = CppFNN(embeddings,lib_std,pred_std,rt_std,eps_std,L1norm,threads,parallel_level);
+  } else {
+    std::vector<std::vector<std::vector<double>>> embeddings = GenGridEmbeddingsCom(cppMat, max_E, tau, style);
+    fnn = CppFNN(embeddings,lib_std,pred_std,rt_std,eps_std,L1norm,threads,parallel_level);
+  }
 
   // Convert the result back to Rcpp::NumericVector and set names as "E:1", "E:2", ..., "E:n"
   Rcpp::NumericVector result = Rcpp::wrap(fnn);
