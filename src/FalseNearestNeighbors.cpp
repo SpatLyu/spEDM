@@ -2,6 +2,7 @@
 #include <cmath>
 #include <limits>
 #include <algorithm>
+#include <numeric>
 #include "NumericUtils.h"
 #include "CppStats.h"
 #include "CppDistances.h"
@@ -157,6 +158,190 @@ double CppSingleFNN(const std::vector<std::vector<double>>& embedding,
 }
 
 /*
+ * Compute the False Nearest Neighbors (FNN) ratio for 3D embeddings.
+ *
+ * Embedding structure:
+ *   embedding[e][unit][lag]
+ *     e    = embedding level
+ *     unit = spatial index
+ *     lag  = lagged coordinate
+ *
+ * Distance definitions:
+ *   Dist_E1 = mean_{e = 0 .. E1-1} distance( embedding[e][pred], embedding[e][lib] )
+ *
+ *   Dist_E2 = mean_{lag = 0 .. embedding[E2-1][pred].size()} abs( embedding[E2-1][pred][lag] - embedding[E2-1][lib][lag] )
+ *
+ * A false neighbor is flagged if:
+ *       Dist_E2 / Dist_E1 > Rtol    OR    Dist_E2 > Atol
+ *
+ * Supports two computation modes:
+ *   parallel_level = 0  → per-pred parallel computation
+ *   parallel_level = 1  → precompute distance tables to reuse for repeated queries
+ *
+ * Returns:
+ *   proportion of false nearest neighbors in [0,1], or NaN if none are valid.
+ */
+double CppSingleFNN(const std::vector<std::vector<std::vector<double>>>& embedding,
+                    const std::vector<size_t>& lib,
+                    const std::vector<size_t>& pred,
+                    size_t E1,
+                    size_t E2,
+                    size_t threads,
+                    int parallel_level = 0,
+                    double Rtol = 10.0,
+                    double Atol = 2.0,
+                    bool L1norm = false){
+    if (embedding.empty()) return std::numeric_limits<double>::quiet_NaN();
+
+    size_t maxE = embedding.size();
+    if (E1 == 0 || E1 >= E2 || E2 > maxE) {
+        return std::numeric_limits<double>::quiet_NaN();
+    }
+
+    size_t N = embedding[0].size();
+    if (N == 0) return std::numeric_limits<double>::quiet_NaN();
+
+    std::vector<char> valid(N, 0);
+    for (size_t i = 0; i < N; ++i) {
+        for (size_t e = 0; e < maxE; ++e) {
+            if (checkOneDimVectorNotNanNum(embedding[e][i]) > 0) {
+                valid[i] = 1;
+                break;
+            }
+        }
+    }
+
+    // -------------------------
+    // parallel_level != 0
+    // -------------------------
+    if (parallel_level != 0) {
+        // Evaluate FNN ratio
+        size_t total = 0, false_count = 0;
+
+        for (size_t pi = 0; pi < pred.size(); ++pi) {
+            size_t iidx = pred[pi];
+            if (!valid[iidx]) continue;
+
+            double best_mean = std::numeric_limits<double>::max();
+            size_t best_j = N;
+
+            for (size_t lj = 0; lj < lib.size(); ++lj) {
+                size_t jidx = lib[lj];
+                if (!valid[jidx] || jidx == iidx) continue;
+
+                double sum = 0.0;
+                size_t num_e1_dist = 0;
+
+                for (size_t e = 0; e < E1; ++e) {
+                    double d = CppDistance(embedding[e][iidx], embedding[e][jidx], L1norm, true);
+                    if (!std::isnan(d)) {
+                      sum += d;
+                      ++num_e1_dist;
+                    }
+                }
+                if (num_e1_dist == 0) continue;
+
+                double mean_d = sum / static_cast<double>(num_e1_dist);
+                if (mean_d < best_mean) {
+                    best_mean = mean_d;
+                    best_j = jidx;
+                }
+            }
+
+            if (best_j == N || doubleNearlyEqual(best_mean, 0.0)) continue;
+            
+            double diff = 0.0;
+            size_t num_e2_dist = 0;
+            
+            for (size_t lagidx = 0; lagidx < embedding[E2 - 1][iidx].size(); ++lagidx) {
+              double d = std::abs(embedding[E2 - 1][iidx][lagidx] - embedding[E2 - 1][best_j][lagidx]);
+              if (!std::isnan(d)) {
+                diff += d;
+                ++num_e2_dist;
+              }
+            }
+
+            if (num_e2_dist == 0) continue;
+
+            double mean_e2 = diff / static_cast<double>(num_e2_dist);
+            double ratio = mean_e2 / best_mean;
+            if (ratio > Rtol || mean_e2 > Atol) ++false_count;
+            ++total;
+        }
+
+        return total > 0 ? double(false_count) / double(total)
+                         : std::numeric_limits<double>::quiet_NaN();
+    } else {
+      // -------------------------
+      // parallel_level == 0 (parallel per pred)
+      // -------------------------
+      std::vector<int> flags(pred.size(), -1);
+
+      RcppThread::parallelFor(0, pred.size(), [&](size_t pi) {
+          size_t iidx = pred[pi];
+          if (!valid[iidx]) return;
+
+          double best_mean = std::numeric_limits<double>::max();
+          size_t best_j = N;
+
+          for (size_t lj = 0; lj < lib.size(); ++lj) {
+              size_t jidx = lib[lj];
+              if (!valid[jidx] || jidx == iidx) continue;
+
+              double sum = 0.0;
+              size_t num_e1_dist = 0;
+
+              for (size_t e = 0; e < E1; ++e) {
+                  double d = CppDistance(embedding[e][iidx], embedding[e][jidx], L1norm, true);
+                  if (!std::isnan(d)) {
+                    sum += d;
+                    ++num_e1_dist;
+                  }
+              }
+              if (num_e1_dist == 0) continue;
+
+              double mean_d = sum / static_cast<double>(num_e1_dist);
+              if (mean_d < best_mean) {
+                  best_mean = mean_d;
+                  best_j = jidx;
+              }
+          }
+
+          if (best_j == N || doubleNearlyEqual(best_mean, 0.0)) return;
+          
+          double diff = 0.0;
+          size_t num_e2_dist = 0;
+          
+          for (size_t lagidx = 0; lagidx < embedding[E2 - 1][iidx].size(); ++lagidx) {
+            double d = std::abs(embedding[E2 - 1][iidx][lagidx] - embedding[E2 - 1][best_j][lagidx]);
+            if (!std::isnan(d)) {
+              diff += d;
+              ++num_e2_dist;
+            }
+          }
+
+          if (num_e2_dist == 0) return;
+
+          double mean_e2 = diff / static_cast<double>(num_e2_dist);
+          double ratio = mean_e2 / best_mean;
+          flags[pi] = (ratio > Rtol || mean_e2 > Atol) ? 1 : 0;
+
+      }, threads);
+
+      size_t total = 0, false_count = 0;
+      for (int f : flags) {
+          if (f >= 0) {
+              ++total;
+              if (f == 1) ++false_count;
+          }
+      }
+
+      return total > 0 ? double(false_count) / double(total)
+                      : std::numeric_limits<double>::quiet_NaN();
+      }
+}
+
+/*
  * Compute False Nearest Neighbor (FNN) ratios across multiple embedding dimensions
  * for spatial cross-sectional data.
  *
@@ -227,4 +412,51 @@ std::vector<double> CppFNN(const std::vector<std::vector<double>>& embedding,
   }
 
   return results;
+}
+
+/*
+ * Compute FNN ratios for 3D embeddings across all embedding dimensions E1 = 1 .. D-1
+ *
+ * Returns: std::vector<double> of size D-1
+ */
+std::vector<double> CppFNN(const std::vector<std::vector<std::vector<double>>>& embedding,
+                           const std::vector<size_t>& lib,
+                           const std::vector<size_t>& pred,
+                           const std::vector<double>& Rtol,
+                           const std::vector<double>& Atol,
+                           bool L1norm = false,
+                           int threads = 8,
+                           int parallel_level = 0){
+    size_t D = embedding.size();
+    if (D < 2) return std::vector<double>(1,std::numeric_limits<double>::quiet_NaN());
+
+    std::vector<double> out(D - 1, std::numeric_limits<double>::quiet_NaN());
+
+    // Configure threads
+    size_t threads_sizet = static_cast<size_t>(std::abs(threads));
+    threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
+
+    if (parallel_level == 0) {
+        for (size_t E1 = 1; E1 < D; ++E1) {
+            out[E1 - 1] = CppSingleFNN(
+                embedding, lib, pred,
+                E1, E1 + 1,
+                threads_sizet, parallel_level,
+                Rtol[E1 - 1], Atol[E1 - 1],
+                L1norm
+            );
+        }
+    } else {
+        RcppThread::parallelFor(1, D, [&](size_t E1) {
+            out[E1 - 1] = CppSingleFNN(
+                embedding, lib, pred,
+                E1, E1 + 1,
+                threads_sizet, parallel_level,
+                Rtol[E1 - 1], Atol[E1 - 1],
+                L1norm
+            );
+        }, threads_sizet);
+    }
+
+    return out;
 }
