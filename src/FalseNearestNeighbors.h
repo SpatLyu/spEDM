@@ -130,4 +130,18 @@ std::vector<double> CppFNN(const std::vector<std::vector<double>>& embedding,
                            int threads = 8,
                            int parallel_level = 0);
 
+/*
+ * Compute FNN ratios for 3D embeddings across all embedding dimensions E1 = 1 .. D-1
+ *
+ * Returns: std::vector<double> of size D-1
+ */
+std::vector<double> CppFNN(const std::vector<std::vector<std::vector<double>>>& embedding,
+                           const std::vector<size_t>& lib,
+                           const std::vector<size_t>& pred,
+                           const std::vector<double>& Rtol,
+                           const std::vector<double>& Atol,
+                           bool L1norm = false,
+                           int threads = 8,
+                           int parallel_level = 0);
+
 #endif // FalseNearestNeighbors_H
