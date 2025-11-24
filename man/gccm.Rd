@@ -109,7 +109,7 @@
 A list
 \describe{
 \item{\code{xmap}}{cross mapping results}
-\item{\code{varname}}{names of causal and effect variable}
+\item{\code{varname}}{names of causal and effect variables}
 \item{\code{bidirectional}}{whether to examine bidirectional causality}
 }
 }
