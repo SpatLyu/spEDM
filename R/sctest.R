@@ -42,7 +42,7 @@
 #' @return A list
 #' \describe{
 #' \item{\code{sc}}{statistic for spatial causality}
-#' \item{\code{varname}}{names of causal and effect variable}
+#' \item{\code{varname}}{names of causal and effect variables}
 #' }
 #' @export
 #' @name sc.test

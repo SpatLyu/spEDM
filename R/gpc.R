@@ -39,7 +39,7 @@
 #' \item{\code{causality}}{per-sample causality statistics(present if `libsizes` is `NULL`)}
 #' \item{\code{summary}}{overall causal strength(present if `libsizes` is `NULL`)}
 #' \item{\code{pattern}}{pairwise pattern relationships(present if `libsizes` is `NULL`)}
-#' \item{\code{varname}}{names of causal and effect variable}
+#' \item{\code{varname}}{names of causal and effect variables}
 #' \item{\code{bidirectional}}{whether to examine bidirectional causality}
 #' }
 #' @export

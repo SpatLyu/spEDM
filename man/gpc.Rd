@@ -114,7 +114,7 @@ A list
 \item{\code{causality}}{per-sample causality statistics(present if \code{libsizes} is \code{NULL})}
 \item{\code{summary}}{overall causal strength(present if \code{libsizes} is \code{NULL})}
 \item{\code{pattern}}{pairwise pattern relationships(present if \code{libsizes} is \code{NULL})}
-\item{\code{varname}}{names of causal and effect variable}
+\item{\code{varname}}{names of causal and effect variables}
 \item{\code{bidirectional}}{whether to examine bidirectional causality}
 }
 }
