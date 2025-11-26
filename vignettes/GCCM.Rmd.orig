@@ -103,8 +103,8 @@ popd_sf
 Determining optimal embedding dimension:
 
 ```{r simplex_lattice}
-spEDM::simplex(popd_sf, "pre", "pre", E = 2:10, k = 6)
-spEDM::simplex(popd_sf, "popd", "popd", E = 2:10, k = 6)
+spEDM::simplex(popd_sf, "pre", "pre", E = 2:10, k = 12)
+spEDM::simplex(popd_sf, "popd", "popd", E = 2:10, k = 12)
 ```
 
 Run GCCM:
@@ -113,7 +113,7 @@ Run GCCM:
 startTime = Sys.time()
 pd_res = spEDM::gccm(data = popd_sf, cause = "pre", effect = "popd",
                      libsizes = seq(100, 2800, by = 200),
-                     E = c(3,9), k = 6, nb = popd_nb, progressbar = FALSE)
+                     E = c(3,9), k = 12, nb = popd_nb, progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
 pd_res
@@ -157,8 +157,8 @@ predindice = nnaindice[indices,]
 Determining optimal embedding dimension:
 
 ```{r simplex_grid}
-spEDM::simplex(npp, "pre", "pre", E = 2:10, k = 8, lib = nnaindice, pred = predindice)
-spEDM::simplex(npp, "npp", "npp", E = 2:10, k = 8, lib = nnaindice, pred = predindice)
+spEDM::simplex(npp, "pre", "pre", E = 2:10, k = 12, lib = nnaindice, pred = predindice)
+spEDM::simplex(npp, "npp", "npp", E = 2:10, k = 12, lib = nnaindice, pred = predindice)
 ```
 
 Run GCCM:
@@ -167,7 +167,7 @@ Run GCCM:
 startTime = Sys.time()
 npp_res = spEDM::gccm(data = npp, cause = "pre", effect = "npp",
                       libsizes = matrix(rep(seq(10,130,20),2),ncol = 2),
-                      E = c(2,10), k = 8, lib = nnaindice, pred = predindice, 
+                      E = c(2,10), k = 12, lib = nnaindice, pred = predindice, 
                       progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
