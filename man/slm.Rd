@@ -25,6 +25,7 @@
   threshold = Inf,
   transient = 1,
   interact = "local",
+  aggregate_fn = NULL,
   nb = NULL
 )
 
@@ -46,7 +47,8 @@
   beta_zy = 0.35,
   threshold = Inf,
   transient = 1,
-  interact = "local"
+  interact = "local",
+  aggregate_fn = NULL
 )
 }
 \arguments{
@@ -66,7 +68,7 @@
 
 \item{alpha_y}{(optional) growth parameter for y.}
 
-\item{alpha_z}{(optional) growth parameter for y.}
+\item{alpha_z}{(optional) growth parameter for z.}
 
 \item{beta_xy}{(optional) cross-inhibition from x to y.}
 
@@ -85,6 +87,8 @@
 \item{transient}{(optional) transients to be excluded from the results.}
 
 \item{interact}{(optional) type of cross-variable interaction (\code{local} or \code{neighbors}).}
+
+\item{aggregate_fn}{(optional) Custom aggregation function. Must accept a numeric vector and return a single numeric value.}
 
 \item{nb}{(optional) neighbours list.}
 }

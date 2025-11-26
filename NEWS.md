@@ -10,6 +10,8 @@
 
 ### enhancements
 
+* Drive extension of `slm` generics with custom aggregation capabilities (#912).
+
 * Permit `simplex` and `ic` generics to accept varying E, k, and tau inputs (#900).
 
 * Calibrate spacing conventions and enable real execution of available-thread detection (#885).
