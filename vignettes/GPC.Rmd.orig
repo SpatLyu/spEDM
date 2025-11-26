@@ -2,7 +2,7 @@
 title: "Geographical Pattern Causality"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-11-20
+  | Last update: 2025-11-25
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -156,14 +156,14 @@ stats::cor.test(~ pre + npp,
                                       datafame = TRUE, na.rm = TRUE))
 
 
-g1 = spEDM::pc(npp, "npp", "pre", E = 6:10, k = 7:12, maximize = "positive")
+g1 = spEDM::pc(npp, "npp", "pre", E = 6:10, k = 12, tau = 1:5, maximize = "positive")
 g1
 ```
 
 Run geographical pattern causality analysis
 
 ```{r gpc_grid}
-spEDM::gpc(npp, "pre", "npp", E = 10, k = 8)
+spEDM::gpc(npp, "pre", "npp", E = 8, k = 12)
 ```
 
 Convergence diagnostics
@@ -171,8 +171,8 @@ Convergence diagnostics
 ```{r fig2,fig.width=5.55,fig.height=3.05,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. **Convergence curves of causal strengths among precipitation and NPP.**")}
 npp_convergence = spEDM::gpc(npp, "pre", "npp",
                              libsizes = matrix(rep(seq(10,80,10),2),ncol = 2),
-                             E = 10, k = 8, progressbar = FALSE)
+                             E = 8, k = 12, progressbar = FALSE)
 npp_convergence
-plot(npp_convergence, ylimits = c(-0.01,0.35),
+plot(npp_convergence, ylimits = c(-0.01,0.65),
      xlimits = c(0,6500), xbreaks = seq(100, 6400, 500))
 ```
