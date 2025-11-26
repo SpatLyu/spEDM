@@ -99,7 +99,7 @@ Then, search optimal parameters:
 stats::cor.test(columbus$hoval,columbus$crime)
 
 # since the correlation is -0.574, negative causality is selected as the metric to maximize in the optimal parameter search
-spEDM::pc(columbus, "hoval", "crime", E = 5:10, k = 6:12, maximize = "negative")
+spEDM::pc(columbus, "hoval", "crime", E = 5:6, k = 7:10, tau = 1, maximize = "negative")
 ```
 
 Run geographical pattern causality analysis
