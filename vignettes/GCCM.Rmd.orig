@@ -157,8 +157,8 @@ predindice = nnaindice[indices,]
 Determining optimal embedding dimension:
 
 ```{r simplex_grid}
-spEDM::simplex(npp, "pre", "pre", E = 2:10, k = 8, lib = nnaindice, pred = predindice)
-spEDM::simplex(npp, "npp", "npp", E = 2:10, k = 8, lib = nnaindice, pred = predindice)
+spEDM::simplex(npp, "pre", "pre", E = 2:10, k = 12, lib = nnaindice, pred = predindice)
+spEDM::simplex(npp, "npp", "npp", E = 2:10, k = 12, lib = nnaindice, pred = predindice)
 ```
 
 Run GCCM:
@@ -167,7 +167,7 @@ Run GCCM:
 startTime = Sys.time()
 npp_res = spEDM::gccm(data = npp, cause = "pre", effect = "npp",
                       libsizes = matrix(rep(seq(10,130,20),2),ncol = 2),
-                      E = c(2,10), k = 8, lib = nnaindice, pred = predindice, 
+                      E = c(2,10), k = 12, lib = nnaindice, pred = predindice, 
                       progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
