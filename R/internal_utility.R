@@ -216,11 +216,12 @@
   return(res)
 }
 
-.bind_slm = \(mat_list,x,y,z,transient){
+.bind_slm = \(mat_list,x,y,z,transient,aggregate_fn){
+  if (is.null(aggregate_fn)) aggregate_fn = \(.x) mean(.x,na.rm = TRUE)
   if (is.null(transient)) {
-    res = lapply(mat_list, \(.x) apply(.x,1,mean,na.rm = TRUE))
+    res = lapply(mat_list, \(.x) apply(.x,1,aggregate_fn))
   } else {
-    res = lapply(mat_list, \(.x) apply(.x[,-unique(abs(transient)),drop = FALSE],1,mean,na.rm = TRUE))
+    res = lapply(mat_list, \(.x) apply(.x[,-unique(abs(transient)),drop = FALSE],1,aggregate_fn))
   }
 
   indices = NULL
