@@ -3,7 +3,7 @@ title: "Introduction to the spEDM package"
 author: "Wenbo Lv"
 date: |
   | Last update: 2025-11-25
-  | Last run: 2025-11-25
+  | Last run: 2025-11-26
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{1. Introduction to the spEDM package}
@@ -15,7 +15,7 @@ vignette: >
 
 ## Overview
 
-The *spEDM* package is an open-source, computationally efficient toolkit designed to provide a unified API for **Spatial Empirical Dynamic Modeling**. It supports a suite of prediction-based causal discovery algorithms, including *spatial (granger) causality test*, *geographically convergent cross mapping*, *geographical pattern causality*, and *geographical cross mapping cardinality*.
+The *spEDM* package is an open-source, computationally efficient toolkit designed to provide a unified API for **Spatial Empirical Dynamic Modeling**. It supports a suite of prediction-based causal discovery algorithms, including *spatial (granger) causality test*, *geographical convergent cross mapping*, *geographical pattern causality*, and *geographical cross mapping cardinality*.
 
 To support both learning and practical application, *spEDM* offers four carefully curated spatial cross-sectional datasets, each paired with a detailed example showcasing the use of key algorithms in the package.
 
