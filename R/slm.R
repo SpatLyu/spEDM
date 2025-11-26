@@ -29,7 +29,7 @@
 #' @param step (optional) number of simulation time steps.
 #' @param alpha_x (optional) growth parameter for x.
 #' @param alpha_y (optional) growth parameter for y.
-#' @param alpha_z (optional) growth parameter for y.
+#' @param alpha_z (optional) growth parameter for z.
 #' @param beta_xy (optional) cross-inhibition from x to y.
 #' @param beta_xz (optional) cross-inhibition from x to z.
 #' @param beta_yx (optional) cross-inhibition from y to x.
