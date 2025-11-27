@@ -7,7 +7,7 @@
   if (is.null(lib)) lib = which(!(is.na(cause) | is.na(effect)))
   if (is.null(pred)) pred = lib
   return(.run_gpc(cause, effect, E, k, tau, style, lib, pred, .check_distmetric(dist.metric),
-                  zero.tolerance, relative, weighted, threads, bidirectional, varname, nb, 
+                  zero.tolerance, relative, weighted, threads, bidirectional, varname, nb,
                   libsizes, boot, random, seed, parallel.level, progressbar))
 }
 
@@ -19,7 +19,7 @@
   if (is.null(lib)) lib = which(!(is.na(cause) | is.na(effect)), arr.ind = TRUE)
   if (is.null(pred)) pred = lib
   return(.run_gpc(cause, effect, E, k, tau, style, lib, pred, .check_distmetric(dist.metric),
-                  zero.tolerance, relative, weighted, threads, bidirectional, varname, NULL, 
+                  zero.tolerance, relative, weighted, threads, bidirectional, varname, NULL,
                   libsizes, boot, random, seed, parallel.level, progressbar))
 }
 
@@ -36,9 +36,9 @@
 #' @return A list
 #' \describe{
 #' \item{\code{xmap}}{cross mapping results (only present if `libsizes` is not `NULL`)}
-#' \item{\code{causality}}{per-sample causality statistics(present if `libsizes` is `NULL`)}
-#' \item{\code{summary}}{overall causal strength(present if `libsizes` is `NULL`)}
-#' \item{\code{pattern}}{pairwise pattern relationships(present if `libsizes` is `NULL`)}
+#' \item{\code{causality}}{per-sample causality statistics (present if `libsizes` is `NULL`)}
+#' \item{\code{summary}}{overall causal strength (present if `libsizes` is `NULL`)}
+#' \item{\code{pattern}}{pairwise pattern relationships (present if `libsizes` is `NULL`)}
 #' \item{\code{varname}}{names of causal and effect variables}
 #' \item{\code{bidirectional}}{whether to examine bidirectional causality}
 #' }
