@@ -54,9 +54,9 @@
 
 \item{stack}{(optional) whether to stack embeddings.}
 
-\item{lib}{(optional) libraries indices.}
+\item{lib}{(optional) libraries indices (input needed: \code{vector} - spatial vector, \code{matrix} - spatial raster).}
 
-\item{pred}{(optional) predictions indices.}
+\item{pred}{(optional) predictions indices (input requirement same as \code{lib}).}
 
 \item{dist.metric}{(optional) distance metric (\code{L1}: Manhattan, \code{L2}: Euclidean).}
 
