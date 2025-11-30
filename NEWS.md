@@ -1,4 +1,4 @@
-# spEDM 2.0
+# spEDM 1.10
 
 # spEDM 1.9
 
