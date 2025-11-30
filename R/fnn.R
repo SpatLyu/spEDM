@@ -24,8 +24,8 @@
 #' false nearest neighbours
 #'
 #' @inheritParams embedded
-#' @param lib (optional) libraries indices.
-#' @param pred (optional) predictions indices.
+#' @param lib (optional) libraries indices (input needed: `vector` - spatial vector, `matrix` - spatial raster).
+#' @param pred (optional) predictions indices (input requirement same as `lib`).
 #' @param dist.metric (optional) distance metric (`L1`: Manhattan, `L2`: Euclidean).
 #' @param rt (optional) escape factor.
 #' @param eps (optional) neighborhood diameter.
