@@ -2,11 +2,11 @@
 title: "Spatially Convergent Partial Cross Mapping"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-08-31
+  | Last update: 2025-12-01
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{SCPCM}
+  %\VignetteIndexEntry{6. Spatially Convergent Partial Cross Mapping}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
