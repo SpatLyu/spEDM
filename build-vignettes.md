@@ -9,7 +9,7 @@ it is necessary to pre-build the vignettes prior to package submission.
 }
 ```
 
-- Compile all vignettes at once:
+- Compile all vignettes at once
 
 ``` r
 # list vignette names
