@@ -13,8 +13,8 @@ it is necessary to pre-build the vignettes prior to package submission.
 
 ``` r
 # list vignette names
-vignettes = paste0(c(paste0(rep("main",5),1:5), 
-                     paste0(rep("si",2),1:2)), "_",
+vignettes = paste0(c(paste0("main", 1:5), 
+                     paste0("si", 1:2)), "_",
                    c("pkgintro", "ssr", "gccm", "gpc",
                      "gcmc", "slm", "sct"))
 
