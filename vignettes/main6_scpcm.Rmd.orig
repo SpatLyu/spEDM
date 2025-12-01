@@ -1,0 +1,120 @@
+---
+title: "Spatially Convergent Partial Cross Mapping"
+author: "Wenbo Lv"
+date: |
+  | Last update: 2025-12-01
+  | Last run: `r Sys.Date()`
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{6. Spatially Convergent Partial Cross Mapping}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "##",
+  fig.path = "man/figures/scpcm/"
+)
+```
+
+## Model principles
+
+
+
+## Usage examples
+
+### An example of spatial lattice data
+
+Load the `spEDM` package and its county-level population density data:
+
+```{r load_lattice_data}
+library(spEDM)
+
+popd_nb = spdep::read.gal(system.file("case/popd_nb.gal",package = "spEDM"))
+popd = readr::read_csv(system.file("case/popd.csv",package = "spEDM"))
+popd_sf = sf::st_as_sf(popd, coords = c("x","y"), crs = 4326)
+popd_sf
+```
+
+Examine the causation between elevation and population density, controlling for precipitation and temperature.
+
+```{r scpcm_lattice}
+startTime = Sys.time()
+popd_pretem = scpcm(data = popd_sf,
+                    cause = "elev",
+                    effect = "popd",
+                    conds = c("pre","tem"),
+                    libsizes = seq(100, 2800, by = 200),
+                    E = 2,
+                    k = 6,
+                    nb = popd_nb)
+endTime = Sys.time()
+print(difftime(endTime,startTime, units ="mins"))
+popd_pretem
+```
+
+Visualize the result:
+
+```{r fig1,fig.width=6.25,fig.height=3.15,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. The causation between elevation and population density. **a** Elevation–Population causality without accounting for covariates. **b** Elevation–Population causality controlling for precipitation and temperature.")}
+fig1a = plot(popd_pretem,partial = FALSE,ylimits = c(0,0.65))
+fig1b = plot(popd_pretem,partial = TRUE,ylimits = c(0,0.65))
+fig1 = cowplot::plot_grid(fig1a,fig1b,ncol = 2,label_fontfamily = 'serif',
+                          labels = paste0('(',letters[1:2],')'))
+fig1
+```
+
+### An example of spatial grid data
+
+Load the `spEDM` package and its farmland NPP data:
+
+```{r load_grid_data}
+library(spEDM)
+
+npp = terra::rast(system.file("case/npp.tif", package = "spEDM"))
+# To save the computation time, we will aggregate the data by 3 times
+npp = terra::aggregate(npp, fact = 3, na.rm = TRUE)
+npp
+
+# Inspect NA values
+terra::global(npp,"isNA")
+terra::ncell(npp)
+nnamat = terra::as.matrix(npp[[1]], wide = TRUE)
+nnaindice = which(!is.na(nnamat), arr.ind = TRUE)
+dim(nnaindice)
+
+# Select 1500 non-NA pixels to predict:
+set.seed(2025)
+indices = sample(nrow(nnaindice), size = 1500, replace = FALSE)
+libindice = nnaindice[-indices,]
+predindice = nnaindice[indices,]
+```
+
+Investigate the causation between elevation and NPP, with precipitation and temperature as control variables:
+
+```{r scpcm_grid}
+startTime = Sys.time()
+npp_pretem = scpcm(data = npp,
+                   cause = "elev",
+                   effect = "npp",
+                   conds = c("pre","tem"),
+                   libsizes = matrix(rep(seq(10,130,20),2),ncol = 2),
+                   E = c(4,8),
+                   k = 8,
+                   lib = nnaindice,
+                   pred = predindice)
+endTime = Sys.time()
+print(difftime(endTime,startTime, units ="mins"))
+npp_pretem
+```
+
+Visualize the result:
+
+```{r fig2,fig.width=5.55,fig.height=2.85,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. The causation between elevation and NPP. **a** Elevation–NPP causality without accounting for covariates. **b** Elevation–NPP causality controlling for precipitation and temperature.")}
+fig2a = plot(npp_pretem,partial = FALSE,draw_ci = TRUE,ylimits = c(-0.05,0.85))
+fig2b = plot(npp_pretem,partial = TRUE,draw_ci = TRUE,ylimits = c(-0.05,0.55))
+fig2 = cowplot::plot_grid(fig2a,fig2b,ncol = 2,label_fontfamily = 'serif',
+                          labels = paste0('(',letters[1:2],')'))
+fig2
+```
