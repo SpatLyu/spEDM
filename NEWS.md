@@ -1,5 +1,9 @@
 # spEDM 1.10
 
+### enhancements
+
+* Align vignette metadata with index entry for correct cran listing (#920).
+
 # spEDM 1.9
 
 ### new
