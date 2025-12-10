@@ -279,7 +279,9 @@ Rcpp::NumericMatrix RcppSLMUni4Lattice(
     int k = 4,
     int step = 20,
     double alpha = 0.77,
-    double escape_threshold = 1e10
+    double noise_level = 0.0,
+    double escape_threshold = 1e10,
+    unsigned long long random_seed = 42
 ) {
   // Convert vec to std::vector<double>
   std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
@@ -288,7 +290,8 @@ Rcpp::NumericMatrix RcppSLMUni4Lattice(
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
   // Call the core function
-  std::vector<std::vector<double>> result = SLMUni4Lattice(vec_std, nb_vec, k, step, alpha, escape_threshold);
+  std::vector<std::vector<double>> result = SLMUni4Lattice(vec_std, nb_vec, k, step, alpha,
+                                                           noise_level, escape_threshold, random_seed);
 
   // Create NumericMatrix with rows = number of spatial units, cols = number of steps+1
   int n_rows = static_cast<int>(result.size());
@@ -318,7 +321,9 @@ Rcpp::List RcppSLMBi4Lattice(
     double beta_xy = 0.05,
     double beta_yx = 0.4,
     int interact = 0,
-    double escape_threshold = 1e10
+    double noise_level = 0.0,
+    double escape_threshold = 1e10,
+    unsigned long long random_seed = 42
 ) {
   // Convert x/y to std::vector<double>
   std::vector<double> vec1 = Rcpp::as<std::vector<double>>(x);
@@ -329,7 +334,8 @@ Rcpp::List RcppSLMBi4Lattice(
 
   // Call the core function
   std::vector<std::vector<std::vector<double>>> result = SLMBi4Lattice(
-    vec1, vec2, nb_vec, k, step, alpha_x, alpha_y, beta_xy, beta_yx, interact, escape_threshold
+    vec1, vec2, nb_vec, k, step, alpha_x, alpha_y, beta_xy, beta_yx,
+    interact, noise_level, escape_threshold, random_seed
   );
 
   // Create NumericMatrix with rows = number of spatial units, cols = number of steps+1
@@ -374,7 +380,9 @@ Rcpp::List RcppSLMTri4Lattice(
     double beta_zx = 0.65,
     double beta_zy = 0.65,
     int interact = 0,
-    double escape_threshold = 1e10
+    double noise_level = 0.0,
+    double escape_threshold = 1e10,
+    unsigned long long random_seed = 42
 ) {
   // Convert x/y to std::vector<double>
   std::vector<double> vec1 = Rcpp::as<std::vector<double>>(x);
@@ -389,7 +397,7 @@ Rcpp::List RcppSLMTri4Lattice(
     vec1, vec2, vec3, nb_vec,
     k, step, alpha_x, alpha_y, alpha_z,
     beta_xy, beta_xz, beta_yx, beta_yz, beta_zx, beta_zy,
-    interact, escape_threshold
+    interact, noise_level, escape_threshold, random_seed
   );
 
   // Create NumericMatrix with rows = number of spatial units, cols = number of steps+1
@@ -1514,7 +1522,7 @@ Rcpp::List RcppGPC4Lattice(
         case 3: pattern_labels[idx]  = "dark"; break;
         default: pattern_labels[idx] = "unknown"; break;
       }
-    } 
+    }
   }
 
   Rcpp::DataFrame causality_df = Rcpp::DataFrame::create(
