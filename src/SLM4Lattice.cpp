@@ -4,21 +4,27 @@
 #include <numeric>
 #include <random>    // std::mt19937_64, std::normal_distribution
 #include <algorithm>
+#include "NumericUtils.h"
 #include "CppLatticeUtils.h"
 
 /**
- * @brief Simulate a univariate Spatial Logistic Map (SLM) over lattice-structured data.
+ * @brief Simulate a univariate Spatial Logistic Map (SLM) over lattice-structured data,
+ *        with optional additive Gaussian white noise.
  *
- * This function performs time-stepped simulations of the Spatial Logistic Map
- * on a lattice data where each spatial unit evolves based on its own value and
- * the average of its k nearest neighbors.
+ * This function performs time-stepped simulations of the Spatial Logistic Map (SLM)
+ * on lattice data, where each spatial unit evolves based on its own value and
+ * the average of its k nearest neighbors. Optionally, zero-mean Gaussian noise is added
+ * to each state update to represent observational or dynamical uncertainty.
  *
- * @param vec                Initial values of the lattice data (e.g., population densities).
- * @param nb                 Neighbor list for each lattice unit (e.g., rook or queen adjacency).
+ * @param vec                Initial values of the lattice data.
+ * @param nb                 Neighbor list for each lattice unit.
  * @param k                  Number of neighbors to consider.
  * @param step               Number of simulation time steps to run.
- * @param alpha              Growth/interaction parameter in the logistic update rule.
+ * @param alpha              Logistic interaction parameter.
+ * @param noise_level        Standard deviation of additive Gaussian noise (default = 0).
+ *                           If set to 0, no noise is applied.
  * @param escape_threshold   Threshold to treat divergent values as invalid (default: 1e10).
+ * @param random_seed        Seed for random number generator (default: 42).
  *
  * @return A 2D vector of simulation results:
  *         Each row corresponds to a spatial unit,
@@ -30,8 +36,14 @@ std::vector<std::vector<double>> SLMUni4Lattice(
     size_t k,
     size_t step,
     double alpha,
-    double escape_threshold = 1e10
+    double noise_level = 0.0,
+    double escape_threshold = 1e10,
+    unsigned long long random_seed = 42
 ){
+  // Random number generator setup (used only if noise_level > 0)
+  std::mt19937_64 rng(static_cast<uint64_t>(random_seed));
+  std::normal_distribution<double> noise_dist(0.0, noise_level);
+
   // Initialize result matrix with NaNs (rows: spatial units, cols: time steps)
   std::vector<std::vector<double>> res(vec.size(),
                                        std::vector<double>(step + 1,
@@ -76,6 +88,10 @@ std::vector<std::vector<double>> SLMUni4Lattice(
           v_next = 1 - alpha * res[currentIndex][s - 1] * v_neighbors / valid_neighbors;
         }
 
+        if (!doubleNearlyEqual(noise_level, 0.0) && noise_level > 0.0 && !std::isnan(v_next)){
+          v_next += noise_dist(rng);
+        }
+
         // Update result only if the value is within the escape threshold
         if (!std::isinf(v_next) && std::abs(v_next) <= escape_threshold){
           res[currentIndex][s] = v_next;
@@ -91,6 +107,10 @@ std::vector<std::vector<double>> SLMUni4Lattice(
 
         // Apply the logistic map update if no neighbors exist
         double v_next = res[currentIndex][s - 1] * (alpha - alpha * res[currentIndex][s - 1]);
+
+        if (!doubleNearlyEqual(noise_level, 0.0) && noise_level > 0.0 && !std::isnan(v_next)){
+          v_next += noise_dist(rng);
+        }
 
         // Update result only if the value is within the escape threshold
         if (!std::isinf(v_next) && std::abs(v_next) <= escape_threshold){
