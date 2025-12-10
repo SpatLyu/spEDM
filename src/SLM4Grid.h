@@ -5,6 +5,9 @@
 #include <limits>
 #include <vector>
 #include <numeric>
+#include <random>    // std::mt19937_64, std::normal_distribution
+#include <algorithm>
+#include "NumericUtils.h"
 #include "CppGridUtils.h"
 
 /**
@@ -18,7 +21,10 @@
  * @param k                  Number of neighbors to consider (using Queen adjacency).
  * @param step               Number of simulation time steps to run.
  * @param alpha              Growth/interaction parameter in the logistic update rule.
+ * @param noise_level        Standard deviation of additive Gaussian noise (default = 0).
+ *                           If set to 0, no noise is applied.
  * @param escape_threshold   Threshold to treat divergent values as invalid (default: 1e10).
+ * @param random_seed        Seed for random number generator (default: 42).
  *
  * @return A 2D vector of simulation results:
  *         Each row corresponds to a spatial unit (flattened from the grid),
@@ -29,7 +35,9 @@ std::vector<std::vector<double>> SLMUni4Grid(
     size_t k,
     size_t step,
     double alpha,
-    double escape_threshold = 1e10
+    double noise_level = 0.0,
+    double escape_threshold = 1e10,
+    unsigned long long random_seed = 42
 );
 
 /**
@@ -57,7 +65,10 @@ std::vector<std::vector<double>> SLMUni4Grid(
  * @param beta12            Cross-inhibition from the first variable to the second.
  * @param beta21            Cross-inhibition from the second variable to the first.
  * @param interact          Type of cross-variable interaction (0 = local, 1 = neighbors).
- * @param escape_threshold  Threshold to treat divergent values as invalid (default: 1e10).
+ * @param noise_level        Standard deviation of additive Gaussian noise (default = 0).
+ *                           If set to 0, no noise is applied.
+ * @param escape_threshold   Threshold to treat divergent values as invalid (default: 1e10).
+ * @param random_seed        Seed for random number generator (default: 42).
  *
  * @return A 3D vector of simulation results:
  *         - Dimension 0: variable index (0 for mat1, 1 for mat2),
@@ -74,7 +85,9 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Grid(
     double beta12,
     double beta21,
     int interact = 0,
-    double escape_threshold = 1e10
+    double noise_level = 0.0,
+    double escape_threshold = 1e10,
+    unsigned long long random_seed = 42
 );
 
 /**
@@ -105,7 +118,10 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Grid(
  * @param beta31 Interaction coefficient from variable 3 to variable 1.
  * @param beta32 Interaction coefficient from variable 3 to variable 2.
  * @param interact If 0, interactions use self-cell values; if 1, interactions use neighbors' averages.
- * @param escape_threshold Threshold to prevent values from diverging too far.
+ * @param noise_level        Standard deviation of additive Gaussian noise (default = 0).
+ *                           If set to 0, no noise is applied.
+ * @param escape_threshold   Threshold to treat divergent values as invalid (default: 1e10).
+ * @param random_seed        Seed for random number generator (default: 42).
  *
  * @return A 3D vector containing simulated values for each variable,
  *         spatial unit, and time step.
@@ -126,7 +142,9 @@ std::vector<std::vector<std::vector<double>>> SLMTri4Grid(
     double beta31,
     double beta32,
     int interact = 0,
-    double escape_threshold = 1e10
+    double noise_level = 0.0,
+    double escape_threshold = 1e10,
+    unsigned long long random_seed = 42
 );
 
 #endif // SLM4Grid_H
