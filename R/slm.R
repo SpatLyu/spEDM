@@ -1,7 +1,7 @@
 .slm_sf_method = \(data, x = NULL, y = NULL, z = NULL,
                    k = 4, step = 15, alpha_x = 0.28, alpha_y = 0.25, alpha_z = 0.22,
                    beta_xy = 0.05, beta_xz = 0.05, beta_yx = 0.2, beta_yz = 0.2, beta_zx = 0.35, beta_zy = 0.35,
-                   noise = 0, seed = 42L, threshold = Inf, transient = 1, interact = "local", aggregate_fn = NULL, nb = NULL){
+                   threshold = Inf, transient = 1, interact = "local", aggregate_fn = NULL, noise = 0, seed = 42L, nb = NULL){
   vx = .uni_lattice(data,x,FALSE)
   vy = .uni_lattice(data,y,FALSE)
   vz = .uni_lattice(data,z,FALSE)
@@ -12,7 +12,7 @@
 .slm_spatraster_method = \(data, x = NULL, y = NULL, z = NULL,
                            k = 4, step = 15, alpha_x = 0.28, alpha_y = 0.25, alpha_z = 0.22,
                            beta_xy = 0.05, beta_xz = 0.05, beta_yx = 0.2, beta_yz = 0.2, beta_zx = 0.35, beta_zy = 0.35,
-                           noise = 0, seed = 42L, threshold = Inf, transient = 1, interact = "local", aggregate_fn = NULL){
+                           threshold = Inf, transient = 1, interact = "local", aggregate_fn = NULL, noise = 0, seed = 42L){
   mx = .uni_grid(data,x,FALSE)
   my = .uni_grid(data,y,FALSE)
   mz = .uni_grid(data,z,FALSE)
@@ -39,7 +39,9 @@
 #' @param threshold (optional) set to `NaN` if the absolute value exceeds this threshold.
 #' @param transient (optional) transients to be excluded from the results.
 #' @param interact (optional) type of cross-variable interaction (`local` or `neighbors`).
-#' @param aggregate_fn (optional) Custom aggregation function. Must accept a numeric vector and return a single numeric value.
+#' @param aggregate_fn (optional) custom aggregation function. Must accept a numeric vector and return a single numeric value.
+#' @param noise (optional) standard deviation of white noise.
+#' @param seed (optional) random seed.
 #' @param nb (optional) neighbours list.
 #'
 #' @return A list
