@@ -26,6 +26,8 @@
   transient = 1,
   interact = "local",
   aggregate_fn = NULL,
+  noise = 0,
+  seed = 42L,
   nb = NULL
 )
 
@@ -48,7 +50,9 @@
   threshold = Inf,
   transient = 1,
   interact = "local",
-  aggregate_fn = NULL
+  aggregate_fn = NULL,
+  noise = 0,
+  seed = 42L
 )
 }
 \arguments{
@@ -88,7 +92,11 @@
 
 \item{interact}{(optional) type of cross-variable interaction (\code{local} or \code{neighbors}).}
 
-\item{aggregate_fn}{(optional) Custom aggregation function. Must accept a numeric vector and return a single numeric value.}
+\item{aggregate_fn}{(optional) custom aggregation function (must accept a numeric vector and return a single numeric value).}
+
+\item{noise}{(optional) standard deviation of white noise.}
+
+\item{seed}{(optional) random seed.}
 
 \item{nb}{(optional) neighbours list.}
 }
