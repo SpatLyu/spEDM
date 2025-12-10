@@ -135,22 +135,22 @@ std::vector<std::string> GenPatternSpace(
  * The result struct contains:
  *
  *   - std::vector<double> NoCausality, PositiveCausality,
- *                         NegativeCausality, DarkCausality  
+ *                         NegativeCausality, DarkCausality
  *       Per-sample causal strengths (or 1 for no causality).
- *   - std::vector<int> RealLoop  
+ *   - std::vector<int> RealLoop
  *       Indices of samples actually used (patterns valid & non-zero).
  *
- *   - std::vector<int> PatternTypes  
- *       Encoded per-sample causal class:  
+ *   - std::vector<int> PatternTypes
+ *       Encoded per-sample causal class:
  *         0=no causality, 1=positive, 2=negative, 3=dark.
  *
- *   - std::vector<std::string> PatternStrings  
+ *   - std::vector<std::string> PatternStrings
  *       Mapping index → pattern string for each row/column of the heatmap.
  *
- *   - std::vector<std::vector<double>> matrice  
+ *   - std::vector<std::vector<double>> matrice
  *       Normalized K×K causal heatmap M(i,j).
  *
- *   - double TotalPos, TotalNeg, TotalDark  
+ *   - double TotalPos, TotalNeg, TotalDark
  *       Mean strength across main diagonal, anti-diagonal, and off-diagonal cells.
  *
  * ---------------------------------------------------------------------------
@@ -303,7 +303,7 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
     int num_neighbors = 0,
     int boot = 99,
     bool random_sample = true,
-    unsigned int seed = 42,
+    unsigned long long seed = 42,
     int zero_tolerance = 0,
     int dist_metric = 2,
     bool relative = true,

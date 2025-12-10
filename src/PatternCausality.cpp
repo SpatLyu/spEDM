@@ -258,22 +258,22 @@ std::vector<std::string> GenPatternSpace(
  * The result struct contains:
  *
  *   - std::vector<double> NoCausality, PositiveCausality,
- *                         NegativeCausality, DarkCausality  
+ *                         NegativeCausality, DarkCausality
  *       Per-sample causal strengths (or 1 for no causality).
- *   - std::vector<int> RealLoop  
+ *   - std::vector<int> RealLoop
  *       Indices of samples actually used (patterns valid & non-zero).
  *
- *   - std::vector<int> PatternTypes  
- *       Encoded per-sample causal class:  
+ *   - std::vector<int> PatternTypes
+ *       Encoded per-sample causal class:
  *         0=no causality, 1=positive, 2=negative, 3=dark.
  *
- *   - std::vector<std::string> PatternStrings  
+ *   - std::vector<std::string> PatternStrings
  *       Mapping index → pattern string for each row/column of the heatmap.
  *
- *   - std::vector<std::vector<double>> matrice  
+ *   - std::vector<std::vector<double>> matrice
  *       Normalized K×K causal heatmap M(i,j).
  *
- *   - double TotalPos, TotalNeg, TotalDark  
+ *   - double TotalPos, TotalNeg, TotalDark
  *       Mean strength across main diagonal, anti-diagonal, and off-diagonal cells.
  *
  * ---------------------------------------------------------------------------
@@ -322,7 +322,7 @@ PatternCausalityRes GenPatternCausality(
 
   // Filter out patterns containing '0' and collect them
   std::vector<std::string> filtered_patterns;
-  filtered_patterns.reserve(uniq_set.size()); 
+  filtered_patterns.reserve(uniq_set.size());
   for (const auto& p : uniq_set) {
     if (!str_contains_zero(p)) {
       filtered_patterns.push_back(p);
@@ -357,10 +357,10 @@ PatternCausalityRes GenPatternCausality(
   // Convert to vector and sort for deterministic ordering
   std::vector<std::string> unique_patterns;
   unique_patterns.reserve(final_set.size());
-  unique_patterns.insert(unique_patterns.end(), 
+  unique_patterns.insert(unique_patterns.end(),
                          final_set.begin(), final_set.end());
   std::sort(unique_patterns.begin(), unique_patterns.end());
-  
+
   // Build pattern_indices map
   std::unordered_map<std::string, size_t> pattern_indices;
   pattern_indices.reserve(unique_patterns.size());
@@ -377,7 +377,7 @@ PatternCausalityRes GenPatternCausality(
       hashed_num, std::vector<double>(hashed_num, std::numeric_limits<double>::quiet_NaN()));
   std::vector<std::vector<double>> count_matrix(
       hashed_num, std::vector<double>(hashed_num, 0.0));
-  
+
   res.PatternStrings = std::move(unique_patterns);
   res.NoCausality.assign(n, 0.0);
   res.PositiveCausality.assign(n, 0.0);
@@ -692,7 +692,7 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
     int num_neighbors = 0,
     int boot = 99,
     bool random_sample = true,
-    unsigned int seed = 42,
+    unsigned long long seed = 42,
     int zero_tolerance = 0,
     int dist_metric = 2,
     bool relative = true,
