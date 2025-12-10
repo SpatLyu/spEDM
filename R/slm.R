@@ -39,7 +39,7 @@
 #' @param threshold (optional) set to `NaN` if the absolute value exceeds this threshold.
 #' @param transient (optional) transients to be excluded from the results.
 #' @param interact (optional) type of cross-variable interaction (`local` or `neighbors`).
-#' @param aggregate_fn (optional) custom aggregation function. Must accept a numeric vector and return a single numeric value.
+#' @param aggregate_fn (optional) custom aggregation function (must accept a numeric vector and return a single numeric value).
 #' @param noise (optional) standard deviation of white noise.
 #' @param seed (optional) random seed.
 #' @param nb (optional) neighbours list.
