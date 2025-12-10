@@ -181,7 +181,7 @@ std::vector<double> SGC4Grid(
     int threads,
     int boot = 399,
     double base = 2,
-    unsigned int seed = 42,
+    unsigned long long seed = 42,
     bool symbolize = true,
     bool normalize = false,
     bool progressbar = true

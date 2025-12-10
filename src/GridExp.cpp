@@ -2474,7 +2474,7 @@ Rcpp::NumericVector RcppSGC4Grid(const Rcpp::NumericMatrix& x,
                                  int threads = 8,
                                  int boot = 399,
                                  double base = 2,
-                                 unsigned int seed = 42,
+                                 unsigned long long seed = 42,
                                  bool symbolize = true,
                                  bool normalize = false,
                                  bool progressbar = true){
