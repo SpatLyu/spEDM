@@ -1,4 +1,4 @@
-.sc_sf_method = \(data, cause, effect, k, block = 3, boot = 399, seed = 42, base = 2, lib = NULL, pred = NULL,
+.sc_sf_method = \(data, cause, effect, k, block = 3, boot = 399, seed = 42L, base = 2, lib = NULL, pred = NULL,
                   threads = detectThreads(), detrend = TRUE, normalize = FALSE, progressbar = FALSE, nb = NULL){
   varname = .check_character(cause, effect)
   if (is.null(nb)) nb = .internal_lattice_nb(data)
@@ -10,7 +10,7 @@
   return(.bind_sc(RcppSGC4Lattice(cause,effect,nb,lib,pred,block,k,threads,boot,base,seed,TRUE,normalize,progressbar),varname))
 }
 
-.sc_spatraster_method = \(data, cause, effect, k, block = 3, boot = 399, seed = 42, base = 2, lib = NULL, pred = NULL,
+.sc_spatraster_method = \(data, cause, effect, k, block = 3, boot = 399, seed = 42L, base = 2, lib = NULL, pred = NULL,
                           threads = detectThreads(), detrend = TRUE, normalize = FALSE, progressbar = FALSE, grid.coord = TRUE){
   varname = .check_character(cause, effect)
   cause = .uni_grid(data,cause,detrend,grid.coord)
