@@ -307,22 +307,24 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppSLMUni4Grid
-Rcpp::NumericMatrix RcppSLMUni4Grid(const Rcpp::NumericMatrix& mat, int k, int step, double alpha, double escape_threshold);
-RcppExport SEXP _spEDM_RcppSLMUni4Grid(SEXP matSEXP, SEXP kSEXP, SEXP stepSEXP, SEXP alphaSEXP, SEXP escape_thresholdSEXP) {
+Rcpp::NumericMatrix RcppSLMUni4Grid(const Rcpp::NumericMatrix& mat, int k, int step, double alpha, double noise_level, double escape_threshold, unsigned long long random_seed);
+RcppExport SEXP _spEDM_RcppSLMUni4Grid(SEXP matSEXP, SEXP kSEXP, SEXP stepSEXP, SEXP alphaSEXP, SEXP noise_levelSEXP, SEXP escape_thresholdSEXP, SEXP random_seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< int >::type step(stepSEXP);
     Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< double >::type noise_level(noise_levelSEXP);
     Rcpp::traits::input_parameter< double >::type escape_threshold(escape_thresholdSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppSLMUni4Grid(mat, k, step, alpha, escape_threshold));
+    Rcpp::traits::input_parameter< unsigned long long >::type random_seed(random_seedSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSLMUni4Grid(mat, k, step, alpha, noise_level, escape_threshold, random_seed));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppSLMBi4Grid
-Rcpp::List RcppSLMBi4Grid(const Rcpp::NumericMatrix& mat1, const Rcpp::NumericMatrix& mat2, int k, int step, double alpha_x, double alpha_y, double beta_xy, double beta_yx, int interact, double escape_threshold);
-RcppExport SEXP _spEDM_RcppSLMBi4Grid(SEXP mat1SEXP, SEXP mat2SEXP, SEXP kSEXP, SEXP stepSEXP, SEXP alpha_xSEXP, SEXP alpha_ySEXP, SEXP beta_xySEXP, SEXP beta_yxSEXP, SEXP interactSEXP, SEXP escape_thresholdSEXP) {
+Rcpp::List RcppSLMBi4Grid(const Rcpp::NumericMatrix& mat1, const Rcpp::NumericMatrix& mat2, int k, int step, double alpha_x, double alpha_y, double beta_xy, double beta_yx, int interact, double noise_level, double escape_threshold, unsigned long long random_seed);
+RcppExport SEXP _spEDM_RcppSLMBi4Grid(SEXP mat1SEXP, SEXP mat2SEXP, SEXP kSEXP, SEXP stepSEXP, SEXP alpha_xSEXP, SEXP alpha_ySEXP, SEXP beta_xySEXP, SEXP beta_yxSEXP, SEXP interactSEXP, SEXP noise_levelSEXP, SEXP escape_thresholdSEXP, SEXP random_seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat1(mat1SEXP);
@@ -334,14 +336,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type beta_xy(beta_xySEXP);
     Rcpp::traits::input_parameter< double >::type beta_yx(beta_yxSEXP);
     Rcpp::traits::input_parameter< int >::type interact(interactSEXP);
+    Rcpp::traits::input_parameter< double >::type noise_level(noise_levelSEXP);
     Rcpp::traits::input_parameter< double >::type escape_threshold(escape_thresholdSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppSLMBi4Grid(mat1, mat2, k, step, alpha_x, alpha_y, beta_xy, beta_yx, interact, escape_threshold));
+    Rcpp::traits::input_parameter< unsigned long long >::type random_seed(random_seedSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSLMBi4Grid(mat1, mat2, k, step, alpha_x, alpha_y, beta_xy, beta_yx, interact, noise_level, escape_threshold, random_seed));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppSLMTri4Grid
-Rcpp::List RcppSLMTri4Grid(const Rcpp::NumericMatrix& mat1, const Rcpp::NumericMatrix& mat2, const Rcpp::NumericMatrix& mat3, int k, int step, double alpha_x, double alpha_y, double alpha_z, double beta_xy, double beta_xz, double beta_yx, double beta_yz, double beta_zx, double beta_zy, int interact, double escape_threshold);
-RcppExport SEXP _spEDM_RcppSLMTri4Grid(SEXP mat1SEXP, SEXP mat2SEXP, SEXP mat3SEXP, SEXP kSEXP, SEXP stepSEXP, SEXP alpha_xSEXP, SEXP alpha_ySEXP, SEXP alpha_zSEXP, SEXP beta_xySEXP, SEXP beta_xzSEXP, SEXP beta_yxSEXP, SEXP beta_yzSEXP, SEXP beta_zxSEXP, SEXP beta_zySEXP, SEXP interactSEXP, SEXP escape_thresholdSEXP) {
+Rcpp::List RcppSLMTri4Grid(const Rcpp::NumericMatrix& mat1, const Rcpp::NumericMatrix& mat2, const Rcpp::NumericMatrix& mat3, int k, int step, double alpha_x, double alpha_y, double alpha_z, double beta_xy, double beta_xz, double beta_yx, double beta_yz, double beta_zx, double beta_zy, int interact, double noise_level, double escape_threshold, unsigned long long random_seed);
+RcppExport SEXP _spEDM_RcppSLMTri4Grid(SEXP mat1SEXP, SEXP mat2SEXP, SEXP mat3SEXP, SEXP kSEXP, SEXP stepSEXP, SEXP alpha_xSEXP, SEXP alpha_ySEXP, SEXP alpha_zSEXP, SEXP beta_xySEXP, SEXP beta_xzSEXP, SEXP beta_yxSEXP, SEXP beta_yzSEXP, SEXP beta_zxSEXP, SEXP beta_zySEXP, SEXP interactSEXP, SEXP noise_levelSEXP, SEXP escape_thresholdSEXP, SEXP random_seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat1(mat1SEXP);
@@ -359,8 +363,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type beta_zx(beta_zxSEXP);
     Rcpp::traits::input_parameter< double >::type beta_zy(beta_zySEXP);
     Rcpp::traits::input_parameter< int >::type interact(interactSEXP);
+    Rcpp::traits::input_parameter< double >::type noise_level(noise_levelSEXP);
     Rcpp::traits::input_parameter< double >::type escape_threshold(escape_thresholdSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppSLMTri4Grid(mat1, mat2, mat3, k, step, alpha_x, alpha_y, alpha_z, beta_xy, beta_xz, beta_yx, beta_yz, beta_zx, beta_zy, interact, escape_threshold));
+    Rcpp::traits::input_parameter< unsigned long long >::type random_seed(random_seedSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSLMTri4Grid(mat1, mat2, mat3, k, step, alpha_x, alpha_y, alpha_z, beta_xy, beta_xz, beta_yx, beta_yz, beta_zx, beta_zy, interact, noise_level, escape_threshold, random_seed));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -760,8 +766,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppSLMUni4Lattice
-Rcpp::NumericMatrix RcppSLMUni4Lattice(const Rcpp::NumericVector& vec, const Rcpp::List& nb, int k, int step, double alpha, double escape_threshold);
-RcppExport SEXP _spEDM_RcppSLMUni4Lattice(SEXP vecSEXP, SEXP nbSEXP, SEXP kSEXP, SEXP stepSEXP, SEXP alphaSEXP, SEXP escape_thresholdSEXP) {
+Rcpp::NumericMatrix RcppSLMUni4Lattice(const Rcpp::NumericVector& vec, const Rcpp::List& nb, int k, int step, double alpha, double noise_level, double escape_threshold, unsigned long long random_seed);
+RcppExport SEXP _spEDM_RcppSLMUni4Lattice(SEXP vecSEXP, SEXP nbSEXP, SEXP kSEXP, SEXP stepSEXP, SEXP alphaSEXP, SEXP noise_levelSEXP, SEXP escape_thresholdSEXP, SEXP random_seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
@@ -769,14 +775,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< int >::type step(stepSEXP);
     Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< double >::type noise_level(noise_levelSEXP);
     Rcpp::traits::input_parameter< double >::type escape_threshold(escape_thresholdSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppSLMUni4Lattice(vec, nb, k, step, alpha, escape_threshold));
+    Rcpp::traits::input_parameter< unsigned long long >::type random_seed(random_seedSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSLMUni4Lattice(vec, nb, k, step, alpha, noise_level, escape_threshold, random_seed));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppSLMBi4Lattice
-Rcpp::List RcppSLMBi4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, int k, int step, double alpha_x, double alpha_y, double beta_xy, double beta_yx, int interact, double escape_threshold);
-RcppExport SEXP _spEDM_RcppSLMBi4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP kSEXP, SEXP stepSEXP, SEXP alpha_xSEXP, SEXP alpha_ySEXP, SEXP beta_xySEXP, SEXP beta_yxSEXP, SEXP interactSEXP, SEXP escape_thresholdSEXP) {
+Rcpp::List RcppSLMBi4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, int k, int step, double alpha_x, double alpha_y, double beta_xy, double beta_yx, int interact, double noise_level, double escape_threshold, unsigned long long random_seed);
+RcppExport SEXP _spEDM_RcppSLMBi4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP kSEXP, SEXP stepSEXP, SEXP alpha_xSEXP, SEXP alpha_ySEXP, SEXP beta_xySEXP, SEXP beta_yxSEXP, SEXP interactSEXP, SEXP noise_levelSEXP, SEXP escape_thresholdSEXP, SEXP random_seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
@@ -789,14 +797,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type beta_xy(beta_xySEXP);
     Rcpp::traits::input_parameter< double >::type beta_yx(beta_yxSEXP);
     Rcpp::traits::input_parameter< int >::type interact(interactSEXP);
+    Rcpp::traits::input_parameter< double >::type noise_level(noise_levelSEXP);
     Rcpp::traits::input_parameter< double >::type escape_threshold(escape_thresholdSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppSLMBi4Lattice(x, y, nb, k, step, alpha_x, alpha_y, beta_xy, beta_yx, interact, escape_threshold));
+    Rcpp::traits::input_parameter< unsigned long long >::type random_seed(random_seedSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSLMBi4Lattice(x, y, nb, k, step, alpha_x, alpha_y, beta_xy, beta_yx, interact, noise_level, escape_threshold, random_seed));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppSLMTri4Lattice
-Rcpp::List RcppSLMTri4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::NumericVector& z, const Rcpp::List& nb, int k, int step, double alpha_x, double alpha_y, double alpha_z, double beta_xy, double beta_xz, double beta_yx, double beta_yz, double beta_zx, double beta_zy, int interact, double escape_threshold);
-RcppExport SEXP _spEDM_RcppSLMTri4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP zSEXP, SEXP nbSEXP, SEXP kSEXP, SEXP stepSEXP, SEXP alpha_xSEXP, SEXP alpha_ySEXP, SEXP alpha_zSEXP, SEXP beta_xySEXP, SEXP beta_xzSEXP, SEXP beta_yxSEXP, SEXP beta_yzSEXP, SEXP beta_zxSEXP, SEXP beta_zySEXP, SEXP interactSEXP, SEXP escape_thresholdSEXP) {
+Rcpp::List RcppSLMTri4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::NumericVector& z, const Rcpp::List& nb, int k, int step, double alpha_x, double alpha_y, double alpha_z, double beta_xy, double beta_xz, double beta_yx, double beta_yz, double beta_zx, double beta_zy, int interact, double noise_level, double escape_threshold, unsigned long long random_seed);
+RcppExport SEXP _spEDM_RcppSLMTri4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP zSEXP, SEXP nbSEXP, SEXP kSEXP, SEXP stepSEXP, SEXP alpha_xSEXP, SEXP alpha_ySEXP, SEXP alpha_zSEXP, SEXP beta_xySEXP, SEXP beta_xzSEXP, SEXP beta_yxSEXP, SEXP beta_yzSEXP, SEXP beta_zxSEXP, SEXP beta_zySEXP, SEXP interactSEXP, SEXP noise_levelSEXP, SEXP escape_thresholdSEXP, SEXP random_seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
@@ -815,8 +825,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type beta_zx(beta_zxSEXP);
     Rcpp::traits::input_parameter< double >::type beta_zy(beta_zySEXP);
     Rcpp::traits::input_parameter< int >::type interact(interactSEXP);
+    Rcpp::traits::input_parameter< double >::type noise_level(noise_levelSEXP);
     Rcpp::traits::input_parameter< double >::type escape_threshold(escape_thresholdSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppSLMTri4Lattice(x, y, z, nb, k, step, alpha_x, alpha_y, alpha_z, beta_xy, beta_xz, beta_yx, beta_yz, beta_zx, beta_zy, interact, escape_threshold));
+    Rcpp::traits::input_parameter< unsigned long long >::type random_seed(random_seedSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSLMTri4Lattice(x, y, z, nb, k, step, alpha_x, alpha_y, alpha_z, beta_xy, beta_xz, beta_yx, beta_yz, beta_zx, beta_zy, interact, noise_level, escape_threshold, random_seed));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1730,9 +1742,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppGenGridNeighbors", (DL_FUNC) &_spEDM_RcppGenGridNeighbors, 3},
     {"_spEDM_RcppGenGridSymbolization", (DL_FUNC) &_spEDM_RcppGenGridSymbolization, 4},
     {"_spEDM_RcppDivideGrid", (DL_FUNC) &_spEDM_RcppDivideGrid, 3},
-    {"_spEDM_RcppSLMUni4Grid", (DL_FUNC) &_spEDM_RcppSLMUni4Grid, 5},
-    {"_spEDM_RcppSLMBi4Grid", (DL_FUNC) &_spEDM_RcppSLMBi4Grid, 10},
-    {"_spEDM_RcppSLMTri4Grid", (DL_FUNC) &_spEDM_RcppSLMTri4Grid, 16},
+    {"_spEDM_RcppSLMUni4Grid", (DL_FUNC) &_spEDM_RcppSLMUni4Grid, 7},
+    {"_spEDM_RcppSLMBi4Grid", (DL_FUNC) &_spEDM_RcppSLMBi4Grid, 12},
+    {"_spEDM_RcppSLMTri4Grid", (DL_FUNC) &_spEDM_RcppSLMTri4Grid, 18},
     {"_spEDM_RcppFNN4Grid", (DL_FUNC) &_spEDM_RcppFNN4Grid, 13},
     {"_spEDM_RcppSimplex4Grid", (DL_FUNC) &_spEDM_RcppSimplex4Grid, 13},
     {"_spEDM_RcppSMap4Grid", (DL_FUNC) &_spEDM_RcppSMap4Grid, 14},
@@ -1753,9 +1765,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppGenLatticeNeighbors", (DL_FUNC) &_spEDM_RcppGenLatticeNeighbors, 4},
     {"_spEDM_RcppGenLatticeSymbolization", (DL_FUNC) &_spEDM_RcppGenLatticeSymbolization, 5},
     {"_spEDM_RcppDivideLattice", (DL_FUNC) &_spEDM_RcppDivideLattice, 2},
-    {"_spEDM_RcppSLMUni4Lattice", (DL_FUNC) &_spEDM_RcppSLMUni4Lattice, 6},
-    {"_spEDM_RcppSLMBi4Lattice", (DL_FUNC) &_spEDM_RcppSLMBi4Lattice, 11},
-    {"_spEDM_RcppSLMTri4Lattice", (DL_FUNC) &_spEDM_RcppSLMTri4Lattice, 17},
+    {"_spEDM_RcppSLMUni4Lattice", (DL_FUNC) &_spEDM_RcppSLMUni4Lattice, 8},
+    {"_spEDM_RcppSLMBi4Lattice", (DL_FUNC) &_spEDM_RcppSLMBi4Lattice, 13},
+    {"_spEDM_RcppSLMTri4Lattice", (DL_FUNC) &_spEDM_RcppSLMTri4Lattice, 19},
     {"_spEDM_RcppFNN4Lattice", (DL_FUNC) &_spEDM_RcppFNN4Lattice, 13},
     {"_spEDM_RcppSimplex4Lattice", (DL_FUNC) &_spEDM_RcppSimplex4Lattice, 13},
     {"_spEDM_RcppSMap4Lattice", (DL_FUNC) &_spEDM_RcppSMap4Lattice, 14},
