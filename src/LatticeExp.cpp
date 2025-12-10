@@ -1568,7 +1568,7 @@ Rcpp::DataFrame RcppGPCRobust4Lattice(
     int b = 0,
     int boot = 99,
     bool random = true,
-    unsigned int seed = 42,
+    unsigned long long seed = 42,
     int zero_tolerance = 0,
     int dist_metric = 2,
     bool relative = true,
