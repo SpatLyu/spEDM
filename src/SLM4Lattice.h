@@ -132,7 +132,10 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Lattice(
  * @param interact           Type of cross-variable interaction:
  *                           0 = use local values (default behavior for k>0),
  *                           1 = use neighbor averages instead.
- * @param escape_threshold   Threshold beyond which values are treated as divergent (default: 1e10).
+ * @param noise_level        Standard deviation of additive Gaussian noise (default = 0).
+ *                           If set to 0, no noise is applied.
+ * @param escape_threshold   Threshold to treat divergent values as invalid (default: 1e10).
+ * @param random_seed        Seed for random number generator (default: 42).
  *
  * @return A 3D vector of simulation results:
  *         - First dimension: variable index (0 for vec1, 1 for vec2, 2 for vec3),
@@ -156,7 +159,9 @@ std::vector<std::vector<std::vector<double>>> SLMTri4Lattice(
     double beta31,
     double beta32,
     int interact = 0,
-    double escape_threshold = 1e10
+    double noise_level = 0.0,
+    double escape_threshold = 1e10,
+    unsigned long long random_seed = 42
 );
 
 #endif // SLM4Lattice_H

@@ -335,7 +335,10 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Lattice(
  * @param interact           Type of cross-variable interaction:
  *                           0 = use local values (default behavior for k>0),
  *                           1 = use neighbor averages instead.
- * @param escape_threshold   Threshold beyond which values are treated as divergent (default: 1e10).
+ * @param noise_level        Standard deviation of additive Gaussian noise (default = 0).
+ *                           If set to 0, no noise is applied.
+ * @param escape_threshold   Threshold to treat divergent values as invalid (default: 1e10).
+ * @param random_seed        Seed for random number generator (default: 42).
  *
  * @return A 3D vector of simulation results:
  *         - First dimension: variable index (0 for vec1, 1 for vec2, 2 for vec3),
@@ -359,8 +362,14 @@ std::vector<std::vector<std::vector<double>>> SLMTri4Lattice(
     double beta31,
     double beta32,
     int interact = 0,
-    double escape_threshold = 1e10
+    double noise_level = 0.0,
+    double escape_threshold = 1e10,
+    unsigned long long random_seed = 42
 ){
+  // RNG setup (only used if noise_level > 0)
+  std::mt19937_64 rng(static_cast<uint64_t>(random_seed));
+  std::normal_distribution<double> noise_dist(0.0, noise_level);
+
   // Initialize result array with NaNs (3, rows: spatial units, cols: time steps)
   std::vector<std::vector<std::vector<double>>> res(3,
                                                     std::vector<std::vector<double>>(vec1.size(),
@@ -430,6 +439,13 @@ std::vector<std::vector<std::vector<double>>> SLMTri4Lattice(
           v_next_3 = 1 - alpha3 * res[2][currentIndex][s - 1] * (v_neighbors_3 / valid_neighbors_3 - beta13 * cross1_3 - beta23 * cross2_3);
         }
 
+        // Add noise if enabled
+        if (!doubleNearlyEqual(noise_level, 0.0) && noise_level > 0.0){
+          if (!std::isnan(v_next_1)) v_next_1 += noise_dist(rng);
+          if (!std::isnan(v_next_2)) v_next_2 += noise_dist(rng);
+          if (!std::isnan(v_next_3)) v_next_3 += noise_dist(rng);
+        }
+
         // Update result only if the value is within the escape threshold
         if (!std::isinf(v_next_1) && std::abs(v_next_1) <= escape_threshold){
           res[0][currentIndex][s] = v_next_1;
@@ -453,6 +469,13 @@ std::vector<std::vector<std::vector<double>>> SLMTri4Lattice(
         double v_next_1 = res[0][currentIndex][s - 1] * (alpha1 - alpha1 * res[0][currentIndex][s - 1] - beta21 * res[1][currentIndex][s - 1] - beta31 * res[2][currentIndex][s - 1]);
         double v_next_2 = res[1][currentIndex][s - 1] * (alpha2 - alpha2 * res[1][currentIndex][s - 1] - beta12 * res[0][currentIndex][s - 1] - beta32 * res[2][currentIndex][s - 1]);
         double v_next_3 = res[2][currentIndex][s - 1] * (alpha3 - alpha3 * res[2][currentIndex][s - 1] - beta13 * res[0][currentIndex][s - 1] - beta23 * res[1][currentIndex][s - 1]);
+
+        // Add noise if enabled
+        if (!doubleNearlyEqual(noise_level, 0.0) && noise_level > 0.0){
+          if (!std::isnan(v_next_1)) v_next_1 += noise_dist(rng);
+          if (!std::isnan(v_next_2)) v_next_2 += noise_dist(rng);
+          if (!std::isnan(v_next_3)) v_next_3 += noise_dist(rng);
+        }
 
         if (!std::isinf(v_next_1) && std::abs(v_next_1) <= escape_threshold) res[0][currentIndex][s] = v_next_1;
         if (!std::isinf(v_next_2) && std::abs(v_next_2) <= escape_threshold) res[1][currentIndex][s] = v_next_2;
