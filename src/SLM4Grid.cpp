@@ -58,6 +58,10 @@ std::vector<std::vector<double>> SLMUni4Grid(
     res[i][0] = vec[i];
   }
 
+  // Random number generator setup (used only if noise_level > 0)
+  std::mt19937_64 rng(static_cast<uint64_t>(random_seed));
+  std::normal_distribution<double> noise_dist(0.0, noise_level);
+
   if (k > 0){
     // Initialize index library for all spatial units
     std::vector<int> lib(ncell);
@@ -185,6 +189,10 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Grid(
     res[0][i][0] = vec1[i];
     res[1][i][0] = vec2[i];
   }
+
+  // Random number generator setup (used only if noise_level > 0)
+  std::mt19937_64 rng(static_cast<uint64_t>(random_seed));
+  std::normal_distribution<double> noise_dist(0.0, noise_level);
 
   if (k > 0){
     // Initialize index library for all spatial units
@@ -353,6 +361,10 @@ std::vector<std::vector<std::vector<double>>> SLMTri4Grid(
     res[1][i][0] = vec2[i];
     res[2][i][0] = vec3[i];
   }
+
+  // Random number generator setup (used only if noise_level > 0)
+  std::mt19937_64 rng(static_cast<uint64_t>(random_seed));
+  std::normal_distribution<double> noise_dist(0.0, noise_level);
 
   if (k > 0){
     // Initialize index library for all spatial units
