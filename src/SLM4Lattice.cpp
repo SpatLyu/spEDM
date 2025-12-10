@@ -2,6 +2,8 @@
 #include <limits>
 #include <vector>
 #include <numeric>
+#include <random>    // std::mt19937_64, std::normal_distribution
+#include <algorithm>
 #include "CppLatticeUtils.h"
 
 /**
