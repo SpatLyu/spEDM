@@ -610,7 +610,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppGPCRobust4Grid
-Rcpp::DataFrame RcppGPCRobust4Grid(const Rcpp::NumericMatrix& xMatrix, const Rcpp::NumericMatrix& yMatrix, const Rcpp::IntegerMatrix& libsizes, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, int E, int tau, int style, int b, int boot, bool random, unsigned int seed, int zero_tolerance, int dist_metric, bool relative, bool weighted, int threads, int parallel_level, bool progressbar);
+Rcpp::DataFrame RcppGPCRobust4Grid(const Rcpp::NumericMatrix& xMatrix, const Rcpp::NumericMatrix& yMatrix, const Rcpp::IntegerMatrix& libsizes, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, int E, int tau, int style, int b, int boot, bool random, unsigned long long seed, int zero_tolerance, int dist_metric, bool relative, bool weighted, int threads, int parallel_level, bool progressbar);
 RcppExport SEXP _spEDM_RcppGPCRobust4Grid(SEXP xMatrixSEXP, SEXP yMatrixSEXP, SEXP libsizesSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP styleSEXP, SEXP bSEXP, SEXP bootSEXP, SEXP randomSEXP, SEXP seedSEXP, SEXP zero_toleranceSEXP, SEXP dist_metricSEXP, SEXP relativeSEXP, SEXP weightedSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -625,7 +625,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type b(bSEXP);
     Rcpp::traits::input_parameter< int >::type boot(bootSEXP);
     Rcpp::traits::input_parameter< bool >::type random(randomSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type seed(seedSEXP);
+    Rcpp::traits::input_parameter< unsigned long long >::type seed(seedSEXP);
     Rcpp::traits::input_parameter< int >::type zero_tolerance(zero_toleranceSEXP);
     Rcpp::traits::input_parameter< int >::type dist_metric(dist_metricSEXP);
     Rcpp::traits::input_parameter< bool >::type relative(relativeSEXP);
@@ -655,7 +655,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppSGC4Grid
-Rcpp::NumericVector RcppSGC4Grid(const Rcpp::NumericMatrix& x, const Rcpp::NumericMatrix& y, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, const Rcpp::IntegerMatrix& block, int k, int threads, int boot, double base, unsigned int seed, bool symbolize, bool normalize, bool progressbar);
+Rcpp::NumericVector RcppSGC4Grid(const Rcpp::NumericMatrix& x, const Rcpp::NumericMatrix& y, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, const Rcpp::IntegerMatrix& block, int k, int threads, int boot, double base, unsigned long long seed, bool symbolize, bool normalize, bool progressbar);
 RcppExport SEXP _spEDM_RcppSGC4Grid(SEXP xSEXP, SEXP ySEXP, SEXP libSEXP, SEXP predSEXP, SEXP blockSEXP, SEXP kSEXP, SEXP threadsSEXP, SEXP bootSEXP, SEXP baseSEXP, SEXP seedSEXP, SEXP symbolizeSEXP, SEXP normalizeSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -668,7 +668,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< int >::type boot(bootSEXP);
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type seed(seedSEXP);
+    Rcpp::traits::input_parameter< unsigned long long >::type seed(seedSEXP);
     Rcpp::traits::input_parameter< bool >::type symbolize(symbolizeSEXP);
     Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
     Rcpp::traits::input_parameter< bool >::type progressbar(progressbarSEXP);
@@ -1075,7 +1075,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppGPCRobust4Lattice
-Rcpp::DataFrame RcppGPCRobust4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, const Rcpp::IntegerVector& libsizes, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, int E, int tau, int style, int b, int boot, bool random, unsigned int seed, int zero_tolerance, int dist_metric, bool relative, bool weighted, int threads, int parallel_level, bool progressbar);
+Rcpp::DataFrame RcppGPCRobust4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, const Rcpp::IntegerVector& libsizes, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, int E, int tau, int style, int b, int boot, bool random, unsigned long long seed, int zero_tolerance, int dist_metric, bool relative, bool weighted, int threads, int parallel_level, bool progressbar);
 RcppExport SEXP _spEDM_RcppGPCRobust4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP libsizesSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP styleSEXP, SEXP bSEXP, SEXP bootSEXP, SEXP randomSEXP, SEXP seedSEXP, SEXP zero_toleranceSEXP, SEXP dist_metricSEXP, SEXP relativeSEXP, SEXP weightedSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -1091,7 +1091,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type b(bSEXP);
     Rcpp::traits::input_parameter< int >::type boot(bootSEXP);
     Rcpp::traits::input_parameter< bool >::type random(randomSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type seed(seedSEXP);
+    Rcpp::traits::input_parameter< unsigned long long >::type seed(seedSEXP);
     Rcpp::traits::input_parameter< int >::type zero_tolerance(zero_toleranceSEXP);
     Rcpp::traits::input_parameter< int >::type dist_metric(dist_metricSEXP);
     Rcpp::traits::input_parameter< bool >::type relative(relativeSEXP);
@@ -1122,7 +1122,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppSGC4Lattice
-Rcpp::NumericVector RcppSGC4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& block, int k, int threads, int boot, double base, unsigned int seed, bool symbolize, bool normalize, bool progressbar);
+Rcpp::NumericVector RcppSGC4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& block, int k, int threads, int boot, double base, unsigned long long seed, bool symbolize, bool normalize, bool progressbar);
 RcppExport SEXP _spEDM_RcppSGC4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP libSEXP, SEXP predSEXP, SEXP blockSEXP, SEXP kSEXP, SEXP threadsSEXP, SEXP bootSEXP, SEXP baseSEXP, SEXP seedSEXP, SEXP symbolizeSEXP, SEXP normalizeSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -1136,7 +1136,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< int >::type boot(bootSEXP);
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
-    Rcpp::traits::input_parameter< unsigned int >::type seed(seedSEXP);
+    Rcpp::traits::input_parameter< unsigned long long >::type seed(seedSEXP);
     Rcpp::traits::input_parameter< bool >::type symbolize(symbolizeSEXP);
     Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
     Rcpp::traits::input_parameter< bool >::type progressbar(progressbarSEXP);
