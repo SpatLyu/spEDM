@@ -92,6 +92,10 @@ std::vector<std::vector<double>> SLMUni4Grid(
           v_next = 1 - alpha * res[i][s - 1] * v_neighbors / valid_neighbors;
         }
 
+        if (!doubleNearlyEqual(noise_level, 0.0) && noise_level > 0.0 && !std::isnan(v_next)){
+          v_next += noise_dist(rng);
+        }
+
         if (!std::isinf(v_next) && std::abs(v_next) <= escape_threshold){
           res[i][s] = v_next;
         }
@@ -105,6 +109,10 @@ std::vector<std::vector<double>> SLMUni4Grid(
 
         // Apply the logistic map update if no neighbors exist
         double v_next = res[i][s - 1] * (alpha - alpha * res[i][s - 1]);
+
+        if (!doubleNearlyEqual(noise_level, 0.0) && noise_level > 0.0 && !std::isnan(v_next)){
+          v_next += noise_dist(rng);
+        }
 
         if (!std::isinf(v_next) && std::abs(v_next) <= escape_threshold){
           res[i][s] = v_next;
@@ -247,6 +255,11 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Grid(
           }
         }
 
+        if (!doubleNearlyEqual(noise_level, 0.0) && noise_level > 0.0){
+          if (!std::isnan(v_next_1)) v_next_1 += noise_dist(rng);
+          if (!std::isnan(v_next_2)) v_next_2 += noise_dist(rng);
+        }
+
         if (!std::isinf(v_next_1) && std::abs(v_next_1) <= escape_threshold){
           res[0][i][s] = v_next_1;
         }
@@ -263,6 +276,11 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Grid(
 
         double v_next_1 = res[0][i][s - 1] * (alpha1 - alpha1 * res[0][i][s - 1] - beta21 * res[1][i][s - 1]);
         double v_next_2 = res[1][i][s - 1] * (alpha2 - alpha2 * res[1][i][s - 1] - beta12 * res[0][i][s - 1]);
+
+        if (!doubleNearlyEqual(noise_level, 0.0) && noise_level > 0.0){
+          if (!std::isnan(v_next_1)) v_next_1 += noise_dist(rng);
+          if (!std::isnan(v_next_2)) v_next_2 += noise_dist(rng);
+        }
 
         if (!std::isinf(v_next_1) && std::abs(v_next_1) <= escape_threshold){
           res[0][i][s] = v_next_1;
@@ -436,6 +454,12 @@ std::vector<std::vector<std::vector<double>>> SLMTri4Grid(
           }
         }
 
+        if (!doubleNearlyEqual(noise_level, 0.0) && noise_level > 0.0){
+          if (!std::isnan(v_next_1)) v_next_1 += noise_dist(rng);
+          if (!std::isnan(v_next_2)) v_next_2 += noise_dist(rng);
+          if (!std::isnan(v_next_3)) v_next_3 += noise_dist(rng);
+        }
+
         if (!std::isinf(v_next_1) && std::abs(v_next_1) <= escape_threshold){
           res[0][i][s] = v_next_1;
         }
@@ -458,6 +482,12 @@ std::vector<std::vector<std::vector<double>>> SLMTri4Grid(
         double v_next_1 = res[0][i][s - 1] * (alpha1 - alpha1 * res[0][i][s - 1] - beta21 * res[1][i][s - 1] - beta31 * res[2][i][s - 1]);
         double v_next_2 = res[1][i][s - 1] * (alpha2 - alpha2 * res[1][i][s - 1] - beta12 * res[0][i][s - 1] - beta32 * res[2][i][s - 1]);
         double v_next_3 = res[2][i][s - 1] * (alpha3 - alpha3 * res[2][i][s - 1] - beta13 * res[0][i][s - 1] - beta23 * res[1][i][s - 1]);
+
+        if (!doubleNearlyEqual(noise_level, 0.0) && noise_level > 0.0){
+          if (!std::isnan(v_next_1)) v_next_1 += noise_dist(rng);
+          if (!std::isnan(v_next_2)) v_next_2 += noise_dist(rng);
+          if (!std::isnan(v_next_3)) v_next_3 += noise_dist(rng);
+        }
 
         if (!std::isinf(v_next_1) && std::abs(v_next_1) <= escape_threshold){
           res[0][i][s] = v_next_1;
