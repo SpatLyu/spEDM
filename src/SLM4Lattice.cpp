@@ -142,6 +142,8 @@ std::vector<std::vector<double>> SLMUni4Lattice(
  *   - Variable 2 evolves based on its neighbors of variable 2 and inhibition from variable 1
  *     (local or neighbor-averaged).
  *
+ * Zero-mean Gaussian noise may be added to each update to represent uncertainty.
+ *
  * @param vec1               Initial values of the first spatial variable (e.g., species A density).
  * @param vec2               Initial values of the second spatial variable (e.g., species B density).
  * @param nb                 Neighbor list for each spatial unit (e.g., rook or queen adjacency).
@@ -152,7 +154,9 @@ std::vector<std::vector<double>> SLMUni4Lattice(
  * @param beta12             Cross-inhibition coefficient from variable 1 to variable 2.
  * @param beta21             Cross-inhibition coefficient from variable 2 to variable 1.
  * @param interact           Interaction type (0 = local interaction, 1 = neighbor-averaged interaction).
+ * @param noise_level        Std. dev. of Gaussian noise (default = 0; no noise applied if = 0).
  * @param escape_threshold   Threshold to treat divergent values as invalid (default: 1e10).
+ * @param random_seed        RNG seed (default: 42).
  *
  * @return A 3D vector of simulation results:
  *         - First dimension: variable index (0 for vec1, 1 for vec2),
@@ -170,8 +174,14 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Lattice(
     double beta12,
     double beta21,
     int interact = 0,
-    double escape_threshold = 1e10
+    double noise_level = 0.0,
+    double escape_threshold = 1e10,
+    unsigned long long random_seed = 42
 ){
+  // RNG setup (only used if noise_level > 0)
+  std::mt19937_64 rng(static_cast<uint64_t>(random_seed));
+  std::normal_distribution<double> noise_dist(0.0, noise_level);
+
   // Initialize result array with NaNs (2, rows: spatial units, cols: time steps)
   std::vector<std::vector<std::vector<double>>> res(2,
                                                     std::vector<std::vector<double>>(vec1.size(),
@@ -245,6 +255,12 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Lattice(
           }
         }
 
+        // Add noise if enabled
+        if (!doubleNearlyEqual(noise_level, 0.0) && noise_level > 0.0){
+          if (!std::isnan(v_next_1)) v_next_1 += noise_dist(rng);
+          if (!std::isnan(v_next_2)) v_next_2 += noise_dist(rng);
+        }
+
         // Update result only if the value is within the escape threshold
         if (!std::isinf(v_next_1) && std::abs(v_next_1) <= escape_threshold){
           res[0][currentIndex][s] = v_next_1;
@@ -266,6 +282,12 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Lattice(
           (alpha1 - alpha1 * res[0][currentIndex][s - 1] - beta21 * res[1][currentIndex][s - 1]);
         double v_next_2 = res[1][currentIndex][s - 1] *
           (alpha2 - alpha2 * res[1][currentIndex][s - 1] - beta12 * res[0][currentIndex][s - 1]);
+
+        // Add noise if enabled
+        if (!doubleNearlyEqual(noise_level, 0.0) && noise_level > 0.0){
+          if (!std::isnan(v_next_1)) v_next_1 += noise_dist(rng);
+          if (!std::isnan(v_next_2)) v_next_2 += noise_dist(rng);
+        }
 
         // Update result only if the value is within the escape threshold
         if (!std::isinf(v_next_1) && std::abs(v_next_1) <= escape_threshold){

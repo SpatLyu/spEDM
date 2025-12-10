@@ -63,6 +63,8 @@ std::vector<std::vector<double>> SLMUni4Lattice(
  *   - Variable 2 evolves based on its neighbors of variable 2 and inhibition from variable 1
  *     (local or neighbor-averaged).
  *
+ * Zero-mean Gaussian noise may be added to each update to represent uncertainty.
+ *
  * @param vec1               Initial values of the first spatial variable (e.g., species A density).
  * @param vec2               Initial values of the second spatial variable (e.g., species B density).
  * @param nb                 Neighbor list for each spatial unit (e.g., rook or queen adjacency).
@@ -73,7 +75,9 @@ std::vector<std::vector<double>> SLMUni4Lattice(
  * @param beta12             Cross-inhibition coefficient from variable 1 to variable 2.
  * @param beta21             Cross-inhibition coefficient from variable 2 to variable 1.
  * @param interact           Interaction type (0 = local interaction, 1 = neighbor-averaged interaction).
+ * @param noise_level        Std. dev. of Gaussian noise (default = 0; no noise applied if = 0).
  * @param escape_threshold   Threshold to treat divergent values as invalid (default: 1e10).
+ * @param random_seed        RNG seed (default: 42).
  *
  * @return A 3D vector of simulation results:
  *         - First dimension: variable index (0 for vec1, 1 for vec2),
@@ -91,7 +95,9 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Lattice(
     double beta12,
     double beta21,
     int interact = 0,
-    double escape_threshold = 1e10
+    double noise_level = 0.0,
+    double escape_threshold = 1e10,
+    unsigned long long random_seed = 42
 );
 
 /**
