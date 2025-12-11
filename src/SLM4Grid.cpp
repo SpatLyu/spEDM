@@ -2,6 +2,9 @@
 #include <limits>
 #include <vector>
 #include <numeric>
+#include <random>    // std::mt19937_64, std::normal_distribution
+#include <algorithm>
+#include "NumericUtils.h"
 #include "CppGridUtils.h"
 
 /**
@@ -15,7 +18,10 @@
  * @param k                  Number of neighbors to consider (using Queen adjacency).
  * @param step               Number of simulation time steps to run.
  * @param alpha              Growth/interaction parameter in the logistic update rule.
+ * @param noise_level        Standard deviation of additive Gaussian noise (default = 0).
+ *                           If set to 0, no noise is applied.
  * @param escape_threshold   Threshold to treat divergent values as invalid (default: 1e10).
+ * @param random_seed        Seed for random number generator (default: 42).
  *
  * @return A 2D vector of simulation results:
  *         Each row corresponds to a spatial unit (flattened from the grid),
@@ -26,7 +32,9 @@ std::vector<std::vector<double>> SLMUni4Grid(
     size_t k,
     size_t step,
     double alpha,
-    double escape_threshold = 1e10
+    double noise_level = 0.0,
+    double escape_threshold = 1e10,
+    unsigned long long random_seed = 42
 ){
   size_t nrow = mat.size();
   size_t ncol = mat[0].size();
@@ -49,6 +57,10 @@ std::vector<std::vector<double>> SLMUni4Grid(
   for (size_t i = 0; i < ncell; ++i){
     res[i][0] = vec[i];
   }
+
+  // Random number generator setup (used only if noise_level > 0)
+  std::mt19937_64 rng(static_cast<uint64_t>(random_seed));
+  std::normal_distribution<double> noise_dist(0.0, noise_level);
 
   if (k > 0){
     // Initialize index library for all spatial units
@@ -80,6 +92,10 @@ std::vector<std::vector<double>> SLMUni4Grid(
           v_next = 1 - alpha * res[i][s - 1] * v_neighbors / valid_neighbors;
         }
 
+        if (!doubleNearlyEqual(noise_level, 0.0) && noise_level > 0.0 && !std::isnan(v_next)){
+          v_next += noise_dist(rng);
+        }
+
         if (!std::isinf(v_next) && std::abs(v_next) <= escape_threshold){
           res[i][s] = v_next;
         }
@@ -93,6 +109,10 @@ std::vector<std::vector<double>> SLMUni4Grid(
 
         // Apply the logistic map update if no neighbors exist
         double v_next = res[i][s - 1] * (alpha - alpha * res[i][s - 1]);
+
+        if (!doubleNearlyEqual(noise_level, 0.0) && noise_level > 0.0 && !std::isnan(v_next)){
+          v_next += noise_dist(rng);
+        }
 
         if (!std::isinf(v_next) && std::abs(v_next) <= escape_threshold){
           res[i][s] = v_next;
@@ -129,7 +149,10 @@ std::vector<std::vector<double>> SLMUni4Grid(
  * @param beta12            Cross-inhibition from the first variable to the second.
  * @param beta21            Cross-inhibition from the second variable to the first.
  * @param interact          Type of cross-variable interaction (0 = local, 1 = neighbors).
- * @param escape_threshold  Threshold to treat divergent values as invalid (default: 1e10).
+ * @param noise_level        Standard deviation of additive Gaussian noise (default = 0).
+ *                           If set to 0, no noise is applied.
+ * @param escape_threshold   Threshold to treat divergent values as invalid (default: 1e10).
+ * @param random_seed        Seed for random number generator (default: 42).
  *
  * @return A 3D vector of simulation results:
  *         - Dimension 0: variable index (0 for mat1, 1 for mat2),
@@ -146,7 +169,9 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Grid(
     double beta12,
     double beta21,
     int interact = 0,
-    double escape_threshold = 1e10
+    double noise_level = 0.0,
+    double escape_threshold = 1e10,
+    unsigned long long random_seed = 42
 ){
   size_t nrow = mat1.size();
   size_t ncol = mat1[0].size();
@@ -172,6 +197,10 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Grid(
     res[0][i][0] = vec1[i];
     res[1][i][0] = vec2[i];
   }
+
+  // Random number generator setup (used only if noise_level > 0)
+  std::mt19937_64 rng(static_cast<uint64_t>(random_seed));
+  std::normal_distribution<double> noise_dist(0.0, noise_level);
 
   if (k > 0){
     // Initialize index library for all spatial units
@@ -226,6 +255,11 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Grid(
           }
         }
 
+        if (!doubleNearlyEqual(noise_level, 0.0) && noise_level > 0.0){
+          if (!std::isnan(v_next_1)) v_next_1 += noise_dist(rng);
+          if (!std::isnan(v_next_2)) v_next_2 += noise_dist(rng);
+        }
+
         if (!std::isinf(v_next_1) && std::abs(v_next_1) <= escape_threshold){
           res[0][i][s] = v_next_1;
         }
@@ -242,6 +276,11 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Grid(
 
         double v_next_1 = res[0][i][s - 1] * (alpha1 - alpha1 * res[0][i][s - 1] - beta21 * res[1][i][s - 1]);
         double v_next_2 = res[1][i][s - 1] * (alpha2 - alpha2 * res[1][i][s - 1] - beta12 * res[0][i][s - 1]);
+
+        if (!doubleNearlyEqual(noise_level, 0.0) && noise_level > 0.0){
+          if (!std::isnan(v_next_1)) v_next_1 += noise_dist(rng);
+          if (!std::isnan(v_next_2)) v_next_2 += noise_dist(rng);
+        }
 
         if (!std::isinf(v_next_1) && std::abs(v_next_1) <= escape_threshold){
           res[0][i][s] = v_next_1;
@@ -284,7 +323,10 @@ std::vector<std::vector<std::vector<double>>> SLMBi4Grid(
  * @param beta31 Interaction coefficient from variable 3 to variable 1.
  * @param beta32 Interaction coefficient from variable 3 to variable 2.
  * @param interact If 0, interactions use self-cell values; if 1, interactions use neighbors' averages.
- * @param escape_threshold Threshold to prevent values from diverging too far.
+ * @param noise_level        Standard deviation of additive Gaussian noise (default = 0).
+ *                           If set to 0, no noise is applied.
+ * @param escape_threshold   Threshold to treat divergent values as invalid (default: 1e10).
+ * @param random_seed        Seed for random number generator (default: 42).
  *
  * @return A 3D vector containing simulated values for each variable,
  *         spatial unit, and time step.
@@ -305,7 +347,9 @@ std::vector<std::vector<std::vector<double>>> SLMTri4Grid(
     double beta31,
     double beta32,
     int interact = 0,
-    double escape_threshold = 1e10
+    double noise_level = 0.0,
+    double escape_threshold = 1e10,
+    unsigned long long random_seed = 42
 ){
   size_t nrow = mat1.size();
   size_t ncol = mat1[0].size();
@@ -335,6 +379,10 @@ std::vector<std::vector<std::vector<double>>> SLMTri4Grid(
     res[1][i][0] = vec2[i];
     res[2][i][0] = vec3[i];
   }
+
+  // Random number generator setup (used only if noise_level > 0)
+  std::mt19937_64 rng(static_cast<uint64_t>(random_seed));
+  std::normal_distribution<double> noise_dist(0.0, noise_level);
 
   if (k > 0){
     // Initialize index library for all spatial units
@@ -406,6 +454,12 @@ std::vector<std::vector<std::vector<double>>> SLMTri4Grid(
           }
         }
 
+        if (!doubleNearlyEqual(noise_level, 0.0) && noise_level > 0.0){
+          if (!std::isnan(v_next_1)) v_next_1 += noise_dist(rng);
+          if (!std::isnan(v_next_2)) v_next_2 += noise_dist(rng);
+          if (!std::isnan(v_next_3)) v_next_3 += noise_dist(rng);
+        }
+
         if (!std::isinf(v_next_1) && std::abs(v_next_1) <= escape_threshold){
           res[0][i][s] = v_next_1;
         }
@@ -428,6 +482,12 @@ std::vector<std::vector<std::vector<double>>> SLMTri4Grid(
         double v_next_1 = res[0][i][s - 1] * (alpha1 - alpha1 * res[0][i][s - 1] - beta21 * res[1][i][s - 1] - beta31 * res[2][i][s - 1]);
         double v_next_2 = res[1][i][s - 1] * (alpha2 - alpha2 * res[1][i][s - 1] - beta12 * res[0][i][s - 1] - beta32 * res[2][i][s - 1]);
         double v_next_3 = res[2][i][s - 1] * (alpha3 - alpha3 * res[2][i][s - 1] - beta13 * res[0][i][s - 1] - beta23 * res[1][i][s - 1]);
+
+        if (!doubleNearlyEqual(noise_level, 0.0) && noise_level > 0.0){
+          if (!std::isnan(v_next_1)) v_next_1 += noise_dist(rng);
+          if (!std::isnan(v_next_2)) v_next_2 += noise_dist(rng);
+          if (!std::isnan(v_next_3)) v_next_3 += noise_dist(rng);
+        }
 
         if (!std::isinf(v_next_1) && std::abs(v_next_1) <= escape_threshold){
           res[0][i][s] = v_next_1;
