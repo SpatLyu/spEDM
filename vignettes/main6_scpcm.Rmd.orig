@@ -2,7 +2,7 @@
 title: "Spatially Convergent Partial Cross Mapping"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-12-01
+  | Last update: 2025-12-15
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 
 ## Model principles
 
-
+The methodological details are pending peer review and will be made available thereafter.
 
 ## Usage examples
 
