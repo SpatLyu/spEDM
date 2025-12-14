@@ -27,7 +27,7 @@ The methodological details are pending peer review and will be made available th
 
 ### Example of spatial vector data
 
-Load the `spEDM` package and the columbus OH spatial analysis dataset:
+Load the `spEDM` package and columbus OH spatial analysis dataset:
 
 ```{r load_lattice_data}
 if (!requireNamespace("spEDM")) install.packages("spEDM")
