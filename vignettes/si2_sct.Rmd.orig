@@ -2,7 +2,7 @@
 title: "Spatial Causality Test"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-11-20
+  | Last update: 2025-12-15
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -61,7 +61,7 @@ $h_{y |\mathcal{Y}_W}(m)$ measures the uncertainty of the distribution of symbol
 
 ## Usage examples
 
-### An example of spatial lattice data
+### Example of spatial vector data
 
 Load the `spEDM` package and the columbus OH dataset:
 
@@ -85,7 +85,7 @@ sc.test(columbus, "inc", "crime", k = 15)
 sc.test(columbus, "inc", "hoval", k = 15)
 ```
 
-### An example of spatial grid data
+### Example of spatial raster data
 
 Load the `spEDM` package and its farmland NPP data:
 

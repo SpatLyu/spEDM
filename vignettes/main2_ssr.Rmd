@@ -2,8 +2,8 @@
 title: "State Space Reconstruction"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-11-20
-  | Last run: 2025-12-01
+  | Last update: 2025-12-15
+  | Last run: 2025-12-15
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{2. State Space Reconstruction}
@@ -29,7 +29,7 @@ where $h_{s(i)}(x)$ denotes the observation function of the $i$-th order spatial
 
 ## Usage examples
 
-### An example of spatial lattice data
+### Example of spatial vector data
 
 Load the `spEDM` package and its county-level population density data:
 
@@ -96,7 +96,7 @@ plot3D::scatter3D(v[,4], v[,5], v[,10], colvar = NULL, pch = 19,
 
 <br>
 
-### An example of spatial grid data
+### Example of spatial raster data
 
 Load the `spEDM` package and its farmland npp data:
 

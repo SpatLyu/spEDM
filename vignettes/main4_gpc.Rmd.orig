@@ -2,7 +2,7 @@
 title: "Geographical Pattern Causality"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-11-25
+  | Last update: 2025-12-15
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -73,7 +73,7 @@ where $\bowtie$ encodes positive, negative, or dark matching rules.
 
 ## Usage examples
 
-### An example of spatial lattice data
+### Example of spatial vector data
 
 Load the `spEDM` package and its columbus spatial analysis data:
 
@@ -121,7 +121,7 @@ plot(crime_convergence, ylimits = c(-0.01,1),
 
 <br>
 
-### An example of spatial grid data
+### Example of spatial raster data
 
 Load the `spEDM` package and its farmland NPP data:
 
