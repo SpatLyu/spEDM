@@ -2,7 +2,7 @@
 title: "Geographical Cross Mapping Cardinality"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-11-20
+  | Last update: 2025-12-15
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -31,7 +31,7 @@ To measure causal strengths from spatial cross-sectional data, GCMC (Geographica
 
 ## Usage examples
 
-### An example of spatial lattice data
+### Example of spatial vector data
 
 Load the `spEDM` package and its county-level population density data:
 
@@ -147,7 +147,7 @@ plot_cs_matrix(res1)
 
 <br>
 
-### An example of spatial grid data
+### Example of spatial raster data
 
 Load the `spEDM` package and its farmland NPP data:
 
