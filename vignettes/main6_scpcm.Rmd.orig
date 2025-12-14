@@ -25,7 +25,7 @@ The methodological details are pending peer review and will be made available th
 
 ## Usage examples
 
-### An example of spatial lattice data
+### Example of spatial vector data
 
 Load the `spEDM` package and its county-level population density data:
 
@@ -65,7 +65,7 @@ fig1 = cowplot::plot_grid(fig1a,fig1b,ncol = 2,label_fontfamily = 'serif',
 fig1
 ```
 
-### An example of spatial grid data
+### Example of spatial raster data
 
 Load the `spEDM` package and its farmland NPP data:
 
