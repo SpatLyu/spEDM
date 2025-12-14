@@ -35,7 +35,7 @@ $$
 x_{t+1}^{(i)} = r_i x_t^{(i)} \left(1 - x_t^{(i)} - \sum_{j \neq i} \beta_{ji} x_t^{(j)} \right),
 $$
 
-where $\beta_{ji}$ denotes the inhibitory (or facilitative) effect of variable $j$ on variable $i$. These multivariate systems allow the study of interaction-driven complexity, including predator-prey dynamics, interspecies competition, and coevolutionary processes.
+where $\beta_{ji}$ denotes the inhibitory (or facilitative) effect of variable $j$ on variable $i$. These multivariable systems allow the study of interaction-driven complexity, including predator-prey dynamics, interspecies competition, and coevolutionary processes.
 
 This framework can be further extended to **spatial domains** to account for interactions among neighboring spatial units. The resulting system, known as the **Spatial Logistic Map (SLM)**, distributes the logistic dynamics over a spatial cross section. In the simplest case, each location $i$ on the cross section updates according to:
 
@@ -50,10 +50,14 @@ Importantly, when extended to multivariate spatial settings, such as **bivariate
 - **Local cross-variable interaction (default form):**
 
 $$
+\begin{equation}
+\left\{
 \begin{aligned}
-x_{i}^{(t+1)} &= 1 - \alpha_x x_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} x_j^{(t)} - \beta_{yx} y_i^{(t)} \right), \\
-y_{i}^{(t+1)} &= 1 - \alpha_y y_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} y_j^{(t)} - \beta_{xy} x_i^{(t)} \right).
+x_{i}^{(t+1)} &= 1 - \alpha_x x_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} x_j^{(t)} - \beta_{yx} y_i^{(t)} \right) + \xi_{x,i}^{(t)}, \\
+y_{i}^{(t+1)} &= 1 - \alpha_y y_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} y_j^{(t)} - \beta_{xy} x_i^{(t)} \right) + \xi_{y,i}^{(t)}.
 \end{aligned}
+\right.
+\end{equation}
 $$
 
 Here, the inhibitory (or facilitative) influence between variables is restricted to the same spatial location.
@@ -61,10 +65,14 @@ Here, the inhibitory (or facilitative) influence between variables is restricted
 - **Neighbor-averaged cross-variable interaction (extended form):**
 
 $$
+\begin{equation}
+\left\{
 \begin{aligned}
-x_{i}^{(t+1)} = 1 - \alpha_x x_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} x_j^{(t)} - \beta_{yx} \frac{1}{k} \sum_{j \in \mathcal{N}(i)} y_j^{(t)} \right), \\
-y_{i}^{(t+1)} = 1 - \alpha_y y_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} y_j^{(t)} - \beta_{xy} \frac{1}{k} \sum_{j \in \mathcal{N}(i)} x_j^{(t)} \right).
+x_{i}^{(t+1)} = 1 - \alpha_x x_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} x_j^{(t)} - \beta_{yx} \frac{1}{k} \sum_{j \in \mathcal{N}(i)} y_j^{(t)} \right) + \xi_{x,i}^{(t)}, \\
+y_{i}^{(t+1)} = 1 - \alpha_y y_i^{(t)} \left( \frac{1}{k} \sum_{j \in \mathcal{N}(i)} y_j^{(t)} - \beta_{xy} \frac{1}{k} \sum_{j \in \mathcal{N}(i)} x_j^{(t)} \right) + \xi_{y,i}^{(t)}.
 \end{aligned}
+\right.
+\end{equation}
 $$
 
 In this alternative form, the inter-variable interactions are mediated through the **neighbor-averaged states**, allowing each variable to be influenced by the spatial context of the other.
@@ -72,6 +80,8 @@ In this alternative form, the inter-variable interactions are mediated through t
 Both formulations capture the combination of **local spatial coupling** and **cross-variable inhibition**, but they differ in whether the cross-variable effects are purely local or spatially contextualized. These distinctions lead to different spatiotemporal outcomes, including waves, kinks, frozen random states, and spatiotemporal chaos.
 
 By performing statistical aggregation over the long-run time series values at each spatial unit, one can generate spatial cross-sectional data that reflect different causal scenarios.
+
+$\xi_{x,i}^{(t)}$ and $\xi_{y,i}^{(t)}$ denote white noise with zero mean and varying standard deviations. In our simulations of spatial causal structures, these noise terms are set to zero, and are only activated when testing sensitivity to noise.
 
 ## Usage examples
 
