@@ -2,7 +2,7 @@
 title: "Geographical Convergent Cross Mapping"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-11-25
+  | Last update: 2025-12-15
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -87,7 +87,7 @@ where $\rho_{x \to y}$ is the correlation after convergence, used to measure the
 
 ## Usage examples
 
-### An example of spatial lattice data
+### Example of spatial vector data
 
 Load the `spEDM` package and its county-level population density data:
 
@@ -128,7 +128,7 @@ plot(pd_res, xlimits = c(0, 2800), draw_ci = TRUE) +
 
 <br>
 
-### An example of spatial grid data
+### Example of spatial raster data
 
 Load the `spEDM` package and its farmland NPP data:
 
@@ -167,7 +167,7 @@ Run GCCM:
 startTime = Sys.time()
 npp_res = spEDM::gccm(data = npp, cause = "pre", effect = "npp",
                       libsizes = matrix(rep(seq(10,130,20),2),ncol = 2),
-                      E = c(2,10), k = 12, lib = nnaindice, pred = predindice, 
+                      E = c(2,10), k = 12, lib = nnaindice, pred = predindice,
                       progressbar = FALSE)
 endTime = Sys.time()
 print(difftime(endTime,startTime, units ="mins"))
