@@ -46,11 +46,15 @@ spEDM::fnn(columbus,"hoval",E = 1:10)
 spEDM::fnn(columbus,"inc",E = 1:10)
 ```
 
+Self prediction for parameter turning:
+
 ```{r simplex_lattice}
 spEDM::simplex(columbus,"crime","crime",E = 7:10,k=12)
 spEDM::simplex(columbus,"hoval","hoval",E = 7:10,k=12)
 spEDM::simplex(columbus,"inc","inc",E = 7:10,k=12)
 ```
+
+Conduct SCPCM:
 
 ```{r scpcm_lattice}
 crime_hoval = spEDM::scpcm(data = columbus,
@@ -105,68 +109,65 @@ sim_trispecies = \(nx,ny,seed = 123){
 species = sim_trispecies(20,20, seed = 42)
 names(species) = c("x","y","z")
 
-sim = spEDM::slm(species, x = "x", y = "y", z = "z", k = 4, step = 15, transient = 1, threshold = Inf,
+sim = spEDM::slm(species, x = "x", y = "y", z = "z", k = 4,
+                 step = 15, transient = 1, threshold = Inf,
                  aggregate_fn = \(.x) mean(.x, na.rm = TRUE),
                  alpha_x = 0.05, alpha_y = 0.05, alpha_z = 0.05,
-                 beta_xy = 1, beta_xz = 0, beta_yx = 0, beta_yz = 1, beta_zx = 1, beta_zy = 0)
+                 beta_xy = 1, beta_xz = 0, beta_yx = 0, beta_yz = 1,
+                 beta_zx = 1, beta_zy = 0)
 
 terra::values(species[["x"]]) = sim$x
 terra::values(species[["y"]]) = sim$y
 terra::values(species[["z"]]) = sim$z
 species
-
-
-spEDM::fnn(species_scenario3, "x")
-spEDM::fnn(species_scenario3, "y")
-spEDM::fnn(species_scenario3, "z")
-
-s1 = spEDM::simplex(species_scenario3, "x", "x", E = 5:10, k = 15, tau = 1)
-s2 = spEDM::simplex(species_scenario3, "y", "y", E = 5:10, k = 15, tau = 1)
-s3 = spEDM::simplex(species_scenario3, "z", "z", E = 5:10, k = 15, tau = 1)
-list(s1,s2,s3)
-
-simplex3 = purrr::map2_dfr(list(s1,s2,s3), c("x","y","z"),
-                           \(.list,.name) dplyr::mutate(.list$xmap,variable = .name))
-ggplot2::ggplot(data = simplex3) +
-  ggplot2::geom_line(ggplot2::aes(x = E, y = rho, color = variable))
-
-xy_scenario3 = spEDM::scpcm(species_scenario3, "x", "y", "z", E = 10, k = 15,
-                            libsizes = matrix(seq(50,400,50), ncol = 1))
-xy_scenario3
-
-yz_scenario3 = spEDM::scpcm(species_scenario3, "y", "z", "x", E = 10, k = 15,
-                            libsizes = matrix(seq(50,400,50), ncol = 1))
-yz_scenario3
-
-xz_scenario3 = spEDM::scpcm(species_scenario3, "x", "z", "y", E = 10, k = 15,
-                            libsizes = matrix(seq(50,400,50), ncol = 1))
-xz_scenario3
-
 ```
 
-Investigate the causation between elevation and NPP, with precipitation and temperature as control variables:
+Determine minimum embedding dimensions:
+
+```{r fnn_grid}
+spEDM::fnn(species, "x")
+spEDM::fnn(species, "y")
+spEDM::fnn(species, "z")
+```
+
+Self prediction for parameter turning:
+
+```{r simplex_grid}
+s1 = spEDM::simplex(species, "x", "x", E = 5:10, k = 15, tau = 1)
+s2 = spEDM::simplex(species, "y", "y", E = 5:10, k = 15, tau = 1)
+s3 = spEDM::simplex(species, "z", "z", E = 5:10, k = 15, tau = 1)
+list(s1,s2,s3)
+```
+
+Due to the statistical aggregation performed after simulating with the spatial logistic map, we adopt a uniform embedding dimension for x, y, and z to reduce inference bias:
+
+``` {r fig2,fig.width=3.55,fig.height=2.85,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. Self cross prediction skills for three variables.")}
+if (!requireNamespace("purrr")) install.packages("purrr")
+simplex_res = purrr::map2_dfr(list(s1,s2,s3), c("x","y","z"),
+                              \(.list,.name) dplyr::mutate(.list$xmap,variable = .name))
+ggplot2::ggplot(data = simplex_res) +
+  ggplot2::geom_line(ggplot2::aes(x = E, y = rho, color = variable)) +
+  ggplot2::theme_classic()
+```
+
+<br>
+
+Since the self-prediction performance of the y variable is relatively weaker than that of x and z, we select the embedding dimension that yields the strongest predictive performance for
+y as the final dimension used in the SCPCM analysis, that is $E = 9$.
+
+Investigate the causation between x and z, with y as control variables:
 
 ```{r scpcm_grid}
-startTime = Sys.time()
-npp_pretem = scpcm(data = npp,
-                   cause = "elev",
-                   effect = "npp",
-                   conds = c("pre","tem"),
-                   libsizes = matrix(rep(seq(10,130,20),2),ncol = 2),
-                   E = c(4,8),
-                   k = 8,
-                   lib = nnaindice,
-                   pred = predindice)
-endTime = Sys.time()
-print(difftime(endTime,startTime, units ="mins"))
-npp_pretem
+xz = spEDM::scpcm(species, "x", "z", "y", E = 9, k = 15,
+                  libsizes = matrix(seq(50,400,50), ncol = 1))
+xz
 ```
 
 Visualize the result:
 
-```{r fig2,fig.width=5.55,fig.height=2.85,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. The causation between elevation and NPP. **a** Elevation–NPP causality without accounting for covariates. **b** Elevation–NPP causality controlling for precipitation and temperature.")}
-fig2a = plot(npp_pretem,partial = FALSE,draw_ci = TRUE,ylimits = c(-0.05,0.85))
-fig2b = plot(npp_pretem,partial = TRUE,draw_ci = TRUE,ylimits = c(-0.05,0.55))
+```{r fig2,fig.width=5.55,fig.height=2.85,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 3**. The cross prediction between x and z. **a** x–z causality without accounting for y. **b** x–z causality controlling for y.")}
+fig2a = plot(xz,partial = FALSE,ylimits = c(0.05,0.7))
+fig2b = plot(xz,partial = TRUE,ylimits = c(0.05,0.7))
 fig2 = cowplot::plot_grid(fig2a,fig2b,ncol = 2,label_fontfamily = 'serif',
                           labels = paste0('(',letters[1:2],')'))
 fig2
