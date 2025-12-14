@@ -38,31 +38,42 @@ columbus
 
 We demonstrate how spatial vector data can be used in SCPCM analysis through a causal example examining the influences of the level of burglary incidents in a neighbourhood on house values, with neighbourhood household income included as a conditioning variable.
 
+Determine minimum embedding dimensions:
+
+```{r fnn_lattice}
+spEDM::fnn(columbus,"crime",E = 1:10)
+spEDM::fnn(columbus,"hoval",E = 1:10)
+spEDM::fnn(columbus,"inc",E = 1:10)
+```
+
+```{r simplex_lattice}
+spEDM::simplex(columbus,"crime","crime",E = 7:10,k=12)
+spEDM::simplex(columbus,"hoval","hoval",E = 7:10,k=12)
+spEDM::simplex(columbus,"inc","inc",E = 7:10,k=12)
+```
 
 ```{r scpcm_lattice}
-startTime = Sys.time()
-popd_pretem = scpcm(data = popd_sf,
-                    cause = "elev",
-                    effect = "popd",
-                    conds = c("pre","tem"),
-                    libsizes = seq(100, 2800, by = 200),
-                    E = 2,
-                    k = 6,
-                    nb = popd_nb)
-endTime = Sys.time()
-print(difftime(endTime,startTime, units ="mins"))
-popd_pretem
+crime_hoval = spEDM::scpcm(data = columbus,
+                           cause = "crime",
+                           effect = "hoval",
+                           conds = "inc",
+                           libsizes = seq(5, 45, by = 5),
+                           E = c(8,7,8),
+                           k = 12)
+crime_hoval
 ```
 
 Visualize the result:
 
-```{r fig1,fig.width=6.25,fig.height=3.15,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. The causation between elevation and population density. **a** Elevation–Population causality without accounting for covariates. **b** Elevation–Population causality controlling for precipitation and temperature.")}
-fig1a = plot(popd_pretem,partial = FALSE,ylimits = c(0,0.65))
-fig1b = plot(popd_pretem,partial = TRUE,ylimits = c(0,0.65))
+```{r fig1,fig.width=6.25,fig.height=3.15,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. The causation between crime and house value. **a** Crime–hoval causality without accounting for covariates. **b** Crime–hoval causality controlling for household income.")}
+fig1a = plot(crime_hoval,partial = FALSE,ylimits = c(0.1,0.75))
+fig1b = plot(crime_hoval,partial = TRUE,ylimits = c(-0.05,0.55))
 fig1 = cowplot::plot_grid(fig1a,fig1b,ncol = 2,label_fontfamily = 'serif',
                           labels = paste0('(',letters[1:2],')'))
 fig1
 ```
+
+<br>
 
 ### Example of spatial raster data
 
