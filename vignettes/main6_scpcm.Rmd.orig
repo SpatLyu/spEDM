@@ -27,18 +27,17 @@ The methodological details are pending peer review and will be made available th
 
 ### Example of spatial vector data
 
-Load the `spEDM` package and its county-level population density data:
+Load the `spEDM` package and the columbus OH spatial analysis dataset:
 
 ```{r load_lattice_data}
 library(spEDM)
 
-popd_nb = spdep::read.gal(system.file("case/popd_nb.gal",package = "spEDM"))
-popd = readr::read_csv(system.file("case/popd.csv",package = "spEDM"))
-popd_sf = sf::st_as_sf(popd, coords = c("x","y"), crs = 4326)
-popd_sf
+columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
+columbus
 ```
 
-Examine the causation between elevation and population density, controlling for precipitation and temperature.
+We demonstrate how spatial vector data can be used in SCPCM analysis through a causal example examining the influences of the level of burglary incidents in a neighbourhood on house values, with neighbourhood household income included as a conditioning variable.
+
 
 ```{r scpcm_lattice}
 startTime = Sys.time()
