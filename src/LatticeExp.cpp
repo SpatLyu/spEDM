@@ -1381,7 +1381,7 @@ Rcpp::List RcppGCMC4Lattice(
   }
 
   // check b that are greater than validSampleNum or less than or equal to 3
-  if (b < 3 || b > validSampleNum) {
+  if (b <= 3 || b > validSampleNum) {
     Rcpp::stop("k must be greater than 3 and no larger than the number of non-NA values.\n"
                "An empirical rule of thumb is to set k = sqrt(E * N),\n"
                "where E is the embedding dimension and N is the number of valid observations in the prediction set.");
