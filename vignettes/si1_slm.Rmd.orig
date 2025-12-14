@@ -2,7 +2,7 @@
 title: "Spatial Logistic Map"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-11-20
+  | Last update: 2025-12-15
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
