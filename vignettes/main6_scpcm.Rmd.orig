@@ -30,7 +30,7 @@ The methodological details are pending peer review and will be made available th
 Load the `spEDM` package and the columbus OH spatial analysis dataset:
 
 ```{r load_lattice_data}
-library(spEDM)
+if (!requireNamespace("spEDM")) install.packages("spEDM")
 
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 columbus
@@ -66,6 +66,8 @@ crime_hoval
 Visualize the result:
 
 ```{r fig1,fig.width=6.25,fig.height=3.15,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. The causation between crime and house value. **a** Crime–hoval causality without accounting for covariates. **b** Crime–hoval causality controlling for household income.")}
+if (!requireNamespace("cowplot")) install.packages("cowplot")
+
 fig1a = plot(crime_hoval,partial = FALSE,ylimits = c(0.1,0.75))
 fig1b = plot(crime_hoval,partial = TRUE,ylimits = c(-0.05,0.55))
 fig1 = cowplot::plot_grid(fig1a,fig1b,ncol = 2,label_fontfamily = 'serif',
@@ -77,28 +79,69 @@ fig1
 
 ### Example of spatial raster data
 
-Load the `spEDM` package and its farmland NPP data:
+Load the `spEDM` package and simulate raster data with a cyclic interaction structure $x \rightarrow y \rightarrow z \rightarrow x$:
 
-```{r load_grid_data}
-library(spEDM)
+```{r sim_grid_data}
+if (!requireNamespace("fields")) install.packages("fields")
+if (!requireNamespace("MASS")) install.packages("MASS")
 
-npp = terra::rast(system.file("case/npp.tif", package = "spEDM"))
-# To save the computation time, we will aggregate the data by 3 times
-npp = terra::aggregate(npp, fact = 3, na.rm = TRUE)
-npp
+sim_trispecies = \(nx,ny,seed = 123){
+  grid = expand.grid(seq(0, 10, length.out = nx),
+                     seq(0, 10, length.out = ny))
+  cov.fun = \(d, range = 1.5, sill=1) sill * exp(-d/range)
+  dist.mat = fields::rdist(grid)
+  cov.mat = cov.fun(dist.mat, range=1.5, sill=1)
+  set.seed(seed)
+  res = replicate(3, {
+    MASS::mvrnorm(1, rep(0, nrow(grid)), cov.mat) |>
+      pmax(0) |>
+      sdsfun::normalize_vector(0,1) |>
+      matrix(nrow = nx, ncol = ny) |>
+      terra::rast()
+  }, simplify = FALSE)
+  terra::rast(res)
+}
 
-# Inspect NA values
-terra::global(npp,"isNA")
-terra::ncell(npp)
-nnamat = terra::as.matrix(npp[[1]], wide = TRUE)
-nnaindice = which(!is.na(nnamat), arr.ind = TRUE)
-dim(nnaindice)
+species = sim_trispecies(20,20, seed = 42)
+names(species) = c("x","y","z")
 
-# Select 1500 non-NA pixels to predict:
-set.seed(2025)
-indices = sample(nrow(nnaindice), size = 1500, replace = FALSE)
-libindice = nnaindice[-indices,]
-predindice = nnaindice[indices,]
+sim = spEDM::slm(species, x = "x", y = "y", z = "z", k = 4, step = 15, transient = 1, threshold = Inf,
+                 aggregate_fn = \(.x) mean(.x, na.rm = TRUE),
+                 alpha_x = 0.05, alpha_y = 0.05, alpha_z = 0.05,
+                 beta_xy = 1, beta_xz = 0, beta_yx = 0, beta_yz = 1, beta_zx = 1, beta_zy = 0)
+
+terra::values(species[["x"]]) = sim$x
+terra::values(species[["y"]]) = sim$y
+terra::values(species[["z"]]) = sim$z
+species
+
+
+spEDM::fnn(species_scenario3, "x")
+spEDM::fnn(species_scenario3, "y")
+spEDM::fnn(species_scenario3, "z")
+
+s1 = spEDM::simplex(species_scenario3, "x", "x", E = 5:10, k = 15, tau = 1)
+s2 = spEDM::simplex(species_scenario3, "y", "y", E = 5:10, k = 15, tau = 1)
+s3 = spEDM::simplex(species_scenario3, "z", "z", E = 5:10, k = 15, tau = 1)
+list(s1,s2,s3)
+
+simplex3 = purrr::map2_dfr(list(s1,s2,s3), c("x","y","z"),
+                           \(.list,.name) dplyr::mutate(.list$xmap,variable = .name))
+ggplot2::ggplot(data = simplex3) +
+  ggplot2::geom_line(ggplot2::aes(x = E, y = rho, color = variable))
+
+xy_scenario3 = spEDM::scpcm(species_scenario3, "x", "y", "z", E = 10, k = 15,
+                            libsizes = matrix(seq(50,400,50), ncol = 1))
+xy_scenario3
+
+yz_scenario3 = spEDM::scpcm(species_scenario3, "y", "z", "x", E = 10, k = 15,
+                            libsizes = matrix(seq(50,400,50), ncol = 1))
+yz_scenario3
+
+xz_scenario3 = spEDM::scpcm(species_scenario3, "x", "z", "y", E = 10, k = 15,
+                            libsizes = matrix(seq(50,400,50), ncol = 1))
+xz_scenario3
+
 ```
 
 Investigate the causation between elevation and NPP, with precipitation and temperature as control variables:
