@@ -1936,7 +1936,9 @@ Rcpp::List RcppGCMC4Grid(
   }
 
   if (b < 3 || b > validCellNum) {
-    Rcpp::stop("k cannot be less than or equal to 3 or greater than the number of non-NA values.");
+    Rcpp::stop("k must be greater than 3 and no larger than the number of non-NA values.\n"
+               "An empirical rule of thumb is to set k = sqrt(E * N),\n"
+               "where E is the embedding dimension and N is the number of valid observations in the prediction set.");
   }
 
   // -- Convert libsizes --------------------------------------------------
