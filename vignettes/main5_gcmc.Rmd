@@ -240,12 +240,6 @@ nnamat = terra::as.matrix(npp[[1]], wide = TRUE)
 nnaindice = which(!is.na(nnamat), arr.ind = TRUE)
 dim(nnaindice)
 ## [1] 4112    2
-
-# Select 1500 non-NA pixels to predict:
-set.seed(2025)
-indices = sample(nrow(nnaindice), size = 1500, replace = FALSE)
-libindice = nnaindice[-indices,]
-predindice = nnaindice[indices,]
 ```
 
 Determining optimal embedding dimension:
