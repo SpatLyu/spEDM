@@ -161,8 +161,8 @@ Load the `spEDM` package and its farmland NPP data:
 library(spEDM)
 
 npp = terra::rast(system.file("case/npp.tif", package = "spEDM"))
-# To save the computation time, we will aggregate the data by 3 times
-npp = terra::aggregate(npp, fact = 3, na.rm = TRUE)
+# To save the computation time, we will aggregate the data by 4 times
+npp = terra::aggregate(npp, fact = 4, na.rm = TRUE)
 npp
 
 # Inspect NA values
@@ -182,16 +182,16 @@ predindice = nnaindice[indices,]
 Determining optimal embedding dimension:
 
 ```{r fnn_grid_data}
-spEDM::fnn(npp, "npp", E = 1:25, lib = predindice, pred = predindice,
-           eps = stats::sd(terra::values(npp[["npp"]]),na.rm = TRUE) / 10)
+spEDM::fnn(npp, "npp", E = 1:25,
+           eps = stats::sd(terra::values(npp[["npp"]]),na.rm = TRUE))
 ```
 
-At $E = 18$, the false nearest neighbor ratio stabilizes at 0.10 and remains constant thereafter. Therefore, $E = 18$ is selected for the subsequent GCMC analysis.
+At $E = 5$, the false nearest neighbor ratio stabilizes at 0 and remains constant thereafter. Therefore, $E = 5$ is selected for the subsequent GCMC analysis.
 
 Adopt an empirical k value derived from the square root of the product of embedding dimension and number of prediction samples:
 
 ```{r k_grid}
-ceiling(sqrt(18 * 1500))
+ceiling(sqrt(5 * dim(nnaindice)[1]))
 ```
 
 ```{r case_grid}
