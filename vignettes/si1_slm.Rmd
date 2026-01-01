@@ -2,8 +2,8 @@
 title: "Spatial Logistic Map"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-12-15
-  | Last run: 2025-12-20
+  | Last update: 2026-01-01
+  | Last run: 2026-01-01
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{SI1. Spatial Logistic Map}
@@ -31,7 +31,7 @@ $$
 
 where $\beta_{ji}$ denotes the inhibitory (or facilitative) effect of variable $j$ on variable $i$. These multivariable systems allow the study of interaction-driven complexity, including predator-prey dynamics, interspecies competition, and coevolutionary processes.
 
-This framework can be further extended to **spatial domains** to account for interactions among neighboring spatial units. The resulting system, known as the **Spatial Logistic Map (SLM)**, distributes the logistic dynamics over a spatial cross section. In the simplest case, each location $i$ on the cross section updates according to:
+This framework can be further extended to **spatial domains** to account for interactions among neighboring spatial units. The resulting system, known as the **Spatial Logistic Map (SLM)**, distributes the logistic dynamics over a spatial cross section. In the simplest case, each unit $i$ on the cross section updates according to:
 
 $$
 x_{i}^{(t+1)} = 1 - \alpha x_i^{(t)} \cdot \frac{1}{k} \sum_{j \in \mathcal{N}(i)} x_j^{(t)},

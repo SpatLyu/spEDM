@@ -2,7 +2,7 @@
 title: "Spatially Convergent Partial Cross Mapping"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-12-15
+  | Last update: 2026-01-01
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -69,7 +69,7 @@ crime_hoval
 
 Visualize the result:
 
-```{r fig1,fig.width=6.25,fig.height=3.15,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. The causation between crime and house value. **a** Crime–hoval causality without accounting for covariates. **b** Crime–hoval causality controlling for household income.")}
+```{r fig1,fig.width=6.25,fig.height=3.15,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. The cross mapping between crime and house value. **a** Crime–hoval causality without accounting for covariates. **b** Crime–hoval causality controlling for household income.")}
 if (!requireNamespace("cowplot")) install.packages("cowplot")
 
 fig1a = plot(crime_hoval,partial = FALSE,ylimits = c(0.1,0.75))
@@ -165,7 +165,7 @@ xz
 
 Visualize the result:
 
-```{r fig2,fig.width=5.55,fig.height=2.85,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 3**. The cross prediction between x and z. **a** x–z causality without accounting for y. **b** x–z causality controlling for y.")}
+```{r fig2,fig.width=5.55,fig.height=2.85,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 3**. The cross mapping between x and z. **a** x–z causality without accounting for y. **b** x–z causality controlling for y.")}
 fig2a = plot(xz,partial = FALSE,ylimits = c(0.05,0.7))
 fig2b = plot(xz,partial = TRUE,ylimits = c(0.05,0.7))
 fig2 = cowplot::plot_grid(fig2a,fig2b,ncol = 2,label_fontfamily = 'serif',

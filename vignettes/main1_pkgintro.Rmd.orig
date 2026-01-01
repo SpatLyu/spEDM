@@ -2,7 +2,7 @@
 title: "Introduction to the spEDM package"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2025-12-01
+  | Last update: 2026-01-01
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -52,7 +52,7 @@ The *spEDM* package includes three illustrative datasets with well-known causati
 2. **Population density and its potential drivers in mainland China** — A county-level dataset capturing population density alongside relevant socio-environmental drivers.
    *Data files*: `popd.csv`, `popd_nb.gal`
 
-3. **Farmland NPP and related variables** — A raster dataset capturing net primary productivity (NPP) of farmland, key climatic variables, elevation, and human activity footprints across mainland China, suitable for analyzing the interactions between agricultural productivity, environmental conditions, and human activities.
+3. **Farmland NPP and related variables** — A raster dataset capturing farmland net primary productivity (NPP), key climatic variables, elevation, and human activity footprints across mainland China, suitable for analyzing the interactions between agricultural productivity, environmental conditions, and human activities.
    *Data files*: `npp.tif`
 
 These datasets can be loaded as shown below:
