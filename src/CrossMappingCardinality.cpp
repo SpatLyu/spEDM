@@ -205,8 +205,6 @@ CMCRes CrossMappingCardinality(
 // #include "CppDistances.h"
 // #include <RcppThread.h>
 //
-// // [[Rcpp::depends(RcppThread)]]
-//
 // /**
 //  * Computes the Cross Mapping Cardinality (CMC) causal strength score (adjusted based on Python logic).
 //  *
