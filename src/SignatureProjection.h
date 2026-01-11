@@ -7,7 +7,11 @@
 #include <numeric>
 #include <limits>
 #include "NumericUtils.h"
-#include <RcppThread.h>
+// Note: <RcppThread.h> is intentionally excluded from this header to avoid
+//       unnecessary Rcpp dependencies and potential header inclusion order
+//       issues (e.g., R.h being included before Rcpp headers). It should only
+//       be included in the corresponding .cpp implementation file.
+
 /**
  * @brief Predicts signature vectors for a subset of target points using weighted nearest neighbors.
  *

@@ -11,10 +11,13 @@
 #include "SMap.h"
 #include "IntersectionCardinality.h"
 #include "PatternCausality.h"
-#include <RcppThread.h>
+// Note: <RcppThread.h> is intentionally excluded from this header to avoid
+//       unnecessary Rcpp dependencies and potential header inclusion order
+//       issues (e.g., R.h being included before Rcpp headers). It should only
+//       be included in the corresponding .cpp implementation file.
 
 /*
- * Evaluates prediction performance of different combinations of embedding dimensions, number of nearest neighbors and 
+ * Evaluates prediction performance of different combinations of embedding dimensions, number of nearest neighbors and
  * tau values for grid data using simplex projection forecasting.
  *
  * Parameters:
@@ -46,7 +49,7 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
                                               int threads = 8);
 
 /*
- * Evaluates prediction performance of different combinations of embedding dimensions, number of nearest neighbors and 
+ * Evaluates prediction performance of different combinations of embedding dimensions, number of nearest neighbors and
  * tau values for grid data using simplex projection forecasting (composite embeddings version).
  */
 std::vector<std::vector<double>> Simplex4GridCom(const std::vector<std::vector<double>>& source,
@@ -119,7 +122,7 @@ std::vector<std::vector<double>> SMap4GridCom(const std::vector<std::vector<doub
  *
  * This function computes the intersection cardinality between the k-nearest neighbors
  * of grid-embedded source and target spatial variables, across a range of embedding dimensions (E),
- * neighborhood sizes (b) and spatial lag step (tau). The result is an AUC (Area Under the Curve) 
+ * neighborhood sizes (b) and spatial lag step (tau). The result is an AUC (Area Under the Curve)
  * score for each (E, tau) pair that quantifies the directional similarity or interaction between
  * the spatial fields.
  *

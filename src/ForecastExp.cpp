@@ -5,7 +5,6 @@
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
 #include <RcppArmadillo.h>
-// [[Rcpp::depends(RcppArmadillo)]]
 
 /*
  * Computes predictions using the simplex projection method based on state-space reconstruction.

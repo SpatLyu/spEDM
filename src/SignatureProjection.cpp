@@ -6,8 +6,6 @@
 #include "NumericUtils.h"
 #include <RcppThread.h>
 
-// [[Rcpp::depends(RcppThread)]]
-
 /**
  * @brief Predicts signature vectors for a subset of target points using weighted nearest neighbors.
  *

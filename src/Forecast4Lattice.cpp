@@ -10,8 +10,6 @@
 #include "PatternCausality.h"
 #include <RcppThread.h>
 
-// [[Rcpp::depends(RcppThread)]]
-
 /*
  * Evaluates prediction performance of different combinations of embedding dimensions, number of nearest neighbors
  * and tau values for lattice data using simplex projection forecasting.
@@ -248,8 +246,8 @@ std::vector<std::vector<double>> SMap4LatticeCom(const std::vector<double>& sour
 /**
  * Compute Intersection Cardinality AUC over spatial lattice data.
  *
- * This function computes the causal strength between two lattice-structured spatial 
- * cross-sections (`source` and `target`) by evaluating the Intersection Cardinality 
+ * This function computes the causal strength between two lattice-structured spatial
+ * cross-sections (`source` and `target`) by evaluating the Intersection Cardinality
  * (IC) curve, and summarizing it using the Area Under the Curve (AUC) metric.
  *
  * For each combination of embedding dimension `E`, neighbor size `b` and spatial lag
@@ -320,7 +318,7 @@ std::vector<std::vector<double>> IC4Lattice(const std::vector<double>& source,
     for (int t : taus)
       unique_ETau.emplace_back(e, t);
 
-  std::vector<std::vector<double>> result(unique_ETau.size() * bs.size(), 
+  std::vector<std::vector<double>> result(unique_ETau.size() * bs.size(),
                                           std::vector<double>(5));
 
   size_t max_num_neighbors = 0;

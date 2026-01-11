@@ -6,8 +6,6 @@
 #include "SimplexProjection.h"
 #include <RcppThread.h>
 
-// [[Rcpp::depends(RcppThread)]]
-
 /**
  * Computes the multi-view embedding by evaluating multiple feature embeddings using simplex projection,
  * selecting top-performing embeddings, and aggregating their contributions.
