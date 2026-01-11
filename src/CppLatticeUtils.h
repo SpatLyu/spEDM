@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <vector>
 #include <queue> // for std::queue
-#include <numeric>   // for std::accumulate
+#include <numeric>  // for std::accumulate
 #include <algorithm> // for std::sort, std::unique, std::accumulate
 #include <unordered_set> // for std::unordered_set
 #include <unordered_map> // for std::unordered_map
