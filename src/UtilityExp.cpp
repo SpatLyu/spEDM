@@ -2,11 +2,8 @@
 #include <limits>
 #include <cmath>
 #include "NumericUtils.h"
-#include <RcppThread.h>
+#include <thread>
 #include <RcppArmadillo.h>
-
-// [[Rcpp::depends(RcppThread)]]
-// [[Rcpp::depends(RcppArmadillo)]]
 
 // [[Rcpp::export(rng = false)]]
 unsigned int DetectMaxNumThreads(){
