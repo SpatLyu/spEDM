@@ -3,7 +3,6 @@
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
 #include <RcppArmadillo.h>
-// [[Rcpp::depends(RcppArmadillo)]]
 
 // [[Rcpp::export(rng = false)]]
 double RcppEntropy_Cont(const Rcpp::NumericVector& vec, int k = 3,

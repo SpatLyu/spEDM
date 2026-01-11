@@ -17,7 +17,6 @@
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
 #include <RcppArmadillo.h>
-// [[Rcpp::depends(RcppArmadillo)]]
 
 // Function to convert Rcpp::List to std::vector<std::vector<int>> (the `nb` object)
 std::vector<std::vector<int>> nb2vec(const Rcpp::List& nb) {

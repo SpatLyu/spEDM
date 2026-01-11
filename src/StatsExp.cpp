@@ -9,7 +9,6 @@
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
 #include <RcppArmadillo.h>
-// [[Rcpp::depends(RcppArmadillo)]]
 
 // [[Rcpp::export(rng = false)]]
 int RcppFactorial(int n){
