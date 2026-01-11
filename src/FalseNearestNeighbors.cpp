@@ -8,8 +8,6 @@
 #include "CppDistances.h"
 #include <RcppThread.h>
 
-// [[Rcpp::depends(RcppThread)]]
-
 /*
  * Compute the False Nearest Neighbors (FNN) ratio for spatial cross-sectional data.
  *
@@ -73,7 +71,7 @@ double CppSingleFNN(const std::vector<std::vector<double>>& embedding,
       // Find nearest neighbor of i in E1-dimensional space
       for (size_t j = 0; j < lib.size(); ++j) {
         if (pred[i] == lib[j] || checkOneDimVectorNotNanNum(embedding[lib[j]]) == 0) continue;
-        
+
         // Compute distance in E1-dimensional space
         std::vector<double> xi(embedding[pred[i]].begin(), embedding[pred[i]].begin() + E1);
         std::vector<double> xj(embedding[lib[j]].begin(), embedding[lib[j]].begin() + E1);
@@ -249,10 +247,10 @@ double CppSingleFNN(const std::vector<std::vector<std::vector<double>>>& embeddi
             }
 
             if (best_j == N || doubleNearlyEqual(best_mean, 0.0)) continue;
-            
+
             double diff = 0.0;
             size_t num_e2_dist = 0;
-            
+
             for (size_t lagidx = 0; lagidx < embedding[E2 - 1][iidx].size(); ++lagidx) {
               double d = std::abs(embedding[E2 - 1][iidx][lagidx] - embedding[E2 - 1][best_j][lagidx]);
               if (!std::isnan(d)) {
@@ -308,10 +306,10 @@ double CppSingleFNN(const std::vector<std::vector<std::vector<double>>>& embeddi
           }
 
           if (best_j == N || doubleNearlyEqual(best_mean, 0.0)) return;
-          
+
           double diff = 0.0;
           size_t num_e2_dist = 0;
-          
+
           for (size_t lagidx = 0; lagidx < embedding[E2 - 1][iidx].size(); ++lagidx) {
             double d = std::abs(embedding[E2 - 1][iidx][lagidx] - embedding[E2 - 1][best_j][lagidx]);
             if (!std::isnan(d)) {

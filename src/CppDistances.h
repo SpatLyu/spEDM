@@ -9,7 +9,10 @@
 #include <utility>
 #include <stdexcept>
 #include "NumericUtils.h"
-#include <RcppThread.h>
+// Note: <RcppThread.h> is intentionally excluded from this header to avoid
+//       unnecessary Rcpp dependencies and potential header inclusion order
+//       issues (e.g., R.h being included before Rcpp headers). It should only
+//       be included in the corresponding .cpp implementation file.
 
 double CppDistance(const std::vector<double>& vec1,
                    const std::vector<double>& vec2,
