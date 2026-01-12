@@ -11,7 +11,7 @@
 #include "CppStats.h"
 #include "CppDistances.h"
 #include "DataStruct.h"
-#include "IntersectionCardinality.h"
+#include "IntersectionalCardinality.h"
 // Note: <RcppThread.h> is intentionally excluded from this header to avoid
 //       unnecessary Rcpp dependencies and potential header inclusion order
 //       issues (e.g., R.h being included before Rcpp headers). It should only

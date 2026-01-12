@@ -9,7 +9,7 @@
 #include "CppStats.h"
 #include "CppDistances.h"
 #include "DataStruct.h"
-#include "IntersectionCardinality.h"
+#include "IntersectionalCardinality.h"
 #include <RcppThread.h>
 
 /**
@@ -103,7 +103,7 @@ CMCRes CrossMappingCardinality(
     if (progressbar) {
       RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
       for(size_t i = 0; i < unique_lib_sizes.size(); ++i){
-        local_results[i] = IntersectionCardinalitySingle(
+        local_results[i] = IntersectionalCardinalitySingle(
           nx,ny,unique_lib_sizes[i],lib,valid_pred,
           num_neighbors, n_excluded,
           threads_sizet, parallel_level
@@ -112,7 +112,7 @@ CMCRes CrossMappingCardinality(
       }
     } else {
       for(size_t i = 0; i < unique_lib_sizes.size(); ++i){
-        local_results[i] = IntersectionCardinalitySingle(
+        local_results[i] = IntersectionalCardinalitySingle(
           nx,ny,unique_lib_sizes[i],lib,valid_pred,
           num_neighbors, n_excluded,
           threads_sizet, parallel_level
@@ -123,7 +123,7 @@ CMCRes CrossMappingCardinality(
     if (progressbar) {
       RcppThread::ProgressBar bar(unique_lib_sizes.size(), 1);
       RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
-        local_results[i] = IntersectionCardinalitySingle(
+        local_results[i] = IntersectionalCardinalitySingle(
           nx,ny,unique_lib_sizes[i],lib,valid_pred,
           num_neighbors, n_excluded,
           threads_sizet, parallel_level
@@ -132,7 +132,7 @@ CMCRes CrossMappingCardinality(
       }, threads_sizet);
     } else {
       RcppThread::parallelFor(0, unique_lib_sizes.size(), [&](size_t i) {
-        local_results[i] = IntersectionCardinalitySingle(
+        local_results[i] = IntersectionalCardinalitySingle(
           nx,ny,unique_lib_sizes[i],lib,valid_pred,
           num_neighbors, n_excluded,
           threads_sizet, parallel_level
@@ -193,7 +193,7 @@ CMCRes CrossMappingCardinality(
   return result;
 }
 
-// // Previous version of CCM implementation, retained for comparison
+// // Previous version of CMC implementation, retained for comparison
 // #include <vector>
 // #include <cmath>
 // #include <algorithm>
@@ -298,7 +298,7 @@ CMCRes CrossMappingCardinality(
 //           mapped_neighbors[nx] = CppDistKNNIndice(dist_y, nx, k, lib);
 //         }
 //
-//         // Compute intersection ratio between mapped x-neighbors and original y-neighbors
+//         // Compute intersectional ratio between mapped x-neighbors and original y-neighbors
 //         for (size_t ki = 0; ki < k; ++ki) {
 //           size_t count = 0;
 //           for (size_t nx : neighbors_x) {
@@ -379,7 +379,7 @@ CMCRes CrossMappingCardinality(
 //           mapped_neighbors[nx] = CppDistKNNIndice(dist_y, nx, k, lib);
 //         }
 //
-//         // Compute intersection ratio between mapped x-neighbors and original y-neighbors
+//         // Compute intersectional ratio between mapped x-neighbors and original y-neighbors
 //         for (size_t ki = 0; ki < k; ++ki) {
 //           size_t count = 0;
 //           for (size_t nx : neighbors_x) {
