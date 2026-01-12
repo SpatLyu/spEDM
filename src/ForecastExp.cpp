@@ -1,7 +1,7 @@
 #include <vector>
 #include "SimplexProjection.h"
 #include "SMap.h"
-#include "IntersectionCardinality.h"
+#include "IntersectionalCardinality.h"
 // 'Rcpp.h' should not be included and correct to include only 'RcppArmadillo.h'.
 // #include <Rcpp.h>
 #include <RcppArmadillo.h>
@@ -320,9 +320,9 @@ Rcpp::NumericVector RcppSMapForecastCom(
 }
 
 /*
- * Computes the Intersection Cardinality (IC) curve
+ * Computes the Intersectional Cardinality (IC) curve
  *
- * This function serves as an interface between R and C++ to compute the Intersection Cardinality (IC) curve,
+ * This function serves as an interface between R and C++ to compute the Intersectional Cardinality (IC) curve,
  * which quantifies the causal relationship between two variables by comparing the intersection of their nearest
  * neighbors in a state-space reconstruction. The function works by performing cross-mapping and calculating the
  * ratio of shared neighbors for each prediction index.
@@ -339,10 +339,10 @@ Rcpp::NumericVector RcppSMapForecastCom(
  *   parallel_level: Whether to use multithreaded (0) or serial (1) mode
  *
  * Returns:
- *   A NumericVector containing the intersection cardinality curve.
+ *   A NumericVector containing the intersectional cardinality curve.
  */
 // [[Rcpp::export(rng = false)]]
-Rcpp::NumericVector RcppIntersectionCardinality(
+Rcpp::NumericVector RcppIntersectionalCardinality(
     const Rcpp::NumericMatrix& embedding_x,
     const Rcpp::NumericMatrix& embedding_y,
     const Rcpp::IntegerVector& lib,
@@ -391,8 +391,8 @@ Rcpp::NumericVector RcppIntersectionCardinality(
     Rcpp::stop("Library size must not exceed the number of nearest neighbors used for mapping.");
   }
 
-  // Call the IntersectionCardinality function
-  std::vector<double> pred_res = IntersectionCardinality(
+  // Call the IntersectionalCardinality function
+  std::vector<double> pred_res = IntersectionalCardinality(
     e1,
     e2,
     lib_indices,
