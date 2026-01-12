@@ -49,8 +49,8 @@ RcppSMapForecastCom <- function(embeddings, target, lib, pred, num_neighbors = 4
     .Call(`_spEDM_RcppSMapForecastCom`, embeddings, target, lib, pred, num_neighbors, theta, dist_metric, dist_average)
 }
 
-RcppIntersectionCardinality <- function(embedding_x, embedding_y, lib, pred, num_neighbors = 4L, n_excluded = 0L, dist_metric = 2L, threads = 8L, parallel_level = 0L) {
-    .Call(`_spEDM_RcppIntersectionCardinality`, embedding_x, embedding_y, lib, pred, num_neighbors, n_excluded, dist_metric, threads, parallel_level)
+RcppIntersectionalCardinality <- function(embedding_x, embedding_y, lib, pred, num_neighbors = 4L, n_excluded = 0L, dist_metric = 2L, threads = 8L, parallel_level = 0L) {
+    .Call(`_spEDM_RcppIntersectionalCardinality`, embedding_x, embedding_y, lib, pred, num_neighbors, n_excluded, dist_metric, threads, parallel_level)
 }
 
 RcppLocateGridIndices <- function(curRow, curCol, totalRow, totalCol) {

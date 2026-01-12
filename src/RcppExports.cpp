@@ -190,9 +190,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// RcppIntersectionCardinality
-Rcpp::NumericVector RcppIntersectionCardinality(const Rcpp::NumericMatrix& embedding_x, const Rcpp::NumericMatrix& embedding_y, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const int& num_neighbors, const int& n_excluded, const int& dist_metric, const int& threads, const int& parallel_level);
-RcppExport SEXP _spEDM_RcppIntersectionCardinality(SEXP embedding_xSEXP, SEXP embedding_ySEXP, SEXP libSEXP, SEXP predSEXP, SEXP num_neighborsSEXP, SEXP n_excludedSEXP, SEXP dist_metricSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP) {
+// RcppIntersectionalCardinality
+Rcpp::NumericVector RcppIntersectionalCardinality(const Rcpp::NumericMatrix& embedding_x, const Rcpp::NumericMatrix& embedding_y, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const int& num_neighbors, const int& n_excluded, const int& dist_metric, const int& threads, const int& parallel_level);
+RcppExport SEXP _spEDM_RcppIntersectionalCardinality(SEXP embedding_xSEXP, SEXP embedding_ySEXP, SEXP libSEXP, SEXP predSEXP, SEXP num_neighborsSEXP, SEXP n_excludedSEXP, SEXP dist_metricSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type embedding_x(embedding_xSEXP);
@@ -204,7 +204,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int& >::type dist_metric(dist_metricSEXP);
     Rcpp::traits::input_parameter< const int& >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< const int& >::type parallel_level(parallel_levelSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppIntersectionCardinality(embedding_x, embedding_y, lib, pred, num_neighbors, n_excluded, dist_metric, threads, parallel_level));
+    rcpp_result_gen = Rcpp::wrap(RcppIntersectionalCardinality(embedding_x, embedding_y, lib, pred, num_neighbors, n_excluded, dist_metric, threads, parallel_level));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1734,7 +1734,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_spEDM_RcppSimplexForecastCom", (DL_FUNC) &_spEDM_RcppSimplexForecastCom, 7},
     {"_spEDM_RcppSMapForecast", (DL_FUNC) &_spEDM_RcppSMapForecast, 8},
     {"_spEDM_RcppSMapForecastCom", (DL_FUNC) &_spEDM_RcppSMapForecastCom, 8},
-    {"_spEDM_RcppIntersectionCardinality", (DL_FUNC) &_spEDM_RcppIntersectionCardinality, 9},
+    {"_spEDM_RcppIntersectionalCardinality", (DL_FUNC) &_spEDM_RcppIntersectionalCardinality, 9},
     {"_spEDM_RcppLocateGridIndices", (DL_FUNC) &_spEDM_RcppLocateGridIndices, 4},
     {"_spEDM_RcppRowColFromGrid", (DL_FUNC) &_spEDM_RcppRowColFromGrid, 2},
     {"_spEDM_RcppLaggedVal4Grid", (DL_FUNC) &_spEDM_RcppLaggedVal4Grid, 2},
