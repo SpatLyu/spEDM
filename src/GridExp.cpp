@@ -579,7 +579,7 @@ Rcpp::NumericVector RcppFNN4Grid(
   return result;
 }
 
-// Wrapper function to perform simplex forecasting for spatial grid data
+// Wrapper function to perform parameter selection of simplex forecasting for spatial grid data
 // [[Rcpp::export(rng = false)]]
 Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
                                      const Rcpp::NumericMatrix& target,
@@ -731,7 +731,7 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
   return result;
 }
 
-// Wrapper function to perform s-mapping for spatial grid data
+// Wrapper function to perform parameter selection of s-mapping for spatial grid data
 // [[Rcpp::export(rng = false)]]
 Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& source,
                                   const Rcpp::NumericMatrix& target,
@@ -1097,7 +1097,7 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
   return resmat;
 }
 
-// Wrapper function to compute intersection cardinality for spatial grid data
+// Wrapper function to perform parameter selection of intersectional cardinality for spatial grid data
 // [[Rcpp::export(rng = false)]]
 Rcpp::NumericMatrix RcppIC4Grid(const Rcpp::NumericMatrix& source,
                                 const Rcpp::NumericMatrix& target,
