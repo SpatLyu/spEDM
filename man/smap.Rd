@@ -4,7 +4,7 @@
 \alias{smap}
 \alias{smap,sf-method}
 \alias{smap,SpatRaster-method}
-\title{optimal parameter search for smap forecasting}
+\title{optimal parameter search for s-mapping}
 \usage{
 \S4method{smap}{sf}(
   data,
@@ -93,7 +93,7 @@ A list
 }
 }
 \description{
-optimal parameter search for smap forecasting
+optimal parameter search for s-mapping
 }
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg",package="spEDM"))
