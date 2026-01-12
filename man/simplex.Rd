@@ -4,7 +4,7 @@
 \alias{simplex}
 \alias{simplex,sf-method}
 \alias{simplex,SpatRaster-method}
-\title{optimal parameter search for simplex forecasting}
+\title{optimal parameter search for simplex projection}
 \usage{
 \S4method{simplex}{sf}(
   data,
@@ -87,7 +87,7 @@ A list
 }
 }
 \description{
-optimal parameter search for simplex forecasting
+optimal parameter search for simplex projection
 }
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg",package="spEDM"))
