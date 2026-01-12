@@ -9,7 +9,7 @@
 #include "CppLatticeUtils.h"
 #include "SimplexProjection.h"
 #include "SMap.h"
-#include "IntersectionCardinality.h"
+#include "IntersectionalCardinality.h"
 #include "PatternCausality.h"
 // Note: <RcppThread.h> is intentionally excluded from this header to avoid
 //       unnecessary Rcpp dependencies and potential header inclusion order
@@ -122,17 +122,17 @@ std::vector<std::vector<double>> SMap4LatticeCom(const std::vector<double>& sour
                                                  int threads = 8);
 
 /**
- * Compute Intersection Cardinality AUC over spatial lattice data.
+ * Compute Intersectional Cardinality AUC over spatial lattice data.
  *
  * This function computes the causal strength between two lattice-structured spatial
- * cross-sections (`source` and `target`) by evaluating the Intersection Cardinality
+ * cross-sections (`source` and `target`) by evaluating the Intersectional Cardinality
  * (IC) curve, and summarizing it using the Area Under the Curve (AUC) metric.
  *
  * For each combination of embedding dimension `E`, neighbor size `b` and spatial lag
  * step `tau`, the function:
  *  - Generates state-space embeddings based on lattice neighborhood topology.
  *  - Filters out prediction points with missing (NaN) values.
- *  - Computes neighbor structures and evaluates intersection sizes between the mapped
+ *  - Computes neighbor structures and evaluates intersectional sizes between the mapped
  *    neighbors of `source` and `target`.
  *  - Aggregates the IC curve and estimates the AUC (optionally using significance test).
  *
