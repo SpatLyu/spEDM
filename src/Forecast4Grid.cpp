@@ -6,7 +6,7 @@
 #include "CppGridUtils.h"
 #include "SimplexProjection.h"
 #include "SMap.h"
-#include "IntersectionCardinality.h"
+#include "IntersectionalCardinality.h"
 #include "PatternCausality.h"
 #include <RcppThread.h>
 
@@ -292,9 +292,9 @@ std::vector<std::vector<double>> SMap4GridCom(const std::vector<std::vector<doub
 }
 
 /**
- * @brief Evaluate intersection cardinality (IC) for spatial grid data.
+ * @brief Evaluate intersectional cardinality (IC) for spatial grid data.
  *
- * This function computes the intersection cardinality between the k-nearest neighbors
+ * This function computes the intersectional cardinality between the k-nearest neighbors
  * of grid-embedded source and target spatial variables, across a range of embedding dimensions (E),
  * neighborhood sizes (b) and spatial lag step (tau). The result is an AUC (Area Under the Curve)
  * score for each (E, tau) pair that quantifies the directional similarity or interaction between
@@ -405,7 +405,7 @@ std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>&
         const size_t k = static_cast<size_t>(bs[j]);
 
         // run cross mapping
-        std::vector<IntersectionRes> res = IntersectionCardinalitySingle(
+        std::vector<IntersectionRes> res = IntersectionalCardinalitySingle(
           nx,ny,lib_indices.size(),lib_indices,valid_pred,k,n_excluded_sizet,threads_sizet,0
         );
 
@@ -458,7 +458,7 @@ std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>&
         const size_t k = static_cast<size_t>(bs[j]);
 
         // run cross mapping
-        std::vector<IntersectionRes> res = IntersectionCardinalitySingle(
+        std::vector<IntersectionRes> res = IntersectionalCardinalitySingle(
           nx,ny,lib_indices.size(),lib_indices,valid_pred,k,n_excluded_sizet,threads_sizet,1
         );
 
