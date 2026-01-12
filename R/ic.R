@@ -21,7 +21,7 @@
   return(.bind_xmapself(res,target,"ic"))
 }
 
-#' optimal parameter search for intersection cardinality
+#' optimal parameter search for intersectional cardinality
 #'
 #' @inheritParams simplex
 #'

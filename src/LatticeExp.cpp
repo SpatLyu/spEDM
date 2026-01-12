@@ -501,9 +501,9 @@ Rcpp::NumericVector RcppFNN4Lattice(
 
 /**
  * Description:
- *   Computes Simplex projection for lattice data and returns a matrix containing
- *   the embedding dimension (E), Pearson correlation coefficient (PearsonCor),
- *   mean absolute error (MAE), and root mean squared error (RMSE).
+ *   Performs parameter selection of Simplex projection for lattice data and returns
+ *   a matrix containing the embedding dimension (E), Pearson correlation coefficient
+ *   (PearsonCor), mean absolute error (MAE), and root mean squared error (RMSE).
  *
  * Parameters:
  *   - source: A NumericVector containing the source spatial cross-sectional data to be embedded.
@@ -629,6 +629,9 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& source,
 }
 
 /**
+ * Description:
+ *   Performs parameter selection of s-mapping for lattice data
+ *
  * Parameters:
  *   - source: A NumericVector containing the source spatial cross-sectional data to be embedded.
  *   - target: A NumericVector containing the source spatial cross-sectional data to be predicted.
@@ -935,7 +938,7 @@ Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
   }
 }
 
-// Wrapper function to compute intersection cardinality for spatial lattice data
+// Wrapper function to perform parameter selection of intersectional cardinality for spatial lattice data
 // [[Rcpp::export(rng = false)]]
 Rcpp::NumericMatrix RcppIC4Lattice(const Rcpp::NumericVector& source,
                                    const Rcpp::NumericVector& target,

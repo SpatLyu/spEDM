@@ -26,7 +26,7 @@
  *   parallel_level - Whether to use multithreaded (0) or serial (1) mode
  *
  * Returns:
- *   A vector of IntersectionRes structures, each containing the average intersection
+ *   A vector of IntersectionRes structures, each containing the average intersectional
  *   ratio sequence (IC curve) for a different starting point of the moving library.
  *   If lib_size == lib_indices.size(), returns a single result using full library.
  *
@@ -35,7 +35,7 @@
  *   - This function assumes that the neighbor vectors are sorted by ascending distance.
  *   - Use in combination with AUC computation to assess causal strength.
  */
-std::vector<IntersectionRes> IntersectionCardinalitySingle(
+std::vector<IntersectionRes> IntersectionalCardinalitySingle(
     const std::vector<std::vector<size_t>>& neighborsX,
     const std::vector<std::vector<size_t>>& neighborsY,
     size_t lib_size,
@@ -105,7 +105,7 @@ std::vector<IntersectionRes> IntersectionCardinalitySingle(
               }
             }
 
-            // Compute intersection ratio between mapped x-neighbors and original y-neighbors
+            // Compute intersectional ratio between mapped x-neighbors and original y-neighbors
             for (size_t ki = 0; ki < num_neighbors; ++ki) {
               size_t count = 0;
 
@@ -180,7 +180,7 @@ std::vector<IntersectionRes> IntersectionCardinalitySingle(
               }
             }
 
-            // Compute intersection ratio between mapped x-neighbors and original y-neighbors
+            // Compute intersectional ratio between mapped x-neighbors and original y-neighbors
             for (size_t ki = 0; ki < num_neighbors; ++ki) {
               size_t count = 0;
 
@@ -291,7 +291,7 @@ std::vector<IntersectionRes> IntersectionCardinalitySingle(
 }
 
 /**
- * Computes the Intersection Cardinality (IC) curve for causal inference via cross mapping.
+ * Computes the Intersectional Cardinality (IC) curve for causal inference via cross mapping.
  *
  * This function evaluates the extent to which neighbors of the effect variable Y
  * are preserved when mapped through the neighbors of cause variable X.
@@ -299,7 +299,7 @@ std::vector<IntersectionRes> IntersectionCardinalitySingle(
  * the intersection count between the k nearest neighbors of Y and the k nearest neighbors of X,
  * for each prediction point.
  *
- * The output is an Intersection Cardinality (IC) curve, which can be further processed
+ * The output is an Intersectional Cardinality (IC) curve, which can be further processed
  * (e.g., calculating AUC, statistical significance) outside this function.
  *
  * @param embedding_x     State-space embedding of the potential cause variable (NxE matrix).
@@ -323,7 +323,7 @@ std::vector<IntersectionRes> IntersectionCardinalitySingle(
  *   - This function returns only the raw intersection values. To compute AUC or p-values,
  *     use additional post-processing such as DeLong’s test.
  */
-std::vector<double> IntersectionCardinality(
+std::vector<double> IntersectionalCardinality(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
     const std::vector<size_t>& lib,
@@ -368,7 +368,7 @@ std::vector<double> IntersectionCardinality(
   auto ny = CppMatKNNeighbors(embedding_y, lib, num_neighbors + n_excluded, threads_sizet, L1norm);
 
   // run cross mapping
-  std::vector<IntersectionRes> res = IntersectionCardinalitySingle(
+  std::vector<IntersectionRes> res = IntersectionalCardinalitySingle(
     nx,ny,lib.size(),lib,pred,num_neighbors,n_excluded,threads_sizet,parallel_level
   );
 
@@ -378,11 +378,11 @@ std::vector<double> IntersectionCardinality(
 }
 
 /**
- * Computes the Intersection Cardinality (IC) AUC-based causal strength score.
+ * Computes the Intersectional Cardinality (IC) AUC-based causal strength score.
  *
  * This function evaluates the extent to which neighbors of the effect variable Y
  * are preserved when mapped through the neighbors of cause variable X, by calculating
- * the intersection ratio curve and evaluating its AUC (area under curve).
+ * the intersectional ratio curve and evaluating its AUC (area under curve).
  * Statistical significance (p-value) and confidence interval are computed via DeLong's test.
  *
  * Parameters:
@@ -398,12 +398,12 @@ std::vector<double> IntersectionCardinality(
  *
  * Returns:
  *   A vector of 4 values:
- *     [0] - AUC (Intersection Cardinality score, bounded [0, 1])
+ *     [0] - AUC (Intersectional Cardinality score, bounded [0, 1])
  *     [1] - p-value from DeLong test (testing whether AUC > 0.5)
  *     [2] - Confidence interval lower bound
  *     [3] - Confidence interval upper bound
  */
-std::vector<double> IntersectionCardinalityScores(
+std::vector<double> IntersectionalCardinalityScores(
     const std::vector<std::vector<double>>& embedding_x,
     const std::vector<std::vector<double>>& embedding_y,
     const std::vector<size_t>& lib,
@@ -447,7 +447,7 @@ std::vector<double> IntersectionCardinalityScores(
   auto ny = CppMatKNNeighbors(embedding_y, lib, num_neighbors + n_excluded, threads_sizet, L1norm);
 
   // run cross mapping
-  std::vector<IntersectionRes> res = IntersectionCardinalitySingle(
+  std::vector<IntersectionRes> res = IntersectionalCardinalitySingle(
     nx,ny,lib.size(),lib,pred,num_neighbors,n_excluded,threads_sizet,parallel_level
   );
 
