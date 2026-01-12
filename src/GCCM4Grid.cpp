@@ -11,8 +11,6 @@
 #include "SMap.h"
 #include <RcppThread.h>
 
-// [[Rcpp::depends(RcppThread)]]
-
 /**
  * Perform Grid-based Geographical Convergent Cross Mapping (GCCM) for a single library size and pred indice.
  *

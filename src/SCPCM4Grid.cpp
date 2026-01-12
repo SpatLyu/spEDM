@@ -12,8 +12,6 @@
 #include "DataStruct.h"
 #include <RcppThread.h>
 
-// [[Rcpp::depends(RcppThread)]]
-
 /**
  * @brief Computes the partial correlation between a spatial cross-sectional series and its prediction
  *        using the Simplex Projection method, incorporating control variables in a grid-based spatial setting.

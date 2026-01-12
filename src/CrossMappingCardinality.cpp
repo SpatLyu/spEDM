@@ -4,14 +4,13 @@
 #include <numeric>
 #include <limits>
 #include <utility>
+#include <map>
 #include <unordered_set>
 #include "CppStats.h"
 #include "CppDistances.h"
 #include "DataStruct.h"
 #include "IntersectionCardinality.h"
 #include <RcppThread.h>
-
-// [[Rcpp::depends(RcppThread)]]
 
 /**
  * @brief Computes the Cross Mapping Cardinality (CMC) causal strength score.
@@ -205,8 +204,6 @@ CMCRes CrossMappingCardinality(
 // #include "CppStats.h"
 // #include "CppDistances.h"
 // #include <RcppThread.h>
-//
-// // [[Rcpp::depends(RcppThread)]]
 //
 // /**
 //  * Computes the Cross Mapping Cardinality (CMC) causal strength score (adjusted based on Python logic).

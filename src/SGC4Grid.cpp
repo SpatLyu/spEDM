@@ -5,8 +5,6 @@
 #include "SpatialBlockBootstrap.h"
 #include <RcppThread.h>
 
-// [[Rcpp::depends(RcppThread)]]
-
 /**
  * @brief Compute directional spatial granger causality for 2D grid data using symbolic entropy measures.
  *

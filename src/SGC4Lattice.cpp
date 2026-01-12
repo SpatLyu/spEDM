@@ -5,8 +5,6 @@
 #include "SpatialBlockBootstrap.h"
 #include <RcppThread.h>
 
-// [[Rcpp::depends(RcppThread)]]
-
 /**
  * @brief Computes directional spatial granger causality between two spatial variables
  * on a spatial lattice using spatial neighbor embeddings and quantized entropy measures.

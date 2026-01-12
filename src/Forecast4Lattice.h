@@ -11,7 +11,10 @@
 #include "SMap.h"
 #include "IntersectionCardinality.h"
 #include "PatternCausality.h"
-#include <RcppThread.h>
+// Note: <RcppThread.h> is intentionally excluded from this header to avoid
+//       unnecessary Rcpp dependencies and potential header inclusion order
+//       issues (e.g., R.h being included before Rcpp headers). It should only
+//       be included in the corresponding .cpp implementation file.
 
 /*
  * Evaluates prediction performance of different combinations of embedding dimensions, number of nearest neighbors
@@ -121,8 +124,8 @@ std::vector<std::vector<double>> SMap4LatticeCom(const std::vector<double>& sour
 /**
  * Compute Intersection Cardinality AUC over spatial lattice data.
  *
- * This function computes the causal strength between two lattice-structured spatial 
- * cross-sections (`source` and `target`) by evaluating the Intersection Cardinality 
+ * This function computes the causal strength between two lattice-structured spatial
+ * cross-sections (`source` and `target`) by evaluating the Intersection Cardinality
  * (IC) curve, and summarizing it using the Area Under the Curve (AUC) metric.
  *
  * For each combination of embedding dimension `E`, neighbor size `b` and spatial lag

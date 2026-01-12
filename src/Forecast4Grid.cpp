@@ -10,10 +10,8 @@
 #include "PatternCausality.h"
 #include <RcppThread.h>
 
-// [[Rcpp::depends(RcppThread)]]
-
 /*
- * Evaluates prediction performance of different combinations of embedding dimensions, number of nearest neighbors and 
+ * Evaluates prediction performance of different combinations of embedding dimensions, number of nearest neighbors and
  * tau values for grid data using simplex projection forecasting.
  *
  * Parameters:
@@ -105,7 +103,7 @@ std::vector<std::vector<double>> Simplex4Grid(const std::vector<std::vector<doub
 }
 
 /*
- * Evaluates prediction performance of different combinations of embedding dimensions, number of nearest neighbors and 
+ * Evaluates prediction performance of different combinations of embedding dimensions, number of nearest neighbors and
  * tau values for grid data using simplex projection forecasting (composite embeddings version).
  */
 std::vector<std::vector<double>> Simplex4GridCom(const std::vector<std::vector<double>>& source,
@@ -298,7 +296,7 @@ std::vector<std::vector<double>> SMap4GridCom(const std::vector<std::vector<doub
  *
  * This function computes the intersection cardinality between the k-nearest neighbors
  * of grid-embedded source and target spatial variables, across a range of embedding dimensions (E),
- * neighborhood sizes (b) and spatial lag step (tau). The result is an AUC (Area Under the Curve) 
+ * neighborhood sizes (b) and spatial lag step (tau). The result is an AUC (Area Under the Curve)
  * score for each (E, tau) pair that quantifies the directional similarity or interaction between
  * the spatial fields.
  *
@@ -360,7 +358,7 @@ std::vector<std::vector<double>> IC4Grid(const std::vector<std::vector<double>>&
     for (int t : taus)
       unique_ETau.emplace_back(e, t);
 
-  std::vector<std::vector<double>> result(unique_ETau.size() * bs.size(), 
+  std::vector<std::vector<double>> result(unique_ETau.size() * bs.size(),
                                           std::vector<double>(5));
 
   size_t max_num_neighbors = 0;

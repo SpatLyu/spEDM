@@ -18,8 +18,6 @@
 #include "SignatureProjection.h"
 #include <RcppThread.h>
 
-// [[Rcpp::depends(RcppThread)]]
-
 /**
  * @brief Computes the Signature Space Matrix from a State Space Matrix.
  *

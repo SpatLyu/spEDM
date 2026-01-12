@@ -9,7 +9,10 @@
 #include "NumericUtils.h"
 #include "CppStats.h"
 #include "CppDistances.h"
-#include <RcppThread.h>
+// Note: <RcppThread.h> is intentionally excluded from this header to avoid
+//       unnecessary Rcpp dependencies and potential header inclusion order
+//       issues (e.g., R.h being included before Rcpp headers). It should only
+//       be included in the corresponding .cpp implementation file.
 
 /*
  * Compute the False Nearest Neighbors (FNN) ratio for spatial cross-sectional data.
