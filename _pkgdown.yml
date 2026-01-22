@@ -53,6 +53,7 @@ reference:
   - gccm
   - gcmc
   - gpc
+  - scpcm
 
 - subtitle: Nonlinear forecasting
   contents:
