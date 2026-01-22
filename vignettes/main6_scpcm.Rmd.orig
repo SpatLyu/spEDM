@@ -2,7 +2,7 @@
 title: "Spatially Convergent Partial Cross Mapping"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2026-01-01
+  | Last update: 2026-01-23
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -165,7 +165,7 @@ xz
 
 Visualize the result:
 
-```{r fig2,fig.width=5.55,fig.height=2.85,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 3**. The cross mapping between x and z. **a** x–z causality without accounting for y. **b** x–z causality controlling for y.")}
+```{r fig3,fig.width=5.55,fig.height=2.85,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 3**. The cross mapping between x and z. **a** x–z causality without accounting for y. **b** x–z causality controlling for y.")}
 fig2a = plot(xz,partial = FALSE,ylimits = c(0.05,0.7))
 fig2b = plot(xz,partial = TRUE,ylimits = c(0.05,0.7))
 fig2 = cowplot::plot_grid(fig2a,fig2b,ncol = 2,label_fontfamily = 'serif',
