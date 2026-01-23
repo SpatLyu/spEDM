@@ -134,9 +134,9 @@ spEDM::fnn(species, "z")
 Self prediction for parameter turning:
 
 ```{r simplex_grid}
-s1 = spEDM::simplex(species, "x", "x", E = 5:13, k = 15, tau = 1)
-s2 = spEDM::simplex(species, "y", "y", E = 5:13, k = 15, tau = 1)
-s3 = spEDM::simplex(species, "z", "z", E = 5:13, k = 15, tau = 1)
+s1 = spEDM::simplex(species, "x", "x", E = 5:10, k = 15, tau = 1)
+s2 = spEDM::simplex(species, "y", "y", E = 5:10, k = 15, tau = 1)
+s3 = spEDM::simplex(species, "z", "z", E = 5:10, k = 15, tau = 1)
 list(s1,s2,s3)
 ```
 
@@ -153,12 +153,12 @@ ggplot2::ggplot(data = simplex_res) +
 
 <br>
 
-Since the self-prediction performance of the y variable is relatively weaker than that of x and z, we select the embedding dimension that yields relatively stable and fairly good predictive performance for y as the final dimension, that is $E = 12$.
+Since the self-prediction performance of the y variable is relatively weaker than that of x and z, we select the embedding dimension that yields the strongest predictive performance for y as the final dimension, that is $E = 9$.
 
 Investigate the causation between x and z, with y as control variables:
 
 ```{r scpcm_grid}
-xz = spEDM::scpcm(species, "x", "z", "y", E = 12, k = 15,
+xz = spEDM::scpcm(species, "x", "z", "y", E = 9, k = 15,
                   libsizes = matrix(seq(50,400,50), ncol = 1),
                   progressbar = FALSE)
 xz
@@ -166,7 +166,7 @@ xz
 
 Visualize the result:
 
-```{r fig3,fig.width=5.55,fig.height=2.85,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 3**. The cross mapping between x and z. **a** x–z causality without accounting for y. **b** x–z causality controlling for y.")}
+```{r fig3,fig.width=5.55,fig.height=2.95,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 3**. The cross mapping between x and z. **a** x–z causality without accounting for y. **b** x–z causality controlling for y.")}
 fig2a = plot(xz,partial = FALSE,ylimits = c(0.05,0.65))
 fig2b = plot(xz,partial = TRUE,ylimits = c(0.05,0.65))
 fig2 = cowplot::plot_grid(fig2a,fig2b,ncol = 2,label_fontfamily = 'serif',
