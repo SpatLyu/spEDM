@@ -23,6 +23,8 @@ navbar:
         href: articles/main4_gpc.html
       - text: 5. Geographical Cross Mapping Cardinality
         href: articles/main5_gcmc.html
+      - text: 6. Spatially Convergent Partial Cross Mapping
+        href: articles/main6_scpcm.html
       - text: SI1. Spatial Logistic Map
         href: articles/si1_slm.html
       - text: SI2. Spatial Causality Test
@@ -53,6 +55,7 @@ reference:
   - gccm
   - gcmc
   - gpc
+  - scpcm
 
 - subtitle: Nonlinear forecasting
   contents:

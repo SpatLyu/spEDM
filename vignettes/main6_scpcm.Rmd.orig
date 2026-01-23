@@ -2,7 +2,7 @@
 title: "Spatially Convergent Partial Cross Mapping"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2026-01-01
+  | Last update: 2026-01-23
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -63,7 +63,8 @@ crime_hoval = spEDM::scpcm(data = columbus,
                            conds = "inc",
                            libsizes = seq(5, 45, by = 5),
                            E = c(8,7,8),
-                           k = 12)
+                           k = 12,
+                           progressbar = FALSE)
 crime_hoval
 ```
 
@@ -159,13 +160,14 @@ Investigate the causation between x and z, with y as control variables:
 
 ```{r scpcm_grid}
 xz = spEDM::scpcm(species, "x", "z", "y", E = 9, k = 15,
-                  libsizes = matrix(seq(50,400,50), ncol = 1))
+                  libsizes = matrix(seq(50,400,50), ncol = 1),
+                  progressbar = FALSE)
 xz
 ```
 
 Visualize the result:
 
-```{r fig2,fig.width=5.55,fig.height=2.85,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 3**. The cross mapping between x and z. **a** x–z causality without accounting for y. **b** x–z causality controlling for y.")}
+```{r fig3,fig.width=5.55,fig.height=2.85,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 3**. The cross mapping between x and z. **a** x–z causality without accounting for y. **b** x–z causality controlling for y.")}
 fig2a = plot(xz,partial = FALSE,ylimits = c(0.05,0.7))
 fig2b = plot(xz,partial = TRUE,ylimits = c(0.05,0.7))
 fig2 = cowplot::plot_grid(fig2a,fig2b,ncol = 2,label_fontfamily = 'serif',
