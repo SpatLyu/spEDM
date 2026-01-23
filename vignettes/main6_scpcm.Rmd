@@ -223,9 +223,9 @@ Self prediction for parameter turning:
 
 
 ``` r
-s1 = spEDM::simplex(species, "x", "x", E = 5:13, k = 15, tau = 1)
-s2 = spEDM::simplex(species, "y", "y", E = 5:13, k = 15, tau = 1)
-s3 = spEDM::simplex(species, "z", "z", E = 5:13, k = 15, tau = 1)
+s1 = spEDM::simplex(species, "x", "x", E = 5:10, k = 15, tau = 1)
+s2 = spEDM::simplex(species, "y", "y", E = 5:10, k = 15, tau = 1)
+s3 = spEDM::simplex(species, "z", "z", E = 5:10, k = 15, tau = 1)
 list(s1,s2,s3)
 ## [[1]]
 ## The suggested E,k,tau for variable x is 7, 15 and 1 
@@ -254,13 +254,13 @@ ggplot2::ggplot(data = simplex_res) +
 
 <br>
 
-Since the self-prediction performance of the y variable is relatively weaker than that of x and z, we select the embedding dimension that yields relatively stable and fairly good predictive performance for y as the final dimension, that is $E = 12$.
+Since the self-prediction performance of the y variable is relatively weaker than that of x and z, we select the embedding dimension that yields the strongest predictive performance for y as the final dimension, that is $E = 9$.
 
 Investigate the causation between x and z, with y as control variables:
 
 
 ``` r
-xz = spEDM::scpcm(species, "x", "z", "y", E = 12, k = 15,
+xz = spEDM::scpcm(species, "x", "z", "y", E = 9, k = 15,
                   libsizes = matrix(seq(50,400,50), ncol = 1),
                   progressbar = FALSE)
 xz
@@ -268,27 +268,27 @@ xz
 ## ***partial cross mapping prediction*** 
 ## -------------------------------------- 
 ##   libsizes       x->z      z->x
-## 1       50 0.07012948 0.1280262
-## 2      100 0.06351926 0.1825078
-## 3      150 0.09457390 0.2199306
-## 4      200 0.14493017 0.2588202
-## 5      250 0.18167778 0.2807256
-## 6      300 0.19455661 0.3043906
-## 7      350 0.19592172 0.3433233
-## 8      400 0.17315840 0.3544498
+## 1       50 0.07977338 0.1020714
+## 2      100 0.10473775 0.1762694
+## 3      150 0.14175015 0.1959109
+## 4      200 0.20562278 0.2543825
+## 5      250 0.25500417 0.3300376
+## 6      300 0.27904324 0.3956866
+## 7      350 0.31249554 0.4597477
+## 8      400 0.28091955 0.4843444
 ## 
 ## ------------------------------ 
 ## ***cross mapping prediction*** 
 ## ------------------------------ 
 ##   libsizes      x->z      z->x
-## 1       50 0.1467021 0.1496570
-## 2      100 0.1790469 0.2216212
-## 3      150 0.2273195 0.2867529
-## 4      200 0.2965731 0.3530164
-## 5      250 0.3625390 0.4143833
-## 6      300 0.4227430 0.4717368
-## 7      350 0.4717804 0.5382956
-## 8      400 0.5104943 0.5830210
+## 1       50 0.1542880 0.1368370
+## 2      100 0.1827606 0.2217753
+## 3      150 0.2426258 0.2781118
+## 4      200 0.3239733 0.3487456
+## 5      250 0.4035323 0.4185710
+## 6      300 0.4653763 0.4835619
+## 7      350 0.5190529 0.5553776
+## 8      400 0.5658039 0.5938894
 ```
 
 Visualize the result:
