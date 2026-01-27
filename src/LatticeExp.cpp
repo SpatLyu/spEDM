@@ -86,13 +86,13 @@ Rcpp::List RcppLaggedVal4Lattice(const Rcpp::NumericVector& vec,
   // Convert Rcpp::NumericVector to std::vector<double>
   std::vector<double> vec_std = Rcpp::as<std::vector<double>>(vec);
 
-  // Convert Rcpp::List to std::vector<std::vector<int>>
+  // Convert nb object from Rcpp::List to std::vector<std::vector<int>>
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
-  // Calculate lagged indices
+  // Calculate lagged values
   std::vector<std::vector<double>> lagged_values = CppLaggedVal4Lattice(vec_std, nb_vec, lagNum);
 
-  // Convert std::vector<std::vector<int>> to Rcpp::List
+  // Convert std::vector<std::vector<double>> to Rcpp::List
   Rcpp::List result(n);
   for (int i = 0; i < n; ++i) {
     result[i] = Rcpp::wrap(lagged_values[i]);
