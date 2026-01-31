@@ -471,7 +471,7 @@ Rcpp::IntegerVector RcppKNNIndice(const Rcpp::NumericMatrix& embedding_space,
   std::vector<size_t> lib_std;
   lib_std.reserve(lib.size());
   for (int i = 0; i < lib.size(); ++i) {
-    if (lib[i] >= 1 && lib[i] <= n_rows) {
+    if (lib[i] >= 1 && lib[i] <= static_cast<int>(n_rows)) {
       lib_std.push_back(lib[i] - 1);
     }
   }
@@ -523,7 +523,7 @@ Rcpp::IntegerVector RcppDistKNNIndice(const Rcpp::NumericMatrix& dist_mat,
   std::vector<size_t> lib_std;
   lib_std.reserve(lib.size());
   for (int i = 0; i < lib.size(); ++i) {
-    if (lib[i] >= 1 && lib[i] <= n_rows) {
+    if (lib[i] >= 1 && lib[i] <= static_cast<int>(n_rows)) {
       lib_std.push_back(lib[i] - 1);
     }
   }
