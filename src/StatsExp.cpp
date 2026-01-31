@@ -468,7 +468,7 @@ Rcpp::IntegerVector RcppKNNIndice(const Rcpp::NumericMatrix& embedding_space,
   }
 
   // Convert lib (1-based R index) to lib_std (0-based C++ index)
-  std::vector<size_t> lib_std(lib.size());
+  std::vector<size_t> lib_std;
   lib_std.reserve(lib.size());
   for (int i = 0; i < lib.size(); ++i) {
     if (lib[i] >= 1 && lib[i] <= n_rows) {
@@ -520,7 +520,7 @@ Rcpp::IntegerVector RcppDistKNNIndice(const Rcpp::NumericMatrix& dist_mat,
   }
 
   // Convert lib (1-based R index) to lib_std (0-based C++ index)
-  std::vector<size_t> lib_std(lib.size());
+  std::vector<size_t> lib_std;
   lib_std.reserve(lib.size());
   for (int i = 0; i < lib.size(); ++i) {
     if (lib[i] >= 1 && lib[i] <= n_rows) {
@@ -560,7 +560,7 @@ Rcpp::List RcppDistSortedIndice(const Rcpp::NumericMatrix& dist_mat,
     }
   }
 
-  std::vector<size_t> lib_std(lib.size());
+  std::vector<size_t> lib_std;
   lib_std.reserve(lib.size());
   for (int i = 0; i < lib.size(); ++i) {
     if (lib[i] >= 1 && lib[i] <= n) {
@@ -607,7 +607,7 @@ Rcpp::List RcppMatKNNeighbors(const Rcpp::NumericMatrix& embeddings,
     }
   }
 
-  std::vector<size_t> lib_std(lib.size());
+  std::vector<size_t> lib_std;
   lib_std.reserve(lib.size());
   for (int i = 0; i < lib.size(); ++i) {
     if (lib[i] >= 1 && lib[i] <= n) {
