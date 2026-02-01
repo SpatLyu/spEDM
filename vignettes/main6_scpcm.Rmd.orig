@@ -2,7 +2,7 @@
 title: "Spatially Convergent Partial Cross Mapping"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2026-01-23
+  | Last update: 2026-02-01
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
