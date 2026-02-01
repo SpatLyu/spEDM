@@ -2,7 +2,7 @@
 
 ### bug fixes
 
-* Resolved macOS CRAN check failures caused by missing `#include` directives for `string` and `utility` headers (#948).
+* Resolve macOS CRAN check failures caused by missing `#include` directives for `string` and `utility` headers (#948).
 
 # spEDM 1.10
 
