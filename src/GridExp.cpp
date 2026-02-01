@@ -229,31 +229,33 @@ Rcpp::NumericVector RcppGenGridSymbolization(const Rcpp::NumericMatrix& mat,
 
   // Convert lib to a fundamental C++ data type
   int lib_dim = lib.ncol();
-  std::vector<std::pair<int, int>> lib_std(lib.nrow());
+  std::vector<std::pair<int, int>> lib_std;
+  lib_std.reserve(lib.nrow());
 
   if (lib_dim == 1){
     for (int i = 0; i < lib.nrow(); ++i) {
       std::vector<int> rowcolnum = RowColFromGrid(lib(i, 0) - 1, numCols);
-      lib_std[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+      lib_std.emplace_back(rowcolnum[0], rowcolnum[1]);
     }
   } else {
     for (int i = 0; i < lib.nrow(); ++i) {
-      lib_std[i] = std::make_pair(lib(i, 0) - 1, lib(i, 1) - 1);
+      lib_std.emplace_back(lib(i, 0) - 1, lib(i, 1) - 1);
     }
   }
 
   // Convert pred to a fundamental C++ data type
   int pred_dim = pred.ncol();
-  std::vector<std::pair<int, int>> pred_std(pred.nrow());
+  std::vector<std::pair<int, int>> pred_std;
+  pred_std.reserve(pred.nrow());
 
   if (pred_dim == 1){
     for (int i = 0; i < pred.nrow(); ++i) {
       std::vector<int> rowcolnum = RowColFromGrid(pred(i, 0) - 1, numCols);
-      pred_std[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+      pred_std.emplace_back(rowcolnum[0], rowcolnum[1]);
     }
   } else {
     for (int i = 0; i < pred.nrow(); ++i) {
-      pred_std[i] = std::make_pair(pred(i, 0) - 1, pred(i, 1) - 1);
+      pred_std.emplace_back(pred(i, 0) - 1, pred(i, 1) - 1);
     }
   }
 
