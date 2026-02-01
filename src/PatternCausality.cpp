@@ -194,8 +194,8 @@ PatternCausalityRes GenPatternCausality(
   // --- 3. Initialize result structures ---
   std::vector<std::vector<double>> heatmap_accum(
       hashed_num, std::vector<double>(hashed_num, std::numeric_limits<double>::quiet_NaN()));
-  std::vector<std::vector<double>> count_matrix(
-      hashed_num, std::vector<double>(hashed_num, 0.0));
+  std::vector<std::vector<size_t>> count_matrix(
+      hashed_num, std::vector<size_t>(hashed_num, 0));
 
   res.PatternStrings = std::move(unique_patterns);
   res.NoCausality.assign(n, 0.0);
@@ -261,10 +261,10 @@ PatternCausalityRes GenPatternCausality(
     // Accumulate to heatmap
     if (std::isnan(heatmap_accum[i][j])) {
       heatmap_accum[i][j] = strength;
-      count_matrix[i][j] = 1.0;
+      count_matrix[i][j] = 1;
     } else {
       heatmap_accum[i][j] += strength;
-      count_matrix[i][j] += 1.0;
+      count_matrix[i][j] += 1;
     }
 
     // --- 6. Classification of per-sample causality type ---
@@ -286,13 +286,12 @@ PatternCausalityRes GenPatternCausality(
   }
 
   // --- 7. Normalize heatmap by counts ---
-  res.matrice = std::move(heatmap_accum);
   for (size_t i = 0; i < hashed_num; ++i) {
     for (size_t j = 0; j < hashed_num; ++j) {
-      if (count_matrix[i][j] > 0.0) {
-        res.matrice[i][j] = res.matrice[i][j] / count_matrix[i][j];
+      if (count_matrix[i][j] > 0) {
+        heatmap_accum[i][j] = heatmap_accum[i][j] / static_cast<double>(count_matrix[i][j]);
       } else {
-        res.matrice[i][j] = std::numeric_limits<double>::quiet_NaN();
+        heatmap_accum[i][j] = std::numeric_limits<double>::quiet_NaN();
       }
     }
   }
@@ -303,16 +302,16 @@ PatternCausalityRes GenPatternCausality(
   anti_vals.reserve(hashed_num);
 
   for (size_t idx = 0; idx < hashed_num; ++idx) {
-    double vdiag = res.matrice[idx][idx];
+    double vdiag = heatmap_accum[idx][idx];
     if (!std::isnan(vdiag)) diag_vals.push_back(vdiag);
 
     size_t anti_j = hashed_num - 1 - idx;
-    double vanti = res.matrice[idx][anti_j];
+    double vanti = heatmap_accum[idx][anti_j];
     if (!std::isnan(vanti)) anti_vals.push_back(vanti);
 
     for (size_t j = 0; j < hashed_num; ++j) {
       if (j == idx || j == anti_j) continue;
-      double v = res.matrice[idx][j];
+      double v = heatmap_accum[idx][j];
       if (!std::isnan(v)) other_vals.push_back(v);
     }
   }
@@ -320,6 +319,7 @@ PatternCausalityRes GenPatternCausality(
   res.TotalPos  = nanmean_ignore_nan(diag_vals);
   res.TotalNeg  = nanmean_ignore_nan(anti_vals);
   res.TotalDark = nanmean_ignore_nan(other_vals);
+  res.matrice = std::move(heatmap_accum);
 
   return res;
 }
