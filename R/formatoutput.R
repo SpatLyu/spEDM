@@ -81,7 +81,8 @@ print.rpc_res = \(x,...){
   cat('-------------------------------- \n')
   cat("***pattern causality analysis*** \n")
   cat('-------------------------------- \n')
-  print(pc)
+  names(pc)[5] = "strength"
+  print(pc[,c(1,2,5,7),drop = FALSE])
 }
 
 #' @export
