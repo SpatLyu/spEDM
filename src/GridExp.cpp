@@ -2418,42 +2418,44 @@ Rcpp::NumericVector RcppSGCSingle4Grid(const Rcpp::NumericMatrix& x,
 
   // Convert lib to a fundamental C++ data type
   int lib_dim = lib.ncol();
-  std::vector<std::pair<int, int>> lib_std(lib.nrow());
+  std::vector<std::pair<int, int>> lib_std;
+  lib_std.reserve(lib.nrow());
 
   if (lib_dim == 1){
     for (int i = 0; i < lib.nrow(); ++i) {
       std::vector<int> rowcolnum = RowColFromGrid(lib(i, 0) - 1, numCols);
       if (!std::isnan(xmat[rowcolnum[0]][rowcolnum[1]]) &&
           !std::isnan(ymat[rowcolnum[0]][rowcolnum[1]])){
-        lib_std[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+        lib_std.emplace_back(rowcolnum[0], rowcolnum[1]);
       }
     }
   } else {
     for (int i = 0; i < lib.nrow(); ++i) {
       if (!std::isnan(xmat[lib(i, 0) - 1][lib(i, 1) - 1]) &&
           !std::isnan(ymat[lib(i, 0) - 1][lib(i, 1) - 1])){
-        lib_std[i] = std::make_pair(lib(i, 0) - 1, lib(i, 1) - 1);
+        lib_std.emplace_back(lib(i, 0) - 1, lib(i, 1) - 1);
       }
     }
   }
 
   // Convert pred to a fundamental C++ data type
   int pred_dim = pred.ncol();
-  std::vector<std::pair<int, int>> pred_std(pred.nrow());
+  std::vector<std::pair<int, int>> pred_std;
+  pred_std.reserve(pred.nrow());
 
   if (pred_dim == 1){
     for (int i = 0; i < pred.nrow(); ++i) {
       std::vector<int> rowcolnum = RowColFromGrid(pred(i, 0) - 1, numCols);
       if (!std::isnan(xmat[rowcolnum[0]][rowcolnum[1]]) &&
           !std::isnan(ymat[rowcolnum[0]][rowcolnum[1]])){
-        pred_std[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+        pred_std.emplace_back(rowcolnum[0], rowcolnum[1]);
       }
     }
   } else {
     for (int i = 0; i < pred.nrow(); ++i) {
       if (!std::isnan(xmat[pred(i, 0) - 1][pred(i, 1) - 1]) &&
           !std::isnan(ymat[pred(i, 0) - 1][pred(i, 1) - 1])){
-        pred_std[i] = std::make_pair(pred(i, 0) - 1, pred(i, 1) - 1);
+        pred_std.emplace_back(pred(i, 0) - 1, pred(i, 1) - 1);
       }
     }
   }
@@ -2514,42 +2516,44 @@ Rcpp::NumericVector RcppSGC4Grid(const Rcpp::NumericMatrix& x,
 
   // Convert lib to a fundamental C++ data type
   int lib_dim = lib.ncol();
-  std::vector<std::pair<int, int>> lib_std(lib.nrow());
+  std::vector<std::pair<int, int>> lib_std;
+  lib_std.reserve(lib.nrow());
 
   if (lib_dim == 1){
     for (int i = 0; i < lib.nrow(); ++i) {
       std::vector<int> rowcolnum = RowColFromGrid(lib(i, 0) - 1, numCols);
       if (!std::isnan(xmat[rowcolnum[0]][rowcolnum[1]]) &&
           !std::isnan(ymat[rowcolnum[0]][rowcolnum[1]])){
-        lib_std[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+        lib_std.emplace_back(rowcolnum[0], rowcolnum[1]);
       }
     }
   } else {
     for (int i = 0; i < lib.nrow(); ++i) {
       if (!std::isnan(xmat[lib(i, 0) - 1][lib(i, 1) - 1]) &&
           !std::isnan(ymat[lib(i, 0) - 1][lib(i, 1) - 1])){
-        lib_std[i] = std::make_pair(lib(i, 0) - 1, lib(i, 1) - 1);
+        lib_std.emplace_back(lib(i, 0) - 1, lib(i, 1) - 1);
       }
     }
   }
 
   // Convert pred to a fundamental C++ data type
   int pred_dim = pred.ncol();
-  std::vector<std::pair<int, int>> pred_std(pred.nrow());
+  std::vector<std::pair<int, int>> pred_std;
+  pred_std.reserve(pred.nrow());
 
   if (pred_dim == 1){
     for (int i = 0; i < pred.nrow(); ++i) {
       std::vector<int> rowcolnum = RowColFromGrid(pred(i, 0) - 1, numCols);
       if (!std::isnan(xmat[rowcolnum[0]][rowcolnum[1]]) &&
           !std::isnan(ymat[rowcolnum[0]][rowcolnum[1]])){
-        pred_std[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+        pred_std.emplace_back(rowcolnum[0], rowcolnum[1]);
       }
     }
   } else {
     for (int i = 0; i < pred.nrow(); ++i) {
       if (!std::isnan(xmat[pred(i, 0) - 1][pred(i, 1) - 1]) &&
           !std::isnan(ymat[pred(i, 0) - 1][pred(i, 1) - 1])){
-        pred_std[i] = std::make_pair(pred(i, 0) - 1, pred(i, 1) - 1);
+        pred_std.emplace_back(pred(i, 0) - 1, pred(i, 1) - 1);
       }
     }
   }
@@ -2557,6 +2561,7 @@ Rcpp::NumericVector RcppSGC4Grid(const Rcpp::NumericMatrix& x,
   // Convert block to a fundamental C++ data type
   int b_dim = block.ncol();
   std::vector<int> b_std;
+  b_std.reserve(block.nrow());
   if (b_dim == 1){
     for (int i = 0; i < block.nrow(); ++i) {
       b_std.push_back(block(i, 0));
