@@ -6,7 +6,7 @@
 
 ### enhancements
 
-* Trim console output for geographical pattern causality results (#942)
+* Trim console output for geographical pattern causality results (#942).
 
 * Enforce include order to prevent R headers from preceding Rcpp headers (#932).
 
