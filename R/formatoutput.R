@@ -61,9 +61,6 @@ print.pc_res = \(x,...){
   } else {
     pc$direction = paste0(x$varname[1], " -> ", x$varname[2])
   }
-  cat('-------------------------------- \n')
-  cat("***pattern causality analysis*** \n")
-  cat('-------------------------------- \n')
   print(pc)
 }
 
@@ -78,9 +75,6 @@ print.rpc_res = \(x,...){
   } else {
     pc$direction = paste0(x$varname[1], " -> ", x$varname[2])
   }
-  cat('-------------------------------- \n')
-  cat("***pattern causality analysis*** \n")
-  cat('-------------------------------- \n')
   names(pc)[5] = "strength"
   print(pc[,c(1,2,5,7),drop = FALSE])
 }
