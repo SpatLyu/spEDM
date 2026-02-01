@@ -488,6 +488,7 @@ Rcpp::NumericVector RcppFNN4Grid(
   int n_predcol = pred.ncol();
 
   std::vector<size_t> lib_std;
+  lib_std.reserve(lib.nrow());
   if (n_libcol == 1){
     for (int i = 0; i < lib.nrow(); ++i) {
       // disallow lib indices to point to vectors with NaN
@@ -506,6 +507,7 @@ Rcpp::NumericVector RcppFNN4Grid(
   }
 
   std::vector<size_t> pred_std;
+  pred_std.reserve(pred.nrow());
   if (n_predcol == 1){
     for (int i = 0; i < pred.nrow(); ++i) {
       // disallow pred indices to point to vectors with NaN
@@ -598,8 +600,10 @@ Rcpp::NumericMatrix RcppSimplex4Grid(const Rcpp::NumericMatrix& source,
   }
 
   // Initialize lib_indices and pred_indices
-  std::vector<int> pred_indices;
   std::vector<int> lib_indices;
+  lib_indices.reserve(lib.nrow());
+  std::vector<int> pred_indices;
+  pred_indices.reserve(pred.nrow());
 
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
   int currow;
@@ -751,8 +755,10 @@ Rcpp::NumericMatrix RcppSMap4Grid(const Rcpp::NumericMatrix& source,
   }
 
   // Initialize lib_indices and pred_indices
-  std::vector<int> pred_indices;
   std::vector<int> lib_indices;
+  lib_indices.reserve(lib.nrow());
+  std::vector<int> pred_indices;
+  pred_indices.reserve(pred.nrow());
 
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
   int currow;
@@ -913,8 +919,10 @@ Rcpp::NumericMatrix RcppMultiView4Grid(const Rcpp::NumericMatrix& xMatrix,
   }
 
   // Initialize lib_indices and pred_indices
-  std::vector<int> pred_indices;
   std::vector<int> lib_indices;
+  lib_indices.reserve(lib.nrow());
+  std::vector<int> pred_indices;
+  pred_indices.reserve(pred.nrow());
 
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
   int lib_col = lib.ncol();
@@ -1115,8 +1123,10 @@ Rcpp::NumericMatrix RcppIC4Grid(const Rcpp::NumericMatrix& source,
   }
 
   // Initialize lib_indices and pred_indices
-  std::vector<size_t> pred_indices;
-  std::vector<size_t> lib_indices;
+  std::vector<int> lib_indices;
+  lib_indices.reserve(lib.nrow());
+  std::vector<int> pred_indices;
+  pred_indices.reserve(pred.nrow());
 
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
   int currow;
@@ -1241,8 +1251,10 @@ Rcpp::NumericMatrix RcppPC4Grid(const Rcpp::NumericMatrix& source,
   }
 
   // Initialize lib_indices and pred_indices
-  std::vector<size_t> pred_indices;
-  std::vector<size_t> lib_indices;
+  std::vector<int> lib_indices;
+  lib_indices.reserve(lib.nrow());
+  std::vector<int> pred_indices;
+  pred_indices.reserve(pred.nrow());
 
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
   int currow;
@@ -1399,6 +1411,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
   // Convert lib to a fundamental C++ data type
   int lib_dim = lib.ncol();
   std::vector<int> lib_cpp1;
+  lib_cpp1.reserve(lib.nrow());
   std::vector<std::pair<int, int>> lib_cpp2(lib.nrow());
   if (libsizes_dim == 1){
     if (lib_dim == 1){
