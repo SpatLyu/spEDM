@@ -1310,8 +1310,9 @@ Rcpp::NumericMatrix RcppPC4Grid(const Rcpp::NumericMatrix& source,
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
   std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
 
-  // Check the validity of the neignbor numbers
+  // Check the validity of the neighbor numbers
   std::vector<int> b_std;
+  b_std.reserve(b.size());
   for (int i = 0; i < b.size(); ++i){
     if (b[i] > static_cast<int>(lib_indices.size())) {
       Rcpp::stop("Neighbor numbers count out of acceptable range at position %d (value: %d)", i + 1, b[i]);
