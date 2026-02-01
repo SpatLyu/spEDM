@@ -479,16 +479,6 @@ Rcpp::NumericVector RcppFNN4Grid(
   int numCols = mat.ncol();
   std::vector<std::vector<double>> cppMat(numRows, std::vector<double>(numCols));
 
-  double validCellNum = 0;
-  for (int r = 0; r < numRows; ++r) {
-    for (int c = 0; c < numCols; ++c) {
-      cppMat[r][c] = mat(r, c);
-      if (!std::isnan(mat(r, c))){
-        validCellNum += 1;
-      }
-    }
-  }
-
   // Convert Rcpp NumericVector to std::vector<double>
   std::vector<double> rt_std = Rcpp::as<std::vector<double>>(rt);
   std::vector<double> eps_std = Rcpp::as<std::vector<double>>(eps);
@@ -1869,7 +1859,7 @@ Rcpp::List RcppGCMC4Grid(
   }
 
   // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
-  double validCellNum = 0;
+  size_t validCellNum = 0;
   std::vector<std::vector<double>> yMatrix_cpp(yMatrix.nrow(), std::vector<double>(yMatrix.ncol()));
   for (int i = 0; i < yMatrix.nrow(); ++i) {
     for (int j = 0; j < yMatrix.ncol(); ++j) {
@@ -1934,7 +1924,7 @@ Rcpp::List RcppGCMC4Grid(
     }
   }
 
-  if (b <= 3 || b > validCellNum) {
+  if (b <= 3 || static_cast<size_t>(b) > validCellNum) {
     Rcpp::stop("k must be greater than 3 and no larger than the number of non-NA values.\n"
                "An empirical rule of thumb is to set k = sqrt(E * N),\n"
                "where E is the embedding dimension and N is the number of valid observations in the prediction set.");
@@ -2023,8 +2013,8 @@ Rcpp::List RcppGPC4Grid(
 
   std::vector<std::vector<double>> xMatrix_cpp(xMatrix.nrow(), std::vector<double>(xMatrix.ncol()));
   std::vector<std::vector<double>> yMatrix_cpp(yMatrix.nrow(), std::vector<double>(yMatrix.ncol()));
-  double validCellNum = 0;
 
+  size_t validCellNum = 0;
   for (int i = 0; i < yMatrix.nrow(); ++i) {
     for (int j = 0; j < yMatrix.ncol(); ++j) {
       xMatrix_cpp[i][j] = xMatrix(i, j);
@@ -2082,7 +2072,7 @@ Rcpp::List RcppGPC4Grid(
 
   // --- Validate parameters --------------------------------------------------
 
-  if (b < 2 || b > validCellNum)
+  if (b < 2 || static_cast<size_t>(b) > validCellNum)
     Rcpp::stop("k cannot be less than or equal to 2 or greater than the number of non-NA values.");
 
   // --- Generate embeddings --------------------------------------------------
@@ -2189,8 +2179,8 @@ Rcpp::DataFrame RcppGPCRobust4Grid(
 
   std::vector<std::vector<double>> xMatrix_cpp(xMatrix.nrow(), std::vector<double>(xMatrix.ncol()));
   std::vector<std::vector<double>> yMatrix_cpp(yMatrix.nrow(), std::vector<double>(yMatrix.ncol()));
-  double validCellNum = 0;
 
+  size_t validCellNum = 0;
   for (int i = 0; i < yMatrix.nrow(); ++i) {
     for (int j = 0; j < yMatrix.ncol(); ++j) {
       xMatrix_cpp[i][j] = xMatrix(i, j);
@@ -2278,7 +2268,7 @@ Rcpp::DataFrame RcppGPCRobust4Grid(
 
   // --- Validate parameters --------------------------------------------------
 
-  if (b < 2 || b > validCellNum)
+  if (b < 2 || static_cast<size_t>(b) > validCellNum)
     Rcpp::stop("k cannot be less than or equal to 2 or greater than the number of non-NA values.");
 
   // --- Generate embeddings --------------------------------------------------
