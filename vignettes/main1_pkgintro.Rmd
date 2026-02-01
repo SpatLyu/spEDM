@@ -2,8 +2,8 @@
 title: "Introduction to the spEDM package"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2026-01-01
-  | Last run: 2026-01-01
+  | Last update: 2026-02-01
+  | Last run: 2026-02-01
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{1. Introduction to the spEDM package}
