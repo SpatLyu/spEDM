@@ -1123,9 +1123,9 @@ Rcpp::NumericMatrix RcppIC4Grid(const Rcpp::NumericMatrix& source,
   }
 
   // Initialize lib_indices and pred_indices
-  std::vector<int> lib_indices;
+  std::vector<size_t> lib_indices;
   lib_indices.reserve(lib.nrow());
-  std::vector<int> pred_indices;
+  std::vector<size_t> pred_indices;
   pred_indices.reserve(pred.nrow());
 
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
@@ -1251,9 +1251,9 @@ Rcpp::NumericMatrix RcppPC4Grid(const Rcpp::NumericMatrix& source,
   }
 
   // Initialize lib_indices and pred_indices
-  std::vector<int> lib_indices;
+  std::vector<size_t> lib_indices;
   lib_indices.reserve(lib.nrow());
-  std::vector<int> pred_indices;
+  std::vector<size_t> pred_indices;
   pred_indices.reserve(pred.nrow());
 
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
