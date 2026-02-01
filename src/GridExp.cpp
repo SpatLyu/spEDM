@@ -1396,7 +1396,10 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
   // Convert libsizes to a fundamental C++ data type
   int libsizes_dim = libsizes.ncol();
   std::vector<int> libsizes_cpp1;
+  libsizes_cpp1.reserve(libsizes.nrow());
   std::vector<std::vector<int>> libsizes_cpp2(2);
+  libsizes_cpp2[0].reserve(libsizes.nrow());
+  libsizes_cpp2[1].reserve(libsizes.nrow());
   if (libsizes_dim == 1){
     for (int i = 0; i < libsizes.nrow(); ++i) {
       libsizes_cpp1.push_back(libsizes(i, 0));
