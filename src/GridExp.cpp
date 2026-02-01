@@ -1415,7 +1415,8 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
   int lib_dim = lib.ncol();
   std::vector<int> lib_cpp1;
   lib_cpp1.reserve(lib.nrow());
-  std::vector<std::pair<int, int>> lib_cpp2(lib.nrow());
+  std::vector<std::pair<int, int>> lib_cpp2;
+  lib_cpp2.reserve(lib.nrow());
   if (libsizes_dim == 1){
     if (lib_dim == 1){
       for (int i = 0; i < lib.nrow(); ++i) {
@@ -1444,7 +1445,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
         // disallow lib indices to point to vectors with NaN
         if (!std::isnan(xMatrix_cpp[rowcolnum[0]][rowcolnum[1]]) &&
             !std::isnan(yMatrix_cpp[rowcolnum[0]][rowcolnum[1]])){
-          lib_cpp2[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+          lib_cpp2.emplace_back(rowcolnum[0], rowcolnum[1]);
         }
       }
     } else {
@@ -1452,7 +1453,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
         // disallow lib indices to point to vectors with NaN
         if (!std::isnan(xMatrix_cpp[lib(i, 0) - 1][lib(i, 1) - 1]) &&
             !std::isnan(yMatrix_cpp[lib(i, 0) - 1][lib(i, 1) - 1])){
-          lib_cpp2[i] = std::make_pair(lib(i, 0) - 1, lib(i, 1) - 1);
+          lib_cpp2.emplace_back(lib(i, 0) - 1, lib(i, 1) - 1);
         }
       }
     }
@@ -1461,7 +1462,9 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
   // Convert pred to a fundamental C++ data type
   int pred_dim = pred.ncol();
   std::vector<int> pred_cpp1;
-  std::vector<std::pair<int, int>> pred_cpp2(pred.nrow());
+  pred_cpp1.reserve(pred.nrow());
+  std::vector<std::pair<int, int>> pred_cpp2;
+  pred_cpp2.reserve(pred.nrow());
   if (libsizes_dim == 1){
     if (pred_dim == 1){
       for (int i = 0; i < pred.nrow(); ++i) {
@@ -1490,7 +1493,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
         // disallow pred indices to point to vectors with NaN
         if (!std::isnan(xMatrix_cpp[rowcolnum[0]][rowcolnum[1]]) &&
             !std::isnan(yMatrix_cpp[rowcolnum[0]][rowcolnum[1]])){
-          pred_cpp2[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+          pred_cpp2.emplace_back(rowcolnum[0], rowcolnum[1]);
         }
       }
     } else {
@@ -1498,7 +1501,7 @@ Rcpp::NumericMatrix RcppGCCM4Grid(
         // disallow pred indices to point to vectors with NaN
         if (!std::isnan(xMatrix_cpp[pred(i, 0) - 1][pred(i, 1) - 1]) &&
             !std::isnan(yMatrix_cpp[pred(i, 0) - 1][pred(i, 1) - 1])){
-          pred_cpp2[i] = std::make_pair(pred(i, 0) - 1, pred(i, 1) - 1);
+          pred_cpp2.emplace_back(pred(i, 0) - 1, pred(i, 1) - 1);
         }
       }
     }
@@ -1644,7 +1647,10 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
   // Convert libsizes to a fundamental C++ data type
   int libsizes_dim = libsizes.ncol();
   std::vector<int> libsizes_cpp1;
+  libsizes_cpp1.reserve(libsizes.nrow());
   std::vector<std::vector<int>> libsizes_cpp2(2);
+  libsizes_cpp2[0].reserve(libsizes.nrow());
+  libsizes_cpp2[1].reserve(libsizes.nrow());
   if (libsizes_dim == 1){
     for (int i = 0; i < libsizes.nrow(); ++i) {
       libsizes_cpp1.push_back(libsizes(i, 0));
@@ -1659,7 +1665,9 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
   // Convert lib to a fundamental C++ data type
   int lib_dim = lib.ncol();
   std::vector<int> lib_cpp1;
-  std::vector<std::pair<int, int>> lib_cpp2(lib.nrow());
+  lib_cpp1.reserve(lib.nrow());
+  std::vector<std::pair<int, int>> lib_cpp2;
+  lib_cpp2.reserve(lib.nrow());
   if (libsizes_dim == 1){
     if (lib_dim == 1){
       for (int i = 0; i < lib.nrow(); ++i) {
@@ -1688,7 +1696,7 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
         // disallow lib indices to point to vectors with NaN
         if (!std::isnan(xMatrix_cpp[rowcolnum[0]][rowcolnum[1]]) &&
             !std::isnan(yMatrix_cpp[rowcolnum[0]][rowcolnum[1]])){
-          lib_cpp2[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+          lib_cpp2.emplace_back(rowcolnum[0], rowcolnum[1]);
         }
       }
     } else {
@@ -1696,7 +1704,7 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
         // disallow lib indices to point to vectors with NaN
         if (!std::isnan(xMatrix_cpp[lib(i, 0) - 1][lib(i, 1) - 1]) &&
             !std::isnan(yMatrix_cpp[lib(i, 0) - 1][lib(i, 1) - 1])){
-          lib_cpp2[i] = std::make_pair(lib(i, 0) - 1, lib(i, 1) - 1);
+          lib_cpp2.emplace_back(lib(i, 0) - 1, lib(i, 1) - 1);
         }
       }
     }
@@ -1705,7 +1713,9 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
   // Convert pred to a fundamental C++ data type
   int pred_dim = pred.ncol();
   std::vector<int> pred_cpp1;
-  std::vector<std::pair<int, int>> pred_cpp2(pred.nrow());
+  pred_cpp1.reserve(pred.nrow());
+  std::vector<std::pair<int, int>> pred_cpp2;
+  pred_cpp2.reserve(pred.nrow());
   if (libsizes_dim == 1){
     if (pred_dim == 1){
       for (int i = 0; i < pred.nrow(); ++i) {
@@ -1734,7 +1744,7 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
         // disallow pred indices to point to vectors with NaN
         if (!std::isnan(xMatrix_cpp[rowcolnum[0]][rowcolnum[1]]) &&
             !std::isnan(yMatrix_cpp[rowcolnum[0]][rowcolnum[1]])){
-          pred_cpp2[i] = std::make_pair(rowcolnum[0], rowcolnum[1]);
+          pred_cpp2.emplace_back(rowcolnum[0], rowcolnum[1]);
         }
       }
     } else {
@@ -1742,7 +1752,7 @@ Rcpp::NumericMatrix RcppSCPCM4Grid(
         // disallow pred indices to point to vectors with NaN
         if (!std::isnan(xMatrix_cpp[pred(i, 0) - 1][pred(i, 1) - 1]) &&
             !std::isnan(yMatrix_cpp[pred(i, 0) - 1][pred(i, 1) - 1])){
-          pred_cpp2[i] = std::make_pair(pred(i, 0) - 1, pred(i, 1) - 1);
+          pred_cpp2.emplace_back(pred(i, 0) - 1, pred(i, 1) - 1);
         }
       }
     }
