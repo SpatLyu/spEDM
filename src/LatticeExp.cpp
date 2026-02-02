@@ -33,6 +33,7 @@ std::vector<std::vector<int>> nb2vec(const Rcpp::List& nb) {
 
     // Create a vector<int> to store the current subset of elements
     std::vector<int> current_subset;
+    current_subset.reserve(current_nb.size());
 
     // Iterate over each element in the current subset
     for (int j = 0; j < current_nb.size(); ++j) {
@@ -180,6 +181,7 @@ Rcpp::List RcppGenLatticeNeighbors(const Rcpp::NumericVector& vec,
 
   // Convert Rcpp IntegerVector lib to std::vector<int> lib_std
   std::vector<int> lib_std;
+  lib_std.reserve(lib.size());
 
   // Check that lib indices are within bounds & convert R based 1 index to C++ based 0 index
   int nsample = vec_std.size();
@@ -227,7 +229,9 @@ Rcpp::NumericVector RcppGenLatticeSymbolization(const Rcpp::NumericVector& vec,
 
   // Convert Rcpp IntegerVector to std::vector<int>
   std::vector<int> lib_std;
+  lib_std.reserve(lib.size());
   std::vector<int> pred_std;
+  pred_std.reserve(pred.size());
 
   // Check that lib and pred indices are within bounds & convert R based 1 index to C++ based 0 index
   int n = vec_std.size();
@@ -451,7 +455,9 @@ Rcpp::NumericVector RcppFNN4Lattice(
   std::vector<double> rt_std = Rcpp::as<std::vector<double>>(rt);
   std::vector<double> eps_std = Rcpp::as<std::vector<double>>(eps);
   std::vector<size_t> lib_std;
+  lib_std.reserve(lib.size());
   std::vector<size_t> pred_std;
+  pred_std.reserve(pred.size());
 
   int validSampleNum = vec_std.size();
   // Check that lib and pred indices are within bounds & convert R based 1 index to C++ based 0 index
@@ -556,7 +562,9 @@ Rcpp::NumericMatrix RcppSimplex4Lattice(const Rcpp::NumericVector& source,
 
   // Initialize lib_indices and pred_indices
   std::vector<int> lib_indices;
+  lib_indices.reserve(lib.size());
   std::vector<int> pred_indices;
+  pred_indices.reserve(pred.size());
 
   int target_len = target_std.size();
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
@@ -682,7 +690,9 @@ Rcpp::NumericMatrix RcppSMap4Lattice(const Rcpp::NumericVector& source,
 
   // Initialize lib_indices and pred_indices
   std::vector<int> lib_indices;
+  lib_indices.reserve(lib.size());
   std::vector<int> pred_indices;
+  pred_indices.reserve(pred.size());
 
   int target_len = target_std.size();
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
@@ -801,9 +811,11 @@ Rcpp::NumericVector RcppMultiView4Lattice(const Rcpp::NumericMatrix& x,
   // Convert neighborhood list to std::vector<std::vector<int>>
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
 
-  // Initialize lib_indices and pred_indices with all false
+  // Initialize lib_indices and pred_indices
   std::vector<int> lib_indices;
+  lib_indices.reserve(lib.size());
   std::vector<int> pred_indices;
+  pred_indices.reserve(pred.size());
 
   int target_len = target.size();
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
@@ -966,7 +978,9 @@ Rcpp::NumericMatrix RcppIC4Lattice(const Rcpp::NumericVector& source,
 
   // Initialize lib_indices and pred_indices
   std::vector<size_t> lib_indices;
+  lib_indices.reserve(lib.size());
   std::vector<size_t> pred_indices;
+  pred_indices.reserve(pred.size());
 
   int target_len = target_std.size();
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
@@ -991,6 +1005,7 @@ Rcpp::NumericMatrix RcppIC4Lattice(const Rcpp::NumericVector& source,
 
   // Check the validity of the neignbor numbers
   std::vector<int> b_std;
+  b_std.reserve(b.size());
   for (int i = 0; i < b.size(); ++i){
     if (b[i] > static_cast<int>(lib_indices.size())) {
       Rcpp::stop("Neighbor numbers count out of acceptable range at position %d (value: %d)", i + 1, b[i]);
@@ -1057,7 +1072,9 @@ Rcpp::NumericMatrix RcppPC4Lattice(const Rcpp::NumericVector& source,
 
   // Initialize lib_indices and pred_indices
   std::vector<size_t> lib_indices;
+  lib_indices.reserve(lib.size());
   std::vector<size_t> pred_indices;
+  pred_indices.reserve(pred.size());
 
   int target_len = target_std.size();
   // Convert lib and pred (1-based in R) to 0-based indices and set corresponding positions to true
@@ -1086,6 +1103,7 @@ Rcpp::NumericMatrix RcppPC4Lattice(const Rcpp::NumericVector& source,
 
   // Check the validity of the neignbor numbers
   std::vector<int> b_std;
+  b_std.reserve(b.size());
   for (int i = 0; i < b.size(); ++i){
     if (b[i] > static_cast<int>(lib_indices.size())) {
       Rcpp::stop("Neighbor numbers count out of acceptable range at position %d (value: %d)", i + 1, b[i]);
@@ -1160,7 +1178,9 @@ Rcpp::NumericMatrix RcppGCCM4Lattice(const Rcpp::NumericVector& x,
   // Convert Rcpp::IntegerVector to std::vector<int>
   std::vector<int> libsizes_std = Rcpp::as<std::vector<int>>(libsizes);
   std::vector<int> lib_std;
+  lib_std.reserve(lib.size());
   std::vector<int> pred_std;
+  pred_std.reserve(pred.size());
 
   // Check that lib and pred indices are within bounds & convert R based 1 index to C++ based 0 index
   int n = y_std.size();
@@ -1266,7 +1286,10 @@ Rcpp::NumericMatrix RcppSCPCM4Lattice(const Rcpp::NumericVector& x,
 
   // Convert and check that lib and pred indices are within bounds & convert R based 1 index to C++ based 0 index
   std::vector<int> lib_std;
+  lib_std.reserve(lib.size());
   std::vector<int> pred_std;
+  pred_std.reserve(pred.size());
+
   int n = y_std.size();
   for (int i = 0; i < lib.size(); ++i) {
     if (lib[i] < 1 || lib[i] > n) {
@@ -1364,7 +1387,10 @@ Rcpp::List RcppGCMC4Lattice(
   int validSampleNum = x_std.size();
   // Convert and check that lib and pred indices are within bounds & convert R based 1 index to C++ based 0 index
   std::vector<size_t> lib_std;
+  lib_std.reserve(lib.size());
   std::vector<size_t> pred_std;
+  pred_std.reserve(pred.size());
+
   for (int i = 0; i < lib.size(); ++i) {
     if (lib[i] < 1 || lib[i] > validSampleNum) {
       Rcpp::stop("lib contains out-of-bounds index at position %d (value: %d)", i + 1, lib[i]);
@@ -1743,7 +1769,9 @@ Rcpp::NumericVector RcppSGCSingle4Lattice(const Rcpp::NumericVector& x,
 
   // Convert Rcpp IntegerVector to std::vector<int>
   std::vector<int> lib_std;
+  lib_std.reserve(lib.size());
   std::vector<int> pred_std;
+  pred_std.reserve(pred.size());
 
   // Check that lib and pred indices are within bounds & convert R based 1 index to C++ based 0 index
   int n = y_std.size();
@@ -1812,7 +1840,9 @@ Rcpp::NumericVector RcppSGC4Lattice(const Rcpp::NumericVector& x,
 
   // Convert Rcpp IntegerVector to std::vector<int>
   std::vector<int> lib_std;
+  lib_std.reserve(lib.size());
   std::vector<int> pred_std;
+  pred_std.reserve(pred.size());
   std::vector<int> b_std = Rcpp::as<std::vector<int>>(block);
 
   // Check that lib and pred indices are within bounds & convert R based 1 index to C++ based 0 index

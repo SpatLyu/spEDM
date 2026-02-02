@@ -3,7 +3,7 @@ title: "Spatial Logistic Map"
 author: "Wenbo Lv"
 date: |
   | Last update: 2026-02-01
-  | Last run: 2026-02-01
+  | Last run: 2026-02-02
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{SI1. Spatial Logistic Map}

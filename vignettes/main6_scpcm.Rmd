@@ -3,7 +3,7 @@ title: "Spatially Convergent Partial Cross Mapping"
 author: "Wenbo Lv"
 date: |
   | Last update: 2026-02-01
-  | Last run: 2026-02-01
+  | Last run: 2026-02-02
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{6. Spatially Convergent Partial Cross Mapping}
@@ -26,6 +26,7 @@ Load the `spEDM` package and columbus OH spatial analysis dataset:
 
 ``` r
 if (!requireNamespace("spEDM")) install.packages("spEDM")
+## Loading required namespace: spEDM
 
 columbus = sf::read_sf(system.file("case/columbus.gpkg", package="spEDM"))
 columbus
