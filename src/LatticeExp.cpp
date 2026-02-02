@@ -33,6 +33,7 @@ std::vector<std::vector<int>> nb2vec(const Rcpp::List& nb) {
 
     // Create a vector<int> to store the current subset of elements
     std::vector<int> current_subset;
+    current_subset.reserve(current_nb.size());
 
     // Iterate over each element in the current subset
     for (int j = 0; j < current_nb.size(); ++j) {
