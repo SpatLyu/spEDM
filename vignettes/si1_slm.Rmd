@@ -121,7 +121,7 @@ terra::plot(species, nc = 3,
             legend = FALSE)
 ```
 
-![**Figure 1**. Simulated initial species density distributions for three species (a, b, and c).](man/figures/slm/sim_trispecies-1.png)
+![**Figure 1**. Simulated initial species density distributions for three species (a, b, and c).](../man/figures/slm/sim_trispecies-1.png)
 
 <br>
 
@@ -155,7 +155,7 @@ terra::plot(species_evolution, nc = 3,
             legend = FALSE)
 ```
 
-![**Figure 2**. Species distributions following spatiotemporal interaction and evolution after 20 simulation steps with 4-neighbor interactions.](man/figures/slm/slm1-1.png)
+![**Figure 2**. Species distributions following spatiotemporal interaction and evolution after 20 simulation steps with 4-neighbor interactions.](../man/figures/slm/slm1-1.png)
 
 <br>
 
@@ -186,4 +186,4 @@ terra::plot(species_evolution, nc = 3,
             legend = FALSE)
 ```
 
-![**Figure 3**. Species distributions after 20 simulation steps with 4-neighbor interactions and neighbor-averaged cross-variable dynamics.](man/figures/slm/slm2-1.png)
+![**Figure 3**. Species distributions after 20 simulation steps with 4-neighbor interactions and neighbor-averaged cross-variable dynamics.](../man/figures/slm/slm2-1.png)
