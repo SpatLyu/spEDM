@@ -3,7 +3,7 @@ title: "Spatially Convergent Partial Cross Mapping"
 author: "Wenbo Lv"
 date: |
   | Last update: 2026-02-01
-  | Last run: 2026-02-01
+  | Last run: 2026-02-02
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{6. Spatially Convergent Partial Cross Mapping}
@@ -202,20 +202,14 @@ Determine minimum embedding dimensions:
 
 ``` r
 spEDM::fnn(species, "x")
-##       E:1       E:2       E:3       E:4       E:5       E:6       E:7       E:8 
-## 0.8937824 0.3125000 0.0100000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 
-##       E:9 
-## 0.0000000
+## E:1 E:2 E:3 E:4 E:5 E:6 E:7 E:8 E:9 
+## NaN NaN NaN NaN NaN NaN NaN NaN NaN
 spEDM::fnn(species, "y")
-##       E:1       E:2       E:3       E:4       E:5       E:6       E:7       E:8 
-## 0.9333333 0.2525000 0.0425000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 
-##       E:9 
-## 0.0000000
+## E:1 E:2 E:3 E:4 E:5 E:6 E:7 E:8 E:9 
+## NaN NaN NaN NaN NaN NaN NaN NaN NaN
 spEDM::fnn(species, "z")
-##       E:1       E:2       E:3       E:4       E:5       E:6       E:7       E:8 
-## 0.9238845 0.3375000 0.0625000 0.0200000 0.0000000 0.0000000 0.0000000 0.0000000 
-##       E:9 
-## 0.0000000
+## E:1 E:2 E:3 E:4 E:5 E:6 E:7 E:8 E:9 
+## NaN NaN NaN NaN NaN NaN NaN NaN NaN
 ```
 
 Self prediction for parameter turning:
