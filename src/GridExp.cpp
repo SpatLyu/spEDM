@@ -480,6 +480,11 @@ Rcpp::NumericVector RcppFNN4Grid(
   int numRows = mat.nrow();
   int numCols = mat.ncol();
   std::vector<std::vector<double>> cppMat(numRows, std::vector<double>(numCols));
+  for (int r = 0; r < numRows; ++r) {
+    for (int c = 0; c < numCols; ++c) {
+      cppMat[r][c] = mat(r, c);
+    }
+  }
 
   // Convert Rcpp NumericVector to std::vector<double>
   std::vector<double> rt_std = Rcpp::as<std::vector<double>>(rt);
