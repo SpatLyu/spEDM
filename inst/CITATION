@@ -5,6 +5,6 @@ bibentry(
   title    = "{spEDM: Spatial Empirical Dynamic Modeling}",
   author   = "Wenbo Lv",
   year     = "2026",
-  note     = "R package version 1.11",
+  note     = "R package version 1.12",
   doi      = "10.32614/CRAN.package.spEDM"
 )
