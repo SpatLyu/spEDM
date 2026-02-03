@@ -43,7 +43,7 @@ std::vector<std::vector<int>> CppLaggedNeighbor4Lattice(const std::vector<std::v
     return result;
   }
 
-  // // Handle lagNum=1: return the immediate neighbors directly
+  // // Handle lagNum=1: return the immediate neighbors directly, as now returned cumulated lagged neighbours
   // if (lagNum == 1) {
   //   return spNeighbor;
   // }
@@ -88,10 +88,9 @@ std::vector<std::vector<int>> CppLaggedNeighbor4Lattice(const std::vector<std::v
       mergedSet.insert(elem);
     }
 
-    // Convert set to sorted vector and deduplicate
+    // Convert unordered set to sorted vector
     std::vector<int> vec(mergedSet.begin(), mergedSet.end());
     std::sort(vec.begin(), vec.end());
-    vec.erase(std::unique(vec.begin(), vec.end()), vec.end());
 
     // Handle empty result by filling with min value
     if (vec.empty()) {
@@ -279,10 +278,9 @@ std::vector<std::vector<double>> GenLatticeEmbeddings(
           mergedSet.insert(elem);
         }
 
-        // Convert set to sorted vector and deduplicate
+        // Convert unordered set to sorted vector
         std::vector<int> vec(mergedSet.begin(), mergedSet.end());
         std::sort(vec.begin(), vec.end());
-        vec.erase(std::unique(vec.begin(), vec.end()), vec.end());
 
         // Handle empty result by filling with min value
         if (vec.empty()) {
