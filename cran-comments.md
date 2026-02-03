@@ -2,4 +2,4 @@
 
 0 errors | 0 warnings | 0 notes
 
-* This release resolve macOS CRAN check failures caused by missing `#include` directives for `string` and `utility` headers.
+* This emergency release resolves a critical installation failure on macOS reported by CRAN's build system for version 1.10.
