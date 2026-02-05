@@ -269,10 +269,10 @@
   } else {
     pl = .check_parallellevel(parallel.level)
     if (is.null(nb)){
-      res = RcppGPCRobust4Grid(y,x,libsizes,lib,pred,E,tau,style,k[1],boot,random,seed,
+      res = RcppGPCRobust4Grid(y, x, libsizes, lib, pred, E, tau, style, k[1], boot, random, seed,
                                zero.tolerance,dist.metric,relative,weighted,threads,pl,progressbar)
     } else {
-      res = RcppGPCRobust4Lattice(y,x,nb,libsizes,lib,pred,E,tau,style,k[1],boot,random,seed,
+      res = RcppGPCRobust4Lattice(y, x, nb, libsizes, lib, pred, E, tau, style, k[1], boot, random, seed,
                                   zero.tolerance,dist.metric,relative,weighted,threads,pl,progressbar)
     }
     res$direction = "y_xmap_x"
