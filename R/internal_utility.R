@@ -239,6 +239,7 @@
   E = .check_inputelementnum(E,2)
   tau = .check_inputelementnum(tau,2)
   k = .check_inputelementnum(k,2)
+
   if (is.null(libsizes)){
     if (is.null(nb)){
       res = RcppGPC4Grid(y,x,lib,pred,E[1],tau[1],style,k[1],zero.tolerance,dist.metric,relative,weighted,threads)
