@@ -30,7 +30,7 @@
 #' @param seed (optional) random seed.
 #' @param random (optional) whether to use random sampling.
 #' @param zero.tolerance (optional) maximum number of zeros tolerated in signature space.
-#' @param relative (optional) whether to calculate relative changes in embeddings.
+#' @param relative (optional) whether to calculate relative changes in embedding.
 #' @param weighted (optional) whether to weight causal strength.
 #'
 #' @return A list
