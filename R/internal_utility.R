@@ -187,7 +187,7 @@
   txmap = .internal_xmapdf_binding(txxmapy,tyxmapx,bidirectional)
   dxmap = .internal_xmapdf_binding(dxxmapy,dyxmapx,bidirectional)
 
-  res = list("pxmap" = dxmap, 
+  res = list("pxmap" = dxmap,
              "xmap" = txmap,
              "varname" = varname,
              "bidirectional" = bidirectional)
@@ -236,11 +236,14 @@
              weighted, threads, bidirectional = FALSE, varname = NULL, nb = NULL,
              libsizes = NULL, boot = 9, random = TRUE, seed = 42, parallel.level = "low",
              progressbar = FALSE){
+  E = .check_inputelementnum(E,2)
+  tau = .check_inputelementnum(tau,2)
+  k = .check_inputelementnum(k,2)
   if (is.null(libsizes)){
     if (is.null(nb)){
-      res = RcppGPC4Grid(y,x,lib,pred,E,tau,style,k,zero.tolerance,dist.metric,relative,weighted,threads)
+      res = RcppGPC4Grid(y,x,lib,pred,E[1],tau[1],style,k[1],zero.tolerance,dist.metric,relative,weighted,threads)
     } else {
-      res = RcppGPC4Lattice(y,x,nb,lib,pred,E,tau,style,k,zero.tolerance,dist.metric,relative,weighted,threads)
+      res = RcppGPC4Lattice(y,x,nb,lib,pred,E[1],tau[1],style,k[1],zero.tolerance,dist.metric,relative,weighted,threads)
     }
     res$causality$direction = "y_xmap_x"
     res$summary$direction = "y_xmap_x"
