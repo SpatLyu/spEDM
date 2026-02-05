@@ -1510,8 +1510,8 @@ Rcpp::List RcppGPC4Lattice(
 
   // --- Embedding Construction ------------------------------------------------
 
-  std::vector<std::vector<double>> Mx = GenLatticeEmbeddings(x_std, nb_vec, E_std[1], tau_std[1], style);
-  std::vector<std::vector<double>> My = GenLatticeEmbeddings(y_std, nb_vec, E_std[2], tau_std[2], style);
+  std::vector<std::vector<double>> Mx = GenLatticeEmbeddings(x_std, nb_vec, E_std[0], tau_std[0], style);
+  std::vector<std::vector<double>> My = GenLatticeEmbeddings(y_std, nb_vec, E_std[1], tau_std[1], style);
 
   // --- Perform Geographical Pattern Causality (GPC) -------------------------
 
@@ -1665,8 +1665,8 @@ Rcpp::DataFrame RcppGPCRobust4Lattice(
 
   // --- Embedding Construction ------------------------------------------------
 
-  std::vector<std::vector<double>> Mx = GenLatticeEmbeddings(x_std, nb_vec, E_std[1], tau_std[1], style);
-  std::vector<std::vector<double>> My = GenLatticeEmbeddings(y_std, nb_vec, E_std[2], tau_std[2], style);
+  std::vector<std::vector<double>> Mx = GenLatticeEmbeddings(x_std, nb_vec, E_std[0], tau_std[0], style);
+  std::vector<std::vector<double>> My = GenLatticeEmbeddings(y_std, nb_vec, E_std[1], tau_std[1], style);
 
   // --- Perform Robust Geographical Pattern Causality -------------------------
 

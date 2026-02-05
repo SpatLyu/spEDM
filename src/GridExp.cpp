@@ -2114,8 +2114,8 @@ Rcpp::List RcppGPC4Grid(
 
   // --- Generate embeddings --------------------------------------------------
 
-  std::vector<std::vector<double>> Mx = GenGridEmbeddings(xMatrix_cpp, E_std[1], tau_std[1], style);
-  std::vector<std::vector<double>> My = GenGridEmbeddings(yMatrix_cpp, E_std[2], tau_std[2], style);
+  std::vector<std::vector<double>> Mx = GenGridEmbeddings(xMatrix_cpp, E_std[0], tau_std[0], style);
+  std::vector<std::vector<double>> My = GenGridEmbeddings(yMatrix_cpp, E_std[1], tau_std[1], style);
 
   // --- Perform GPC analysis -------------------------------------------------
 
@@ -2313,8 +2313,8 @@ Rcpp::DataFrame RcppGPCRobust4Grid(
 
   // --- Generate embeddings --------------------------------------------------
 
-  std::vector<std::vector<double>> Mx = GenGridEmbeddings(xMatrix_cpp, E_std[1], tau_std[1], style);
-  std::vector<std::vector<double>> My = GenGridEmbeddings(yMatrix_cpp, E_std[2], tau_std[2], style);
+  std::vector<std::vector<double>> Mx = GenGridEmbeddings(xMatrix_cpp, E_std[0], tau_std[0], style);
+  std::vector<std::vector<double>> My = GenGridEmbeddings(yMatrix_cpp, E_std[1], tau_std[1], style);
 
   // --- Perform Robust GPC analysis -------------------------------------------
 
