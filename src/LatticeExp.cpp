@@ -1596,8 +1596,8 @@ Rcpp::DataFrame RcppGPCRobust4Lattice(
     const Rcpp::IntegerVector& libsizes,
     const Rcpp::IntegerVector& lib,
     const Rcpp::IntegerVector& pred,
-    int E = 3,
-    int tau = 0,
+    const Rcpp::IntegerVector& E,
+    const Rcpp::IntegerVector& tau,
     int style = 1,
     int b = 0,
     int boot = 99,
@@ -1616,6 +1616,8 @@ Rcpp::DataFrame RcppGPCRobust4Lattice(
   std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
   std::vector<double> y_std = Rcpp::as<std::vector<double>>(y);
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
+  std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
+  std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
   int validSampleNum = x_std.size();
 
   // Convert library indices (R 1-based → C++ 0-based)
@@ -1663,8 +1665,8 @@ Rcpp::DataFrame RcppGPCRobust4Lattice(
 
   // --- Embedding Construction ------------------------------------------------
 
-  std::vector<std::vector<double>> Mx = GenLatticeEmbeddings(x_std, nb_vec, E, tau, style);
-  std::vector<std::vector<double>> My = GenLatticeEmbeddings(y_std, nb_vec, E, tau, style);
+  std::vector<std::vector<double>> Mx = GenLatticeEmbeddings(x_std, nb_vec, E_std[1], tau_std[1], style);
+  std::vector<std::vector<double>> My = GenLatticeEmbeddings(y_std, nb_vec, E_std[2], tau_std[2], style);
 
   // --- Perform Robust Geographical Pattern Causality -------------------------
 
