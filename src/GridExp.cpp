@@ -2197,8 +2197,8 @@ Rcpp::DataFrame RcppGPCRobust4Grid(
     const Rcpp::IntegerMatrix& libsizes,
     const Rcpp::IntegerMatrix& lib,
     const Rcpp::IntegerMatrix& pred,
-    int E = 3,
-    int tau = 1,
+    const Rcpp::IntegerVector& E,
+    const Rcpp::IntegerVector& tau,
     int style = 1,
     int b = 4,
     int boot = 99,
@@ -2225,6 +2225,9 @@ Rcpp::DataFrame RcppGPCRobust4Grid(
       if (!std::isnan(yMatrix(i, j))) validCellNum += 1;
     }
   }
+
+  std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
+  std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
 
   int numRows = yMatrix.nrow();
   int numCols = yMatrix.ncol();
