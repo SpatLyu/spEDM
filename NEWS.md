@@ -2,7 +2,7 @@
 
 ### enhancements
 
-* Enable asymmetric configurations (`E`, `tau`, `k`) in bidirectional bivariate causality analysis (#955).
+* Enable asymmetric configurations (`E`, `tau`, `k`) in bidirectional pattern causality analysis (#955).
 
 # spEDM 1.11
 
