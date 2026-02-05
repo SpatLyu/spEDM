@@ -2,7 +2,7 @@
 
 ### enhancements
 
-* Permit `gpc` generic to use direction-specific parameters (`E`, `tau`, `k`) when detecting bi-variate causality (#955).
+* Enable asymmetric configurations (`E`, `tau`, `k`) in bidirectional bivariate causality analysis (#955).
 
 # spEDM 1.11
 
