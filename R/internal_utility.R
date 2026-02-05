@@ -242,9 +242,9 @@
 
   if (is.null(libsizes)){
     if (is.null(nb)){
-      res = RcppGPC4Grid(y,x,lib,pred,E,tau,style,k[1],zero.tolerance,dist.metric,relative,weighted,threads)
+      res = RcppGPC4Grid(y,x,lib,pred,rev(E),rev(tau),style,k[2],zero.tolerance,dist.metric,relative,weighted,threads)
     } else {
-      res = RcppGPC4Lattice(y,x,nb,lib,pred,E,tau,style,k[1],zero.tolerance,dist.metric,relative,weighted,threads)
+      res = RcppGPC4Lattice(y,x,nb,lib,pred,rev(E),rev(tau),style,k[2],zero.tolerance,dist.metric,relative,weighted,threads)
     }
     res$causality$direction = "y_xmap_x"
     res$summary$direction = "y_xmap_x"
@@ -253,7 +253,7 @@
     res$bidirectional = FALSE
 
     if (bidirectional){
-      res_bi = .run_gpc(y, x, rev(E), rev(k), rev(tau), style, lib, pred,
+      res_bi = .run_gpc(y, x, E, k, tau, style, lib, pred,
                         dist.metric, zero.tolerance, relative, weighted,
                         threads, FALSE, varname, nb)
       res_bi$causality$direction = "x_xmap_y"
@@ -269,17 +269,17 @@
   } else {
     pl = .check_parallellevel(parallel.level)
     if (is.null(nb)){
-      res = RcppGPCRobust4Grid(y, x, libsizes, lib, pred, E, tau, style, k[1], boot, random, seed,
-                               zero.tolerance,dist.metric,relative,weighted,threads,pl,progressbar)
+      res = RcppGPCRobust4Grid(y, x, libsizes, lib, pred, rev(E), rev(tau), style, k[2], boot, random,
+                               seed, zero.tolerance,dist.metric,relative,weighted,threads,pl,progressbar)
     } else {
-      res = RcppGPCRobust4Lattice(y, x, nb, libsizes, lib, pred, E, tau, style, k[1], boot, random, seed,
-                                  zero.tolerance,dist.metric,relative,weighted,threads,pl,progressbar)
+      res = RcppGPCRobust4Lattice(y, x, nb, libsizes, lib, pred, rev(E), rev(tau), style, k[2], boot, random,
+                                  seed, zero.tolerance,dist.metric,relative,weighted,threads,pl,progressbar)
     }
     res$direction = "y_xmap_x"
     res = list(xmap = res)
 
     if (bidirectional){
-      res_bi = .run_gpc(y, x, rev(E), rev(k), rev(tau), style, lib, pred, dist.metric,
+      res_bi = .run_gpc(y, x, E, k, tau, style, lib, pred, dist.metric,
                         zero.tolerance, relative, weighted, threads, FALSE,
                         varname, nb, libsizes, boot, random, seed, pl, progressbar)
       res_bi$xmap$direction = "x_xmap_y"
