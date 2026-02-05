@@ -28,7 +28,7 @@
                                 .check_distmetric(dist.metric),threads,pl,progressbar)
   }
   y_xmap_x = RcppGCMC4Lattice(effect,cause,nb,libsizes,lib,pred,rev(E),rev(tau),k[2],0,
-                              style, .check_distmetric(dist.metric),threads,pl,progressbar)
+                              style,.check_distmetric(dist.metric),threads,pl,progressbar)
 
   return(.bind_intersectdf(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
