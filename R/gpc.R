@@ -60,5 +60,4 @@
 methods::setMethod("gpc", "sf", .gpc_sf_method)
 
 #' @rdname gpc
-#' @param grid.coord (optional) whether to detrend using cell center coordinates (`TRUE`) or row/column numbers (`FALSE`).
 methods::setMethod("gpc", "SpatRaster", .gpc_spatraster_method)
