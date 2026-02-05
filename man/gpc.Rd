@@ -21,7 +21,7 @@
   random = TRUE,
   seed = 42L,
   dist.metric = "L2",
-  zero.tolerance = k,
+  zero.tolerance = max(k),
   relative = TRUE,
   weighted = TRUE,
   threads = detectThreads(),
@@ -47,7 +47,7 @@
   random = TRUE,
   seed = 42L,
   dist.metric = "L2",
-  zero.tolerance = k,
+  zero.tolerance = max(k),
   relative = TRUE,
   weighted = TRUE,
   threads = detectThreads(),
@@ -89,7 +89,7 @@
 
 \item{zero.tolerance}{(optional) maximum number of zeros tolerated in signature space.}
 
-\item{relative}{(optional) whether to calculate relative changes in embeddings.}
+\item{relative}{(optional) whether to calculate relative changes in embedding.}
 
 \item{weighted}{(optional) whether to weight causal strength.}
 
