@@ -1,5 +1,9 @@
 # spEDM 1.12
 
+### enhancements
+
+* Permit `gpc` generic to use direction-specific parameters (`E`, `tau`, `k`) when detecting bi-variate causality (#955).
+
 # spEDM 1.11
 
 ### bug fixes
