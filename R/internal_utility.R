@@ -253,7 +253,7 @@
     res$bidirectional = FALSE
 
     if (bidirectional){
-      res_bi = .run_gpc(y, x, E, rev(k), tau, style, lib, pred,
+      res_bi = .run_gpc(y, x, rev(E), rev(k), rev(tau), style, lib, pred,
                         dist.metric, zero.tolerance, relative, weighted,
                         threads, FALSE, varname, nb)
       res_bi$causality$direction = "x_xmap_y"
