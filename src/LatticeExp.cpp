@@ -1461,8 +1461,8 @@ Rcpp::List RcppGPC4Lattice(
     const Rcpp::List& nb,
     const Rcpp::IntegerVector& lib,
     const Rcpp::IntegerVector& pred,
-    int E = 3,
-    int tau = 0,
+    const Rcpp::IntegerVector& E,
+    const Rcpp::IntegerVector& tau,
     int style = 1,
     int b = 0,
     int zero_tolerance = 0,
@@ -1504,10 +1504,14 @@ Rcpp::List RcppGPC4Lattice(
   else if (b + 1 > static_cast<int>(lib_std.size()))
     Rcpp::stop("Please check `libsizes` or `lib`; no valid libraries available for running GPCM.");
 
+  // Convert Rcpp IntegerVector to std::vector<int>
+  std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
+  std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
+
   // --- Embedding Construction ------------------------------------------------
 
-  std::vector<std::vector<double>> Mx = GenLatticeEmbeddings(x_std, nb_vec, E, tau, style);
-  std::vector<std::vector<double>> My = GenLatticeEmbeddings(y_std, nb_vec, E, tau, style);
+  std::vector<std::vector<double>> Mx = GenLatticeEmbeddings(x_std, nb_vec, E_std[1], tau_std[1], style);
+  std::vector<std::vector<double>> My = GenLatticeEmbeddings(y_std, nb_vec, E_std[2], tau_std[2], style);
 
   // --- Perform Geographical Pattern Causality (GPC) -------------------------
 
