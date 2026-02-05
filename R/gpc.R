@@ -1,4 +1,4 @@
-.gpc_sf_method = \(data, cause, effect, libsizes = NULL, E = 3, k = E+2, tau = 1, style = 1, lib = NULL, pred = NULL, boot = 99, random = TRUE, seed = 42L, dist.metric = "L2", zero.tolerance = k,
+.gpc_sf_method = \(data, cause, effect, libsizes = NULL, E = 3, k = E+2, tau = 1, style = 1, lib = NULL, pred = NULL, boot = 99, random = TRUE, seed = 42L, dist.metric = "L2", zero.tolerance = max(k),
                    relative = TRUE, weighted = TRUE, threads = detectThreads(), detrend = FALSE, parallel.level = "low", bidirectional = TRUE, progressbar = TRUE, nb = NULL){
   varname = .check_character(cause, effect)
   if (is.null(nb)) nb = .internal_lattice_nb(data)
@@ -11,7 +11,7 @@
                   libsizes, boot, random, seed, parallel.level, progressbar))
 }
 
-.gpc_spatraster_method = \(data, cause, effect, libsizes = NULL, E = 3, k = E+2, tau = 1, style = 1, lib = NULL, pred = NULL, boot = 99, random = TRUE, seed = 42L, dist.metric = "L2", zero.tolerance = k,
+.gpc_spatraster_method = \(data, cause, effect, libsizes = NULL, E = 3, k = E+2, tau = 1, style = 1, lib = NULL, pred = NULL, boot = 99, random = TRUE, seed = 42L, dist.metric = "L2", zero.tolerance = max(k),
                            relative = TRUE, weighted = TRUE, threads = detectThreads(), detrend = FALSE, parallel.level = "low", bidirectional = TRUE, progressbar = TRUE, grid.coord = TRUE){
   varname = .check_character(cause, effect)
   cause = .uni_grid(data,cause,detrend,grid.coord)
@@ -30,7 +30,7 @@
 #' @param seed (optional) random seed.
 #' @param random (optional) whether to use random sampling.
 #' @param zero.tolerance (optional) maximum number of zeros tolerated in signature space.
-#' @param relative (optional) whether to calculate relative changes in embeddings.
+#' @param relative (optional) whether to calculate relative changes in embedding.
 #' @param weighted (optional) whether to weight causal strength.
 #'
 #' @return A list
