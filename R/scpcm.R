@@ -1,6 +1,6 @@
 .scpcm_sf_method = \(data, cause, effect, conds, libsizes = NULL, E = 3, k = E+2, tau = 1, style = 1, stack = FALSE, lib = NULL, pred = NULL, dist.metric = "L2", dist.average = TRUE,
                      theta = 1, algorithm = "simplex", threads = detectThreads(), detrend = TRUE, parallel.level = "low", bidirectional = TRUE, progressbar = TRUE, cumulate = FALSE, nb = NULL){
-  varname = .check_character(c(cause, effect, conds))
+  varname = .check_character(c(cause, effect, rev(conds)))
   E = .check_inputelementnum(E,length(varname)+length(conds),2*length(conds))
   tau = .check_inputelementnum(tau,length(varname)+length(conds),2*length(conds))
   k = .check_inputelementnum(k,length(varname)+length(conds),2*length(conds))
@@ -37,7 +37,7 @@
 
 .scpcm_spatraster_method = \(data, cause, effect, conds, libsizes = NULL, E = 3, k = E+2, tau = 1, style = 1, stack = FALSE, lib = NULL, pred = NULL, dist.metric = "L2", dist.average = TRUE, theta = 1, algorithm = "simplex",
                              threads = detectThreads(), detrend = TRUE, parallel.level = "low", bidirectional = TRUE, progressbar = TRUE, cumulate = FALSE, grid.coord = TRUE, embed.direction = 0, win.ratio = 0){
-  varname = .check_character(cause, effect, conds)
+  varname = .check_character(cause, effect, rev(conds))
   E = .check_inputelementnum(E,length(varname)+length(conds),2*length(conds))
   tau = .check_inputelementnum(tau,length(varname)+length(conds),2*length(conds))
   k = .check_inputelementnum(k,length(varname)+length(conds),2*length(conds))
