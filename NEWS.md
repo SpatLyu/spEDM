@@ -8,6 +8,8 @@
 
 ### breaking changes
 
+* Correct the causal strength normalization in geographical pattern causality to use the target variable's signature norm as denominator instead of the source variable's norm (#962).
+
 * Align `conds` parameter in `scpcm` generic to accept condition variables in direct path order for causal mediation analysis (#961).
 
 # spEDM 1.11
