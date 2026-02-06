@@ -2,7 +2,7 @@
 title: "Geographical Pattern Causality"
 author: "Wenbo Lv"
 date: |
-  | Last update: 2026-02-01
+  | Last update: 2026-02-06
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -105,7 +105,7 @@ spEDM::pc(columbus, "hoval", "crime", E = 5:6, k = 7:10, tau = 1, maximize = "ne
 Run geographical pattern causality analysis
 
 ```{r gpc_lattice}
-spEDM::gpc(columbus, "hoval", "crime", E = 6, k = 9)
+spEDM::gpc(columbus, "hoval", "crime", E = 6, k = 8)
 ```
 
 Convergence diagnostics
@@ -113,7 +113,7 @@ Convergence diagnostics
 ```{r fig1,fig.width=5.55,fig.height=3.05,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. **Convergence curves of causal strengths among house value and crime.**")}
 crime_convergence = spEDM::gpc(columbus, "hoval", "crime",
                                libsizes = seq(5, 45, by = 5),
-                               E = 6, k = 9, progressbar = FALSE)
+                               E = 6, k = 8, progressbar = FALSE)
 crime_convergence
 plot(crime_convergence, ylimits = c(-0.01,1),
      xlimits = c(9,46), xbreaks = seq(10, 45, 10))
@@ -153,7 +153,7 @@ Then, search optimal parameters:
 ```{r pc_grid}
 stats::cor.test(~ pre + npp,
                 data = terra::values(npp[[c("pre","npp")]],
-                                      datafame = TRUE, na.rm = TRUE))
+                                     dataframe = TRUE, na.rm = TRUE))
 
 
 g1 = spEDM::pc(npp, "npp", "pre", E = 6:10, k = 12, tau = 1:5, maximize = "positive")
