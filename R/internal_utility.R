@@ -236,8 +236,8 @@
              weighted, threads, bidirectional = FALSE, varname = NULL, nb = NULL,
              libsizes = NULL, boot = 9, random = TRUE, seed = 42, parallel.level = "low",
              progressbar = FALSE){
-  E = .check_inputelementnum(E,2)
-  tau = .check_inputelementnum(tau,2)
+  E = .check_inputelementnum(E,4)
+  tau = .check_inputelementnum(tau,4)
   k = .check_inputelementnum(k,2)
 
   if (is.null(libsizes)){
