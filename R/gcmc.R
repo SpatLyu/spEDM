@@ -1,4 +1,4 @@
-.gcmc_sf_method = \(data, cause, effect, libsizes = NULL, E = 3, k = pmin(E^2), tau = 1, style = 1, lib = NULL, pred = NULL, dist.metric = "L2",
+.gcmc_sf_method = \(data, cause, effect, libsizes = NULL, E = 3, k = min(E^2), tau = 1, style = 1, lib = NULL, pred = NULL, dist.metric = "L2",
                     threads = detectThreads(), detrend = FALSE, parallel.level = "low", bidirectional = TRUE, progressbar = TRUE, nb = NULL){
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,4)
@@ -33,7 +33,7 @@
   return(.bind_intersectdf(varname,x_xmap_y,y_xmap_x,bidirectional))
 }
 
-.gcmc_spatraster_method = \(data, cause, effect, libsizes = NULL, E = 3, k = pmin(E^2), tau = 1, style = 1, lib = NULL, pred = NULL, dist.metric = "L2",
+.gcmc_spatraster_method = \(data, cause, effect, libsizes = NULL, E = 3, k = min(E^2), tau = 1, style = 1, lib = NULL, pred = NULL, dist.metric = "L2",
                             threads = detectThreads(), detrend = FALSE, parallel.level = "low", bidirectional = TRUE, progressbar = TRUE, grid.coord = TRUE){
   varname = .check_character(cause, effect)
   E = .check_inputelementnum(E,4)
