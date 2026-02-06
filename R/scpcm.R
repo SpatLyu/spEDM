@@ -1,9 +1,9 @@
 .scpcm_sf_method = \(data, cause, effect, conds, libsizes = NULL, E = 3, k = E+2, tau = 1, style = 1, stack = FALSE, lib = NULL, pred = NULL, dist.metric = "L2", dist.average = TRUE,
                      theta = 1, algorithm = "simplex", threads = detectThreads(), detrend = TRUE, parallel.level = "low", bidirectional = TRUE, progressbar = TRUE, cumulate = FALSE, nb = NULL){
   varname = .check_character(c(cause, effect, conds))
-  E = .check_inputelementnum(E,length(varname),length(conds))
-  tau = .check_inputelementnum(tau,length(varname),length(conds))
-  k = .check_inputelementnum(k,length(varname),length(conds))
+  E = .check_inputelementnum(E,length(varname),2*length(conds))
+  tau = .check_inputelementnum(tau,length(varname),2*length(conds))
+  k = .check_inputelementnum(k,length(varname),2*length(conds))
   pl = .check_parallellevel(parallel.level)
   .varname = .internal_varname(conds)
   if (is.null(nb)) nb = .internal_lattice_nb(data)
@@ -26,8 +26,8 @@
   simplex = ifelse(algorithm == "simplex", TRUE, FALSE)
   x_xmap_y = NULL
   if (bidirectional){
-    x_xmap_y = RcppSCPCM4Lattice(cause,effect,condmat,nb,libsizes,lib,pred,E[-2],tau[-2],k[-2],simplex,theta,threads,pl,
-                                 cumulate, style, stack, .check_distmetric(dist.metric), dist.average, TRUE, progressbar)
+    x_xmap_y = RcppSCPCM4Lattice(cause,effect,condmat,nb,libsizes,lib,pred,E[-c(2,2+seq_along(conds))],tau[-c(2,2+seq_along(conds))],k[-c(2,2+seq_along(conds))],
+                                 simplex, theta, threads, pl, cumulate, style, stack, .check_distmetric(dist.metric), dist.average, TRUE, progressbar)
   }
   y_xmap_x = RcppSCPCM4Lattice(effect,cause,condmat,nb,libsizes,lib,pred,E[-1],tau[-1],k[-1],simplex,theta,threads,pl,
                                cumulate, style, stack, .check_distmetric(dist.metric), dist.average, TRUE, progressbar)
