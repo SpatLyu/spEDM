@@ -113,7 +113,7 @@ Convergence diagnostics
 ```{r fig1,fig.width=5.55,fig.height=3.05,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. **Convergence curves of causal strengths among house value and crime.**")}
 crime_convergence = spEDM::gpc(columbus, "hoval", "crime",
                                libsizes = seq(5, 45, by = 5),
-                               E = 6, k = 9, progressbar = FALSE)
+                               E = 6, k = 8, progressbar = FALSE)
 crime_convergence
 plot(crime_convergence, ylimits = c(-0.01,1),
      xlimits = c(9,46), xbreaks = seq(10, 45, 10))
