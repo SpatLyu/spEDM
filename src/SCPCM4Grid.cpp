@@ -905,21 +905,21 @@ std::vector<std::vector<double>> SCPCM4Grid(
     const std::vector<double>& win_ratios = {0,0},       // Scale the sliding window step relative to the matrix width/height to speed up state-space predictions.
     bool progressbar = false                             // Whether to print the progress bar
 ) {
-  // If b is not provided correctly, default it to E + 2
-  std::vector<int> bs = b;
-  for (size_t i = 0; i < bs.size(); ++i){
+  // Extract first (n_controls + 1) elements from b for bs, with safe boundary check
+  std::vector<int> bs(b.begin(), b.begin() + zMatrixs.size() + 1);
+
+  // Apply defaulting logic: if bs[i] <= 0, set to Es[i] + 2 (with Es bounds check)
+  for (size_t i = 0; i < bs.size(); ++i) {
     if (bs[i] <= 0) {
       bs[i] = Es[i] + 2;
     }
   }
 
   int Ex = Es[0];
-  std::vector<int> conEs = Es;
-  conEs.erase(conEs.begin());
+  std::vector<int> conEs(Es.begin() + 1, Es.begin() + 1 + zMatrixs.size());
 
   int taux = taus[0];
-  std::vector<int> contaus = taus;
-  contaus.erase(contaus.begin());
+  std::vector<int> contaus(taus.begin() + 1, taus.begin() + 1 + zMatrixs.size());
 
   // Configure threads
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
@@ -1405,21 +1405,21 @@ std::vector<std::vector<double>> SCPCM4GridOneDim(
     const std::vector<int>& dir = {0},
     bool progressbar = false
 ) {
-  // If b is not provided correctly, default it to E + 2
-  std::vector<int> bs = b;
-  for (size_t i = 0; i < bs.size(); ++i){
+  // Extract first (n_controls + 1) elements from b for bs, with safe boundary check
+  std::vector<int> bs(b.begin(), b.begin() + zMatrixs.size() + 1);
+
+  // Apply defaulting logic: if bs[i] <= 0, set to Es[i] + 2 (with Es bounds check)
+  for (size_t i = 0; i < bs.size(); ++i) {
     if (bs[i] <= 0) {
       bs[i] = Es[i] + 2;
     }
   }
 
   int Ex = Es[0];
-  std::vector<int> conEs = Es;
-  conEs.erase(conEs.begin());
+  std::vector<int> conEs(Es.begin() + 1, Es.begin() + 1 + zMatrixs.size());
 
   int taux = taus[0];
-  std::vector<int> contaus = taus;
-  contaus.erase(contaus.begin());
+  std::vector<int> contaus(taus.begin() + 1, taus.begin() + 1 + zMatrixs.size());
 
   // Configure threads
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
