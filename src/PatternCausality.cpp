@@ -44,7 +44,7 @@
  *       - Dark         : all other off-diagonal relationships
  *
  *  7. Causal strength is optional weighted by:
- *         erf( ||pred_Y|| / (||X|| + 1e-6) )
+ *         erf( ||pred_SMy|| / (||SMy|| + 1e-6) )
  *     which bounds the strength in [0, 1] and prevents division instability.
  *
  *  8. A final normalized heatmap (cell-wise average) and aggregated metrics
@@ -253,9 +253,9 @@ PatternCausalityRes GenPatternCausality(
 
     double strength = 0.0;
     if (pat_y_pred == pat_y_real) {
-      double norm_sigx = norm_vec_ignore_nan(SMx[t]) + 1e-6;
-      double ratio = norm_vec_ignore_nan(pred_SMy[t]) / norm_sigx;
-      strength = weighted ? std::erf(ratio) : 1.0;
+      strength = weighted ?
+        std::erf(norm_vec_ignore_nan(pred_SMy[t]) /
+                (norm_vec_ignore_nan(SMy[t]) + 1e-6)) : 1.0;
     }
 
     // Accumulate to heatmap
