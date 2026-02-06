@@ -6,6 +6,10 @@
 
 * Enable asymmetric configurations (`E`, `tau`, `k`) in bidirectional pattern causality analysis (#955).
 
+### breaking changes
+
+* Align `conds` parameter in `scpcm` generic to accept condition variables in direct path order for causal mediation analysis (#961).
+
 # spEDM 1.11
 
 ### bug fixes
