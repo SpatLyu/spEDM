@@ -50,7 +50,7 @@
  *       - Dark         : all other off-diagonal relationships
  *
  *  7. Causal strength is optional weighted by:
- *         erf( ||pred_Y|| / (||X|| + 1e-6) )
+ *         erf( ||pred_SMy|| / (||SMx|| + 1e-6) )
  *     which bounds the strength in [0, 1] and prevents division instability.
  *
  *  8. A final normalized heatmap (cell-wise average) and aggregated metrics
