@@ -38,9 +38,9 @@
 .scpcm_spatraster_method = \(data, cause, effect, conds, libsizes = NULL, E = 3, k = E+2, tau = 1, style = 1, stack = FALSE, lib = NULL, pred = NULL, dist.metric = "L2", dist.average = TRUE, theta = 1, algorithm = "simplex",
                              threads = detectThreads(), detrend = TRUE, parallel.level = "low", bidirectional = TRUE, progressbar = TRUE, cumulate = FALSE, grid.coord = TRUE, embed.direction = 0, win.ratio = 0){
   varname = .check_character(cause, effect, conds)
-  E = .check_inputelementnum(E,length(varname),2*length(conds))
-  tau = .check_inputelementnum(tau,length(varname),2*length(conds))
-  k = .check_inputelementnum(k,length(varname),2*length(conds))
+  E = .check_inputelementnum(E,length(varname)+length(conds),2*length(conds))
+  tau = .check_inputelementnum(tau,length(varname)+length(conds),2*length(conds))
+  k = .check_inputelementnum(k,length(varname)+length(conds),2*length(conds))
   win.ratio = .check_inputelementnum(win.ratio,2)
   pl = .check_parallellevel(parallel.level)
   .varname = .internal_varname(conds)
