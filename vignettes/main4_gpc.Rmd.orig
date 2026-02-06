@@ -153,7 +153,7 @@ Then, search optimal parameters:
 ```{r pc_grid}
 stats::cor.test(~ pre + npp,
                 data = terra::values(npp[[c("pre","npp")]],
-                                     datafame = TRUE, na.rm = TRUE))
+                                     dataframe = TRUE, na.rm = TRUE))
 
 
 g1 = spEDM::pc(npp, "npp", "pre", E = 6:10, k = 12, tau = 1:5, maximize = "positive")
