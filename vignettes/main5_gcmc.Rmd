@@ -3,7 +3,7 @@ title: "Geographical Cross Mapping Cardinality"
 author: "Wenbo Lv"
 date: |
   | Last update: 2026-02-01
-  | Last run: 2026-02-02
+  | Last run: 2026-02-10
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{5. Geographical Cross Mapping Cardinality}
