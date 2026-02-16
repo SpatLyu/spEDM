@@ -502,7 +502,7 @@ Rcpp::NumericVector RcppFNN4Lattice(
   }
   result.names() = resnames;
 
-  // === Terminal-friendly hint (one-time, non-intrusive) ===
+  // Terminal-friendly hint (one-time, non-intrusive)
   Rcpp::Rcout << "[spEDM] Output 'E:i' corresponds to the i-th valid embedding dimension.\n"
               << "[spEDM] Input E values exceeding max embeddable dimension were truncated.\n"
               << "[spEDM] Please map output indices to original E inputs before interpretation.\n";
