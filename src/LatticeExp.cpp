@@ -502,6 +502,11 @@ Rcpp::NumericVector RcppFNN4Lattice(
   }
   result.names() = resnames;
 
+  // === Terminal-friendly hint (one-time, non-intrusive) ===
+  Rcpp::Rcout << "\033[34m[spEDM]\033[0m Output columns 'E:k' index valid embedding dimensions.\n"
+              << "\033[34m[spEDM]\033[0m Input E values exceeding max embeddable dimension were truncated.\n"
+              << "\033[34m[spEDM]\033[0m Map output indices to original E inputs before interpretation.\n";
+
   return result;
 }
 
