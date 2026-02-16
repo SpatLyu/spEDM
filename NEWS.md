@@ -2,6 +2,8 @@
 
 ### enhancements
 
+* Add plain-text terminal hint to `fnn` output (#965).
+
 * Unify preprocessing strategies for embedding parameters `E` and `tau` across spatial causal discovery algorithms (#960).
 
 * Enable asymmetric configurations (`E`, `tau`, `k`) in bidirectional pattern causality analysis (#955).
