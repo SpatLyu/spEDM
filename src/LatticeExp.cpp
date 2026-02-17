@@ -64,7 +64,7 @@ Rcpp::List RcppLaggedNeighbor4Lattice(const Rcpp::List& nb, int lagNum = 1) {
       val += 1;
     }
   }
-  // // A more modern C++ implementation, provided for comparison only. -- Wenbo Lv, 2025.3.3
+  // // A more modern C++ implementation, provided for comparison only. -- Wenbo Lyu, 2025.3.3
   // for (auto& row : lagged_indices) {
   //   std::transform(row.begin(), row.end(), row.begin(), [](int x) { return x + 1; });
   // }
