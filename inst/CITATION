@@ -3,7 +3,7 @@ citHeader("To cite package spEDM in publications, please use:")
 bibentry(
   bibtype  = "Manual",
   title    = "{spEDM: Spatial Empirical Dynamic Modeling}",
-  author   = "Wenbo Lv",
+  author   = "Wenbo Lyu",
   year     = "2026",
   note     = "R package version 1.12",
   doi      = "10.32614/CRAN.package.spEDM"
