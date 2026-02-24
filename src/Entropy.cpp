@@ -14,13 +14,13 @@
  * @param vec A vector of double values representing the dataset.
  * @param k The number of nearest neighbors to consider in the estimation.
  * @param base The logarithm base used for entropy calculation (default: 10).
- * @param NA_rm A boolean flag indicating whether to remove missing values (default: false).
+ * @param na_rm A boolean flag indicating whether to remove missing values (default: true).
  *
  * @return The estimated entropy of the vector.
  */
 double CppEntropy_Cont(const std::vector<double>& vec, size_t k,
-                       double base = 10, bool NA_rm = false) {
-  std::vector<double> distances = CppKNearestDistance(vec, k, true, NA_rm);
+                       double base = 10, bool na_rm = true) {
+  std::vector<double> distances = CppKNearestDistance(vec, k, true, na_rm);
   size_t n = vec.size();
 
   double sum = 0.0;
@@ -41,13 +41,13 @@ double CppEntropy_Cont(const std::vector<double>& vec, size_t k,
  * @param columns The indices of columns to select for joint entropy calculation.
  * @param k The number of nearest neighbors to consider in the estimation.
  * @param base The logarithm base used for entropy calculation (default: 10).
- * @param NA_rm A boolean flag indicating whether to remove missing values (NaN) before computation (default: false).
+ * @param na_rm A boolean flag indicating whether to remove missing values (NaN) before computation (default: true).
  *
  * @return The estimated joint entropy of the multivariate matrix.
  */
 double CppJoinEntropy_Cont(const std::vector<std::vector<double>>& mat,
                            const std::vector<int>& columns, size_t k,
-                           double base = 10, bool NA_rm = false) {
+                           double base = 10, bool na_rm = true) {
   // Step 1: Construct new_mat based on selected columns
   std::vector<std::vector<double>> new_mat;
   size_t original_ncol = mat.empty() ? 0 : mat[0].size();
@@ -74,13 +74,13 @@ double CppJoinEntropy_Cont(const std::vector<std::vector<double>>& mat,
 
   // Step 3: Compute Chebyshev distance matrix for new_mat
   std::vector<double> distances(nrow);
-  std::vector<std::vector<double>> mat_dist = CppMatChebyshevDistance(new_mat, NA_rm);
+  std::vector<std::vector<double>> mat_dist = CppMatChebyshevDistance(new_mat, na_rm);
 
   // Step 4: Calculate k-th nearest neighbor distances
   for (size_t i = 0; i < nrow; ++i) {
     std::vector<double> dist_n;
 
-    if (NA_rm) {
+    if (na_rm) {
       for (double val : mat_dist[i]) {
         if (!std::isnan(val)) {
           dist_n.push_back(val);
@@ -126,7 +126,7 @@ double CppJoinEntropy_Cont(const std::vector<std::vector<double>>& mat,
  *
  * @note
  * - MI is always non-negative. Negative estimates are set to 0.
- * - Missing values (NaNs) can be excluded from the computation using `NA_rm = true`.
+ * - Missing values (NaNs) can be excluded from the computation using `na_rm = true`.
  * - Normalization can be applied to return MI as a fraction of joint entropy.
  *
  * @references
@@ -139,7 +139,7 @@ double CppJoinEntropy_Cont(const std::vector<std::vector<double>>& mat,
  * @param k The number of nearest neighbors used in MI estimation.
  * @param alg Algorithm type: 1 for Kraskov Algorithm I, 2 for Kraskov Algorithm II.
  * @param normalize Whether to normalize the MI estimate by the joint entropy.
- * @param NA_rm Whether to remove missing values (NaNs) from the computation.
+ * @param na_rm Whether to remove missing values (NaNs) from the computation.
  *
  * @return A non-negative double representing the estimated mutual information.
  */
@@ -147,7 +147,7 @@ double CppMutualInformation_Cont(const std::vector<std::vector<double>>& mat,
                                  const std::vector<int>& columns1,
                                  const std::vector<int>& columns2,
                                  size_t k, int alg = 1,
-                                 bool normalize = false, bool NA_rm = false){
+                                 bool normalize = false, bool na_rm = true){
   std::unordered_set<int> unique_set;
   unique_set.insert(columns1.begin(), columns1.end());
   unique_set.insert(columns2.begin(), columns2.end());
@@ -189,20 +189,20 @@ double CppMutualInformation_Cont(const std::vector<std::vector<double>>& mat,
   }
 
   std::vector<double> distances(nrow);
-  std::vector<std::vector<double>> mat_dist = CppMatChebyshevDistance(new_mat, NA_rm);
+  std::vector<std::vector<double>> mat_dist = CppMatChebyshevDistance(new_mat, na_rm);
 
   for (size_t i = 0; i < nrow; ++i) {
-    // Create a vector to store the distances for the current row, filtering out NaN values if NA_rm is true
+    // Create a vector to store the distances for the current row, filtering out NaN values if na_rm is true
     std::vector<double> dist_n;
 
-    if (NA_rm) {
+    if (na_rm) {
       for (double val : mat_dist[i]) {
         if (!std::isnan(val)) {
           dist_n.push_back(val);  // Only include non-NaN values
         }
       }
     } else {
-      dist_n = mat_dist[i];  // Include all values if NA_rm is false
+      dist_n = mat_dist[i];  // Include all values if na_rm is false
     }
 
     // Use nth_element to partially sort the distances up to the k-th element
@@ -218,18 +218,18 @@ double CppMutualInformation_Cont(const std::vector<std::vector<double>>& mat,
   double sum = 0;
   double mi = 0;
   if (alg == 1){
-    std::vector<int> NX = CppMatNeighborsNum(X, distances, false, NA_rm);
-    std::vector<int> NY = CppMatNeighborsNum(Y, distances, false, NA_rm);
+    std::vector<int> NX = CppMatNeighborsNum(X, distances, false, na_rm);
+    std::vector<int> NY = CppMatNeighborsNum(Y, distances, false, na_rm);
     for (size_t i = 0; i < nrow; i ++){
       sum += CppDigamma(NX[i] + 1) + CppDigamma(NY[i] + 1);
     }
     sum /= nrow;
     mi = CppDigamma(k) + CppDigamma(nrow) - sum;
   } else {
-    std::vector<double> distances_x = CppMatKNearestDistance(X, k, NA_rm);
-    std::vector<double> distances_y = CppMatKNearestDistance(Y, k, NA_rm);
-    std::vector<int> NX = CppMatNeighborsNum(X, distances_x, true, NA_rm);
-    std::vector<int> NY = CppMatNeighborsNum(Y, distances_y, true, NA_rm);
+    std::vector<double> distances_x = CppMatKNearestDistance(X, k, na_rm);
+    std::vector<double> distances_y = CppMatKNearestDistance(Y, k, na_rm);
+    std::vector<int> NX = CppMatNeighborsNum(X, distances_x, true, na_rm);
+    std::vector<int> NY = CppMatNeighborsNum(Y, distances_y, true, na_rm);
     for (size_t i = 0; i < nrow; i++){
       sum += CppDigamma(NX[i]) + CppDigamma(NY[i]);
     }
@@ -261,23 +261,23 @@ double CppMutualInformation_Cont(const std::vector<std::vector<double>>& mat,
  * @param conditional_columns Indices of columns representing the conditioning variable(s) Y.
  * @param k Number of nearest neighbors used for entropy estimation.
  * @param base Logarithm base used in entropy calculations (default: 10).
- * @param NA_rm If true, removes samples with any NaN values; otherwise returns NaN if any NaN is encountered.
+ * @param na_rm If true, removes samples with any NaN values; otherwise returns NaN if any NaN is encountered.
  * @return Estimated conditional entropy H(X | Y) = H(X,Y) - H(Y), or NaN if invalid conditions occur.
  */
 double CppConditionalEntropy_Cont(const std::vector<std::vector<double>>& mat,
                                   const std::vector<int>& target_columns,
                                   const std::vector<int>& conditional_columns,
-                                  size_t k, double base = 10, bool NA_rm = false) {
+                                  size_t k, double base = 10, bool na_rm = true) {
   std::unordered_set<int> unique_set;
   unique_set.insert(target_columns.begin(), target_columns.end());
   unique_set.insert(conditional_columns.begin(), conditional_columns.end());
   std::vector<int> columns(unique_set.begin(), unique_set.end());
 
   // Compute the joint entropy H(X, Y)
-  double joint_entropy = CppJoinEntropy_Cont(mat, columns, k, base, NA_rm);
+  double joint_entropy = CppJoinEntropy_Cont(mat, columns, k, base, na_rm);
 
   // Compute the entropy of y, H(Y)
-  double entropy_y = CppJoinEntropy_Cont(mat, conditional_columns, k, base, NA_rm);
+  double entropy_y = CppJoinEntropy_Cont(mat, conditional_columns, k, base, na_rm);
 
   // Compute the conditional entropy H(X|Y) = H(X, Y) - H(Y)
   double ce = joint_entropy - entropy_y;
@@ -288,17 +288,17 @@ double CppConditionalEntropy_Cont(const std::vector<std::vector<double>>& mat,
  * Computes the entropy of a discrete sequence.
  * @param vec Input vector containing discrete values.
  * @param base Logarithm base (default: 10).
- * @param NA_rm If true, removes NaN values; otherwise returns NaN if any NaN exists.
+ * @param na_rm If true, removes NaN values; otherwise returns NaN if any NaN exists.
  * @return Entropy value or NaN if invalid conditions occur.
  */
 double CppEntropy_Disc(const std::vector<double>& vec,
-                       double base = 10, bool NA_rm = false) {
+                       double base = 10, bool na_rm = true) {
   std::unordered_map<double, int> counts;
   int valid_n = 0;
 
   for (double x : vec) {
     if (std::isnan(x)) {
-      if (!NA_rm) return std::numeric_limits<double>::quiet_NaN();
+      if (!na_rm) return std::numeric_limits<double>::quiet_NaN();
       continue;
     }
     counts[x]++;
@@ -323,12 +323,12 @@ double CppEntropy_Disc(const std::vector<double>& vec,
  * @param mat Input matrix where each row represents a sample containing multiple variables.
  * @param columns The columns which used in joint entropy estimation.
  * @param base Logarithm base (default: 10).
- * @param NA_rm If true, removes samples with any NaN; otherwise returns NaN if any NaN exists.
+ * @param na_rm If true, removes samples with any NaN; otherwise returns NaN if any NaN exists.
  * @return Joint entropy value or NaN if invalid conditions occur.
  */
 double CppJoinEntropy_Disc(const std::vector<std::vector<double>>& mat,
                            const std::vector<int>& columns,
-                           double base = 10, bool NA_rm = false){
+                           double base = 10, bool na_rm = true){
   const double log_base = std::log(base);
 
   // Flattened and valid samples, stored as string key or unique encoding
@@ -350,7 +350,7 @@ double CppJoinEntropy_Disc(const std::vector<std::vector<double>>& mat,
     }
 
     if (has_nan) {
-      if (!NA_rm) return std::numeric_limits<double>::quiet_NaN();
+      if (!na_rm) return std::numeric_limits<double>::quiet_NaN();
       continue;
     }
 
@@ -375,21 +375,21 @@ double CppJoinEntropy_Disc(const std::vector<std::vector<double>>& mat,
  * @param columns1 Indices of columns representing the first set of variables (X).
  * @param columns2 Indices of columns representing the second set of variables (Y).
  * @param base Logarithm base used in entropy calculations (default: 10).
- * @param NA_rm If true, removes samples with any NaN values; otherwise returns NaN if any NaN is encountered.
+ * @param na_rm If true, removes samples with any NaN values; otherwise returns NaN if any NaN is encountered.
  * @return Mutual information value I(X; Y) = H(X) + H(Y) - H(X,Y), or NaN if invalid conditions occur.
  */
 double CppMutualInformation_Disc(const std::vector<std::vector<double>>& mat,
                                  const std::vector<int>& columns1,
                                  const std::vector<int>& columns2,
-                                 double base = 10, bool NA_rm = false) {
+                                 double base = 10, bool na_rm = true) {
   std::unordered_set<int> unique_set;
   unique_set.insert(columns1.begin(), columns1.end());
   unique_set.insert(columns2.begin(), columns2.end());
   std::vector<int> columns(unique_set.begin(), unique_set.end());
 
-  double h_x = CppJoinEntropy_Disc(mat, columns1, base, NA_rm);
-  double h_y = CppJoinEntropy_Disc(mat, columns2, base, NA_rm);
-  double h_xy = CppJoinEntropy_Disc(mat, columns, base, NA_rm);
+  double h_x = CppJoinEntropy_Disc(mat, columns1, base, na_rm);
+  double h_y = CppJoinEntropy_Disc(mat, columns2, base, na_rm);
+  double h_xy = CppJoinEntropy_Disc(mat, columns, base, na_rm);
 
   if (std::isnan(h_x) || std::isnan(h_y) || std::isnan(h_xy)) {
     return std::numeric_limits<double>::quiet_NaN();
@@ -404,20 +404,20 @@ double CppMutualInformation_Disc(const std::vector<std::vector<double>>& mat,
  * @param target_columns Indices of columns representing the target variable(s) X.
  * @param conditional_columns Indices of columns representing the conditioning variable(s) Y.
  * @param base Logarithm base used in entropy calculations (default: 10).
- * @param NA_rm If true, removes samples with any NaN values; otherwise returns NaN if any NaN is encountered.
+ * @param na_rm If true, removes samples with any NaN values; otherwise returns NaN if any NaN is encountered.
  * @return Conditional entropy value H(X | Y) = H(X,Y) - H(Y), or NaN if invalid conditions occur.
  */
 double CppConditionalEntropy_Disc(const std::vector<std::vector<double>>& mat,
                                   const std::vector<int>& target_columns,
                                   const std::vector<int>& conditional_columns,
-                                  double base = 10, bool NA_rm = false) {
+                                  double base = 10, bool na_rm = true) {
   std::unordered_set<int> unique_set;
   unique_set.insert(target_columns.begin(), target_columns.end());
   unique_set.insert(conditional_columns.begin(), conditional_columns.end());
   std::vector<int> columns(unique_set.begin(), unique_set.end());
 
-  double H_xy = CppJoinEntropy_Disc(mat, columns, base, NA_rm);
-  double H_y = CppJoinEntropy_Disc(mat, conditional_columns, base, NA_rm);
+  double H_xy = CppJoinEntropy_Disc(mat, columns, base, na_rm);
+  double H_y = CppJoinEntropy_Disc(mat, conditional_columns, base, na_rm);
 
   if (std::isnan(H_xy) || std::isnan(H_y)) {
     return std::numeric_limits<double>::quiet_NaN();

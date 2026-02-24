@@ -58,14 +58,14 @@ std::vector<std::vector<double>> GenSignatureSpace(
  *
  *
  * @param mat   Input 2D signature matrix (n × d), real-valued, may contain NaNs.
- * @param NA_rm If true, skip rows with NaNs entirely (output "0" for those rows);
+ * @param na_rm If true, skip rows with NaNs entirely (output "0" for those rows);
  *              if false, include NaNs as '0' symbols in their pattern strings.
  *
  * @return A vector of strings, where each string encodes one discrete pattern.
  */
 std::vector<std::string> GenPatternSpace(
     const std::vector<std::vector<double>>& mat,
-    bool NA_rm = true
+    bool na_rm = true
 );
 
 #endif // SymbolicDynamics_H

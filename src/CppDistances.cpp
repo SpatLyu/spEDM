@@ -14,15 +14,15 @@
  * @param vec1     First input vector
  * @param vec2     Second input vector
  * @param L1norm   If true → Manhattan (L1) distance, else → Euclidean (L2)
- * @param NA_rm    If true → ignore NaNs; if false → return NaN if any NaN present
+ * @param na_rm    If true → ignore NaNs; if false → return NaN if any NaN present
  * @return double  Distance value (NaN if invalid or all-NaN)
  */
 double CppDistance(const std::vector<double>& vec1,
                    const std::vector<double>& vec2,
                    bool L1norm = false,
-                   bool NA_rm = false){
+                   bool na_rm = true){
   const size_t n = vec1.size();
-  // if (n != vec2.size()) throw std::invalid_argument("CppChebyshevDistance: Input vectors must have the same length.");
+  // if (n != vec2.size()) throw std::invalid_argument("CppDistance: Input vectors must have the same length.");
 
   double dist = 0.0;
   bool has_valid = false;
@@ -32,7 +32,7 @@ double CppDistance(const std::vector<double>& vec1,
     for (size_t i = 0; i < n; ++i) {
       double a = vec1[i], b = vec2[i];
       if (std::isnan(a) || std::isnan(b)) {
-        if (!NA_rm) return std::numeric_limits<double>::quiet_NaN();
+        if (!na_rm) return std::numeric_limits<double>::quiet_NaN();
         else continue;
       }
       dist += std::abs(a - b);
@@ -43,7 +43,7 @@ double CppDistance(const std::vector<double>& vec1,
     for (size_t i = 0; i < n; ++i) {
       double a = vec1[i], b = vec2[i];
       if (std::isnan(a) || std::isnan(b)) {
-        if (!NA_rm) return std::numeric_limits<double>::quiet_NaN();
+        if (!na_rm) return std::numeric_limits<double>::quiet_NaN();
         else continue;
       }
       double diff = a - b;
@@ -66,13 +66,13 @@ double CppDistance(const std::vector<double>& vec1,
  *
  * @param vec1   First numeric vector.
  * @param vec2   Second numeric vector (must have the same length as vec1).
- * @param NA_rm  Whether to remove NaN pairs before computing distance.
+ * @param na_rm  Whether to remove NaN pairs before computing distance.
  *
- * @return Chebyshev distance (double). Returns NaN if no valid pairs or NA_rm=false with NaN present.
+ * @return Chebyshev distance (double). Returns NaN if no valid pairs or na_rm=false with NaN present.
  */
 double CppChebyshevDistance(const std::vector<double>& vec1,
                             const std::vector<double>& vec2,
-                            bool NA_rm = false){
+                            bool na_rm = true){
   // if (vec1.size() != vec2.size()) {
   //   throw std::invalid_argument("CppChebyshevDistance: Input vectors must have the same length.");
   // }
@@ -87,7 +87,7 @@ double CppChebyshevDistance(const std::vector<double>& vec1,
 
     // Handle missing values
     if (std::isnan(a) || std::isnan(b)) {
-      if (!NA_rm) return std::numeric_limits<double>::quiet_NaN();
+      if (!na_rm) return std::numeric_limits<double>::quiet_NaN();
       continue;
     }
 
@@ -103,7 +103,7 @@ double CppChebyshevDistance(const std::vector<double>& vec1,
 
 // Function to compute the k-th nearest distance for a vector.
 std::vector<double> CppKNearestDistance(const std::vector<double>& vec, size_t k,
-                                        bool L1norm = false, bool NA_rm = false) {
+                                        bool L1norm = false, bool na_rm = true) {
   size_t n = vec.size();
   std::vector<double> result(n,std::numeric_limits<double>::quiet_NaN());  // Vector to store the k-th nearest distances
 
@@ -117,11 +117,11 @@ std::vector<double> CppKNearestDistance(const std::vector<double>& vec, size_t k
 
     for (size_t j = 0; j < n; ++j) {
       if (std::isnan(vec[j])) {
-        if (!NA_rm) {
+        if (!na_rm) {
           distances.push_back(std::numeric_limits<double>::quiet_NaN());
-          continue;  // Skip if NA is encountered and NA_rm is false
+          continue;  // Skip if NA is encountered and na_rm is false
         } else {
-          continue;  // Skip if NA is encountered and NA_rm is true
+          continue;  // Skip if NA is encountered and na_rm is true
         }
       }
 
@@ -155,15 +155,15 @@ std::vector<double> CppKNearestDistance(const std::vector<double>& vec, size_t k
 
 // Function to compute the k-th nearest Chebyshev distance for each sample in a matrix
 std::vector<double> CppMatKNearestDistance(const std::vector<std::vector<double>>& mat,
-                                           size_t k, bool NA_rm = false) {
+                                           size_t k, bool na_rm = true) {
   size_t n = mat.size();
   std::vector<double> result(n, std::numeric_limits<double>::quiet_NaN());
 
   for (size_t i = 0; i < n; ++i) {
     const auto& vec_i = mat[i];
 
-    if (std::any_of(vec_i.begin(), vec_i.end(), [](double val) { return std::isnan(val); }) && !NA_rm) {
-      continue;  // Skip if NA and NA_rm is false
+    if (std::any_of(vec_i.begin(), vec_i.end(), [](double val) { return std::isnan(val); }) && !na_rm) {
+      continue;  // Skip if NA and na_rm is false
     }
 
     std::vector<double> distances;
@@ -172,9 +172,9 @@ std::vector<double> CppMatKNearestDistance(const std::vector<std::vector<double>
     for (size_t j = 0; j < n; ++j) {
       if (i == j) continue;
 
-      double dist = CppChebyshevDistance(vec_i, mat[j], NA_rm);
+      double dist = CppChebyshevDistance(vec_i, mat[j], na_rm);
       if (std::isnan(dist)) {
-        if (!NA_rm) {
+        if (!na_rm) {
           distances.clear();
           break;
         } else {
@@ -202,7 +202,7 @@ std::vector<double> CppMatKNearestDistance(const std::vector<std::vector<double>
 std::vector<std::vector<double>> CppMatDistance(
     const std::vector<std::vector<double>>& mat,
     bool L1norm = false,
-    bool NA_rm = false){
+    bool na_rm = true){
   size_t n = mat.size();
   // std::vector<std::vector<double>> distance_matrix(n, std::vector<double>(n, std::numeric_limits<double>::quiet_NaN()));
   std::vector<std::vector<double>> distance_matrix(n, std::vector<double>(n, 0));
@@ -210,10 +210,10 @@ std::vector<std::vector<double>> CppMatDistance(
   // Compute distance between every pair of rows
   for (size_t i = 0; i < n; ++i) {
     for (size_t j = i+1; j < n; ++j) {  // <-- Corrected: increment j
-      double distv = CppDistance(mat[i], mat[j], L1norm, NA_rm);
+      double distv = CppDistance(mat[i], mat[j], L1norm, na_rm);
       distance_matrix[i][j] = distv;  // Correctly assign distance to upper triangle
       distance_matrix[j][i] = distv;  // Mirror the value to the lower triangle
-      // distance_matrix[i][j] = distance_matrix[j][i] = CppDistance(mat[i],mat[j],L1norm,NA_rm);
+      // distance_matrix[i][j] = distance_matrix[j][i] = CppDistance(mat[i],mat[j],L1norm,na_rm);
     }
   }
   return distance_matrix;
@@ -222,7 +222,7 @@ std::vector<std::vector<double>> CppMatDistance(
 // Function to compute chebyshev distance for a matrix:
 std::vector<std::vector<double>> CppMatChebyshevDistance(
     const std::vector<std::vector<double>>& mat,
-    bool NA_rm = false){
+    bool na_rm = true){
   size_t n = mat.size();
   // std::vector<std::vector<double>> distance_matrix(n, std::vector<double>(n, std::numeric_limits<double>::quiet_NaN()));
   std::vector<std::vector<double>> distance_matrix(n, std::vector<double>(n, 0));
@@ -230,10 +230,10 @@ std::vector<std::vector<double>> CppMatChebyshevDistance(
   // Compute distance between every pair of rows
   for (size_t i = 0; i < n; ++i) {
     for (size_t j = i+1; j < n; ++j) {  // <-- Corrected: increment j
-      double distv = CppChebyshevDistance(mat[i], mat[j], NA_rm);
+      double distv = CppChebyshevDistance(mat[i], mat[j], na_rm);
       distance_matrix[i][j] = distv;  // Correctly assign distance to upper triangle
       distance_matrix[j][i] = distv;  // Mirror the value to the lower triangle
-      // distance_matrix[i][j] = distance_matrix[j][i] = CppDistance(mat[i],mat[j],L1norm,NA_rm);
+      // distance_matrix[i][j] = distance_matrix[j][i] = CppDistance(mat[i],mat[j],L1norm,na_rm);
     }
   }
   return distance_matrix;
@@ -245,7 +245,7 @@ std::vector<int> CppNeighborsNum(
     const std::vector<double>& radius,  // A vector where radius[i] specifies the search radius for the i-th point.
     bool equal = false,                 // Flag to include points at exactly the radius distance (default: false).
     bool L1norm = false,                // Flag to use Manhattan distance or Euclidean distance
-    bool NA_rm = false                  // Whether to remove the nan value in cpp
+    bool na_rm = true                   // Whether to remove the nan value in cpp
 ) {
   size_t N = vec.size();
   std::vector<int> NAx(N, 0); // Initialize neighbor counts to 0
@@ -289,12 +289,12 @@ std::vector<int> CppMatNeighborsNum(
     const std::vector<std::vector<double>>& mat,     // A vector of 2D points.
     const std::vector<double>& radius,               // A vector where radius[i] specifies the search radius for the i-th point.
     bool equal = false,                              // Flag to include points at exactly the radius distance (default: false).
-    bool NA_rm = false                               // Whether to remove the nan value in cpp
+    bool na_rm = true                                // Whether to remove the nan value in cpp
 ) {
   size_t N = mat.size();
   std::vector<int> NAx(N, 0); // Initialize neighbor counts to 0
 
-  std::vector<std::vector<double>> dist = CppMatChebyshevDistance(mat,NA_rm);
+  std::vector<std::vector<double>> dist = CppMatChebyshevDistance(mat,na_rm);
 
   // Iterate over all pairs of points (i, j)
   for (size_t i = 0; i < N; ++i) {

@@ -6,16 +6,16 @@
 
 // [[Rcpp::export(rng = false)]]
 double RcppEntropy_Cont(const Rcpp::NumericVector& vec, int k = 3,
-                        double base = 10, bool NA_rm = false){
+                        double base = 10, bool na_rm = true){
   std::vector<double> v1 = Rcpp::as<std::vector<double>>(vec);
-  return CppEntropy_Cont(v1,static_cast<size_t>(std::abs(k)),base,NA_rm);
+  return CppEntropy_Cont(v1,static_cast<size_t>(std::abs(k)),base,na_rm);
 };
 
 // [[Rcpp::export(rng = false)]]
 double RcppJoinEntropy_Cont(const Rcpp::NumericMatrix& mat,
                             const Rcpp::IntegerVector& columns,
                             int k = 3, double base = 10,
-                            bool NA_rm = false){
+                            bool na_rm = true){
   int numRows = mat.nrow();
   int numCols = mat.ncol();
   // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
@@ -35,7 +35,7 @@ double RcppJoinEntropy_Cont(const Rcpp::NumericMatrix& mat,
     col_std[i] -= 1;
   }
 
-  return CppJoinEntropy_Cont(cppMat,col_std,static_cast<size_t>(std::abs(k)),base,NA_rm);
+  return CppJoinEntropy_Cont(cppMat,col_std,static_cast<size_t>(std::abs(k)),base,na_rm);
 };
 
 // [[Rcpp::export(rng = false)]]
@@ -44,7 +44,7 @@ double RcppMutualInformation_Cont(const Rcpp::NumericMatrix& mat,
                                   const Rcpp::IntegerVector& columns2,
                                   int k = 3, int alg = 1,
                                   bool normalize = false,
-                                  bool NA_rm = false){
+                                  bool na_rm = true){
   int numRows = mat.nrow();
   int numCols = mat.ncol();
   // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
@@ -71,14 +71,14 @@ double RcppMutualInformation_Cont(const Rcpp::NumericMatrix& mat,
     col2[i] -= 1;
   }
 
-  return CppMutualInformation_Cont(cppMat,col1,col2,static_cast<size_t>(std::abs(k)),alg,normalize,NA_rm);
+  return CppMutualInformation_Cont(cppMat,col1,col2,static_cast<size_t>(std::abs(k)),alg,normalize,na_rm);
 }
 
 // [[Rcpp::export(rng = false)]]
 double RcppConditionalEntropy_Cont(const Rcpp::NumericMatrix& mat,
                                    const Rcpp::IntegerVector& target_columns,
                                    const Rcpp::IntegerVector& conditional_columns,
-                                   int k = 3, double base = 10, bool NA_rm = false){
+                                   int k = 3, double base = 10, bool na_rm = true){
   int numRows = mat.nrow();
   int numCols = mat.ncol();
 
@@ -106,21 +106,21 @@ double RcppConditionalEntropy_Cont(const Rcpp::NumericMatrix& mat,
     col2[i] -= 1;
   }
 
-  return CppConditionalEntropy_Cont(cppMat,col1,col2,static_cast<size_t>(std::abs(k)),base,NA_rm);
+  return CppConditionalEntropy_Cont(cppMat,col1,col2,static_cast<size_t>(std::abs(k)),base,na_rm);
 }
 
 // [[Rcpp::export(rng = false)]]
 double RcppEntropy_Disc(const Rcpp::NumericVector& vec,
-                        double base = 10, bool NA_rm = false){
+                        double base = 10, bool na_rm = true){
   std::vector<double> v1 = Rcpp::as<std::vector<double>>(vec);
-  return CppEntropy_Disc(v1,base,NA_rm);
+  return CppEntropy_Disc(v1,base,na_rm);
 };
 
 // [[Rcpp::export(rng = false)]]
 double RcppJoinEntropy_Disc(const Rcpp::NumericMatrix& mat,
                             const Rcpp::IntegerVector& columns,
                             double base = 10,
-                            bool NA_rm = false){
+                            bool na_rm = true){
   int numRows = mat.nrow();
   int numCols = mat.ncol();
   // Convert Rcpp NumericMatrix to std::vector<std::vector<double>>
@@ -140,7 +140,7 @@ double RcppJoinEntropy_Disc(const Rcpp::NumericMatrix& mat,
     col_std[i] -= 1;
   }
 
-  return CppJoinEntropy_Disc(cppMat,col_std,base,NA_rm);
+  return CppJoinEntropy_Disc(cppMat,col_std,base,na_rm);
 };
 
 // [[Rcpp::export(rng = false)]]
@@ -148,7 +148,7 @@ double RcppMutualInformation_Disc(const Rcpp::NumericMatrix& mat,
                                   const Rcpp::IntegerVector& columns1,
                                   const Rcpp::IntegerVector& columns2,
                                   double base = 10,
-                                  bool NA_rm = false){
+                                  bool na_rm = true){
   int numRows = mat.nrow();
   int numCols = mat.ncol();
 
@@ -176,7 +176,7 @@ double RcppMutualInformation_Disc(const Rcpp::NumericMatrix& mat,
     col2[i] -= 1;
   }
 
-  return CppMutualInformation_Disc(cppMat,col1,col2,base,NA_rm);
+  return CppMutualInformation_Disc(cppMat,col1,col2,base,na_rm);
 }
 
 // [[Rcpp::export(rng = false)]]
@@ -184,7 +184,7 @@ double RcppConditionalEntropy_Disc(const Rcpp::NumericMatrix& mat,
                                    const Rcpp::IntegerVector& target_columns,
                                    const Rcpp::IntegerVector& conditional_columns,
                                    double base = 10,
-                                   bool NA_rm = false){
+                                   bool na_rm = true){
   int numRows = mat.nrow();
   int numCols = mat.ncol();
 
@@ -212,5 +212,5 @@ double RcppConditionalEntropy_Disc(const Rcpp::NumericMatrix& mat,
     col2[i] -= 1;
   }
 
-  return CppConditionalEntropy_Disc(cppMat,col1,col2,base,NA_rm);
+  return CppConditionalEntropy_Disc(cppMat,col1,col2,base,na_rm);
 }

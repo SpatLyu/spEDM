@@ -101,16 +101,16 @@ std::vector<std::vector<double>> GenSignatureSpace(
  *
  *
  * @param mat   Input 2D signature matrix (n × d), real-valued, may contain NaNs.
- * @param NA_rm If true, skip rows with NaNs entirely (output "0" for those rows);
+ * @param na_rm If true, skip rows with NaNs entirely (output "0" for those rows);
  *              if false, include NaNs as '0' symbols in their pattern strings.
  *
  * @return A vector of strings, where each string encodes one discrete pattern.
  *
- * @ Behavior controlled by `NA_rm`:
- * - **NA_rm = true (default)**:
+ * @ Behavior controlled by `na_rm`:
+ * - **na_rm = true (default)**:
  *   - If a row contains *any* NaN, that entire row is skipped (output is "0").
  *   - Only fully valid numeric rows are encoded into symbolic strings.
- * - **NA_rm = false**:
+ * - **na_rm = false**:
  *   - All rows are encoded, even those containing NaNs.
  *   - NaNs are represented as '0' in the output string.
  *
@@ -123,12 +123,12 @@ std::vector<std::vector<double>> GenSignatureSpace(
  * ]
  * ```
  *
- * Output (NA_rm = true):
+ * Output (na_rm = true):
  * ```
  * ["312", "0"]
  * ```
  *
- * Output (NA_rm = false):
+ * Output (na_rm = false):
  * ```
  * ["312", "031"]
  * ```
@@ -142,14 +142,14 @@ std::vector<std::vector<double>> GenSignatureSpace(
  * - Empty input returns an empty vector.
  *
  * @ Design decisions
- * - **NaN handling**: Controlled by `NA_rm`; defaults to safe filtering mode.
+ * - **NaN handling**: Controlled by `na_rm`; defaults to safe filtering mode.
  * - **Compactness**: Each row pattern stored as a single `std::string`, minimizing
  *   indexing complexity and simplifying hashing.
  * - **Performance**: Uses `reserve()` to avoid repeated allocations when building strings.
  */
 std::vector<std::string> GenPatternSpace(
     const std::vector<std::vector<double>>& mat,
-    bool NA_rm = true
+    bool na_rm = true
 ) {
   std::vector<std::string> patterns;
   if (mat.empty()) return patterns;
@@ -178,8 +178,8 @@ std::vector<std::string> GenPatternSpace(
       }
     }
 
-    // When NA_rm = true and row contains NaN → replace with "0"
-    if (NA_rm && has_nan) {
+    // When na_rm = true and row contains NaN → replace with "0"
+    if (na_rm && has_nan) {
       patterns.emplace_back("0");
     } else {
       patterns.emplace_back(std::move(pat));

@@ -17,39 +17,39 @@
 double CppDistance(const std::vector<double>& vec1,
                    const std::vector<double>& vec2,
                    bool L1norm = false,
-                   bool NA_rm = false);
+                   bool na_rm = true);
 
 double CppChebyshevDistance(const std::vector<double>& vec1,
                             const std::vector<double>& vec2,
-                            bool NA_rm = false);
+                            bool na_rm = true);
 
 std::vector<double> CppKNearestDistance(const std::vector<double>& vec, size_t k,
-                                        bool L1norm = false, bool NA_rm = false);
+                                        bool L1norm = false, bool na_rm = true);
 
 std::vector<double> CppMatKNearestDistance(const std::vector<std::vector<double>>& mat,
-                                           size_t k, bool NA_rm = false);
+                                           size_t k, bool na_rm = true);
 
 std::vector<std::vector<double>> CppMatDistance(
     const std::vector<std::vector<double>>& mat,
     bool L1norm = false,
-    bool NA_rm = false);
+    bool na_rm = true);
 
 std::vector<std::vector<double>> CppMatChebyshevDistance(
     const std::vector<std::vector<double>>& mat,
-    bool NA_rm = false);
+    bool na_rm = true);
 
 std::vector<int> CppNeighborsNum(
     const std::vector<double>& vec,
     const std::vector<double>& radius,
     bool equal = false,
     bool L1norm = false,
-    bool NA_rm = false);
+    bool na_rm = true);
 
 std::vector<int> CppMatNeighborsNum(
     const std::vector<std::vector<double>>& mat,
     const std::vector<double>& radius,
     bool equal = false,
-    bool NA_rm = false);
+    bool na_rm = true);
 
 std::vector<size_t> CppKNNIndice(
     const std::vector<std::vector<double>>& embedding_space,

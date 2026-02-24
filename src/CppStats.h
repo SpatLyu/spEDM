@@ -31,27 +31,27 @@ double CppDigamma(double x);
 double CppLog(double x, double base = 10);
 
 double CppMedian(const std::vector<double>& vec,
-                 bool NA_rm = false);
+                 bool na_rm = true);
 
 double CppMean(const std::vector<double>& vec,
-               bool NA_rm = false);
+               bool na_rm = true);
 
 double CppMin(const std::vector<double>& vec,
-              bool NA_rm = false);
+              bool na_rm = true);
 
 double CppMax(const std::vector<double>& vec,
-              bool NA_rm = false);
+              bool na_rm = true);
 
 double CppSum(const std::vector<double>& vec,
-              bool NA_rm = false);
+              bool na_rm = true);
 
 double CppMAE(const std::vector<double>& x1,
               const std::vector<double>& x2,
-              bool NA_rm = false);
+              bool na_rm = true);
 
 double CppRMSE(const std::vector<double>& x1,
                const std::vector<double>& x2,
-               bool NA_rm = false);
+               bool na_rm = true);
 
 std::vector<double> CppCumSum(const std::vector<double>& vec);
 
@@ -59,43 +59,43 @@ std::vector<double> CppAbsDiff(const std::vector<double>& vec1,
                                const std::vector<double>& vec2);
 
 std::vector<double> CppSumNormalize(const std::vector<double>& vec,
-                                    bool NA_rm = false);
+                                    bool na_rm = true);
 
 std::vector<double> CppArithmeticSeq(double from, double to, size_t length_out);
 
 std::vector<double> CppQuantile(const std::vector<double>& vec,
                                 const std::vector<double>& probs = {0.05, 0.5, 0.95},
-                                bool NA_rm = true);
+                                bool na_rm = true);
 
-double CppVariance(const std::vector<double>& vec, bool NA_rm = false);
+double CppVariance(const std::vector<double>& vec, bool na_rm = true);
 
 double CppCovariance(const std::vector<double>& vec1,
                      const std::vector<double>& vec2,
-                     bool NA_rm = false);
+                     bool na_rm = true);
 
 double PearsonCor(const std::vector<double>& y,
                   const std::vector<double>& y_hat,
-                  bool NA_rm = false);
+                  bool na_rm = true);
 
 double SpearmanCor(const std::vector<double>& y,
                    const std::vector<double>& y_hat,
-                   bool NA_rm = false);
+                   bool na_rm = true);
 
 double KendallCor(const std::vector<double>& y,
                   const std::vector<double>& y_hat,
-                  bool NA_rm = false);
+                  bool na_rm = true);
 
 double PartialCor(const std::vector<double>& y,
                   const std::vector<double>& y_hat,
                   const std::vector<std::vector<double>>& controls,
-                  bool NA_rm = false,
+                  bool na_rm = true,
                   bool linear = false,
                   double pinv_tol = 1e-10);
 
 double PartialCorTrivar(const std::vector<double>& y,
                         const std::vector<double>& y_hat,
                         const std::vector<double>& control,
-                        bool NA_rm = false,
+                        bool na_rm = true,
                         bool linear = false,
                         double pinv_tol = 1e-10);
 
@@ -126,6 +126,6 @@ std::vector<std::vector<std::vector<double>>> CppSVD(const std::vector<std::vect
 std::vector<double> LinearTrendRM(const std::vector<double>& vec,
                                   const std::vector<double>& xcoord,
                                   const std::vector<double>& ycoord,
-                                  bool NA_rm = false);
+                                  bool na_rm = true);
 
 #endif // CppStats_H
