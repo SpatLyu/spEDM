@@ -14,35 +14,35 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // RcppEntropy_Cont
-double RcppEntropy_Cont(const Rcpp::NumericVector& vec, int k, double base, bool NA_rm);
-RcppExport SEXP _spEDM_RcppEntropy_Cont(SEXP vecSEXP, SEXP kSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
+double RcppEntropy_Cont(const Rcpp::NumericVector& vec, int k, double base, bool na_rm);
+RcppExport SEXP _spEDM_RcppEntropy_Cont(SEXP vecSEXP, SEXP kSEXP, SEXP baseSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppEntropy_Cont(vec, k, base, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppEntropy_Cont(vec, k, base, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppJoinEntropy_Cont
-double RcppJoinEntropy_Cont(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& columns, int k, double base, bool NA_rm);
-RcppExport SEXP _spEDM_RcppJoinEntropy_Cont(SEXP matSEXP, SEXP columnsSEXP, SEXP kSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
+double RcppJoinEntropy_Cont(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& columns, int k, double base, bool na_rm);
+RcppExport SEXP _spEDM_RcppJoinEntropy_Cont(SEXP matSEXP, SEXP columnsSEXP, SEXP kSEXP, SEXP baseSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type columns(columnsSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppJoinEntropy_Cont(mat, columns, k, base, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppJoinEntropy_Cont(mat, columns, k, base, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppMutualInformation_Cont
-double RcppMutualInformation_Cont(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& columns1, const Rcpp::IntegerVector& columns2, int k, int alg, bool normalize, bool NA_rm);
-RcppExport SEXP _spEDM_RcppMutualInformation_Cont(SEXP matSEXP, SEXP columns1SEXP, SEXP columns2SEXP, SEXP kSEXP, SEXP algSEXP, SEXP normalizeSEXP, SEXP NA_rmSEXP) {
+double RcppMutualInformation_Cont(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& columns1, const Rcpp::IntegerVector& columns2, int k, int alg, bool normalize, bool na_rm);
+RcppExport SEXP _spEDM_RcppMutualInformation_Cont(SEXP matSEXP, SEXP columns1SEXP, SEXP columns2SEXP, SEXP kSEXP, SEXP algSEXP, SEXP normalizeSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
@@ -51,14 +51,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< int >::type alg(algSEXP);
     Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppMutualInformation_Cont(mat, columns1, columns2, k, alg, normalize, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppMutualInformation_Cont(mat, columns1, columns2, k, alg, normalize, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppConditionalEntropy_Cont
-double RcppConditionalEntropy_Cont(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& target_columns, const Rcpp::IntegerVector& conditional_columns, int k, double base, bool NA_rm);
-RcppExport SEXP _spEDM_RcppConditionalEntropy_Cont(SEXP matSEXP, SEXP target_columnsSEXP, SEXP conditional_columnsSEXP, SEXP kSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
+double RcppConditionalEntropy_Cont(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& target_columns, const Rcpp::IntegerVector& conditional_columns, int k, double base, bool na_rm);
+RcppExport SEXP _spEDM_RcppConditionalEntropy_Cont(SEXP matSEXP, SEXP target_columnsSEXP, SEXP conditional_columnsSEXP, SEXP kSEXP, SEXP baseSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
@@ -66,61 +66,61 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type conditional_columns(conditional_columnsSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppConditionalEntropy_Cont(mat, target_columns, conditional_columns, k, base, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppConditionalEntropy_Cont(mat, target_columns, conditional_columns, k, base, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppEntropy_Disc
-double RcppEntropy_Disc(const Rcpp::NumericVector& vec, double base, bool NA_rm);
-RcppExport SEXP _spEDM_RcppEntropy_Disc(SEXP vecSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
+double RcppEntropy_Disc(const Rcpp::NumericVector& vec, double base, bool na_rm);
+RcppExport SEXP _spEDM_RcppEntropy_Disc(SEXP vecSEXP, SEXP baseSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppEntropy_Disc(vec, base, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppEntropy_Disc(vec, base, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppJoinEntropy_Disc
-double RcppJoinEntropy_Disc(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& columns, double base, bool NA_rm);
-RcppExport SEXP _spEDM_RcppJoinEntropy_Disc(SEXP matSEXP, SEXP columnsSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
+double RcppJoinEntropy_Disc(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& columns, double base, bool na_rm);
+RcppExport SEXP _spEDM_RcppJoinEntropy_Disc(SEXP matSEXP, SEXP columnsSEXP, SEXP baseSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type columns(columnsSEXP);
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppJoinEntropy_Disc(mat, columns, base, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppJoinEntropy_Disc(mat, columns, base, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppMutualInformation_Disc
-double RcppMutualInformation_Disc(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& columns1, const Rcpp::IntegerVector& columns2, double base, bool NA_rm);
-RcppExport SEXP _spEDM_RcppMutualInformation_Disc(SEXP matSEXP, SEXP columns1SEXP, SEXP columns2SEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
+double RcppMutualInformation_Disc(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& columns1, const Rcpp::IntegerVector& columns2, double base, bool na_rm);
+RcppExport SEXP _spEDM_RcppMutualInformation_Disc(SEXP matSEXP, SEXP columns1SEXP, SEXP columns2SEXP, SEXP baseSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type columns1(columns1SEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type columns2(columns2SEXP);
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppMutualInformation_Disc(mat, columns1, columns2, base, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppMutualInformation_Disc(mat, columns1, columns2, base, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppConditionalEntropy_Disc
-double RcppConditionalEntropy_Disc(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& target_columns, const Rcpp::IntegerVector& conditional_columns, double base, bool NA_rm);
-RcppExport SEXP _spEDM_RcppConditionalEntropy_Disc(SEXP matSEXP, SEXP target_columnsSEXP, SEXP conditional_columnsSEXP, SEXP baseSEXP, SEXP NA_rmSEXP) {
+double RcppConditionalEntropy_Disc(const Rcpp::NumericMatrix& mat, const Rcpp::IntegerVector& target_columns, const Rcpp::IntegerVector& conditional_columns, double base, bool na_rm);
+RcppExport SEXP _spEDM_RcppConditionalEntropy_Disc(SEXP matSEXP, SEXP target_columnsSEXP, SEXP conditional_columnsSEXP, SEXP baseSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type target_columns(target_columnsSEXP);
     Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type conditional_columns(conditional_columnsSEXP);
     Rcpp::traits::input_parameter< double >::type base(baseSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppConditionalEntropy_Disc(mat, target_columns, conditional_columns, base, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppConditionalEntropy_Disc(mat, target_columns, conditional_columns, base, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1209,104 +1209,104 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppMedian
-double RcppMedian(const Rcpp::NumericVector& vec, bool NA_rm);
-RcppExport SEXP _spEDM_RcppMedian(SEXP vecSEXP, SEXP NA_rmSEXP) {
+double RcppMedian(const Rcpp::NumericVector& vec, bool na_rm);
+RcppExport SEXP _spEDM_RcppMedian(SEXP vecSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppMedian(vec, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppMedian(vec, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppMean
-double RcppMean(const Rcpp::NumericVector& vec, bool NA_rm);
-RcppExport SEXP _spEDM_RcppMean(SEXP vecSEXP, SEXP NA_rmSEXP) {
+double RcppMean(const Rcpp::NumericVector& vec, bool na_rm);
+RcppExport SEXP _spEDM_RcppMean(SEXP vecSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppMean(vec, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppMean(vec, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppMin
-double RcppMin(const Rcpp::NumericVector& vec, bool NA_rm);
-RcppExport SEXP _spEDM_RcppMin(SEXP vecSEXP, SEXP NA_rmSEXP) {
+double RcppMin(const Rcpp::NumericVector& vec, bool na_rm);
+RcppExport SEXP _spEDM_RcppMin(SEXP vecSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppMin(vec, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppMin(vec, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppMax
-double RcppMax(const Rcpp::NumericVector& vec, bool NA_rm);
-RcppExport SEXP _spEDM_RcppMax(SEXP vecSEXP, SEXP NA_rmSEXP) {
+double RcppMax(const Rcpp::NumericVector& vec, bool na_rm);
+RcppExport SEXP _spEDM_RcppMax(SEXP vecSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppMax(vec, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppMax(vec, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppSum
-double RcppSum(const Rcpp::NumericVector& vec, bool NA_rm);
-RcppExport SEXP _spEDM_RcppSum(SEXP vecSEXP, SEXP NA_rmSEXP) {
+double RcppSum(const Rcpp::NumericVector& vec, bool na_rm);
+RcppExport SEXP _spEDM_RcppSum(SEXP vecSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppSum(vec, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSum(vec, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppVariance
-double RcppVariance(const Rcpp::NumericVector& vec, bool NA_rm);
-RcppExport SEXP _spEDM_RcppVariance(SEXP vecSEXP, SEXP NA_rmSEXP) {
+double RcppVariance(const Rcpp::NumericVector& vec, bool na_rm);
+RcppExport SEXP _spEDM_RcppVariance(SEXP vecSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppVariance(vec, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppVariance(vec, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppCovariance
-double RcppCovariance(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, bool NA_rm);
-RcppExport SEXP _spEDM_RcppCovariance(SEXP vec1SEXP, SEXP vec2SEXP, SEXP NA_rmSEXP) {
+double RcppCovariance(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, bool na_rm);
+RcppExport SEXP _spEDM_RcppCovariance(SEXP vec1SEXP, SEXP vec2SEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec1(vec1SEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec2(vec2SEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppCovariance(vec1, vec2, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppCovariance(vec1, vec2, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppMAE
-double RcppMAE(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, bool NA_rm);
-RcppExport SEXP _spEDM_RcppMAE(SEXP vec1SEXP, SEXP vec2SEXP, SEXP NA_rmSEXP) {
+double RcppMAE(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, bool na_rm);
+RcppExport SEXP _spEDM_RcppMAE(SEXP vec1SEXP, SEXP vec2SEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec1(vec1SEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec2(vec2SEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppMAE(vec1, vec2, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppMAE(vec1, vec2, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppRMSE
-double RcppRMSE(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, bool NA_rm);
-RcppExport SEXP _spEDM_RcppRMSE(SEXP vec1SEXP, SEXP vec2SEXP, SEXP NA_rmSEXP) {
+double RcppRMSE(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, bool na_rm);
+RcppExport SEXP _spEDM_RcppRMSE(SEXP vec1SEXP, SEXP vec2SEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec1(vec1SEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec2(vec2SEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppRMSE(vec1, vec2, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppRMSE(vec1, vec2, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1332,13 +1332,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppSumNormalize
-Rcpp::NumericVector RcppSumNormalize(const Rcpp::NumericVector& vec, bool NA_rm);
-RcppExport SEXP _spEDM_RcppSumNormalize(SEXP vecSEXP, SEXP NA_rmSEXP) {
+Rcpp::NumericVector RcppSumNormalize(const Rcpp::NumericVector& vec, bool na_rm);
+RcppExport SEXP _spEDM_RcppSumNormalize(SEXP vecSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppSumNormalize(vec, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSumNormalize(vec, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1355,80 +1355,80 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppQuantile
-Rcpp::NumericVector RcppQuantile(const Rcpp::NumericVector& vec, const Rcpp::NumericVector& probs, bool NA_rm);
-RcppExport SEXP _spEDM_RcppQuantile(SEXP vecSEXP, SEXP probsSEXP, SEXP NA_rmSEXP) {
+Rcpp::NumericVector RcppQuantile(const Rcpp::NumericVector& vec, const Rcpp::NumericVector& probs, bool na_rm);
+RcppExport SEXP _spEDM_RcppQuantile(SEXP vecSEXP, SEXP probsSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type probs(probsSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppQuantile(vec, probs, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppQuantile(vec, probs, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppPearsonCor
-double RcppPearsonCor(const Rcpp::NumericVector& y, const Rcpp::NumericVector& y_hat, bool NA_rm);
-RcppExport SEXP _spEDM_RcppPearsonCor(SEXP ySEXP, SEXP y_hatSEXP, SEXP NA_rmSEXP) {
+double RcppPearsonCor(const Rcpp::NumericVector& y, const Rcpp::NumericVector& y_hat, bool na_rm);
+RcppExport SEXP _spEDM_RcppPearsonCor(SEXP ySEXP, SEXP y_hatSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y_hat(y_hatSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppPearsonCor(y, y_hat, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppPearsonCor(y, y_hat, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppSpearmanCor
-double RcppSpearmanCor(const Rcpp::NumericVector& y, const Rcpp::NumericVector& y_hat, bool NA_rm);
-RcppExport SEXP _spEDM_RcppSpearmanCor(SEXP ySEXP, SEXP y_hatSEXP, SEXP NA_rmSEXP) {
+double RcppSpearmanCor(const Rcpp::NumericVector& y, const Rcpp::NumericVector& y_hat, bool na_rm);
+RcppExport SEXP _spEDM_RcppSpearmanCor(SEXP ySEXP, SEXP y_hatSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y_hat(y_hatSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppSpearmanCor(y, y_hat, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppSpearmanCor(y, y_hat, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppKendallCor
-double RcppKendallCor(const Rcpp::NumericVector& y, const Rcpp::NumericVector& y_hat, bool NA_rm);
-RcppExport SEXP _spEDM_RcppKendallCor(SEXP ySEXP, SEXP y_hatSEXP, SEXP NA_rmSEXP) {
+double RcppKendallCor(const Rcpp::NumericVector& y, const Rcpp::NumericVector& y_hat, bool na_rm);
+RcppExport SEXP _spEDM_RcppKendallCor(SEXP ySEXP, SEXP y_hatSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y_hat(y_hatSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppKendallCor(y, y_hat, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppKendallCor(y, y_hat, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppPartialCor
-double RcppPartialCor(const Rcpp::NumericVector& y, const Rcpp::NumericVector& y_hat, const Rcpp::NumericMatrix& controls, bool NA_rm, bool linear, double pinv_tol);
-RcppExport SEXP _spEDM_RcppPartialCor(SEXP ySEXP, SEXP y_hatSEXP, SEXP controlsSEXP, SEXP NA_rmSEXP, SEXP linearSEXP, SEXP pinv_tolSEXP) {
+double RcppPartialCor(const Rcpp::NumericVector& y, const Rcpp::NumericVector& y_hat, const Rcpp::NumericMatrix& controls, bool na_rm, bool linear, double pinv_tol);
+RcppExport SEXP _spEDM_RcppPartialCor(SEXP ySEXP, SEXP y_hatSEXP, SEXP controlsSEXP, SEXP na_rmSEXP, SEXP linearSEXP, SEXP pinv_tolSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y_hat(y_hatSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type controls(controlsSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
     Rcpp::traits::input_parameter< bool >::type linear(linearSEXP);
     Rcpp::traits::input_parameter< double >::type pinv_tol(pinv_tolSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppPartialCor(y, y_hat, controls, NA_rm, linear, pinv_tol));
+    rcpp_result_gen = Rcpp::wrap(RcppPartialCor(y, y_hat, controls, na_rm, linear, pinv_tol));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppPartialCorTrivar
-double RcppPartialCorTrivar(const Rcpp::NumericVector& y, const Rcpp::NumericVector& y_hat, const Rcpp::NumericVector& control, bool NA_rm, bool linear, double pinv_tol);
-RcppExport SEXP _spEDM_RcppPartialCorTrivar(SEXP ySEXP, SEXP y_hatSEXP, SEXP controlSEXP, SEXP NA_rmSEXP, SEXP linearSEXP, SEXP pinv_tolSEXP) {
+double RcppPartialCorTrivar(const Rcpp::NumericVector& y, const Rcpp::NumericVector& y_hat, const Rcpp::NumericVector& control, bool na_rm, bool linear, double pinv_tol);
+RcppExport SEXP _spEDM_RcppPartialCorTrivar(SEXP ySEXP, SEXP y_hatSEXP, SEXP controlSEXP, SEXP na_rmSEXP, SEXP linearSEXP, SEXP pinv_tolSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y(ySEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type y_hat(y_hatSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type control(controlSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
     Rcpp::traits::input_parameter< bool >::type linear(linearSEXP);
     Rcpp::traits::input_parameter< double >::type pinv_tol(pinv_tolSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppPartialCorTrivar(y, y_hat, control, NA_rm, linear, pinv_tol));
+    rcpp_result_gen = Rcpp::wrap(RcppPartialCorTrivar(y, y_hat, control, na_rm, linear, pinv_tol));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1509,54 +1509,54 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppDistance
-double RcppDistance(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, bool L1norm, bool NA_rm);
-RcppExport SEXP _spEDM_RcppDistance(SEXP vec1SEXP, SEXP vec2SEXP, SEXP L1normSEXP, SEXP NA_rmSEXP) {
+double RcppDistance(const Rcpp::NumericVector& vec1, const Rcpp::NumericVector& vec2, bool L1norm, bool na_rm);
+RcppExport SEXP _spEDM_RcppDistance(SEXP vec1SEXP, SEXP vec2SEXP, SEXP L1normSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec1(vec1SEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec2(vec2SEXP);
     Rcpp::traits::input_parameter< bool >::type L1norm(L1normSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppDistance(vec1, vec2, L1norm, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppDistance(vec1, vec2, L1norm, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppKNearestDistance
-Rcpp::NumericVector RcppKNearestDistance(const Rcpp::NumericVector& vec1, int k, bool L1norm, bool NA_rm);
-RcppExport SEXP _spEDM_RcppKNearestDistance(SEXP vec1SEXP, SEXP kSEXP, SEXP L1normSEXP, SEXP NA_rmSEXP) {
+Rcpp::NumericVector RcppKNearestDistance(const Rcpp::NumericVector& vec1, int k, bool L1norm, bool na_rm);
+RcppExport SEXP _spEDM_RcppKNearestDistance(SEXP vec1SEXP, SEXP kSEXP, SEXP L1normSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec1(vec1SEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< bool >::type L1norm(L1normSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppKNearestDistance(vec1, k, L1norm, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppKNearestDistance(vec1, k, L1norm, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppMatDistance
-Rcpp::NumericMatrix RcppMatDistance(const Rcpp::NumericMatrix& mat, bool L1norm, bool NA_rm);
-RcppExport SEXP _spEDM_RcppMatDistance(SEXP matSEXP, SEXP L1normSEXP, SEXP NA_rmSEXP) {
+Rcpp::NumericMatrix RcppMatDistance(const Rcpp::NumericMatrix& mat, bool L1norm, bool na_rm);
+RcppExport SEXP _spEDM_RcppMatDistance(SEXP matSEXP, SEXP L1normSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< bool >::type L1norm(L1normSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppMatDistance(mat, L1norm, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppMatDistance(mat, L1norm, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // RcppNeighborsNum
-Rcpp::IntegerVector RcppNeighborsNum(const Rcpp::NumericVector& vec, const Rcpp::NumericVector& radius, bool equal, bool L1norm, bool NA_rm);
-RcppExport SEXP _spEDM_RcppNeighborsNum(SEXP vecSEXP, SEXP radiusSEXP, SEXP equalSEXP, SEXP L1normSEXP, SEXP NA_rmSEXP) {
+Rcpp::IntegerVector RcppNeighborsNum(const Rcpp::NumericVector& vec, const Rcpp::NumericVector& radius, bool equal, bool L1norm, bool na_rm);
+RcppExport SEXP _spEDM_RcppNeighborsNum(SEXP vecSEXP, SEXP radiusSEXP, SEXP equalSEXP, SEXP L1normSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type radius(radiusSEXP);
     Rcpp::traits::input_parameter< bool >::type equal(equalSEXP);
     Rcpp::traits::input_parameter< bool >::type L1norm(L1normSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppNeighborsNum(vec, radius, equal, L1norm, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppNeighborsNum(vec, radius, equal, L1norm, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1614,15 +1614,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppLinearTrendRM
-Rcpp::NumericVector RcppLinearTrendRM(const Rcpp::NumericVector& vec, const Rcpp::NumericVector& xcoord, const Rcpp::NumericVector& ycoord, bool NA_rm);
-RcppExport SEXP _spEDM_RcppLinearTrendRM(SEXP vecSEXP, SEXP xcoordSEXP, SEXP ycoordSEXP, SEXP NA_rmSEXP) {
+Rcpp::NumericVector RcppLinearTrendRM(const Rcpp::NumericVector& vec, const Rcpp::NumericVector& xcoord, const Rcpp::NumericVector& ycoord, bool na_rm);
+RcppExport SEXP _spEDM_RcppLinearTrendRM(SEXP vecSEXP, SEXP xcoordSEXP, SEXP ycoordSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type vec(vecSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type xcoord(xcoordSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type ycoord(ycoordSEXP);
-    Rcpp::traits::input_parameter< bool >::type NA_rm(NA_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppLinearTrendRM(vec, xcoord, ycoord, NA_rm));
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(RcppLinearTrendRM(vec, xcoord, ycoord, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
