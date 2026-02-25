@@ -19,7 +19,7 @@
  * @return The estimated entropy of the vector.
  */
 double CppEntropy_Cont(const std::vector<double>& vec, size_t k,
-                       double base = 10, bool na_rm = false) {
+                       double base = 10, bool na_rm = true) {
   std::vector<double> distances = CppKNearestDistance(vec, k, true, na_rm);
   size_t n = vec.size();
 
@@ -47,7 +47,7 @@ double CppEntropy_Cont(const std::vector<double>& vec, size_t k,
  */
 double CppJoinEntropy_Cont(const std::vector<std::vector<double>>& mat,
                            const std::vector<int>& columns, size_t k,
-                           double base = 10, bool na_rm = false) {
+                           double base = 10, bool na_rm = true) {
   // Step 1: Construct new_mat based on selected columns
   std::vector<std::vector<double>> new_mat;
   size_t original_ncol = mat.empty() ? 0 : mat[0].size();
@@ -147,7 +147,7 @@ double CppMutualInformation_Cont(const std::vector<std::vector<double>>& mat,
                                  const std::vector<int>& columns1,
                                  const std::vector<int>& columns2,
                                  size_t k, int alg = 1,
-                                 bool normalize = false, bool na_rm = false){
+                                 bool normalize = false, bool na_rm = true){
   std::unordered_set<int> unique_set;
   unique_set.insert(columns1.begin(), columns1.end());
   unique_set.insert(columns2.begin(), columns2.end());
@@ -267,7 +267,7 @@ double CppMutualInformation_Cont(const std::vector<std::vector<double>>& mat,
 double CppConditionalEntropy_Cont(const std::vector<std::vector<double>>& mat,
                                   const std::vector<int>& target_columns,
                                   const std::vector<int>& conditional_columns,
-                                  size_t k, double base = 10, bool na_rm = false) {
+                                  size_t k, double base = 10, bool na_rm = true) {
   std::unordered_set<int> unique_set;
   unique_set.insert(target_columns.begin(), target_columns.end());
   unique_set.insert(conditional_columns.begin(), conditional_columns.end());
@@ -292,7 +292,7 @@ double CppConditionalEntropy_Cont(const std::vector<std::vector<double>>& mat,
  * @return Entropy value or NaN if invalid conditions occur.
  */
 double CppEntropy_Disc(const std::vector<double>& vec,
-                       double base = 10, bool na_rm = false) {
+                       double base = 10, bool na_rm = true) {
   std::unordered_map<double, int> counts;
   int valid_n = 0;
 
@@ -328,7 +328,7 @@ double CppEntropy_Disc(const std::vector<double>& vec,
  */
 double CppJoinEntropy_Disc(const std::vector<std::vector<double>>& mat,
                            const std::vector<int>& columns,
-                           double base = 10, bool na_rm = false){
+                           double base = 10, bool na_rm = true){
   const double log_base = std::log(base);
 
   // Flattened and valid samples, stored as string key or unique encoding
@@ -381,7 +381,7 @@ double CppJoinEntropy_Disc(const std::vector<std::vector<double>>& mat,
 double CppMutualInformation_Disc(const std::vector<std::vector<double>>& mat,
                                  const std::vector<int>& columns1,
                                  const std::vector<int>& columns2,
-                                 double base = 10, bool na_rm = false) {
+                                 double base = 10, bool na_rm = true) {
   std::unordered_set<int> unique_set;
   unique_set.insert(columns1.begin(), columns1.end());
   unique_set.insert(columns2.begin(), columns2.end());
@@ -410,7 +410,7 @@ double CppMutualInformation_Disc(const std::vector<std::vector<double>>& mat,
 double CppConditionalEntropy_Disc(const std::vector<std::vector<double>>& mat,
                                   const std::vector<int>& target_columns,
                                   const std::vector<int>& conditional_columns,
-                                  double base = 10, bool na_rm = false) {
+                                  double base = 10, bool na_rm = true) {
   std::unordered_set<int> unique_set;
   unique_set.insert(target_columns.begin(), target_columns.end());
   unique_set.insert(conditional_columns.begin(), conditional_columns.end());
