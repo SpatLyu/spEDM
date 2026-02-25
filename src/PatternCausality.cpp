@@ -116,7 +116,7 @@ PatternCausalityRes GenPatternCausality(
 
   // --- 1. Generate symbolic pattern strings ---
   // GenPatternSpace() should convert numeric sequences into symbolic strings
-  // (e.g., "321", "122", etc.), possibly removing or keeping NaN based on NA_rm.
+  // (e.g., "321", "122", etc.), possibly removing or keeping NaN based on na_rm.
   std::vector<std::string> PMx = GenPatternSpace(SMx, true);
   std::vector<std::string> PMy = GenPatternSpace(SMy, true);
   std::vector<std::string> pred_PMy = GenPatternSpace(pred_SMy, true);
