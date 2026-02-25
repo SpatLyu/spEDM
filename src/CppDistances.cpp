@@ -20,7 +20,7 @@
 double CppDistance(const std::vector<double>& vec1,
                    const std::vector<double>& vec2,
                    bool L1norm = false,
-                   bool na_rm = false){
+                   bool na_rm = true){
   const size_t n = vec1.size();
   // if (n != vec2.size()) throw std::invalid_argument("CppDistance: Input vectors must have the same length.");
 
@@ -72,7 +72,7 @@ double CppDistance(const std::vector<double>& vec1,
  */
 double CppChebyshevDistance(const std::vector<double>& vec1,
                             const std::vector<double>& vec2,
-                            bool na_rm = false){
+                            bool na_rm = true){
   // if (vec1.size() != vec2.size()) {
   //   throw std::invalid_argument("CppChebyshevDistance: Input vectors must have the same length.");
   // }
@@ -103,7 +103,7 @@ double CppChebyshevDistance(const std::vector<double>& vec1,
 
 // Function to compute the k-th nearest distance for a vector.
 std::vector<double> CppKNearestDistance(const std::vector<double>& vec, size_t k,
-                                        bool L1norm = false, bool na_rm = false) {
+                                        bool L1norm = false, bool na_rm = true) {
   size_t n = vec.size();
   std::vector<double> result(n,std::numeric_limits<double>::quiet_NaN());  // Vector to store the k-th nearest distances
 
@@ -155,7 +155,7 @@ std::vector<double> CppKNearestDistance(const std::vector<double>& vec, size_t k
 
 // Function to compute the k-th nearest Chebyshev distance for each sample in a matrix
 std::vector<double> CppMatKNearestDistance(const std::vector<std::vector<double>>& mat,
-                                           size_t k, bool na_rm = false) {
+                                           size_t k, bool na_rm = true) {
   size_t n = mat.size();
   std::vector<double> result(n, std::numeric_limits<double>::quiet_NaN());
 
@@ -202,7 +202,7 @@ std::vector<double> CppMatKNearestDistance(const std::vector<std::vector<double>
 std::vector<std::vector<double>> CppMatDistance(
     const std::vector<std::vector<double>>& mat,
     bool L1norm = false,
-    bool na_rm = false){
+    bool na_rm = true){
   size_t n = mat.size();
   // std::vector<std::vector<double>> distance_matrix(n, std::vector<double>(n, std::numeric_limits<double>::quiet_NaN()));
   std::vector<std::vector<double>> distance_matrix(n, std::vector<double>(n, 0));
@@ -222,7 +222,7 @@ std::vector<std::vector<double>> CppMatDistance(
 // Function to compute chebyshev distance for a matrix:
 std::vector<std::vector<double>> CppMatChebyshevDistance(
     const std::vector<std::vector<double>>& mat,
-    bool na_rm = false){
+    bool na_rm = true){
   size_t n = mat.size();
   // std::vector<std::vector<double>> distance_matrix(n, std::vector<double>(n, std::numeric_limits<double>::quiet_NaN()));
   std::vector<std::vector<double>> distance_matrix(n, std::vector<double>(n, 0));
@@ -245,7 +245,7 @@ std::vector<int> CppNeighborsNum(
     const std::vector<double>& radius,  // A vector where radius[i] specifies the search radius for the i-th point.
     bool equal = false,                 // Flag to include points at exactly the radius distance (default: false).
     bool L1norm = false,                // Flag to use Manhattan distance or Euclidean distance
-    bool na_rm = false                  // Whether to remove the nan value in cpp
+    bool na_rm = true                   // Whether to remove the nan value in cpp
 ) {
   size_t N = vec.size();
   std::vector<int> NAx(N, 0); // Initialize neighbor counts to 0
@@ -289,7 +289,7 @@ std::vector<int> CppMatNeighborsNum(
     const std::vector<std::vector<double>>& mat,     // A vector of 2D points.
     const std::vector<double>& radius,               // A vector where radius[i] specifies the search radius for the i-th point.
     bool equal = false,                              // Flag to include points at exactly the radius distance (default: false).
-    bool na_rm = false                               // Whether to remove the nan value in cpp
+    bool na_rm = true                                // Whether to remove the nan value in cpp
 ) {
   size_t N = mat.size();
   std::vector<int> NAx(N, 0); // Initialize neighbor counts to 0
