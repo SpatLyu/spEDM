@@ -133,7 +133,7 @@ double CppLog(double x, double base = 10) {
 }
 
 // Function to calculate the median of a vector.
-double CppMedian(const std::vector<double>& vec, bool na_rm = false) {
+double CppMedian(const std::vector<double>& vec, bool na_rm = true) {
   std::vector<double> filtered_vec;
   if (filtered_vec.capacity() < vec.size()){
     filtered_vec.reserve(vec.size());
@@ -168,7 +168,7 @@ double CppMedian(const std::vector<double>& vec, bool na_rm = false) {
 }
 
 // Function to calculate the mean of a vector, ignoring NA values
-double CppMean(const std::vector<double>& vec, bool na_rm = false) {
+double CppMean(const std::vector<double>& vec, bool na_rm = true) {
   double sum = 0.0;
   size_t count = 0;
   for (const auto& value : vec) {
@@ -181,7 +181,7 @@ double CppMean(const std::vector<double>& vec, bool na_rm = false) {
 }
 
 // Function to calculate the minimum of a vector, ignoring NA values if na_rm is true
-double CppMin(const std::vector<double>& vec, bool na_rm = false) {
+double CppMin(const std::vector<double>& vec, bool na_rm = true) {
   double min_val = std::numeric_limits<double>::infinity();
   bool found_valid = false;
 
@@ -205,7 +205,7 @@ double CppMin(const std::vector<double>& vec, bool na_rm = false) {
 }
 
 // Function to calculate the maximum of a vector, ignoring NA values if na_rm is true
-double CppMax(const std::vector<double>& vec, bool na_rm = false) {
+double CppMax(const std::vector<double>& vec, bool na_rm = true) {
   double max_val = -std::numeric_limits<double>::infinity();
   bool found_valid = false;
 
@@ -227,7 +227,7 @@ double CppMax(const std::vector<double>& vec, bool na_rm = false) {
 
 // Function to calculate the sum of a vector, ignoring NA values if na_rm is true
 double CppSum(const std::vector<double>& vec,
-              bool na_rm = false) {
+              bool na_rm = true) {
   double sum = 0.0;
   for (const auto& value : vec) {
     if (!na_rm || !isNA(value)) {
@@ -240,7 +240,7 @@ double CppSum(const std::vector<double>& vec,
 // Function to compute Mean Absolute Error (MAE) between two vectors
 double CppMAE(const std::vector<double>& vec1,
               const std::vector<double>& vec2,
-              bool na_rm = false) {
+              bool na_rm = true) {
   // Check if input vectors have the same size
   if (vec1.size() != vec2.size()) {
     throw std::invalid_argument("Input vectors must have the same size.");
@@ -277,7 +277,7 @@ double CppMAE(const std::vector<double>& vec1,
 // Function to compute Root Mean Squared Error (RMSE) between two vectors
 double CppRMSE(const std::vector<double>& vec1,
                const std::vector<double>& vec2,
-               bool na_rm = false) {
+               bool na_rm = true) {
   // Check if input vectors have the same size
   if (vec1.size() != vec2.size()) {
     throw std::invalid_argument("Input vectors must have the same size.");
@@ -347,7 +347,7 @@ std::vector<double> CppAbsDiff(const std::vector<double>& vec1,
 
 // Function to normalize a vector by dividing each element by the sum of all elements
 std::vector<double> CppSumNormalize(const std::vector<double>& vec,
-                                    bool na_rm = false) {
+                                    bool na_rm = true) {
   double sum = CppSum(vec, na_rm);
   if (sum == 0.0) {
     throw std::invalid_argument("Sum of vector elements is zero, cannot normalize.");
@@ -474,7 +474,7 @@ std::vector<double> CppQuantile(const std::vector<double>& vec,
 }
 
 // Function to calculate the variance of a vector, ignoring NA values
-double CppVariance(const std::vector<double>& vec, bool na_rm = false) {
+double CppVariance(const std::vector<double>& vec, bool na_rm = true) {
   double mean_val = CppMean(vec, na_rm);
   double var = 0.0;
   size_t count = 0;
@@ -490,7 +490,7 @@ double CppVariance(const std::vector<double>& vec, bool na_rm = false) {
 // Function to calculate the covariance of two vectors, ignoring NA values
 double CppCovariance(const std::vector<double>& vec1,
                      const std::vector<double>& vec2,
-                     bool na_rm = false) {
+                     bool na_rm = true) {
   if (vec1.size() != vec2.size()) {
     throw std::invalid_argument("Vectors must have the same size");
   }
@@ -511,7 +511,7 @@ double CppCovariance(const std::vector<double>& vec1,
 // Function to compute Pearson correlation using Armadillo
 double PearsonCor(const std::vector<double>& y,
                   const std::vector<double>& y_hat,
-                  bool na_rm = false) {
+                  bool na_rm = true) {
   // Check input sizes
   if (y.size() != y_hat.size()) {
     throw std::invalid_argument("Input vectors must have the same size.");
@@ -560,7 +560,7 @@ double PearsonCor(const std::vector<double>& y,
 // // Function to calculate the Pearson correlation coefficient, ignoring NA values
 // double PearsonCor(const std::vector<double>& y,
 //                   const std::vector<double>& y_hat,
-//                   bool na_rm = false) {
+//                   bool na_rm = true) {
 //   // // Check input sizes
 //   // if (y.size() != y_hat.size()) {
 //   //   throw std::invalid_argument("Input vectors must have the same size.");
@@ -612,7 +612,7 @@ double PearsonCor(const std::vector<double>& y,
 // Function to compute Spearman correlation using Armadillo
 double SpearmanCor(const std::vector<double>& y,
                    const std::vector<double>& y_hat,
-                   bool na_rm = false) {
+                   bool na_rm = true) {
   if (y.size() != y_hat.size()) {
     throw std::invalid_argument("Input vectors must have the same size.");
   }
@@ -653,7 +653,7 @@ double SpearmanCor(const std::vector<double>& y,
 // Function to compute Kendall's tau correlation coefficient
 double KendallCor(const std::vector<double>& y,
                   const std::vector<double>& y_hat,
-                  bool na_rm = false) {
+                  bool na_rm = true) {
   if (y.size() != y_hat.size()) {
     throw std::invalid_argument("Input vectors must have the same size.");
   }
@@ -722,7 +722,7 @@ double KendallCor(const std::vector<double>& y,
 double PartialCor(const std::vector<double>& y,
                   const std::vector<double>& y_hat,
                   const std::vector<std::vector<double>>& controls,
-                  bool na_rm = false,
+                  bool na_rm = true,
                   bool linear = false,
                   double pinv_tol = 1e-10) {
   // Check input sizes
@@ -852,7 +852,7 @@ double PartialCor(const std::vector<double>& y,
 double PartialCorTrivar(const std::vector<double>& y,
                         const std::vector<double>& y_hat,
                         const std::vector<double>& control,
-                        bool na_rm = false,
+                        bool na_rm = true,
                         bool linear = false,
                         double pinv_tol = 1e-10){
   std::vector<std::vector<double>> conmat;
@@ -1370,7 +1370,7 @@ std::vector<std::vector<std::vector<double>>> CppSVD(const std::vector<std::vect
 std::vector<double> LinearTrendRM(const std::vector<double>& vec,
                                   const std::vector<double>& xcoord,
                                   const std::vector<double>& ycoord,
-                                  bool na_rm = false) {
+                                  bool na_rm = true) {
   // Check input sizes
   if (vec.size() != xcoord.size() || vec.size() != ycoord.size()) {
     throw std::invalid_argument("Input vectors must have the same size.");
@@ -1434,7 +1434,7 @@ std::vector<double> LinearTrendRM(const std::vector<double>& vec,
 // std::vector<double> LinearTrendRM(const std::vector<double>& vec,
 //                                   const std::vector<double>& xcoord,
 //                                   const std::vector<double>& ycoord,
-//                                   bool na_rm = false) {
+//                                   bool na_rm = true) {
 //   if (vec.size() != xcoord.size() || vec.size() != ycoord.size()) {
 //     throw std::invalid_argument("Input vectors must have the same size.");
 //   }
