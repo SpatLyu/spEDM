@@ -14,7 +14,7 @@
  * @param vec A vector of double values representing the dataset.
  * @param k The number of nearest neighbors to consider in the estimation.
  * @param base The logarithm base used for entropy calculation (default: 10).
- * @param na_rm A boolean flag indicating whether to remove missing values (default: false).
+ * @param na_rm A boolean flag indicating whether to remove missing values (default: true).
  *
  * @return The estimated entropy of the vector.
  */
@@ -41,7 +41,7 @@ double CppEntropy_Cont(const std::vector<double>& vec, size_t k,
  * @param columns The indices of columns to select for joint entropy calculation.
  * @param k The number of nearest neighbors to consider in the estimation.
  * @param base The logarithm base used for entropy calculation (default: 10).
- * @param na_rm A boolean flag indicating whether to remove missing values (NaN) before computation (default: false).
+ * @param na_rm A boolean flag indicating whether to remove missing values (NaN) before computation (default: true).
  *
  * @return The estimated joint entropy of the multivariate matrix.
  */
