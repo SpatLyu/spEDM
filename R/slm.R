@@ -54,7 +54,7 @@
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg",package="spEDM"))
 #' columbus$inc = sdsfun::normalize_vector(columbus$inc)
-#' slm(columbus,"inc")
+#' spEDM::slm(columbus,"inc")
 #'
 methods::setMethod("slm", "sf", .slm_sf_method)
 

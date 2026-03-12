@@ -41,7 +41,7 @@
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg",package="spEDM"))
 #' \donttest{
-#' fnn(columbus,"crime")
+#' spEDM::fnn(columbus,"crime")
 #' }
 methods::setMethod("fnn", "sf", .fnn_sf_method)
 

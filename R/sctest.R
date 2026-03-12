@@ -53,7 +53,7 @@
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg",package="spEDM"))
 #' \donttest{
-#' sc.test(columbus,"hoval","crime",k = 15)
+#' spEDM::sc.test(columbus,"hoval","crime",k = 15)
 #' }
 methods::setMethod("sc.test", "sf", .sc_sf_method)
 

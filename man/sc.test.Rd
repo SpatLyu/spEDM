@@ -88,7 +88,7 @@ spatial causality test
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg",package="spEDM"))
 \donttest{
-sc.test(columbus,"hoval","crime",k = 15)
+spEDM::sc.test(columbus,"hoval","crime",k = 15)
 }
 }
 \references{

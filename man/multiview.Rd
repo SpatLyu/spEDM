@@ -92,9 +92,9 @@ multiview embedding forecast
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg",package="spEDM"))
 \donttest{
-multiview(columbus,
-          column = c("inc","crime","open","plumb","discbd"),
-          target = "hoval", nvar = 3)
+spEDM::multiview(columbus,
+                 column = c("inc","crime","open","plumb","discbd"),
+                 target = "hoval", nvar = 3)
 }
 }
 \references{

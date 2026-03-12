@@ -6,6 +6,8 @@
 
 ### enhancements
 
+* Qualify function calls in examples with namespace for reproducibility (#971).
+
 * Inject plain-text terminal hint to `fnn` output (#965).
 
 * Unify preprocessing strategies for embedding parameters `E` and `tau` across spatial causal discovery algorithms (#960).

@@ -4,7 +4,7 @@
 #' @export
 #'
 #' @examples
-#' detectThreads()
+#' spEDM::detectThreads()
 #' 
 detectThreads = \() {
   return(DetectMaxNumThreads())

@@ -92,7 +92,7 @@ optimal parameter search for simplex projection
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg",package="spEDM"))
 \donttest{
-simplex(columbus,"inc","crime")
+spEDM::simplex(columbus,"inc","crime")
 }
 }
 \references{
