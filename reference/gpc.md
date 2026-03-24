@@ -204,10 +204,10 @@ spEDM::gpc(columbus,"hoval","crime",E = 6,k = 9)
 #>       type  strength      direction
 #> 1 positive       NaN hoval -> crime
 #> 2 negative 0.4718467 hoval -> crime
-#> 3     dark 0.3656227 hoval -> crime
+#> 3     dark 0.4571089 hoval -> crime
 #> 4 positive       NaN crime -> hoval
 #> 5 negative 0.6479988 crime -> hoval
-#> 6     dark 0.5395169 crime -> hoval
+#> 6     dark 0.6373764 crime -> hoval
 
 # convergence diagnostics
 g = spEDM::gpc(columbus,"hoval","crime",libsizes = seq(5,45,5),E = 6,k = 9)
