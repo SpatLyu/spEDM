@@ -189,7 +189,22 @@ PatternCausalityRes GenPatternCausality(
 
   const size_t hashed_num = unique_patterns.size();
   if (hashed_num == 0) return res;
-  const double midpoint = static_cast<double>(hashed_num - 1) / 2.0;
+
+  // Build opposite index mapping: for each pattern, find its opposite pattern index
+  std::vector<size_t> opposite_index(hashed_num);
+
+  for (size_t i = 0; i < hashed_num; ++i) {
+    const std::string& pat = unique_patterns[i];
+    std::string opposite = get_opposite_pattern(pat);
+
+    auto it = pattern_indices.find(opposite);
+    if (it != pattern_indices.end()) {
+      opposite_index[i] = it->second;
+    } else {
+      // fallback: map to itself if opposite not found (should not happen)
+      opposite_index[i] = i;
+    }
+  }
 
   // --- 3. Initialize result structures ---
   std::vector<std::vector<double>> heatmap_accum(
@@ -214,20 +229,6 @@ PatternCausalityRes GenPatternCausality(
     return std::sqrt(sum);
   };
 
-  auto nanmean_ignore_nan = [](const std::vector<double>& vals) -> double {
-    double sum = 0.0;
-    std::size_t count = 0;
-    for (double v : vals) {
-      if (!std::isnan(v)) {
-        sum += v;
-        ++count;
-      }
-    }
-    return (count > 0)
-      ? (sum / static_cast<double>(count))
-      : std::numeric_limits<double>::quiet_NaN();
-  };
-
   // --- 5. Main causality loop ---
   for (size_t t = 0; t < n; ++t) {
     // if (SMx[t].empty() || SMy[t].empty() || pred_SMy[t].empty()) continue;
@@ -239,6 +240,22 @@ PatternCausalityRes GenPatternCausality(
     // --- Skip invalid pattern cases ---
     if (str_contains_zero(pat_x) || str_contains_zero(pat_y_real) || str_contains_zero(pat_y_pred)) continue;
 
+    res.RealLoop.push_back(static_cast<int>(t));
+
+    /* --- causality existence --- */
+    if (pat_y_real != pat_y_pred){
+      res.NoCausality[t] = 1.0;
+      res.PatternTypes.push_back(0);
+      continue;
+    }
+
+    /* --- strength --- */
+    double strength = weighted
+      ? std::erf(
+          norm_vec_ignore_nan(pred_SMy[t]) /
+          (norm_vec_ignore_nan(SMy[t]) + 1e-6))
+      : 1.0;
+
     // --- Safe index lookup ---
     auto x_it = pattern_indices.find(pat_x);
     auto y_pred_it = pattern_indices.find(pat_y_pred);
@@ -248,15 +265,6 @@ PatternCausalityRes GenPatternCausality(
 
     size_t i = x_it->second;
     size_t j = y_pred_it->second;
-
-    res.RealLoop.push_back(static_cast<int>(t));
-
-    double strength = 0.0;
-    if (pat_y_pred == pat_y_real) {
-      strength = weighted ?
-        std::erf(norm_vec_ignore_nan(pred_SMy[t]) /
-                (norm_vec_ignore_nan(SMy[t]) + 1e-6)) : 1.0;
-    }
 
     // Accumulate to heatmap
     if (std::isnan(heatmap_accum[i][j])) {
@@ -268,57 +276,53 @@ PatternCausalityRes GenPatternCausality(
     }
 
     // --- 6. Classification of per-sample causality type ---
-    if (doubleNearlyEqual(strength,0.0)) {
-      res.NoCausality[t] = 1.0;
-      res.PatternTypes.push_back(0);
+    if (i == j) {
+      // Positive causality: same pattern
+      res.PositiveCausality[t] = strength;
+      res.PatternTypes.push_back(1);
+    } else if (opposite_index[i] == j) {
+      // Negative causality: opposite pattern
+      res.NegativeCausality[t] = strength;
+      res.PatternTypes.push_back(2);
     } else {
-      if (i == j && !doubleNearlyEqual(static_cast<double>(i), midpoint)) {
-        res.PositiveCausality[t] = strength;
-        res.PatternTypes.push_back(1);
-      } else if ((i + j) == (hashed_num - 1) && !doubleNearlyEqual(static_cast<double>(i), midpoint)) {
-        res.NegativeCausality[t] = strength;
-        res.PatternTypes.push_back(2);
-      } else {
-        res.DarkCausality[t] = strength;
-        res.PatternTypes.push_back(3);
-      }
+      // Dark causality: all other cases
+      res.DarkCausality[t] = strength;
+      res.PatternTypes.push_back(3);
     }
   }
 
-  // --- 7. Normalize heatmap by counts ---
-  for (size_t i = 0; i < hashed_num; ++i) {
-    for (size_t j = 0; j < hashed_num; ++j) {
-      if (count_matrix[i][j] > 0) {
-        heatmap_accum[i][j] = heatmap_accum[i][j] / static_cast<double>(count_matrix[i][j]);
-      } else {
-        heatmap_accum[i][j] = std::numeric_limits<double>::quiet_NaN();
-      }
-    }
-  }
-
-  // --- 8. Compute summary metrics ---
+  // --- 7. Compute summary metrics ---
   std::vector<double> diag_vals, anti_vals, other_vals;
   diag_vals.reserve(hashed_num);
   anti_vals.reserve(hashed_num);
+  anti_vals.reserve((hashed_num - 2)*hashed_num);
 
-  for (size_t idx = 0; idx < hashed_num; ++idx) {
-    double vdiag = heatmap_accum[idx][idx];
-    if (!std::isnan(vdiag)) diag_vals.push_back(vdiag);
-
-    size_t anti_j = hashed_num - 1 - idx;
-    double vanti = heatmap_accum[idx][anti_j];
-    if (!std::isnan(vanti)) anti_vals.push_back(vanti);
-
+  for (size_t i = 0; i < hashed_num; ++i) {
     for (size_t j = 0; j < hashed_num; ++j) {
-      if (j == idx || j == anti_j) continue;
-      double v = heatmap_accum[idx][j];
-      if (!std::isnan(v)) other_vals.push_back(v);
-    }
+      if (count_matrix[i][j] == 0) continue;
+
+      double val = heatmap_accum[i][j] / count_matrix[i][j];
+
+      if (i == j)
+        diag_vals.push_back(val);
+      else if (opposite_index[i] == j)
+        anti_vals.push_back(val);
+      else
+        other_vals.push_back(val);
+      }
   }
 
-  res.TotalPos  = nanmean_ignore_nan(diag_vals);
-  res.TotalNeg  = nanmean_ignore_nan(anti_vals);
-  res.TotalDark = nanmean_ignore_nan(other_vals);
+  auto mean = [](const std::vector<double>& v)
+  {
+    if (v.empty()) return std::numeric_limits<double>::quiet_NaN();
+      double s = 0;
+      for (double x : v) s += x;
+      return s / v.size();
+  };
+
+  res.TotalPos  = mean(diag_vals);
+  res.TotalNeg  = mean(anti_vals);
+  res.TotalDark = mean(other_vals);
   res.matrice = std::move(heatmap_accum);
 
   return res;

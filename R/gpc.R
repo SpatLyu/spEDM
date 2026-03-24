@@ -51,10 +51,10 @@
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg",package="spEDM"))
 #' \donttest{
-#' spEDM::gpc(columbus,"hoval","crime",E = 6,k = 9)
+#' spEDM::gpc(columbus,"hoval","crime",E = 5,k = 10)
 #'
 #' # convergence diagnostics
-#' g = spEDM::gpc(columbus,"hoval","crime",libsizes = seq(5,45,5),E = 6,k = 9)
+#' g = spEDM::gpc(columbus,"hoval","crime",libsizes = seq(5,45,5),E = 5,k = 10)
 #' plot(g)
 #' }
 methods::setMethod("gpc", "sf", .gpc_sf_method)
