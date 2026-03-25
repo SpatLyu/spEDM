@@ -1669,52 +1669,52 @@ BEGIN_RCPP
 END_RCPP
 }
 // OptSimplexParm
-Rcpp::IntegerVector OptSimplexParm(Rcpp::NumericMatrix Emat);
+Rcpp::IntegerVector OptSimplexParm(const Rcpp::NumericMatrix& Emat);
 RcppExport SEXP _spEDM_OptSimplexParm(SEXP EmatSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Emat(EmatSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type Emat(EmatSEXP);
     rcpp_result_gen = Rcpp::wrap(OptSimplexParm(Emat));
     return rcpp_result_gen;
 END_RCPP
 }
 // OptThetaParm
-double OptThetaParm(Rcpp::NumericMatrix Thetamat);
+double OptThetaParm(const Rcpp::NumericMatrix& Thetamat);
 RcppExport SEXP _spEDM_OptThetaParm(SEXP ThetamatSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Thetamat(ThetamatSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type Thetamat(ThetamatSEXP);
     rcpp_result_gen = Rcpp::wrap(OptThetaParm(Thetamat));
     return rcpp_result_gen;
 END_RCPP
 }
 // OptICparm
-Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat);
+Rcpp::IntegerVector OptICparm(const Rcpp::NumericMatrix& Emat);
 RcppExport SEXP _spEDM_OptICparm(SEXP EmatSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Emat(EmatSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type Emat(EmatSEXP);
     rcpp_result_gen = Rcpp::wrap(OptICparm(Emat));
     return rcpp_result_gen;
 END_RCPP
 }
 // OptPCparm
-Rcpp::IntegerVector OptPCparm(Rcpp::NumericMatrix Emat, std::string maximize);
+Rcpp::IntegerVector OptPCparm(const Rcpp::NumericMatrix& Emat, const std::string& maximize);
 RcppExport SEXP _spEDM_OptPCparm(SEXP EmatSEXP, SEXP maximizeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Emat(EmatSEXP);
-    Rcpp::traits::input_parameter< std::string >::type maximize(maximizeSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type Emat(EmatSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type maximize(maximizeSEXP);
     rcpp_result_gen = Rcpp::wrap(OptPCparm(Emat, maximize));
     return rcpp_result_gen;
 END_RCPP
 }
 // MatNotNAIndice
-Rcpp::NumericMatrix MatNotNAIndice(Rcpp::NumericMatrix mat, bool byrow);
+Rcpp::NumericMatrix MatNotNAIndice(const Rcpp::NumericMatrix& mat, bool byrow);
 RcppExport SEXP _spEDM_MatNotNAIndice(SEXP matSEXP, SEXP byrowSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type mat(matSEXP);
     Rcpp::traits::input_parameter< bool >::type byrow(byrowSEXP);
     rcpp_result_gen = Rcpp::wrap(MatNotNAIndice(mat, byrow));
     return rcpp_result_gen;

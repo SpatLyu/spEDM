@@ -39,7 +39,7 @@ unsigned int DetectMaxNumThreads(){
  * @return IntegerVector of length three that contains E k tau in this order.
  */
 // [[Rcpp::export(rng = false)]]
-Rcpp::IntegerVector OptSimplexParm(Rcpp::NumericMatrix Emat) {
+Rcpp::IntegerVector OptSimplexParm(const Rcpp::NumericMatrix& Emat) {
 
   if (Emat.ncol() != 6) {
     Rcpp::stop("Input matrix must have exactly six columns: E k tau rho mae rmse.");
@@ -143,7 +143,7 @@ Rcpp::IntegerVector OptSimplexParm(Rcpp::NumericMatrix Emat) {
  * @return The optimal theta parameter as a double.
  */
 // [[Rcpp::export(rng = false)]]
-double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
+double OptThetaParm(const Rcpp::NumericMatrix& Thetamat) {
 
   if (Thetamat.ncol() != 4) {
     Rcpp::stop("Input matrix must have exactly four columns: theta rho mae rmse.");
@@ -245,7 +245,7 @@ double OptThetaParm(Rcpp::NumericMatrix Thetamat) {
  * @return IntegerVector containing E k tau in this order.
  */
 // [[Rcpp::export(rng = false)]]
-Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat) {
+Rcpp::IntegerVector OptICparm(const Rcpp::NumericMatrix& Emat) {
 
   if (Emat.ncol() != 5) {
     Rcpp::stop("Input matrix must have exactly five columns: E k tau metric p.");
@@ -366,8 +366,8 @@ Rcpp::IntegerVector OptICparm(Rcpp::NumericMatrix Emat) {
  * @return IntegerVector containing E k tau in this order.
  */
 // [[Rcpp::export(rng = false)]]
-Rcpp::IntegerVector OptPCparm(Rcpp::NumericMatrix Emat,
-                              std::string maximize = "positive") {
+Rcpp::IntegerVector OptPCparm(const Rcpp::NumericMatrix& Emat,
+                              const std::string& maximize = "positive") {
 
   if (Emat.ncol() != 6) {
     Rcpp::stop("Input matrix must have exactly six columns: E k tau pos neg dark.");
@@ -496,7 +496,7 @@ Rcpp::IntegerVector OptPCparm(Rcpp::NumericMatrix Emat,
  *     - The second column contains the column indices of non-NA elements.
  */
 // [[Rcpp::export(rng = false)]]
-Rcpp::NumericMatrix MatNotNAIndice(Rcpp::NumericMatrix mat, bool byrow = true) {
+Rcpp::NumericMatrix MatNotNAIndice(const Rcpp::NumericMatrix& mat, bool byrow = true) {
   // Initialize vectors to store the row and column indices of non-NA elements
   std::vector<double> row_indices;
   std::vector<double> col_indices;
