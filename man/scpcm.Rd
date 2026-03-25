@@ -128,7 +128,7 @@ spatially convergent partial cross mapping
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg",package="spEDM"))
 \donttest{
-g = scpcm(columbus,"hoval","crime","inc",libsizes = seq(5,45,5),E = 6)
+g = spEDM::scpcm(columbus,"hoval","crime","inc",libsizes = seq(5,45,5),E = 6)
 g
 plot(g,ylimits = c(-0.1,0.4),ybreaks = seq(-0.1,0.4,0.1))
 }

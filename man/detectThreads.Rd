@@ -13,6 +13,6 @@ An integer
 detect the number of available threads
 }
 \examples{
-detectThreads()
+spEDM::detectThreads()
 
 }
