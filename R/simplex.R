@@ -47,7 +47,7 @@
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg",package="spEDM"))
 #' \donttest{
-#' simplex(columbus,"inc","crime")
+#' spEDM::simplex(columbus,"inc","crime")
 #' }
 methods::setMethod("simplex", "sf", .simplex_sf_method)
 
