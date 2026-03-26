@@ -41,7 +41,7 @@
  *     and each cell accumulates strength values over valid samples.
  *
  *  7. Per-sample classification is performed:
- *       - No causality: pattern(Y_pred) != pattern(Y_real)
+ *       - No causality : pattern(Y_pred) != pattern(Y_real)
  *       - Positive     : i == j (same pattern)
  *       - Negative     : opposite_index[i] == j (symmetric-opposite pattern)
  *       - Dark         : all other off-diagonal relationships
