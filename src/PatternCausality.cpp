@@ -47,7 +47,7 @@
  *       - Dark         : all other off-diagonal relationships
  *
  *  8. Strength is computed only when prediction matches reality:
- *         strength = erf( ||pred_Y|| / (||Y_real|| + 1e-6) )
+ *         strength = erf( ||pred_Y|| / (||X|| + 1e-6) )
  *     which bounds the value in [0, 1] and avoids division instability.
  *
  *  9. A final normalized heatmap (cell-wise average) and aggregated metrics
@@ -254,18 +254,18 @@ PatternCausalityRes GenPatternCausality(
     res.RealLoop.push_back(static_cast<int>(t));
 
     /* --- causality existence --- */
-    if (pat_y_real != pat_y_pred){
-      res.NoCausality[t] = 1.0;
-      res.PatternTypes.push_back(0);
-      continue;
-    }
+    bool causality_exit = pat_y_pred == pat_y_real;
 
     /* --- strength --- */
-    double strength = weighted
-      ? std::erf(
-          norm_vec_ignore_nan(pred_SMy[t]) /
-          (norm_vec_ignore_nan(SMy[t]) + 1e-6))
-      : 1.0;
+    double strength = 0.0;
+    if (causality_exit)
+    {
+      strength = weighted
+        ? std::erf(
+            norm_vec_ignore_nan(pred_SMy[t]) /
+            (norm_vec_ignore_nan(SMx[t]) + 1e-6))
+        : 1.0;
+    }
 
     // --- Safe index lookup ---
     auto x_it = pattern_indices.find(pat_x);
@@ -286,8 +286,11 @@ PatternCausalityRes GenPatternCausality(
       count_matrix[i][j] += 1;
     }
 
-    // --- 6. Classification of per-sample causality type ---
-    if (i == j) {
+    // --- Classification of per-sample causality type ---
+    if (!causality_exit) {
+      res.NoCausality[t] = 1.0;
+      res.PatternTypes.push_back(0);
+    } else if (i == j) {
       // Positive causality: same pattern
       res.PositiveCausality[t] = strength;
       res.PatternTypes.push_back(1);
@@ -421,6 +424,7 @@ PatternCausalityRes PatternCausality(
   auto compute_distance = [&](size_t p) {
     size_t pi = pred_indices[p];
     for (size_t li : lib_indices) {
+      if (pi == li) continue;
       double dist = CppDistance(Mx[pi], Mx[li], L1norm, true);
       if (!std::isnan(dist)) {
         Dx[pi][li] = dist;  // assign distance; no mirroring required
@@ -564,6 +568,7 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
   auto compute_distance = [&](size_t p) {
     size_t pi = pred_indices[p];
     for (size_t li : lib_indices) {
+      if (pi == li) continue;
       double dist = CppDistance(Mx[pi], Mx[li], L1norm, true);
       if (!std::isnan(dist)) Dx[pi][li] = dist;
     }

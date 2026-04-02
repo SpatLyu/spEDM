@@ -124,10 +124,10 @@ geographical pattern causality
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg",package="spEDM"))
 \donttest{
-spEDM::gpc(columbus,"hoval","crime",E = 5,k = 10)
+spEDM::gpc(columbus,"crime","hoval",E = 7,k = 9)
 
 # convergence diagnostics
-g = spEDM::gpc(columbus,"hoval","crime",libsizes = seq(5,45,5),E = 5,k = 10)
+g = spEDM::gpc(columbus,"crime","hoval",libsizes = seq(7,49,7),E = 7,k = 9)
 plot(g)
 }
 }

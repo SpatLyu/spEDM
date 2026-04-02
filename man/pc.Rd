@@ -20,7 +20,7 @@
   zero.tolerance = max(k),
   relative = TRUE,
   weighted = TRUE,
-  maximize = "positive",
+  maximize = "dark",
   threads = detectThreads(),
   detrend = FALSE,
   nb = NULL
@@ -40,7 +40,7 @@
   zero.tolerance = max(k),
   relative = TRUE,
   weighted = TRUE,
-  maximize = "positive",
+  maximize = "dark",
   threads = detectThreads(),
   detrend = FALSE,
   grid.coord = TRUE
@@ -98,7 +98,7 @@ optimal parameter search for pattern causality
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg",package="spEDM"))
 \donttest{
-spEDM::pc(columbus,"hoval","crime",E = 5:10,maximize = "negative")
+spEDM::pc(columbus,"crime","hoval",E = 5:10,maximize = "negative")
 }
 }
 \references{

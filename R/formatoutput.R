@@ -116,8 +116,7 @@ plot.ccm_res = \(x, family = "serif",
                  draw_ci = FALSE, ci_alpha = 0.25,
                  xbreaks = NULL, xlimits = NULL,
                  ybreaks = seq(0, 1, by = 0.1),
-                 ylimits = c(-0.05, 1),
-                 ylabel = expression(rho), ...){
+                 ylimits = c(-0.05, 1), ylabel = expression(rho), ...){
   resdf = x[[1]]
   bidirectional = x$bidirectional
 
@@ -210,7 +209,7 @@ plot.pcm_res = \(x, partial = TRUE, ...){
 plot.rpc_res = \(x, family = "serif",
                  xbreaks = NULL, xlimits = NULL,
                  ybreaks = seq(0, 1, by = 0.1),
-                 ylimits = c(-0.05, 1), ...){
+                 ylimits = NULL, ...){
   xmapdf = x$xmap
   if("q50" %in% names(xmapdf)) xmapdf = dplyr::rename(xmapdf,causality = q50)
   if (x$bidirectional){
@@ -222,6 +221,7 @@ plot.rpc_res = \(x, family = "serif",
   }
   if(is.null(xbreaks)) xbreaks = xmapdf$libsizes
   if(is.null(xlimits)) xlimits = c(min(xbreaks)-1,max(xbreaks)+1)
+  if(is.null(ylimits)) ylimits = c(-0.01, max(xmapdf$causality)+0.1)
 
   ggplot2::ggplot(xmapdf, ggplot2::aes(x = libsizes, y = causality, color = type)) +
     ggplot2::geom_line(linewidth = 1.25) +
@@ -237,7 +237,7 @@ plot.rpc_res = \(x, family = "serif",
     ggplot2::theme(
       legend.position = "bottom",
       legend.box = "horizontal",
-      panel.grid.minor = ggplot2::element_blank(),
+      panel.grid = ggplot2::element_blank(),
       axis.text.x = ggplot2::element_text(angle = 30),
       strip.text = ggplot2::element_text(face = "bold")
     )

@@ -1,5 +1,5 @@
 .pc_sf_method = \(data, column, target, E = 2:10, k = E+2, tau = 1, style = 1, lib = NULL, pred = NULL, dist.metric = "L2", zero.tolerance = max(k),
-                  relative = TRUE, weighted = TRUE, maximize = "positive", threads = detectThreads(), detrend = FALSE, nb = NULL){
+                  relative = TRUE, weighted = TRUE, maximize = "dark", threads = detectThreads(), detrend = FALSE, nb = NULL){
   vx = .uni_lattice(data,column,detrend)
   vy = .uni_lattice(data,target,detrend)
   if (is.null(lib)) lib = .internal_library(cbind(vx,vy))
@@ -11,7 +11,7 @@
 }
 
 .pc_spatraster_method = \(data, column, target, E = 2:10, k = E+2, tau = 1, style = 1, lib = NULL, pred = NULL, dist.metric = "L2", zero.tolerance = max(k),
-                          relative = TRUE, weighted = TRUE, maximize = "positive", threads = detectThreads(), detrend = FALSE, grid.coord = TRUE){
+                          relative = TRUE, weighted = TRUE, maximize = "dark", threads = detectThreads(), detrend = FALSE, grid.coord = TRUE){
   mx = .uni_grid(data,column,detrend,grid.coord)
   my = .uni_grid(data,target,detrend,grid.coord)
   if (is.null(lib)) lib = which(!(is.na(mx) | is.na(my)), arr.ind = TRUE)
@@ -45,7 +45,7 @@
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg",package="spEDM"))
 #' \donttest{
-#' spEDM::pc(columbus,"hoval","crime",E = 5:10,maximize = "negative")
+#' spEDM::pc(columbus,"crime","hoval",E = 5:10,maximize = "negative")
 #' }
 methods::setMethod("pc", "sf", .pc_sf_method)
 
