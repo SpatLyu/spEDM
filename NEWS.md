@@ -4,7 +4,9 @@
 
 * Correct maintainer surname spelling from `Lv` to `Lyu` for pinyin compliance (#966).
 
-### 
+### enhancements
+
+* Support data slicing by library and prediction sets for large scale pattern causality computation (#985).
 
 * Assign zero to missing pattern causality values for positive, negative, and dark categories in returned results (#983).
 
