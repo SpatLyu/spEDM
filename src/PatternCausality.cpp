@@ -484,8 +484,8 @@ PatternCausalityRes PatternCausality(
 /**
  * @brief Perform robust (bootstrapped) pattern-based causality analysis across multiple library sizes.
  *
- * This function extends `PatternCausality()` by introducing both random and systematic
- * sampling strategies for robustness evaluation. It performs repeated causality
+ * This function extends `PatternCausality()` by introducing flexible sampling
+ * strategies for robustness evaluation. It performs repeated causality
  * estimations across different library sizes (`libsizes`) and returns results organized
  * as `[3][libsizes][boot]`:
  *
@@ -507,10 +507,12 @@ PatternCausalityRes PatternCausality(
  *
  * 3. **Sampling & Bootstrapping**
  *    - For each library size:
- *        - If `random_sample = true`: draw `boot` random subsets (size = L)
- *          from `lib_indices` using RNG.
- *        - If `random_sample = false`: perform deterministic slicing
- *          and **force `boot = 1`** for reproducibility.
+ *        - If `replace_sampling = true`: perform bootstrap sampling with replacement,
+ *          drawing `boot` independent samples (each of size L) from `lib_indices`.
+ *        - If `replace_sampling = false`: perform subsampling without replacement
+ *          via shuffling, drawing subsets of size L.
+ *        - If `boot = 1`: sampling becomes deterministic (first L indices are used),
+ *          ensuring reproducibility without randomness.
  *
  * 4. **Causality Computation**
  *    - Projects `SMy` → `PredSMy` via `SignatureProjection()`.
@@ -524,22 +526,23 @@ PatternCausalityRes PatternCausality(
  *        - Metric index 2 → TotalDark
  *
  * ### Parameters
- * @param Mx             Shadow manifold for variable X
- * @param My             Shadow manifold for variable Y
- * @param libsizes       Candidate library sizes
- * @param lib_indices    Indices for library samples
- * @param pred_indices   Indices for prediction samples
- * @param num_neighbors  Number of nearest neighbors for projection
- * @param boot           Number of bootstrap replicates per library size
- * @param random_sample  Whether to use random bootstrap (true) or deterministic (false)
- * @param seed           Random seed for reproducibility
- * @param zero_tolerance Max zeros allowed in signatures
- * @param dist_metric    Distance metric (1 = L1, 2 = L2)
- * @param relative       Normalize embeddings relative to local mean
- * @param weighted       Weight causality by erf(norm(pred_Y)/norm(X))
- * @param threads        Number of threads for distance/projection
- * @param parallel_level Parallelism level across boot iterations
- * @param progressbar    Whether to show progress (optional)
+ * @param Mx                Shadow manifold for variable X
+ * @param My                Shadow manifold for variable Y
+ * @param libsizes          Candidate library sizes
+ * @param lib_indices       Indices for library samples
+ * @param pred_indices      Indices for prediction samples
+ * @param num_neighbors     Number of nearest neighbors for projection
+ * @param boot              Number of bootstrap replicates per library size
+ * @param replace_sampling  If true, use bootstrap sampling (with replacement);
+ *                          otherwise use subsampling (without replacement)
+ * @param seed              Random seed for reproducibility
+ * @param zero_tolerance    Max zeros allowed in signatures
+ * @param dist_metric       Distance metric (1 = L1, 2 = L2)
+ * @param relative          Normalize embeddings relative to local mean
+ * @param weighted          Weight causality by erf(norm(pred_Y)/norm(X))
+ * @param threads           Number of threads for distance/projection
+ * @param parallel_level    Parallelism level across boot iterations
+ * @param progressbar       Whether to show progress (optional)
  *
  * @return 3D vector `[3][libsizes][boot]`
  */
@@ -551,7 +554,7 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
     const std::vector<size_t>& pred_indices,
     int num_neighbors = 0,
     int boot = 99,
-    bool random_sample = true,
+    bool replace_sampling = true,
     unsigned long long seed = 42,
     int zero_tolerance = 0,
     int dist_metric = 2,
@@ -566,9 +569,6 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
   // --------------------------------------------------------------------------
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
-
-  // Enforce boot = 1 for deterministic sampling
-  if (!random_sample) boot = 1;
 
   // Prebuild 64-bit RNG pool for reproducibility
   std::vector<std::mt19937_64> rng_pool(boot);
@@ -628,15 +628,24 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
     size_t L = libsizes[li];
 
     auto process_boot = [&](int b) {
-      std::vector<size_t> sampled_lib, sampled_pred;
+      std::vector<size_t> sampled_lib;
+      // std::vector<size_t> sampled_pred;
 
-      if (random_sample) {
+      if (boot == 1) {
+        sampled_lib.assign(lib_indices.begin(), lib_indices.begin() + L);
+        // sampled_pred = sampled_lib;
+      } else if (replace_sampling) {   
+        sampled_lib.resize(L);
+        std::uniform_int_distribution<size_t> dist(0, lib_indices.size() - 1);
+
+        for (size_t i = 0; i < L; ++i) {
+          sampled_lib[i] = lib_indices[dist(rng_pool[b])];
+        }
+        // sampled_pred = sampled_lib;
+      } else {
         std::vector<size_t> shuffled_lib = lib_indices;
         std::shuffle(shuffled_lib.begin(), shuffled_lib.end(), rng_pool[b]);
         sampled_lib.assign(shuffled_lib.begin(), shuffled_lib.begin() + L);
-        // sampled_pred = sampled_lib;
-      } else {
-        sampled_lib.assign(lib_indices.begin(), lib_indices.begin() + L);
         // sampled_pred = sampled_lib;
       }
 
