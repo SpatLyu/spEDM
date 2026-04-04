@@ -2,7 +2,7 @@
 title: "Geographical Convergent Cross Mapping"
 author: "Wenbo Lyu"
 date: |
-  | Last update: 2026-02-15
+  | Last update: 2026-04-05
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -122,7 +122,7 @@ pd_res
 Visualize the result:
 
 ```{r fig1,fig.width=4.5,fig.height=3.65,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 1**. The cross-mapping results between population density and county-level precipitation.")}
-plot(pd_res, xlimits = c(0, 2800), draw_ci = TRUE) +
+plot(pd_res, xlimits = c(0, 2800), ylimits = c(-0.01,1), draw_ci = TRUE) +
   ggplot2::theme(legend.justification = c(0.65,1))
 ```
 
@@ -177,6 +177,6 @@ npp_res
 Visualize the result:
 
 ```{r fig2,fig.width=4.5,fig.height=3.5,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. The cross-mapping results between farmland NPP and precipitation.")}
-plot(npp_res,xlimits = c(5, 135),ylimits = c(0.05,1), draw_ci = TRUE) +
+plot(npp_res, xlimits = c(5, 135), ylimits = c(0.05,1), draw_ci = TRUE) +
   ggplot2::theme(legend.justification = c(0.25,1))
 ```

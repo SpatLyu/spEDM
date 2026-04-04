@@ -3,7 +3,7 @@ title: "Geographical Pattern Causality"
 author: "Wenbo Lyu"
 date: |
   | Last update: 2026-04-03
-  | Last run: 2026-04-03
+  | Last run: 2026-04-05
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{4. Geographical Pattern Causality}
