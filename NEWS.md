@@ -20,6 +20,8 @@
 
 ### breaking changes
 
+* Switch the `random` parameter to `replace` in the `gpc` generic implementation and revise the sampling logic accordingly (#987).
+
 * Rename NA handling argument from `NA_rm` to `na_rm` and change default value to true (#968).
 
 * Align `conds` parameter in `scpcm` generic to accept condition variables in direct path order for causal mediation analysis (#961).

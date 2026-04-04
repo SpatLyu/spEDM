@@ -611,8 +611,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppGPCRobust4Grid
-Rcpp::DataFrame RcppGPCRobust4Grid(const Rcpp::NumericMatrix& xMatrix, const Rcpp::NumericMatrix& yMatrix, const Rcpp::IntegerMatrix& libsizes, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& tau, int style, int b, int boot, bool random, unsigned long long seed, int zero_tolerance, int dist_metric, bool relative, bool weighted, int threads, int parallel_level, bool progressbar);
-RcppExport SEXP _spEDM_RcppGPCRobust4Grid(SEXP xMatrixSEXP, SEXP yMatrixSEXP, SEXP libsizesSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP styleSEXP, SEXP bSEXP, SEXP bootSEXP, SEXP randomSEXP, SEXP seedSEXP, SEXP zero_toleranceSEXP, SEXP dist_metricSEXP, SEXP relativeSEXP, SEXP weightedSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP, SEXP progressbarSEXP) {
+Rcpp::DataFrame RcppGPCRobust4Grid(const Rcpp::NumericMatrix& xMatrix, const Rcpp::NumericMatrix& yMatrix, const Rcpp::IntegerMatrix& libsizes, const Rcpp::IntegerMatrix& lib, const Rcpp::IntegerMatrix& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& tau, int style, int b, int boot, bool replace_sampling, unsigned long long seed, int zero_tolerance, int dist_metric, bool relative, bool weighted, int threads, int parallel_level, bool progressbar);
+RcppExport SEXP _spEDM_RcppGPCRobust4Grid(SEXP xMatrixSEXP, SEXP yMatrixSEXP, SEXP libsizesSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP styleSEXP, SEXP bSEXP, SEXP bootSEXP, SEXP replace_samplingSEXP, SEXP seedSEXP, SEXP zero_toleranceSEXP, SEXP dist_metricSEXP, SEXP relativeSEXP, SEXP weightedSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type xMatrix(xMatrixSEXP);
@@ -625,7 +625,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type style(styleSEXP);
     Rcpp::traits::input_parameter< int >::type b(bSEXP);
     Rcpp::traits::input_parameter< int >::type boot(bootSEXP);
-    Rcpp::traits::input_parameter< bool >::type random(randomSEXP);
+    Rcpp::traits::input_parameter< bool >::type replace_sampling(replace_samplingSEXP);
     Rcpp::traits::input_parameter< unsigned long long >::type seed(seedSEXP);
     Rcpp::traits::input_parameter< int >::type zero_tolerance(zero_toleranceSEXP);
     Rcpp::traits::input_parameter< int >::type dist_metric(dist_metricSEXP);
@@ -634,7 +634,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< int >::type parallel_level(parallel_levelSEXP);
     Rcpp::traits::input_parameter< bool >::type progressbar(progressbarSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppGPCRobust4Grid(xMatrix, yMatrix, libsizes, lib, pred, E, tau, style, b, boot, random, seed, zero_tolerance, dist_metric, relative, weighted, threads, parallel_level, progressbar));
+    rcpp_result_gen = Rcpp::wrap(RcppGPCRobust4Grid(xMatrix, yMatrix, libsizes, lib, pred, E, tau, style, b, boot, replace_sampling, seed, zero_tolerance, dist_metric, relative, weighted, threads, parallel_level, progressbar));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1076,8 +1076,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // RcppGPCRobust4Lattice
-Rcpp::DataFrame RcppGPCRobust4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, const Rcpp::IntegerVector& libsizes, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& tau, int style, int b, int boot, bool random, unsigned long long seed, int zero_tolerance, int dist_metric, bool relative, bool weighted, int threads, int parallel_level, bool progressbar);
-RcppExport SEXP _spEDM_RcppGPCRobust4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP libsizesSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP styleSEXP, SEXP bSEXP, SEXP bootSEXP, SEXP randomSEXP, SEXP seedSEXP, SEXP zero_toleranceSEXP, SEXP dist_metricSEXP, SEXP relativeSEXP, SEXP weightedSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP, SEXP progressbarSEXP) {
+Rcpp::DataFrame RcppGPCRobust4Lattice(const Rcpp::NumericVector& x, const Rcpp::NumericVector& y, const Rcpp::List& nb, const Rcpp::IntegerVector& libsizes, const Rcpp::IntegerVector& lib, const Rcpp::IntegerVector& pred, const Rcpp::IntegerVector& E, const Rcpp::IntegerVector& tau, int style, int b, int boot, bool replace_sampling, unsigned long long seed, int zero_tolerance, int dist_metric, bool relative, bool weighted, int threads, int parallel_level, bool progressbar);
+RcppExport SEXP _spEDM_RcppGPCRobust4Lattice(SEXP xSEXP, SEXP ySEXP, SEXP nbSEXP, SEXP libsizesSEXP, SEXP libSEXP, SEXP predSEXP, SEXP ESEXP, SEXP tauSEXP, SEXP styleSEXP, SEXP bSEXP, SEXP bootSEXP, SEXP replace_samplingSEXP, SEXP seedSEXP, SEXP zero_toleranceSEXP, SEXP dist_metricSEXP, SEXP relativeSEXP, SEXP weightedSEXP, SEXP threadsSEXP, SEXP parallel_levelSEXP, SEXP progressbarSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
@@ -1091,7 +1091,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type style(styleSEXP);
     Rcpp::traits::input_parameter< int >::type b(bSEXP);
     Rcpp::traits::input_parameter< int >::type boot(bootSEXP);
-    Rcpp::traits::input_parameter< bool >::type random(randomSEXP);
+    Rcpp::traits::input_parameter< bool >::type replace_sampling(replace_samplingSEXP);
     Rcpp::traits::input_parameter< unsigned long long >::type seed(seedSEXP);
     Rcpp::traits::input_parameter< int >::type zero_tolerance(zero_toleranceSEXP);
     Rcpp::traits::input_parameter< int >::type dist_metric(dist_metricSEXP);
@@ -1100,7 +1100,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< int >::type parallel_level(parallel_levelSEXP);
     Rcpp::traits::input_parameter< bool >::type progressbar(progressbarSEXP);
-    rcpp_result_gen = Rcpp::wrap(RcppGPCRobust4Lattice(x, y, nb, libsizes, lib, pred, E, tau, style, b, boot, random, seed, zero_tolerance, dist_metric, relative, weighted, threads, parallel_level, progressbar));
+    rcpp_result_gen = Rcpp::wrap(RcppGPCRobust4Lattice(x, y, nb, libsizes, lib, pred, E, tau, style, b, boot, replace_sampling, seed, zero_tolerance, dist_metric, relative, weighted, threads, parallel_level, progressbar));
     return rcpp_result_gen;
 END_RCPP
 }

@@ -234,7 +234,7 @@
 
 .run_gpc = \(x, y, E, k, tau, style, lib, pred, dist.metric, zero.tolerance, relative,
              weighted, threads, bidirectional = FALSE, varname = NULL, nb = NULL,
-             libsizes = NULL, boot = 9, random = TRUE, seed = 42, parallel.level = "low",
+             libsizes = NULL, boot = 9, replace = FALSE, seed = 42, parallel.level = "low",
              progressbar = FALSE){
   E = .check_inputelementnum(E,4)
   tau = .check_inputelementnum(tau,4)
@@ -269,10 +269,10 @@
   } else {
     pl = .check_parallellevel(parallel.level)
     if (is.null(nb)){
-      res = RcppGPCRobust4Grid(x, y, libsizes, lib, pred, E,tau, style, k[1], boot, random,
+      res = RcppGPCRobust4Grid(x, y, libsizes, lib, pred, E,tau, style, k[1], boot, replace,
                                seed, zero.tolerance,dist.metric,relative,weighted,threads,pl,progressbar)
     } else {
-      res = RcppGPCRobust4Lattice(x, y, nb, libsizes, lib, pred, E,tau, style, k[1], boot, random,
+      res = RcppGPCRobust4Lattice(x, y, nb, libsizes, lib, pred, E,tau, style, k[1], boot, replace,
                                   seed, zero.tolerance,dist.metric,relative,weighted,threads,pl,progressbar)
     }
     res$direction = "y_xmap_x"
@@ -281,7 +281,7 @@
     if (bidirectional){
       res_bi = .run_gpc(y, x, rev(E), rev(k), rev(tau), style, lib, pred, dist.metric,
                         zero.tolerance, relative, weighted, threads, FALSE,
-                        varname, nb, libsizes, boot, random, seed, pl, progressbar)
+                        varname, nb, libsizes, boot, replace, seed, pl, progressbar)
       res_bi$xmap$direction = "x_xmap_y"
       res$xmap = rbind(res$xmap,res_bi$xmap)
     }
