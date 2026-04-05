@@ -20,6 +20,8 @@
 
 ### breaking changes
 
+* Match causality detection direction in optimal parameter search to actual variable naming (#955).
+
 * Ensure that `k` is constrained to be greater than or equal to `E` during optimal parameter search (#990).
 
 * Switch the `random` parameter to `replace` in the `gpc` generic implementation and revise the sampling logic accordingly (#987).

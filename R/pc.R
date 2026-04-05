@@ -7,7 +7,7 @@
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   res = RcppPC4Lattice(vx, vy, nb, lib, pred, E, k, tau, style, zero.tolerance,
                        .check_distmetric(dist.metric),relative,weighted,threads,1)
-  return(.bind_xmapself(res,target,"pc",maximize = maximize))
+  return(.bind_xmapself(res,column,"pc",maximize = maximize))
 }
 
 .pc_spatraster_method = \(data, column, target, E = 2:10, k = E+2, tau = 1, style = 1, lib = NULL, pred = NULL, dist.metric = "L2", zero.tolerance = max(k),
@@ -18,7 +18,7 @@
   if (is.null(pred)) pred = lib
   res = RcppPC4Grid(mx, my, lib, pred, E, k, tau, style, zero.tolerance,
                     .check_distmetric(dist.metric),relative,weighted,threads,1)
-  return(.bind_xmapself(res,target,"pc",maximize = maximize))
+  return(.bind_xmapself(res,column,"pc",maximize = maximize))
 }
 
 #' optimal parameter search for pattern causality
