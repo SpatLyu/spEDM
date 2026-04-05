@@ -6,7 +6,7 @@
   if (is.null(pred)) pred = lib
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   res = RcppPC4Lattice(vx, vy, nb, lib, pred, E, k, tau, style, zero.tolerance,
-                       .check_distmetric(dist.metric),relative,weighted,threads)
+                       .check_distmetric(dist.metric),relative,weighted,threads,1)
   return(.bind_xmapself(res,target,"pc",maximize = maximize))
 }
 
@@ -17,7 +17,7 @@
   if (is.null(lib)) lib = which(!(is.na(mx) | is.na(my)), arr.ind = TRUE)
   if (is.null(pred)) pred = lib
   res = RcppPC4Grid(mx, my, lib, pred, E, k, tau, style, zero.tolerance,
-                    .check_distmetric(dist.metric),relative,weighted,threads)
+                    .check_distmetric(dist.metric),relative,weighted,threads,1)
   return(.bind_xmapself(res,target,"pc",maximize = maximize))
 }
 
