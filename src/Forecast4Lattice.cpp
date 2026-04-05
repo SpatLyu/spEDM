@@ -624,7 +624,7 @@ std::vector<std::vector<double>> PC4Lattice(const std::vector<double>& source,
       auto Mx = GenLatticeEmbeddings(source, nb_vec, Ei, taui, style);
       auto My = GenLatticeEmbeddings(target, nb_vec, Ei, taui, style);
       
-            PatternCausalityRes res;
+      PatternCausalityRes res;
 
       if (!use_subset) {
         // --- Full data: no slicing needed ---
