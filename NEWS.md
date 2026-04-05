@@ -20,7 +20,7 @@
 
 ### breaking changes
 
-* Match causality detection direction in optimal parameter search to actual variable naming (#955).
+* Match causality detection direction in optimal parameter search to actual variable naming (#995).
 
 * Ensure that `k` is constrained to be greater than or equal to `E` during optimal parameter search (#990).
 
