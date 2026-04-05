@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <utility>
 #include <tuple>
+#include <unordered_map>
 #include "CppGridUtils.h"
 #include "SimplexProjection.h"
 #include "SMap.h"
@@ -593,6 +594,45 @@ std::vector<std::vector<double>> PC4Grid(const std::vector<std::vector<double>>&
     }
   }
 
+  // Prepare for data slicing
+  std::vector<size_t> selected_indices;
+  selected_indices.reserve(lib_indices.size() + pred_indices.size());
+  for (size_t i = 0; i < lib_indices.size(); ++i)
+    selected_indices.push_back(lib_indices[i]);
+  for (size_t i = 0; i < pred_indices.size(); ++i)
+    selected_indices.push_back(pred_indices[i]);
+  std::sort(selected_indices.begin(), selected_indices.end());
+  selected_indices.erase(
+    std::unique(selected_indices.begin(), selected_indices.end()),
+    selected_indices.end()
+  );
+
+  // Check if full set is used
+  bool use_subset = (selected_indices.size() < target.size());
+  
+  std::vector<size_t> lib_sub, pred_sub;
+  lib_sub.reserve(lib_indices.size());
+  pred_sub.reserve(pred_indices.size());
+
+  if (use_subset) {
+    std::unordered_map<size_t, size_t> index_map;
+    index_map.reserve(selected_indices.size());
+
+    for (size_t i = 0; i < selected_indices.size(); ++i) {
+      index_map[selected_indices[i]] = i;
+    }
+
+    // --- Remap lib indices ---
+    for (size_t i = 0; i < lib_indices.size(); ++i) {
+      lib_sub.push_back(index_map[lib_indices[i]]);
+    }
+
+    // --- Remap pred indices ---
+    for (size_t i = 0; i < pred_indices.size(); ++i) {
+      pred_sub.push_back(index_map[pred_indices[i]]);
+    }
+  }
+
   std::vector<std::vector<double>> result(unique_EbTau.size(), std::vector<double>(6));
 
   if (parallel_level == 0){
@@ -604,10 +644,33 @@ std::vector<std::vector<double>> PC4Grid(const std::vector<std::vector<double>>&
 
       auto Mx = GenGridEmbeddings(source, Ei, taui, style);
       auto My = GenGridEmbeddings(target, Ei, taui, style);
+      
+      PatternCausalityRes res;
 
-      PatternCausalityRes res = PatternCausality(
-        Mx, My, lib_indices, pred_indices, bi, zero_tolerance,
-        dist_metric, relative, weighted, threads);
+      if (!use_subset) {
+        // --- Full data: no slicing needed ---
+        res = PatternCausality(
+          Mx, My, lib_indices, pred_indices, bi, zero_tolerance,
+          dist_metric, relative, weighted, threads);
+      } else {
+        // --- Slice Mx and My ---
+        std::vector<std::vector<double>> Mx_sub;
+        std::vector<std::vector<double>> My_sub;
+
+        Mx_sub.reserve(selected_indices.size());
+        My_sub.reserve(selected_indices.size());
+
+        for (size_t i = 0; i < selected_indices.size(); ++i) {
+          size_t idx = selected_indices[i];
+          Mx_sub.push_back(Mx[idx]);
+          My_sub.push_back(My[idx]);
+        }
+
+        // --- Compute pattern causality on subset ---
+        res = PatternCausality(
+          Mx_sub, My_sub, lib_sub, pred_sub, bi, zero_tolerance,
+          dist_metric, relative, weighted, threads);
+      }
 
       result[i][0] = Ei;
       result[i][1] = bi;
@@ -630,9 +693,32 @@ std::vector<std::vector<double>> PC4Grid(const std::vector<std::vector<double>>&
       auto Mx = GenGridEmbeddings(source, Ei, taui, style);
       auto My = GenGridEmbeddings(target, Ei, taui, style);
 
-      PatternCausalityRes res = PatternCausality(
-        Mx, My, lib_indices, pred_indices, bi, zero_tolerance,
-        dist_metric, relative, weighted, 1);
+      PatternCausalityRes res;
+
+      if (!use_subset) {
+        // --- Full data: no slicing needed ---
+        res = PatternCausality(
+          Mx, My, lib_indices, pred_indices, bi, zero_tolerance,
+          dist_metric, relative, weighted, 1);
+      } else {
+        // --- Slice Mx and My ---
+        std::vector<std::vector<double>> Mx_sub;
+        std::vector<std::vector<double>> My_sub;
+
+        Mx_sub.reserve(selected_indices.size());
+        My_sub.reserve(selected_indices.size());
+
+        for (size_t i = 0; i < selected_indices.size(); ++i) {
+          size_t idx = selected_indices[i];
+          Mx_sub.push_back(Mx[idx]);
+          My_sub.push_back(My[idx]);
+        }
+
+        // --- Compute pattern causality on subset ---
+        res = PatternCausality(
+          Mx_sub, My_sub, lib_sub, pred_sub, bi, zero_tolerance,
+          dist_metric, relative, weighted, 1);
+      }
 
       result[i][0] = Ei;
       result[i][1] = bi;

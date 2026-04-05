@@ -3,6 +3,7 @@
 #include <string>
 #include <iterator>
 #include <algorithm>
+#include <unordered_map>
 #include "CppStats.h"
 #include "CppGridUtils.h"
 #include "Forecast4Grid.h"
@@ -1295,7 +1296,7 @@ Rcpp::NumericMatrix RcppPC4Grid(const Rcpp::NumericMatrix& source,
     }
   }
 
-  if (pred_col == 1){
+  if (pred_col == 1) {
     for (int i = 0; i < pred.nrow(); ++i) {
       // disallow pred indices to point to vectors with NaN
       if (!std::isnan(sourceMat[(pred(i,0)-1) / numCols][(pred(i,0)-1) % numCols]) &&
