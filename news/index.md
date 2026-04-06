@@ -4,6 +4,8 @@
 
 ## spEDM 1.12
 
+CRAN release: 2026-04-05
+
 #### new
 
 - Correct maintainer surname spelling from `Lv` to `Lyu` for pinyin
