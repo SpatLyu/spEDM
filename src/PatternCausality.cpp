@@ -229,20 +229,6 @@ PatternCausalityRes GenPatternCausality(
     return std::sqrt(sum);
   };
 
-  auto nanmean_ignore_nan = [](const std::vector<double>& vals) -> double {
-    double sum = 0.0;
-    std::size_t count = 0;
-    for (double v : vals) {
-      if (!std::isnan(v)) {
-        sum += v;
-        ++count;
-      }
-    }
-    return (count > 0)
-      ? (sum / static_cast<double>(count))
-      : std::numeric_limits<double>::quiet_NaN();
-  };
-
   // --- 5. Main causality loop ---
   for (size_t t = 0; t < n; ++t) {
     // if (SMx[t].empty() || SMy[t].empty() || pred_SMy[t].empty()) continue;
