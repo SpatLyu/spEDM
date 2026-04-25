@@ -252,8 +252,8 @@ PatternCausalityRes GenPatternCausality(
     /* --- strength --- */
     double strength = weighted
       ? std::erf(
-          norm_ignore_nan(pred_SMy[t]) /
-          (norm_ignore_nan(SMy[t]) + 1e-6))
+          norm_vec_ignore_nan(pred_SMy[t]) /
+          (norm_vec_ignore_nan(SMy[t]) + 1e-6))
       : 1.0;
 
     // --- Safe index lookup ---
@@ -312,7 +312,7 @@ PatternCausalityRes GenPatternCausality(
     for (size_t j = 0; j < hashed_num; ++j) {
       if (counts[i][j] == 0) continue;
 
-      double val = heatmap[i][j] / counts[i][j];
+      double val = heatmap_accum[i][j] / counts[i][j];
 
       if (i == j)
         diag_vals.push_back(val);
