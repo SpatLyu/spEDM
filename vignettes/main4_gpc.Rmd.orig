@@ -2,7 +2,7 @@
 title: "Geographical Pattern Causality"
 author: "Wenbo Lyu"
 date: |
-  | Last update: 2026-02-15
+  | Last update: 2026-03-25
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -163,7 +163,7 @@ g1
 Run geographical pattern causality analysis
 
 ```{r gpc_grid}
-spEDM::gpc(npp, "pre", "npp", E = 8, k = 12, tau = 5)
+spEDM::gpc(npp, "pre", "npp", E = 10, k = 12, tau = 5)
 ```
 
 Convergence diagnostics
