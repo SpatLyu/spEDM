@@ -22,6 +22,10 @@
 
 * Align `conds` parameter in `scpcm` generic to accept condition variables in direct path order for causal mediation analysis (#961).
 
+### bug fixes
+
+* Fix incorrect midpoint-based pattern causality classification (#973).
+
 # spEDM 1.11
 
 ### bug fixes
