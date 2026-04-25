@@ -310,9 +310,9 @@ PatternCausalityRes GenPatternCausality(
 
   for (size_t i = 0; i < hashed_num; ++i) {
     for (size_t j = 0; j < hashed_num; ++j) {
-      if (counts[i][j] == 0) continue;
+      if (count_matrix[i][j] == 0) continue;
 
-      double val = heatmap_accum[i][j] / counts[i][j];
+      double val = heatmap_accum[i][j] / count_matrix[i][j];
 
       if (i == j)
         diag_vals.push_back(val);
