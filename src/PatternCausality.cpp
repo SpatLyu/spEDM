@@ -291,36 +291,18 @@ PatternCausalityRes GenPatternCausality(
     }
 
     // --- 6. Classification of per-sample causality type ---
-    // Classification using direct index relationship instead of midpoint
     if (i == j) {
       // Positive causality: same pattern
       res.PositiveCausality[t] = strength;
       res.PatternTypes.push_back(1);
-
     } else if (opposite_index[i] == j) {
       // Negative causality: opposite pattern
       res.NegativeCausality[t] = strength;
       res.PatternTypes.push_back(2);
-
     } else {
       // Dark causality: all other cases
       res.DarkCausality[t] = strength;
       res.PatternTypes.push_back(3);
-    }
-    if (doubleNearlyEqual(strength,0.0)) {
-      res.NoCausality[t] = 1.0;
-      res.PatternTypes.push_back(0);
-    } else {
-      if (i == j && !doubleNearlyEqual(static_cast<double>(i), midpoint)) {
-        res.PositiveCausality[t] = strength;
-        res.PatternTypes.push_back(1);
-      } else if ((i + j) == (hashed_num - 1) && !doubleNearlyEqual(static_cast<double>(i), midpoint)) {
-        res.NegativeCausality[t] = strength;
-        res.PatternTypes.push_back(2);
-      } else {
-        res.DarkCausality[t] = strength;
-        res.PatternTypes.push_back(3);
-      }
     }
   }
 
