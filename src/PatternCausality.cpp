@@ -320,7 +320,7 @@ PatternCausalityRes GenPatternCausality(
   std::vector<double> diag_vals, anti_vals, other_vals;
   diag_vals.reserve(hashed_num);
   anti_vals.reserve(hashed_num);
-  anti_vals.reserve(hashed_num*);
+  anti_vals.reserve((hashed_num - 2)*hashed_num);
 
   for (size_t i = 0; i < hashed_num; ++i) {
     for (size_t j = 0; j < hashed_num; ++j) {
@@ -330,48 +330,24 @@ PatternCausalityRes GenPatternCausality(
 
       if (i == j)
         diag_vals.push_back(val);
-      else if (j == opposite_id[i])
+      else if (opposite_index[i] == j)
         anti_vals.push_back(val);
       else
         other_vals.push_back(val);
       }
   }
 
-        auto mean = [](const std::vector<double>& v)
-        {
-            if (v.empty()) return std::numeric_limits<double>::quiet_NaN();
-            double s = 0;
-            for (double x : v) s += x;
-            return s / v.size();
-        };
+  auto mean = [](const std::vector<double>& v)
+  {
+    if (v.empty()) return std::numeric_limits<double>::quiet_NaN();
+      double s = 0;
+      for (double x : v) s += x;
+      return s / v.size();
+  };
 
-        res.TotalPos  = mean(diag_vals);
-        res.TotalNeg  = mean(anti_vals);
-        res.TotalDark = mean(other_vals);
-
-        return res;
-  std::vector<double> diag_vals, anti_vals, other_vals;
-  diag_vals.reserve(hashed_num);
-  anti_vals.reserve(hashed_num);
-
-  for (size_t idx = 0; idx < hashed_num; ++idx) {
-    double vdiag = heatmap_accum[idx][idx];
-    if (!std::isnan(vdiag)) diag_vals.push_back(vdiag);
-
-    size_t anti_j = hashed_num - 1 - idx;
-    double vanti = heatmap_accum[idx][anti_j];
-    if (!std::isnan(vanti)) anti_vals.push_back(vanti);
-
-    for (size_t j = 0; j < hashed_num; ++j) {
-      if (j == idx || j == anti_j) continue;
-      double v = heatmap_accum[idx][j];
-      if (!std::isnan(v)) other_vals.push_back(v);
-    }
-  }
-
-  res.TotalPos  = nanmean_ignore_nan(diag_vals);
-  res.TotalNeg  = nanmean_ignore_nan(anti_vals);
-  res.TotalDark = nanmean_ignore_nan(other_vals);
+  res.TotalPos  = mean(diag_vals);
+  res.TotalNeg  = mean(anti_vals);
+  res.TotalDark = mean(other_vals);
   res.matrice = std::move(heatmap_accum);
 
   return res;
