@@ -318,6 +318,9 @@ PatternCausalityRes GenPatternCausality(
 
   // --- 8. Compute summary metrics ---
   std::vector<double> diag_vals, anti_vals, other_vals;
+  diag_vals.reserve(hashed_num);
+  anti_vals.reserve(hashed_num);
+  anti_vals.reserve(hashed_num*);
 
   for (size_t i = 0; i < hashed_num; ++i) {
     for (size_t j = 0; j < hashed_num; ++j) {
