@@ -318,6 +318,36 @@ PatternCausalityRes GenPatternCausality(
 
   // --- 8. Compute summary metrics ---
   std::vector<double> diag_vals, anti_vals, other_vals;
+
+  for (size_t i = 0; i < hashed_num; ++i) {
+    for (size_t j = 0; j < hashed_num; ++j) {
+      if (counts[i][j] == 0) continue;
+
+      double val = heatmap[i][j] / counts[i][j];
+
+      if (i == j)
+        diag_vals.push_back(val);
+      else if (j == opposite_id[i])
+        anti_vals.push_back(val);
+      else
+        other_vals.push_back(val);
+      }
+  }
+
+        auto mean = [](const std::vector<double>& v)
+        {
+            if (v.empty()) return std::numeric_limits<double>::quiet_NaN();
+            double s = 0;
+            for (double x : v) s += x;
+            return s / v.size();
+        };
+
+        res.TotalPos  = mean(diag_vals);
+        res.TotalNeg  = mean(anti_vals);
+        res.TotalDark = mean(other_vals);
+
+        return res;
+  std::vector<double> diag_vals, anti_vals, other_vals;
   diag_vals.reserve(hashed_num);
   anti_vals.reserve(hashed_num);
 
