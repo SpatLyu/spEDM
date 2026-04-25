@@ -291,18 +291,7 @@ PatternCausalityRes GenPatternCausality(
     }
   }
 
-  // --- 7. Normalize heatmap by counts ---
-  for (size_t i = 0; i < hashed_num; ++i) {
-    for (size_t j = 0; j < hashed_num; ++j) {
-      if (count_matrix[i][j] > 0) {
-        heatmap_accum[i][j] = heatmap_accum[i][j] / static_cast<double>(count_matrix[i][j]);
-      } else {
-        heatmap_accum[i][j] = std::numeric_limits<double>::quiet_NaN();
-      }
-    }
-  }
-
-  // --- 8. Compute summary metrics ---
+  // --- 7. Compute summary metrics ---
   std::vector<double> diag_vals, anti_vals, other_vals;
   diag_vals.reserve(hashed_num);
   anti_vals.reserve(hashed_num);
