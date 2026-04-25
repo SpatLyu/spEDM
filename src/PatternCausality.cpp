@@ -205,7 +205,6 @@ PatternCausalityRes GenPatternCausality(
       opposite_index[i] = i;
     }
   }
-  const double midpoint = static_cast<double>(hashed_num - 1) / 2.0;
 
   // --- 3. Initialize result structures ---
   std::vector<std::vector<double>> heatmap_accum(
