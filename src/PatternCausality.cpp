@@ -255,6 +255,22 @@ PatternCausalityRes GenPatternCausality(
     // --- Skip invalid pattern cases ---
     if (str_contains_zero(pat_x) || str_contains_zero(pat_y_real) || str_contains_zero(pat_y_pred)) continue;
 
+    res.RealLoop.push_back(static_cast<int>(t));
+
+    /* --- causality existence --- */
+    if (pat_y_real != pat_y_pred){
+      res.NoCausality[t] = 1.0;
+      res.PatternTypes.push_back(0);
+      continue;
+    }
+
+    /* --- strength --- */
+    double strength = weighted
+      ? std::erf(
+          norm_ignore_nan(pred_SMy[t]) /
+          (norm_ignore_nan(SMy[t]) + 1e-6))
+      : 1.0;
+
     // --- Safe index lookup ---
     auto x_it = pattern_indices.find(pat_x);
     auto y_pred_it = pattern_indices.find(pat_y_pred);
@@ -264,15 +280,6 @@ PatternCausalityRes GenPatternCausality(
 
     size_t i = x_it->second;
     size_t j = y_pred_it->second;
-
-    res.RealLoop.push_back(static_cast<int>(t));
-
-    double strength = 0.0;
-    if (pat_y_pred == pat_y_real) {
-      strength = weighted ?
-        std::erf(norm_vec_ignore_nan(pred_SMy[t]) /
-                (norm_vec_ignore_nan(SMy[t]) + 1e-6)) : 1.0;
-    }
 
     // Accumulate to heatmap
     if (std::isnan(heatmap_accum[i][j])) {
