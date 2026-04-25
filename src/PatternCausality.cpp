@@ -189,6 +189,22 @@ PatternCausalityRes GenPatternCausality(
 
   const size_t hashed_num = unique_patterns.size();
   if (hashed_num == 0) return res;
+
+  // Build opposite index mapping: for each pattern, find its opposite pattern index
+  std::vector<size_t> opposite_index(hashed_num);
+
+  for (size_t i = 0; i < hashed_num; ++i) {
+    const std::string& pat = unique_patterns[i];
+    std::string opposite = get_opposite_pattern(pat);
+
+    auto it = pattern_indices.find(opposite);
+    if (it != pattern_indices.end()) {
+      opposite_index[i] = it->second;
+    } else {
+      // fallback: map to itself if opposite not found (should not happen)
+      opposite_index[i] = i;
+    }
+  }
   const double midpoint = static_cast<double>(hashed_num - 1) / 2.0;
 
   // --- 3. Initialize result structures ---
@@ -268,6 +284,22 @@ PatternCausalityRes GenPatternCausality(
     }
 
     // --- 6. Classification of per-sample causality type ---
+    // Classification using direct index relationship instead of midpoint
+    if (i == j) {
+      // Positive causality: same pattern
+      res.PositiveCausality[t] = strength;
+      res.PatternTypes.push_back(1);
+
+    } else if (opposite_index[i] == j) {
+      // Negative causality: opposite pattern
+      res.NegativeCausality[t] = strength;
+      res.PatternTypes.push_back(2);
+
+    } else {
+      // Dark causality: all other cases
+      res.DarkCausality[t] = strength;
+      res.PatternTypes.push_back(3);
+    }
     if (doubleNearlyEqual(strength,0.0)) {
       res.NoCausality[t] = 1.0;
       res.PatternTypes.push_back(0);
