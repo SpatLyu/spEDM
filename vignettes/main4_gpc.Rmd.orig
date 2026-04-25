@@ -116,7 +116,7 @@ crime_convergence = spEDM::gpc(columbus, "hoval", "crime",
                                E = 5, k = 10, progressbar = FALSE)
 crime_convergence
 plot(crime_convergence, ylimits = c(-0.01,1),
-     xlimits = c(9,46), xbreaks = seq(10, 45, 10))
+     xlimits = c(14,46), xbreaks = seq(10, 45, 10))
 ```
 
 <br>
