@@ -295,7 +295,7 @@ PatternCausalityRes GenPatternCausality(
   std::vector<double> diag_vals, anti_vals, other_vals;
   diag_vals.reserve(hashed_num);
   anti_vals.reserve(hashed_num);
-  anti_vals.reserve((hashed_num - 2)*hashed_num);
+  other_vals.reserve((hashed_num - 2)*hashed_num);
 
   for (size_t i = 0; i < hashed_num; ++i) {
     for (size_t j = 0; j < hashed_num; ++j) {
