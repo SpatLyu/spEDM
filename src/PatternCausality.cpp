@@ -302,6 +302,7 @@ PatternCausalityRes GenPatternCausality(
       if (count_matrix[i][j] == 0) continue;
 
       double val = heatmap_accum[i][j] / count_matrix[i][j];
+      heatmap_accum[i][j] = val;
 
       if (i == j)
         diag_vals.push_back(val);
