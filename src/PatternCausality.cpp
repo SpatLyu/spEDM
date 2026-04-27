@@ -291,7 +291,7 @@ PatternCausalityRes GenPatternCausality(
     }
   }
 
-  // --- 7. Compute summary metrics ---
+  // --- 7. Normalize heatmap in-place and compute summary metrics ---
   std::vector<double> diag_vals, anti_vals, other_vals;
   diag_vals.reserve(hashed_num);
   anti_vals.reserve(hashed_num);
