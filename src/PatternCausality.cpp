@@ -20,16 +20,16 @@
 #include <RcppThread.h>
 
 /**
- * @brief Perform symbolic pattern–based dependency analysis between real and predicted signatures.
+ * @brief Perform symbolic pattern–based causality analysis between real and predicted signatures.
  *
- * This function implements a deterministic, pattern–indexed analysis pipeline.
+ * This function implements a deterministic, pattern–indexed causal analysis pipeline.
  * Numerical signature vectors (SMx, SMy, pred_SMy) are first transformed into symbolic
  * pattern strings using GenPatternSpace(). The function then:
  *
  *  1. Collects all unique patterns appearing in X, Y_real, and Y_pred.
  *  2. Removes patterns containing '0' (invalid placeholder state).
  *  3. Augments the pattern set by including their symmetric-opposite counterparts
- *     (swapping '1' <-> '3'), ensuring pattern-space completeness.
+ *     (swapping '1' <-> '3'), ensuring anti-diagonal causality is always representable.
  *  4. Produces a sorted, dense pattern index (0 … K-1) for deterministic and
  *     reproducible matrix alignment.
  *  5. Constructs an explicit opposite-pattern index mapping, such that for each
@@ -41,7 +41,7 @@
  *     and each cell accumulates strength values over valid samples.
  *
  *  7. Per-sample classification is performed:
- *       - No dependency: pattern(Y_pred) != pattern(Y_real)
+ *       - No causality: pattern(Y_pred) != pattern(Y_real)
  *       - Positive     : i == j (same pattern)
  *       - Negative     : opposite_index[i] == j (symmetric-opposite pattern)
  *       - Dark         : all other off-diagonal relationships
