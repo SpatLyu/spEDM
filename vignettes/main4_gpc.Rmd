@@ -112,7 +112,7 @@ spEDM::fnn(columbus, "crime", E = 1:10, eps = stats::sd(columbus$crime))
 ## 0.00000000
 ```
 
-The false nearest neighbours (FNN) ratio decreased to approximately 0.001 when the embedding dimension E reached 7, and remained relatively stable thereafter. Therefore, we adopted $E = 7$ as the minimal embedding dimension for subsequent parameter search.
+The false nearest neighbours (FNN) ratio decreased to `0` when the embedding dimension E reached 5, and remained relatively stable thereafter. Therefore, we adopted $E = 5$ as the minimal embedding dimension for subsequent parameter search.
 
 Then, search optimal parameters:
 
