@@ -20,37 +20,40 @@
 #include <RcppThread.h>
 
 /**
- * @brief Perform symbolic pattern–based causality analysis between real and predicted signatures.
+ * @brief Perform symbolic pattern–based dependency analysis between real and predicted signatures.
  *
- * This function implements a deterministic, pattern–indexed causal analysis pipeline.
+ * This function implements a deterministic, pattern–indexed analysis pipeline.
  * Numerical signature vectors (SMx, SMy, pred_SMy) are first transformed into symbolic
  * pattern strings using GenPatternSpace(). The function then:
  *
  *  1. Collects all unique patterns appearing in X, Y_real, and Y_pred.
  *  2. Removes patterns containing '0' (invalid placeholder state).
  *  3. Augments the pattern set by including their symmetric-opposite counterparts
- *     (swapping '1' <-> '3'), ensuring anti-diagonal causality is always representable.
+ *     (swapping '1' <-> '3'), ensuring pattern-space completeness.
  *  4. Produces a sorted, dense pattern index (0 … K-1) for deterministic and
  *     reproducible matrix alignment.
- *  5. Computes a K×K causal strength matrix M(i, j), where:
+ *  5. Constructs an explicit opposite-pattern index mapping, such that for each
+ *     pattern i, opposite_index[i] gives the index of its symmetric counterpart.
+ *
+ *  6. Computes a K×K strength matrix M(i, j), where:
  *         i = pattern index of X(t)
  *         j = pattern index of predicted Y(t)
- *     and the matrix cell accumulates weighted causal strength over all samples.
+ *     and each cell accumulates strength values over valid samples.
  *
- *  6. Per-sample causality classification is performed:
- *       - No causality: pattern(Y_pred) != pattern(Y_real)
- *       - Positive     : i == j (main diagonal)
- *       - Negative     : i + j == K - 1 (anti-diagonal)
+ *  7. Per-sample classification is performed:
+ *       - No dependency: pattern(Y_pred) != pattern(Y_real)
+ *       - Positive     : i == j (same pattern)
+ *       - Negative     : opposite_index[i] == j (symmetric-opposite pattern)
  *       - Dark         : all other off-diagonal relationships
  *
- *  7. Causal strength is optional weighted by:
- *         erf( ||pred_SMy|| / (||SMy|| + 1e-6) )
- *     which bounds the strength in [0, 1] and prevents division instability.
+ *  8. Strength is computed only when prediction matches reality:
+ *         strength = erf( ||pred_Y|| / (||Y_real|| + 1e-6) )
+ *     which bounds the value in [0, 1] and avoids division instability.
  *
- *  8. A final normalized heatmap (cell-wise average) and aggregated metrics
+ *  9. A final normalized heatmap (cell-wise average) and aggregated metrics
  *     (mean positive / negative / dark strengths) are returned.
  *
- * This implemention is optimized for:
+ * This implementation is optimized for:
  *   - Zero-copy pattern referencing
  *   - No dynamic string comparison in the main loop
  *   - Deterministic ordering and symmetric space closure
@@ -59,16 +62,18 @@
  * @details
  * The key conceptual guarantee is *pattern space completeness*:
  * for any observed pattern p, the function ensures its symmetric-opposite
- * exists in the index set, even if never observed in the data. This creates
- * a fully defined anti-diagonal causal relation space, solving the correctness
- * issue in earlier implementations where i+j==K-1 could not be relied upon.
+ * exists in the index set, even if never observed in the data.
+ *
+ * Instead of relying on index symmetry (e.g., i + j == K - 1),
+ * this implementation explicitly constructs an opposite-pattern mapping,
+ * ensuring correctness regardless of pattern ordering.
  *
  * ---------------------------------------------------------------------------
  *
  * @param SMx        X signature matrix (n × d)
  * @param SMy        Y real signature matrix (n × d)
  * @param pred_SMy   Y predicted signatures (n × d)
- * @param weighted   Whether to weight causal strength by erf(norm(pred_Y)/norm(X))
+ * @param weighted   Whether to weight strength using erf(norm ratio)
  *
  * ---------------------------------------------------------------------------
  *
@@ -78,30 +83,36 @@
  *
  *   - std::vector<double> NoCausality, PositiveCausality,
  *                         NegativeCausality, DarkCausality
- *       Per-sample causal strengths (or 1 for no causality).
+ *       Per-sample classification strengths (or 1 for no dependency).
+ *
  *   - std::vector<int> RealLoop
- *       Indices of samples actually used (patterns valid & non-zero).
+ *       Indices of samples actually used (valid patterns only).
  *
  *   - std::vector<int> PatternTypes
- *       Encoded per-sample causal class:
- *         0=no causality, 1=positive, 2=negative, 3=dark.
+ *       Encoded per-sample class:
+ *         0 = no dependency
+ *         1 = positive (same pattern)
+ *         2 = negative (opposite pattern)
+ *         3 = dark (other relations)
  *
  *   - std::vector<std::string> PatternStrings
- *       Mapping index → pattern string for each row/column of the heatmap.
+ *       Mapping index → pattern string for heatmap rows/columns.
  *
  *   - std::vector<std::vector<double>> matrice
- *       Normalized K×K causal heatmap M(i,j).
+ *       Normalized K×K matrix M(i,j).
  *
  *   - double TotalPos, TotalNeg, TotalDark
- *       Mean strength across main diagonal, anti-diagonal, and off-diagonal cells.
+ *       Mean strength across positive, negative, and dark cells.
  *
  * ---------------------------------------------------------------------------
  *
  * @note
- *  - Patterns containing '0' are discarded from analysis.
- *  - The function guarantees symmetric pattern-space completion.
+ *  - Patterns containing '0' are excluded from analysis.
+ *  - Strength is only accumulated when predicted pattern matches real pattern.
+ *  - Opposite-pattern relationships are defined explicitly via mapping,
+ *    not via index symmetry.
  *  - Index ordering is deterministic and reproducible across runs.
- *  - Handles NaN values robustly by ignoring them in norms and averages.
+ *  - NaN values are safely ignored in norm computation.
  *
  */
 PatternCausalityRes GenPatternCausality(
