@@ -51,7 +51,7 @@
 \item{embed.direction}{(optional) direction selector for embeddings (\code{0} returns all directions, \code{1-8} correspond to NW, N, NE, W, E, SW, S, SE).}
 }
 \value{
-A matrix (when \code{stack} is \code{FALSE}) or list.
+A matrix (when \code{stack} is \code{FALSE}) or list
 }
 \description{
 embedding spatial cross sectional data
