@@ -54,7 +54,7 @@
 #' spEDM::gpc(columbus,"crime","hoval",E = 7,k = 9)
 #'
 #' # convergence diagnostics
-#' g = spEDM::gpc(columbus,"crime","hoval",libsizes = seq(5,45,5),E = 7,k = 9)
+#' g = spEDM::gpc(columbus,"crime","hoval",libsizes = seq(7,49,7),E = 7,k = 9)
 #' plot(g)
 #' }
 methods::setMethod("gpc", "sf", .gpc_sf_method)
