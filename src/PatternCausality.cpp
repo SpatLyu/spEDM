@@ -262,8 +262,8 @@ PatternCausalityRes GenPatternCausality(
     {
       strength = weighted
         ? std::erf(
-            norm_ignore_nan(pred_SMy[t]) /
-            (norm_ignore_nan(SMx[t]) + 1e-6))
+            norm_vec_ignore_nan(pred_SMy[t]) /
+            (norm_vec_ignore_nan(SMx[t]) + 1e-6))
         : 1.0;
     }
 
