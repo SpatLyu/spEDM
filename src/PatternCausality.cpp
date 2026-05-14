@@ -47,7 +47,7 @@
  *       - Dark         : all other off-diagonal relationships
  *
  *  8. Strength is computed only when prediction matches reality:
- *         strength = erf( ||pred_Y|| / (||Y_real|| + 1e-6) )
+ *         strength = erf( ||pred_Y|| / (||X|| + 1e-6) )
  *     which bounds the value in [0, 1] and avoids division instability.
  *
  *  9. A final normalized heatmap (cell-wise average) and aggregated metrics
