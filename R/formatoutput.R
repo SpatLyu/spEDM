@@ -116,13 +116,12 @@ plot.ccm_res = \(x, family = "serif",
                  draw_ci = FALSE, ci_alpha = 0.25,
                  xbreaks = NULL, xlimits = NULL,
                  ybreaks = seq(0, 1, by = 0.1),
-                 ylimits = NULL, ylabel = expression(rho), ...){
+                 ylimits = c(-0.05, 1), ylabel = expression(rho), ...){
   resdf = x[[1]]
   bidirectional = x$bidirectional
 
   if(is.null(xbreaks)) xbreaks = resdf$libsizes
   if(is.null(xlimits)) xlimits = c(min(xbreaks)-1,max(xbreaks)+1)
-  if(is.null(ylimits)) ylimits = range(resdf)
   if (is.null(legend_texts)){
     legend_texts = c(paste0(x$varname[2], " xmap ", x$varname[1]),
                      paste0(x$varname[1], " xmap ", x$varname[2]))
