@@ -424,6 +424,7 @@ PatternCausalityRes PatternCausality(
   auto compute_distance = [&](size_t p) {
     size_t pi = pred_indices[p];
     for (size_t li : lib_indices) {
+      if (pi == li) continue;
       double dist = CppDistance(Mx[pi], Mx[li], L1norm, true);
       if (!std::isnan(dist)) {
         Dx[pi][li] = dist;  // assign distance; no mirroring required
@@ -567,6 +568,7 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
   auto compute_distance = [&](size_t p) {
     size_t pi = pred_indices[p];
     for (size_t li : lib_indices) {
+      if (pi == li) continue;
       double dist = CppDistance(Mx[pi], Mx[li], L1norm, true);
       if (!std::isnan(dist)) Dx[pi][li] = dist;
     }
