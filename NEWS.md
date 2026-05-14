@@ -24,6 +24,8 @@
 
 ### bug fixes
 
+* Correct mismatch between causal strength direction and prediction direction in pattern causality (#978).
+
 * Fix incorrect midpoint-based pattern causality classification (#973).
 
 # spEDM 1.11
