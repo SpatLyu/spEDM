@@ -20,7 +20,7 @@
   zero.tolerance = max(k),
   relative = TRUE,
   weighted = TRUE,
-  maximize = "positive",
+  maximize = "dark",
   threads = detectThreads(),
   detrend = FALSE,
   nb = NULL
@@ -40,7 +40,7 @@
   zero.tolerance = max(k),
   relative = TRUE,
   weighted = TRUE,
-  maximize = "positive",
+  maximize = "dark",
   threads = detectThreads(),
   detrend = FALSE,
   grid.coord = TRUE
