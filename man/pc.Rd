@@ -98,7 +98,7 @@ optimal parameter search for pattern causality
 \examples{
 columbus = sf::read_sf(system.file("case/columbus.gpkg",package="spEDM"))
 \donttest{
-spEDM::pc(columbus,"hoval","crime",E = 5:10,maximize = "negative")
+spEDM::pc(columbus,"crime","hoval",E = 5:10,maximize = "negative")
 }
 }
 \references{
