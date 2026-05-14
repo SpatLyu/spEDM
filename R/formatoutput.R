@@ -210,7 +210,7 @@ plot.pcm_res = \(x, partial = TRUE, ...){
 plot.rpc_res = \(x, family = "serif",
                  xbreaks = NULL, xlimits = NULL,
                  ybreaks = seq(0, 1, by = 0.1),
-                 ylimits = c(-0.05, 1), ...){
+                 ylimits = c(-0.01, 1), ...){
   xmapdf = x$xmap
   if("q50" %in% names(xmapdf)) xmapdf = dplyr::rename(xmapdf,causality = q50)
   if (x$bidirectional){
@@ -237,7 +237,7 @@ plot.rpc_res = \(x, family = "serif",
     ggplot2::theme(
       legend.position = "bottom",
       legend.box = "horizontal",
-      panel.grid.minor = ggplot2::element_blank(),
+      panel.grid = ggplot2::element_blank(),
       axis.text.x = ggplot2::element_text(angle = 30),
       strip.text = ggplot2::element_text(face = "bold")
     )
