@@ -56,8 +56,8 @@ print.pcm_res = \(x,significant = FALSE,...){
 print.pc_res = \(x,...){
   pc = x$summary
   if (x$bidirectional){
-    pc$direction = rep(c(paste0(x$varname[1], " -> ", x$varname[2]),
-                         paste0(x$varname[2], " -> ", x$varname[1])), each = 3)
+    pc$direction = rep(c(paste0(x$varname[2], " -> ", x$varname[1]),
+                         paste0(x$varname[1], " -> ", x$varname[2])), each = 3)
   } else {
     pc$direction = paste0(x$varname[1], " -> ", x$varname[2])
   }
@@ -69,8 +69,8 @@ print.pc_res = \(x,...){
 print.rpc_res = \(x,...){
   pc = x$xmap
   if (x$bidirectional){
-    pc$direction = rep(c(paste0(x$varname[1], " -> ", x$varname[2]),
-                         paste0(x$varname[2], " -> ", x$varname[1])),
+    pc$direction = rep(c(paste0(x$varname[2], " -> ", x$varname[1]),
+                         paste0(x$varname[1], " -> ", x$varname[2])),
                        each = (nrow(pc) / 2))
   } else {
     pc$direction = paste0(x$varname[1], " -> ", x$varname[2])
