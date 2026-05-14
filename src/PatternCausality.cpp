@@ -254,18 +254,18 @@ PatternCausalityRes GenPatternCausality(
     res.RealLoop.push_back(static_cast<int>(t));
 
     /* --- causality existence --- */
-    if (pat_y_real != pat_y_pred){
-      res.NoCausality[t] = 1.0;
-      res.PatternTypes.push_back(0);
-      continue;
-    }
+    bool causality_exit = pat_y_pred == pat_y_real;
 
     /* --- strength --- */
-    double strength = weighted
-      ? std::erf(
-          norm_vec_ignore_nan(pred_SMy[t]) /
-          (norm_vec_ignore_nan(SMx[t]) + 1e-6))
-      : 1.0;
+    double strength = 0.0;
+    if (causality_exit)
+    {
+      strength = weighted
+        ? std::erf(
+            norm_ignore_nan(pred_SMy[t]) /
+            (norm_ignore_nan(SMx[t]) + 1e-6))
+        : 1.0;
+    }
 
     // --- Safe index lookup ---
     auto x_it = pattern_indices.find(pat_x);
@@ -286,8 +286,11 @@ PatternCausalityRes GenPatternCausality(
       count_matrix[i][j] += 1;
     }
 
-    // --- 6. Classification of per-sample causality type ---
-    if (i == j) {
+    // --- Classification of per-sample causality type ---
+    if (!causality_exit) {
+      res.NoCausality[t] = 1.0;
+      res.PatternTypes.push_back(0);
+    } else if (i == j) {
       // Positive causality: same pattern
       res.PositiveCausality[t] = strength;
       res.PatternTypes.push_back(1);
