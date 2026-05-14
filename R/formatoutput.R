@@ -116,13 +116,13 @@ plot.ccm_res = \(x, family = "serif",
                  draw_ci = FALSE, ci_alpha = 0.25,
                  xbreaks = NULL, xlimits = NULL,
                  ybreaks = seq(0, 1, by = 0.1),
-                 ylimits = c(-0.05, 1),
-                 ylabel = expression(rho), ...){
+                 ylimits = NULL, ylabel = expression(rho), ...){
   resdf = x[[1]]
   bidirectional = x$bidirectional
 
   if(is.null(xbreaks)) xbreaks = resdf$libsizes
   if(is.null(xlimits)) xlimits = c(min(xbreaks)-1,max(xbreaks)+1)
+  if(is.null(ylimits)) ylimits = range(resdf)
   if (is.null(legend_texts)){
     legend_texts = c(paste0(x$varname[2], " xmap ", x$varname[1]),
                      paste0(x$varname[1], " xmap ", x$varname[2]))
@@ -210,7 +210,7 @@ plot.pcm_res = \(x, partial = TRUE, ...){
 plot.rpc_res = \(x, family = "serif",
                  xbreaks = NULL, xlimits = NULL,
                  ybreaks = seq(0, 1, by = 0.1),
-                 ylimits = c(-0.01, 1), ...){
+                 ylimits = NULL, ...){
   xmapdf = x$xmap
   if("q50" %in% names(xmapdf)) xmapdf = dplyr::rename(xmapdf,causality = q50)
   if (x$bidirectional){
@@ -222,6 +222,7 @@ plot.rpc_res = \(x, family = "serif",
   }
   if(is.null(xbreaks)) xbreaks = xmapdf$libsizes
   if(is.null(xlimits)) xlimits = c(min(xbreaks)-1,max(xbreaks)+1)
+  if(is.null(ylimits)) ylimits = c(-0.01, max(xmapdf$causality)+0.1)
 
   ggplot2::ggplot(xmapdf, ggplot2::aes(x = libsizes, y = causality, color = type)) +
     ggplot2::geom_line(linewidth = 1.25) +
