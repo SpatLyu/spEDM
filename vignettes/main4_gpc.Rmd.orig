@@ -158,6 +158,9 @@ stats::cor.test(~ pre + npp,
 
 g1 = spEDM::pc(npp, "pre", "npp", E = 6:10, k = 7:12, tau = 1:5, maximize = "positive")
 g1
+
+g2 = spEDM::pc(npp, "npp", "pre", E = 6:10, k = 7:12, tau = 1:5, maximize = "dark")
+g2
 ```
 
 Run geographical pattern causality analysis
