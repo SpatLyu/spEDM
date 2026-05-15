@@ -124,9 +124,9 @@ plot.ccm_res = \(x, family = "serif",
   if(is.null(xlimits)) xlimits = c(min(xbreaks)-1,max(xbreaks)+1)
   
   if(is.null(ylimits) && bidirectional) 
-    ylimits = range(c(resdf$y_xmap_x_mean, resdf$x_xmap_y_mean)) + c(-0.01, 0.05)
+    ylimits = range(c(resdf$y_xmap_x_mean, resdf$x_xmap_y_mean)) + c(-0.01, 0.1)
   else
-    ylimits = range(resdf$y_xmap_x_mean) + c(-0.01, 0.05)
+    ylimits = range(resdf$y_xmap_x_mean) + c(-0.01, 0.1)
   
   if (is.null(legend_texts)){
     legend_texts = c(paste0(x$varname[2], " xmap ", x$varname[1]),
