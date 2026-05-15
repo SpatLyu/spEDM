@@ -163,7 +163,7 @@ g1
 Run geographical pattern causality analysis
 
 ```{r gpc_grid}
-spEDM::gpc(npp, "pre", "npp", E = 6, k = 12, tau = 5)
+spEDM::gpc(npp, "pre", "npp", E = 6, k = 9, tau = 5)
 ```
 
 Convergence diagnostics
