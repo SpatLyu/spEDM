@@ -123,7 +123,7 @@ plot.ccm_res = \(x, family = "serif",
   if(is.null(xbreaks)) xbreaks = resdf$libsizes
   if(is.null(xlimits)) xlimits = c(min(xbreaks)-1,max(xbreaks)+1)
   
-  if(is.null(ylimits) & bidirectional) 
+  if(is.null(ylimits) && bidirectional) 
     ylimits = range(c(resdf$y_xmap_x_mean, resdf$x_xmap_y_mean)) + c(-0.01, 0.05)
   else
     ylimits = range(resdf$y_xmap_x_mean) + c(-0.01, 0.05)
