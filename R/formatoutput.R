@@ -128,7 +128,7 @@ plot.ccm_res = \(x, family = "serif",
     if (legend_sig){
       pval = resdf |>
         dplyr::slice_tail(n = 1) |>
-        dplyr::select(dplyr::any_of("y_xmap_x_sig", "x_xmap_y_sig")) |>
+        dplyr::select(dplyr::any_of(c("y_xmap_x_sig", "x_xmap_y_sig"))) |>
         unlist() |>
         round(3)
       legend_texts = paste0(legend_texts,", P = ",pval)
