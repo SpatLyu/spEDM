@@ -329,7 +329,7 @@ PatternCausalityRes GenPatternCausality(
 
   auto mean = [](const std::vector<double>& v)
   {
-    if (v.empty()) return std::numeric_limits<double>::quiet_NaN();
+    if (v.empty()) return 0.0;
       double s = 0;
       for (double x : v) s += x;
       return s / v.size();
