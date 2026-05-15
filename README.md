@@ -30,8 +30,7 @@
 install.packages("spEDM", dep = TRUE)
 ```
 
-- Install binary version from
-  [R-universe](https://stscl.r-universe.dev/spEDM) with:
+- Install binary version from [R-universe](https://stscl.r-universe.dev/spEDM) with:
 
 ``` r
 install.packages("spEDM",
@@ -40,8 +39,7 @@ install.packages("spEDM",
                  dep = TRUE)
 ```
 
-- Install from source code on [GitHub](https://github.com/stscl/spEDM)
-  with:
+- Install from source code on [GitHub](https://github.com/stscl/spEDM) with:
 
 ``` r
 if (!requireNamespace("devtools")) {
