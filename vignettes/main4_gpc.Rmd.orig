@@ -156,7 +156,7 @@ stats::cor.test(~ pre + npp,
                                      dataframe = TRUE, na.rm = TRUE))
 
 
-g1 = spEDM::pc(npp, "pre", "npp", E = 6:10, k = 12, tau = 1:5, maximize = "positive")
+g1 = spEDM::pc(npp, "pre", "npp", E = 6:10, k = 7:12, tau = 1:5, maximize = "positive")
 g1
 ```
 
