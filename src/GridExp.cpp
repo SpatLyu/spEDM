@@ -2109,7 +2109,7 @@ Rcpp::List RcppGPC4Grid(
     }
   }
 
-  // Sort + unique lib/pred ----
+  // Sort + unique lib/pred
   std::sort(lib_std.begin(), lib_std.end());
   lib_std.erase(
     std::unique(lib_std.begin(), lib_std.end()),
@@ -2125,11 +2125,11 @@ Rcpp::List RcppGPC4Grid(
   // Copy prediction indices for mapping back to original dataset
   std::vector<size_t> pred_indices = pred_std;
 
-  // --- Validate parameters --------------------------------------------------
+  // --- Validate parameters ---
   if (b < 2 || static_cast<size_t>(b) > validCellNum)
     Rcpp::stop("k cannot be less than or equal to 2 or greater than the number of non-NA values.");
 
-  // --- Generate embeddings --------------------------------------------------
+  // --- Generate embeddings ---
   std::vector<std::vector<double>> Mx = GenGridEmbeddings(xMatrix_cpp, E_std[0], tau_std[0], style);
   std::vector<std::vector<double>> My = GenGridEmbeddings(yMatrix_cpp, E_std[1], tau_std[1], style);
 
