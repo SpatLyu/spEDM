@@ -1621,11 +1621,11 @@ Rcpp::List RcppGPC4Lattice(
 
     // Map pattern_types (0–3) → descriptive string labels
     switch (res.PatternTypes[rl]) {
-      case 0: pattern_labels[idx]  = "no"; break;
-      case 1: pattern_labels[idx]  = "positive"; break;
-      case 2: pattern_labels[idx]  = "negative"; break;
-      case 3: pattern_labels[idx]  = "dark"; break;
-      default: pattern_labels[idx] = "unknown"; break;
+      case 0: pattern_labels[rl]  = "no"; break;
+      case 1: pattern_labels[rl]  = "positive"; break;
+      case 2: pattern_labels[rl]  = "negative"; break;
+      case 3: pattern_labels[rl]  = "dark"; break;
+      default: pattern_labels[rl] = "unknown"; break;
     }
   }
 
