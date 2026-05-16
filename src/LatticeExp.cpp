@@ -1475,9 +1475,7 @@ Rcpp::List RcppGPC4Lattice(
     bool relative = true,
     bool weighted = true,
     int threads = 8) {
-
   // --- Input Conversion and Validation --------------------------------------
-
   std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
   std::vector<double> y_std = Rcpp::as<std::vector<double>>(y);
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
@@ -1529,8 +1527,7 @@ Rcpp::List RcppGPC4Lattice(
   std::vector<int> E_std = Rcpp::as<std::vector<int>>(E);
   std::vector<int> tau_std = Rcpp::as<std::vector<int>>(tau);
 
-  // --- Embedding Construction ------------------------------------------------
-
+  // --- Embedding Construction ---
   std::vector<std::vector<double>> Mx = GenLatticeEmbeddings(x_std, nb_vec, E_std[0], tau_std[0], style);
   std::vector<std::vector<double>> My = GenLatticeEmbeddings(y_std, nb_vec, E_std[1], tau_std[1], style);
     
@@ -1550,7 +1547,7 @@ Rcpp::List RcppGPC4Lattice(
   // --- Check if full set is used ---
   bool use_subset = (selected_indices.size() < Mx.size());
 
-  // --- Perform Geographical Pattern Causality (GPC) -------------------------
+  // --- Perform Geographical Pattern Causality (GPC) ---
   PatternCausalityRes res;
 
   if (!use_subset) {
@@ -1596,7 +1593,7 @@ Rcpp::List RcppGPC4Lattice(
       dist_metric, relative, weighted, threads);
   }
 
-  // --- Convert result.matrice to Rcpp::NumericMatrix ------------------------
+  // --- Convert result.matrice to Rcpp::NumericMatrix ---
   size_t nrow = res.matrice.size();
   size_t ncol = nrow > 0 ? res.matrice[0].size() : 0;
   Rcpp::NumericMatrix matrice_mat(nrow, ncol);
@@ -1613,7 +1610,7 @@ Rcpp::List RcppGPC4Lattice(
     Rcpp::colnames(matrice_mat) = diffpatternnames;
   }
 
-  // --- Create DataFrame for per-sample causality ----------------------------
+  // --- Create DataFrame for per-sample causality ---
   size_t n_samples = res.NoCausality.size();
   Rcpp::IntegerVector real_index(n_samples);  // original indices (+1 for R)
   Rcpp::CharacterVector pattern_labels(n_samples, "no");
@@ -1641,7 +1638,7 @@ Rcpp::List RcppGPC4Lattice(
     Rcpp::Named("type") = pattern_labels
   );
 
-  // --- Create summary DataFrame for causal strengths ------------------------
+  // --- Create summary DataFrame for causal strengths ---
   Rcpp::CharacterVector causal_type = Rcpp::CharacterVector::create("positive", "negative", "dark");
   Rcpp::NumericVector causal_strength = Rcpp::NumericVector::create(res.TotalPos, res.TotalNeg, res.TotalDark);
 
@@ -1650,7 +1647,7 @@ Rcpp::List RcppGPC4Lattice(
     Rcpp::Named("strength") = causal_strength
   );
 
-  // --- Return structured results --------------------------------------------
+  // --- Return structured results ---
   return Rcpp::List::create(
     Rcpp::Named("causality") = causality_df,
     Rcpp::Named("summary") = summary_df,

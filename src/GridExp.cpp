@@ -2047,9 +2047,7 @@ Rcpp::List RcppGPC4Grid(
     bool relative = true,
     bool weighted = true,
     int threads = 8) {
-
   // --- Convert inputs to C++ types ------------------------------------------
-
   std::vector<std::vector<double>> xMatrix_cpp(xMatrix.nrow(), std::vector<double>(xMatrix.ncol()));
   std::vector<std::vector<double>> yMatrix_cpp(yMatrix.nrow(), std::vector<double>(yMatrix.ncol()));
 
@@ -2112,17 +2110,47 @@ Rcpp::List RcppGPC4Grid(
     }
   }
 
-  // --- Validate parameters --------------------------------------------------
+  // Sort + unique lib/pred ----
+  std::sort(lib_std.begin(), lib_std.end());
+  lib_std.erase(
+    std::unique(lib_std.begin(), lib_std.end()),
+    lib_std.end()
+  );
 
+  std::sort(pred_std.begin(), pred_std.end());
+    pred_std.erase(
+      std::unique(pred_std.begin(), pred_std.end()),
+      pred_std.end()
+  );
+
+  // Copy prediction indices for mapping back to original dataset
+  std::vector<size_t> pred_indices = pred_std;
+
+  // --- Validate parameters --------------------------------------------------
   if (b < 2 || static_cast<size_t>(b) > validCellNum)
     Rcpp::stop("k cannot be less than or equal to 2 or greater than the number of non-NA values.");
 
   // --- Generate embeddings --------------------------------------------------
-
   std::vector<std::vector<double>> Mx = GenGridEmbeddings(xMatrix_cpp, E_std[0], tau_std[0], style);
   std::vector<std::vector<double>> My = GenGridEmbeddings(yMatrix_cpp, E_std[1], tau_std[1], style);
 
-  // --- Perform GPC analysis -------------------------------------------------
+  // --- Prepare for data slicing ---
+  std::vector<size_t> selected_indices;
+  selected_indices.reserve(lib_std.size() + pred_std.size());
+  for (size_t i = 0; i < lib_std.size(); ++i)
+    selected_indices.push_back(lib_std[i]);
+  for (size_t i = 0; i < pred_std.size(); ++i)
+    selected_indices.push_back(pred_std[i]);
+  std::sort(selected_indices.begin(), selected_indices.end());
+  selected_indices.erase(
+    std::unique(selected_indices.begin(), selected_indices.end()),
+    selected_indices.end()
+  );
+
+  // --- Check if full set is used ---
+  bool use_subset = (selected_indices.size() < Mx.size());
+
+  // --- Perform GPC analysis ---
 
   PatternCausalityRes res = PatternCausality(
     Mx, My, lib_std, pred_std, b, zero_tolerance,
