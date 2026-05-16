@@ -147,7 +147,6 @@ struct PatternCausalityRes {
   std::vector<double> PositiveCausality;   ///< Strengths classified as "positive causality".
   std::vector<double> NegativeCausality;   ///< Strengths classified as "negative causality".
   std::vector<double> DarkCausality;       ///< Strengths classified as "dark causality".
-  std::vector<size_t> RealLoop;            ///< Indices of valid samples actually processed.
   std::vector<int> PatternTypes;           ///< Encoded pattern types (0–3).
   std::vector<std::string> PatternStrings; ///< Encoded diff strings ("123","312",etc).
   std::vector<std::vector<double>> matrice;///< Averaged heatmap (pattern × pattern).
