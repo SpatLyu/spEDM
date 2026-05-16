@@ -228,7 +228,7 @@ PatternCausalityRes GenPatternCausality(
   res.PositiveCausality.assign(n, 0.0);
   res.NegativeCausality.assign(n, 0.0);
   res.DarkCausality.assign(n, 0.0);
-  res.PatternTypes.reserve(n);
+  res.PatternTypes.assign(n, 0);
   res.RealLoop.reserve(n);
 
   // --- 4. Local helper lambdas for NaN-safe math ---
@@ -289,19 +289,18 @@ PatternCausalityRes GenPatternCausality(
     // --- Classification of per-sample causality type ---
     if (!causality_exit) {
       res.NoCausality[t] = 1.0;
-      res.PatternTypes.push_back(0);
     } else if (i == j) {
       // Positive causality: same pattern
       res.PositiveCausality[t] = strength;
-      res.PatternTypes.push_back(1);
+      res.PatternTypes[t] = 1;
     } else if (opposite_index[i] == j) {
       // Negative causality: opposite pattern
       res.NegativeCausality[t] = strength;
-      res.PatternTypes.push_back(2);
+      res.PatternTypes[t] = 2;
     } else {
       // Dark causality: all other cases
       res.DarkCausality[t] = strength;
-      res.PatternTypes.push_back(3);
+      res.PatternTypes[t] = 3;
     }
   }
 
