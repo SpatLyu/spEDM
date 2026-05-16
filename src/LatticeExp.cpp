@@ -1503,6 +1503,22 @@ Rcpp::List RcppGPC4Lattice(
       pred_std.push_back(static_cast<size_t>(pred[i] - 1));
   }
 
+    // Sort + unique lib/pred ----
+  std::sort(lib_std.begin(), lib_std.end());
+  lib_std.erase(
+    std::unique(lib_std.begin(), lib_std.end()),
+    lib_std.end()
+  );
+
+  std::sort(pred_std.begin(), pred_std.end());
+    pred_std.erase(
+      std::unique(pred_std.begin(), pred_std.end()),
+      pred_std.end()
+  );
+
+  // Copy prediction indices for mapping back to original dataset
+  std::vector<size_t> pred_indices = pred_std;
+
   // Check neighbor and embedding parameters
   if (b < 2 || b > validSampleNum)
     Rcpp::stop("k cannot be less than or equal to 2 or greater than the number of non-NA values.");
@@ -1517,12 +1533,68 @@ Rcpp::List RcppGPC4Lattice(
 
   std::vector<std::vector<double>> Mx = GenLatticeEmbeddings(x_std, nb_vec, E_std[0], tau_std[0], style);
   std::vector<std::vector<double>> My = GenLatticeEmbeddings(y_std, nb_vec, E_std[1], tau_std[1], style);
+    
+  // --- Prepare for data slicing ---
+  std::vector<size_t> selected_indices;
+  selected_indices.reserve(lib_std.size() + pred_std.size());
+  for (size_t i = 0; i < lib_std.size(); ++i)
+    selected_indices.push_back(lib_std[i]);
+  for (size_t i = 0; i < pred_std.size(); ++i)
+    selected_indices.push_back(pred_std[i]);
+  std::sort(selected_indices.begin(), selected_indices.end());
+  selected_indices.erase(
+    std::unique(selected_indices.begin(), selected_indices.end()),
+    selected_indices.end()
+  );
+
+  // --- Check if full set is used ---
+  bool use_subset = (selected_indices.size() < Mx.size());
 
   // --- Perform Geographical Pattern Causality (GPC) -------------------------
+  PatternCausalityRes res;
 
-  PatternCausalityRes res = PatternCausality(
-    Mx, My, lib_std, pred_std, b, zero_tolerance,
-    dist_metric, relative, weighted, threads);
+  if (!use_subset) {
+    // --- Full data: no slicing needed ---
+    res = PatternCausality(
+      Mx, My, lib_std, pred_std, b, zero_tolerance,
+      dist_metric, relative, weighted, threads);
+  } else {   
+    // --- Slice Mx and My ---
+    std::vector<std::vector<double>> Mx_sub;
+    std::vector<std::vector<double>> My_sub;
+
+    Mx_sub.reserve(selected_indices.size());
+    My_sub.reserve(selected_indices.size());
+
+    for (size_t i = 0; i < selected_indices.size(); ++i) {
+      size_t idx = selected_indices[i];
+      Mx_sub.push_back(Mx[idx]);
+      My_sub.push_back(My[idx]);
+    }
+
+    // --- Subset mode: build index map ---
+    std::unordered_map<size_t, size_t> index_map;
+    index_map.reserve(selected_indices.size());
+
+    for (size_t i = 0; i < selected_indices.size(); ++i) {
+      index_map[selected_indices[i]] = i;
+    }
+
+    // --- Remap lib indices ---
+    for (size_t i = 0; i < lib_std.size(); ++i) {
+      lib_std[i] = index_map[lib_std[i]];
+    }
+
+    // --- Remap pred indices ---
+    for (size_t i = 0; i < pred_std.size(); ++i) {
+      pred_std[i] = index_map[pred_std[i]];
+    }
+
+    // --- Run pattern causality on subset ---
+    res = PatternCausality(
+      Mx_sub, My_sub, lib_std, pred_std, b, zero_tolerance,
+      dist_metric, relative, weighted, threads);
+  }
 
   // --- Convert result.matrice to Rcpp::NumericMatrix ------------------------
 

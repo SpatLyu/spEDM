@@ -474,7 +474,7 @@ PatternCausalityRes PatternCausality(
       PredSMy_sub.push_back(PredSMy[idx]);
     }
 
-    // --- Compute patcaus on subset ---
+    // --- Compute pattern causality on subset ---
     res = GenPatternCausality(SMx_sub, SMy_sub, PredSMy_sub, weighted);
   }
 
@@ -668,7 +668,7 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
           PredSMy_sub.push_back(PredSMy[idx]);
         }
 
-        // --- Compute patcaus on subset ---
+        // --- Compute pattern causality on subset ---
         res = GenPatternCausality(SMx_sub, SMy_sub, PredSMy_sub, weighted);
       }
 
