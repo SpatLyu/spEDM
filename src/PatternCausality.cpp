@@ -229,7 +229,6 @@ PatternCausalityRes GenPatternCausality(
   res.NegativeCausality.assign(n, 0.0);
   res.DarkCausality.assign(n, 0.0);
   res.PatternTypes.assign(n, 0);
-  res.RealLoop.reserve(n);
 
   // --- 4. Local helper lambdas for NaN-safe math ---
   auto norm_vec_ignore_nan = [](const std::vector<double>& v) -> double {
@@ -250,8 +249,6 @@ PatternCausalityRes GenPatternCausality(
 
     // --- Skip invalid pattern cases ---
     if (str_contains_zero(pat_x) || str_contains_zero(pat_y_real) || str_contains_zero(pat_y_pred)) continue;
-
-    res.RealLoop.push_back(static_cast<int>(t));
 
     /* --- causality existence --- */
     bool causality_exit = pat_y_pred == pat_y_real;
