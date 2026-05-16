@@ -2340,8 +2340,20 @@ Rcpp::DataFrame RcppGPCRobust4Grid(
     }
   }
 
-  // -- Convert libsizes --------------------------------------------------
+  // Sort + unique lib/pred
+  std::sort(lib_std.begin(), lib_std.end());
+  lib_std.erase(
+    std::unique(lib_std.begin(), lib_std.end()),
+    lib_std.end()
+  );
 
+  std::sort(pred_std.begin(), pred_std.end());
+    pred_std.erase(
+      std::unique(pred_std.begin(), pred_std.end()),
+      pred_std.end()
+  );
+
+  // -- Convert libsizes ---
   int libsizes_dim = libsizes.ncol();
   std::vector<size_t> libsizes_std;
   libsizes_std.reserve(libsizes.nrow());
@@ -2370,23 +2382,77 @@ Rcpp::DataFrame RcppGPCRobust4Grid(
     valid_libsizes.push_back(lib_std.size());
   }
 
-  // --- Validate parameters --------------------------------------------------
-
+  // --- Validate parameters ---
   if (b < 2 || static_cast<size_t>(b) > validCellNum)
     Rcpp::stop("k cannot be less than or equal to 2 or greater than the number of non-NA values.");
 
-  // --- Generate embeddings --------------------------------------------------
-
+  // --- Generate embeddings ---
   std::vector<std::vector<double>> Mx = GenGridEmbeddings(xMatrix_cpp, E_std[0], tau_std[0], style);
   std::vector<std::vector<double>> My = GenGridEmbeddings(yMatrix_cpp, E_std[1], tau_std[1], style);
 
-  // --- Perform Robust GPC analysis -------------------------------------------
+  // --- Prepare for data slicing ---
+  std::vector<size_t> selected_indices;
+  selected_indices.reserve(lib_std.size() + pred_std.size());
+  for (size_t i = 0; i < lib_std.size(); ++i)
+    selected_indices.push_back(lib_std[i]);
+  for (size_t i = 0; i < pred_std.size(); ++i)
+    selected_indices.push_back(pred_std[i]);
+  std::sort(selected_indices.begin(), selected_indices.end());
+  selected_indices.erase(
+    std::unique(selected_indices.begin(), selected_indices.end()),
+    selected_indices.end()
+  );
 
-  std::vector<std::vector<std::vector<double>>> res = RobustPatternCausality(
-    Mx, My, valid_libsizes, lib_std, pred_std, b, boot, random, seed, zero_tolerance,
-    dist_metric, relative, weighted, threads, parallel_level, progressbar);
+  // --- Check if full set is used ---
+  bool use_subset = (selected_indices.size() < Mx.size());
 
-  // --- Result Processing -----------------------------------------------------
+  // --- Perform Robust GPC analysis ---
+  std::vector<std::vector<std::vector<double>>> res;
+
+  if (!use_subset) {
+    // --- Full data: no slicing needed ---
+    res = RobustPatternCausality(
+      Mx, My, valid_libsizes, lib_std, pred_std, b, boot, random, seed, zero_tolerance,
+      dist_metric, relative, weighted, threads, parallel_level, progressbar);
+  } else {   
+    // --- Slice Mx and My ---
+    std::vector<std::vector<double>> Mx_sub;
+    std::vector<std::vector<double>> My_sub;
+
+    Mx_sub.reserve(selected_indices.size());
+    My_sub.reserve(selected_indices.size());
+
+    for (size_t i = 0; i < selected_indices.size(); ++i) {
+      size_t idx = selected_indices[i];
+      Mx_sub.push_back(Mx[idx]);
+      My_sub.push_back(My[idx]);
+    }
+
+    // --- Subset mode: build index map ---
+    std::unordered_map<size_t, size_t> index_map;
+    index_map.reserve(selected_indices.size());
+
+    for (size_t i = 0; i < selected_indices.size(); ++i) {
+      index_map[selected_indices[i]] = i;
+    }
+
+    // --- Remap lib indices ---
+    for (size_t i = 0; i < lib_std.size(); ++i) {
+      lib_std[i] = index_map[lib_std[i]];
+    }
+
+    // --- Remap pred indices ---
+    for (size_t i = 0; i < pred_std.size(); ++i) {
+      pred_std[i] = index_map[pred_std[i]];
+    }
+
+    // --- Run pattern causality on subset ---
+    res = RobustPatternCausality(
+      Mx_sub, My_sub, valid_libsizes, lib_std, pred_std, b, boot, random, seed, zero_tolerance,
+      dist_metric, relative, weighted, threads, parallel_level, progressbar);
+  }
+
+  // --- Result Processing ---
 
   // res structure: [3][libsizes][boot]
   // dimension 0: metric type (0=Positive,1=Negative,2=Dark)

@@ -1501,7 +1501,7 @@ Rcpp::List RcppGPC4Lattice(
       pred_std.push_back(static_cast<size_t>(pred[i] - 1));
   }
 
-  // Sort + unique lib/pred ----
+  // Sort + unique lib/pred
   std::sort(lib_std.begin(), lib_std.end());
   lib_std.erase(
     std::unique(lib_std.begin(), lib_std.end()),
@@ -1706,7 +1706,7 @@ Rcpp::DataFrame RcppGPCRobust4Lattice(
       pred_std.push_back(static_cast<size_t>(pred[i] - 1));
   }
 
-  // Sort + unique lib/pred ----
+  // Sort + unique lib/pred
   std::sort(lib_std.begin(), lib_std.end());
   lib_std.erase(
     std::unique(lib_std.begin(), lib_std.end()),
