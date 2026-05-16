@@ -1597,7 +1597,6 @@ Rcpp::List RcppGPC4Lattice(
   }
 
   // --- Convert result.matrice to Rcpp::NumericMatrix ------------------------
-
   size_t nrow = res.matrice.size();
   size_t ncol = nrow > 0 ? res.matrice[0].size() : 0;
   Rcpp::NumericMatrix matrice_mat(nrow, ncol);
@@ -1615,38 +1614,34 @@ Rcpp::List RcppGPC4Lattice(
   }
 
   // --- Create DataFrame for per-sample causality ----------------------------
-
   size_t n_samples = res.NoCausality.size();
-  Rcpp::LogicalVector real_loop(n_samples, false);
+  Rcpp::IntegerVector real_index(n_samples);  // original indices (+1 for R)
   Rcpp::CharacterVector pattern_labels(n_samples, "no");
 
-  for (size_t rl = 0; rl < res.RealLoop.size(); ++rl) {
-    size_t idx = res.RealLoop[rl];
-    if (idx < n_samples) {
-      // Record validated samples
-      real_loop[idx] = true;
-      // Map pattern_types (0–3) → descriptive string labels
-      switch (res.PatternTypes[rl]) {
-        case 0: pattern_labels[idx]  = "no"; break;
-        case 1: pattern_labels[idx]  = "positive"; break;
-        case 2: pattern_labels[idx]  = "negative"; break;
-        case 3: pattern_labels[idx]  = "dark"; break;
-        default: pattern_labels[idx] = "unknown"; break;
-      }
+  for (size_t rl = 0; rl < n_samples; ++rl) {
+    // Restore original index (+1 for R)
+    real_index[rl] = static_cast<int>(pred_indices[rl] + 1);
+
+    // Map pattern_types (0–3) → descriptive string labels
+    switch (res.PatternTypes[rl]) {
+      case 0: pattern_labels[idx]  = "no"; break;
+      case 1: pattern_labels[idx]  = "positive"; break;
+      case 2: pattern_labels[idx]  = "negative"; break;
+      case 3: pattern_labels[idx]  = "dark"; break;
+      default: pattern_labels[idx] = "unknown"; break;
     }
   }
 
   Rcpp::DataFrame causality_df = Rcpp::DataFrame::create(
+    Rcpp::Named("index") = real_index,
     Rcpp::Named("no") = Rcpp::NumericVector(res.NoCausality.begin(), res.NoCausality.end()),
     Rcpp::Named("positive") = Rcpp::NumericVector(res.PositiveCausality.begin(), res.PositiveCausality.end()),
     Rcpp::Named("negative") = Rcpp::NumericVector(res.NegativeCausality.begin(), res.NegativeCausality.end()),
     Rcpp::Named("dark") = Rcpp::NumericVector(res.DarkCausality.begin(), res.DarkCausality.end()),
-    Rcpp::Named("type") = pattern_labels,
-    Rcpp::Named("valid") = real_loop
+    Rcpp::Named("type") = pattern_labels
   );
 
   // --- Create summary DataFrame for causal strengths ------------------------
-
   Rcpp::CharacterVector causal_type = Rcpp::CharacterVector::create("positive", "negative", "dark");
   Rcpp::NumericVector causal_strength = Rcpp::NumericVector::create(res.TotalPos, res.TotalNeg, res.TotalDark);
 
@@ -1656,7 +1651,6 @@ Rcpp::List RcppGPC4Lattice(
   );
 
   // --- Return structured results --------------------------------------------
-
   return Rcpp::List::create(
     Rcpp::Named("causality") = causality_df,
     Rcpp::Named("summary") = summary_df,
