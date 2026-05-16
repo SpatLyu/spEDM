@@ -2047,7 +2047,7 @@ Rcpp::List RcppGPC4Grid(
     bool relative = true,
     bool weighted = true,
     int threads = 8) {
-  // --- Convert inputs to C++ types ------------------------------------------
+  // --- Convert inputs to C++ types ---
   std::vector<std::vector<double>> xMatrix_cpp(xMatrix.nrow(), std::vector<double>(xMatrix.ncol()));
   std::vector<std::vector<double>> yMatrix_cpp(yMatrix.nrow(), std::vector<double>(yMatrix.ncol()));
 
@@ -2068,8 +2068,7 @@ Rcpp::List RcppGPC4Grid(
   int n_libcol = lib.ncol();
   int n_predcol = pred.ncol();
 
-  // --- Convert library and prediction indices -------------------------------
-
+  // --- Convert library and prediction indices ---
   std::vector<size_t> lib_std;
   lib_std.reserve(lib.nrow());
 
@@ -2279,9 +2278,7 @@ Rcpp::DataFrame RcppGPCRobust4Grid(
     int threads = 8,
     int parallel_level = 0,
     bool progressbar = false) {
-
-  // --- Convert inputs to C++ types ------------------------------------------
-
+  // --- Convert inputs to C++ types ---
   std::vector<std::vector<double>> xMatrix_cpp(xMatrix.nrow(), std::vector<double>(xMatrix.ncol()));
   std::vector<std::vector<double>> yMatrix_cpp(yMatrix.nrow(), std::vector<double>(yMatrix.ncol()));
 
@@ -2302,8 +2299,7 @@ Rcpp::DataFrame RcppGPCRobust4Grid(
   int n_libcol = lib.ncol();
   int n_predcol = pred.ncol();
 
-  // --- Convert library and prediction indices -------------------------------
-
+  // --- Convert library and prediction indices ---
   std::vector<size_t> lib_std;
   lib_std.reserve(lib.nrow());
 

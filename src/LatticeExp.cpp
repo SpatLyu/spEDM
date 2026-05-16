@@ -1475,7 +1475,7 @@ Rcpp::List RcppGPC4Lattice(
     bool relative = true,
     bool weighted = true,
     int threads = 8) {
-  // --- Input Conversion and Validation --------------------------------------
+  // --- Input Conversion and Validation ---
   std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
   std::vector<double> y_std = Rcpp::as<std::vector<double>>(y);
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
@@ -1678,7 +1678,7 @@ Rcpp::DataFrame RcppGPCRobust4Lattice(
     int threads = 8,
     int parallel_level = 0,
     bool progressbar = false) {
-  // --- Input Conversion and Validation --------------------------------------
+  // --- Input Conversion and Validation ---
   std::vector<double> x_std = Rcpp::as<std::vector<double>>(x);
   std::vector<double> y_std = Rcpp::as<std::vector<double>>(y);
   std::vector<std::vector<int>> nb_vec = nb2vec(nb);
@@ -1742,7 +1742,7 @@ Rcpp::DataFrame RcppGPCRobust4Lattice(
     valid_libsizes.push_back(lib_std.size());
   }
 
-  // --- Embedding Construction ------------------------------------------------
+  // --- Embedding Construction ---
   std::vector<std::vector<double>> Mx = GenLatticeEmbeddings(x_std, nb_vec, E_std[0], tau_std[0], style);
   std::vector<std::vector<double>> My = GenLatticeEmbeddings(y_std, nb_vec, E_std[1], tau_std[1], style);
 
@@ -1762,7 +1762,7 @@ Rcpp::DataFrame RcppGPCRobust4Lattice(
   // --- Check if full set is used ---
   bool use_subset = (selected_indices.size() < Mx.size());
 
-  // --- Perform Robust Geographical Pattern Causality -------------------------
+  // --- Perform Robust Geographical Pattern Causality ---
   std::vector<std::vector<std::vector<double>>> res;
 
   if (!use_subset) {
@@ -1808,7 +1808,7 @@ Rcpp::DataFrame RcppGPCRobust4Lattice(
       dist_metric, relative, weighted, threads, parallel_level, progressbar);
   }
 
-  // --- Result Processing -----------------------------------------------------
+  // --- Result Processing ---
 
   // res structure: [3][valid_libsizes][boot]
   // dimension 0: metric type (0=TotalPos,1=TotalNeg,2=TotalDark)
