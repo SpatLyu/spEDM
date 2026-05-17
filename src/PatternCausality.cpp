@@ -524,22 +524,22 @@ PatternCausalityRes PatternCausality(
  *        - Metric index 2 → TotalDark
  *
  * ### Parameters
- * @param Mx             Shadow manifold for variable X
- * @param My             Shadow manifold for variable Y
- * @param libsizes       Candidate library sizes
- * @param lib_indices    Indices for library samples
- * @param pred_indices   Indices for prediction samples
- * @param num_neighbors  Number of nearest neighbors for projection
- * @param boot           Number of bootstrap replicates per library size
- * @param random_sample  Whether to use random bootstrap (true) or deterministic (false)
- * @param seed           Random seed for reproducibility
- * @param zero_tolerance Max zeros allowed in signatures
- * @param dist_metric    Distance metric (1 = L1, 2 = L2)
- * @param relative       Normalize embeddings relative to local mean
- * @param weighted       Weight causality by erf(norm(pred_Y)/norm(X))
- * @param threads        Number of threads for distance/projection
- * @param parallel_level Parallelism level across boot iterations
- * @param progressbar    Whether to show progress (optional)
+ * @param Mx                Shadow manifold for variable X
+ * @param My                Shadow manifold for variable Y
+ * @param libsizes          Candidate library sizes
+ * @param lib_indices       Indices for library samples
+ * @param pred_indices      Indices for prediction samples
+ * @param num_neighbors     Number of nearest neighbors for projection
+ * @param boot              Number of bootstrap replicates per library size
+ * @param replace_sampling  Should sampling be with replacement?
+ * @param seed              Random seed for reproducibility
+ * @param zero_tolerance    Max zeros allowed in signatures
+ * @param dist_metric       Distance metric (1 = L1, 2 = L2)
+ * @param relative          Normalize embeddings relative to local mean
+ * @param weighted          Weight causality by erf(norm(pred_Y)/norm(X))
+ * @param threads           Number of threads for distance/projection
+ * @param parallel_level    Parallelism level across boot iterations
+ * @param progressbar       Whether to show progress (optional)
  *
  * @return 3D vector `[3][libsizes][boot]`
  */
@@ -551,7 +551,7 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
     const std::vector<size_t>& pred_indices,
     int num_neighbors = 0,
     int boot = 99,
-    bool random_sample = true,
+    bool replace_sampling = true,
     unsigned long long seed = 42,
     int zero_tolerance = 0,
     int dist_metric = 2,
@@ -566,9 +566,6 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
   // --------------------------------------------------------------------------
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
-
-  // Enforce boot = 1 for deterministic sampling
-  if (!random_sample) boot = 1;
 
   // Prebuild 64-bit RNG pool for reproducibility
   std::vector<std::mt19937_64> rng_pool(boot);
@@ -630,7 +627,7 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
     auto process_boot = [&](int b) {
       std::vector<size_t> sampled_lib, sampled_pred;
 
-      if (random_sample) {
+      if (replace_sampling) {
         std::vector<size_t> shuffled_lib = lib_indices;
         std::shuffle(shuffled_lib.begin(), shuffled_lib.end(), rng_pool[b]);
         sampled_lib.assign(shuffled_lib.begin(), shuffled_lib.begin() + L);
