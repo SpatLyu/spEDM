@@ -625,15 +625,24 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
     size_t L = libsizes[li];
 
     auto process_boot = [&](int b) {
-      std::vector<size_t> sampled_lib, sampled_pred;
+      std::vector<size_t> sampled_lib;
+      // std::vector<size_t> sampled_pred;
 
-      if (replace_sampling) {
+      if (boot == 1) {
+        sampled_lib.assign(lib_indices.begin(), lib_indices.begin() + L);
+        // sampled_pred = sampled_lib;
+      } else if (replace_sampling) {   
+        sampled_lib.resize(L);
+        std::uniform_int_distribution<size_t> dist(0, lib_indices.size() - 1);
+
+        for (size_t i = 0; i < L; ++i) {
+          sampled_lib[i] = lib_indices[dist(rng_pool[b])];
+        }
+        // sampled_pred = sampled_lib;
+      } else {
         std::vector<size_t> shuffled_lib = lib_indices;
         std::shuffle(shuffled_lib.begin(), shuffled_lib.end(), rng_pool[b]);
         sampled_lib.assign(shuffled_lib.begin(), shuffled_lib.begin() + L);
-        // sampled_pred = sampled_lib;
-      } else {
-        sampled_lib.assign(lib_indices.begin(), lib_indices.begin() + L);
         // sampled_pred = sampled_lib;
       }
 
