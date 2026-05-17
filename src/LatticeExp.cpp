@@ -1669,7 +1669,7 @@ Rcpp::DataFrame RcppGPCRobust4Lattice(
     int style = 1,
     int b = 0,
     int boot = 99,
-    bool random = true,
+    bool replace_sampling = false,
     unsigned long long seed = 42,
     int zero_tolerance = 0,
     int dist_metric = 2,
@@ -1768,7 +1768,7 @@ Rcpp::DataFrame RcppGPCRobust4Lattice(
   if (!use_subset) {
     // --- Full data: no slicing needed ---
     res = RobustPatternCausality(
-      Mx, My, valid_libsizes, lib_std, pred_std, b, boot, random, seed, zero_tolerance,
+      Mx, My, valid_libsizes, lib_std, pred_std, b, boot, replace_sampling, seed, zero_tolerance,
       dist_metric, relative, weighted, threads, parallel_level, progressbar);
   } else {   
     // --- Slice Mx and My ---
@@ -1804,7 +1804,7 @@ Rcpp::DataFrame RcppGPCRobust4Lattice(
 
     // --- Run pattern causality on subset ---
     res = RobustPatternCausality(
-      Mx_sub, My_sub, valid_libsizes, lib_std, pred_std, b, boot, random, seed, zero_tolerance,
+      Mx_sub, My_sub, valid_libsizes, lib_std, pred_std, b, boot, replace_sampling, seed, zero_tolerance,
       dist_metric, relative, weighted, threads, parallel_level, progressbar);
   }
 

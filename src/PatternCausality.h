@@ -253,7 +253,7 @@ std::vector<std::vector<std::vector<double>>> RobustPatternCausality(
     const std::vector<size_t>& pred_indices,
     int num_neighbors = 0,
     int boot = 99,
-    bool replace_sampling = true,
+    bool replace_sampling = false,
     unsigned long long seed = 42,
     int zero_tolerance = 0,
     int dist_metric = 2,
