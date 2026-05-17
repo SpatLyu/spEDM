@@ -18,7 +18,7 @@
   lib = NULL,
   pred = NULL,
   boot = 99,
-  random = TRUE,
+  replace = FALSE,
   seed = 42L,
   dist.metric = "L2",
   zero.tolerance = max(k),
@@ -44,7 +44,7 @@
   lib = NULL,
   pred = NULL,
   boot = 99,
-  random = TRUE,
+  replace = FALSE,
   seed = 42L,
   dist.metric = "L2",
   zero.tolerance = max(k),
@@ -81,7 +81,7 @@
 
 \item{boot}{(optional) number of bootstraps to perform.}
 
-\item{random}{(optional) whether to use random sampling.}
+\item{replace}{(optional) should sampling be with replacement?}
 
 \item{seed}{(optional) random seed.}
 
