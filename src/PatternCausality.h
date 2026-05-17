@@ -183,8 +183,8 @@ PatternCausalityRes PatternCausality(
 /**
  * @brief Perform robust (bootstrapped) pattern-based causality analysis across multiple library sizes.
  *
- * This function extends `PatternCausality()` by introducing both random and systematic
- * sampling strategies for robustness evaluation. It performs repeated causality
+ * This function extends `PatternCausality()` by introducing flexible sampling
+ * strategies for robustness evaluation. It performs repeated causality
  * estimations across different library sizes (`libsizes`) and returns results organized
  * as `[3][libsizes][boot]`:
  *
@@ -206,10 +206,12 @@ PatternCausalityRes PatternCausality(
  *
  * 3. **Sampling & Bootstrapping**
  *    - For each library size:
- *        - If `random_sample = true`: draw `boot` random subsets (size = L)
- *          from `lib_indices` using RNG.
- *        - If `random_sample = false`: perform deterministic slicing
- *          and **force `boot = 1`** for reproducibility.
+ *        - If `replace_sampling = true`: perform bootstrap sampling with replacement,
+ *          drawing `boot` independent samples (each of size L) from `lib_indices`.
+ *        - If `replace_sampling = false`: perform subsampling without replacement
+ *          via shuffling, drawing subsets of size L.
+ *        - If `boot = 1`: sampling becomes deterministic (first L indices are used),
+ *          ensuring reproducibility without randomness.
  *
  * 4. **Causality Computation**
  *    - Projects `SMy` → `PredSMy` via `SignatureProjection()`.
@@ -223,22 +225,23 @@ PatternCausalityRes PatternCausality(
  *        - Metric index 2 → TotalDark
  *
  * ### Parameters
- * @param Mx             Shadow manifold for variable X
- * @param My             Shadow manifold for variable Y
- * @param libsizes       Candidate library sizes
- * @param lib_indices    Indices for library samples
- * @param pred_indices   Indices for prediction samples
- * @param num_neighbors  Number of nearest neighbors for projection
- * @param boot           Number of bootstrap replicates per library size
- * @param random_sample  Whether to use random bootstrap (true) or deterministic (false)
- * @param seed           Random seed for reproducibility
- * @param zero_tolerance Max zeros allowed in signatures
- * @param dist_metric    Distance metric (1 = L1, 2 = L2)
- * @param relative       Normalize embeddings relative to local mean
- * @param weighted       Weight causality by erf(norm(pred_Y)/norm(X))
- * @param threads        Number of threads for distance/projection
- * @param parallel_level Parallelism level across boot iterations
- * @param progressbar    Whether to show progress (optional)
+ * @param Mx                Shadow manifold for variable X
+ * @param My                Shadow manifold for variable Y
+ * @param libsizes          Candidate library sizes
+ * @param lib_indices       Indices for library samples
+ * @param pred_indices      Indices for prediction samples
+ * @param num_neighbors     Number of nearest neighbors for projection
+ * @param boot              Number of bootstrap replicates per library size
+ * @param replace_sampling  If true, use bootstrap sampling (with replacement);
+ *                          otherwise use subsampling (without replacement)
+ * @param seed              Random seed for reproducibility
+ * @param zero_tolerance    Max zeros allowed in signatures
+ * @param dist_metric       Distance metric (1 = L1, 2 = L2)
+ * @param relative          Normalize embeddings relative to local mean
+ * @param weighted          Weight causality by erf(norm(pred_Y)/norm(X))
+ * @param threads           Number of threads for distance/projection
+ * @param parallel_level    Parallelism level across boot iterations
+ * @param progressbar       Whether to show progress (optional)
  *
  * @return 3D vector `[3][libsizes][boot]`
  */
