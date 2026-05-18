@@ -2,8 +2,8 @@
 title: "Geographical Convergent Cross Mapping"
 author: "Wenbo Lyu"
 date: |
-  | Last update: 2026-02-15
-  | Last run: 2026-03-01
+  | Last update: 2026-04-05
+  | Last run: 2026-04-05
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{3. Geographical Convergent Cross Mapping}
@@ -166,7 +166,7 @@ Visualize the result:
 
 
 ``` r
-plot(pd_res, xlimits = c(0, 2800), draw_ci = TRUE) +
+plot(pd_res, xlimits = c(0, 2800), ylimits = c(-0.01,1), draw_ci = TRUE) +
   ggplot2::theme(legend.justification = c(0.65,1))
 ```
 
@@ -255,7 +255,7 @@ Visualize the result:
 
 
 ``` r
-plot(npp_res,xlimits = c(5, 135),ylimits = c(0.05,1), draw_ci = TRUE) +
+plot(npp_res, xlimits = c(5, 135), ylimits = c(0.05,1), draw_ci = TRUE) +
   ggplot2::theme(legend.justification = c(0.25,1))
 ```
 
