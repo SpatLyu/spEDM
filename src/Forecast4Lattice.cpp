@@ -507,10 +507,14 @@ std::vector<std::vector<double>> PC4Lattice(const std::vector<double>& source,
 
   // Generate unique (E, b, tau) combinations
   std::vector<std::tuple<int, int, int>> unique_EbTau;
-  for (int e : Es)
-    for (int bb : bs)
+  for (int e : Es) {
+    for (int bb : bs) {
+      if (bb < e) continue;
+
       for (int t : taus)
         unique_EbTau.emplace_back(e, bb, t);
+    }
+  }
 
   std::vector<std::vector<double>> result(unique_EbTau.size(), std::vector<double>(6));
 
