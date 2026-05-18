@@ -248,6 +248,7 @@ Due to the statistical aggregation performed after simulating with the spatial l
 
 ``` r
 if (!requireNamespace("purrr")) install.packages("purrr")
+## Loading required namespace: purrr
 simplex_res = purrr::map2_dfr(list(s1,s2,s3), c("x","y","z"),
                               \(.list,.name) dplyr::mutate(.list$xmap,variable = .name))
 ggplot2::ggplot(data = simplex_res) +
