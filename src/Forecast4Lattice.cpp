@@ -540,6 +540,10 @@ std::vector<std::vector<double>> PC4Lattice(const std::vector<double>& source,
 
   // Check if full set is used
   bool use_subset = (selected_indices.size() < target.size());
+  
+  std::vector<size_t> lib_sub, pred_sub;
+  lib_sub.reserve(lib_indices.size());
+  pred_sub.reserve(pred_indices.size());
 
   if (use_subset) {
     std::unordered_map<size_t, size_t> index_map;
@@ -551,12 +555,12 @@ std::vector<std::vector<double>> PC4Lattice(const std::vector<double>& source,
 
     // --- Remap lib indices ---
     for (size_t i = 0; i < lib_indices.size(); ++i) {
-      lib_indices[i] = index_map[lib_indices[i]];
+      lib_sub.push_back(index_map[lib_indices[i]]);
     }
 
     // --- Remap pred indices ---
     for (size_t i = 0; i < pred_indices.size(); ++i) {
-      pred_indices[i] = index_map[pred_indices[i]];
+      pred_sub.push_back(index_map[pred_indices[i]]);
     }
   }
 
