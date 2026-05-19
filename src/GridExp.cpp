@@ -1296,7 +1296,7 @@ Rcpp::NumericMatrix RcppPC4Grid(const Rcpp::NumericMatrix& source,
     }
   }
 
-  if (pred_col == 1){
+  if (pred_col == 1) {
     for (int i = 0; i < pred.nrow(); ++i) {
       // disallow pred indices to point to vectors with NaN
       if (!std::isnan(sourceMat[(pred(i,0)-1) / numCols][(pred(i,0)-1) % numCols]) &&
@@ -1314,6 +1314,41 @@ Rcpp::NumericMatrix RcppPC4Grid(const Rcpp::NumericMatrix& source,
           !std::isnan(targetMat[currow-1][curcol-1])){
           pred_indices.push_back(static_cast<size_t>(LocateGridIndices(currow, curcol, numRows, numCols)));
       }
+    }
+  }
+  
+  // Prepare for data slicing
+  std::vector<size_t> selected_indices;
+  selected_indices.reserve(lib_indices.size() + pred_indices.size());
+  for (size_t i = 0; i < lib_indices.size(); ++i)
+    selected_indices.push_back(lib_indices[i]);
+  for (size_t i = 0; i < pred_indices.size(); ++i)
+    selected_indices.push_back(pred_indices[i]);
+  std::sort(selected_indices.begin(), selected_indices.end());
+  selected_indices.erase(
+    std::unique(selected_indices.begin(), selected_indices.end()),
+    selected_indices.end()
+  );
+
+  // Check if full set is used
+  bool use_subset = (selected_indices.size() < target_std.size());
+
+  if (use_subset) {
+    std::unordered_map<size_t, size_t> index_map;
+    index_map.reserve(selected_indices.size());
+
+    for (size_t i = 0; i < selected_indices.size(); ++i) {
+      index_map[selected_indices[i]] = i;
+    }
+
+    // --- Remap lib indices ---
+    for (size_t i = 0; i < lib_indices.size(); ++i) {
+      lib_indices[i] = index_map[lib_indices[i]];
+    }
+
+    // --- Remap pred indices ---
+    for (size_t i = 0; i < pred_indices.size(); ++i) {
+      pred_indices[i] = index_map[pred_indices[i]];
     }
   }
 
