@@ -693,9 +693,32 @@ std::vector<std::vector<double>> PC4Grid(const std::vector<std::vector<double>>&
       auto Mx = GenGridEmbeddings(source, Ei, taui, style);
       auto My = GenGridEmbeddings(target, Ei, taui, style);
 
-      PatternCausalityRes res = PatternCausality(
-        Mx, My, lib_indices, pred_indices, bi, zero_tolerance,
-        dist_metric, relative, weighted, 1);
+            PatternCausalityRes res;
+
+      if (!use_subset) {
+        // --- Full data: no slicing needed ---
+        res = PatternCausality(
+          Mx, My, lib_indices, pred_indices, bi, zero_tolerance,
+          dist_metric, relative, weighted, 1);
+      } else {
+        // --- Slice Mx and My ---
+        std::vector<std::vector<double>> Mx_sub;
+        std::vector<std::vector<double>> My_sub;
+
+        Mx_sub.reserve(selected_indices.size());
+        My_sub.reserve(selected_indices.size());
+
+        for (size_t i = 0; i < selected_indices.size(); ++i) {
+          size_t idx = selected_indices[i];
+          Mx_sub.push_back(Mx[idx]);
+          My_sub.push_back(My[idx]);
+        }
+
+        // --- Compute pattern causality on subset ---
+        res = PatternCausality(
+          Mx_sub, My_sub, lib_sub, pred_sub, bi, zero_tolerance,
+          dist_metric, relative, weighted, 1);
+      }
 
       result[i][0] = Ei;
       result[i][1] = bi;
