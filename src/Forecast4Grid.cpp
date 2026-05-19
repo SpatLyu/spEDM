@@ -693,7 +693,7 @@ std::vector<std::vector<double>> PC4Grid(const std::vector<std::vector<double>>&
       auto Mx = GenGridEmbeddings(source, Ei, taui, style);
       auto My = GenGridEmbeddings(target, Ei, taui, style);
 
-            PatternCausalityRes res;
+      PatternCausalityRes res;
 
       if (!use_subset) {
         // --- Full data: no slicing needed ---
