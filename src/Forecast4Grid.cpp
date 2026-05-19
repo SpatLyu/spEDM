@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <utility>
 #include <tuple>
+#include <unordered_map>
 #include "CppGridUtils.h"
 #include "SimplexProjection.h"
 #include "SMap.h"
@@ -590,6 +591,41 @@ std::vector<std::vector<double>> PC4Grid(const std::vector<std::vector<double>>&
 
       for (int t : taus)
         unique_EbTau.emplace_back(e, bb, t);
+    }
+  }
+
+  // Prepare for data slicing
+  std::vector<size_t> selected_indices;
+  selected_indices.reserve(lib_indices.size() + pred_indices.size());
+  for (size_t i = 0; i < lib_indices.size(); ++i)
+    selected_indices.push_back(lib_indices[i]);
+  for (size_t i = 0; i < pred_indices.size(); ++i)
+    selected_indices.push_back(pred_indices[i]);
+  std::sort(selected_indices.begin(), selected_indices.end());
+  selected_indices.erase(
+    std::unique(selected_indices.begin(), selected_indices.end()),
+    selected_indices.end()
+  );
+
+  // Check if full set is used
+  bool use_subset = (selected_indices.size() < target.size());
+
+  if (use_subset) {
+    std::unordered_map<size_t, size_t> index_map;
+    index_map.reserve(selected_indices.size());
+
+    for (size_t i = 0; i < selected_indices.size(); ++i) {
+      index_map[selected_indices[i]] = i;
+    }
+
+    // --- Remap lib indices ---
+    for (size_t i = 0; i < lib_indices.size(); ++i) {
+      lib_indices[i] = index_map[lib_indices[i]];
+    }
+
+    // --- Remap pred indices ---
+    for (size_t i = 0; i < pred_indices.size(); ++i) {
+      pred_indices[i] = index_map[pred_indices[i]];
     }
   }
 
