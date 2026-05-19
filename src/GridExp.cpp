@@ -3,6 +3,7 @@
 #include <string>
 #include <iterator>
 #include <algorithm>
+#include <unordered_map>
 #include "CppStats.h"
 #include "CppGridUtils.h"
 #include "Forecast4Grid.h"
