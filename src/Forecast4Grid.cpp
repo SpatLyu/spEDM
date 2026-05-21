@@ -608,7 +608,7 @@ std::vector<std::vector<double>> PC4Grid(const std::vector<std::vector<double>>&
   );
 
   // Check if full set is used
-  bool use_subset = (selected_indices.size() < target.size());
+  bool use_subset = (selected_indices.size() < target.size() * target[0].size());
   
   std::vector<size_t> lib_sub, pred_sub;
   lib_sub.reserve(lib_indices.size());
