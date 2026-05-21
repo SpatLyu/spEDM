@@ -7,7 +7,7 @@
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   res = RcppSMap4Lattice(vx,vy,nb,lib,pred,theta,E,tau,k,style,stack,
                          .check_distmetric(dist.metric),dist.average, threads)
-  return(.bind_xmapself(res,column,"smap"))
+  return(.bind_xmapself(res,target,"smap"))
 }
 
 .smap_spatraster_method = \(data, column, target, E = 3, k = E+2, tau = 1, style = 1, stack = FALSE, lib = NULL, pred = NULL, dist.metric = "L2",
@@ -19,7 +19,7 @@
   if (is.null(pred)) pred = lib
   res = RcppSMap4Grid(mx, my, lib, pred, theta, E, tau, k, style, stack,
                       .check_distmetric(dist.metric),dist.average,embed.direction,threads)
-  return(.bind_xmapself(res,column,"smap"))
+  return(.bind_xmapself(res,target,"smap"))
 }
 
 #' optimal parameter search for s-mapping
