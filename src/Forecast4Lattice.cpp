@@ -566,7 +566,7 @@ std::vector<std::vector<double>> PC4Lattice(const std::vector<double>& source,
 
   std::vector<std::vector<double>> result(unique_EbTau.size(), std::vector<double>(6));
 
-  if (parallel_level == 0){
+  if (parallel_level == 0) {
     for (size_t i = 0; i < unique_EbTau.size(); ++i) {
       const int Ei   = std::get<0>(unique_EbTau[i]);
       const int bi   = std::get<1>(unique_EbTau[i]);
