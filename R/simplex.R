@@ -7,7 +7,7 @@
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   res = RcppSimplex4Lattice(vx,vy,nb,lib,pred,E,k,tau,style,stack,
                             .check_distmetric(dist.metric),dist.average,threads)
-  return(.bind_xmapself(res,target,"simplex"))
+  return(.bind_xmapself(res,column,"simplex"))
 }
 
 .simplex_spatraster_method = \(data, column, target, E = 2:10, k = E+2, tau = 1, style = 1, stack = FALSE, lib = NULL, pred = NULL, dist.metric = "L2",
@@ -18,7 +18,7 @@
   if (is.null(pred)) pred = lib
   res = RcppSimplex4Grid(mx, my, lib, pred, E, k, tau, style, stack,
                          .check_distmetric(dist.metric),dist.average,embed.direction,threads)
-  return(.bind_xmapself(res,target,"simplex"))
+  return(.bind_xmapself(res,column,"simplex"))
 }
 
 #' optimal parameter search for simplex projection
