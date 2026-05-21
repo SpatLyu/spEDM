@@ -7,7 +7,7 @@
   if (is.null(nb)) nb = .internal_lattice_nb(data)
   res = RcppIC4Lattice(vx, vy, nb, lib, pred, E, k, tau, 0, style,
                        .check_distmetric(dist.metric),threads,0)
-  return(.bind_xmapself(res,target,"ic"))
+  return(.bind_xmapself(res,column,"ic"))
 }
 
 .ic_spatraster_method = \(data, column, target, E = 2:10, k = E+2, tau = 1, style = 1, lib = NULL, pred = NULL,
@@ -18,7 +18,7 @@
   if (is.null(pred)) pred = lib
   res = RcppIC4Grid(mx, my, lib, pred, E, k, tau, 0, style,
                     .check_distmetric(dist.metric),threads,0)
-  return(.bind_xmapself(res,target,"ic"))
+  return(.bind_xmapself(res,column,"ic"))
 }
 
 #' optimal parameter search for intersectional cardinality
