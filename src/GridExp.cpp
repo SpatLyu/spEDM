@@ -577,9 +577,9 @@ Rcpp::NumericVector RcppFNN4Grid(
   result.names() = resnames;
 
   // Terminal-friendly hint (one-time, non-intrusive)
-  Rcpp::Rcout << "[spEDM] Output 'E:i' corresponds to the i-th valid embedding dimension.\n"
-              << "[spEDM] Input E values exceeding max embeddable dimension were truncated.\n"
-              << "[spEDM] Please map output indices to original E inputs before interpretation.\n";
+  Rcpp::Rcout << "[fnn] Input E values exceeding max embeddable dimension were truncated, and values < 2 were clamped to 2.\n"
+              << "[fnn] Max embedding dimension E_max is auto-computed, with results returned for dimensions 1 through E_max.\n"
+              << "[fnn] Output 'E:i' (where i = 1 to E_max-1) corresponds to the comparison between dimension i and i+1.\n";
 
   return result;
 }
