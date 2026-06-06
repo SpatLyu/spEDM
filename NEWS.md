@@ -1,5 +1,9 @@
 # spEDM 1.13
 
+### enhancements
+
+* Clarify output indexing and boundary handling in `fnn` generic via console output modification (#999).
+
 # spEDM 1.12
 
 ### new
