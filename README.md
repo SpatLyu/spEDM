@@ -27,7 +27,7 @@
 - Install from [CRAN](https://CRAN.R-project.org/package=spEDM) with:
 
 ``` r
-install.packages("spEDM", dep = TRUE)
+install.packages("spEDM", dependencies = TRUE)
 ```
 
 - Install binary version from [R-universe](https://stscl.r-universe.dev/spEDM) with:
@@ -36,16 +36,14 @@ install.packages("spEDM", dep = TRUE)
 install.packages("spEDM",
                  repos = c("https://stscl.r-universe.dev",
                            "https://cloud.r-project.org"),
-                 dep = TRUE)
+                 dependencies = TRUE)
 ```
 
 - Install from source code on [GitHub](https://github.com/stscl/spEDM) with:
 
 ``` r
-if (!requireNamespace("devtools")) {
-    install.packages("devtools")
+if (!requireNamespace("pak", quietly = TRUE)) {
+    install.packages("pak")
 }
-devtools::install_github("stscl/spEDM",
-                         build_vignettes = TRUE,
-                         dep = TRUE)
+pak::pak("stscl/spEDM", dependencies = TRUE)
 ```
