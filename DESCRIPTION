@@ -9,8 +9,6 @@ Authors@R:
 Description: Inferring causation from spatial cross-sectional data through empirical dynamic modeling (EDM), with methodological extensions including geographical convergent cross mapping from Gao et al. (2023) <doi:10.1038/s41467-023-41619-6>, as well as the spatial causality test following the approach of Herrera et al. (2016) <doi:10.1111/pirs.12144>, together with geographical pattern causality proposed in Zhang & Wang (2025) <doi:10.1080/13658816.2025.2581207>.
 License: GPL-3
 Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 URL: https://stscl.github.io/spEDM/, https://github.com/stscl/spEDM
 BugReports: https://github.com/stscl/spEDM/issues
 Depends: 
@@ -35,3 +33,5 @@ Suggests:
     readr,
     plot3D
 VignetteBuilder: knitr
+Config/roxygen2/markdown: TRUE
+Config/roxygen2/version: 8.0.0
