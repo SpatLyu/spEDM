@@ -2,7 +2,7 @@
 
 ### enhancements
 
-* No longer loads the `sf` and `terra` namespaces when loading `spEDM` package. (#1000).
+* No longer loads the `sf` and `terra` namespaces when loading `spEDM` package (#1000).
 
 * Clarify output indexing and boundary handling in `fnn` generic via console output modification (#999).
 
