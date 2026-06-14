@@ -96,7 +96,7 @@
 
 * Remove redundant internal case data (`cu.tif`) from the package (#828).
 
-* Harmonize parameter order across s4 generics for spatial vector and raster data (#817).
+* Harmonize parameter order across S4 generics for spatial vector and raster data (#817).
 
 # spEDM 1.8
 
@@ -131,6 +131,8 @@
 * Provide R-level API and vignette for spatial logistic map ([#609](https://github.com/stscl/spEDM/pull/609),[#612](https://github.com/stscl/spEDM/pull/612)).
 
 ### enhancements
+
+* No longer initializes the RNG state when loading `spEDM` (#652).
 
 * Replace logical vectors with integer index vectors for `lib` and `pred` in `simplex` and `s-mapping` forecasting sources (#632).
 
