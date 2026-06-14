@@ -2,6 +2,8 @@
 
 ### enhancements
 
+* No longer loads the `sf` and `terra` namespaces when loading `spEDM` package. (#1000).
+
 * Clarify output indexing and boundary handling in `fnn` generic via console output modification (#999).
 
 # spEDM 1.12
@@ -132,7 +134,7 @@
 
 ### enhancements
 
-* No longer initializes the RNG state when loading `spEDM` (#652).
+* No longer initializes the RNG state when loading `spEDM` package (#652).
 
 * Replace logical vectors with integer index vectors for `lib` and `pred` in `simplex` and `s-mapping` forecasting sources (#632).
 
