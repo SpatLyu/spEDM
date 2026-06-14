@@ -92,8 +92,6 @@
 
 * Support spatial grid(raster) data detrending with cell center coordinates or row/column numbers (#815).
 
-* Adjust `Makevars` to track latest rcpparmadillo release and armadillo updates improving build integration and forward compatibility (#785).
-
 ### breaking changes
 
 * Remove redundant internal case data (`cu.tif`) from the package (#828).
