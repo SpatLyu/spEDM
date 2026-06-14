@@ -96,6 +96,8 @@
 #' @export
 #' @name gcmc
 #' @aliases gcmc,sf-method
+#' @references
+#' Lyu, W., Dai, S., Song, Y., Zhao, W., Yi, W., Xiao, Y., & Jia, N, 2026. Measuring causal strengths from spatial cross sectional data with geographical cross mapping cardinality. International Journal of Geographical Information Science.
 #'
 #' @examples
 #' columbus = sf::read_sf(system.file("case/columbus.gpkg",package="spEDM"))

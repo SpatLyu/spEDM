@@ -2,8 +2,8 @@
 title: "Geographical Cross Mapping Cardinality"
 author: "Wenbo Lyu"
 date: |
-  | Last update: 2026-02-15
-  | Last run: 2026-04-05
+  | Last update: 2026-06-15
+  | Last run: 2026-06-15
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{5. Geographical Cross Mapping Cardinality}
