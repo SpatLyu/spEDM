@@ -42,10 +42,8 @@ install.packages("spEDM",
 - Install from source code on [GitHub](https://github.com/stscl/spEDM) with:
 
 ``` r
-if (!requireNamespace("devtools")) {
-    install.packages("devtools")
+if (!requireNamespace("pak", quietly = TRUE)) {
+    install.packages("pak")
 }
-devtools::install_github("stscl/spEDM",
-                         build_vignettes = TRUE,
-                         dep = TRUE)
+pak::pak("stscl/spEDM", dependencies = TRUE)
 ```
