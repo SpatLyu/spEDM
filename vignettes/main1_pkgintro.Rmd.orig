@@ -2,7 +2,7 @@
 title: "Introduction to the spEDM package"
 author: "Wenbo Lyu"
 date: |
-  | Last update: 2026-02-15
+  | Last update: 2026-06-10
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -30,7 +30,7 @@ To support both learning and practical application, *spEDM* offers four carefull
 Install the stable version from [CRAN](https://CRAN.R-project.org/package=spEDM) with:
 
 ```r
-install.packages("spEDM", dep = TRUE)
+install.packages("spEDM", dependencies = TRUE)
 ```
 
 Alternatively, you can install the development version from [R-universe](https://stscl.r-universe.dev/spEDM) with:
@@ -39,7 +39,7 @@ Alternatively, you can install the development version from [R-universe](https:/
 install.packages("spEDM",
                  repos = c("https://stscl.r-universe.dev",
                            "https://cloud.r-project.org"),
-                 dep = TRUE)
+                 dependencies = TRUE)
 ```
 
 ## Data
