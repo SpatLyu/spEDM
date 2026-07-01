@@ -2,6 +2,8 @@
 
 ### enhancements
 
+* Integrate accepted IJGIS publication details for geographical cross mapping cardinality (#1005).
+
 * No longer loads the `sf` and `terra` namespaces when loading `spEDM` package (#1000).
 
 * Clarify output indexing and boundary handling in `fnn` generic via console output modification (#999).
