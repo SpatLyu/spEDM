@@ -2,7 +2,7 @@ citHeader("To cite package spEDM in publications, please use:")
 
 bibentry(
   bibtype      = "Article",
-  title        = "Measuring causal strengths from spatial cross sectional data with geographical cross mapping cardinality",
+  title        = "Measuring causal strengths from spatial cross-sectional data with geographical cross mapping cardinality",
   author       = "Wenbo Lyu and Shaoqing Dai and Yongze Song and Wufan Zhao and Wen Yi and Yumiao Xiao and Nan Jia",
   journal      = "International Journal of Geographical Information Science",
   year         = "2026",
