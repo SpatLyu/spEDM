@@ -11,6 +11,7 @@
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-20b2aa.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![R-CMD-check](https://github.com/stscl/spEDM/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/stscl/spEDM/actions/workflows/R-CMD-check.yaml)
 [![R-universe](https://stscl.r-universe.dev/badges/spEDM?color=cyan)](https://stscl.r-universe.dev/spEDM)
+[![IJGIS](https://img.shields.io/badge/IJGIS-10.1080%2F13658816.2026.2687121-blue?style=flat)](https://doi.org/10.1080/13658816.2026.2687121)
 
 <!-- badges: end -->
 
