@@ -43,14 +43,7 @@
   return(.varname)
 }
 
-.internal_lattice_nb = \(data){
-  if (sdsfun::sf_geometry_type(data) %in% c('point','multipoint')){
-    nb = sdsfun::spdep_nb(data,k = 8)
-  } else {
-    nb = sdsfun::spdep_nb(data)
-  }
-  return(nb)
-}
+.internal_lattice_nb = \(data) sdsfun::spdep_nb(data)
 
 .internal_grid2df = \(data, grid.coord = TRUE){
   if (grid.coord) {
