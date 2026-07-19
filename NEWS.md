@@ -10,6 +10,10 @@
 
 * Clarify output indexing and boundary handling in `fnn` generic via console output modification (#999).
 
+### bug fixes
+
+* Fix incorrect auto-filling of default `E`, `tau`, `k` parameters in `scpcm` generic (#1009).
+
 # spEDM 1.12
 
 ### new

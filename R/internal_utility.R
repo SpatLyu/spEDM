@@ -9,12 +9,14 @@
 }
 
 .check_inputelementnum = \(x,n,condsnum = NULL){
-  if (is.null(condsnum) || length(x) == 1){
+  if (is.null(condsnum)){
     res = rep(x,length.out = n)
+  } else if (length(x) == 1) {
+    res = rep(x,length.out = 2 + condsnum)
   } else if (length(x) == 2) {
     res = c(rep(x[1],2),rep(x[2],condsnum))
   } else {
-    res = c(x[1:2],rep(x[c(-1,-2)],length.out = condsnum))
+    res = c(x[1:2],rep(rev(x[c(-1,-2)]),length.out = condsnum))
   }
   return(res)
 }
