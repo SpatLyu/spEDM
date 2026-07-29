@@ -20,7 +20,6 @@ double KSGMI(
     double base = 2.0)
 {
     const size_t n = d_xy.size();
-    const size_t d = xy.size();
 
     double sum = 0.0;
     double avg_log_eps = 0.0;
@@ -34,7 +33,7 @@ double KSGMI(
                 row.begin(),
                 row.end(),
                 [](double v){ return std::isnan(v); }),
-                row.end());
+            row.end());
 
         if (row.size() < k)
             throw std::runtime_error("k larger than valid neighbor count");
@@ -67,29 +66,29 @@ double KSGMI(
         else
             sum += CppDigamma(nx)
                 + CppDigamma(ny);
-        }
-
-        avg_log_eps /= n;
-
-        double mival = CppDigamma(k)
-                     + CppDigamma(n)
-                     - sum / n;
-
-        if (alg == 1) mival -= 1.0 / k;
-
-        mival = std::max(0.0, mival);
-
-        double hxy = CppDigamma(n)
-                   - CppDigamma(k)
-                   + d * avg_log_eps;
-        if (alg == 1) hxy += 1.0 / k;
-
-        if (hxy <= 0) {
-            if (doubleNearlyEqual(base,std::exp(1.0)))
-                mival /= std::log(base);
-
-            return mival;
-        } 
-
-        return mival / hxy;
     }
+
+    avg_log_eps /= n;
+
+    double mival = CppDigamma(k)
+                 + CppDigamma(n)
+                 - sum / n;
+
+    if (alg == 1) mival -= 1.0 / k;
+
+    mival = std::max(0.0, mival);
+
+    double hxy = CppDigamma(n)
+               - CppDigamma(k)
+               + 2 * avg_log_eps;
+    if (alg == 1) hxy += 1.0 / k;
+
+    if (hxy <= 0) {
+        if (doubleNearlyEqual(base,std::exp(1.0)))
+            mival /= std::log(base);
+
+        return mival;
+    } 
+
+    return mival / hxy;
+}
