@@ -16,60 +16,55 @@ double KSGMI(
     size_t k = 3,
     size_t alg = 0,
     double base = 2.0)
-    {
-        const size_t n = d_xy.size();
-        const size_t d = xy.size();
+{
+    const size_t n = d_xy.size();
+    const size_t d = xy.size();
 
-        double sum = 0.0;
-        double avg_log_eps = 0.0;
+    double sum = 0.0;
+    double avg_log_eps = 0.0;
 
-        for (size_t i = 0; i < n; ++i)
-        {   
-            auto& row = d_xy[i];
-            row[i] = std::numeric_limits<double>::quiet_NaN();
+    for (size_t i = 0; i < n; ++i) {   
+        auto& row = d_xy[i];
+        row[i] = std::numeric_limits<double>::quiet_NaN();
 
-            row.erase(
-                std::remove_if(
-                    row.begin(),
-                    row.end(),
-                    [](double v){ return std::isnan(v); }),
+        row.erase(
+            std::remove_if(
+                row.begin(),
+                row.end(),
+                [](double v){ return std::isnan(v); }),
                 row.end());
 
-            if (row.size() < k)
-                throw std::runtime_error("k larger than valid neighbor count");
+        if (row.size() < k)
+            throw std::runtime_error("k larger than valid neighbor count");
 
-            std::nth_element(row.begin(),row.begin()+k-1,row.end());
+        std::nth_element(row.begin(),row.begin()+k-1,row.end());
             
-            double eps = row[k-1];
-            // double eps = std::max(row[k-1], 1e-15);
+        double eps = row[k-1];
+        // double eps = std::max(row[k-1], 1e-15);
 
-            avg_log_eps += (doubleNearlyEqual(eps*2.0, 0.0) || eps < 0) 
-                            ? 0.0 : std::log(eps * 2.0);
+        avg_log_eps += (doubleNearlyEqual(eps*2.0, 0.0) || eps < 0) 
+                        ? 0.0 : std::log(eps * 2.0);
 
-            size_t nx = 0, ny = 0;
+        size_t nx = 0, ny = 0;
 
-            for (size_t j = 0; j < n; ++j)
-            {
-                if (i == j) continue;
+        for (size_t j = 0; j < n; ++j) {
+            if (i == j) continue;
 
-                if (alg == 0)
-                {
-                    if (!std::isnan(d_x[i][j]) && d_x[i][j] < eps) nx++;
-                    if (!std::isnan(d_y[i][j]) && d_y[i][j] < eps) ny++;
-                }
-                else 
-                {
-                    if (!std::isnan(d_x[i][j]) && d_x[i][j] <= eps) nx++;
-                    if (!std::isnan(d_y[i][j]) && d_y[i][j] <= eps) ny++;
-                } 
-            }
+            if (alg == 0) {
+                if (!std::isnan(d_x[i][j]) && d_x[i][j] < eps) nx++;
+                if (!std::isnan(d_y[i][j]) && d_y[i][j] < eps) ny++;
+            } else {
+                if (!std::isnan(d_x[i][j]) && d_x[i][j] <= eps) nx++;
+                if (!std::isnan(d_y[i][j]) && d_y[i][j] <= eps) ny++;
+            } 
+        }
 
-            if (alg == 0)
-                sum += CppDigamma(nx+1)
-                     + CppDigamma(ny+1);
-            else
-                sum += CppDigamma(nx)
-                     + CppDigamma(ny);
+        if (alg == 0)
+            sum += CppDigamma(nx+1)
+                + CppDigamma(ny+1);
+        else
+            sum += CppDigamma(nx)
+                + CppDigamma(ny);
         }
 
         avg_log_eps /= n;
@@ -96,3 +91,4 @@ double KSGMI(
 
         return mival / hxy;
     }
+    
