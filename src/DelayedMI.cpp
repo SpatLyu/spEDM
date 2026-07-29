@@ -17,7 +17,8 @@ double KSGMI(
     const std::vector<double>& d_y,
     size_t k = 3,
     size_t alg = 0,
-    double base = 2.0)
+    double base = 2.0,
+    bool normalize = false)
 {
     const size_t n = d_xy.size();
 
@@ -77,6 +78,13 @@ double KSGMI(
     if (alg == 1) mival -= 1.0 / k;
 
     mival = std::max(0.0, mival);
+
+    if (!normalize) {
+        if (!doubleNearlyEqual(base,std::exp(1.0)))
+                mival /= std::log(base);
+
+        return mival;
+    } 
 
     double hxy = CppDigamma(n)
                - CppDigamma(k)
