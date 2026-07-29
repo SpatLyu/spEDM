@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <stdexcept>
 #include "NumericUtils.h"
+#include "CppStats.h"
+#include <RcppThread.h>
 
 /***********************************************************
  * Mutual Information (KSG estimator)
@@ -91,4 +93,3 @@ double KSGMI(
 
         return mival / hxy;
     }
-    
