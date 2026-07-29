@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include "NumericUtils.h"
 #include "CppStats.h"
+#include "CppDistances.h"
 #include <RcppThread.h>
 
 /***********************************************************
