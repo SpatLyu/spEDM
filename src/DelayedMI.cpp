@@ -131,50 +131,31 @@ std::vector<double> CppDMI(const std::vector<std::vector<double>>& embedding,
             }
         }
     }
-   
 
-  // Determine distance metric: true → L1 norm, false → L2 norm
-  bool L1norm = (dist_metric == 1);
+    const size_t taus = embedding[0].size();
+    std::vector<double> results(taus, std::numeric_limits<double>::quiet_NaN());
 
-  // --------------------------------------------------------------------------
-  // Step 1: Compute pairwise distances between prediction and library indices
-  // --------------------------------------------------------------------------
-  auto compute_distance = [&](size_t p) {
-    size_t pi = pred[p];
-    for (size_t i = 0; i < lib.size(); ++i) {
-      size_t li = lib[i];
-      if (pi == li) continue;
-      double dist = CppDistance(vec[pi], vec[li], L1norm, true);
-      if (!std::isnan(dist)) {
-        Dx[pi][li] = dist;  // assign distance; no mirroring required
-      }
+    if (embedding.empty()) {
+        return results; 
     }
-  };
 
-  size_t max_E2 = embedding[0].size();
-  std::vector<double> results(max_E2 - 1, std::numeric_limits<double>::quiet_NaN());
-
-  if (embedding.empty() || embedding[0].size() < 2) {
-    return results;  // Not enough dimensions to compute FNN
-  }
-
-  if (parallel_level == 0){
-    // Loop through E1 = 1 to max_E2 - 1
-    for (size_t E1 = 1; E1 < max_E2; ++E1) {
-      size_t E2 = E1 + 1;
-      double fnn_ratio = CppSingleFNN(embedding, lib, pred, E1, E2, threads_sizet,
-                                      parallel_level, Rtol[E1 - 1], Atol[E1 - 1], L1norm);
-      results[E1 - 1] = fnn_ratio;
+    if (parallel_level == 0){
+        // Loop through E1 = 1 to max_E2 - 1
+        for (size_t E1 = 1; E1 < max_E2; ++E1) {
+        size_t E2 = E1 + 1;
+        double fnn_ratio = CppSingleFNN(embedding, lib, pred, E1, E2, threads_sizet,
+                                        parallel_level, Rtol[E1 - 1], Atol[E1 - 1], L1norm);
+        results[E1 - 1] = fnn_ratio;
+        }
+    } else {
+        // Parallel computation
+        RcppThread::parallelFor(1, max_E2, [&](size_t E1) {
+        size_t E2 = E1 + 1;
+        double fnn_ratio = CppSingleFNN(embedding, lib, pred, E1, E2, threads_sizet,
+                                        parallel_level, Rtol[E1 - 1], Atol[E1 - 1], L1norm);
+        results[E1 - 1] = fnn_ratio;
+        }, threads_sizet);
     }
-  } else {
-    // Parallel computation
-    RcppThread::parallelFor(1, max_E2, [&](size_t E1) {
-      size_t E2 = E1 + 1;
-      double fnn_ratio = CppSingleFNN(embedding, lib, pred, E1, E2, threads_sizet,
-                                      parallel_level, Rtol[E1 - 1], Atol[E1 - 1], L1norm);
-      results[E1 - 1] = fnn_ratio;
-    }, threads_sizet);
-  }
 
-  return results;
+    return results;
 }
