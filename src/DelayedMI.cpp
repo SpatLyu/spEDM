@@ -14,8 +14,8 @@
  ***********************************************************/
 double KSGMI(
     const std::vector<std::vector<double>>& d_xy,
-    const std::vector<double>& d_x,
-    const std::vector<double>& d_y,
+    const std::vector<std::vector<double>>& d_x,
+    const std::vector<std::vector<double>>& d_y,
     size_t k = 3,
     size_t alg = 0,
     double base = 2.0,
@@ -107,7 +107,8 @@ std::vector<double> CppDMI(const std::vector<std::vector<double>>& embedding,
                            size_t k = 3,
                            size_t alg = 0,
                            double base = 2.0,
-                           bool normalize = false){
+                           bool normalize = false,
+                           parallel_level == 0){
     // Configure threads (cap at hardware concurrency)
     size_t threads_sizet = static_cast<size_t>(std::abs(threads));
     threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
@@ -169,6 +170,8 @@ std::vector<double> CppDMI(const std::vector<std::vector<double>>& embedding,
                     }
                 }
             }
+
+            results[tau] = KSG;
         }
     } else {
         // Parallel computation
