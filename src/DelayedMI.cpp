@@ -110,9 +110,33 @@ std::vector<double> CppDMI(const std::vector<std::vector<double>>& embedding,
                            double base = 2.0,
                            bool normalize = false
                            int parallel_level = 0){
-  // Configure threads
+  // Configure threads (cap at hardware concurrency)
   size_t threads_sizet = static_cast<size_t>(std::abs(threads));
   threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
+
+  const size_t n_row = pred.size();
+  const size_t n_col = lib.size();
+
+  // Initialize distance matrix (n_obs × n_obs) filled with NaN
+  std::vector<std::vector<double>> Dx(
+      n_obs, std::vector<double>(n_obs, std::numeric_limits<double>::quiet_NaN()));
+
+  // Determine distance metric: true → L1 norm, false → L2 norm
+  bool L1norm = (dist_metric == 1);
+
+  // --------------------------------------------------------------------------
+  // Step 1: Compute pairwise distances between prediction and library indices
+  // --------------------------------------------------------------------------
+  auto compute_distance = [&](size_t p) {
+    size_t pi = pred_indices[p];
+    for (size_t li : lib_indices) {
+      if (pi == li) continue;
+      double dist = CppDistance(Mx[pi], Mx[li], L1norm, true);
+      if (!std::isnan(dist)) {
+        Dx[pi][li] = dist;  // assign distance; no mirroring required
+      }
+    }
+  };
 
   size_t max_E2 = embedding[0].size();
   std::vector<double> results(max_E2 - 1, std::numeric_limits<double>::quiet_NaN());
