@@ -28,7 +28,7 @@ double KSGMI(
     double avg_log_eps = 0.0;
 
     for (size_t i = 0; i < n; ++i) {   
-        auto& row = d_xy[i];
+        auto row = d_xy[i];
 
         row.erase(
             std::remove_if(
@@ -108,6 +108,7 @@ std::vector<double> CppDMI(const std::vector<std::vector<double>>& embedding,
                            size_t alg = 0,
                            double base = 2.0,
                            bool normalize = false,
+                           int threads = 8,
                            int parallel_level = 1){
     // Configure threads (cap at hardware concurrency)
     size_t threads_sizet = static_cast<size_t>(std::abs(threads));
