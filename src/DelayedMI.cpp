@@ -166,18 +166,6 @@ std::vector<double> CppDMI(const std::vector<std::vector<double>>& embedding,
                 }
             }, threads_sizet);
 
-            
-    
-            for (size_t i = 0; i < lib.size(); ++i) {
-                for (size_t j = 0; j < pred.size(); ++j) {
-                    if (!std::isnan(Dx[j][i]) || !std::isnan(Dy[j][i])) continue;
-                    double dist = std::max(Dx[j][i], Dy[j][i]);
-                    if (!std::isnan(dist)) {
-                        Dxy[j][i] = dist;  // assign distance; no mirroring required
-                    }
-                }
-            }
-
             results[tau] = KSGMI(Dxy, Dx, Dy, k, alg, base, normalize);
         }
     } else {
