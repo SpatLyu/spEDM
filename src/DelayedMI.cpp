@@ -103,6 +103,7 @@ double KSGMI(
 }
 
 std::vector<double> CppDMI(const std::vector<std::vector<double>>& embedding,
+                           const std::vector<double>& vec,
                            const std::vector<size_t>& lib,
                            const std::vector<size_t>& pred,
                            size_t k = 3,
@@ -110,16 +111,29 @@ std::vector<double> CppDMI(const std::vector<std::vector<double>>& embedding,
                            double base = 2.0,
                            bool normalize = false
                            int parallel_level = 0){
-  // Configure threads (cap at hardware concurrency)
-  size_t threads_sizet = static_cast<size_t>(std::abs(threads));
-  threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
+    // Configure threads (cap at hardware concurrency)
+    size_t threads_sizet = static_cast<size_t>(std::abs(threads));
+    threads_sizet = std::min(static_cast<size_t>(std::thread::hardware_concurrency()), threads_sizet);
 
-  const size_t n_row = pred.size();
-  const size_t n_col = lib.size();
+    const size_t n_row = pred.size();
+    const size_t n_col = lib.size();
 
-  // Initialize distance matrix (pred.size × lib.size) filled with NaN
-  std::vector<std::vector<double>> Dx(
-      n_row, std::vector<double>(n_col, std::numeric_limits<double>::quiet_NaN()));
+    // Compute pairwise distances for original vector
+    std::vector<std::vector<double>> Dx(
+        n_row, std::vector<double>(n_col, std::numeric_limits<double>::quiet_NaN()));
+    
+    for (size_t i = 0; i < lib.size(); ++i) {
+        for (size_t j = 0; j < pred.size(); ++j) {
+            size_t li = lib[i];
+            size_t pi = pred[j];
+            if (pi == li) continue;
+            double dist = std::abs(vec[pi] - vec[li]);
+            if (!std::isnan(dist)) {
+                Dx[j][i] = dist;  // assign distance; no mirroring required
+            }
+        }
+    }
+   
 
   // Determine distance metric: true → L1 norm, false → L2 norm
   bool L1norm = (dist_metric == 1);
@@ -128,10 +142,11 @@ std::vector<double> CppDMI(const std::vector<std::vector<double>>& embedding,
   // Step 1: Compute pairwise distances between prediction and library indices
   // --------------------------------------------------------------------------
   auto compute_distance = [&](size_t p) {
-    size_t pi = pred_indices[p];
-    for (size_t li : lib_indices) {
+    size_t pi = pred[p];
+    for (size_t i = 0; i < lib.size(); ++i) {
+      size_t li = lib[i];
       if (pi == li) continue;
-      double dist = CppDistance(Mx[pi], Mx[li], L1norm, true);
+      double dist = CppDistance(vec[pi], vec[li], L1norm, true);
       if (!std::isnan(dist)) {
         Dx[pi][li] = dist;  // assign distance; no mirroring required
       }
