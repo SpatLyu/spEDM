@@ -28,14 +28,14 @@ double KSGMI(
     double avg_log_eps = 0.0;
 
     for (size_t i = 0; i < n; ++i) {   
-        auto row = d_xy[i];
+        std::vector<double> row;
+        row.reserve(p);
 
-        row.erase(
-            std::remove_if(
-                row.begin(),
-                row.end(),
-                [](double v){ return std::isnan(v); }),
-            row.end());
+        for (double val : d_xy[i]) {
+            if (!std::isnan(val)) {
+                row.push_back(val);
+            }
+        }
 
         if (row.size() < k)
             throw std::runtime_error("k larger than valid neighbor count");
