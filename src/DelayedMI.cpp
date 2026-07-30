@@ -162,12 +162,10 @@ std::vector<double> CppDMI(const std::vector<std::vector<double>>& embedding,
     
             for (size_t i = 0; i < lib.size(); ++i) {
                 for (size_t j = 0; j < pred.size(); ++j) {
-                    size_t li = lib[i];
-                    size_t pi = pred[j];
-                    if (pi == li) continue;
-                    double dist = std::abs(embedding[pi][tau] - embedding[li][tau]);
+                    if (std::isnan(Dx[j][i]) || std::isnan(Dy[j][i])) continue;
+                    double dist = std::max(Dx[j][i], Dy[j][i]);
                     if (!std::isnan(dist)) {
-                        Dy[j][i] = dist;  // assign distance; no mirroring required
+                        Dxy[j][i] = dist;  // assign distance; no mirroring required
                     }
                 }
             }
