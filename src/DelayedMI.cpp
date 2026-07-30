@@ -146,6 +146,10 @@ std::vector<double> CppDMI(const std::vector<std::vector<double>>& embedding,
                 n_row, 
                 std::vector<double>(n_col, std::numeric_limits<double>::quiet_NaN()));
 
+            std::vector<std::vector<double>> Dxy(
+                n_row, 
+                std::vector<double>(n_col, std::numeric_limits<double>::quiet_NaN()));
+
             RcppThread::parallelFor(0, pred.size(), [&](size_t j) {
                 for (size_t i = 0; i < lib.size(); ++i) {
                     size_t li = lib[i];
@@ -154,17 +158,19 @@ std::vector<double> CppDMI(const std::vector<std::vector<double>>& embedding,
                     double dist = std::abs(embedding[pi][tau] - embedding[li][tau]);
                     if (!std::isnan(dist)) {
                         Dy[j][i] = dist;  // assign distance; no mirroring required
+
+                        if (!std::isnan(Dx[j][i]) {
+                             Dxy[j][i] = std::max(Dx[j][i], dist);
+                        }
                     }
                 }
             }, threads_sizet);
 
-            std::vector<std::vector<double>> Dxy(
-                n_row, 
-                std::vector<double>(n_col, std::numeric_limits<double>::quiet_NaN()));
+            
     
             for (size_t i = 0; i < lib.size(); ++i) {
                 for (size_t j = 0; j < pred.size(); ++j) {
-                    if (std::isnan(Dx[j][i]) || std::isnan(Dy[j][i])) continue;
+                    if (!std::isnan(Dx[j][i]) || !std::isnan(Dy[j][i])) continue;
                     double dist = std::max(Dx[j][i], Dy[j][i]);
                     if (!std::isnan(dist)) {
                         Dxy[j][i] = dist;  // assign distance; no mirroring required
