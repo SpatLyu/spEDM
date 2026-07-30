@@ -139,7 +139,7 @@ std::vector<double> CppDMI(const std::vector<std::vector<double>>& embedding,
         return results; 
     }
 
-    if (parallel_level == 0){
+    if (parallel_level == 0) {
         for (size_t tau = 0; tau < tau_dim; ++tau) {
             std::vector<std::vector<double>> Dy(
                 n_row, 
@@ -174,12 +174,39 @@ std::vector<double> CppDMI(const std::vector<std::vector<double>>& embedding,
             results[tau] = KSGMI(Dxy, Dx, Dy, k, alg, base, normalize);
         }
     } else {
-        // Parallel computation
-        RcppThread::parallelFor(1, max_E2, [&](size_t E1) {
-        size_t E2 = E1 + 1;
-        double fnn_ratio = CppSingleFNN(embedding, lib, pred, E1, E2, threads_sizet,
-                                        parallel_level, Rtol[E1 - 1], Atol[E1 - 1], L1norm);
-        results[E1 - 1] = fnn_ratio;
+        // High-level parallel computation
+        RcppThread::parallelFor(0, tau_dim, [&](size_t tau) {
+            std::vector<std::vector<double>> Dy(
+                n_row, 
+                std::vector<double>(n_col, std::numeric_limits<double>::quiet_NaN()));
+    
+            for (size_t i = 0; i < lib.size(); ++i) {
+                for (size_t j = 0; j < pred.size(); ++j) {
+                    size_t li = lib[i];
+                    size_t pi = pred[j];
+                    if (pi == li) continue;
+                    double dist = std::abs(embedding[pi][tau] - embedding[li][tau]);
+                    if (!std::isnan(dist)) {
+                        Dy[j][i] = dist;  // assign distance; no mirroring required
+                    }
+                }
+            }
+
+            std::vector<std::vector<double>> Dxy(
+                n_row, 
+                std::vector<double>(n_col, std::numeric_limits<double>::quiet_NaN()));
+    
+            for (size_t i = 0; i < lib.size(); ++i) {
+                for (size_t j = 0; j < pred.size(); ++j) {
+                    if (std::isnan(Dx[j][i]) || std::isnan(Dy[j][i])) continue;
+                    double dist = std::max(Dx[j][i], Dy[j][i]);
+                    if (!std::isnan(dist)) {
+                        Dxy[j][i] = dist;  // assign distance; no mirroring required
+                    }
+                }
+            }
+
+            results[tau] = KSGMI(Dxy, Dx, Dy, k, alg, base, normalize);
         }, threads_sizet);
     }
 
