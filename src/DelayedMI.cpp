@@ -140,13 +140,14 @@ std::vector<double> CppDMI(const std::vector<std::vector<double>>& embedding,
     }
 
     if (parallel_level == 0) {
+        // Low-level parallel computation
         for (size_t tau = 0; tau < tau_dim; ++tau) {
             std::vector<std::vector<double>> Dy(
                 n_row, 
                 std::vector<double>(n_col, std::numeric_limits<double>::quiet_NaN()));
-    
-            for (size_t i = 0; i < lib.size(); ++i) {
-                for (size_t j = 0; j < pred.size(); ++j) {
+
+            RcppThread::parallelFor(0, pred.size(), [&](size_t j) {
+                for (size_t i = 0; i < lib.size(); ++i) {
                     size_t li = lib[i];
                     size_t pi = pred[j];
                     if (pi == li) continue;
@@ -155,7 +156,7 @@ std::vector<double> CppDMI(const std::vector<std::vector<double>>& embedding,
                         Dy[j][i] = dist;  // assign distance; no mirroring required
                     }
                 }
-            }
+            }, threads_sizet);
 
             std::vector<std::vector<double>> Dxy(
                 n_row, 
