@@ -117,9 +117,9 @@ std::vector<double> CppDMI(const std::vector<std::vector<double>>& embedding,
   const size_t n_row = pred.size();
   const size_t n_col = lib.size();
 
-  // Initialize distance matrix (n_obs × n_obs) filled with NaN
+  // Initialize distance matrix (pred.size × lib.size) filled with NaN
   std::vector<std::vector<double>> Dx(
-      n_obs, std::vector<double>(n_obs, std::numeric_limits<double>::quiet_NaN()));
+      n_row, std::vector<double>(n_col, std::numeric_limits<double>::quiet_NaN()));
 
   // Determine distance metric: true → L1 norm, false → L2 norm
   bool L1norm = (dist_metric == 1);
