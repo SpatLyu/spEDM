@@ -22,13 +22,13 @@ double KSGMI(
     bool normalize = false
 ){
     const size_t n = d_xy.size();
+    const size_t p = d_xy[0].size();
 
     double sum = 0.0;
     double avg_log_eps = 0.0;
 
     for (size_t i = 0; i < n; ++i) {   
         auto& row = d_xy[i];
-        row[i] = std::numeric_limits<double>::quiet_NaN();
 
         row.erase(
             std::remove_if(
@@ -40,7 +40,7 @@ double KSGMI(
         if (row.size() < k)
             throw std::runtime_error("k larger than valid neighbor count");
 
-        std::nth_element(row.begin(),row.begin()+k-1,row.end());
+        std::nth_element(row.begin(), row.begin()+k-1, row.end());
             
         double eps = row[k-1];
         // double eps = std::max(row[k-1], 1e-15);
@@ -50,9 +50,7 @@ double KSGMI(
 
         size_t nx = 0, ny = 0;
 
-        for (size_t j = 0; j < n; ++j) {
-            if (i == j) continue;
-
+        for (size_t j = 0; j < p; ++j) {
             if (alg == 0) {
                 if (!std::isnan(d_x[i][j]) && d_x[i][j] < eps) nx++;
                 if (!std::isnan(d_y[i][j]) && d_y[i][j] < eps) ny++;
