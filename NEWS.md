@@ -12,7 +12,7 @@
 
 ### bug fixes
 
-* Fix incorrect auto-filling of default `E`, `tau`, `k` parameters in SCPCM (#1009).
+* Fix incorrect auto-filling of default `E`, `tau`, `k` parameters in `scpcm` generic (#1009).
 
 # spEDM 1.12
 
