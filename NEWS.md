@@ -12,7 +12,7 @@
 
 ### bug fixes
 
-* fix incorrect auto-filling of default E, tau, k parameter lengths in SCPCM (#1009).
+* Fix incorrect auto-filling of default `E`, `tau`, `k` parameters in SCPCM (#1009).
 
 # spEDM 1.12
 
