@@ -2,7 +2,7 @@
 title: "Spatial Logistic Map"
 author: "Wenbo Lyu"
 date: |
-  | Last update: 2026-02-15
+  | Last update: 2026-07-20
   | Last run: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
@@ -97,7 +97,7 @@ sim_trispecies = \(nx,ny,seed = 123){
   set.seed(seed)
   res = replicate(3, {
     MASS::mvrnorm(1, rep(0, nrow(grid)), cov.mat) |>
-      pmax(0) |>
+      #pmax(0) |>
       sdsfun::normalize_vector(0,1) |>
       matrix(nrow = nx, ncol = ny) |>
       terra::rast()
