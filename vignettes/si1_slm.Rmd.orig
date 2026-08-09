@@ -119,7 +119,7 @@ terra::plot(species, nc = 3,
 
 <br>
 
-We assume an underlying causal interaction structure among species, where species *a* influences *b*, and *b* in turn influences *c* (i.e., *a* → *b* → *c*). The intrinsic growth rates of species a, b, and c are uniformly assigned a value of 0.2. Species a exerts an effect of 0.04 on species b, and species b exerts an effect of 0.04 on species c. All other interspecific influence parameters are set to 0. This setup provides a controlled environment to test spatial causality detection methods under known dynamic interactions.
+We assume an underlying causal interaction structure among species, where species *a* influences *b*, and *b* in turn influences *c* (i.e., *a* → *b* → *c*). The intrinsic growth rates of species a, b, and c are assigned to 0.75, 0.78 and 0.76 respectively. Species a exerts an effect of 0.04 on species b, and species b exerts an effect of 0.04 on species c. All other interspecific influence parameters are set to 0. This setup provides a controlled environment to test spatial causality detection methods under known dynamic interactions.
 
 ```{r slm1,fig.width=6.55,fig.height=2.60,fig.dpi=100,fig.cap=knitr::asis_output("**Figure 2**. Species distributions following spatiotemporal interaction and evolution after 15 simulation steps with 4-neighbor interactions.")}
 simv = spEDM::slm(species, x = "a", y = "b", z = "c", k = 4, step = 15, transient = 1, interact = "local",
