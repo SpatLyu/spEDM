@@ -86,7 +86,7 @@ We first construct three simulated species density distributions by combining a 
 sim_trispecies = \(nx,ny,seed = 123){
   grid = expand.grid(seq(0, 10, length.out = nx),
                      seq(0, 10, length.out = ny))
-  cov.fun = \(d, range = 1.5, sill=1) sill * exp(-d/range)
+  cov.fun = \(d, range=1.5, sill=1) sill * exp(-d/range)
   dist.mat = fields::rdist(grid)
   cov.mat = cov.fun(dist.mat, range=1.5, sill=1)
   set.seed(seed)
